@@ -21,8 +21,10 @@ XFILES= $D/xinit.o $D/xwind.o \
 	$D/xpopup.o $D/xscroll.o $D/socket.o \
 	$D/xdbg.o $D/xzoom.o
 
-#$D/adascan.o \$D/cscan.o $D/3dwindow.o
-#	$D/tk3d.o $D/tkScrollbar.o $D/tkBorders.o $D/xmenu.o\
+X3DFILES=$D/3dwindow.o \
+	 $D/tk3d.o $D/tkScrollbar.o $D/tkBorders.o $D/xmenu.o
+
+# $D/adascan.o $D/cscan.o
 
 $D/%.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -30,7 +32,7 @@ $D/%.o : %.c
 $D/%.o : X/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-all:	zedit xzedit
+all:	zedit xzedit zedit3d
 
 zedit:
 	@$(MAKE) $(MFLAGS) "D=zos" "LIBS=-lncurses" $(ZEXE)
@@ -43,17 +45,20 @@ xzedit:
 		x$(ZEXE)
 
 zedit3d:
-	@$(MAKE) $(MFLAGS) "USE_TERM=0" "USE_X=1" \
-		"CDEFS=$(WALL) -I$(OPENWINHOME)/include -DSCROLLBARS -DHSCROLL -DBORDER3D" \
-		"D=x3dsun5" \
-		"LIBS=-lX11 -lsocket -lnsl" \
-		x3dsun5/x$(ZEXE)
+	@$(MAKE) $(MFLAGS) \
+		"CDEFS=-DXWINDOWS=1 -DSCROLLBARS -I./X -DHSCROLL -DBORDER3D" \
+		"D=x3d" \
+		"LIBS=-L/usr/X11R6/lib -lX11" \
+		x3d$(ZEXE)
 
 $(ZEXE): $(FILES)
 	$(CC) $(CFLAGS) -o $(ZEXE) $(FILES) $(LIBS)
 
 x$(ZEXE): $(FILES) $(XFILES)
 	$(CC) $(CFLAGS) -o x$(ZEXE) $(FILES) $(XFILES) $(LIBS)
+
+x3d$(ZEXE): $(FILES) $(XFILES) $(X3DFILES)
+	$(CC) $(CFLAGS) -o x3d$(ZEXE) $(FILES) $(XFILES) $(X3DFILES) $(LIBS)
 
 $D/funcs.o: cnames.h
 

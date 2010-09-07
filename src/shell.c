@@ -321,6 +321,7 @@ Proc Zbeauty()
 {
 	char cmdStr[128];
 	char fileName1[25], fileName2[25];
+	int status, fd1;
 
 	Arg = 0;
 	if(!(Curbuff->bmode & PROGMODE))
@@ -330,40 +331,49 @@ Proc Zbeauty()
 	}
 	Echo("Beautifying...");
 	strcpy(fileName1, "/tmp/cbeaut1XXXXXX");
-	mktemp(fileName1);
+	fd1 = mkstemp(fileName1);
 	strcpy(fileName2, "/tmp/cbeaut2XXXXXX");
 	mktemp(fileName2);
-	if(Bwritefile(fileName1))
-	{
+
+	if (fd1 == -1) {
+		Echo("mkstemp failed");
+		return;
+	}
+	status = Bwritefd(fd1);
+	close(fd1);
+	if (!status) {
+		Echo("Write failed");
+		return;
+	}
+
 #if PIPESH
-		sprintf(cmdStr, "%s %s %s", INDENT, fileName1, fileName2);
-		if(Dopipe(Curbuff, cmdStr))
-		{
-			while(Curbuff->child != EOF)
-				Checkpipes(2);
+	sprintf(cmdStr, "%s %s %s", INDENT, fileName1, fileName2);
+	if(!Dopipe(Curbuff, cmdStr))
+		return;
+
+	while(Curbuff->child != EOF)
+		Checkpipes(2);
 #else
-		sprintf(cmdStr, "%s %s %s >/dev/null 2>&1", INDENT, fileName1,
-			fileName2);
-		if(system(cmdStr) == 0)
-		{
+	sprintf(cmdStr, "%s %s %s >/dev/null 2>&1", INDENT, fileName1,
+		fileName2);
+	if (system(cmdStr))
+		return;
 #endif
-			if(access(fileName2, 0))
-			{
-				sprintf(PawStr, "Unable to execute %s.", INDENT);
-				Error(PawStr);
-			}
-			else
-			{
-				Breadfile(fileName2);
-				Curbuff->bmodf = MODIFIED;
-				Clrecho();
-			}
-		}
-		unlink(fileName1);
-		unlink(fileName2);
+
+	if(access(fileName2, 0))
+	{
+		sprintf(PawStr, "Unable to execute %s.", INDENT);
+		Error(PawStr);
 	}
 	else
-		Echo("Write failed");
+	{
+		Breadfile(fileName2);
+		Curbuff->bmodf = MODIFIED;
+		Clrecho();
+	}
+
+	unlink(fileName1);
+	unlink(fileName2);
 }
 
 

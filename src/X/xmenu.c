@@ -2,7 +2,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include "z.h"
+#include "../z.h"
 #include "xwind.h"
 #include "xkeys.h"
 
@@ -112,37 +112,6 @@ int x, y, w, h;
 			Menus[i].name, strlen(Menus[i].name));
 		x += maxlen;
 	}
-}
-
-int ProcessMenuBar(event)
-XEvent *event;
-{
-	int i;
-	int x, y;
-
-/* SAM	if(event->type != ButtonPress) return 0; */
-
-	x = event->xbutton.x; y = event->xbutton.y;
-	
-	/* If it is not on menu bar, we do not handle it! */
-	if(y > H_MENUBAR) return 0;
-	
-	/* If it is in the border - pretend we handled it! */
-	x -= MenuBW * 2;
-	y -= MenuBW * 2;
-	if(x < 0 || y < 0 || y > fontheight + highlight * 2) return 1;
-
-	/* Check if it is on a menu item */
-	for(i = 0; i < NUMMENUS; ++i)
-		if(x < maxlen * (i + 1))
-		{	/* got one! */
-			if(event->type == ButtonPress)
-				MenuPopup(&Menus[i], maxlen * i);
-			return 1;
-		}
-	
-	/* pretend we handled it */
-	return 1;
 }
 
 static void MenuPopup(menu, x)
@@ -258,6 +227,37 @@ int x;		/* really just an offset */
 
 	ShowCursor(TRUE);
 
+}
+
+int ProcessMenuBar(event)
+XEvent *event;
+{
+	int i;
+	int x, y;
+
+/* SAM	if(event->type != ButtonPress) return 0; */
+
+	x = event->xbutton.x; y = event->xbutton.y;
+
+	/* If it is not on menu bar, we do not handle it! */
+	if(y > H_MENUBAR) return 0;
+
+	/* If it is in the border - pretend we handled it! */
+	x -= MenuBW * 2;
+	y -= MenuBW * 2;
+	if(x < 0 || y < 0 || y > fontheight + highlight * 2) return 1;
+
+	/* Check if it is on a menu item */
+	for(i = 0; i < NUMMENUS; ++i)
+		if(x < maxlen * (i + 1))
+		{	/* got one! */
+			if(event->type == ButtonPress)
+				MenuPopup(&Menus[i], maxlen * i);
+			return 1;
+		}
+
+	/* pretend we handled it */
+	return 1;
 }
 
 

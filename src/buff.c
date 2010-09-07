@@ -692,6 +692,40 @@ char *fname;
 }
 
 
+/*	Write the current buffer to an open file descriptor.
+ *	Returns:	TRUE	if write successfull
+ *			FALSE	if write failed
+ */
+int Bwritefd(int fd)
+{
+	Mark pmark;				/* no mallocs! */
+	Page *tpage;
+	struct stat sbuf;
+	int status = TRUE;
+
+	Bmrktopnt( &pmark );
+	for( tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp )
+	{
+		Makecur( tpage );
+		status = XBput( fd, Cpstart, Curplen );
+	}
+	/* flush the buffers */
+	if( (status &= XBput(fd, NULL, EOF)) )
+	{	/* get the time here - on some machines (SUN) 'time' incorrect */
+		fstat( fd, &sbuf );
+		Curbuff->mtime = sbuf.st_mtime;
+	}
+	else
+		Error( "Unable to write file." );
+	(void)close( fd );
+	Bpnttomrk( &pmark );
+
+	if( status )
+		Curbuff->bmodf = FALSE;
+
+	return status;
+}
+
 /*	Write the current buffer to the file 'fname'.
  *	Handles the backup scheme according to Vars[VBACKUP].val.
  *	Returns:	TRUE	if write successfull
@@ -704,8 +738,6 @@ char *fname;
 	extern int Cmask;
 	char bakname[ PATHMAX + 1 ];
 	int fd, mode, status = TRUE, bak = FALSE;
-	Mark pmark;				/* no mallocs! */
-	Page *tpage;
 	struct stat sbuf;
 	int nlink;
 
@@ -755,24 +787,7 @@ char *fname;
 
 	/* Write the output file */
 	if( (fd = open(fname, WRITE_MODE, mode)) != EOF )
-	{
-		Bmrktopnt( &pmark );
-		for( tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp )
-		{
-			Makecur( tpage );
-			status = XBput( fd, Cpstart, Curplen );
-		}
-		/* flush the buffers */
-		if( (status &= XBput(fd, NULL, EOF)) )
-		{	/* get the time here - on some machines (SUN) 'time' incorrect */
-			fstat( fd, &sbuf );
-			Curbuff->mtime = sbuf.st_mtime;
-		}
-		else
-			Error( "Unable to write file." );
-		(void)close( fd );
-		Bpnttomrk( &pmark );
-	}
+		status = Bwritefd(fd);
 	else
 	{
 		if( errno == EACCES )
@@ -785,7 +800,6 @@ char *fname;
 	/* cleanup */
 	if( status )
 	{
-		Curbuff->bmodf = FALSE;
 		Clrecho();
 	}
 	else if(bak)

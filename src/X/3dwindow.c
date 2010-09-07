@@ -7,7 +7,7 @@
  ****************************************************************************/
 #ifdef BORDER3D
 
-#include "z.h"
+#include "../z.h"
 
 extern Mark Scrnmarks[], *Sstart;
 extern int Sendp;

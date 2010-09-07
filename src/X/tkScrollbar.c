@@ -19,9 +19,9 @@
 
 #include <X11/Xlib.h>
 #define XWINDOWS 1
-#include "global.h"
+#include "../global.h"
 #include "xwind.h"
-#include "buff.h"
+#include "../buff.h"
 
 #define Tk_Depth(win)		DefaultDepth(display, screen)
 #define Tk_WindowId(win)	(win)

@@ -57,7 +57,7 @@ of the Rights in Technical Data and Computer Software Clause as DFARS
 #include <math.h>
 #endif
 #define XWINDOWS 1
-#include "global.h"
+#include "../global.h"
 #include "xwind.h"
 
 
@@ -69,6 +69,9 @@ of the Rights in Technical Data and Computer Software Clause as DFARS
 static void ShiftLine(XPoint *p1, XPoint *p2, int distance, XPoint *p3);
 static int  Intersect(XPoint *a1, XPoint *a2, XPoint *b1, XPoint *b2,
 	XPoint *i);
+
+static void GetShadows(Border * borderPtr, Window tkwin);
+static XColor *Tk_GetColorByValue(Window win, XColor * color);
 
 /*
  *--------------------------------------------------------------

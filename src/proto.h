@@ -217,6 +217,7 @@ void Bswappnt ARGS((Mark*));
 void Bswitchto ARGS((Buffer*));
 void Btoend NOARGS;
 void Btostart NOARGS;
+int Bwritefd ARGS((int));
 int Bwritefile ARGS((char*));
 int Checkpipes ARGS((int type));
 Buffer *Cfindbuff ARGS((char*));

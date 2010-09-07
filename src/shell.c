@@ -332,8 +332,8 @@ Proc Zbeauty()
 	Echo("Beautifying...");
 	strcpy(fileName1, "/tmp/cbeaut1XXXXXX");
 	fd1 = mkstemp(fileName1);
-	strcpy(fileName2, "/tmp/cbeaut2XXXXXX");
-	mktemp(fileName2);
+	strcpy(fileName2, fileName1);
+	fileName2[11] = '2';
 
 	if (fd1 == -1) {
 		Echo("mkstemp failed");

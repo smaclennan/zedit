@@ -250,7 +250,7 @@ Proc Zsetbookmrk()
 	else
 		strcpy(PawStr, "Unamed");
 
-	Bookmark = ++Bookmark % BOOKMARKS;
+	Bookmark = (Bookmark + 1) % BOOKMARKS;
 	if(Bookname[Bookmark]) free(Bookname[Bookmark]);
 	Bookname[Bookmark] = strdup(PawStr);
 

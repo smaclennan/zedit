@@ -1,6 +1,6 @@
 ZEXE=ze
 
-MAKE = make -j4
+MAKE = make
 CFLAGS=-O3 -Wall -g $(CDEFS)
 
 #D=.
@@ -32,12 +32,12 @@ $D/%.o : X/%.c
 
 all:	zedit xzedit
 
-zedit:	$(ZEXE)
+zedit:
 	@$(MAKE) $(MFLAGS) "D=zos" "LIBS=-lncurses" $(ZEXE)
 
 xzedit:
 	@$(MAKE) $(MFLAGS) \
-		"CDEFS=-DXWINDOWS=1 -DSCROLLBARS" \
+		"CDEFS=-DXWINDOWS=1 -DSCROLLBARS -I./X" \
 		"D=zxos" \
 		"LIBS=-L/usr/X11R6/lib -lX11" \
 		x$(ZEXE)

@@ -66,4 +66,4 @@ int strcasecmp  ARGS((const char *, const char *));
 int strncasecmp ARGS((const char *, const char *, size_t));
 #endif
 
-void Dbg ARGS(());
+void Dbg ARGS((char *fmt, ...));

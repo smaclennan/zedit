@@ -10,7 +10,7 @@
 #if TERMINFO
 #undef TRUE
 #undef FALSE
-#undef SYSV
+#undef SYSV2
 #undef ISPRINT
 #include <curses.h>
 #undef ISPRINT		/* guarentee we don't get the wrong one! */
@@ -151,11 +151,12 @@ int *rows, *cols;
 	if((fp = popen("resize -u", "r")))
 	{
 		while(fgets(buf, sizeof(buf), fp))
-			if(sscanf(buf, "%[^=]=%d;\n", name, &n) == 2)
+			if(sscanf(buf, "%[^=]=%d;\n", name, &n) == 2) {
 				if(strcmp(name, "COLUMNS") == 0)
 					*cols = n;
 				else if(strcmp(name, "LINES") == 0)
 					*rows = n;
+			}
 		pclose(fp);
 	}
 #endif
@@ -187,16 +188,17 @@ int style;
 #if COMMENTBOLD
 	case T_NORMAL:
 		TPUTS(exit_attribute_mode);
-		TPUTS(tparm(set_a_foreground, 7)); // white
+// SAM		TPUTS(tparm(set_a_foreground, COLOR_WHITE));
+				TPUTS(tparm(set_a_foreground, COLOR_BLACK));
 		break;
 	case T_COMMENT:
-		TPUTS(tparm(set_a_foreground, 6)); // cyan
+		TPUTS(tparm(set_a_foreground, COLOR_RED));
 		break;
 	case T_CPP:
-		TPUTS(tparm(set_a_foreground, 2)); // green
+		TPUTS(tparm(set_a_foreground, COLOR_GREEN));
 		break;
 	case T_CPPIF:
-		TPUTS(tparm(set_a_foreground, 5)); // magenta
+		TPUTS(tparm(set_a_foreground, COLOR_MAGENTA));
 		break;
 #else
 	case T_NORMAL:		TPUTS(exit_attribute_mode); break;

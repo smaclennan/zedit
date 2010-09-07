@@ -4,7 +4,7 @@
  *					  Copyright of Sean MacLennan							*
  *						  All rights reserved.								*
  *																			*
-b ****************************************************************************/
+ ****************************************************************************/
 #include "config.h"
 #include <stdio.h>
 #include <ctype.h>
@@ -24,7 +24,7 @@ extern int Verbose;
 #include <pwd.h>
 extern struct passwd *Me;
 
-#if SYSV
+#if SYSV2
 #ifdef MAXNAMLEN
 /* KLUDGE for SYSV machines that have "BSD" compatibility */
 #define BSDDIR	1

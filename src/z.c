@@ -81,7 +81,7 @@ void Execute()
 		/* select returns -1 if a child dies (SIGPIPE) - Sigchild handles it */
 		while(select(NumFDs, &fds, 0, 0, 0) == -1)
 		{
-#if SYSV
+#if SYSV2
 			Checkpipes(1);
 			Refresh();
 #endif
@@ -558,7 +558,7 @@ Proc Zcwd()
 	char path[PATHMAX], *p;
 
 	strcpy(path, Cwd);
-	if(Getdname("CWD: ", path) == 0)
+	if(Getdname("CWD: ", path) == 0) {
 		if((p = strdup(path)) == NULL)
 			Error("Not enough memory");
 		else if(chdir(p) == 0)
@@ -570,6 +570,7 @@ Proc Zcwd()
 		}
 		else
 			Error("chdir failed.");
+	}
 }
 
 

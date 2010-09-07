@@ -257,7 +257,7 @@ void Bind()
  	Keys[ZXK_F7]		= ZMAKE;
  	Keys[ZXK_F8]		= ZGREP;
  	Keys[ZXK_F9]		= ZDOMACRO;
- 	Keys[ZXK_F10]		= ZTAG;
+// SAM 	Keys[ZXK_F10]		= ZTAG;
 #ifdef sun
 /* 	Keys[ZXK_F11]		= ; This is not the F11 key! */
  	Keys[ZXK_F12]		= ZAGAIN;			/* Again */

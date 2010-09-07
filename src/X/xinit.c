@@ -8,7 +8,7 @@
 
 #include "../global.h"
 #include "../config.h"
-#include "../xwind.h"
+#include "xwind.h"
 #include "../vars.h"
 
 /* This file contains the routines that work with the databases */

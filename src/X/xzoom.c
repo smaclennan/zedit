@@ -1,4 +1,4 @@
-#include "z.h"
+#include "../z.h"
 
 #if XWINDOWS
 #include <X11/Xlib.h>

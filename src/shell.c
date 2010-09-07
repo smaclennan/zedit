@@ -192,7 +192,7 @@ Boolean Doshell()
 	argv[2] = NULL;
 	return Invoke(Curbuff, argv);
 }
-#elif SYSV
+#elif SYSV2
 Proc Zshell()	/*for tags*/
 {
 	extern char *Shell;

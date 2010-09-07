@@ -7,7 +7,7 @@
  ****************************************************************************/
 #include "z.h"
 
-#include <varargs.h>
+#include <stdarg.h>
 #include <signal.h>
 
 
@@ -21,16 +21,13 @@ int Dbgint = 0;
 */
 
 /*VARARGS0*/
-void Dbg(va_alist)
-va_dcl
+void Dbg(char *fmt, ...)
 {
 	FILE *fp;
-	char *fmt;
 	va_list arg_ptr;
 
 	fp = dbgfname ? fopen(dbgfname, "a") : NULL;
-	va_start(arg_ptr);
-	fmt = va_arg(arg_ptr, char *);
+	va_start(arg_ptr, fmt);
 
 	if(fp)
 		vfprintf(fp, fmt, arg_ptr);

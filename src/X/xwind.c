@@ -1,4 +1,4 @@
-#include "z.h"
+#include "../z.h"
 
 #if XWINDOWS
 #include <signal.h>
@@ -58,7 +58,7 @@ static char zedit_bits[] = {
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 #include "xwind.h"
-#include "keys.h"
+#include "../keys.h"
 
 #define DOUBLE_CLICK		500		/* 1/2 second */
 
@@ -1166,9 +1166,7 @@ Boolean set;
 	Window window;
 	static int point_x, point_y;
 	static Byte wasch = ' ';		/* color only */
-#if COMMENTBOLD
 	static GC wasgc;
-#endif
 
 #ifdef BORDER3D
 	window = InPaw ? PAWwindow : zwindow;
@@ -1185,10 +1183,10 @@ Boolean set;
 				fontwidth, fontheight);
 	else if(set)
 	{
-#ifdef COMMENTBOLD
+#if COMMENTBOLD
 		CheckComment();
-		wasgc = curgc;
 #endif
+		wasgc = curgc;
 		wasch = (Bisend() || ISNL(Buff()) || Buff() == '\t') ? ' ' : Buff();
 		XDrawImageString(display, window, cursorgc, point_x,
 			point_y + fontbase, &wasch, 1);

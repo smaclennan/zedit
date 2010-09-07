@@ -20,7 +20,7 @@ int SGnum = 0;			/* needed by Termcap/Terminfo but... */
 #include <termios.h>
 struct termios Savetty;
 struct termios settty;
-#elif SYSV
+#elif SYSV2
 #include <termio.h>
 struct termio Savetty;
 struct termio settty;
@@ -68,7 +68,7 @@ int sig;
 		Refresh();			/* force a screen update */
 	}
 
-#ifdef SYSV
+#ifdef SYSV2
 	signal(SIGWINCH, sigwinch);
 #endif
 }
@@ -100,7 +100,7 @@ void Tinit()
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr( fileno(stdin), TCSANOW, &settty );
-#elif SYSV
+#elif SYSV2
 	ioctl( fileno(stdin), TCGETA, &Savetty );
 	ioctl( fileno(stdin), TCGETA, &settty );
 	settty.c_iflag = Vars[VFLOW].val ? (IXON | IXOFF) : 0;
@@ -159,7 +159,7 @@ void Tfini()
 {
 #if LINUX
   tcsetattr( fileno(stdin), TCSAFLUSH, &Savetty );
-#elif SYSV
+#elif SYSV2
 	ioctl( fileno(stdin), TCSETAF, &Savetty );
 #elif BSD
 	stty( fileno(stdin), &Savetty );

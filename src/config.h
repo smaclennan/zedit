@@ -7,7 +7,7 @@
  ****************************************************************************/
 /* OPERATING SYSTEM - define only one */
 #define LINUX   	1			/* Linux */
-#define SYSV		0			/* Unix System V Release 2/3 */
+#define SYSV2		0			/* Unix System V Release 2/3 */
 #define SYSV4		0			/* Unix System V Release 4   */
 #define BSD			0			/* Berkely */
 #define SUNBSD		0			/* Sun BSD */
@@ -56,8 +56,8 @@
 #define SYSV4		1
 #endif
 #if SYSV4
-#undef  SYSV
-#define SYSV		1
+#undef  SYSV2
+#define SYSV2		1
 #endif
 #define PIPESH		1
 

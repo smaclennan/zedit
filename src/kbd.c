@@ -81,7 +81,7 @@ static Boolean Pending = FALSE;
 
 Byte Tgetkb()
 {
-	cptr = ++cptr % CSTACK;
+	cptr = (cptr + 1) % CSTACK;
 	if(cpushed)
 		--cpushed;
 	else
@@ -91,7 +91,7 @@ Byte Tgetkb()
 
 		if((cpushed = read(0, (char *)buff, CSTACK >> 1) - 1) < 0)
 			Hangup(1);	/* we lost connection */
-		for(i = 0, p = cptr; i <= cpushed; ++i, p = ++p % CSTACK)
+		for(i = 0, p = cptr; i <= cpushed; ++i, p = (p + 1) % CSTACK)
 			cstack[p] = buff[i];
 	}
 	Pending = FALSE;

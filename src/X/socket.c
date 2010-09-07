@@ -1,4 +1,4 @@
-#include "z.h"
+#include "../z.h"
 
 #if XWINDOWS
 #include <sys/socket.h>
@@ -26,6 +26,9 @@ static char *Name[MAXACCEPT];
 static char fname[16];
 
 static void WriteSocket(int socket, char *str);
+static void CheckSockets(fd_set *readfds);
+static void ListAllVars(int fd);
+static void SendVariable(int fd, int i);
 
 /* Called by xinit to initialize the checkfds with the Xfd fd.
  * Also create the socket for other programs to connect to.

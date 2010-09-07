@@ -98,14 +98,13 @@ char *msg;
 
 #if !XWINDOWS
 #include <sys/time.h>
+#include <sys/poll.h>
 
 Boolean Delay()
 {
-	static struct timeval wait = {1, 0};
-	int fds = 1;
+	static struct pollfd ufd = { .fd = 1, .events = POLLIN };
 
-	return((InPaw || Tkbrdy() ||
-		select(1, (fd_set *)&fds, NULL, NULL, &wait)) ? 0 : 1 );
+	return InPaw || Tkbrdy() || poll(&ufd, 1, 1000) == 1 ? 1 : 0;
 }
 
 #else

@@ -121,7 +121,7 @@ int type;
 			}
 	}
 
-#if SYSV
+#if SYSV2
 	/* See note in Sigchild() */
 #if !SYSV4 || !defined(WNOWAIT)
 	signal( SIGCLD, Sigchild );

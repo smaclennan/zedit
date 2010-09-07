@@ -1,0 +1,380 @@
+/****************************************************************************
+ *																			*
+ *				 The software found in this file is the						*
+ *					  Copyright of Sean MacLennan							*
+ *						  All rights reserved.								*
+ *																			*
+ ****************************************************************************/
+#include "z.h"
+#include "keys.h"
+#if XWINDOWS
+#include "xwind.h"
+#endif
+ 
+/* globals for Getarg */
+Boolean InPaw, First;
+int Pawcol, Pawlen, Pshift;
+Buffer *Paw, *Buff_save;
+
+/* globals for Getplete */
+char **Carray;
+int Csize, Cnum = 0, Cret;
+unsigned Nextpart = ZNOTIMPL;
+
+/* General purpose string argument input routine which recursively calls the
+ * editor through the PAW buffer.
+ * Returns 0 if ok, ABORT if user aborted, 1 if empty string.
+ * Prompt the user for an argument, with an optional default in arg.
+ * Only allow max chars.
+ * Arg is NOT overwritten if the user aborts, or returns a null string.
+ */
+
+#if XWINDOWS
+/* We need this global so we can redisplay on an exposure event */
+char *PromptString;
+#endif
+
+Boolean Getarg( prompt, arg, max )
+char *prompt, *arg;
+int max;
+{
+	extern Proc (**Funcs)(), (*Cmds[])(), (*Vcmds[])(), (*Pawcmds[])();
+	extern Boolean Insearch;
+	extern Byte Keys[];
+
+	char *ptr;
+	int argp_save, arg_save, rc;
+	int tcol, trow;
+
+	tcol = Pcol; trow = Prow;
+#if XWINDOWS
+	PromptString = prompt;
+	Tstyle(T_NORMAL);		/* always display paw in normal */
+#endif
+#ifdef BORDER3D
+	Echo(prompt);
+	Tflush();
+	GrabKeyboard(PAWwindow);
+#else
+	Tgoto(Tmaxrow() - 1 , 0);			/* display the prompt */
+	Tprntstr(prompt);
+#endif
+	Pawcol = Pcol = strlen(prompt);		/* prompts are always simple ascii */
+
+#if 0
+	/* SAM done in Makepaw */
+	memset(tline, '\376', COLMAX + 1);
+#endif
+	argp_save = Argp;
+	arg_save = Arg;
+	Buff_save = Curbuff;
+	Paw->bmode = Curbuff->bmode;
+	InPaw = TRUE;
+	Funcs = Pawcmds;
+	Keys[CR] = ZNEWLINE;				/* in case we are in a VIEW buff */
+	Pshift = 0;
+	Pawlen = max;
+	Makepaw(arg, TRUE);
+	First = TRUE;
+	while( InPaw == TRUE )
+		Execute();
+	if(InPaw != ABORT)
+	{	/* get the argument */
+		Btostart();
+		for(ptr = arg; !Bisend() && Buff() != '\0'; Bmove1())
+			*ptr++ = Buff();
+		*ptr = '\0';
+		rc = ptr == arg;	/* set to 1 if string empty */
+	}
+	else
+		rc = ABORT;
+	InPaw = FALSE;
+	Insearch = FALSE;			/* used by Zcase when in search command */
+	Argp = argp_save;
+	Arg = arg_save;
+	Bswitchto(Buff_save);					/* go back */
+	Curbuff->bmode = Paw->bmode;			/* mainly for EXACT mode */
+#if 0
+	/* SAM ??? */
+	Clrcol[Tgetrow()] = Tmaxcol();		/* force clear */
+#endif
+	Tgoto(trow, tcol);
+	Curwdo->modeflags = INVALID;
+	Funcs = (Curbuff->bmode & VIEW) ? Vcmds : Cmds;	/* SAM */
+	Clrecho();
+#if XWINDOWS
+# ifdef BORDER3D
+	GrabKeyboard(textwindow);
+# endif
+	Tflush();
+	ShowCursor(TRUE);
+	ShowCursor(FALSE);
+#endif
+	return rc;
+}
+
+
+/*
+General purpose ask for an argument with completion given a struct or char *
+array.
+Returns offset of entry in array if found, else -1.
+*/
+int Getplete( prompt, def, array, size, num )
+char *prompt, *def, **array;
+int size, num;
+{
+	char cmdstr[ STRMAX + 1 ];
+
+	Carray = array;
+	Csize = size / sizeof( char * );
+	Cnum = num;
+	if( def )
+		strcpy( cmdstr, def );
+	else
+		*cmdstr = '\0';
+	if( Getarg(prompt, cmdstr, STRMAX) )
+		Cret = -1;
+	Cnum = 0;
+	return( Cret );
+}
+
+
+int Pcmdplete(show)
+Boolean show;
+{
+	char cmd[ STRMAX + 1 ], **cca, *mstr = NULL;
+	int i = 0, len, len1 = 0, rc;
+
+	Cret = -1;
+	Getbtxt( cmd, STRMAX );
+	len = strlen( cmd );
+	cca = Carray;
+	if(show && !len)
+		for(; i < Cnum; ++i, cca += Csize)
+			Pout(*cca, TRUE);
+	else
+		for(; i < Cnum && (rc = Strnicmp(*cca, cmd, len)) <= 0;
+				++i, cca += Csize)
+		 	if( rc == 0 )
+			{
+				if(show)
+					Pout(*cca, TRUE);
+				else if( mstr )
+				{
+					Cret = -1;
+					len1 = nmatch( mstr, *cca );
+				}
+				else
+				{
+					Cret = i;
+					len1 = strlen( mstr = *cca );
+				}
+			}
+	if( mstr && !show )
+	{
+		strncpy( cmd, mstr, len1 );
+		cmd[ len1 ] = '\0';
+		Makepaw( cmd, FALSE );
+		return( Cret != -1 ? 2 : 1 );
+	}
+	return( 0 );
+}
+
+
+static int p_row, p_col;
+static int p_ncols = PNUMCOLS;
+
+void Pclear()
+{
+	extern Mark Scrnmarks[];
+	int i;
+#ifdef BORDER3D
+	WDO *wdo = Curwdo;
+	wdo->modeflags = INVALID;
+#else
+	WDO *wdo = Whead;
+#endif
+	
+	for(i = 0; i < Rowmax - 2; ++i)
+	{
+		Tsetpoint(i, 0);
+		Tcleol();
+		Scrnmarks[i].modf = TRUE;
+#ifndef BORDER3D
+		if(wdo->last == i)
+		{
+			wdo->modeflags = INVALID;
+			if(wdo->next) wdo = wdo->next;
+		}
+#endif
+	}
+	Pset(0, 0, PNUMCOLS);
+}
+
+
+void Pset(row, col, ncols)
+int row, col, ncols;
+{
+	p_row = row;
+	p_col = col;
+	p_ncols = ncols;
+}
+
+
+void Pout(str, check)
+char *str;
+Boolean check;
+{
+	extern Mark Scrnmarks[];
+
+	Tsetpoint(p_row, p_col * PCOLSIZE);
+	Scrnmarks[p_row].modf = TRUE;
+	if(!check || p_row < Tmaxrow() - 2)
+	{
+		Tprntstr(str);
+		Tcleol();
+	}
+	if(++p_col >= p_ncols)
+	{
+		++p_row;
+		p_col = 0;
+	}
+}
+
+	
+/* Use instead of Zinsert when in PAW */
+Proc Pinsert()
+{
+	extern unsigned Cmd;
+	char savech;
+	Mark tmark;
+	int width;
+
+	if(Cmd == '?' && Cnum)
+	{	/* Help!!!!*/
+		Pclear();
+		Pcmdplete(TRUE);
+		Dline(p_col ? ++p_row : p_row);
+		return;
+	}
+	
+	if(First)
+	{
+		Bdelete(Curplen);
+		First = FALSE;
+		Tlrow = -1;
+	}
+
+	width = Twidth(Cmd);
+	if(Bgetcol(FALSE, 0) + width <= Pawlen)
+	{
+		savech = Buff();	/* in case overwrite mode */
+		Zinsert();
+		
+		Bmrktopnt(&tmark);
+		Btoend();
+		if(Bgetcol(FALSE, 0) > Pawlen)
+		{	/* Insert in middle pushed text past end */
+			Bmove(-width);
+			Bdelete(width);
+		}
+		Bpnttomrk(&tmark);
+
+		if(Cnum)
+			switch(Pcmdplete(FALSE))
+			{
+				case 0:		/* no match - remove char */
+					Bmove( -1 );
+					Bdelete( 1 );
+					if( Paw->bmode & OVERWRITE )
+					{
+						Binsert( savech );
+						Bmove( -1 );
+					}
+					break;
+				case 1:		/* partial match */
+					break;
+				case 2:		/* full match */
+					if(Vars[VEXECONMATCH].val)
+						InPaw = FALSE;
+					break;
+			}
+	}
+	else Tbell();
+}
+
+
+/* Use instead of Znewline when in PAW */
+Proc Pnewline()
+{
+	char cmdstr[ STRMAX + 1 ], **ptr;
+
+	if( Cnum )
+	{
+		Getbtxt( cmdstr, STRMAX );
+		for( Cret = 0, ptr = Carray;
+			 Cret < Cnum && Stricmp(cmdstr, *ptr);
+			 ++Cret, ptr += Csize );
+		if( Cret == Cnum )
+		{
+			Tbell();
+			return;
+		}
+	}
+	InPaw = FALSE;
+}
+
+
+Proc Zpart()
+{
+	extern char Savetag[];
+	extern Buffer *Bufflist;
+	char word[ STRMAX + 1 ];
+	Buffer *tbuff;
+
+	if( Nextpart == ZFINDTAG )
+	{
+		Bswitchto( Cfindbuff(TAGBUFNAME) );
+		for( Bcsearch(NL); !Bisend(); Bcsearch(NL) )
+		{
+			Getbword( word, STRMAX, Istoken );
+			if( Strstr(word, Savetag) )
+			{
+				Makepaw( word, TRUE );
+				return;
+			}
+		}
+		Bswitchto( Paw );
+		Tbell();
+	}
+	else if( Nextpart == ZSWITCHTO )
+	{
+		Getbtxt( word, STRMAX );
+		if((tbuff = Cfindbuff(word)) == 0) tbuff = Curbuff;
+		if( tbuff->next )
+			tbuff = tbuff->next;
+		else
+			tbuff = Bufflist;
+		Makepaw( tbuff->bname, TRUE );
+	}
+	else
+		Tbell();
+}
+
+
+void Makepaw(word, start)
+char *word;
+Boolean start;
+{
+	extern char tline[];
+
+	Bswitchto(Paw);
+	Btostart();
+	Bdelete(Curplen);
+	Binstr(word);
+#ifndef BORDER3D
+	Tcleol();
+#endif
+	memset(tline, '\376', COLMAX);	/* invalidate it */
+	if(start) Btostart();
+}

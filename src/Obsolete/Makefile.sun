@@ -1,0 +1,144 @@
+C=gcc
+ZEXE=ze
+ZCEXE=zc
+
+# On SparcClassic -fomit-frame-pointer made no difference in exe size
+# SAM -funroll-loops -finline-functions
+CFLAGS=-DUSE_MAKEFILE -DTERMINFO=$(USE_TERM) -DXWINDOWS=$(USE_X) $(CDEFS) \
+	-Dsun -O3
+
+FILES=	$D/bcmds.o $D/bind.o $D/bind2.o $D/bindings.o \
+	$D/buff.o $D/calc.o $D/comms.o $D/comms1.o \
+	$D/cursor.o $D/dbg.o $D/delete.o $D/display.o \
+	$D/file.o $D/funcs.o $D/getarg.o $D/global.o \
+	$D/help.o $D/kbd.o $D/life.o $D/macro.o $D/modes.o\
+	$D/reg.o $D/shell.o $D/srch.o $D/support.o \
+	$D/tags.o $D/term.o $D/termcap.o $D/terminfo.o \
+	$D/unix.o $D/vars.o $D/window.o $D/cache.o $D/z.o \
+	$D/getfname.o $D/mbuff.o $D/spell.o $D/make.o \
+	$D/ada.o $D/rcs.o $D/audio.o $D/expand.o $D/rot13.o
+
+XFILES= $D/xinit.o $D/xwind.o $D/adascan.o \
+	$D/comment.o $D/xpopup.o $D/xscroll.o $D/socket.o \
+	$D/tk3d.o $D/tkScrollbar.o $D/tkBorders.o $D/xmenu.o\
+	$D/xdbg.o $D/xzoom.o $D/cscan.o $D/3dwindow.o
+
+# The -Wall option cannot be used with -g or it complains about
+# -Wuninitialized. Below is the -Wall for -g.
+WALL=	-Wimplicit -Wreturn-type -Wunused -Wswitch -Wcomment -Wtrigraphs \
+	-Wformat -Wparentheses -Winline
+
+$D/%.o : %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+#all:	realall
+#all:	zedit3d
+all:	xzedit
+
+realall: zedit xzedit zedit3d
+
+# Entries for sun5
+
+zedit:
+	@$(MAKE) $(MFLAGS) "USE_TERM=1" "USE_X=0" \
+		"CDEFS=$(WALL)" \
+		"D=sun5" \
+		"LIBS=-ltermlib" \
+		sun5/$(ZEXE)
+
+xzedit:
+	@$(MAKE) $(MFLAGS) "USE_TERM=0" "USE_X=1" \
+		"CDEFS=$(WALL) -I$(OPENWINHOME)/include -DSCROLLBARS" \
+		"D=xsun5" \
+		"LIBS=-lX11 -lsocket -lnsl" \
+		xsun5/x$(ZEXE)
+
+# Note: use of -lmalloc caused zedit to core with vscroll->firstFraction = 0.0
+zedit3d:
+	@$(MAKE) $(MFLAGS) "USE_TERM=0" "USE_X=1" \
+		"CDEFS=$(WALL) -I$(OPENWINHOME)/include -DSCROLLBARS -DHSCROLL -DBORDER3D" \
+		"D=x3dsun5" \
+		"LIBS=-lX11 -lsocket -lnsl" \
+		x3dsun5/x$(ZEXE)
+
+install:
+	cp $(ARCH)/$(ZEXE)  /usr/local/zedit/z
+	cp x$(ARCH)/x$(ZEXE) /usr/local/zedit/Z
+	cp x3d$(ARCH)/x$(ZEXE) /usr/local/zedit/Ze
+
+# Entries for sun4
+
+sun4/zedit:
+	@$(MAKE) $(MFLAGS) "USE_TERM=1" "USE_X=0" "CC=/usr/5bin/cc" \
+		"CDEFS=-Dsun4" "D=sun4" "LIBS=-ltermlib" $(ZEXE)
+
+sun4/xzedit:
+	@$(MAKE) $(MFLAGS) "USE_TERM=0" "USE_X=1" \
+		"CDEFS=-I$(OPENWINHOME)/include -Dsun4" \
+		"D=xsun4" "LIBS=-lX11" x$(ZEXE)
+	
+# Common
+
+$D/$(ZEXE): $(FILES)
+	$(CC) $(CFLAGS) -o $D/$(ZEXE) $(FILES) $(LIBS)
+
+$D/x$(ZEXE): $(FILES) $(XFILES)
+	$(CC) $(CFLAGS) -o $D/x$(ZEXE) $(FILES) $(XFILES) $(LIBS)
+
+$D/funcs.o: cnames.h
+
+
+$D/adascan.o:	adascan.l
+	lex -t adascan.l | sed 's/(void)putc/putc/' > adascan.c
+	$(CC) $(CFLAGS) -c adascan.c -o $@
+	rm adascan.c
+
+$D/cscan.o:	cscan.l
+	lex -t cscan.l | sed \
+		-e 's/yysptr/ccsptr/g' \
+		-e 's/yysvec/ccsvec/g' \
+		-e 's/yyback/ccback/g' \
+		-e 's/yylook/cclook/g' \
+		-e 's/yybgin/ccbgin/g' \
+		-e 's/yyprevious/ccprevious/g' \
+		-e 's/yyextra/ccextra/g' \
+		-e 's/yymatch/ccmatch/g' \
+		-e 's/yycrank/cccrank/g' \
+		-e 's/yyvstop/ccvstop/g' \
+		-e 's/yyunput/ccunput/g' \
+		-e 's/yyinput/ccinput/g' \
+		-e 's/yyin/ccin/g' \
+		-e 's/yylineno/cclineno/g' \
+		-e 's/yyoutput/ccoutput/g' \
+		-e 's/yytop/cctop/g' \
+		-e 's/yyout/ccout/g' \
+		-e 's/yylex/cclex/g' \
+		> cscan.c
+	$(CC) $(CFLAGS) -c cscan.c -o $@
+	rm cscan.c
+
+# memlog won't compile under gcc
+memlog.o: memlog.c
+	cc $(CFLAGS) -c memlog.c
+
+xkey:	xkey.c
+	$(CC) -I/usr/openwin/include -Wall -o xkey xkey.c -lX11
+
+zfont:	zfont.c
+	$(CC) -I/usr/openwin/include -Wall -o zfont zfont.c -lX11
+
+$(ZCEXE): zc.o bind.o
+	$(CC) -o $(ZCEXE) zc.o bind.o
+
+zc.o: cnames.h
+
+xwind.o:	xwind.c bitmaps/zedit
+
+ctags:
+	tagfiles
+
+lint:
+	lint $(SFILES) > lint.out 2>&1
+
+clean:
+	rm -f *.o */*.o ze */ze xze */xze cscan.c adascan.c

@@ -1,0 +1,5 @@
+volcheck
+tar cvf /vol/dev/aliases/floppy0 *.[chl] Makfile README TODO
+[ $? -eq 0 ] || exit 1
+eject
+exit 0

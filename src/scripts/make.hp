@@ -1,0 +1,12 @@
+ZEXE=ze
+FILES=	bcmds.o bind.o bind2.o bindings.o buff.o calc.o comms.o comms1.o\
+	cursor.o dbg.o delete.o display.o file.o funcs.o getarg.o\
+	global.o help.o kbd.o life.o macro.o modes.o \
+	reg.o shell.o srch.o support.o tags.o term.o termcap.o\
+	terminfo.o unix.o vars.o window.o xb.o z.o getfname.o \
+	mbuff.o spell.o make.o rcs.o
+
+$(ZEXE): $(FILES)
+	$(CC) $(CFLAGS) -o $(ZEXE) $(FILES) $(LIBS)
+
+funcs.o: cnames.h

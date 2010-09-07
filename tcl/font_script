@@ -1,0 +1,5 @@
+FONTFILE=/usr/local/zedit/fixedwidthfonts
+cut -d- -f2-3 $FONTFILE | sort -u >/tmp/names
+cut -d- -f4 $FONTFILE | sort -u >/tmp/types
+cut -d- -f8 $FONTFILE | sort -u -n >/tmp/sizes
+cut -d- -f1-3,4,8 $FONTFILE | sort -u >/tmp/valid

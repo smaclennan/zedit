@@ -1,0 +1,4 @@
+#!/bin/sh
+# SAM this script implements a 'mv -f' for makefiles
+[ $# -gt 1 -a -f $1 ] && mv $*
+exit 0

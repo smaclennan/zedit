@@ -1,0 +1,19 @@
+3D
+--
+
+Look at Wload
+
+
+- checkmail should use var for timeout
+
+- Rowmax should be for text window
+	- paw line
+	- modeline
+
+- Zroot has too many events in BORDER3D case
+
+- Dopipe should implement CheckPipes and allow multiple instances!
+
+- Maybe the Unix code should use the new xpipe calls?
+
+- Zfont does not show the fixed size NxN fonts

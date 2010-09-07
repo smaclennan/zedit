@@ -1,0 +1,209 @@
+:AddNL
+
+If this flag variable is set, the editor will insure that all saved files
+end in a Newline. The default is on.
+.sp 0
+:Backup
+
+If this flag variable is set, a backup file is created when a file is
+written. The default is on.
+.sp 0
+:CExtends
+
+This variable defines the extensions that turn on C Mode. The
+extensions are seperated with the colon (:). There is a maximum of eight
+extensions. See also AExtends, TExtends.
+.sp 0
+:ClearExit
+
+If this variable is set, Zedit will clear the screen on exit. Default is
+off. Not available on PC.
+.sp 0
+:CTabs
+
+A tab is a single character that is displayed as one or more spaces on
+the screen. This variable defines the number of spaces displayed per tab
+in C mode buffers, even if the buffer is in View mode. The default is 4
+spaces. See also Tabs.
+.sp 0
+:DateFormat
+
+The Date command uses strftime to format the output string. This varable
+is passed to strftime as the format string. It has a default of NULL.
+See strftime.
+.sp 0
+:DoSave
+
+If this flag variable is set, the current state of the editor will be
+saved on exit. If Zedit is then started with no command line arguments,
+the editor reverts to the saved state. The default is on.
+.sp 0
+:Exact
+
+If Exact is set, all searches and replaces are case sensitive. This
+means that the search string "string" will only match "string", not
+"STRING", or "String". The default is on.
+.sp 0
+:ExecOnMatch
+
+If this flag variable is set, command completions are executed as soon
+as they are uniquely defined without having to hit the Enter or Return
+key. If it is off, the user must hit Enter or Return to confirm the
+completion. The default is off.
+.sp 0
+:ExpandPaths
+
+If ExpandPaths is set, all file names are expanded to a full path. For
+example, the file name "../file.c" might be expanded to
+"/home/sam/dir/file.c". ~ and $ prefixed paths are always expanded. The
+default is on.
+.sp 0
+:FillWidth
+
+This is the column at which the Text mode commands wrap the right
+margin. It is also used by the Center Line command. The default is 72.
+.sp 0
+:FlowControl
+
+On SYS3 and SYS5 machines, the flow control is user definable. If
+FlowControl is set, ^S and ^Q stop and start the terminal. However, the
+^S cannot be used as the Search command. If FlowControl is off, ^S can
+be used. The default is off.
+.sp 0
+:Lines
+
+This flag variable turns on a line:column indicator on the mode line.
+The Lines feature can cause a lot of cursor movement and is irritating
+on some slow terminals. It can also be slow in Fastread buffers. The
+default is on.
+.sp 0
+:Macrofile
+
+This is a string variable which can contain the path name of a macro
+file to load on startup. The default is NONE.
+.sp 0
+:MailCmd
+
+Specifies the command to use with the Mail command. It is usually mail,
+however, on some machines the command mailx may be needed. Note that
+Zedit appends "-s <subject> <to_list> < <mail_message>" to the command.
+.sp 0
+:MakeCmd
+
+This is a string variable which contains the default string for the Make
+command. The default is "make".
+.sp 0
+:Margin
+
+This is a decimal variable that defines the left margin for Text mode
+and the Format Paragraph command. It does not affect the first line of
+the paragraph. The default is 0.
+.sp 0
+:Match
+
+This variable controls the C Mode "matching" function.
+
+.ip 0
+No matching occurs.
+
+.ip 1
+Zedit will "match" all ')' and ']' with their matching '(' or '[' by
+moving the cursor to the matching character temporarily. If there is no
+match, Zedit will beep. Default.
+
+.ip 2
+Zedit will insert a ')' or ']' for every '(' or '[' typed.
+.sp 0
+.lp
+:Normal
+
+If on, sets the default buffer mode to Normal. If off, sets the default
+buffer mode to Text. Some file extensions override this variable. The
+default is on.
+.sp 0
+:Overwrite
+
+If overwrite is set, newly created buffers default to overwrite mode
+instead of insert mode. Default is off.
+.sp 0
+:PopupMan
+
+If this variable is set, Zedit will try to use the show command to popup
+an X window with the man page in it. If it is off, Zedit will place the
+man page in a buffer. The default is off.
+
+Note: The show command is not a standard Unix command.
+.sp 0
+:Print
+
+Specifies the print command to execute. It will append the file name to
+this string.
+.sp 0
+:SaveOnExit
+
+Usually, the editor prompts to save modified files when the Exit command
+is executed. If SaveOnExit is set, all modified buffers are saved on
+exit. The default is off.
+.sp 0
+:ShowCWD
+
+This variable is for XWINDOWS only. If set, the current working
+directory is shown in the title bar of the window. The default is True.
+.sp 0
+:Silent
+
+If set, turns the bell off. Default is off (bell on).
+.sp 0
+:SingleScroll
+
+If SingleScroll is set, a Next Line command at the bottom of the screen
+will scroll one line. If not set, the Next Line will scroll a few lines.
+The default is set. It would be turned off only on very slow terminals.
+.sp 0
+:SpaceTabs
+
+The tab character is normally inserted into the buffer as a single ASCII
+9 character. If the SpaceTabs variable is set, then a tab is inserted as
+spaces in the buffer. This flag does not affect tabs already in the
+buffer or tabs inserted in the PAW. The default is off.
+.sp 0
+:Tabs
+
+A tab is a single character that is displayed as one or more spaces on
+the screen. This variable defines the number of space characters
+displayed per tab in buffers that are not in a program mode. The default
+is 8 spaces per tab. See also AdaTabs and CTabs.
+.sp 0
+:Tagfile
+
+This specifies the tag file name used by the Find Tag command. It is a
+full path name to the tag file. The default is "NONE".
+.sp 0
+:TCLExtends
+
+This variable defines the extensions that turn on TCL Mode. The
+extensions are seperated with the colon (:). Note that CExtends takes
+precedence. There is a maximum of eight extensions. See
+also CExtends, TExtends.
+.sp 0
+:TExtends
+
+This variable defines the extensions that turn on Text Mode. The
+extensions are seperated with the colon (:). An extension of "." matches
+no extension (i.e. no "." in file name). Note that the CExtends then
+AExtends take precedence over TExtends. There is a maximum of eight
+extensions. See also CExtends, TCLExtends.
+.sp 0
+:UseOtherWdo
+
+If this variable is set, Findfile will read the file into the next
+window on the screen. If there is only one window, a second window will
+be created. The default is off.
+.sp 0
+:XorCursor
+
+Some terminals exclusive or the cursor with the current character. On
+these terminals, if the cursor is on the mark, they negate each other
+and the cursor disappears. Setting XorCursor fixes this problem. The
+default is set on a per site basis.
+.sp 0

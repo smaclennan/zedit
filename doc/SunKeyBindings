@@ -1,0 +1,73 @@
+Key		Zedit Command*
+--------	--------------
+Help		Help
+unmarked	<???>
+
+F1		Find File
+F2		Search
+F3		Switch to Buffer
+F4		Set Mark
+
+F5		Save File
+F6		Set Bookmark
+F7		Next Bookmark
+F8		Zoom
+
+F9		Go Macro
+F10		Exit
+F11		Unbound
+F12		Again
+
+Print Screen	Unbound
+Scroll Lock	Unbound
+Pause		Unbound
+
+<4 Special Keys Unusable>
+
+Stop		Unbound
+Props		Set Variable
+Front		<Front>
+Open		<Open>
+Find		Search
+
+Again		Again
+Undo		Unbound
+Copy		Copy Region
+Paste		Yank
+Cut		Delete Region
+
+Insert		Insert/Overwrite
+  Control	Insert/Overwrite
+Del		Delete Character
+  Control	Delete Character
+Home		Beginning of Line
+  Control	Beginning of Buffer
+End		End of Line
+ Control	End of Buffer
+Page Up		Previous Page
+  Control	Unbound
+Page Down	Next Page
+ Control	Unbound
+
+[Up]		Previous Line
+  Control	Previous Page
+[Down]		Next Line
+  Control	Next Page
+[Left]		Previous Character
+  Control	Previous Word
+[Right]		Next Character
+  Control	Next Word
+
+Esc		Meta
+Alt		Meta
+[Diamond]	Meta
+Compose		<>
+Alt Graph	<>
+
+Num Lock	Changes the keys on the keypad to work as numbers.
+		When on, the arrow keys do not work.
+
+
+* commands marked as <> means that the Sun function stays in effect
+* keys marked in [] are descriptions, not labels
+* ascii keys work as expected

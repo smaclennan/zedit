@@ -1,0 +1,8 @@
+etags -dt ada.c bcmds.c bind.c bind2.c bindings.c buff.c 	\
+		calc.c comms.c comms1.c cursor.c dbg.c delete.c 	\
+		display.c fbind.c file.c funcs.c getarg.c getfname.c 	\
+		global.c help.c ispell.c kbd.c life.c macro.c make.c	\
+		mbuff.c memlog.c modes.c rcs.c reg.c shell.c socket.c	\
+		spell.c srch.c support.c tags.c term.c termcap.c 	\
+		terminfo.c unix.c vars.c vbuff.c window.c xb.c z.c	\
+		buff.h cnames.h global.h help.h keys.h term.h vars.h z.h

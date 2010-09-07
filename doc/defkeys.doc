@@ -1,0 +1,96 @@
+.nf
+.pl 60
+.ce
+DEFAULT ZEDIT KEYS
+
+.ce
+CURSOR COMMANDS
+Beginning of Line       C-A             End of Line             C-E
+Beginning of Window     M-,             End of Window           M-.
+Beginning of Buffer     M-<             End of Buffer           M->
+Previous Character      C-B             Next Character          C-F
+Previous Word           M-B             Next Word               M-F
+Previous Line           C-P             Next Line               C-N
+Previous Paragraph      M-P             Next Paragraph          M-N
+Previous Page           C-Z             Next Page               C-V
+Set Book Mark           C-X M           Next Book Mark          C-X B
+Goto Line               M-G             Out To                  C-X C-O
+Swap Mark and Point     C-X C-X         
+.ce
+DISPLAY COMMANDS
+Insert Space            M-&             Open Line               C-O
+View Line               M-C-V           Center Line             C-_
+Redisplay               C-L             Capitalize Word         M-C
+Uppercase Region        C-X C-U         Lowercase Region        C-X C-L
+Uppercase Word          M-U             Lowercase Word          M-L
+Transpose Characters    C-T             Transpose Words         M-T
+Indent                  C-X I           Undent                  C-X U
+.ce
+COPY/DELETE COMMANDS
+Delete Previous Char    C-H or Delete   Delete Character        C-D
+Delete Previous Word    M-H             Delete Word             M-D
+Delete to End of Line   C-K             Delete Line             C-X C-K
+Set Mark                C-@ or C-\      Yank                    C-Y
+Delete Region           C-W             Copy Region             M-W
+Append Kill             M-+             Trim White Space        C-X T
+Copy Word               C-C             Delete Blanks           C-^
+Mark Paragraph          C-X C-P         Join                    M-J
+Unmodify                M-*
+.ce
+SEARCH/REPLACE COMMANDS
+Forward Search          C-S             Reverse Search          C-R
+Incremental Search      M-C-S           Reverse Inc. Search     Unbound
+Expression Search       M-E             Again                   M-A
+Query Replace           M-R             Expression Replace      C-X E
+Global Search           C-X A
+.ce
+FILE COMMANDS
+Find File               C-X C-F         Save File               C-X C-S
+Read File               C-X C-R         Write File              C-X C-W
+Find Tag                M--             Save All Files          C-X C-A
+Overwrite File		M-O             View File               Unbound
+.ce
+BUFFER/WINDOW COMMANDS
+Switch to Buffer        C-X C-B         Next Buffer             C-X X
+List Buffers            C-X L           Delete Buffer           C-X C-D
+One Window              C-X 1           Two Windows             C-X 2
+Other Window            C-X O           Size Window             Unbound
+Grow Window             C-X ^		Shrink Window           Unbound
+Other Previous Page     C-X C-Z         Other Next Page         C-X C-V
+Empty Buffer            C-X C-E
+.ce
+MODE COMMANDS
+Text Mode               C-X F           View Mode               C-X R
+C Mode                  Unbound         Insert/Overwrite        C-]
+Fill Paragraph          M-M             Toggle Case             M-I
+C Indent                C-J
+.ce
+MACRO COMMANDS
+Start Macro             C-X (           End Macro               C-X )
+Go Macro                C-X G           Name Macro              Unbound
+Save Macros             Unbound         Load Macros             Unbound
+.bp
+.ce
+HELP/STATUS COMMANDS
+Help                    C-X H           Date                    C-X D
+Stats                   Unbound         Position                C-X =
+Calculator              M-#             Hex Output              C-X C-H
+Count                   C-X C           Set Variable            C-X V
+.ce
+BINDINGS COMMANDS
+Bind                    Unbound         Save Bindings           Unbound
+Display Bindings        Unbound         NULL                    Unbound
+Key Binding             C-X K           
+.ce
+SHELL COMMANDS
+Cmd to Screen           M-!             Cmd to Buffer           M-@
+Spell                   M-?             Next Spell              M-/
+Make                    C-X C-M         Next Error              C-X C-N
+Shell                   Unbound
+.ce
+OTHER COMMANDS
+Abort                   C-G             Universal Argument      C-U
+Exit                    M-Z             Quit			C-X C-C
+Quote                   M-Q             Extended Command        M-X
+Life                    Unbound         Mail                    Unbound
+C Beautify              Unbound         Check Mail              Unbound

@@ -1,0 +1,106 @@
+.bp
+.ce
+Appendix D: PC Version
+.(x t
+Appendix D: PC Version
+.)x \\n%
+.sp 2
+.sh 1 "Files" 1
+
+Files are an important part of any editor, therefore, Zedit tries to
+make file name entry as easy as possible. The Zedit file commands all
+support file name completion. If you are typing in a file name and hit
+the <tab>, Zedit will try to complete the file name much like
+Command Completion. A <space> will display all possible matches.
+
+Zedit supports full DOS wildcards at startup. It also allows full DOS
+filenames of the form:
+.ce
+	<drive>:<dir>\<dir>\<fname>
+
+The '\' character and the `/` character can be used interchangeable,
+however, Zedit will convert them to '\' characters. Zedit defaults to
+the current drive and the current directory.
+
+In file names, it accepts "." as the current directory and ".." as the
+previous directory. Zedit limits a full path name to 128 characters. The
+filename portion is limited to 8 characters, a dot (.), and a 3 character
+extension.
+
+For backups, Zedit appends a ~ to the filename using the following
+table:
+
+.(b I
+Original File Name		Backup File Name
+------------------		----------------
+file				file.~
+file.e				file.e~
+file.ext			file.ex~
+.)b
+
+
+.sh 2 "PC File I/O and the Binary Flag"
+
+In the PC world, normal ASCII text files contain lines terminated by LF
+CR characters. However, many programs (including Zedit), expect lines to
+end in a single LF. To overcome this problem, the PC has two file modes;
+text and binary. In text mode, when reading a file, the LF CR pair is
+converted to a single LF. Text mode also stops reading when it gets a
+C-Z character in the input file. Binary mode performs no conversion.
+Zedit normally opens files in text mode. If you need to edit a binary
+file, or a text file that contains C-Zs, the binary option is needed.
+
+To preserve binary files, the Addnl feature is turned off in buffers
+which have Binary mode set.
+
+Binary mode is specified at startup with the -b flag. All files
+specified after the -b will be started in binary. A binary buffer is
+displayed with a 'B' in the status line after the file name. The binary
+status is save in the save file.
+
+
+.sh 1 "Shell Commands"
+
+Zedit supports shell escapes to DOS. When you are finished in DOS, type
+\'exit' to return to Zedit.
+
+Other shell commands perform the command, redirecting the output to a
+file. The file is then read into Zedit.
+
+The Make command is not very useful, since it requires too much memory.
+However, you can run the make outside of Zedit, redirecting the output
+to a file (for example make.out). You can then enter Zedit and read the file
+into the .make buffer by specify a Universal Argument and specifying:
+.ce
+type make.out
+at the command prompt. You can then use the Next Error command.
+
+
+.sh 1 "Terminal Interface"
+
+Zedit uses memory mapped video for speed. It will compensate for CGA so
+there is no "snow".
+
+Zedit supports bolding the current line if the Boldline variable is set.
+It will also put a border around the windows if Border is set.
+
+The status line is always in reverse video, as is the mark. The
+continuation character and control characters are displayed in bold if
+Boldline is not set.
+
+Zedit stores the current screen image on startup and restores it at
+exit.
+
+
+.sh 1 "Environment Variables"
+
+The environment variable HOME should be set to the directory in which
+you will store global files such as bindings or configuration.
+
+
+.sh 1 "Mail Command"
+
+Some PCs have a Unix style mail command. If this is true for your
+machine, you should set the MAIL define in the config.h file. You should
+also insure that the MAILDIR environment variable points to the
+directory containing the mail files.

@@ -1,0 +1,36 @@
+! This gives Iain a nice border
+Zfindfile*Top.background:	red
+Zfindfile*Top.borderWidth:	6
+Zfindfile*Top.relief:		ridge
+
+! This gives a nice outline around everything
+Zfindfile*highlightBackground:	medium sea green
+Zfindfile*dir.background:	medium sea green
+Zfindfile*dir.label.background:	medium sea green
+
+! This blends the buttons in but moving the cursor
+! over the button does not change its color - only the
+! text does
+Zfindfile*buttons*background:	medium sea green
+Zfindfile*buttons*borderWidth:	4
+Zfindfile*buttons*activeBackground: medium sea green
+
+! This gives static text a nice look
+Zfindfile*buttons*foreground:	red
+Zfindfile*label*foreground:	red
+
+! This blends the scrollbars in
+Zfindfile*sy*background:		medium sea green
+Zfindfile*sy*troughColor:	cadet blue
+Zfindfile*sy*activeBackground:	red
+
+! Make the two entry areas look deeper
+Zfindfile*entry.background:	cadet blue
+Zfindfile*list.background:	cadet blue
+Zfindfile*list.selectBackground:	medium sea green
+
+! Global preferences
+Zfindfile*font:		-adobe-times-medium-i-normal--24-240-75-75-p-125-iso8859-1
+Zfindfile*list.list.cursor:	crosshair
+
+Zfindfile*overrideredirect:	1

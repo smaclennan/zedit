@@ -1,0 +1,287 @@
+.sh 1 "Commands"
+
+Every key on the keyboard is bound to a command. Commands can be one or
+two keystrokes long. Commands that are prefixed with C- are control
+commands. It means type the Ctrl key and the key listed after the - at
+the same time.
+
+The command prefix C-X means to type Ctrl and X at the same time, then
+type the sequence after it. For example, C-X C-A tells you to type Ctrl
+and X at the same time, then to type Ctrl and A at the same time.
+
+The prefix M- means to hit the Escape key, then the key after it. On a
+PC, M- means to hit the ALT key and the key after it at the same time.
+
+
+.sh 2 "Point Movement"
+
+Aside from text input, Point movement is the most used feature of an
+editor. Zedit has commands that move the point by characters, words,
+lines, paragraphs, and buffer.
+
+On most terminals, the character Point movement will be done with the
+arrow keys, however, control commands are included for terminals without
+such keys.
+
+
+.sh 2 "Search and Replace Commands"
+
+Zedit supports a wide variety of search and replace commands. There
+three basic types of searches: literal, incremental, and expression. The
+literal searches are performed by the Forward Search and Reverse Search
+commands. These commands prompt for a search string and look for a match
+of that string in the buffer. A Universal Argument causes the literal
+and expression searches to look for exactly Arg matches. If they cannot
+find the correct number of matches, they display the message "Found #",
+where # is the number of matches found. "Not Found" is displayed if no
+matches where found.
+
+The incremental search commands (Incremental Search and Reverse Inc.
+Search) are used to find a match in the least amount of key strokes. On
+every normal ASCII character entered, Zedit will try to find a match for
+the current string in the PAW. If a match is found, the Mark is
+displayed at this Point on the screen. If the Delete Previous Character
+command is executed, the previous character is deleted in the PAW and
+the Mark is backed up to the last complete match.
+
+The Abort command can be executed to leave the incremental search and
+return to the original Point. A Newline command terminates the search
+and moves the Point to the match. Any other command causes the search to
+terminate and that command to be immediately executed.
+
+Assume the buffer contains the text "Do not panic." and that the Point
+is currently on the "D" in "Do".
+
+.(b I
+User		PAW		Point
+---------	---		--------------
+n		n		"n" in "not"
+i		ni		"n" in "panic"
+Backspace	n		"n" in "not"
+.)b
+
+The last type of search is the expression search. The only command is
+the Expression Search. This command prompts for a regular expression to
+search for instead of a literal. Regular expressions are discussed in
+Section 1.10. Expression searches are much more powerful than literal
+searches, but are also slower.
+
+There are two replace commands: Query Replace and Expression Replace.
+Query Replace expects a literal search string while the Expression
+Replace expects a regular expression search string. The replace string
+for Query Replace is also a literal, however the Expression Replace is a
+literal with two exceptions. An '&' character in the replace string
+causes the matched string to be placed in the buffer instead of the '&'
+character itself. For example, if the search string was ".*", and the
+replace string was "&&", all lines would be doubled. The escape
+character '\' can be used to turn off this special meaning of the '&'.
+
+The replacement commands prompt for a search string and a replacement
+string. For each occurrence of the search string, the user is prompted
+for what they want to do with the string. The valid responses are:
+
+.ip ,
+Replace current match and ask for confirmation. The confirmation is y/Y
+to go ahead with the replace, or n/N to leave the string as it was.
+
+.ip "y or <space>"
+Replace current match and continue.
+
+.ip .
+Replace and exit.
+
+.ip !
+Replace this and all succeeding occurrences. The editor will no
+longer prompt on each occurrence.
+
+.ip "Abort"
+Exit without replacing current match.
+
+.ip "Others"
+Continue without replacing current match.
+.lp
+The commands are the same for both versions of the replace command.
+
+If a Universal Argument is given to a replace command, it performs a
+global replace. Instead of performing the replace on the current Point
+to the end of the current buffer, the replacement is performed on ALL of
+the buffers in the buffer list.
+
+NOTE: You cannot search for or replace with a string that has a NULL
+(ASCII 0) character in it.
+
+
+.sh 2 "Pattern Matching"
+
+Zedit supports pattern matching using regular expressions (REs). The REs
+are the same as the Unix grep command. The rules for created the REs are
+described below.
+
+.ip -
+An ordinary character matches itself.
+
+.ip -
+A period (.) matches any one character except Newline.
+
+.ip -
+A non-empty string of characters enclosed in square brackets ([])
+matches any one of the characters in the string. If the first character
+of the string is a caret (^), it matches any character except the
+Newline and the characters in the string. The caret (^) has this special
+meaning only if it occurs as the first character after the '['. The
+minus (-) may be used to indicate a range of consecutive ASCII
+characters; for example, [0-9] is equivalent to [0123456789]. The -
+loses this special meaning if it occurs first (after an initial ^, if
+any) or last in the string. The right square bracket (]) does not
+terminate such a string when it is the first character within it (after
+an initial ^, if any); e.g. []a-f] matches either a right square bracket
+(]) or one of the characters a through f inclusive. None of the other
+special characters are special inside the [].
+
+.ip -
+A backslash (\) escapes a special character.
+
+.ip -
+A one-character RE followed by an asterisk (*) matches zero or more
+occurrences of the one-character RE. If there is any choice, the longest
+leftmost string that permits a match is chosen.
+
+.ip -
+A one-character RE followed by \{m\}, \{m,\}, or \{m,n\} matches a range
+of occurrences of the one-character RE. The values of m and n must be
+positive integers less than 256; \{m\} matches exactly m occurrences;
+\{m,\} matches at least m occurrences; \{m,n\} matches any number of
+occurrences between m and n inclusive. Whenever a choice exists, the RE
+matches as many occurrences as possible.
+
+.ip -
+The concatenation of REs is a RE that matches the concatenation of
+the strings matched by each component.
+
+.ip -
+A RE enclosed between the character sequences \( and \) is a RE that
+matches whatever the unadorned RE matches.
+
+.ip -
+The expression \n matches the same string of characters as was
+matched by an expression enclosed between \( and \) earlier in the same
+RE. Here n is a digit; the sub-expression specified is that beginning
+with the n-th occurrence of \( counting from the left. For example, the
+expression ^\(.*\)\1$ matches a line consisting of two repeated
+appearances of the same string.
+
+.ip -
+A caret (^) at the beginning of an entire RE constrains that RE to match
+an initial segment of a line.
+
+.ip -
+A dollar sign ($) at the end of an entire RE constrains that RE to match
+a final segment of a line.
+
+
+.sh 2 "Tag Files"
+
+Tag files are a list of tags, usually function names, and their
+associated file name and position in the file. Tag files allow files to
+be found by function names instead of file names.
+
+Zedit does not produce the tag files. They must be created by an
+external program. The tag file formats supported are:
+
+.(b
+	<tag> <num>   <fname>
+	<tag> <fname> <num>
+	<tag> <fname> <match_ch>[^]<search_string>[$][<match_ch>]
+.)b
+
+The single space shown can actually be any number of spaces and/or tabs
+as long as there is at least one space or tab. If the number <num> has a
+leading 0 it is assumed to be a byte offset, else a line offset.
+
+The first format is produced by ctags with the -x option. The second is
+produced by Microsoft's calltree program. The third format is the ctags
+type format. The match_ch is any character except '\'. The '^' and '$'
+are optional and match the start of line and end of line respectively.
+The ending match_ch is also optional. The search_string ends at the end
+of the line. The search string is a literal. '\' characters can be used
+to escape the match_ch in the string.
+
+Other programs that produce one of these formats can be used.
+
+The command Find Tag is used to look for a tag in the tags file. If it
+finds the tag, it sets a bookmark at the current Point, performs a Find
+File with the matched filename, and positions the Point in the opened
+file. The first time the Find Tag command is executed, it creates the
+".tags" buffer and loads the tags file. The tag file is only loaded
+once.
+
+The tag file is loaded into a special buffer called ".tags". This buffer
+is editable. If a line in the file needs to be changed, it can be edited
+in the ".tags" buffer and saved to disk with the Write File command.
+
+The Tagfile variable is used to find the tag file. The editor first
+looks for the tag file in the current directory under the name "tags",
+the default output name for the ctags command. If the file is not found,
+it looks for the file specified by the Tagfile variable. A Universal
+Argument will prompt for the tag file to read.
+
+If Zedit cannot find the tag, it will return the first partial match, if
+any. If the tag string is "file" and there is no tag "file" but a tag
+"Readfilename" exists, Zedit will reprompt for the tag with
+"Readfilename" as the default. The Again command can be used to find the
+next partial match.
+
+
+.sh 2 "Calculator"
+
+Zedit has a built-in six function integer calculator. The calculator is
+very simple but useful for doing addition, subtraction, multiplication,
+and division of decimal, hexadecimal, or octal numbers. The output is
+displayed in both decimal and hexadecimal. 
+
+The calculator can also be used to convert from decimal, hexadecimal, or
+octal to decimal and hexadecimal. Just enter the number to be converted
+and hit Newline.
+
+To differentiate between the different bases, hexadecimal numbers begin
+with 0x or 0X, octal numbers begin with 0, and decimal numbers begin
+with 1 through 9. The bases can be mixed within a given command string.
+
+
+.sh 2 "Macros"
+
+Zedit supports keystroke macros. Keystroke macros are a way of saving a
+sequence of keystrokes, then playing them back latter. 
+
+To define a macro, the Start Macro command is first executed. All keys
+typed after the Start Macro command are stored in the macro buffer. This
+buffer can hold a maximum of 100 keys. The commands are still executed
+normally as you type them. Most commands work within macros. The
+Universal Argument command within a macro works as normal. The Start
+Macro command overwrites the last macro and therefore cannot be used
+within a macro, however, a named macro can be used within a macro.
+
+When you have completed the macro, execute the End Macro command. The
+macro is now stored in the macro buffer and can be executed with the Go
+Macro command. The Go Macro command always executes the macro in the
+macro buffer. A Universal Argument to the Go Macro command causes the
+entire macro to be executed 'Arg' times.
+
+Each time the Start Macro command is executed, it overwrites any
+previously defined macro. To save a macro definition, the Name Macro
+command is used. A macro can have any unique name. Up to sixteen (16)
+macros can be named. The named macros become a regular Zedit command and
+can be executed with the Extended Command or bound to a key.
+
+The Save Macros command allows you to save all the currently named
+macros in a file. The current bindings of the macros will also be saved.
+These bindings will overwrite the default bindings when the macro file
+is loaded. This file can then be loaded by the Load Macros command or at
+startup. If the variable Macrofile is set in a config.z file, at
+startup, Zedit will try to load the macro file pointed to by this
+variable. Each Load Macros command overwrites any previously named
+macros. The macro buffer is not saved or loaded.
+
+Macros can be defined and/or executed in the PAW. Note that if there are
+commands in the macro that are not valid in the PAW, these commands will
+not get executed.

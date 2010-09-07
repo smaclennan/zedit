@@ -1,0 +1,82 @@
+.sh 1 "Zedit Macro Compiler"
+
+
+.sh 2 "Introduction"
+
+The Zedit Macro Compiler reads an ASCII text file and produces a macro
+file that is readable by Zedit. The invocation of the 'zc' compiler is as
+follows:
+.ce
+zc [-x] infile [outfile]
+
+'infile' is the input ASCII text file. 'outfile' is the output macro
+file. If no 'outfile' is specified, 'z.mac' is produced.
+
+The 'zc' compiler uses "M-X" commands to produce the macro file. This
+allows maximum portability. However, these commands take more keystrokes
+and each macro has a 100 keystroke maximum. The '-x' option forces 'zc' to
+try to use the key bindings for the commands.
+
+.sh 2 "Text File Format"
+
+'zc' expects the text file to be in a given format. Shown below are the
+BNFs for acceptable input. Note that a space shown can be any number of
+spaces or tabs. Comments are denoted by '#' and can be on any line or
+any closed argument.
+
+.(b I
+macro:	[title]
+	[key]
+	[cmd arg ...]
+	.
+	.
+	.
+
+title:	>> <string>
+
+key:	:<key>
+
+cmd:	<metax_cmd>
+
+arg:	'<string>[']
+	"<metax_cmd>["]
+.)b
+
+The title line is used to denote the start of a new macro. Several
+macros (maximum 16) can be in the same file. The string can be used to
+comment the macro and is ignored by 'zc'.
+
+The key line is used to bind key sequence to the macro. The <key> can be
+any ASCII character or a combinaton of:
+
+.(b I
+C-?		for control keys
+M-?		for Meta keys
+C-X ?		for C-X keys
+F1 thru F10	on PC
+.)b
+
+If an argument is not closed or occurs at the end of a command, a
+Newline is appended to the argument. M-X commands as arguments ("") do
+not include the M-X command token itself.
+
+The macros are names consecutively from M01 to M16. Only 16 macros can
+be defined in a macro file.
+
+.sh 2 Macro File Format
+
+The macro file is a binary file. In the discussion that follows, a
+"word" is defined as two bytes.
+
+The first word in the macro file is a "magic" word to mark the macro
+file version. Currently the version is 0xA9A9. If this word is wrong,
+the file will not be read.
+
+The file then contains a variable number of macro definitions. The
+definitions consist of a variable length header and a fixed, 200 byte,
+keystroke macro. The individual keystrokes are stored in the macro file
+as words.
+
+Each macro definition header consists of a variable length, Newline
+terminated macro name. The next word is the key binding for the macro.
+The macro may be unbound.

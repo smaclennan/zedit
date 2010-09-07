@@ -1,0 +1,447 @@
+.sh 1 "Introduction"
+
+
+.sh 2 "What is Zedit?"
+
+Zedit is a fully configurable text editor. It supports multiple windows
+and multiple buffers. There is a virtual buffering scheme for machines
+with limited memory. It is available for Unix machines and PCs. 
+
+Editing commands are "bound" (assigned) to key sequences. These
+sequences can be control key, function key, PC ALT key, or keypad key
+combinations. A set of default bindings comes with the editor, but all
+key bindings can be modified. This allows you to set up the editor the
+way you want it.
+
+To allow further customization of Zedit, there are user variables that
+allow you to change the workings of Zedit. For example, there is a
+variable called "Tabs" that controls the tab columns.
+
+Zedit can also have disk caching to speed up disk access. On PCs, Zedit
+will utilize extended or expanded memory.
+
+One of the most powerful features of the editor is tag files. A tag file
+allows you to find files by "tag" name instead of file name. For
+example, you might create a tag file of all the functions in a given
+executable program and reference the files by function name instead of
+having to know which file a function is in. See the "Tags" section for a
+description of tag files.
+
+
+.sh 2 "Some Basic Terms"
+
+A few terms need to be defined.
+
+A buffer is a collection of characters that can be manipulated with the
+editor. A buffer is usually, but does not have to be, associated with a
+file. A buffer called "Main" is always created on startup. The number of
+buffers is only limited by available memory.
+
+A buffer can be much larger than the size of a computer screen. A window
+is the portion of the buffer that is displayed on the screen. By moving
+the window over the buffer, the entire buffer can be edited.
+
+Mulitple windows can be displayed on the screen at the same time. The
+windows can display different buffers, or different sections of the same
+buffer. Only one window is active at any one time. The active window has
+the cursor in it.
+
+If a buffer line is greater than the width of the screen, Zedit will
+continue the buffer line on the next screen line. The '>' character will
+be displayed in the last column of the screen line to show the line has
+wrapped. This character is not put in the buffer.
+
+The Point is the current location in the buffer. Every buffer has its
+own Point. Most work on the buffer is done relative to the Point. The
+Point is represented in the active window by the cursor.
+
+Every buffer also has a user defined Mark, which is set with the Set
+Mark command. The Mark is represented by a reverse video block on the
+screen. The Mark is like a bookmark, it is used to keep track of a
+specific place in a buffer. The Mark is most often used with commands
+that deal with the Region.
+
+The Point and Mark are actually before the character they are displayed
+on but after the previous character.
+
+The Region is all the characters in the buffer bounded by the Mark and
+the Point. The Region can be before or after the Point. The Region is
+used to work with blocks of text.
+
+
+.sh 2 "Invocation"
+
+The easiest method of starting Zedit is to type "z" at the prompt. This
+will start Zedit and put you in a buffer called Main. If you want to
+edit a specific file, "z filename" will start Zedit and load the file
+into a buffer. More than one file can be specified, and wildcards are
+supported. If more than one file is specified, Zedit will load all the
+files into different buffers and make the first file specified the
+active buffer.
+
+When a file is loaded into the buffer, the Point and Mark are set to the
+beginning of the file. If the option "-l<line>" is specified, the Point
+will be placed at the start of the given line or at the end of the
+buffer is the line is not in the file. This only affects the buffer that
+is made active at startup.
+
+If the variable DoSave is set, Zedit will create a save file at exit. If
+Zedit is then started with no arguments it will read this file and
+return Zedit to the state it was in when you exited. This is extremely
+useful for edit/compile/run cycles. See the "Save" section for more
+information. A simple way to start the editor without reading the save
+file is to type "z -".
+
+The full Zedit command line is:
+.ce
+z [-l#] [-b] [-u] [-p#] [-s#] [file ...]
+
+On PCs, a "-b" option can be given to read files as binary files. All
+file after the  "-b"  on the command line are opened in binary mode.
+This allows the editing of executable files. A 'B' is shown on the mode
+line for binary files. For more information on the "-b" option, see the
+appendix for PCs.
+
+On PCs, the "-u" command can be used to change the meaning of some of
+the key bindings from a "Unix" to "PC" standard. See the section on the
+Meta key.
+
+The last two options, "-s" and "-p", are to allow the customization of
+the low level virtual buffering scheme. They are described in detail in
+the "Technical" section.
+
+
+.sh 2 "The Status Line"
+
+Each user window has a status line at the bottom. The status line is in
+reverse video if supported by the terminal. The status line describes
+the current status of the buffer in that window. A typical status line
+is shown below:
+
+.ce
+Zedit 3.0  (Text)  zedit.doc: /home/zedit/doc/zedit.doc *+
+
+"Zedit 3.0" is the version of Zedit. "(Text)" is the current buffer
+mode. After the mode comes the buffer name. Every buffer must have a
+unique buffer name of up to 15 characters. The main use of the buffer
+name is for the Switch to Buffer command.
+
+After the buffer name comes the file name. A buffer does not have to
+have a file name. This name is usually the name of the file read into
+the buffer at startup or with the Find File command. If the file name is
+too large to fit on the status line, it will be left truncated.
+
+The last group of characters are flags used to specify buffer status.
+The asterisk (*) means that the buffer has been modified. The Exit
+command, for example, uses this flag to decide whether to ask to save a
+buffer. The plus sign (+) is the delete flag. See the "Kill Ring"
+section for more detail on the delete flag and its use. 
+
+The 'F' flag, means that this is a Fastread buffer. The 'B' signifies a
+Binary buffer. See the "Technical" section for more detail.
+
+The current line and column can also be displayed in the status line by
+setting the Lines variable. Lines displays the current line and column
+the Point is at in the format "line:column". This is displayed at the
+extreme right of the status line.
+
+
+.sh 3 "Major Modes"
+
+Every buffer has one major mode and possibly one or two minor
+modes. The major modes affect operations in the buffer and are mutually
+exclusive. The major modes are: Normal, C, Text, and View. Normal is the
+regular editing mode for the editor. Other modes are used to change the
+normal operation of the editor.
+
+
+.sh 4 "C Mode"
+
+In C mode, the Newline command (usually the Enter or Return key on the
+keyboard) is bound to the C Indent command. This causes Newline to
+auto-indent to the current tab level. If a Newline is hit after an open
+brace ({), the next line is indented an extra tab stop. The close brace
+(}) is bound to C Insert. This causes the close brace to line up with
+the first unmatched open brace. C mode is automatically set if a file
+ends in ".c", ".h", or ."y".
+
+C Mode also has optional "matching" capabilities. The matching is
+controlled by the Match variable. If Match is 0, no matching occurs.
+
+If Match is 1, Zedit will "match" all ')' and ']' with there matching
+'(' or '[' by moving the cursor to the matching character temporarily.
+If there is no match, Zedit will beep.
+
+If Match is 2, Zedit will insert a ')' or ']' for every '(' or '['
+typed.
+
+
+.sh 4 "Text Mode"
+
+Text mode has word processing type features. In Text mode, the space bar
+and Newline are bound to the Fill Check command. The Fill Check command
+is used to wrap words that go past the FillWidth column and to indent to
+a fixed right margin. The left margin is defined by the Margin variable.
+The left margin does not affect the first line in the paragraph.
+
+The Fill Paragraph command can be used to clean up a paragraph. It uses
+both the Margin and FillWidth variables to format the current paragraph.
+A Universal Argument of zero (0) causes the command to reformat the
+entire buffer. If a key is hit during a global reformat, the reformat
+will abort at the end of the paragraph it is currently formatting.
+
+Text mode is turned on with the Toggle Fill Mode command or can be the
+default if the variable Normal is turned off. It also gets turned on by
+file names ending in ".doc".
+
+
+.sh 4 "View Mode"
+
+View mode is automatically set for read only files. In View mode,
+commands that modify the buffer are not allowed. The Newline character
+is changed to perform a Next Line command. Commands available in a View
+buffer are marked by an 'r' in the perms column of Appendix A and the
+output from the Display Bindings command.
+
+
+.sh 3 "Minor Modes"
+
+Along with the major modes, the editor has two minor modes, overwrite
+and Exact. All or none of the minor modes can be active in a given
+buffer.
+
+
+.sh 4 "Overwrite Mode"
+
+ The editor is usually in insert mode. This means characters are
+inserted at the Point, moving all the characters after the Point over
+one character. The Point is left on the character it was originally on.
+In overwrite mode, characters are placed over top of the character the
+Point is on and the Point is moved forward one space. Overwrite mode is
+set with the Insert/Overwrite command. On PCs, insert mode is signified
+by a blinking underline cursor, and overwrite by a blinking block
+cursor. On Unix systems, the word "Ovwrt" is displayed in the status
+line after the major mode. The status line in the above example was in
+insert mode, in overwrite mode it would display:
+
+.ce
+Zedit 3.0  (Text Ovwrt)  zedit.doc: /home/zedit/doc/zedit.doc *+
+
+
+.sh 4 "Exact Mode"
+
+Exact specifies whether search/replace functions are to be case
+sensitive. Searches are case sensitive by default. A search for the
+string "string" will not match "String" or "STRING". If Exact is off,
+then "string" will match "String", "STRING", "string", or "sTrInG". Case
+insensitivity is set with the Toggle Case command. In Exact mode,
+prompts that are case insensitive are displayed in uppercase. For
+example, the prompt for a search string is usually "Search". If Exact is
+off, it would be "SEARCH:".
+
+
+.sh 2 "Kill Buffer"
+
+The kill buffer is a special buffer created by Zedit to store deleted or
+copied text. This buffer does not show up in the buffer list and is
+never saved.
+
+When text is deleted, it is placed in the kill buffer. If the delete
+flag is set (a '+' in the status line), the text will be appended to the
+kill buffer. If the delete flag is not set, the kill buffer will be
+overwritten.
+
+The Yank command will yank the text from the kill buffer.
+
+
+.sh 2 "String Arguments and the PAW"
+
+Various command require string arguments. For example, the Forward
+Search command needs the string to search for. String arguments are
+entered in the Prompt Argument Window (PAW). The PAW is a special one
+line buffer that is on the last line of the display. The PAW is
+restricted to this one line and will truncate past the end of this line.
+The PAW is also used to display error and informational messages.
+
+Most of the editor commands are available in the PAW. Commands that
+leave the current buffer or window, for example Switch to Buffer, or
+commands that need the PAW, for example Print Position, cannot be
+executed in the PAW. The commands available in the PAW are marked with a
+"p" in the perms column of appendix A and the output of the Display
+Bindings command. Note that the Again command is marked as usable in the
+PAW. This is only true for the Find Tag command for partial matches. See
+section "tags" for more detail.
+
+String arguments may have optional defaults. For example, the Forward
+Search command defaults to the last search string. When a string
+argument has a default, the default is displayed in the PAW and the
+Point is placed at the start of the default. If the Newline command is
+executed, the default will be used. If a key bound to the Insert
+Character, most ASCII characters not bound to a command, or the Get
+Buffer Word commands is the first character entered in the PAW, the
+default is deleted and the character, or word, entered. If any other
+command is entered, the default is left in place and the command acts on
+it.
+
+Three special cases of string arguments are Command Completion, "ask"
+(yes/no) type prompts, and Incremental Search prompts. Command
+Completion is explained in section 1.9.
+
+Yes/no "ask" type prompts usually end in a question mark (?) and expect a
+yes/no response. Valid inputs to an "ask" prompt are Y, y, N, n, or the
+Abort command. A bell will sound if an invalid key is hit. An example of
+an "ask" type prompt is the question "Save buffer Main?" during the Exit
+command.
+
+The Abort command always exits a prompt of any type except after a Quote
+command.
+
+
+.sh 2 "Universal Argument"
+
+Most commands in Zedit will respond to a Universal Argument. The
+Universal Argument is a number that is entered in the PAW. Any non-digit
+stops the Universal Argument and is executed as a command.
+
+Usually, a Universal Argument tells a command to execute more than once.
+However, sometimes it is used to toggle the way a command works. The
+help and command descriptions explain what the Universal Argument does
+for each command.
+
+
+.sh 2 "Meta, C-X, and M-X"
+
+Commands in Zedit are usually bound to control keys, however, there are
+not enough control keys on a keyboard. To solve this problem, Zedit
+employs prefix commands. A prefix command waits for another keystroke
+and modifies the meaning of that keystroke. This allows a much wider set
+of commands.
+
+For example, C-F goes forward one character, M-F goes forward one word.
+The Meta key is the Esc key. To execute M-F you would type Esc and then
+F.
+
+On the PC, the Meta key is also the ALT key and should be used like the
+Ctrl key. If the "-u" option is specified, the Esc key is bound to the
+Abort command and the ALT key must be used as the Meta key. This is to
+conform to the PC usage of Esc as an "Escape" key.
+
+The Extended Command, also known as the Meta X (M-X) command, allows any
+Zedit command to be executed, even if it is not bound to a key. When the
+Extended Command is executed, it prompts with "M-X:" and waits for a
+command name. Hitting the Abort command will cancel the Extended
+Command. A list of the valid commands is included in appendix A. When a
+valid command is entered, it is executed normally. Any Universal
+Argument is passed directly to the entered command.
+
+The Extended Command supports command completion. As you type characters
+at the prompt, the editor tries to complete the command you are typing.
+If the text matches a command uniquely, the editor will display the
+complete command. If the current word is unique, the complete word will
+be displayed with a space after it. The editor will not allow you to hit
+return if the command in the PAW is not unique.
+
+If the variable ExecOnMatch is set, command completion will execute the
+command as soon as the command is uniquely matched.
+
+An example of command completion is given for the Find Tag
+command.
+
+.(b
+User        Displayed           Commentary
+----        ----------          ------------------------------
+"f"         "Fi"                Non-unique: matches Find File,
+                                Find Tag,  or  Fill Paragraph.
+"n"         "Find "             Now  matches  a  unique  word:
+                                completes word.
+"t"         "Find Tag"          Now  matches a unique command.
+                                If  ExecOnMatch  is  set,  the
+                                command   would  be  executed,
+                                else it waits for a Newline.
+.)b
+
+In the above example only 3 characters had to be typed to complete a 8
+character command. Full editing capabilities are still available during
+command completion.
+
+Other commands also support command completion, for example: Bind, Set
+Variable, and Switch Buffer.
+
+
+.sh 1 "Configuration Files"
+
+Zedit has four configuration files: bindings, config, help, and save.
+All of these files are optional, however, help commands are unavailable
+without the help file. These files are used to customize the editor.
+
+The file names for the configuration files are in the appendix for your
+specific machines.
+
+
+.sh 2 "Bindings File"
+
+The bindings file is used to store user key bindings. Zedit comes with
+a default set of key bindings built in, it does not need a bindings
+file. This file is created with the Save Bindings command. It first
+tries to save the file in the directory pointed to by the HOME
+environment variable. If HOME is not set, it saves the file in the
+current directory. At startup, Zedit tries to load the bindings file
+from the directory that the Zedit executable is in, then in the
+directory pointed to by the HOME environment variable, then in the
+current directory. Each file found overwrites the previous.
+
+The bindings file is a binary memory image.
+
+
+.sh 2 "Configuration File"
+
+The config file is used to save the configuration variables which allow
+customization of the editor. These variables are given defaults by
+Zedit, can be assigned values in the config file, or can be modified
+at run time. Since they are given built in defaults, the config file
+is optional.
+
+The format for specifying a variable in the config file is:
+
+.ce
+<variable_name> <variable>
+
+The variable_name is one of the variables name shown in appendix B.
+Only the first three (3) characters of the name are needed. The space
+can be any number of spaces and/or tabs as long as there is at least one
+space or tab. The variable is a number for DECIMAL or FLAG variables and
+a string for STRING variables. STRING variables can contain spaces. Each
+variable must be on a separate line. The variables are case insensitive.
+
+Zedit looks for the config first in the directory that the Zedit
+executable was in, then the directory pointed to by the environment
+variable HOME, then the current directory. All files found are loaded,
+with later files taking precedence.
+
+
+.sh 2 "Help File"
+
+The help file contains the text for Zedits on-line help command. This
+file must exist for these commands to work.
+
+While a help file is supplied with the editor, you might want to
+customize it. The help file MUST be in alphabetical order by command
+name. The command name MUST start with a ':'s. Note that if you
+change the help file, it may not work with later versions of the
+editor.
+
+
+.sh 2 "Save File"
+
+This file is accessed if the DoSave variable is set. If DoSave is set,
+the save file is created upon exit. This file contains information about
+what buffers and files where loaded, what was in the search/replace
+variables, and which buffer was the current buffer. This information is
+loaded upon startup if DoSave is set and there are no arguments to the
+editor. The configuration variables are not saved.
+
+It stores the mode of each buffer. This means that if you set Ovwrt mode
+in a buffer, when it reads the buffer it will set it to Ovwrt mode. Any
+buffers opened in binary mode will be read in binary mode.
+
+Zedit looks for the save file in the current directory.

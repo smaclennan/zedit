@@ -1,0 +1,308 @@
+ZSRC=../src
+CC=cc
+CFLAGS=-O
+EXE=./zhsort
+
+# parse the arguments
+[ x$1 = x-h ] && { echo "usage: $0 [-a] [version]"; exit; }
+[ x$1 = x-a ] && { all=1; shift; }
+
+# we need the version for the title page
+if [ x$1 = x ]
+then
+	echo -n "Version? "; read version
+	[ "$version" ] || exit
+else
+	version=$1
+fi
+
+# if these don't exist, rebuild all
+[ -f help.z -a -f appab.doc ] || all=1
+
+# create zhack if necessary
+if [ ! -x zhack ]
+then
+	echo "Creating zhack"
+	cat >zhack.c <<ZHACK_END
+#include <stdio.h>
+
+main()
+{
+	int c;
+	
+	while((c = getchar()) != EOF)
+		switch(c)
+		{
+			case '_':	
+				if((c = getchar()) != '\\b')
+				{
+					ungetc(c, stdin);
+					putchar('_');
+				}
+				break;
+			case '\033':
+				if((c = getchar()) != '9') ungetc(c, stdin);
+				break;
+			default:
+				putchar(c);
+				break;
+		}
+}
+ZHACK_END
+	$CC $CFLAGS -o zhack zhack.c
+fi
+
+# this chunk creates zhsort.exe if necessary and checks the help.doc file
+[ -z "$all" ] && { echo -n "Update help.z and support files? "; read go; }
+if [ -n "$all" -o "$go" = y ]
+then
+	if [ ! -f $EXE ]
+	then
+		echo "Creating $EXE from $ZSRC"
+		cp $ZSRC/*.h .
+		echo "" >proto.h
+		echo "" >sun.h
+		echo '#define INCLUDE_VARS_STRUCT' >zhsort.c
+		echo '#include "z.h"' >>zhsort.c
+		awk /VARS_START/,/VARS_END/ $ZSRC/vars.c |
+		sed -e '/^#if/d' -e '/^#else/d' -e '/^#endif/d' >>zhsort.c
+		#add the actual code
+		cat >>zhsort.c <<END
+
+#include "help.h"
+#include "cnames.h"
+
+long Locs[ NUMFUNCS ];
+
+#define COMMANDS	1
+#define VARIABLES	2
+
+main(argc, argv)
+int argc;
+char *argv[];
+{
+	FILE *fp;
+	char buff[ BUFSIZ ];
+	int err, i;
+	
+	if(argc < 3 || (*argv[1] != 'c' && *argv[1] != 'v'))
+	{
+		puts("usage: zhsort {c | v} file");
+		exit(2);
+	}
+	if(!(fp = fopen(argv[2], "r")))
+	{
+		puts("unable to open file");
+		exit(2);
+	}
+
+	memset(Locs,  0xff, sizeof(long) * NUMFUNCS);
+	switch(*argv[1])
+	{
+		case 'c':
+			err = process(fp, COMMANDS);		
+			for( i = 0; i < NUMFUNCS; ++i )
+				if( Locs[i] == -1 )
+				{
+					if(Cnames[i].fnum < ZMACRON || Cnames[i].fnum > ZMACROL)
+					{
+						err = TRUE;
+						fprintf( stderr, "%s: %s not found\\n", argv[2], Cnames[i].name);
+					}
+				}
+				else if( fseek(fp, Locs[i], 0) == 0 )
+				{
+					fgets( buff, BUFSIZ, fp );
+					do
+						printf( "%s", buff );
+					while( fgets(buff, BUFSIZ, fp) && *buff != ':' );
+				}
+				else
+				{
+					fprintf( stderr, "Bad seek to %d\\n", Locs[i] );
+					exit( 1 );
+				}
+			break;
+			
+		case 'v':
+			err = process(fp, VARIABLES);		
+			for( i = 0; i < NUMVARS; ++i )
+				if( Locs[i] == -1 )
+				{
+					err = TRUE;
+					fprintf(stderr, "%s: %s not found\\n", argv[2], Vars[i].vname);
+				}
+				else if( fseek(fp, Locs[i], 0) == 0 )
+				{
+					fgets( buff, BUFSIZ, fp );
+					do
+						printf( "%s", buff );
+					while( fgets(buff, BUFSIZ, fp) && *buff != ':' );
+				}
+				else
+				{
+					fprintf( stderr, "Bad seek to %d\\n", Locs[i] );
+					exit( 1 );
+				}
+			break;
+	}
+	fclose(fp);
+	exit( err );
+}
+
+process( fp, type )
+FILE *fp;
+int type;
+{
+	extern char *strchr();
+	char buff[ BUFSIZ ], *ptr, *eof;
+	int err = 0, i;
+	long loc = 0;
+
+	while( fgets(buff, BUFSIZ, fp) )
+	{
+		if( *buff == ':' )
+		{
+			if( ptr = strchr(buff, '\\n') ) *ptr = '\\0';
+			switch(type)
+			{
+				case COMMANDS:	
+				for( i = 0; i < NUMFUNCS; ++i )
+					if( strcmp(Cnames[i].name, &buff[1]) == 0 )
+					{	/* found it! */
+						Locs[ i ] = loc;
+						break;
+					}
+				if(i == NUMFUNCS)
+				{
+					fprintf(stderr, "unknown command: %s\n", buff);
+					err = TRUE;
+				}
+				break;
+
+				case VARIABLES:
+				for( i = 0; i < NUMVARS; ++i )
+					if( strcmp(Vars[i].vname, &buff[1]) == 0 )
+					{
+						Locs[ i ] = loc;
+						break;
+					}
+				if(i == NUMVARS)
+				{
+					fprintf(stderr, "unknown variable: %s\n", buff);
+/* SAM					err = TRUE; */
+				}
+				break;
+			}
+		}
+		loc = ftell( fp );
+	}
+	return( err );
+}
+END
+		$CC -o $EXE zhsort.c
+		[ $? -eq 0 ] || { echo "Compile failed"; exit; }
+		rm -f *.[cho] *.obj
+	fi
+
+	echo "Checking commands..."
+	$EXE c command.doc >cmd.tmp
+	[ $? -eq 0 ] || { echo "Errors: aborted"; rm -f cmd.tmp; exit; }
+	mv cmd.tmp command.doc
+	echo "Checking variables..."
+	$EXE v variable.doc >var.tmp
+	[ $? -eq 0 ] || { echo "Errors: aborted"; rm -f var.tmp; exit; }
+	mv var.tmp variable.doc
+	echo "Updating help.z"
+	# SAM no top or bottom margins, long lines
+	echo ".ll 78"	> help.head
+	echo ".m1 0"	>>help.head
+	echo ".m2 0"	>>help.head
+	echo ".m3 0"	>>help.head
+	echo ".m4 0"	>>help.head
+	echo ":ZEDIT" | nroff -me help.head command.doc variable.doc - |
+		zhack >help.z
+
+	echo "Updating help.z.x"
+	# SAM no top or bottom margins, short lines
+	echo ".ll 40"	> help.head
+	echo ".m1 0"	>>help.head
+	echo ".m2 0"	>>help.head
+	echo ".m3 0"	>>help.head
+	echo ".m4 0"	>>help.head
+	echo ":ZEDIT" | nroff -me help.head command.doc variable.doc - |
+		zhack >help.z.x
+	rm $EXE help.head
+fi
+
+# create appendix A and B if necessary
+[ -z "$all" ] && { echo -n "Create appendicies A and B? "; read go; }
+if [ -n "$all" -o "$go" = y ]
+then
+	[ "$go" = y ] || echo "Creating appendix A and appendix B"
+	cat >appab.doc <<END_APPA
+.bp
+.ce
+Appendix A: Command Descriptions
+.(x t
+Appendix A: Command Descriptions
+.)x \\n%
+.sp 2
+END_APPA
+	sed -e 's/^://' -e 's/sp 0/sp 2/' command.doc >>appab.doc
+	cat >>appab.doc <<END_APPB
+.bp
+.ce
+Appendix B: Variable Descriptions
+.(x t
+Appendix B: Variable Descriptions
+.)x \\n%
+.sp 2
+END_APPB
+	sed -e 's/^://' -e 's/sp 0/sp 2/' variable.doc >>appab.doc
+fi
+
+echo "Creating manual for version $version"
+# zhead contains nroff setup stuff
+#laser .ll 72
+#laser .pl 76
+cat >zhead <<END_TITLE
+.pl 75
+.po 12
+.fo ''- Zedit $version -'%
+.de \$0
+.(x t
+\\\\\$2 \\\\\$1
+.)x \\\\n%
+..
+END_TITLE
+# ztail contains title page and toc
+cat >ztail <<END_TAIL
+.fo ''- Zedit $version -
+.bp
+.sp 24
+.(b C
+Z E D I T   $version
+.sp 3
+Copyright 1991 Sean MacLennan
+.)b
+.bp
+.ce
+Table of Contents
+
+.xp t
+END_TAIL
+
+# create it
+[ -f zhead ] || { echo zhead; exit; }
+[ -f intro.doc ] || { echo intro.doc; exit; }
+[ -f cmds.doc ] || { echo cmds.doc; exit; }
+[ -f tech.doc ] || { echo tech.doc; exit; }
+[ -f zc.doc ] || { echo zc.doc; exit; }
+[ -f appab.doc ] || { echo appab.doc; exit; }
+[ -f unix.doc ] || { echo unix.doc; exit; }
+[ -f pc.doc ] || { echo pc.doc; exit; }
+[ -f ztail ] || { echo ztail; exit; }
+nroff -me zhead intro.doc cmds.doc tech.doc zc.doc appab.doc unix.doc pc.doc \
+	ztail | zhack >zedit.doc
+rm zhead ztail

@@ -1,0 +1,3 @@
+fgrep -- "$*" /usr/local/zedit/fixedwidthfonts >/tmp/valid
+cut -d- -f4 /tmp/valid | sort -u >/tmp/types
+cut -d- -f8 /tmp/valid | sort -u -n >/tmp/sizes

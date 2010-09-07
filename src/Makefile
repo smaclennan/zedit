@@ -31,7 +31,7 @@ $D/%.o : X/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # all:	zedit xzedit zedit3d
-all:	zedit xzedit zedit3d
+all:	zedit
 
 zedit:
 	@$(MAKE) $(MFLAGS) "D=zos" "LIBS=-lncurses" $(ZEXE)

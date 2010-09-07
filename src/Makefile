@@ -24,14 +24,13 @@ XFILES= $D/xinit.o $D/xwind.o \
 X3DFILES=$D/3dwindow.o \
 	 $D/tk3d.o $D/tkScrollbar.o $D/tkBorders.o $D/xmenu.o
 
-# $D/adascan.o $D/cscan.o
-
 $D/%.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $D/%.o : X/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# all:	zedit xzedit zedit3d
 all:	zedit xzedit zedit3d
 
 zedit:
@@ -79,4 +78,4 @@ lint:
 	lint $(SFILES) > lint.out 2>&1
 
 clean:
-	rm -f *.o */*.o ze */ze xze */xze xkey zfont core TAGS
+	rm -f *.o */*.o ze xze x3dze xkey zfont core TAGS

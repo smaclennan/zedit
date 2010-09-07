@@ -1,5 +1,0 @@
-PS=`ps -ef | fgrep ze | fgrep -v fgrep`x
-[ `echo $PS | cut -f1 -d' '` = "sam" ] || { echo "no srem"; exit 1; }
-echo "Starting debugger..."
-debugger $ARCH/ze `echo $PS | cut -f2 -d' '` &
-exit $?

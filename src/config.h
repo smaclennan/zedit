@@ -60,10 +60,3 @@
 #define SYSV2		1
 #endif
 #define PIPESH		1
-
-/*
- * When this define is set, a count is kept of all the commands executed.
- * The program zprof can then be used to produce formatted output from
- * this file. See zprof.c for more documentation.
-#define CMDPROF
- */

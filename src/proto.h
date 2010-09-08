@@ -450,13 +450,6 @@ int nmatch ARGS((char*, char*));
 void sreplace ARGS((char *));
 #endif
 
-#ifdef CMDPROF
-void CMDinit NOARGS;
-void CMDreadwrite ARGS((int));
-void CMDinsert ARGS((int, int));
-#endif
-
-
 void Wswitchto ARGS((WDO *wdo));
 void Winvalid ARGS((WDO *wdo));
 void Wsize NOARGS;

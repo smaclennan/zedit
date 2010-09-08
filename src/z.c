@@ -107,9 +107,6 @@ Proc Dotty()
 	Argp = FALSE;
 	while( Arg > 0 )
 	{
-#ifdef CMDPROF
-		CMDinsert(Keys[Cmd], Cmd);
-#endif
 		(*Funcs[Keys[Cmd]])();
 		--Arg;
 	}
@@ -162,10 +159,6 @@ char **argv;
 
 #if DBG
 	Dbgname(AddHome(path, ZDBGFILE));
-#endif
-
-#ifdef CMDPROF
-	CMDinit();
 #endif
 
 	Cmask = umask(0);		/* get the current umask */

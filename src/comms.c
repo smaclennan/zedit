@@ -635,9 +635,6 @@ void Quit()
 #endif
 	if( Vars[VDOSAVE].val ) Save( Curbuff );
 	Exitflag = TRUE;
-#ifdef CMDPROF
-	CMDreadwrite(WRITE_MODE);
-#endif
 	KillHelp();
 	Tfini();
 
@@ -783,9 +780,6 @@ Proc Zarg()
 		PutPaw( str, 2 );
 	}
 	Clrecho();
-#ifdef CMDPROF
-	CMDinsert(Keys[Cmd], Cmd);
-#endif
 	(*Funcs[Keys[Cmd]])();
 }
 
@@ -807,9 +801,6 @@ Proc Zmeta()
 		if( Mstate == MCREATE ) Addtomacro( Cmd - 128 );
 		if( tmp ) Clrecho();
 	}
-#ifdef CMDPROF
-	CMDinsert(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL, Cmd);
-#endif
 	(*Funcs[ Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL ])();
 }
 
@@ -826,9 +817,6 @@ Proc Zctrlx()
 	tmp = Delayprompt( "C-X: " );
 	Cmd = Tgetcmd() | 256;
 	if( tmp ) Clrecho();
-#ifdef CMDPROF
-	CMDinsert(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL, Cmd);
-#endif
 	(*Funcs[ Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL ])();
 }
 
@@ -846,9 +834,6 @@ Proc Zmetax()
 	{
 		Cmd = Cnames[ rc ].fnum;
 		Lfunc = ZMETAX;
-#ifdef CMDPROF
-		CMDinsert(Cnames[rc].fnum, 0);
-#endif
 		for(Arg = Arg == 0 ? 1 : Arg; Arg > 0; --Arg)
 			(*Funcs[Cnames[rc].fnum])();
 	}

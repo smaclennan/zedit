@@ -48,7 +48,7 @@ extern char *malloc();
 
 
 #define ZSTR		"Zedit"
-#define VERSION	"4.9"
+#define VERSION	"5 beta"
 #define ZFMT		"%s %s  (%s)  %s: "
 
 

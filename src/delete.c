@@ -23,16 +23,8 @@ Proc Zdelchar()
 
 Proc Zrdelchar()
 {
-#if 0
-	Mark *tmark = Bcremrk();
-
-	Bmove( -Arg );
-	Bdeltomrk( tmark );
-	Unmark( tmark );
-#else
 	Bmove(-Arg);
 	Bdelete(Arg);
-#endif
 	Arg = 0;
 }
 
@@ -214,25 +206,6 @@ Proc Zempty()
 	if(Ask("Empty buffer? ") != YES) return;
 	Bempty();
 	Curbuff->bmodf = MODIFIED;
-}
-
-
-Proc Zcut()
-{
-	extern char ClipFile[];
-	
-	if(Write_rgn(ClipFile) == FALSE)
-		Echo("Unable to write clipboard.");
-}
-
-
-Proc Zpaste()
-{
-	extern char ClipFile[];
-
-	Bmrktopnt(Curbuff->mark);
-	if(Fileread(ClipFile) > 0)
-		Echo("Unable to read clipboard.");
 }
 
 

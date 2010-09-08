@@ -143,19 +143,17 @@
 #define ZEDITFILE			149
 #define ZSCROLLDOWN			150
 #define ZSCROLLUP			151
-#define ZCUT				152
-#define ZPASTE				153
-#define ZFORMTAB			154
-#define ZCWD				155
-#define ZCMDBIND			156
-#define ZSAVECONFIG			157
-#define ZSETENV				158
-#define ZREF				159
-#define ZZOOM				160
-#define ZGRESRCH			161
-#define ZGREP				162
-#define ZUNDO				163
-#define NUMFUNCS			164
+#define ZFORMTAB			152
+#define ZCWD				153
+#define ZCMDBIND			154
+#define ZSAVECONFIG			155
+#define ZSETENV				156
+#define ZREF				157
+#define ZZOOM				158
+#define ZGRESRCH			159
+#define ZGREP				160
+#define ZUNDO				161
+#define NUMFUNCS			162
 
 /* these are used by the Getfname command in the PAW for command completion */
 #define ZFNAME				NUMFUNCS

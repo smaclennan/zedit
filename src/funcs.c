@@ -165,8 +165,6 @@ Proc (*Cmds[])() =
 	Zeditfile, /* 150 */
 	Zscrolldown,
 	Zscrollup,
-	Zcut,
-	Zpaste,
 	Zformtab,
 	Zcwd,
 	Zcmdbind,
@@ -339,8 +337,6 @@ Proc (*Vcmds[])() =
 	Zeditfile,	/* 150 */
 	Zscrolldown,
 	Zscrollup,
-	Zcut,
-	Znotimpl,
 	Znotimpl,
 	Zcwd,
 	Zcmdbind,
@@ -508,8 +504,6 @@ Proc (*Pawcmds[])() =
 	Znotimpl, /* 150 */
 	Znotimpl,
 	Znotimpl,
-	Zcut,
-	Zpaste,
 	Znotimpl,
 	Znotimpl,
 	Znotimpl,

@@ -24,9 +24,6 @@ int Numbuffs = 0;			/* number of buffers */
 struct passwd *Me;
 char *Shell;
 
-char ClipFile[PATHMAX + 1];
-
-
 int main(argc, argv)
 int argc;
 char **argv;
@@ -166,8 +163,6 @@ char **argv;
 #if DBG
 	Dbgname(AddHome(path, ZDBGFILE));
 #endif
-
-	AddHome(ClipFile, ZCLIP);
 
 #ifdef CMDPROF
 	CMDinit();

@@ -176,6 +176,7 @@ Proc (*Cmds[])() =
 	Zzoom,
 	Zgresrch,
 	Zgrep,
+	Zundo,
 };
 
 
@@ -349,6 +350,7 @@ Proc (*Vcmds[])() =
 	Zzoom,
 	Zgresrch,
 	Zgrep,
+	Znotimpl,
 };
 
 
@@ -515,6 +517,7 @@ Proc (*Pawcmds[])() =
 	Znotimpl,
 	Znotimpl,
 	Zzoom,
+	Znotimpl,
 	Znotimpl,
 	Znotimpl,
 	Zfname,			/* only in the PAW you say? pity... */

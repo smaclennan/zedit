@@ -45,6 +45,7 @@
 								 *	problem.
 								 */
 #define FLOATCALC	1			/* Allow floats in calc command */
+#define UNDO            1			/* EXPERIMENTAL undo code */
 
 /* DON'T TOUCH THESE */
 #if SUNBSD || ULTRIX

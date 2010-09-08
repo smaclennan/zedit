@@ -154,7 +154,8 @@
 #define ZZOOM				160
 #define ZGRESRCH			161
 #define ZGREP				162
-#define NUMFUNCS			163
+#define ZUNDO				163
+#define NUMFUNCS			164
 
 /* these are used by the Getfname command in the PAW for command completion */
 #define ZFNAME				NUMFUNCS

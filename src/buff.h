@@ -69,6 +69,9 @@ typedef struct _buff
 	int comstate;					/* comment state */
 	int comchar;					/* single char comment character */
 #endif
+#if UNDO
+	void *undo_tail;
+#endif
 } Buffer;
 
 typedef struct _wdo

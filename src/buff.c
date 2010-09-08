@@ -20,6 +20,7 @@ Buffer 		*Curbuff	= NULL;	/* the current buffer */
 Mark		*Mrklist	= NULL;	/* the marks list */
 Page		*Curpage	= NULL;	/* the current page */
 
+/* SAM needs undo */
 /* Copy from Point to tmark to tbuff. */
 void Bcopyrgn(tmark, tbuff)
 Mark *tmark;
@@ -218,6 +219,7 @@ Buffer *tbuff;
 	return( TRUE );
 }
 
+/* UNDO */
 /* Delete quantity characters. */
 void Bdelete(quantity)
 unsigned quantity;
@@ -234,6 +236,9 @@ unsigned quantity;
 			quan = quantity;
 		if(quan < 0) quan = 0;		/* SAM Why? */
 		Curplen -= quan;
+
+		undo_del(quan);
+
 		memmove(Curcptr, Curcptr + quan, Curplen - Curchar);
 		if( Curpage == Curbuff->lastp )
 			quantity = 0;
@@ -318,6 +323,7 @@ int col;
 }
 
 
+/* UNDO */
 /* Insert a character in the current buffer. */
 void Binsert(Byte new)
 {
@@ -330,13 +336,18 @@ void Binsert(Byte new)
 	++Curchar;
 	Curbuff->bmodf = MODIFIED;
 	Curmodf = TRUE;
+
+	undo_add(1);
+
 	for(btmark = Mrklist; btmark; btmark = btmark->prev)
 		if(btmark->mpage == Curpage && btmark->moffset >= Curchar)
 			++(btmark->moffset);
 	Vsetmod(FALSE);
+
 }
 
 
+/* UNDO */
 /* Insert a string into the current buffer. */
 void Binstr(str)
 char *str;
@@ -891,12 +902,15 @@ Mark *mark1, *mark2;
 /* Free up the given mark and remove it from the list.
  * Cannot free a scrnmark!
  */
-void Unmark(mptr)
-Mark *mptr;
+void Unmark(Mark *mptr)
 {
-	if(!mptr) return;
-	if(mptr->prev)		mptr->prev->next = mptr->next;
-	if(mptr->next)		mptr->next->prev = mptr->prev;
-	if(mptr == Mrklist)	Mrklist = mptr->prev;
-	free((char *)mptr);
+	if (mptr) {
+		if (mptr->prev)
+			mptr->prev->next = mptr->next;
+		if (mptr->next)
+			mptr->next->prev = mptr->prev;
+		if (mptr == Mrklist)
+			Mrklist = mptr->prev;
+		free((char *)mptr);
+	}
 }

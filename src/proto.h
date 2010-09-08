@@ -533,3 +533,7 @@ void AddCPP NOARGS;
 #ifdef SCROLLBARS
 void UpdateScrollbars();
 #endif
+
+void undo_add(int size);
+void undo_del(int size);
+Proc Zundo(void);

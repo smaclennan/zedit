@@ -161,6 +161,7 @@ struct cnames Cnames[] =
 	{"Trim White Space",			ZDELWHITE,		H_DELETE},
 	{"Two Windows",					Z2WIND,			H_BUFF},
 	{"Undent",						ZUNDENT,		H_DISP},
+	{"Undo",				ZUNDO,		H_MISC},
 	{"Universal Argument",			ZARG,			H_MISC},
 	{"Unmodify",					ZUNMODF,		H_DELETE},
 	{"Uppercase Region",			ZUPREGION,		H_DISP},

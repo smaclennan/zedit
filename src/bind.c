@@ -47,7 +47,7 @@ void Bind()
 	Keys[ 28 ] = ZSETMRK;		/* C-\ */ /**/
 	Keys[ 29 ] = ZOVERIN;		/* C-] */ /**/
 	Keys[ 30 ] = ZDELBLANKS;	/* C-^ */ /**/
-	Keys[ 31 ] = ZCENTER;		/* C-_ */ /**/
+	Keys[ 31 ] = ZUNDO;		/* C-_ */ /**/
 	/* 32 - 126 are ZINSERT */
 	Keys[127 ] = ZRDELCHAR;		/* Backspace */
 

@@ -12,7 +12,7 @@ FILES=	$D/bcmds.o $D/bind.o $D/bind2.o $D/bindings.o \
 	$D/file.o $D/funcs.o $D/getarg.o $D/global.o \
 	$D/help.o $D/kbd.o $D/life.o $D/macro.o $D/modes.o\
 	$D/reg.o $D/shell.o $D/srch.o $D/support.o \
-	$D/tags.o $D/term.o $D/termcap.o $D/terminfo.o \
+	$D/tags.o $D/term.o $D/terminfo.o \
 	$D/unix.o $D/vars.o $D/window.o $D/z.o \
 	$D/getfname.o $D/mbuff.o $D/spell.o $D/make.o \
 	$D/comment.o $D/undo.o

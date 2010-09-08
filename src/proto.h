@@ -395,16 +395,6 @@ void TIinit NOARGS;
 void TIfini NOARGS;
 #endif
 
-#if TERMCAP
-char *tgoto ARGS((char *cm, int destcol, int destline));
-int tputs ARGS((char *cp, int affcnt, int (*outc)()));
-int tgetent ARGS((char *bp, char *name));
-int tgetnum ARGS((char *id));
-char *tgetstr ARGS((char *id, char **area));
-
-void TCinit NOARGS;
-#endif
-
 
 /* compile switched routines */
 

@@ -33,10 +33,6 @@
 #define TC_F7			397 /* 13 */
 #define TC_F8			398 /* 14 */
 #define TC_F9			399 /* 15 */
-#ifdef TRADITIONAL_TERMCAP
-/* Tradition termcap ended here */
-#define NUMKEYS			400
-#else
 #define TC_F10			400 /* 16 */
 #define TC_F11			401 /* 17 */
 #define TC_F12			402 /* 18 */
@@ -49,7 +45,6 @@
 #define TC_S_RIGHT		409
 #define TC_S_LEFT		410
 #define NUMKEYS			411
-#endif
 
 struct key_array
 {

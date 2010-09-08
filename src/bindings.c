@@ -189,7 +189,7 @@ FILE *fp;
 static char *BindFname(fname)
 char *fname;
 {
-#if TERMCAP || TERMINFO
+#if TERMINFO
 	extern char *Term;
 	sprintf(fname, ".zb.%s", Term);
 #elif XWINDOWS

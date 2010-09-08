@@ -13,14 +13,13 @@
 #define SUNBSD		0			/* Sun BSD */
 #define ULTRIX		0			/* almost a BSD... */
 
-/* SCREEN DRIVER - choose terminfo over termcaps if possible */
+/* SCREEN DRIVER */
 #ifdef XWINDOWS
 #define TERMINFO	0		/* don't change this one */
 #else
 #define XWINDOWS	0
 #define TERMINFO	1		/* set terminfo here */
 #endif
-#define TERMCAP		0
 
 /* USER CONFIGURABLE - don't define any, see if I care */
 #define DBG			1			/* turn debugs on */

@@ -38,11 +38,6 @@ struct ltchars Savelchars;
 struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 #endif
 
-#if TERMCAP
-extern char *cm[];
-#endif
-
-
 size_t Clrcol[ ROWMAX + 1 ];	/* Clear if past this */
 
 int Prow, Pcol;				/* Point row and column */
@@ -82,11 +77,6 @@ void Tinit()
 #if TERMINFO
 	/* Initialize from the Terminfo database. Do this first - it may exit */
 	TIinit();
-#endif
-
-#if TERMCAP
-	/* Initialize from the Termcap database. Do this first - it may exit */
-	TCinit();
 #endif
 
 	Termsize();
@@ -277,19 +267,13 @@ void Tprntchar( Byte ichar )
 			break;
 
 		case 0x89:
-#if !TERMCAP
 			Tstyle( T_BOLD );
 			Tprntstr( "~^I" );
 			Tstyle( T_NORMAL );
-#else
-			Tprntstr( "~^I" );
-#endif
 			break;
 
 		default:
-#if !TERMCAP
 			Tstyle( T_BOLD );
-#endif
 			if( ichar & 0x80 )
 			{
 				Tprntchar( '~' );
@@ -300,9 +284,7 @@ void Tprntchar( Byte ichar )
 				Tprntchar( '^' );
 				Tprntchar( ichar ^ '@' );
 			}
-#if !TERMCAP
 			Tstyle( T_NORMAL );
-#endif
 			break;
 	}
 }
@@ -381,11 +363,7 @@ void Tforce()
 {
 	if( Scol != Pcol || Srow != Prow )
 	{
-#if TERMCAP
-		TPUTS(tgoto(cm[0], Pcol, Prow));
-#else
 		TPUTS(tparm(cursor_address, Prow, Pcol));
-#endif
 		Srow = Prow;
 		Scol = Pcol;
 	}
@@ -397,11 +375,7 @@ void Tcleol()
 	if( Pcol < Clrcol[Prow] )
 	{
 		Tforce();
-#if TERMCAP
-		TPUTS(cm[1]);
-#else
 		TPUTS(clr_eol);
-#endif
 		Clrcol[ Prow ] = Pcol;
 	}
 }
@@ -409,11 +383,7 @@ void Tcleol()
 
 void Tclrwind()
 {
-#if TERMCAP
-	TPUTS(cm[2]);
-#else
 	TPUTS(clear_screen);
-#endif
 	memset( Clrcol, 0, ROWMAX );
 	Prow = Pcol = 0;
 	Tflush();

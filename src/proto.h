@@ -419,11 +419,6 @@ int Isalpha NOARGS;
 
 void Unvoke ARGS((Buffer*, Boolean));
 
-Proc Zlife NOARGS;
-void generation NOARGS;
-void init_matrix1 ARGS((char*));
-void fill_matrix1 ARGS((char*));
-
 Proc Zmail NOARGS;
 
 

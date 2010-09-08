@@ -10,7 +10,7 @@ FILES=	$D/bcmds.o $D/bind.o $D/bind2.o $D/bindings.o \
 	$D/buff.o $D/calc.o $D/comms.o $D/comms1.o \
 	$D/cursor.o $D/dbg.o $D/delete.o $D/display.o \
 	$D/file.o $D/funcs.o $D/getarg.o $D/global.o \
-	$D/help.o $D/kbd.o $D/life.o $D/macro.o $D/modes.o\
+	$D/help.o $D/kbd.o $D/macro.o $D/modes.o\
 	$D/reg.o $D/shell.o $D/srch.o $D/support.o \
 	$D/tags.o $D/term.o $D/terminfo.o \
 	$D/unix.o $D/vars.o $D/window.o $D/z.o \

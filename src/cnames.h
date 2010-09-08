@@ -70,7 +70,6 @@ struct cnames Cnames[] =
 	{"Join",						ZJOIN,			H_DELETE},
 	{"Key Binding",					ZKEYBIND,		H_BIND},
 	{"Kill",						ZKILL,			H_SHELL},
-	{"Life",						ZLIFE,			H_MISC},
 	{"List Buffers",				ZLSTBUFF,		H_BUFF},
 	{"Load Macros",					ZREADMACRO,		H_MACRO},
 	{"Lowercase Region",			ZLOWREGION,		H_DISP},

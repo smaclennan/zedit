@@ -19,10 +19,6 @@ Boolean Sendp;					/* Screen end set */
 Mark Scrnmarks[ ROWMAX + 1 ];	/* Screen marks - one per line */
 int Tlrow;						/* Last row displayed */
 
-#if XWINDOWS || TERMINFO
-extern Boolean HasColor;
-#endif
-
 int NESTED = 0;					/* Refresh can go recursive... */
 Byte tline[ COLMAX + 1 ];
 

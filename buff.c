@@ -234,7 +234,8 @@ unsigned quantity;
 			quan = Curplen - Curchar;
 		else
 			quan = quantity;
-		if(quan < 0) quan = 0;		/* SAM Why? */
+		if(quan < 0)
+			quan = 0; /* May need to switch pages */
 		Curplen -= quan;
 
 		undo_del(quan);

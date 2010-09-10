@@ -78,6 +78,9 @@ void undo_del(int size)
 {
 	struct undo *undo = Curbuff->undo_tail;
 
+	if (size == 0) /* this can happen on page boundaries */
+		return;
+
 	/* SAM merge deletes! */
 
 	/* need a new undo */

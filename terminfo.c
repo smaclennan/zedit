@@ -87,6 +87,9 @@ void TIinit()
 		/* turn off the other modes */
 		enter_reverse_mode = enter_bold_mode = 0;
 
+	if (!flash_screen)
+		Vars[VVISBELL].val = 0;
+
 #if !LINUX
 	// SAM????
 	/* initialize the terminal */

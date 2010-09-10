@@ -55,7 +55,8 @@ extern struct avar Vars[];
 #define VSEXTS				VTAG + 1
 #define VTEXTS				VSEXTS + 1
 #define VUSEOTHER			VTEXTS + 1
-#define VXORCURSOR			VUSEOTHER + 1
+#define VVISBELL			VUSEOTHER + 1
+#define VXORCURSOR			VVISBELL + 1
 #define VARNUM				VXORCURSOR + 1
 
 
@@ -124,6 +125,7 @@ struct avar Vars[] =
 	{"TCLExtends",	STRING,		VALUE(0)},
 	{"TExtends",	STRING,		VALUE(0)},
 	{"UseOtherWdo",	FLAG,		VALUE(0)},
+	{"VisibleBell", FLAG,		VALUE(1)},
 	{"XorCursor",	FLAG,		VALUE(XORCURSOR)},
 };
 #define VARSIZE		sizeof( struct avar )

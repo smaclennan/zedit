@@ -172,7 +172,13 @@ void Tfini()
 
 void Tbell()
 {
-	if( Vars[VSILENT].val == 0 ) putchar( '\7' );
+#if TERMINFO
+	if (Vars[VVISBELL].val && flash_screen)
+		TPUTS(flash_screen);
+	else
+#endif
+		if( Vars[VSILENT].val == 0 )
+			putchar( '\7' );
 }
 
 

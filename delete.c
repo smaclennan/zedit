@@ -70,19 +70,21 @@ Proc Zdelrgn()
 }
 
 
-Proc Zcopyrgn()
 /* Copy from point to the mark into delbuff */
+Proc Zcopyrgn()
 {
-	Copytomrk( Curbuff->mark );
+	Copytomrk(Curbuff->mark);
 }
 
 
-Proc Zyank()
+/* UNDO */
 /* Insert the delete buffer at the point */
+Proc Zyank()
 {
 	extern Boolean First;
 	extern Mark *Send;
 	Buffer *tbuff;
+	int yanked;
 	Mark *tmark, save;	/* save must NOT be a pointer */
 
 	if( InPaw && First )
@@ -97,9 +99,10 @@ Proc Zyank()
 	Btoend();
 	tmark = Bcremrk();
 	Btostart();
-	Bcopyrgn( tmark, tbuff );
+	yanked = Bcopyrgn( tmark, tbuff );
 	Unmark( tmark );
 	Bswitchto( tbuff );
+	undo_add(yanked);
 	if( Bisaftermrk(&save) )
 		Reframe();
 }
@@ -209,8 +212,7 @@ Proc Zempty()
 }
 
 
-void Copytomrk( tmark )
-Mark *tmark;
+void Copytomrk(Mark *tmark)
 {
 	Buffer *save;
 

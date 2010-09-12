@@ -176,7 +176,7 @@ void Addtomacro ARGS((int));
 int Ask ARGS((char*));
 char *Bakname ARGS((char*, char*));
 int Batoi NOARGS;
-void Bcopyrgn ARGS((Mark*, Buffer*));
+int Bcopyrgn ARGS((Mark*, Buffer*));
 Buffer *Bcreate NOARGS;
 Mark *Bcremrk NOARGS;
 Page *Bcrepage ARGS((Buffer*, Page*, Page*, int));

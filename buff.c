@@ -20,21 +20,23 @@ Buffer 		*Curbuff	= NULL;	/* the current buffer */
 Mark		*Mrklist	= NULL;	/* the marks list */
 Page		*Curpage	= NULL;	/* the current page */
 
-/* SAM needs undo */
-/* Copy from Point to tmark to tbuff. */
-void Bcopyrgn(tmark, tbuff)
-Mark *tmark;
-Buffer *tbuff;
+
+/* Copy from Point to tmark to tbuff. Returns number of bytes copied. Caller must handle undo. */
+int Bcopyrgn(Mark *tmark, Buffer *tbuff)
 {
 	Buffer *sbuff;
-	Mark *ltmark;
+	Mark *ltmark, *btmark;
 	Boolean flip;
 	int  srclen, dstlen;
 	Byte *spnt;
-	register Mark *btmark;
+	int copied = 0;
 
-	if(tbuff == Curbuff) return;
-	if((flip = Bisaftermrk(tmark)) == TRUE) Bswappnt( tmark );
+	if(tbuff == Curbuff)
+		return 0;
+
+	if((flip = Bisaftermrk(tmark)) == TRUE)
+		Bswappnt( tmark );
+
 	ltmark = Bcremrk();
 	sbuff = Curbuff;
 	while(Bisbeforemrk(tmark))
@@ -63,6 +65,7 @@ Buffer *tbuff;
 		/* and fill it in */
 		memmove( spnt, Curcptr, dstlen );
 		Curplen += dstlen;
+		copied += dstlen;
 		for( btmark = Mrklist; btmark; btmark = btmark->prev )
 			if( btmark->mpage == Curpage && btmark->moffset > Curchar )
 					btmark->moffset += dstlen;
@@ -75,7 +78,10 @@ Buffer *tbuff;
 	}
 	Bpnttomrk( ltmark );
 	Unmark( ltmark );
-	if( flip ) Bswappnt( tmark );
+	if( flip )
+		Bswappnt( tmark );
+
+	return copied;
 }
 
 
@@ -152,25 +158,18 @@ register Byte what;
 }
 
 
-#ifdef __STDC__
-Boolean Bcsearch(register Byte what)
-#else
-Boolean Bcsearch(what)
-register Byte what;
-#endif
+Boolean Bcsearch(Byte what)
 {
 	Byte *n;
 
-	if(Bisend()) return FALSE;
+	if (Bisend())
+		return FALSE;
 
-	while((n = (Byte *)memchr(Curcptr, what, Curplen - Curchar)) == NULL)
-		if(Curpage == Curbuff->lastp)
-		{
+	while ((n = (Byte *)memchr(Curcptr, what, Curplen - Curchar)) == NULL)
+		if(Curpage == Curbuff->lastp) {
 			Makeoffset(Curplen);
 			return FALSE;
-		}
-		else
-		{
+		} else {
 			Makecur(Curpage->nextp);
 			Makeoffset(0);
 		}
@@ -181,55 +180,52 @@ register Byte what;
 }
 
 
-Boolean Bdelbuff(tbuff)
-Buffer *tbuff;
 /* Delete the buffer and its pages. */
+Boolean Bdelbuff(Buffer *tbuff)
 {
-	if( tbuff )
-	{
-		if( tbuff == Curbuff ) /* switch to a safe buffer */
-		{
-			if( tbuff->next )
-				Bswitchto( tbuff->next );
-			else if( tbuff->prev )
-				Bswitchto( tbuff->prev );
-			else
-			{
-				Error( "Last Buffer." );
-				return( FALSE );
-			}
+	if (!tbuff)
+		return TRUE;
+
+	if( tbuff == Curbuff ) { /* switch to a safe buffer */
+		if (tbuff->next)
+			Bswitchto(tbuff->next);
+		else if (tbuff->prev)
+			Bswitchto(tbuff->prev);
+		else {
+			Error( "Last Buffer." );
+			return( FALSE );
 		}
+	}
 
 #if PIPESH || XWINDOWS
-		if( tbuff->child != EOF ) Unvoke( tbuff, TRUE );
+	if( tbuff->child != EOF )
+		Unvoke( tbuff, TRUE );
 #endif
-		while( tbuff->firstp )					/* delete the pages */
-		{
-			Freepage( tbuff, tbuff->firstp );
-		}
-		Unmark( tbuff->mark );					/* free the user mark */
-		if( tbuff == Bufflist )					/* unlink from the list */
-			Bufflist = tbuff->next;
-		if( tbuff->prev )
-			tbuff->prev->next = tbuff->next;
-		if( tbuff->next )
-			tbuff->next->prev = tbuff->prev;
-		free( (char *)tbuff );					/* free the buffer proper */
-	}
-	return( TRUE );
+
+	while (tbuff->firstp)					/* delete the pages */
+		Freepage( tbuff, tbuff->firstp );
+	Unmark( tbuff->mark );					/* free the user mark */
+	if( tbuff == Bufflist )					/* unlink from the list */
+		Bufflist = tbuff->next;
+	if( tbuff->prev )
+		tbuff->prev->next = tbuff->next;
+	if( tbuff->next )
+		tbuff->next->prev = tbuff->prev;
+	free( (char *)tbuff );					/* free the buffer proper */
+
+	return TRUE;
 }
 
 /* UNDO */
 /* Delete quantity characters. */
-void Bdelete(quantity)
-unsigned quantity;
+void Bdelete(unsigned quantity)
 {
 	int quan, noffset;
 	Page *tpage;
 	register Mark *tmark;
 
-	while(quantity)
-	{	/* Delete as many characters as possible from this page */
+	while(quantity) {
+		/* Delete as many characters as possible from this page */
 		if(Curchar + quantity > Curplen)
 			quan = Curplen - Curchar;
 		else
@@ -293,11 +289,12 @@ unsigned quantity;
 }
 
 
-/* delete from the point to the Mark. */
-void Bdeltomrk( tmark )
-Mark *tmark;
+/* UNDO */
+/* Delete from the point to the Mark. */
+void Bdeltomrk(Mark *tmark)
 {
-	if(Bisaftermrk(tmark)) Bswappnt(tmark);
+	if(Bisaftermrk(tmark))
+		Bswappnt(tmark);
 	while(Bisbeforemrk(tmark))
 		if(Curpage == tmark->mpage)
 			Bdelete(tmark->moffset - Curchar);

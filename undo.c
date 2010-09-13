@@ -129,4 +129,6 @@ Proc Zundo(void)
 }
 #else
 Proc Zundo(void) { Tbell(); }
+void undo_add(int size) {}
+void undo_del(int size) {}
 #endif

@@ -214,11 +214,9 @@ Proc Zempty()
 
 void Copytomrk(Mark *tmark)
 {
-	Buffer *save;
-
-	save = Curbuff;
+	Buffer *save = Curbuff;
 	Bswitchto(Killbuff);
-	if(Delcmd())
+	if (Delcmd())
 		Btoend();
 	else
 		Bempty();

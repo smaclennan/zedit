@@ -34,32 +34,31 @@ int Bcopyrgn(Mark *tmark, Buffer *tbuff)
 	if(tbuff == Curbuff)
 		return 0;
 
-	if((flip = Bisaftermrk(tmark)) == TRUE)
-		Bswappnt( tmark );
+	flip = Bisaftermrk(tmark);
+	if (flip)
+		Bswappnt(tmark);
 
 	ltmark = Bcremrk();
 	sbuff = Curbuff;
-	while(Bisbeforemrk(tmark))
-	{
+	while(Bisbeforemrk(tmark)) {
 		if( Curpage == tmark->mpage )
 			srclen = tmark->moffset - Curchar;
 		else
 			srclen = Curplen - Curchar;
 		Curmodf = TRUE;
 		spnt = Curcptr;
-		Bswitchto( tbuff );
+		Bswitchto(tbuff);
 		dstlen = PSIZE - Curplen;
-		if( dstlen == 0 )
-		{
-			if( Pagesplit() )
+		if (dstlen == 0) {
+			if (Pagesplit())
 				dstlen = PSIZE - Curplen;
-			else
-			{
+			else {
 				Bswitchto( sbuff );
 				break;
 			}
 		}
-		if( srclen < dstlen ) dstlen = srclen;
+		if( srclen < dstlen )
+			dstlen = srclen;
 		/* Make a gap */
 		memmove( Curcptr + dstlen, Curcptr, Curplen - Curchar );
 		/* and fill it in */

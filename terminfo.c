@@ -62,6 +62,13 @@ void TIinit()
 		printf("FATAL ERROR: environment variable TERM not set.\n");
 		exit(1);
 	}
+
+#ifdef __linux__
+	/* The key bindings are broken for the Linux xterm entry. */
+	if (strcmp(Term, "xterm") == 0)
+		Term = "linux";
+#endif
+
 	setupterm(Term, 1, &rc);
 	if(rc != 1)
 	{
@@ -90,13 +97,10 @@ void TIinit()
 	if (!flash_screen)
 		Vars[VVISBELL].val = 0;
 
-#if !LINUX
-	// SAM????
 	/* initialize the terminal */
 	TPUTS(init_1string);
 	TPUTS(init_2string);
 	TPUTS(init_3string);
-#endif
 
 	Tkeys[ 0].key = key_up;
 	Tkeys[ 1].key = key_down;

@@ -173,9 +173,16 @@ void Tfini()
 void Tbell()
 {
 #if TERMINFO
-	if (Vars[VVISBELL].val && flash_screen)
+	if (Vars[VVISBELL].val && flash_screen) {
+#ifdef __linux__
+		fputs("\033[?5h", stdout);
+		fflush(stdout);
+		usleep(100000);
+		fputs("\033[?5l", stdout);
+#else
 		TPUTS(flash_screen);
-	else
+#endif
+	} else
 #endif
 		if( Vars[VSILENT].val == 0 )
 			putchar( '\7' );

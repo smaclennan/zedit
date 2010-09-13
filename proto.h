@@ -494,10 +494,6 @@ void GrabKeyboard();
 void Xfindtag NOARGS;
 #endif
 
-#if USE_RCS
-int CheckRCS ARGS((char *fname, int locked));
-#endif
-
 #if COMMENTBOLD
 void AddComment NOARGS;
 void ResetComments NOARGS;

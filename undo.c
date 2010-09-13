@@ -48,11 +48,24 @@ static void recycle_undo(struct undo *undo)
 	freelist = undo;
 }
 
+static inline int no_undo(Buffer *buff)
+{
+	extern Buffer *Paw, *Killbuff;
+
+	if (buff == Paw || buff == Killbuff)
+		return TRUE;
+
+	return FALSE;
+}
+
 /* Exports */
 
 void undo_add(int size)
 {
 	struct undo *undo = Curbuff->undo_tail;
+
+	if (no_undo(Curbuff))
+		return;
 
 	if (undo && undo->action == ACT_INSERT && Bisatmrk(undo->end)) {
 		Dbg("undo_add: add to current p %p.%d u %p.%d\n",
@@ -77,6 +90,9 @@ void undo_add(int size)
 void undo_del(int size)
 {
 	struct undo *undo = Curbuff->undo_tail;
+
+	if (no_undo(Curbuff))
+		return;
 
 	if (size == 0) /* this can happen on page boundaries */
 		return;

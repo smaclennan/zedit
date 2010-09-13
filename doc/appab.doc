@@ -11,12 +11,6 @@ Aborts the current command. This is the only way to exit Universal
 Arguments and String Arguments. It will also abort C-X and Meta
 prefixes. Cannot abort the Quote command.
 .sp 2
-Ada Indent
-
-Causes Newline characters to auto-indent to the current tab level. Bound
-to Newline in Ada mode. A Universal Argument causes the command to
-repeat.
-.sp 2
 Again
 
 Causes the last search to be executed again. If the mode Exact is set,
@@ -112,11 +106,6 @@ Centers the current line on the screen. It uses FillWidth to define the
 right margin. A Universal Argument causes the command to repeat on the
 next lines.
 .sp 2
-Check Mail
-
-Checkmail checks to see if you have new or unread mail. A Universal
-Argument causes the command to repeat.
-.sp 2
 Cmd to Buffer
 
 Prompts  for  a command and then executes the command in the shell. The
@@ -149,12 +138,6 @@ Count
 
 Count the number of lines, words, and characters in the region. A
 Universal Argument counts the entire buffer.
-.sp 2
-Cut
-
-Copy the current region to the "clipboard". Each user has their own
-clipboard that is accessable from any Zedit session started by the user.
-See Paste.
 .sp 2
 CWD
 
@@ -352,6 +335,15 @@ was found at. If not found, leaves the Point at the end of the buffer. A
 Universal Argument causes the command to repeat, deleting and skipping
 intermediate strings.
 .sp 2
+Global RE Search
+
+This command is used to search for a regular expression in all the buffers.
+It prompts for a search string and then starts searching at the start of
+the first buffer. If a match is found, it stops and leaves the point at
+the match. If Again is executed, it starts at the current Point and
+searches forwards through the buffers. At the last buffer it stops and
+puts the Point back where it started. A Universal Argument is ignored.
+.sp 2
 Global Search
 
 This command is used to search for a string in all the buffers. It
@@ -372,6 +364,11 @@ Moves the point to the start of a given line. If there is a Universal
 Argument, uses the argument, else prompts for the line number. If the
 line is past the end of the buffer, moves the Point is left at the end
 of the buffer.
+.sp 2
+Grep
+
+Prompts for the completion of a grep command and then performs the
+grep command in the *grep* buffer.
 .sp 2
 Grow Window
 
@@ -454,22 +451,6 @@ Kill
 
 Kills the current make. The command must wait for the make to die before
 it can continue. Unix only.
-.sp 2
-Life
-
-Plays the game of life. It converts all the characters in the current
-buffer to '*'s, then waits for a command. A Newline causes it to start
-running. An Abort command causes it to stop. Any other key causes it to
-step. The game of life has three laws:
-.(b I
-1. Law of Survival
-	A * with either 2 or 3 neighbors survives.
-2. Law of Death
-	A * with more than 3 neighbors dies of overcrowding.
-	A * with less than 2 neighbors dies of loneliness.
-3. Law of Birth
-	A space with exactly 3 neighbors causes birth.
-.)b
 .sp 2
 List Buffers
 
@@ -654,12 +635,6 @@ Rereads the current file. If the file has changed, asks to overwrite
 changes. A Universal Argument causes multiple rereads. Mimics the vi "e"
 command.
 .sp 2
-Paste
-
-Copy the current contents of the "clipboard" to the Point. Each user has
-their own clipboard that is accessable from any Zedit session started by
-the user. See Cut.
-.sp 2
 Position
 
 Displays the current Point position as a line, column, and byte offset
@@ -745,14 +720,6 @@ hit within approximately one second, "Quote:" is displayed in the echo
 window. The Quote command does not work within a Universal Argument. A
 Universal Argument inserts Arg characters.
 .sp 2
-RCS ci
-
-Unsupported
-.sp 2
-RCS co
-
-Check out locked the current buffer.
-.sp 2
 Read File
 
 Prompts for a path name, with file name completion,  and inserts the
@@ -765,6 +732,11 @@ Redisplay
 
 Repaints the entire screen. A Universal Argument causes the command to
 repeat.
+.sp 2
+Reference
+
+Prompts for a tag and then runs the 'ref' command on it. See the
+documentation for `elvis'.
 .sp 2
 Replace
 
@@ -807,6 +779,11 @@ A key bound with the Bind command only stays in effect for the duration
 of the edit session. The Save Bindings command is used to permanently
 save any new bindings in the bindings file. A Universal Argument
 causes Arg saves!
+.sp 2
+Save Config
+
+Save the current settings of all the Zedit variables in the .config.z
+file.
 .sp 2
 Save File
 
@@ -857,6 +834,11 @@ Allows any of the configurable variables to be set. Command completion
 is supported. Prompts for the variable, then prompts for the new
 setting. A Universal Argument causes numeric or flag variables to be
 set to Arg, string variables ignore the Universal Argument.
+.sp 2
+Setenv
+
+Performs a 'setenv' command on an environment variable. The variable will
+keep the setting during the the Zedit session.
 .sp 2
 Shell
 
@@ -959,6 +941,10 @@ Undent
 Removes Universal Argument tabs from the start of every line in the
 region.
 .sp 2
+Undo
+
+Undo the previous edit. There is a list of undos.
+.sp 2
 Universal Argument
 
 Many of the commands accept a Universal Argument to cause the command to
@@ -1007,6 +993,10 @@ Inserts the characters from the Kill Buffer before the Point. The
 characters are inserted, even in overwrite mode. A Universal Argument
 causes the command to repeat.
 .sp 2
+Zoom
+
+In X, will perform a window manager zoom command.
+.sp 2
 .bp
 .ce
 Appendix B: Variable Descriptions
@@ -1014,24 +1004,20 @@ Appendix B: Variable Descriptions
 Appendix B: Variable Descriptions
 .)x \n%
 .sp 2
-AdaTabs
-
-A tab is a single character that is displayed as one or more spaces on
-the screen. This variable defines the number of spaces displayed per tab
-in Ada mode buffers, even the buffer is currently in View mode. The
-default is 2 spaces. See also Tabs.
-.sp 2
 AddNL
 
 If this flag variable is set, the editor will insure that all saved files
 end in a Newline. The default is on.
 .sp 2
-AExtends
+AsmChar
 
-This variable defines the extensions that turn on ADA Mode. The
-extensions are seperated with the colon (:). Note that CExtends takes
-precedence over AExtends. There is a maximum of eight extensions. See
-also CExtends, TExtends.
+The character used to mark ASM comments. The default is a semicolon (;).
+.sp 2
+AsmExtends
+
+This variable defines the extensions that turn on ASM Mode. The
+extensions are seperated with the colon (:). There is a maximum of eight
+extensions. See also CExtends, TExtends.
 .sp 2
 Backup
 
@@ -1100,6 +1086,20 @@ FlowControl is set, ^S and ^Q stop and start the terminal. However, the
 ^S cannot be used as the Search command. If FlowControl is off, ^S can
 be used. The default is off.
 .sp 2
+Font
+
+Set the font to be used by Zedit. Xwindows only.
+.sp 2
+Grep
+
+The command to use for the Zedit grep command. The default is `grep -n'.
+.sp 2
+KillLine
+
+If this variable is set, the 'Delete to End of Line' command will
+delete the entire line. If at the start of line, it will delete the
+line including the NL. The default is on.
+.sp 2
 Lines
 
 This flag variable turns on a line:column indicator on the mode line.
@@ -1156,6 +1156,14 @@ Overwrite
 If overwrite is set, newly created buffers default to overwrite mode
 instead of insert mode. Default is off.
 .sp 2
+PopupMake
+
+If this variable is set, Zedit will try to use the show command to popup
+an X window with the make output in it. If it is off, Zedit will place the
+man page in a buffer. The default is off.
+
+Note: The show command is not a standard Unix command.
+.sp 2
 PopupMan
 
 If this variable is set, Zedit will try to use the show command to popup
@@ -1209,19 +1217,32 @@ Tagfile
 This specifies the tag file name used by the Find Tag command. It is a
 full path name to the tag file. The default is "NONE".
 .sp 2
+TCLExtends
+
+This variable defines the extensions that turn on TCL Mode. The
+extensions are seperated with the colon (:). Note that CExtends takes
+precedence. There is a maximum of eight extensions. See
+also CExtends, TExtends.
+.sp 2
 TExtends
 
 This variable defines the extensions that turn on Text Mode. The
 extensions are seperated with the colon (:). An extension of "." matches
 no extension (i.e. no "." in file name). Note that the CExtends then
 AExtends take precedence over TExtends. There is a maximum of eight
-extensions. See also AExtends, CExtends.
+extensions. See also CExtends, TCLExtends.
 .sp 2
 UseOtherWdo
 
 If this variable is set, Findfile will read the file into the next
 window on the screen. If there is only one window, a second window will
 be created. The default is off.
+.sp 2
+VisibleBell
+
+If this variable is set, the bell will flash the screen rather than
+producing an audible tone. The default is on if flashing the screen
+is supported.
 .sp 2
 XorCursor
 

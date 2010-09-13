@@ -1,4 +1,4 @@
-ZSRC=../src
+ZSRC=..
 CC=cc
 CFLAGS=-O
 EXE=./zhsort
@@ -221,7 +221,7 @@ END
 	echo ".m3 0"	>>help.head
 	echo ".m4 0"	>>help.head
 	echo ":ZEDIT" | nroff -me help.head command.doc variable.doc - |
-		zhack >help.z
+		./zhack >help.z
 
 	echo "Updating help.z.x"
 	# SAM no top or bottom margins, short lines
@@ -231,7 +231,7 @@ END
 	echo ".m3 0"	>>help.head
 	echo ".m4 0"	>>help.head
 	echo ":ZEDIT" | nroff -me help.head command.doc variable.doc - |
-		zhack >help.z.x
+		./zhack >help.z.x
 	rm $EXE help.head
 fi
 
@@ -298,11 +298,11 @@ END_TAIL
 [ -f intro.doc ] || { echo intro.doc; exit; }
 [ -f cmds.doc ] || { echo cmds.doc; exit; }
 [ -f tech.doc ] || { echo tech.doc; exit; }
-[ -f zc.doc ] || { echo zc.doc; exit; }
+# [ -f zc.doc ] || { echo zc.doc; exit; }
 [ -f appab.doc ] || { echo appab.doc; exit; }
 [ -f unix.doc ] || { echo unix.doc; exit; }
 [ -f pc.doc ] || { echo pc.doc; exit; }
 [ -f ztail ] || { echo ztail; exit; }
-nroff -me zhead intro.doc cmds.doc tech.doc zc.doc appab.doc unix.doc pc.doc \
-	ztail | zhack >zedit.doc
+nroff -me zhead intro.doc cmds.doc tech.doc appab.doc unix.doc pc.doc \
+	ztail | ./zhack >zedit.doc
 rm zhead ztail

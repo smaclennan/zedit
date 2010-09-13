@@ -3,6 +3,16 @@
 If this flag variable is set, the editor will insure that all saved files
 end in a Newline. The default is on.
 .sp 0
+:AsmChar
+
+The character used to mark ASM comments. The default is a semicolon (;).
+.sp 0
+:AsmExtends
+
+This variable defines the extensions that turn on ASM Mode. The
+extensions are seperated with the colon (:). There is a maximum of eight
+extensions. See also CExtends, TExtends.
+.sp 0
 :Backup
 
 If this flag variable is set, a backup file is created when a file is
@@ -70,6 +80,20 @@ FlowControl is set, ^S and ^Q stop and start the terminal. However, the
 ^S cannot be used as the Search command. If FlowControl is off, ^S can
 be used. The default is off.
 .sp 0
+:Font
+
+Set the font to be used by Zedit. Xwindows only.
+.sp 0
+:Grep
+
+The command to use for the Zedit grep command. The default is `grep -n'.
+.sp 0
+:KillLine
+
+If this variable is set, the 'Delete to End of Line' command will
+delete the entire line. If at the start of line, it will delete the
+line including the NL. The default is on.
+.sp 0
 :Lines
 
 This flag variable turns on a line:column indicator on the mode line.
@@ -125,6 +149,14 @@ default is on.
 
 If overwrite is set, newly created buffers default to overwrite mode
 instead of insert mode. Default is off.
+.sp 0
+:PopupMake
+
+If this variable is set, Zedit will try to use the show command to popup
+an X window with the make output in it. If it is off, Zedit will place the
+man page in a buffer. The default is off.
+
+Note: The show command is not a standard Unix command.
 .sp 0
 :PopupMan
 
@@ -199,6 +231,12 @@ extensions. See also CExtends, TCLExtends.
 If this variable is set, Findfile will read the file into the next
 window on the screen. If there is only one window, a second window will
 be created. The default is off.
+.sp 0
+:VisibleBell
+
+If this variable is set, the bell will flash the screen rather than
+producing an audible tone. The default is on if flashing the screen
+is supported.
 .sp 0
 :XorCursor
 

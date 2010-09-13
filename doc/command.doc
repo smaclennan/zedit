@@ -132,12 +132,6 @@ and inserts it into the PAW.
 Count the number of lines, words, and characters in the region. A
 Universal Argument counts the entire buffer.
 .sp 0
-:Cut
-
-Copy the current region to the "clipboard". Each user has their own
-clipboard that is accessable from any Zedit session started by the user.
-See Paste.
-.sp 0
 :CWD
 
 This command allows you to change Zedit's current working directory. All
@@ -451,22 +445,6 @@ PAW. Handles C-X and M- prefixes. A Universal Argument is ignored.
 Kills the current make. The command must wait for the make to die before
 it can continue. Unix only.
 .sp 0
-:Life
-
-Plays the game of life. It converts all the characters in the current
-buffer to '*'s, then waits for a command. A Newline causes it to start
-running. An Abort command causes it to stop. Any other key causes it to
-step. The game of life has three laws:
-.(b I
-1. Law of Survival
-	A * with either 2 or 3 neighbors survives.
-2. Law of Death
-	A * with more than 3 neighbors dies of overcrowding.
-	A * with less than 2 neighbors dies of loneliness.
-3. Law of Birth
-	A space with exactly 3 neighbors causes birth.
-.)b
-.sp 0
 :List Buffers
 
 /* SAM WRONG */
@@ -649,12 +627,6 @@ prompts for the column to go to.
 Rereads the current file. If the file has changed, asks to overwrite
 changes. A Universal Argument causes multiple rereads. Mimics the vi "e"
 command.
-.sp 0
-:Paste
-
-Copy the current contents of the "clipboard" to the Point. Each user has
-their own clipboard that is accessable from any Zedit session started by
-the user. See Cut.
 .sp 0
 :Position
 
@@ -961,6 +933,10 @@ keeps splitting the current window.
 
 Removes Universal Argument tabs from the start of every line in the
 region.
+.sp 0
+:Undo
+
+Undo the previous edit. There is a list of undos.
 .sp 0
 :Universal Argument
 

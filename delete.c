@@ -87,11 +87,11 @@ Proc Zyank()
 	int yanked;
 	Mark *tmark, save;	/* save must NOT be a pointer */
 
-	if( InPaw && First )
-	{
+	if (InPaw && First) {
 		Bdelete( Curplen );
 		First = FALSE;
 	}
+
 	Mrktomrk(&save, Send);
 	tbuff = Curbuff;
 	Bmrktopnt(Curbuff->mark);

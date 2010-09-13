@@ -47,6 +47,7 @@ int Bcopyrgn(Mark *tmark, Buffer *tbuff)
 			srclen = Curplen - Curchar;
 		Curmodf = TRUE;
 		spnt = Curcptr;
+
 		Bswitchto(tbuff);
 		dstlen = PSIZE - Curplen;
 		if (dstlen == 0) {
@@ -62,7 +63,7 @@ int Bcopyrgn(Mark *tmark, Buffer *tbuff)
 		/* Make a gap */
 		memmove( Curcptr + dstlen, Curcptr, Curplen - Curchar );
 		/* and fill it in */
-		memmove( spnt, Curcptr, dstlen );
+		memmove( Curcptr, spnt, dstlen );
 		Curplen += dstlen;
 		copied += dstlen;
 		for( btmark = Mrklist; btmark; btmark = btmark->prev )
@@ -75,10 +76,12 @@ int Bcopyrgn(Mark *tmark, Buffer *tbuff)
 		Bswitchto( sbuff );
 		Bmove( dstlen );
 	}
+
 	Bpnttomrk( ltmark );
 	Unmark( ltmark );
-	if( flip )
-		Bswappnt( tmark );
+
+	if (flip)
+		Bswappnt(tmark);
 
 	return copied;
 }
@@ -354,13 +357,14 @@ char *str;
 
 
 /* Returns TRUE if point is after the mark. */
-Boolean Bisaftermrk(tmark)
-Mark *tmark;
+Boolean Bisaftermrk(Mark *tmark)
 {
-	register Page *tp;
+	Page *tp;
 
-	if(!tmark->mpage || tmark->mbuff != Curbuff) return FALSE;
-	if(tmark->mpage == Curpage) return Curchar > tmark->moffset;
+	if (!tmark->mpage || tmark->mbuff != Curbuff)
+		return FALSE;
+	if (tmark->mpage == Curpage)
+		return Curchar > tmark->moffset;
 	for(tp = Curpage->prevp; tp && tp != tmark->mpage; tp = tp->prevp) ;
 	return tp != NULL;
 }
@@ -596,8 +600,7 @@ void Bshoveit()
 
 
 /* Swap the point and the mark. */
-void Bswappnt(tmark)
-Mark *tmark;
+void Bswappnt(Mark *tmark)
 {
 	Mark tmp;
 

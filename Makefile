@@ -52,6 +52,7 @@ zedit3d:
 
 $(ZEXE): $(FILES)
 	$(CC) $(CFLAGS) -o $(ZEXE) $(FILES) $(LIBS)
+	etags *.c *.h
 
 x$(ZEXE): $(FILES) $(XFILES)
 	$(CC) $(CFLAGS) -o x$(ZEXE) $(FILES) $(XFILES) $(LIBS)

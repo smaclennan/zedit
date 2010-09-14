@@ -39,8 +39,12 @@ static struct undo *new_undo(Buffer *buff)
 	return undo;
 }
 
-static void recycle_undo(struct undo *undo)
+static void recycle_undo(Buffer *buff)
 {
+	struct undo *undo = buff->undo_tail;
+
+	buff->undo_tail = undo->next;
+
 	if (undo->data)
 		free(undo->data);
 
@@ -106,7 +110,7 @@ void undo_del(int size)
 
 	undo->data = malloc(size);
 	if (!undo->data) {
-		recycle_undo(undo);
+		recycle_undo(Curbuff);
 		return;
 	}
 
@@ -116,6 +120,11 @@ void undo_del(int size)
 	undo->size = size;
 }
 
+void undo_clear(Buffer *buff)
+{
+	while (buff->undo_tail)
+		recycle_undo(buff);
+}
 
 Proc Zundo(void)
 {
@@ -140,11 +149,11 @@ Proc Zundo(void)
 			Binsert(undo->data[i]);
 	}
 
-	Curbuff->undo_tail = undo->prev;
-	recycle_undo(undo);
+	recycle_undo(Curbuff);
 }
 #else
 Proc Zundo(void) { Tbell(); }
 void undo_add(int size) {}
 void undo_del(int size) {}
+void undo_clear(Buffer *buff) {}
 #endif

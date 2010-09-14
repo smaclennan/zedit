@@ -508,4 +508,5 @@ void UpdateScrollbars();
 
 void undo_add(int size);
 void undo_del(int size);
+void undo_clear(Buffer *buff);
 Proc Zundo(void);

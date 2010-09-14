@@ -215,10 +215,11 @@ Boolean Bdelbuff(Buffer *tbuff)
 		tbuff->next->prev = tbuff->prev;
 	free( (char *)tbuff );					/* free the buffer proper */
 
+	undo_clear(tbuff);
+
 	return TRUE;
 }
 
-/* UNDO */
 /* Delete quantity characters. */
 void Bdelete(unsigned quantity)
 {
@@ -291,7 +292,6 @@ void Bdelete(unsigned quantity)
 }
 
 
-/* UNDO */
 /* Delete from the point to the Mark. */
 void Bdeltomrk(Mark *tmark)
 {
@@ -323,7 +323,6 @@ int col;
 }
 
 
-/* UNDO */
 /* Insert a character in the current buffer. */
 void Binsert(Byte new)
 {
@@ -347,12 +346,12 @@ void Binsert(Byte new)
 }
 
 
-/* UNDO */
 /* Insert a string into the current buffer. */
 void Binstr(str)
 char *str;
 {
-	while(*str) Binsert(*str++);
+	while(*str)
+		Binsert(*str++);
 }
 
 
@@ -588,6 +587,8 @@ void Bempty()
 	Curplen = Curchar = 0;		/* reset to start of page */
 	Curcptr = Cpstart;
 	Curmodf = TRUE;
+
+	undo_clear(Curbuff);
 }
 
 

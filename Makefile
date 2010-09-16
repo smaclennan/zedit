@@ -1,8 +1,9 @@
 .PHONY: all clean zedit xzedit zedit3d
 
 ZEXE=ze
+CC ?= gcc
 CFLAGS=-O3 -Wall -g $(CDEFS)
-MFLAGS+=--no-print-directory
+MFLAGS+=-rR --no-print-directory
 
 LIBS=-lncurses
 

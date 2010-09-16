@@ -30,43 +30,30 @@ int Tgetcmd()
 	int cmd;
 
 	if( Cmdpushed ) return( Popcmd() );
-	if( Mstate == INMACRO ) return( *Mptr++ );
-	do
-	{ /* try to match one of the termcap key entries */
+	do { /* try to match one of the termcap key entries */
 		mask = Key_mask;
-		for(j = 0; mask; ++j)
-		{
+		for(j = 0; mask; ++j) {
 			cmd = Tgetkb() & 0x7f;
 			for( i = 0; i < NUMKEYS - SPECIAL_START; ++i )
-				if( (mask & (1 << i)) && cmd == Tkeys[i].key[j] )
-				{
+				if( (mask & (1 << i)) && cmd == Tkeys[i].key[j] ) {
 					if( Tkeys[i].key[j + 1] == '\0' )
-					{
-						cmd = i + SPECIAL_START;
-						goto found;
-					}
-				}
-				else
+						return i + SPECIAL_START;
+				} else
 					mask &= ~(1 << i);
 		}
 
 		// No match - push back the chars and try to handle
 		// the first one.
-		while( j-- > 0 ) Tungetkb();
+		while( j-- > 0 )
+			Tungetkb();
 
-		if((cmd = Tgetkb() & 0x7f) > NUMKEYS)
-		{ // Ignore the key
+		if((cmd = Tgetkb() & 0x7f) > NUMKEYS) { // Ignore the key
 			cmd = K_NODEF;
 			Tbell();
 		}
-	}
-	while( cmd == K_NODEF );
+	} while( cmd == K_NODEF );
 
- found:
-	if( Mstate == MCREATE )
-		Addtomacro( cmd );
-
-	return( cmd );
+	return cmd;
 }
 #endif
 
@@ -115,7 +102,7 @@ int Tkbrdy()
 		.events = POLLIN
 	};
 
-	if (Mstate == INMACRO || cpushed || Pending)
+	if (cpushed || Pending)
 		return TRUE;
 
 	Pending = poll(&stdin_fd, 1, 0);
@@ -124,7 +111,7 @@ int Tkbrdy()
 	static struct timeval poll = {0,0};
 	int fds = 1;
 
-	return(Mstate == INMACRO || cpushed ||
+	return(cpushed ||
 		(Pending ? Pending :
 			(Pending = select(1, (fd_set *)&fds, NULL, NULL, &poll))));
 #endif

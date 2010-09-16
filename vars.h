@@ -35,8 +35,7 @@ extern struct avar Vars[];
 #define VGREP				VFONT + 1
 #define VKILLLINE			VGREP + 1
 #define VLINES				VKILLLINE + 1
-#define VMACROFILE			VLINES + 1
-#define VMAIL				VMACROFILE + 1
+#define VMAIL				VLINES + 1
 #define VMAKE				VMAIL + 1
 #define VMARGIN				VMAKE + 1
 #define VMATCH				VMARGIN + 1
@@ -105,7 +104,6 @@ struct avar Vars[] =
 	{"Grep",	    STRING,		VALUE(0)},
 	{"KillLine",    FLAG,		VALUE(1)},
 	{"Lines",		FLAG,		VALUE(1)},
-	{"Macrofile",	STRING,		VALUE(0)},
 	{"MailCmd",		STRING,		VALUE(0)},
 	{"MakeCmd",		STRING,		VALUE(0)},
 	{"Margin",		DECIMAL,	VALUE(0)},

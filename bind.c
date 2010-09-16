@@ -139,15 +139,15 @@ void Bind()
 	Keys[ 256 + '=' ] = ZPRINTPOS;							/* C-X = */
 	Keys[ 256 + '1' ] = Z1WIND;								/* C-X 1 */
 	Keys[ 256 + '2' ] = Z2WIND;								/* C-X 2 */
-	Keys[ 256 + '9' ] = Keys[ 256 + '(' ] = ZSTARTMACRO;	/* C-X ( */
-	Keys[ 256 + '0' ] = Keys[ 256 + ')' ] = ZENDMACRO;		/* C-X ) */
+/* C-X ( */
+/* C-X ) */
 	Keys[ 256 + 'A' ] = Keys[ 256 + 'a' ] = ZGSEARCH;		/* C-X A */
 	Keys[ 256 + 'B' ] = Keys[ 256 + 'b' ] = ZNXTBOOKMRK;	/* C-X B */
 	Keys[ 256 + 'C' ] = Keys[ 256 + 'c' ] = ZCOUNT;			/* C-X C */
 	Keys[ 256 + 'D' ] = Keys[ 256 + 'd' ] = ZDATE;			/* C-X D */
 	Keys[ 256 + 'E' ] = Keys[ 256 + 'e' ] = ZREREPLACE;		/* C-X E */
 /* C-X F */
-	Keys[ 256 + 'G' ] = Keys[ 256 + 'g' ] = ZDOMACRO;		/* C-X G */
+/* C-X G */
 	Keys[ 256 + 'H' ] = Keys[ 256 + 'h' ] = ZHELP;			/* C-X H */
 	Keys[ 256 + 'I' ] = Keys[ 256 + 'i' ] = ZINDENT;		/* C-X I */
 /* C-X J */
@@ -237,7 +237,7 @@ void Bind()
 	Keys[ZXK_Begin]		= ZBEGLINE;
 	Keys[ZXK_Select]	= ZSETMRK;
 	Keys[ZXK_Print]		= ZPRINT;
-	Keys[ZXK_Execute]	= ZDOMACRO;
+/*	Keys[ZXK_Execute]	= ; */
 	Keys[ZXK_Insert]	= ZOVERIN;
 /*	Keys[ZXK_Undo]		= ; */
 	Keys[ZXK_Redo]		= ZAGAIN;
@@ -256,7 +256,7 @@ void Bind()
  	Keys[ZXK_F6]		= ZSETBOOKMRK;
  	Keys[ZXK_F7]		= ZMAKE;
  	Keys[ZXK_F8]		= ZGREP;
- 	Keys[ZXK_F9]		= ZDOMACRO;
+/* 	Keys[ZXK_F9]		= ; */
 // SAM 	Keys[ZXK_F10]		= ZTAG;
 #ifdef sun
 /* 	Keys[ZXK_F11]		= ; This is not the F11 key! */

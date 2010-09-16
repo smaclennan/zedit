@@ -485,7 +485,7 @@ Proc Zfillpara()
 		Unmark( tmp );
 		Movepast( Isspace, FORWARD );		/* setup for next iteration */
 	}
-	while( (all || --Arg > 0) && !Bisend() && (Mstate || !Tkbrdy()) );
+	while( (all || --Arg > 0) && !Bisend() && !Tkbrdy() );
 	
 	Clrecho();
 	if( Arg > 0 || (all && !Bisend()) )
@@ -792,15 +792,9 @@ Proc Zmeta()
 	extern Proc (**Funcs)();
 	Boolean tmp;
 
-	if( Mstate == INMACRO )
-		Cmd = *Mptr++ | 128;
-	else
-	{
-		tmp = Delayprompt( "Meta: " );
-		Cmd = Tgetkb() | 128;
-		if( Mstate == MCREATE ) Addtomacro( Cmd - 128 );
-		if( tmp ) Clrecho();
-	}
+	tmp = Delayprompt( "Meta: " );
+	Cmd = Tgetkb() | 128;
+	if( tmp ) Clrecho();
 	(*Funcs[ Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL ])();
 }
 

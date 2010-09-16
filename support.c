@@ -113,7 +113,7 @@ Boolean Delay()
 {
 	long t;
 
-	if( InPaw || Mstate == INMACRO ) return( FALSE );
+	if( InPaw ) return( FALSE );
 	t = time( (long *)0 ) + 2;	/* at least 1 second */
     do
     	if( Tkbrdy() ) return( FALSE );
@@ -165,7 +165,7 @@ int type;
  		if(type != 1) Tsetpoint(trow, tcol);
 		Tforce();
 		Tflush();
-		if(type == 1 && Mstate != INMACRO) Tgetcmd();
+		if(type == 1 ) Tgetcmd();
 	}
 }
 #endif

@@ -20,7 +20,6 @@ char *Htype[] =
 	"Cursor",
 	"Copy/Delete",
 	"Search/Replace",
-	"Macro",
 	"File",
 	"Buffer/Window",
 	"Display",

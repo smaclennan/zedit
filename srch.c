@@ -376,7 +376,7 @@ input:
 			Bmove1();
 		if( *query ) 
 			Echo( "Searching..." );
-		else if(Mstate != INMACRO && Tkbrdy())
+		else if(Tkbrdy())
 			*exit = TRUE;
 	}
 	Unmark(prevmatch);
@@ -440,7 +440,6 @@ Boolean Dosearch()
 	}
 	if( !found )
 	{
-		if( Mstate == INMACRO ) Mstate = MABORT;
 		Bpnttomrk( tmark );
 		if( fcnt )
 		{

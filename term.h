@@ -68,10 +68,6 @@ extern size_t Colmax, Rowmax;			/* Row and column maximums */
 extern int Tstart;					/* Start column and row */
 extern int Tlrow;					/* Last row displayed (-1 for none) */
 
-extern Short Mstate;					/* Current macro state */
-extern Short *Mptr;					/* pointer to tmp macro buffer */
-
-
 #define PNUMCOLS		3			/* default columns for Pout */
 #define PCOLSIZE		26			/* default column size */
 

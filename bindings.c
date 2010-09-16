@@ -109,8 +109,7 @@ Proc Zdispbinds()
 {
 	extern Proc (*Vcmds[])(), (*Pawcmds[])(), Znotimpl();
 	extern struct cnames Cnames[];
-	extern Short *Macro[];
-	
+
 	Boolean found;
 	FILE *fp;
 	char line[ STRMAX ];
@@ -140,9 +139,7 @@ Proc Zdispbinds()
 	Echo( "Please Wait..." );
 	Out("COMMAND                            PERMS     BINDING\n", fp);
 	for( f = 0; f < NUMFUNCS; ++f )
-		if( Cnames[f].fnum != ZNOTIMPL && Cnames[f].fnum != ZINSERT &&
-			(Cnames[f].fnum < ZMACRON || Cnames[f].fnum > ZMACROL ||
-			Macro[Cnames[f].fnum - ZMACRON]) )
+		if( Cnames[f].fnum != ZNOTIMPL && Cnames[f].fnum != ZINSERT)
 		{
 			sprintf( line, "%-35s%cw%c       ", Cnames[f].name,
 					 Vcmds[Cnames[f].fnum]   == Znotimpl ? '-' : 'r',

@@ -24,9 +24,7 @@ int Numbuffs = 0;			/* number of buffers */
 struct passwd *Me;
 char *Shell;
 
-int main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	/* A longjmp is called if Bcremrk or Getmemp run out of memory */
 	if( setjmp(zenv) != 0 )
@@ -71,7 +69,7 @@ void Execute()
 
 	Refresh();
 
-	if(Mstate == INMACRO || cpushed)
+	if(cpushed)
 		Dotty();
 	else
 	{
@@ -110,7 +108,7 @@ Proc Dotty()
 		(*Funcs[Keys[Cmd]])();
 		--Arg;
 	}
-	if( Keys[Cmd] != ZENDMACRO ) Lfunc = Keys[ Cmd ];
+	Lfunc = Keys[ Cmd ];
 	First = FALSE;				/* used by Pinsert when InPaw */
 }
 
@@ -129,12 +127,11 @@ char **argv;
 	extern struct avar Vars[];
 	extern Buffer *Bufflist, *Paw;
 	extern Mark *Sstart, *Psstart, *Send, *REstart;
-	extern Short *Macro[];
 #ifdef PIPESH
 	extern fd_set SelectFDs;
 	extern int NumFDs;
 #endif
-	char path[ PATHMAX + 1 ], *macrofile = 0;
+	char path[ PATHMAX + 1 ];
 	char *progname;
 	int col = 0, arg, files = 0, textMode = 0;
 	Buffer *tbuff, *other = NULL;
@@ -188,13 +185,12 @@ char **argv;
 
 	/* Note: for X we cannot use -m */
 	opterr = 0;
-	while((arg = getopt(argc, argv, "c:hl:M:o:tvx")) != EOF)
+	while((arg = getopt(argc, argv, "c:hl:o:tvx")) != EOF)
 		switch(arg)
 		{
 			case 'c': ConfigDir = optarg;			break;
 			case 'h': Usage(progname);
 			case 'l': Argp = Arg = atoi(optarg);	break;
-			case 'M': macrofile = optarg;			break;
 #if XWINDOWS
 			case 'n': Spawn = FALSE;				break;
 #endif
@@ -295,13 +291,8 @@ char **argv;
 
 	if( !Curbuff->mtime && Curbuff->fname ) Echo( "New File" );
 
-	memset( Macro, 0, NUMMACROS * sizeof(unsigned *) );
 	Bind();
 	Loadbind();		/* Do this after Tinit */
-	if( Vars[VMACROFILE].val )
-		Macrofile( (char *)Vars[VMACROFILE].val, FALSE );
-	if(macrofile)
-		Macrofile( macrofile, FALSE );
 
 /*	Setmodes( TRUE ); */
 	Curwdo->modeflags = INVALID;
@@ -514,7 +505,7 @@ void Usage(prog)
 char *prog;
 {
 	printf(
-"usage: %s [-hntx] [-c config_dir] [-M macro_file] [fname ... [-l#] [-o#]]\n",
+"usage: %s [-hntx] [-c config_dir] [fname ... [-l#] [-o#]]\n",
 		prog);
 	puts("where:\t-h  displays this message.");
 #if XWINDOWS
@@ -529,7 +520,6 @@ char *prog;
 	puts("\t-x  cursor cancels mark.");
 #endif
 	puts("\t-c  specifies a config dir.");
-	puts("\t-M  load the specified macro file.");
 	puts("\t-l  goto specified line number.");
 	puts("\t    this only applies to the first file.");
 	puts("\t-o  goto specified offset in line.");

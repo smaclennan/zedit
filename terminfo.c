@@ -57,8 +57,6 @@ struct key_array Tkeys[] =
 
 void TIinit()
 {
-	extern char *getenv();
-	extern int SGnum;
 	char *n;
 	int rc, i;
 
@@ -98,10 +96,6 @@ void TIinit()
 	if(!exit_attribute_mode &&
 	  (exit_attribute_mode = exit_standout_mode) == 0)
 			enter_reverse_mode = enter_standout_mode = enter_bold_mode = 0;
-
-	if((SGnum = magic_cookie_glitch == -1 ? 0 : magic_cookie_glitch))
-		/* turn off the other modes */
-		enter_reverse_mode = enter_bold_mode = 0;
 
 	if (!flash_screen)
 		Vars[VVISBELL].val = 0;

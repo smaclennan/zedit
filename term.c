@@ -11,8 +11,6 @@
 #include <term.h>
 #endif
 
-int SGnum = 0;			/* needed by Termcap/Terminfo but... */
-
 #include <signal.h>
 #include <sys/wait.h>	/* need for WNOWAIT */
 

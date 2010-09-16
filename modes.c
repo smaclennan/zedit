@@ -91,7 +91,6 @@ void Initline()
 static void Modeline(wdo)
 WDO *wdo;
 {
-	extern int SGnum;
 	char str[COLMAX + 1];		/* can't use PawStr because of Setmodes */
 	int len;
 
@@ -101,13 +100,13 @@ WDO *wdo;
 	Tprntstr(str);
 	if(wdo->wbuff->fname)
 	{
-		len = (Vars[VLINES].val ? 13 : 3) + SGnum + strlen(str);
+		len = (Vars[VLINES].val ? 13 : 3) + strlen(str);
 		Tprntstr(Limit(wdo->wbuff->fname, len));
 	}
-	wdo->modecol = Tgetcol() + SGnum;
+	wdo->modecol = Tgetcol();
 
 	/* space pad the line */
-	for(len = Tmaxcol() - Tgetcol() - SGnum - SGnum; len > 0; --len)
+	for(len = Tmaxcol() - Tgetcol(); len > 0; --len)
 		Tprntchar(' ');
 	Tstyle(T_NORMAL);
 }

@@ -60,10 +60,12 @@ void TIinit()
 	char *n;
 	int rc, i;
 
-	if (DBG && N_KEYS != NUMKEYS - TC_UP) {
+#if DBG
+	if (N_KEYS != NUMKEYS - TC_UP) {
 		printf("Mismatch N_KEYS %d NUMKEYS %d\n", N_KEYS, NUMKEYS - TC_UP);
 		exit(1);
 	}
+#endif
 
 	if((Term = getenv("TERM")) == NULL) {
 		printf("FATAL ERROR: environment variable TERM not set.\n");

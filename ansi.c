@@ -52,16 +52,16 @@ void TIinit()
 
 	Term = "ansi";
 
-	if (DBG && N_KEYS != NUMKEYS - TC_UP) {
+#if DBG
+	if (N_KEYS != NUMKEYS - TC_UP) {
 		printf("Mismatch N_KEYS %d NUMKEYS %d\n", N_KEYS, NUMKEYS - TC_UP);
 		exit(1);
 	}
+#endif
 
 	for(i = 0; i < sizeof(Tkeys) / sizeof(struct key_array); ++i)
 		if(Tkeys[i].key)
 			Key_mask |= 1 << i;
-
-	printf("Key_mask %x\n", Key_mask);
 }
 
 

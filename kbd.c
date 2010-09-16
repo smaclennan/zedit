@@ -6,6 +6,7 @@
  *																			*
  ****************************************************************************/
 #include "z.h"
+#include <poll.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include "keys.h"
@@ -76,7 +77,7 @@ int Tgetcmd()
 static Byte cstack[CSTACK];
 static int cptr = -1;
 int cpushed = 0;	/* needed in z.c */
-static Boolean Pending = FALSE;
+static int Pending = FALSE;
 
 
 Byte Tgetkb()
@@ -108,11 +109,24 @@ void Tungetkb()
 
 int Tkbrdy()
 {
+#if LINUX
+	static struct pollfd stdin_fd = {
+		.fd = 1,
+		.events = POLLIN
+	};
+
+	if (Mstate == INMACRO || cpushed || Pending)
+		return TRUE;
+
+	Pending = poll(&stdin_fd, 1, 0);
+	return Pending;
+#else
 	static struct timeval poll = {0,0};
 	int fds = 1;
 
 	return(Mstate == INMACRO || cpushed ||
 		(Pending ? Pending :
 			(Pending = select(1, (fd_set *)&fds, NULL, NULL, &poll))));
+#endif
 }
 #endif /* !XWINDOWS */

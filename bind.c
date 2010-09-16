@@ -170,34 +170,42 @@ void Bind()
 	Keys[ 256 + '^' ] = ZGROWWINDOW;						/* C-X ^ */
 
 #if TERMINFO || ANSI
-	/* special keys - termcap a subset of all others */
-	Keys[ TC_UP ]	= ZPREVLINE;
-	Keys[ TC_DOWN ]	= ZNEXTLINE;
-	Keys[ TC_LEFT ]	= ZPREVCHAR;
-	Keys[ TC_RIGHT ]= ZNEXTCHAR;
-	Keys[ TC_HOME ]	= ZBEGLINE;
-	Keys[ TC_BACK ]	= ZRDELCHAR;
-	Keys[ TC_F0 ]	= ZFINDFILE;
-	Keys[ TC_F1 ]	= ZSEARCH;
-	Keys[ TC_F2 ]	= ZSWITCHTO;
-	Keys[ TC_F3 ]	= ZAGAIN;
-	Keys[ TC_F4 ]	= ZNEXTERR;
-	Keys[ TC_F5 ]	= ZSETBOOKMRK;
-	Keys[ TC_F6 ]	= ZNXTBOOKMRK;
-	Keys[ TC_F7 ]	= ZMAKE;
-	Keys[ TC_F8 ]	= ZGREP;
-	Keys[ TC_F9 ]	= ZEXIT;
-	/* Keys[ TC_F10 ] = ; */
-	/* Keys[ TC_F11 ] = ; */
-	Keys[ TC_F12 ]  = ZEDITFILE;
-	Keys[ TC_END ]  = ZENDLINE;
-	Keys[ TC_NPAGE ]= ZNEXTPAGE;
-	Keys[ TC_PPAGE ]= ZPREVPAGE;
-	Keys[ TC_INSERT ]=ZOVERIN;
-	Keys[ TC_DELETE ]=ZDELCHAR;
-	Keys[ TC_HELP ] = ZHELP;
-	Keys[ TC_S_RIGHT ] = ZFWORD;
-	Keys[ TC_S_LEFT ] = ZBWORD;
+	Keys[TC_UP]	= ZPREVLINE;
+	Keys[TC_C_UP]	= ZPREVPAGE;
+
+	Keys[TC_DOWN]	= ZNEXTLINE;
+	Keys[TC_C_DOWN]	= ZNEXTPAGE;
+
+	Keys[TC_LEFT]	= ZPREVCHAR;
+	Keys[TC_C_LEFT]	= ZBWORD;
+
+	Keys[TC_RIGHT]	= ZNEXTCHAR;
+	Keys[TC_C_RIGHT]= ZFWORD;
+
+	Keys[TC_HOME]	= ZBEGLINE;
+	Keys[TC_C_HOME]	= ZTOSTART;
+
+	Keys[TC_END]	= ZENDLINE;
+	Keys[TC_C_END]	= ZTOEND;
+
+	Keys[TC_BACK]	= ZRDELCHAR;
+	Keys[TC_NPAGE]	= ZNEXTPAGE;
+	Keys[TC_PPAGE]	= ZPREVPAGE;
+	Keys[TC_INSERT]	= ZOVERIN;
+	Keys[TC_DELETE]	= ZDELCHAR;
+
+	Keys[TC_F1]	= ZFINDFILE;
+	Keys[TC_F2]	= ZSEARCH;
+	Keys[TC_F3]	= ZSWITCHTO;
+	Keys[TC_F4]	= ZAGAIN;
+	Keys[TC_F5]	= ZNEXTERR;
+	Keys[TC_F6]	= ZSETBOOKMRK;
+	Keys[TC_F7]	= ZNXTBOOKMRK;
+	Keys[TC_F8]	= ZMAKE;
+	Keys[TC_F9]	= ZGREP;
+	Keys[TC_F10]	= ZEXIT;
+	/* Keys[TC_F11] = ; */
+	Keys[TC_F12]	= ZEDITFILE;
 #endif
 
 #if XWINDOWS
@@ -257,43 +265,9 @@ void Bind()
  	Keys[ZXK_F7]		= ZMAKE;
  	Keys[ZXK_F8]		= ZGREP;
 /* 	Keys[ZXK_F9]		= ; */
-// SAM 	Keys[ZXK_F10]		= ZTAG;
-#ifdef sun
-/* 	Keys[ZXK_F11]		= ; This is not the F11 key! */
- 	Keys[ZXK_F12]		= ZAGAIN;			/* Again */
- 	Keys[ZXK_F13]		= ZSETAVAR;			/* Props */
-/* 	Keys[ZXK_F14]		= ; */
- 	Keys[ZXK_F15]		= ZSETMRK;			/* Front mapped to Enter */
- 	Keys[ZXK_F16]		= ZCOPYRGN;			/* Copy */
-/* 	Keys[ZXK_F17]		= ; */
- 	Keys[ZXK_F18]		= ZYANK;			/* Paste */
-	Keys[ZXK_F19]		= ZSEARCH;			/* Find */
- 	Keys[ZXK_F20]		= ZDELRGN;			/* Cut */
-/* 	Keys[ZXK_F21]		= ; */
-/* 	Keys[ZXK_F22]		= ; */
-/* 	Keys[ZXK_F23]		= ; */
-/* 	Keys[ZXK_F24]		= ; */
-/* 	Keys[ZXK_F25]		= ; */
-/* 	Keys[ZXK_F26]		= ; */
-	Keys[ZXK_F27]		= ZTOSTART;			/* Keypad Home */
-/* 	Keys[ZXK_F28]		= ; */
- 	Keys[ZXK_F29]		= ZPREVPAGE;		/* Keypad PgUp */
-/* 	Keys[ZXK_F30]		= ; */
-/* 	Keys[ZXK_F31]		= ; */
-/* 	Keys[ZXK_F32]		= ; */
- 	Keys[ZXK_F33]		= ZTOEND;			/* Keypad End */
-/* 	Keys[ZXK_F34]		= ; */
- 	Keys[ZXK_F35]		= ZNEXTPAGE;		/* Keypad PgDn */
-#endif
+/* 	Keys[ZXK_F10]		= ; */
+/* 	Keys[ZXK_F11]		= ; */
+/* 	Keys[ZXK_F12]		= ; */
 #endif
 
-#if VT100
-	Keys[ KP_ENTER	] = ZEXIT;
-	Keys[ K_PREV	] = ZPREVPAGE;
-	Keys[ K_NEXT	] = ZNEXTPAGE;
-	Keys[ K_INSERT	] = ZOVERIN;
-	Keys[ K_FIND	] = ZBEGLINE;
-	Keys[ K_SELECT	] = ZENDLINE;
-	Keys[ K_REMOVE	] = ZDELCHAR;
-#endif
 }

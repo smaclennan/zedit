@@ -15,8 +15,6 @@
 	This file contains the keyboard input routines.
 	The only routines accessed outside of this routine are Tgetcmd and
 	the macro Pushcmd.
-
-	Special code can be conditionally compiled in for the VT100.
 */
 
 unsigned Cmdpushed = 0, Cmdstack[ 10 ];	/* stack and vars for T[un]getcmd */

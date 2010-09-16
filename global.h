@@ -59,11 +59,4 @@ typedef unsigned Word;
 typedef unsigned long ulong;
 #endif
 
-#ifdef __sun__y
-/* These are not defined with Solaris */
-char *strdup ARGS((char *));
-int strcasecmp  ARGS((const char *, const char *));
-int strncasecmp ARGS((const char *, const char *, size_t));
-#endif
-
 void Dbg ARGS((char *fmt, ...));

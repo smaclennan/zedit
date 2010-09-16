@@ -17,29 +17,33 @@ struct key_array Tkeys[] =
 	{ "\033[C",	"right" },
 	{ "\033[D",	"left" },
 	{ "\033[7~",	"home" },
-	{ NULL,		"back" }, /* SAM ? */
+	{ NULL,		"back" },
 	{ "\033[11~",	"f1" },
 	{ "\033[12~",	"f2" },
 	{ "\033[13~",	"f3" },
 	{ "\033[14~",	"f4" },
 	{ "\033[15~",	"f5" },
 	{ "\033[16~",	"f6" },
-	{ "\033[17~",	"f7" }, /* SAM */
+	{ "\033[17~",	"f7" },
 	{ "\033[18~",	"f8" },
 	{ "\033[19~",	"f9" },
 	{ "\033[20~",	"f10" },
 	{ "\033[21~",	"f11" },
 	{ "\033[22~",	"f12" },
-	{ NULL,		"f13" },
 	{ "\033[8~",	"end" },
 	{ "\033[6~",	"page down" },
 	{ "\033[5~",	"page up" },
 	{ "\033[2~",	"insert" },
 	{ "\033[3~",	"delete" },
-	{ NULL,		"help" },
-	{ NULL,		"S-right" },
-	{ NULL,		"S-left" }
+
+	{ "\033Oa",	"C-up" },
+	{ "\033Ob",	"C-down" },
+	{ "\033Oc",	"C-right" },
+	{ "\033Od",	"C-left" },
+	{ "\033[7^",	"C-home" },
+	{ "\033[8^",	"C-end" },
 };
+#define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
 
 void TIinit()
@@ -47,6 +51,11 @@ void TIinit()
 	int i;
 
 	Term = "ansi";
+
+	if (DBG && N_KEYS != NUMKEYS - TC_UP) {
+		printf("Mismatch N_KEYS %d NUMKEYS %d\n", N_KEYS, NUMKEYS - TC_UP);
+		exit(1);
+	}
 
 	for(i = 0; i < sizeof(Tkeys) / sizeof(struct key_array); ++i)
 		if(Tkeys[i].key)

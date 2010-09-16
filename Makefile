@@ -1,11 +1,11 @@
 .PHONY: all clean zedit xzedit zedit3d
 
-ZEXE=ze
+ZEXE = ze
 CC ?= gcc
-CFLAGS=-O3 -Wall -g $(CDEFS)
-MFLAGS+=-rR --no-print-directory
+CFLAGS += -O3 -Wall -g $(CDEFS)
+MFLAGS += -rR --no-print-directory
 
-#LIBS=-lncurses
+LIBS=-lncurses
 
 FILES=	$D/bcmds.o $D/bind.o $D/bind2.o $D/bindings.o \
 	$D/buff.o $D/calc.o $D/comms.o $D/comms1.o \
@@ -55,6 +55,10 @@ quiet_cmd_link = LD $@
 cmd_link = $(CC) -o $@ $+ $(LIBS)
 do_link = @$(call echo-cmd,link) $(cmd_link)
 
+quiet_cmd_strip = STRIP $@
+cmd_strip = $(CROSS_COMPILE)strip $@
+do_strip = @$(call echo-cmd,strip) $(cmd_strip)
+
 # No quiet for tags
 cmd_tags = etags $+
 do_tags =  @$(call echo-cmd,tags) $(cmd_tags)
@@ -92,6 +96,7 @@ zedit3d:
 
 $(ZEXE): $(FILES)
 	$(do_link)
+	$(do_strip)
 
 x$(ZEXE): $(FILES) $(XFILES)
 	$(CC) $(CFLAGS) -o x$(ZEXE) $(FILES) $(XFILES) $(LIBS)

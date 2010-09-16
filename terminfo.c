@@ -38,16 +38,21 @@ struct key_array Tkeys[] =
 	{ NULL,		"kf9" },
 	{ NULL,		"kf10" },
 	{ NULL,		"kf11" },
-	{ NULL,		"kf12" },
 	{ NULL,		"kend" },
 	{ NULL,		"knp" },
 	{ NULL,		"kpp" },
 	{ NULL,		"kich1" },
 	{ NULL,		"kdch1" },
-	{ NULL,		"khlp" },
-	{ NULL,		"kRIT" },
-	{ NULL,		"kLFT" }
+
+	/* Hack the ctrl versions since they are not in the terminfo */
+	{ "\033Oa",	"C-up" },
+	{ "\033Ob",	"C-down" },
+	{ "\033Oc",	"C-right" },
+	{ "\033Od",	"C-left" },
+	{ "\033[7^",	"C-home" },
+	{ "\033[8^",	"C-end" },
 };
+#define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
 
 void TIinit()
@@ -57,8 +62,12 @@ void TIinit()
 	char *n;
 	int rc, i;
 
-	if((Term = getenv("TERM")) == NULL)
-	{
+	if (DBG && N_KEYS != NUMKEYS - TC_UP) {
+		printf("Mismatch N_KEYS %d NUMKEYS %d\n", N_KEYS, NUMKEYS - TC_UP);
+		exit(1);
+	}
+
+	if((Term = getenv("TERM")) == NULL) {
 		printf("FATAL ERROR: environment variable TERM not set.\n");
 		exit(1);
 	}
@@ -120,20 +129,11 @@ void TIinit()
 	Tkeys[15].key = key_f9;
 	Tkeys[16].key = key_f10;
 	Tkeys[17].key = key_f11;
-	Tkeys[18].key = key_f12;
-	Tkeys[19].key = key_end;
-	Tkeys[20].key = key_npage;
-	Tkeys[21].key = key_ppage;
-	Tkeys[22].key = key_ic;
-	Tkeys[23].key = key_dc;
-#ifdef key_help
-	/* some machines (eg. sun) have this
-	 * and some (eg hp9000) don't.
-	 */
-	Tkeys[24].key = key_help;
-#endif
-	Tkeys[25].key = key_sright;
-	Tkeys[26].key = key_sleft;
+	Tkeys[18].key = key_end;
+	Tkeys[19].key = key_npage;
+	Tkeys[20].key = key_ppage;
+	Tkeys[21].key = key_ic;
+	Tkeys[22].key = key_dc;
 
 	for(i = 0; i <= 24; ++i)
 		if(Tkeys[i].key && *Tkeys[i].key)

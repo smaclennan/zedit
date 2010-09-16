@@ -169,7 +169,7 @@ void Bind()
 	Keys[ 256 + 'Z' ] = Keys[ 256 + 'z' ] = ZEXIT;			/* C-X Z */
 	Keys[ 256 + '^' ] = ZGROWWINDOW;						/* C-X ^ */
 
-#if TERMINFO
+#if TERMINFO || ANSI
 	/* special keys - termcap a subset of all others */
 	Keys[ TC_UP ]	= ZPREVLINE;
 	Keys[ TC_DOWN ]	= ZNEXTLINE;

@@ -74,7 +74,7 @@ void Tinit()
 {
 	extern Boolean Exitflag;
 
-#if TERMINFO
+#if TERMINFO || ANSI
 	/* Initialize from the Terminfo database. Do this first - it may exit */
 	TIinit();
 #endif
@@ -165,21 +165,21 @@ void Tfini()
 		Tgoto(Rowmax - 1, 0);
 	}
 	Tflush();
-#if TERMINFO
+#if TERMINFO || ANSI
 	TIfini();
 #endif
 }
 
 void Tbell()
 {
-#if TERMINFO
-	if (Vars[VVISBELL].val && flash_screen) {
+#if TERMINFO || ANSI
+	if (Vars[VVISBELL].val) {
 #ifdef __linux__
 		fputs("\033[?5h", stdout);
 		fflush(stdout);
 		usleep(100000);
 		fputs("\033[?5l", stdout);
-#else
+#elif TERMINFO
 		TPUTS(flash_screen);
 #endif
 	} else
@@ -376,7 +376,11 @@ void Tforce()
 {
 	if( Scol != Pcol || Srow != Prow )
 	{
+#if TERMINFO
 		TPUTS(tparm(cursor_address, Prow, Pcol));
+#else
+		printf("\033[%d;%dH", Prow, Pcol);
+#endif
 		Srow = Prow;
 		Scol = Pcol;
 	}
@@ -388,7 +392,11 @@ void Tcleol()
 	if( Pcol < Clrcol[Prow] )
 	{
 		Tforce();
+#if TERMINFO
 		TPUTS(clr_eol);
+#else
+		TPUTS("\033[K");
+#endif
 		Clrcol[ Prow ] = Pcol;
 	}
 }
@@ -396,7 +404,11 @@ void Tcleol()
 
 void Tclrwind()
 {
+#if TERMINFO
 	TPUTS(clear_screen);
+#else
+	TPUTS("\033[2J");
+#endif
 	memset( Clrcol, 0, ROWMAX );
 	Prow = Pcol = 0;
 	Tflush();

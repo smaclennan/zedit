@@ -5,7 +5,7 @@ CC ?= gcc
 CFLAGS=-O3 -Wall -g $(CDEFS)
 MFLAGS+=-rR --no-print-directory
 
-LIBS=-lncurses
+#LIBS=-lncurses
 
 FILES=	$D/bcmds.o $D/bind.o $D/bind2.o $D/bindings.o \
 	$D/buff.o $D/calc.o $D/comms.o $D/comms1.o \
@@ -16,7 +16,7 @@ FILES=	$D/bcmds.o $D/bind.o $D/bind2.o $D/bindings.o \
 	$D/tags.o $D/term.o $D/terminfo.o \
 	$D/unix.o $D/vars.o $D/window.o $D/z.o \
 	$D/getfname.o $D/mbuff.o $D/spell.o $D/make.o \
-	$D/comment.o $D/undo.o
+	$D/comment.o $D/undo.o $D/ansi.o
 
 XFILES= $D/xinit.o $D/xwind.o \
 	$D/xpopup.o $D/xscroll.o $D/socket.o \
@@ -74,7 +74,7 @@ $D/%.o : X/%.c
 all:	zedit TAGS
 
 zedit:
-	@$(MAKE) $(MFLAGS) "D=zos" "LIBS=-lncurses" $(ZEXE)
+	@$(MAKE) $(MFLAGS) "D=zos" $(ZEXE)
 
 xzedit:
 	@$(MAKE) $(MFLAGS) \
@@ -99,8 +99,8 @@ x$(ZEXE): $(FILES) $(XFILES)
 x3d$(ZEXE): $(FILES) $(XFILES) $(X3DFILES)
 	$(CC) $(CFLAGS) -o x3d$(ZEXE) $(FILES) $(XFILES) $(X3DFILES) $(LIBS)
 
-xkey:	xkey.c
-	$(CC) -Wall -o xkey xkey.c -L/usr/X11R6/lib -lX11
+xkey:	X/xkey.c
+	$(CC) -Wall -o xkey X/xkey.c -L/usr/X11R6/lib -lX11
 
 zfont:	X/zfont.c
 	$(CC) -Wall -o zfont X/zfont.c -L/usr/X11R6/lib -lX11

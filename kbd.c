@@ -29,11 +29,13 @@ int Tgetcmd()
 	int i, j, mask;
 	int cmd;
 
-	if( Cmdpushed ) return( Popcmd() );
+	if (Cmdpushed)
+		return Popcmd();
 	do { /* try to match one of the termcap key entries */
 		mask = Key_mask;
 		for(j = 0; mask; ++j) {
 			cmd = Tgetkb() & 0x7f;
+			Dbg("%02x mask %x\n", cmd, mask); // SAM DBG
 			for( i = 0; i < NUMKEYS - SPECIAL_START; ++i )
 				if( (mask & (1 << i)) && cmd == Tkeys[i].key[j] ) {
 					if( Tkeys[i].key[j + 1] == '\0' )

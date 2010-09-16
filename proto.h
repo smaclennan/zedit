@@ -390,7 +390,7 @@ void Hangup ARGS((int));
 /* Terminal driver specific routines */
 
 
-#if TERMINFO
+#if TERMINFO || ANSI
 void TIinit NOARGS;
 void TIfini NOARGS;
 #endif

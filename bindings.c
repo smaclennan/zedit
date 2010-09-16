@@ -186,7 +186,7 @@ FILE *fp;
 static char *BindFname(fname)
 char *fname;
 {
-#if TERMINFO
+#if TERMINFO || ANSI
 	extern char *Term;
 	sprintf(fname, ".zb.%s", Term);
 #elif XWINDOWS

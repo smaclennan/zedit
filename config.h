@@ -16,9 +16,11 @@
 /* SCREEN DRIVER */
 #ifdef XWINDOWS
 #define TERMINFO	0		/* don't change this one */
+#define ANSI		0		/* don't change this one */
 #else
 #define XWINDOWS	0
-#define TERMINFO	1		/* set terminfo here */
+#define TERMINFO	0		/* set terminfo here */
+#define ANSI		1
 #endif
 
 /* USER CONFIGURABLE - don't define any, see if I care */

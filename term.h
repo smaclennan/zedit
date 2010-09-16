@@ -28,7 +28,11 @@ int _putchar ARGS((int));
 int _putchar ARGS((char));
 #endif
 
+#if TERMINFO
 #define TPUTS(s)		tputs(s, 1, _putchar)
+#elif ANSI
+#define TPUTS(s)		fputs(s, stdout)
+#endif
 
 #define Tsetpoint(r, c)		(Prow = r, Pcol = c)
 #define Tgetrow()			Prow

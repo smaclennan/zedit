@@ -379,7 +379,7 @@ void Tforce()
 #if TERMINFO
 		TPUTS(tparm(cursor_address, Prow, Pcol));
 #else
-		printf("\033[%d;%dH", Prow, Pcol);
+		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
 #endif
 		Srow = Prow;
 		Scol = Pcol;

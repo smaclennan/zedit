@@ -96,7 +96,7 @@ zedit3d:
 
 $(ZEXE): $(FILES)
 	$(do_link)
-	$(do_strip)
+#	$(do_strip)
 
 x$(ZEXE): $(FILES) $(XFILES)
 	$(CC) $(CFLAGS) -o x$(ZEXE) $(FILES) $(XFILES) $(LIBS)

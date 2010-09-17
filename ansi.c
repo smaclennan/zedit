@@ -74,8 +74,8 @@ int *rows, *cols;
 	int n;
 #endif
 
-	*rows = 30;
-	*cols = 80;
+	/* If no resize... let Termsize default it */
+	*rows = *cols = 0;
 
 #if HAS_RESIZE
 	if((fp = popen("resize -u", "r")))

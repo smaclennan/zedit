@@ -241,7 +241,6 @@ char *Findfirst ARGS((char*));
 char *Findnext NOARGS;
 FILE *Findhelp ARGS((int, int, char *));
 int Findpath ARGS((char*, char*, int, Boolean));
-Boolean Findstart NOARGS;
 WDO *Findwdo ARGS((Buffer *));
 int Forcecol NOARGS;
 void Freelist ARGS((struct llist**));
@@ -303,9 +302,7 @@ void Pntmove ARGS((int, int));
 void Pout ARGS((char *, Boolean));
 void Pset ARGS((int, int, int));
 int Prefline NOARGS;
-Boolean Promptsave ARGS((Buffer*, Boolean));
 void PutPaw ARGS((char*, int));
-void Quit NOARGS;
 /* SAM Boolean ReadFile ARGS((char *bname, char *path)); */
 void ReadVfile NOARGS;
 Boolean Readone ARGS((char*, char*));

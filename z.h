@@ -200,6 +200,10 @@ extern char Lbufname[];
 extern struct avar Vars[];
 extern Buffer *Bufflist, *Paw;
 extern Mark *Sstart, *Psstart, *Send, *REstart;
+extern Mark Scrnmarks[];
+
+extern Boolean Exitflag;
+extern Boolean Insearch;
 
 extern char **Bnames;
 extern int Numbuffs;
@@ -208,6 +212,7 @@ extern unsigned Nextpart;
 extern Proc (*Vcmds[])(), (*Pawcmds[])();
 extern struct cnames Cnames[];
 
+extern char Calc_str[];
 
 #define Stricmp				strcasecmp
 #define Strnicmp			strncasecmp

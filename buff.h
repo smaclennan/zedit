@@ -108,6 +108,7 @@ extern Buffer *Curbuff;
 extern Page *Curpage;
 extern Mark *Mrklist;
 extern WDO *Curwdo, *Whead;
+extern int Curmodf;
 
 #define MRKSIZE		(sizeof(Mark) - (sizeof(Mark *) << 1))
 

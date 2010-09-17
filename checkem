@@ -1,5 +1,7 @@
 #!/bin/sh
 
-for f in *.[ch]; do
+# SAM for f in *.[ch]; do
+echo "Only deal with c files for now..."
+for f in *.c; do
     checkpatch --file $f | fgrep -q "no obvious style problems" || echo "$f"
 done

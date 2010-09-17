@@ -750,8 +750,6 @@ int Tgetcmd()
 	static int PushRow = 0, PushCol = 0;
 	static Time ButtonTime = 0;		/* time of last button click */
 
-	if(Mstate == INMACRO) return *Mptr++;
-
 	/* process events until keypress */
 	ShowCursor(TRUE);	/* only display cursor when waiting */
 
@@ -1141,7 +1139,6 @@ int Tgetcmd()
 	}
 	ShowCursor(FALSE);
 
-	if(Mstate == MCREATE) Addtomacro(Cmd);
 	return Cmd;
 }
 

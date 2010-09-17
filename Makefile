@@ -7,7 +7,7 @@ MFLAGS += -rR --no-print-directory
 
 LIBS=-lncurses
 
-FILES=	$D/bcmds.o $D/bind.o $D/bind2.o $D/bindings.o \
+FILES=	$D/bcmds.o $D/bind.o $D/bindings.o \
 	$D/buff.o $D/calc.o $D/comms.o $D/comms1.o \
 	$D/cursor.o $D/dbg.o $D/delete.o $D/display.o \
 	$D/file.o $D/funcs.o $D/getarg.o $D/global.o \

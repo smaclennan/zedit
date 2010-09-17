@@ -1,133 +1,149 @@
-/****************************************************************************
- *																			*
- *				 The software found in this file is the						*
- *					  Copyright of Sean MacLennan							*
- *						  All rights reserved.								*
- *																			*
- ****************************************************************************/
+/* bindings.c - Zedit binding commands
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "z.h"
 #include "keys.h"
-#include "help.h"
 #include <sys/stat.h>
 
 Byte CRdefault = ZNEWLINE;
-extern Byte Keys[];
 
-Proc Zbind()
+static Boolean Bindfile(char *fname, int mode);
+static Boolean Bindone(char *prompt, int first, int *key);
+
+Proc Zbind(void)
 {
-	extern struct cnames Cnames[];
 	int f, key;
-	
-	if( Argp )
-	{
+
+	if (Argp) {
 		Bind();
 		Arg = 0;
 		return;
 	}
-	f = Getplete("Bind: ", (char *)NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
-	if( f != -1 )
-	{
-		if( Bindone("Key: ", TRUE, &key) )
-		{
-			Keys[ key ] = Cnames[ f ].fnum;
-			if( key == CR ) CRdefault = Keys[ key ];
-		}
-		else
+	f = Getplete("Bind: ", (char *)NULL, (char **)Cnames,
+		     CNAMESIZE, NUMFUNCS);
+	if (f != -1) {
+		if (Bindone("Key: ", TRUE, &key)) {
+			Keys[key] = Cnames[f].fnum;
+			if (key == CR)
+				CRdefault = Keys[key];
+		} else
 			Tbell();
 	}
 	Clrecho();
 }
 
 
-Proc Zkeybind()
+Proc Zkeybind(void)
 {
-	extern Byte Keys[];
-	extern struct cnames Cnames[];
-	char str[ STRMAX ];
+	char str[STRMAX];
 	int rc;
 	unsigned key;
 
 	Arg = 0;
-	Echo( "Key: " );
-	if( (key = Keys[Tgetcmd()]) == ZCTRLX )
-	{
-		Echo( "Key: C-X " );
-		key = Keys[ Tgetcmd() + 256 ];
+	Echo("Key: ");
+	key = Keys[Tgetcmd()];
+	if (key == ZCTRLX) {
+		Echo("Key: C-X ");
+		key = Keys[Tgetcmd() + 256];
+	} else if (key == ZMETA) {
+		Echo("Key: M-");
+		key = Keys[Tgetcmd() + 128];
 	}
-	else if( key == ZMETA )
-	{
-		Echo( "Key: M-" );
-		key = Keys[ Tgetcmd() + 128 ];
-	}
-	if( key == ZNOTIMPL )
-		Echo( "Unbound" );
+
+	if (key == ZNOTIMPL)
+		Echo("Unbound");
 	else
-		for( rc = 0; rc < NUMFUNCS; ++rc )
-			if( Cnames[rc].fnum == key )
-			{
-				sprintf( str, "Bound to %s", Cnames[rc].name );
-				Echo( str );
+		for (rc = 0; rc < NUMFUNCS; ++rc)
+			if (Cnames[rc].fnum == key) {
+				sprintf(str, "Bound to %s", Cnames[rc].name);
+				Echo(str);
 			}
 }
 
-
-Proc Zcmdbind()
+/* Don't display both C-X A and C-X a if bound to same Ditto for Meta */
+static inline Boolean notdup_key(int k)
 {
-	extern struct cnames Cnames[];
+	return ((k < (256 + 'a') || k > (256 + 'z')) &&
+		(k < (128 + 'a') || k > (128 + 'z'))) ||
+		Keys[k] != Keys[k - ('a' - 'A')];
+}
+
+Proc Zcmdbind(void)
+{
 	char line[STRMAX];
 	int f, k, found = 0;
-	
+
 	Arg = 0;
 	*PawStr = '\0';
 	f = Getplete("Command: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
-	if(f != -1)
-	{
-		for(k = 0; k < NUMKEYS; ++k)
-			if(Keys[k] == Cnames[f].fnum)
-				/*
-				 * Don't display both C-X A and C-X a if bound to same
-				 * Ditto for Meta
-				 */
-				if(((k < (256 + 'a') || k > (256 + 'z')) &&
-					(k < (128 + 'a') || k > (128 + 'z'))) ||
-					Keys[k] != Keys[k - ('a' - 'A')])
-				{
-					if(found) strcat(PawStr, " or ");
+	if (f != -1) {
+		for (k = 0; k < NUMKEYS; ++k)
+			if (Keys[k] == Cnames[f].fnum)
+				if (notdup_key(k)) {
+					if (found)
+						strcat(PawStr, " or ");
 					strcat(PawStr, Dispkey(k, line));
-					if(strlen(PawStr) > Colmax) break;
+					if (strlen(PawStr) > Colmax)
+						break;
 					found = TRUE;
 				}
-		if(found)
+		if (found)
 			Echo(PawStr);
 		else
 			Echo("Unbound");
 	}
 }
 
-
-Proc Zdispbinds()
+static void Out(char *line, FILE *fp)
 {
-	extern Proc (*Vcmds[])(), (*Pawcmds[])(), Znotimpl();
-	extern struct cnames Cnames[];
+	if (fp)
+		fputs(line, fp);
+	else
+		Binstr(line);
+}
 
+static void Outto(FILE *fp, int col)
+{
+	int i;
+
+	for (i = Bgetcol(FALSE, 0); i < col; ++i)
+		Out(" ", fp);
+}
+
+Proc Zdispbinds(void)
+{
 	Boolean found;
 	FILE *fp;
-	char line[ STRMAX ];
-	int j, f;
+	char line[STRMAX];
+	int f;
 	unsigned k;
 
-	if(Argp)
-	{
+	if (Argp) {
 		*line = '\0';
-		if(Getarg("Output file: ", line, STRMAX)) return;
-		if((fp = fopen(line, "w")) == NULL)
-		{
+		if (Getarg("Output file: ", line, STRMAX))
+			return;
+		fp = fopen(line, "w");
+		if (fp == NULL) {
 			Echo("Unable to create");
 			return;
 		}
-	}
-	else
-	{
+	} else {
 #ifdef BORDER3D
 		Tbell();
 		return;
@@ -136,58 +152,38 @@ Proc Zdispbinds()
 		WuseOther(LISTBUFF);
 #endif
 	}
-	Echo( "Please Wait..." );
+	Echo("Please Wait...");
 	Out("COMMAND                            PERMS     BINDING\n", fp);
-	for( f = 0; f < NUMFUNCS; ++f )
-		if( Cnames[f].fnum != ZNOTIMPL && Cnames[f].fnum != ZINSERT)
-		{
-			sprintf( line, "%-35s%cw%c       ", Cnames[f].name,
-					 Vcmds[Cnames[f].fnum]   == Znotimpl ? '-' : 'r',
-					 Pawcmds[Cnames[f].fnum] == Znotimpl ? '-' : 'p' );
+	for (f = 0; f < NUMFUNCS; ++f)
+		if (Cnames[f].fnum != ZNOTIMPL && Cnames[f].fnum != ZINSERT) {
+			sprintf(line, "%-35s%cw%c       ", Cnames[f].name,
+				Vcmds[Cnames[f].fnum]   == Znotimpl ? '-' : 'r',
+				Pawcmds[Cnames[f].fnum] == Znotimpl ? '-' : 'p'
+				);
 			Out(line, fp);
 			found = FALSE;
-			for( k = 0; k < NUMKEYS; ++k )
-				if( Keys[k] == Cnames[f].fnum )
-					/*
-					 * Don't display both C-X A and C-X a if bound to same
-					 * Ditto for Meta
-					 */
-					if(((k < (256 + 'a') || k > (256 + 'z')) &&
-						(k < (128 + 'a') || k > (128 + 'z'))) ||
-						Keys[k] != Keys[k - ('a' - 'A')] )
-					{
-						if( found )
-							for(j = Bgetcol(FALSE, 0); j < 45; ++j)
-								Out(" ", fp);
+			for (k = 0; k < NUMKEYS; ++k)
+				if (Keys[k] == Cnames[f].fnum)
+					if (notdup_key(k)) {
+						if (found)
+							Outto(fp, 45);
 						Out(Dispkey(k, line), fp);
 						Out("\n", fp);
 						found = TRUE;
 					}
-			if( !found )
+			if (!found)
 				Out("Unbound\n", fp);
 		}
 	Btostart();
-	if(!fp) Curbuff->bmodf = FALSE;
+	if (!fp)
+		Curbuff->bmodf = FALSE;
 	Clrecho();
 	Arg = 0;
 }
 
-Proc Out(line, fp)
-char *line;
-FILE *fp;
-{
-	if(fp)
-		fputs(line, fp);
-	else
-		Binstr(line);
-}
-
-
-static char *BindFname(fname)
-char *fname;
+static char *BindFname(char *fname)
 {
 #if TERMINFO || ANSI
-	extern char *Term;
 	sprintf(fname, ".zb.%s", Term);
 #elif XWINDOWS
 	strcpy(fname, ".zb.X");
@@ -196,14 +192,14 @@ char *fname;
 #endif
 	return fname;
 }
-	
+
 void Loadbind()
 {
 	char fname[30], path[PATHMAX + 1];
 	int i;
 
 	BindFname(fname);
-	for(i = FINDPATHS; i && (i = Findpath(path, fname, i, TRUE)); --i)
+	for (i = FINDPATHS; i && (i = Findpath(path, fname, i, TRUE)); --i)
 		Bindfile(path, READ_BINARY);
 #if DBG
 	Fcheck();
@@ -222,164 +218,114 @@ Proc Zsavebind()
 	int i, n;
 
 	BindFname(fname);
-	for(n = 0, i = 3; i && (i = Findpath(path, fname, i, TRUE)); --i) n = i;
-	if(n)
+	for (n = 0, i = 3; i && (i = Findpath(path, fname, i, TRUE)); --i)
+		n = i;
+	if (n)
 		Findpath(path, fname, n, TRUE);
 	else
 		sprintf(path, "%s/%s", Me->pw_dir, fname);
-	if(Argp && Getfname("Bind File: ", path)) return;
-	if(Bindfile(path, WRITE_MODE))
-	{
+	if (Argp && Getfname("Bind File: ", path))
+		return;
+	if (Bindfile(path, WRITE_MODE)) {
 		sprintf(PawStr, "%s written.", path);
 		Echo(PawStr);
 	}
 }
 
-#define OLD_WAY
-#ifdef OLD_WAY
-Boolean Bindfile(fname, mode)
-char *fname;
-int mode;
+static Boolean Bindfile(char *fname, int mode)
 {
-	extern int Cmask;
-	char version[ 3 ];
+	char version[3];
 	int fd, modesave, rc = FALSE;
 
-	if( (fd = open(fname, mode, Cmask)) != EOF )
-	{
-		modesave = Curbuff->bmode;		/* set mode to normal !!! */
-		Curbuff->bmode = NORMAL;
-		Curwdo->modeflags = INVALID;
-		if( mode == WRITE_MODE )
-		{
-			write( fd, "01", 2 );
-			if( write(fd, (char *)Keys, 510) != 510 )
-				Error( "Unable to Write Bindings File" );
-			else
-				rc = TRUE;
-		}
-		else
-		{
-			read( fd, version, 2 );
-			if( *version != '0' )
-				Error( "Incompatible Bindings File" );
-			else if( read(fd, (char *)Keys, NUMKEYS) == -1 )
-				Error( "Unable to Read Bindings File" );
-			else
-			{
-				CRdefault = Keys[ CR ];
-				rc = TRUE;
-			}
-		}
-		(void)close( fd );
-		Curbuff->bmode = modesave;
-		Curwdo->modeflags = INVALID;
+	fd = open(fname, mode, Cmask);
+	if (fd == EOF) {
+		if (mode == WRITE_MODE)
+			Error("Unable to Create Bindings File");
+		return FALSE;
 	}
-	else if( mode == WRITE_MODE )
-		Error( "Unable to Create Bindings File" );
-	return( rc );
-}
-#else
-Boolean Bindfile(fname, mode)
-char *fname;
-int mode;
-{
-	extern struct cnames Cnames[];
-	FILE *fp;
-	int modesave, rc = FALSE;
-	int i, j;
 
-	if((fp = fopen(fname, mode == WRITE_MODE ? "w" : "r")) != 0)
-	{
-		modesave = Curbuff->bmode;		/* set mode to normal !!! */
-		Curbuff->bmode = NORMAL;
-		Curwdo->modeflags = INVALID;
-		if( mode == WRITE_MODE )
-		{
-			for(i = 0; i < NUMKEYS; ++i)
-				for(j = 0; j < NUMFUNCS; ++j)
-					if(Keys[i] == Cnames[j].fnum)
-					{
-						fprintf(fp, "%s\t%d\n", Cnames[j].name, i);
-						break;
-					}
+	modesave = Curbuff->bmode;		/* set mode to normal !!! */
+	Curbuff->bmode = NORMAL;
+	Curwdo->modeflags = INVALID;
+	if (mode == WRITE_MODE) {
+		write(fd, "01", 2);
+		if (write(fd, (char *)Keys, 510) != 510)
+			Error("Unable to Write Bindings File");
+		else
+			rc = TRUE;
+	} else {
+		read(fd, version, 2);
+		if (*version != '0')
+			Error("Incompatible Bindings File");
+		else if (read(fd, (char *)Keys, NUMKEYS) == -1)
+			Error("Unable to Read Bindings File");
+		else {
+			CRdefault = Keys[CR];
 			rc = TRUE;
 		}
-		else
-		{
-			char name[40];
-			int key;
-			
-			*name = '?';
-			if(fscanf(fp, "%s\t%d\n", name, &key) == 2)
-			{	/* new way */
-				rewind(fp);
-				while(fscanf(fp, "%s\t%d\n", name, &key) == 2)
-				{
-					for(j = 0; j < NUMFUNCS; ++j)
-						if(strcmp(name, Cnames[j].name) == 0)
-						{
-							Keys[key] = Cnames[j].fnum;
-							break;
-						}
-				}
-				rc = TRUE;
-			}
-			else if(*name == '0')
-			{	/* old way */
-				int fd;
-				
-				if((fd = open(fname, READ_BINARY)) != EOF)
-				{
-					read(fd, name, 2);
-					rc = read(fd, (char *)Keys, NUMKEYS);
-					close(fd);
-					if(rc == -1)
-						Error("Unable to Read Bindings File");
-					else
-					{
-						CRdefault = Keys[CR];
-						rc = TRUE;
-					}
-				}
-			}
-		}
-		fclose(fp);
-		Curbuff->bmode = modesave;
-		Curwdo->modeflags = INVALID;
 	}
-	else if( mode == WRITE_MODE )
-		Error( "Unable to Create Bindings File" );
+
+	(void)close(fd);
+	Curbuff->bmode = modesave;
+	Curwdo->modeflags = INVALID;
+
 	return rc;
 }
-#endif
 
-Boolean Bindone( prompt, first, key )
-char *prompt;
-int first, *key;
-{		
-	extern unsigned Cmd;
-	
-	Echo( prompt );
-	if( Keys[*key = Tgetcmd()] == ZABORT )
-		return( FALSE );
-	else if( Keys[*key] == ZQUOTE )
-	{
+static Boolean Bindone(char *prompt, int first, int *key)
+{
+	Echo(prompt);
+	*key = Tgetcmd();
+	if (Keys[*key] == ZABORT)
+		return FALSE;
+	else if (Keys[*key] == ZQUOTE) {
 		Arg = 0;
 		Zquote();
 		*key = Cmd;
-	}
-	else if( first && Keys[*key] == ZMETA )
-		if( Bindone("Key: M-", FALSE, key) )
+	} else if (first && Keys[*key] == ZMETA)
+		if (Bindone("Key: M-", FALSE, key))
 			*key += 128;
 		else
-			return( FALSE );
-	else if( first && Keys[*key] == ZCTRLX )
-	{
-		if( Bindone("Key: C-X ", FALSE, key) )
+			return FALSE;
+	else if (first && Keys[*key] == ZCTRLX) {
+		if (Bindone("Key: C-X ", FALSE, key))
 			*key += 256;
 		else
-			return( FALSE );
+			return FALSE;
 	}
-	return( TRUE );
+	return TRUE;
+}
+
+char *Dispkey(unsigned key, char *s)
+{
+	char *p;
+	int j;
+
+	*s = '\0';
+#if TERMINFO || ANSI
+	if (key > SPECIAL_START)
+		return strcpy(s, Tkeys[key - SPECIAL_START].label);
+	if (key > 127)
+		strcpy(s, key < 256 ? "M-" : "C-X ");
+#endif
+#if XWINDOWS
+	if (key >= ZXK_START && key < NUMKEYS)
+		return strcpy(s, KeyNames[key - ZXK_START]);
+#endif
+	j = key & 0x7f;
+	if (j == 27)
+		strcat(s, "ESC");
+	else if (j < 32 || j == 127) {
+		strcat(s, "C-");
+		p = s + strlen(s);
+		*p++ = j ^ '@';
+		*p = '\0';
+	} else if (j == 32)
+		strcat(s, "Space");
+	else {
+		p = s + strlen(s);
+		*p++ = j;
+		*p = '\0';
+	}
+	return s;
 }

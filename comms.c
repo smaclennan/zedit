@@ -7,7 +7,6 @@
  ****************************************************************************/
 #include "z.h"
 #include "keys.h"
-#include "help.h"
 
 extern int Curmodf;
 int Arg;

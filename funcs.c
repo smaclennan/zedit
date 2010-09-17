@@ -6,7 +6,6 @@
  *																			*
  ****************************************************************************/
 #include "z.h"
-#include "help.h"
 
 /* the following include file contains the definition of the Cnames array */
 #include "cnames.h"

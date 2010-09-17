@@ -18,6 +18,8 @@ extern int foreground, background;
 extern int border_width, highlight;
 extern int win_width, win_height;
 
+extern char *KeyNames[];
+
 Window CreateWindow ARGS((Window parent, int x, int y, int w, int h, long ev));
 char *GetResource ARGS((char *name, char *class));
 void initSockets ARGS((int xfd));

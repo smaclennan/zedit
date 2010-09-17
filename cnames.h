@@ -5,6 +5,7 @@
  *						  All rights reserved.								*
  *																			*
  ****************************************************************************/
+
 struct cnames Cnames[] = {
 	{"Abort",			ZABORT,			H_MISC},
 	{"Again",			ZAGAIN,			H_SEARCH},

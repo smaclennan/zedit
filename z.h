@@ -147,6 +147,20 @@ extern struct passwd *Me;
 
 #define FORMSTRING	">FIELD<"
 
+/* Help Types */
+#define H_NONE				0
+#define H_MISC				1
+#define H_VAR				2
+#define H_CURSOR			3
+#define H_DELETE			4
+#define H_SEARCH			5
+#define H_FILE				6
+#define H_BUFF				7
+#define H_DISP				8
+#define H_MODE				9
+#define H_HELP				10
+#define H_BIND				11
+#define H_SHELL				12
 
 /* GENERAL STRUCTURE DEFS */
 
@@ -156,6 +170,13 @@ struct llist {
 	struct llist *prev, *next;
 };
 
+struct cnames
+{
+	char *name;
+	Short fnum;
+	Short htype;
+};
+#define CNAMESIZE			sizeof( struct cnames )
 
 extern Boolean Argp;
 extern int Arg;				/* must be signed */
@@ -163,6 +184,7 @@ extern Boolean InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
 
 extern int Cmask;
+extern unsigned Cmd;
 
 extern Proc (**Funcs)();
 extern Byte Keys[], Lfunc;
@@ -182,6 +204,9 @@ extern Mark *Sstart, *Psstart, *Send, *REstart;
 extern char **Bnames;
 extern int Numbuffs;
 extern unsigned Nextpart;
+
+extern Proc (*Vcmds[])(), (*Pawcmds[])();
+extern struct cnames Cnames[];
 
 
 #define Stricmp				strcasecmp

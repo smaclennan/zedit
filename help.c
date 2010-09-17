@@ -6,8 +6,6 @@
  *																			*
  ****************************************************************************/
 #include "z.h"
-#include "help.h"
-
 #include "keys.h"
 
 extern struct cnames Cnames[];

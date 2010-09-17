@@ -60,6 +60,21 @@ static char zedit_bits[] = {
 #include "xwind.h"
 #include "../keys.h"
 
+#if XWINDOWS
+char *KeyNames[] = {
+	"Home", "Left", "Up", "Right", "Down", "Prior",
+	"Next", "End", "Begin", "Select", "Print", "Execute",
+	"Insert", "???", "Undo", "Redo", "Menu", "Find",
+ 	"Cancel", "Help", "Break",
+	"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9",
+ 	"F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17",
+	"F18", "F19", "F20", "F21", "F22", "F23", "F24", "F25",
+	"F26", "F27", "F28", "F29", "F30", "F31", "F32", "F33",
+ 	"F34", "F35", "Ctrl Home","Ctrl Left","Ctrl Up", "Ctrl Right",
+ 	"Ctrl Down","Ctrl Prior", "Ctrl Next","Ctrl End",	"Ctrl Begin"
+};
+#endif
+
 #define DOUBLE_CLICK		500		/* 1/2 second */
 
 void processpipe ARGS((XClientMessageEvent *event));

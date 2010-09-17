@@ -413,15 +413,10 @@ void Tclrwind()
 }
 
 /* for tputs this must be a function */
-#ifdef __STDC__
 #if LINUX
 int _putchar(int ch)
 #else
 int _putchar(char ch)
-#endif
-#else
-int _putchar(ch)
-char ch;
 #endif
 {
 	putchar(ch);

@@ -12,7 +12,7 @@
 #include <sys/dir.h>
 #endif
 
-LLIST *Flist = NULL;
+struct llist *Flist = NULL;
 Boolean Didmatch = FALSE;
 
 
@@ -80,7 +80,7 @@ Proc Zfname()
 {
 	extern int Pawlen;
 	Boolean update;
-	LLIST *list;
+	struct llist *list;
 	char txt[ PATHMAX + 1 ], *fname, *match = NULL;
 	int len, n = 0, f = 0, rc;
 
@@ -117,7 +117,7 @@ Proc Zfname()
 
 Proc Zmatch()
 {
-	LLIST *list;
+	struct llist *list;
 	char dir[PATHMAX + 1], *fname, *p;
 	int row, col, len;
 
@@ -159,7 +159,7 @@ Proc Zmatch()
 }
 
 
-LLIST *GetFill( dir, fname, len, update )
+struct llist *GetFill( dir, fname, len, update )
 char *dir, **fname;
 int *len;
 Boolean *update;
@@ -195,7 +195,7 @@ Boolean *update;
 
 #define OBJEXT		".o"
 
-LLIST *Fill_list( dir )
+struct llist *Fill_list( dir )
 char *dir;
 {
 	static char savedir[ PATHMAX + 1 ];
@@ -241,13 +241,13 @@ char *s1, *s2;
 }
 
 
-LLIST *Add( list, fname )
-LLIST **list;
+struct llist *Add( list, fname )
+struct llist **list;
 char *fname;
 {
-	LLIST *new, *l;
+	struct llist *new, *l;
 
-	if((new = (LLIST *)malloc(sizeof(LLIST))))
+	if((new = (struct llist *)malloc(sizeof(struct llist))))
 	{
 		strcpy( new->fname, fname );
 		if( *list == NULL || strcmp(fname, (*list)->fname) < 0 )
@@ -272,9 +272,9 @@ char *fname;
 
 
 void Freelist( list )
-LLIST **list;
+struct llist **list;
 {
-	LLIST *next;
+	struct llist *next;
 
 	while( *list )
 	{

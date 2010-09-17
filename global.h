@@ -7,18 +7,11 @@
  ****************************************************************************/
 
 /* types */
-#ifdef __STDC__
 /* assume ansi compilers can handle void ... */
 typedef void Proc;
 #define ARGS(x)		x
 #define NOARGS		(void)
 #define ZPROC(x)	Proc x (void);
-#else
-typedef int Proc;
-#define ARGS(x)		()
-#define NOARGS		()
-#define ZPROC(x)	Proc x ();
-#endif
 
 #include <string.h>
 #include <memory.h>

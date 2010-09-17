@@ -1,17 +1,28 @@
-/****************************************************************************
- *																			*
- *				 The software found in this file is the						*
- *					  Copyright of Sean MacLennan							*
- *						  All rights reserved.								*
- *																			*
- ****************************************************************************/
+/* ansi.c - low level ansi terminal interface
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "z.h"
 
 #if ANSI
 #include "keys.h"
 
-struct key_array Tkeys[] =
-{
+struct key_array Tkeys[] = {
 	{ "\033[A",	"up" },
 	{ "\033[B",	"down" },
 	{ "\033[C",	"right" },
@@ -46,7 +57,7 @@ struct key_array Tkeys[] =
 #define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
 
-void TIinit()
+void TIinit(void)
 {
 	int i;
 
@@ -54,19 +65,18 @@ void TIinit()
 
 #if DBG
 	if (N_KEYS != NUMKEYS - TC_UP) {
-		printf("Mismatch N_KEYS %d NUMKEYS %d\n", N_KEYS, NUMKEYS - TC_UP);
+		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
+		       N_KEYS, NUMKEYS - TC_UP);
 		exit(1);
 	}
 #endif
 
-	for(i = 0; i < sizeof(Tkeys) / sizeof(struct key_array); ++i)
-		if(Tkeys[i].key)
+	for (i = 0; i < N_KEYS; ++i)
+		if (Tkeys[i].key)
 			Key_mask |= 1 << i;
 }
 
-
-void Tsize(rows, cols)
-int *rows, *cols;
+void Tsize(int *rows, int *cols)
 {
 #if HAS_RESIZE
 	FILE *fp;
@@ -78,13 +88,13 @@ int *rows, *cols;
 	*rows = *cols = 0;
 
 #if HAS_RESIZE
-	if((fp = popen("resize -u", "r")))
-	{
-		while(fgets(buf, sizeof(buf), fp))
-			if(sscanf(buf, "%[^=]=%d;\n", name, &n) == 2) {
-				if(strcmp(name, "COLUMNS") == 0)
+	fp = popen("resize -u", "r");
+	if (fp) {
+		while (fgets(buf, sizeof(buf), fp))
+			if (sscanf(buf, "%[^=]=%d;\n", name, &n) == 2) {
+				if (strcmp(name, "COLUMNS") == 0)
 					*cols = n;
-				else if(strcmp(name, "LINES") == 0)
+				else if (strcmp(name, "LINES") == 0)
 					*rows = n;
 			}
 		pclose(fp);
@@ -93,7 +103,7 @@ int *rows, *cols;
 }
 
 
-void TIfini()
+void TIfini(void)
 {
 #if COMMENTBOLD
 	Tstyle(T_NORMAL);
@@ -105,20 +115,29 @@ void Tstyle(int style)
 {
 	static int cur_style = -1;
 
-	if(style == cur_style) return;
+	if (style == cur_style)
+		return;
 
-	switch(cur_style = style) {
+	switch (cur_style = style) {
 #if COMMENTBOLD
-	case T_NORMAL: TPUTS("\033[0;30m"); break; /* black */
-	case T_COMMENT: TPUTS("\033[31m"); break; /* red */
-	case T_CPP: TPUTS("\033[32m"); break; /* green */
-	case T_CPPIF: TPUTS("\033[35m"); break; /* magenta */
+	case T_NORMAL:
+		TPUTS("\033[0;30m"); break; /* black */
+	case T_COMMENT:
+		TPUTS("\033[31m"); break; /* red */
+	case T_CPP:
+		TPUTS("\033[32m"); break; /* green */
+	case T_CPPIF:
+		TPUTS("\033[35m"); break; /* magenta */
 #else
-	case T_NORMAL:		TPUTS("\033[0m"); break;
+	case T_NORMAL:
+		TPUTS("\033[0m"); break;
 #endif
-	case T_STANDOUT:	TPUTS("\033[7m");	break;
-	case T_REVERSE:		TPUTS("\033[7m");	break;
-	case T_BOLD:		TPUTS("\033[1m");	break;
+	case T_STANDOUT:
+		TPUTS("\033[7m"); break;
+	case T_REVERSE:
+		TPUTS("\033[7m"); break;
+	case T_BOLD:
+		TPUTS("\033[1m"); break;
 	}
 	fflush(stdout);
 }

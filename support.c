@@ -476,21 +476,6 @@ void NoMem()
 }
 
 
-#ifndef __STDC__
-int Strnicmp( s, t, n )
-char *s, *t;
-int n;
-{
-	int i;
-	
-	for( i = 1; Tolower(*s) == Tolower(*t); ++s, ++t, ++i )
-		if( *s == '\0' || i == n )
-			return( 0 );
-	return( Tolower(*s) - Tolower(*t) );
-
-}
-#endif
-
 /* Find first occurance in str1 of str2. NULL if not found.
  * Case insensitive!
  */

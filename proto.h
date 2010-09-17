@@ -45,11 +45,9 @@ ZPROC(Zdelwhite)
 ZPROC(Zdelwind)
 ZPROC(Zdelword)
 ZPROC(Zdispbinds)
-ZPROC(Zdomacro)
 ZPROC(Zeditfile)
 ZPROC(Zempty)
 ZPROC(Zendline)
-ZPROC(Zendmacro)
 ZPROC(Zendwind)
 ZPROC(Zexit)
 ZPROC(Zfileread)
@@ -82,7 +80,6 @@ ZPROC(Zlgoto)
 ZPROC(Zlowregion)
 ZPROC(Zlowword)
 ZPROC(Zlstbuff)
-ZPROC(Zmacron)
 ZPROC(Zmake)
 ZPROC(Zmakedel)
 ZPROC(Zman)
@@ -90,7 +87,6 @@ ZPROC(Zmeta)
 ZPROC(Zmetax)
 ZPROC(Zmode)
 ZPROC(Zmrkpara)
-ZPROC(Znamemacro)
 ZPROC(Znewline)
 ZPROC(Znextbuff)
 ZPROC(Znextchar)
@@ -118,7 +114,6 @@ ZPROC(Zrcsci)
 ZPROC(Zrcsco)
 ZPROC(Zrdelchar)
 ZPROC(Zrdelword)
-ZPROC(Zreadmacro)
 ZPROC(Zredisplay)
 ZPROC(Zref)
 ZPROC(Zreplace)
@@ -141,7 +136,6 @@ ZPROC(Zshell)
 ZPROC(Zshrinkwind)
 ZPROC(Zsizewind)
 ZPROC(Zspell)
-ZPROC(Zstartmacro)
 ZPROC(Zstat)
 ZPROC(Zswapchar)
 ZPROC(Zswapmrk)
@@ -157,7 +151,6 @@ ZPROC(Zupword)
 ZPROC(Zviewfile)
 ZPROC(Zviewline)
 ZPROC(Zvmode)
-ZPROC(Zwritemacro)
 ZPROC(Zyank)
 ZPROC(Zzoom)
 
@@ -169,10 +162,9 @@ int access ARGS((char *, int));
 struct passwd *dup_pwent ARGS((struct passwd *));
 char *AddHome ARGS((char*, char*));
 void initScrnmarks NOARGS;
-LLIST *Add ARGS((LLIST**, char*));
+struct llist *Add ARGS((struct llist**, char*));
 char *Addbname ARGS((char*));
 void Addtocnames ARGS((int, char*));
-void Addtomacro ARGS((int));
 int Ask ARGS((char*));
 char *Bakname ARGS((char*, char*));
 int Batoi NOARGS;
@@ -237,7 +229,6 @@ Boolean DelcmdAll NOARGS;
 char *Dispkey ARGS((unsigned, char*));
 void Dispit ARGS((char*, int*));
 void Doincsrch ARGS((char*, Boolean));
-void Domacro ARGS((Short*));
 void Doreplace ARGS((int));
 Proc Dotty NOARGS;
 void Dline ARGS((int));
@@ -255,7 +246,7 @@ int Findpath ARGS((char*, char*, int, Boolean));
 Boolean Findstart NOARGS;
 WDO *Findwdo ARGS((Buffer *));
 int Forcecol NOARGS;
-void Freelist ARGS((LLIST**));
+void Freelist ARGS((struct llist**));
 void Freepage ARGS((Buffer*, Page*));
 Boolean Getarg ARGS((char*, char*, int));
 char *Getbtxt ARGS((char*, int));
@@ -284,7 +275,6 @@ char *Limit ARGS((char*, int));
 void Loadbind NOARGS;
 void Loadsaved NOARGS;
 void Loadwdo ARGS((char *));
-void Macrofile ARGS((char*, Boolean));
 void Makecur ARGS((Page*));
 void Makeoffset ARGS((int));
 void Makepaw ARGS((char*, Boolean));
@@ -337,9 +327,6 @@ int Settabsize ARGS((unsigned));
 void Setup ARGS((int, char**));
 Boolean Step ARGS((Byte*));
 void SetMark ARGS((Boolean));
-#ifndef __STDC__
-int Strnicmp ARGS((char*, char*, int));
-#endif
 char *Strstr ARGS((char*, char*));
 char *Strup ARGS((char*));
 void Syerr ARGS((int));
@@ -436,8 +423,8 @@ char *XEventName ARGS((int type));
 int Getfname ARGS((char*, char*));
 Proc Zfname NOARGS;
 Proc Zmatch NOARGS;
-LLIST *GetFill ARGS((char*, char**, int*, Boolean*));
-LLIST *Fill_list ARGS((char*));
+struct llist *GetFill ARGS((char*, char**, int*, Boolean*));
+struct llist *Fill_list ARGS((char*));
 int nmatch ARGS((char*, char*));
 
 

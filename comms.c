@@ -521,19 +521,13 @@ Proc Zbpara()
 }
 
 
-#ifdef __STDC__
-Boolean Ispara( char pc, char ch )
-#else
-Boolean Ispara( pc, ch )
-char pc, ch;
-#endif
+Boolean Ispara(char pc, char ch)
 {
 	/* We consider a FF, VT, or two NLs in a row to mark a paragraph.
 	 * A '.' at the start of a line also marks a paragraph (for nroff)
 	 */
-	return( ch == '\f' ||
-			ch == '\13' ||
-			(pc == NL && (ch == NL || ch == '.')));
+	return ch == '\f' || ch == '\13' ||
+		(pc == NL && (ch == NL || ch == '.'));
 }
 
 

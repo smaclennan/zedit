@@ -512,14 +512,7 @@ void Fcheck()
 }
 
 
-#ifdef __STDC__
 static int Testit(Proc (*p1)(), Proc (*p2)(), int num, char type)
-#else
-static int Testit(p1, p2, num, type)
-Proc (*p1)(), (*p2)();
-int num;
-char type;
-#endif
 {
 	if( p1 != Znotimpl && p2 != Znotimpl && p1 != p2 )
 	{

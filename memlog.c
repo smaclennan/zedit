@@ -51,23 +51,15 @@ unsigned l;
 }
 
 
-void logfree(m, f, l)
-char *m, *f;
-unsigned l;
+void logfree(char *m, *f, unsigned l)
 {
 	logmem('F', m, 0, f, l);
 	free(m);
 }
 
-
-#ifdef __STDC__
 static void logmem(char ch, char *m, unsigned n, char *f, unsigned l)
-#else
-static void logmem(ch, m, n, f, l)
-char ch, *m, *f;
-unsigned n, l;
-#endif
 {
-	if(logfp) fprintf(logfp, "%c %8x %4u  %s:%u\n", ch, m, n, f, l);
+	if(logfp)
+		fprintf(logfp, "%c %8x %4u  %s:%u\n", ch, m, n, f, l);
 }
 #endif

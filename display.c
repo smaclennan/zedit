@@ -19,9 +19,6 @@
 
 #include "z.h"
 #include "assert.h"
-#if XWINDOWS
-#include "xwind.h"
-#endif
 
 static void Pawdisplay(Mark *, Mark *);
 

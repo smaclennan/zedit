@@ -5,8 +5,8 @@
 #include <X11/Xutil.h>
 #include "xwind.h"
 
-static int GetWindowPosition ARGS((Window window,
-		int *absx, int *absy, int *relx, int *rely));
+static int GetWindowPosition(Window window,
+			     int *absx, int *absy, int *relx, int *rely);
 
 /* Calculate the height lost by the WM decoarations.
  * We assume the window is layed out with a header on top and
@@ -14,7 +14,7 @@ static int GetWindowPosition ARGS((Window window,
  */
 #define WM_WASTE	((absy - rely) + (absx - relx))
 
-Proc Zzoom ()
+void Zzoom ()
 {
 	int absx, absy, relx, rely;
 	/* keep track of the last unzoomed position */

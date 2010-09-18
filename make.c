@@ -45,7 +45,7 @@ void Zmake()
 	RunMakeCmd();
 #else
 #if XWINDOWS
-	if (Vars[VPOPMAKE].val) {
+	if (VAR(VPOPMAKE)) {
 		RunMakeCmd();
 		Refresh();	/* update mode lines from Saveall */
 		return;
@@ -112,7 +112,7 @@ void Znexterr()
 	int line;
 
 #if XWINDOWS
-	if (Vars[VPOPMAKE].val && ZmakeNextErr())
+	if (VAR(VPOPMAKE) && ZmakeNextErr())
 		return;
 #endif
 

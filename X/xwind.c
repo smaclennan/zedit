@@ -77,13 +77,13 @@ char *KeyNames[] = {
 
 #define DOUBLE_CLICK		500		/* 1/2 second */
 
-void processpipe ARGS((XClientMessageEvent *event));
-static Window CreateRootWindow ARGS((int argc, char **argv, int *, int *));
-static void GetGeometry ARGS((XSizeHints *sh, int bw));
+void processpipe(XClientMessageEvent *event);
+static Window CreateRootWindow(int argc, char **argv, int *, int *);
+static void GetGeometry(XSizeHints *sh, int bw);
 static void ExposeWindow(), SetupSpecial();
 static void SetTimer(XEvent *event, unsigned timeout);
 
-static void Paste ARGS((Atom paste));
+static void Paste(Atom paste);
 
 /* set in Xinit */
 extern Display *display;
@@ -359,10 +359,7 @@ printf("Scrollbar width %d border %d highlight  %d\n",
  * Note that width and height are the sizes
  * specified by the user for the source window.
  */
-static Window CreateRootWindow(argc, argv, width, height)
-int argc;
-char **argv;
-int *width, *height;
+static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 {
 	XSizeHints size_hints;
 	XWMHints wm_hints;
@@ -519,7 +516,8 @@ char *title;
 void Tbell()
 {
 #define BELLTIME	100
-	if(Vars[VSILENT].val == 0) XBell(display, BELLTIME);
+	if(VAR(VSILENT) == 0)
+		XBell(display, BELLTIME);
 }
 
 
@@ -814,7 +812,7 @@ int Tgetcmd()
 						event.xclient.message_type, event.xclient.format);
 					for(i = 0; i < 5; ++i)
 						Dbg("%x  ", event.xclient.data.l[i]);
-					Dbg('\n');
+					Dbg("\n");
 				}
 #endif
 				continue;
@@ -1340,7 +1338,7 @@ void Initline()
 {
 	extern char *Cwd;
 
-	if(Vars[VSHOWCWD].val) Newtitle(Cwd);
+	if(VAR(VSHOWCWD)) Newtitle(Cwd);
 
 #if 0
 #ifndef BORDER3D
@@ -1371,7 +1369,7 @@ int y;
 		Setmodes(wdo->wbuff), wdo->wbuff->bname);
 	if(wdo->wbuff->fname)
 	{
-		int len = (Vars[VLINES].val ? 13 : 3) + strlen(modeline);
+		int len = (VAR(VLINES) ? 13 : 3) + strlen(modeline);
 		strcat(modeline, Limit(wdo->wbuff->fname, len));
 	}
 	wdo->modecol = strlen(modeline) + 1;
@@ -1416,10 +1414,10 @@ WDO *wdo;
 		wdo->modeflags = mask;
 	}
 
-	if(Vars[VLINES].val == 2)
+	if(VAR(VLINES) == 2)
 	{	/* show as % */
 		Buffer *was = Curbuff;
-		
+
 		/* SAM this could be optimized */
 		Bswitchto(wdo->wbuff);
 		Blocation(&line);
@@ -1433,7 +1431,7 @@ WDO *wdo;
 
 		Bswitchto(was);
 	}
-	else if(Vars[VLINES].val)
+	else if(VAR(VLINES))
 	{	/* show as line/col */
 		Buffer *was = Curbuff;
 		
@@ -1495,9 +1493,6 @@ int type;
  */
 static void ExposeWindow()
 {
-	extern Mark Scrnmarks[], *Sstart;
-	extern Byte Keys[];
-	extern Proc (*Pawcmds[])(), (**Funcs)();
 	int i;
 	Mark *psave = Bcremrk();
 	int inpaw = InPaw;

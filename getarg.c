@@ -19,9 +19,6 @@
 
 #include "z.h"
 #include "keys.h"
-#if XWINDOWS
-#include "xwind.h"
-#endif
 
 /* globals for Getarg */
 Boolean InPaw, First;

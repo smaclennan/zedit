@@ -1,6 +1,10 @@
-#if XWINDOWS
-#include <X11/Xlib.h>
+#include "../z.h"
 
+#if XWINDOWS
+#ifndef XWIND_H
+#define XWIND_H
+
+#include <X11/Xlib.h>
 
 #ifdef sun4
 typedef unsigned long ulong;
@@ -25,16 +29,16 @@ extern int win_width, win_height;
 
 extern char *KeyNames[];
 
-Window CreateWindow ARGS((Window parent, int x, int y, int w, int h, long ev));
-char *GetResource ARGS((char *name, char *class));
-void initSockets ARGS((int xfd));
+Window CreateWindow(Window parent, int x, int y, int w, int h, long ev);
+char *GetResource(char *name, char *class);
+void initSockets(int xfd);
 
 /* defined in xscroll.c */
 #ifdef SCROLLBARS
-void ScrollEvent ARGS((XEvent *event));
+void ScrollEvent(XEvent *event);
 #ifdef _buff_h
-void VscrollEvent ARGS((XEvent *event, WDO *wdo));
-void HscrollEvent ARGS((XEvent *event, WDO *wdo));
+void VscrollEvent(XEvent *event, WDO *wdo);
+void HscrollEvent(XEvent *event, WDO *wdo);
 #endif
 # ifdef BORDER3D
 extern int ScrollBarWidth;
@@ -130,4 +134,5 @@ void ComputeScrollbarGeometry(Scrollbar *scrollPtr);
 void DisplayScrollbar(Scrollbar *scrollPtr);
 int ScrollbarPosition(Scrollbar *scrollPtr, int x, int y);
 
+#endif
 #endif

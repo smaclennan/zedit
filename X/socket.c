@@ -3,8 +3,8 @@
 #if XWINDOWS
 #include <sys/socket.h>
 
-static void addSocket ARGS((int sock));
-static void AcceptSocket ARGS((void));
+static void addSocket(int sock);
+static void AcceptSocket(void);
 
 /************************************************************************/
 /* The following code handles sockets/xevents.							*/
@@ -85,7 +85,7 @@ void closeSockets()
 	close(MySock);
 }
 
-/* Process socket calls. Return only if we get an Xevent. */
+/* voidess socket calls. Return only if we get an Xevent. */
 void ProcessFDs()
 {
 	fd_set readfds, exceptFDs;
@@ -383,17 +383,17 @@ int fd, i;
 	switch(Vars[i].vtype)
 	{
 		case STRING:
-			if(Vars[i].val)
+			if(VARSTR(i))
 				sprintf(varline, "VS%s \"%s\"", Vars[i].vname,
-					(char *)Vars[i].val);
+					VARSTR(i));
 			else
 				sprintf(varline, "VS%s \"\"", Vars[i].vname);
 			break;
 		case DECIMAL:
-			sprintf(varline, "VD%s %d", Vars[i].vname, Vars[i].val);
+			sprintf(varline, "VD%s %d", Vars[i].vname, VAR(i));
 			break;
 		case FLAG:
-			sprintf(varline, "VF%s %d", Vars[i].vname, Vars[i].val);
+			sprintf(varline, "VF%s %d", Vars[i].vname, VAR(i));
 			break;
 	}
 	WriteSocket(fd, varline);

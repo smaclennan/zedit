@@ -6,10 +6,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xresource.h>
 
-#include "../global.h"
-#include "../config.h"
 #include "xwind.h"
-#include "../vars.h"
 
 /* This file contains the routines that work with the databases */
 
@@ -151,9 +148,7 @@ char *name, *class;
 	return NULL;
 }
 
-int GetXColor(color_name, color)
-char *color_name;
-XColor *color;
+int GetXColor(char *color_name, XColor *color)
 {		
 	Colormap cmap = DefaultColormap(display, screen);
 
@@ -275,18 +270,17 @@ XFontStruct *LoadFonts()
 	/* SAM ignore bold font for now. */
 	boldid = 0;	
 
-	if(Vars[VFONT].val)
-		fontname = (char *)Vars[VFONT].val;
+	if(VARSTR(VFONT))
+		fontname = VARSTR(VFONT);
 	else if((fontname = GetResource(".font", ".Font")) == NULL)
 		fontname = "fixed";
 		
-	if((font_info = LoadFontByName(fontname)) == 0)
-	{
+	if((font_info = LoadFontByName(fontname)) == 0) {
 		printf("Unable to load font %s\n", fontname);
 		exit(1);
 	}
 	
-	Vars[VFONT].val = (Word)strdup(fontname);
+	VARSTR(VFONT) = strdup(fontname);
 
 	return font_info;
 }

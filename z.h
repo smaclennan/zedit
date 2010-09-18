@@ -17,25 +17,29 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#ifndef _Z_H_
+#define _Z_H_
+
 #include "config.h"
+
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <string.h>
 #include <memory.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <pwd.h>
+
 #include "typedefs.h"
 #include "vars.h"
 #include "term.h"
 #include "funcs.h"
 #include "buff.h"
 
-#include <errno.h>
-#ifndef errno
-extern int errno;
-#endif
 extern int Verbose;
 
-#include <pwd.h>
 extern struct passwd *Me;
 
 #if SYSV2
@@ -52,10 +56,9 @@ extern struct passwd *Me;
 #include <time.h>
 #endif
 
-#include <fcntl.h>
-
-#include <stdlib.h>
-
+#if XWINDOWS
+#include "xwind.h"
+#endif
 
 #define ZSTR	"Zedit"
 #define VERSION	"5 beta"
@@ -264,3 +267,5 @@ extern int Dbgint;
 #if SUNBSD
 #include "sun.h"
 #endif
+
+#endif /* _Z_H_ */

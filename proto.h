@@ -335,8 +335,9 @@ void Termsize(void);
 void Tfini(void);
 #if XWINDOWS
 void Tflush(void);
-#endif
+#else
 void Tforce(void);
+#endif
 int Tgetcmd(void);
 Byte Tgetkb(void);
 void Tgoto(int, int);
@@ -457,8 +458,8 @@ int Pinvoke(char *argv[], FILE **in, FILE **out);
 int ColorResource(char *name, char *class, int *pixel);
 void Tputchar(char);
 int GetColor(char *, int *);
-int GetXColor(char *, void *);
-void LoadFonts(void);
+int GetXColor(char *, XColor *);
+XFontStruct *LoadFonts(void);
 void Xinit(char *app, int *argc, char **argv);
 void XShellInput(void);
 

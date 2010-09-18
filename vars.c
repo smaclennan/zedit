@@ -83,7 +83,7 @@ int XSetAVar(char *str)
 				Xflush();
 				break;
 			case FLAG:
-				sprintf(pstr, "%s %d", str, !Vars[var].val);
+				sprintf(pstr, "%s %d", str, !VAR(var));
 				Setavar(pstr, TRUE);
 				Xflush();
 				break;
@@ -215,9 +215,9 @@ static void do_var_match(int i, char *vin)
 	if (i == VFONT) {
 		if (display == 0)
 			return;
-		if (LoadFontByName(Vars[VFONT].val) == 0) {
+		if (LoadFontByName(VARSTR(VFONT)) == 0) {
 			sprintf(PawStr, "Unknown font %s.",
-				Vars[VFONT].val);
+				VARSTR(VFONT));
 			Error(PawStr);
 			return;
 		}

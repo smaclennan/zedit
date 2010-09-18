@@ -13,7 +13,7 @@ static int MenuBW = 2;
 
 typedef struct Entry {
 	char *name;
-	Proc (*func)();
+	void (*func)();
 	int arg;
 	Window *win;
 	struct Entry *next;
@@ -31,13 +31,13 @@ typedef struct {
 static Menu Menus[NUMMENUS];
 static int maxlen = 0;
 
-static void NewEntry(Menu *menu, char *name, Proc (*func)(), int arg);
+static void NewEntry(Menu *menu, char *name, void (*func)(), int arg);
 
 static void Docmd(int cmd)
 {
 	extern unsigned Cmd;
 	extern Byte Keys[];
-	
+
 	/* For Menu Open we want the popup */
 	if(cmd == ZFINDFILE) Argp = 1;
 
@@ -61,20 +61,20 @@ void InitMenuBar()
 	int n = 0;
 
 	memset(Menus, 0, sizeof(Menus));
-	
+
 	/* File menu */
 	Menus[n].name  = strdup("File  ");
 /* SAM	NewEntry(&Menus[n], 0, Tearoff); */
 	NewEntry(&Menus[n], "New",				Docmd, ZNOTIMPL);
 	NewEntry(&Menus[n], "Open...",			MenuFindfile, 0);
 	NewEntry(&Menus[n], "Include...",		Docmd, ZFILEREAD);
-	NewEntry(&Menus[n], "", 0, 0);	
+	NewEntry(&Menus[n], "", 0, 0);
 	NewEntry(&Menus[n], "Save",				Docmd, ZFILESAVE);
 	NewEntry(&Menus[n], "Save As...",  		Docmd, ZFILEWRITE);
 	NewEntry(&Menus[n], "Print...",  		Docmd, ZNOTIMPL);
-	NewEntry(&Menus[n], "", 0, 0);	
+	NewEntry(&Menus[n], "", 0, 0);
 	NewEntry(&Menus[n], "Close     Alt+F4",	Zexit, 0);
-	
+
 	/* Find menu */
 	++n;
 	Menus[n].name = strdup("Find");
@@ -85,7 +85,7 @@ void InitMenuBar()
 	NewEntry(&Menus[n], "Global ...",		Docmd, ZGSEARCH);
 	NewEntry(&Menus[n], "", 0, 0);
 	NewEntry(&Menus[n], "Again",			Docmd, ZAGAIN);
-	
+
 	/* Find the longest menu name */
 	for(maxlen = n = 0; n < NUMMENUS; ++n)
 	{
@@ -107,7 +107,7 @@ int x, y, w, h;
 	x += MenuBW + highlight;
 	y += MenuBW + highlight + fontbase;
 	for(i = 0; i < NUMMENUS; ++i)
-	{	
+	{
 		XDrawImageString(display, Zroot, modegc, x, y,
 			Menus[i].name, strlen(Menus[i].name));
 		x += maxlen;
@@ -120,7 +120,7 @@ int x;		/* really just an offset */
 {
 	extern GC modegc;
 	Window popup;
-	XEvent event; 
+	XEvent event;
 	int y, w, h, i;
 	Entry *e;
 
@@ -130,7 +130,7 @@ int x;		/* really just an offset */
 	w = MenuBW * 4 + menu->maxlen;
 	h = ((MenuBW * 2 + fontheight) * menu->nentry) + MenuBW * 2;
 	popup = CreateWindow(Zroot, x, y, w, h, 0);
-	
+
 	/* And outline it */
 	Tk_Draw3DRectangle (popup, popup, &Zborder, 0, 0, w, h, MenuBW,
 		TK_RELIEF_GROOVE);
@@ -160,7 +160,7 @@ int x;		/* really just an offset */
 			TK_RELIEF_RAISED);
 		points[0].x += 2 * width;
     }
-	
+
 	y += h;
 }
 #endif
@@ -190,7 +190,7 @@ int x;		/* really just an offset */
 			XDrawString(display, e->win, modegc, x, x + fontbase,
 						e->name, strlen(e->name));
 	}
-	
+
 	/* The ButtonPress in the menubar did an implicit grab of the pointer
 	 * and buttons. We must ungrab to allow the popup to get events
 	 * properly.
@@ -264,7 +264,7 @@ XEvent *event;
 static void NewEntry(menu, name, func, arg)
 Menu *menu;
 char *name;
-Proc (*func)();
+void (*func)();
 int arg;
 {
 	Entry *new;

@@ -164,33 +164,33 @@ WDO *wdo;
  *																			*
  ****************************************************************************/
 
-Proc Z1wind() {}
-Proc Z2wind() { Tbell(); }
-Proc Zdelwind() { Tbell(); }
-Proc Zprevwind() { Tbell(); }
-Proc Znextwind() { Tbell(); }
+void Z1wind() {}
+void Z2wind() { Tbell(); }
+void Zdelwind() { Tbell(); }
+void Zprevwind() { Tbell(); }
+void Znextwind() { Tbell(); }
 
-Proc Zgrowwind()
+void Zgrowwind()
 {
 	Sizewindow(Arg);
 	Arg = 0;
 }
 
-Proc Zshrinkwind()
+void Zshrinkwind()
 {
 	Sizewindow(-Arg);
 	Arg = 0;
 }
 
-Proc Zsizewind()
+void Zsizewind()
 {
 	if(!Sizewindow(Arg - Wheight() + 1)) Tbell();
 	Arg = 0;
 }
 
 
-Proc Znxtothrwind() { Tbell(); }
-Proc Zprevothrwind() { Tbell(); }
+void Znxtothrwind() { Tbell(); }
+void Zprevothrwind() { Tbell(); }
 
 
 /* If buffer is in a current window, switchto that window, else put the buffer

@@ -306,8 +306,11 @@ void Wsize()
 
 #ifdef SCROLLBARS
 	/* We always update scrollbars since width may have changed. */
-	for (wdo = Whead; wdo; wdo = wdo->next)
-		ResizeScrollBars(wdo);
+	{
+		WDO *wdo;
+		for (wdo = Whead; wdo; wdo = wdo->next)
+			ResizeScrollBars(wdo);
+	}
 #endif
 }
 

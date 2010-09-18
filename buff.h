@@ -35,32 +35,32 @@ extern jmp_buf zenv;
 #define BMODF_HINT	2		/* Modified since last display */
 #define MODIFIED	(BMODF | BMODF_HINT)
 
-typedef struct _page {
+typedef struct page {
 	Byte pdata[PSIZE];		/* the page data */
 	int plen;			/* current length of the page */
 	int lines;			/* number of lines in page */
-	struct _page *nextp, *prevp;	/* list of pages in buffer */
+	struct page *nextp, *prevp;	/* list of pages in buffer */
 } Page;
 
 
-typedef struct _mrk {
+typedef struct mark {
 	Page *mpage;			/* page in the buffer */
-	struct _buff *mbuff;		/* buffer the mark is in */
+	struct buff *mbuff;		/* buffer the mark is in */
 	int moffset;			/* offset in the page */
 	Boolean modf;			/* screen mark modified flags */
-	struct _mrk *prev, *next;	/* list of marks */
+	struct mark *prev, *next;	/* list of marks */
 } Mark;
 
 #if COMMENTBOLD
-typedef struct _comment {
+struct comment {
 	Mark *start;
 	Mark *end;
 	int  type;
-	struct _comment *next;
-} Comment;
+	struct comment *next;
+};
 #endif
 
-typedef struct _buff {
+typedef struct buff {
 	Boolean bmodf;			/* buffer modified? */
 	Page *firstp, *lastp;		/* describe the pages */
 	Page *pnt_page;			/* the position of the point */
@@ -70,15 +70,15 @@ typedef struct _buff {
 	char *bname;			/* buffer name */
 	char *fname;			/* file name associated with buffer */
 	long mtime;			/* file time at read */
-	struct _buff *prev, *next;	/* list of buffers */
+	struct buff *prev, *next;	/* list of buffers */
 #if PIPESH
 	int child;			/* PID of shell or EOF */
 	int in_pipe;			/* the pipes */
 	FILE *out_pipe;
 #endif
 #if COMMENTBOLD
-	Comment *comments;		/* list of comments in file */
-	Comment *ctail;
+	struct comment *comments;	/* list of comments in file */
+	struct comment *ctail;
 	int comstate;			/* comment state */
 	int comchar;			/* single char comment character */
 #endif
@@ -87,7 +87,7 @@ typedef struct _buff {
 #endif
 } Buffer;
 
-typedef struct _wdo {
+typedef struct wdo {
 	Buffer	*wbuff;			/* buffer window looks on */
 	Mark	*wpnt;			/* saved Point */
 	Mark	*wmrk;			/* saved Mark */
@@ -100,7 +100,7 @@ typedef struct _wdo {
 	int		vheight;	/* height of vert scrollbar */
 	ulong	hscroll, hthumb;	/* windows for horiz scrollbar */
 #endif
-	struct _wdo	*prev, *next;
+	struct wdo	*prev, *next;
 } WDO;
 
 extern Byte *Curcptr, *Cpstart;

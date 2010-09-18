@@ -2,12 +2,12 @@
 
 #if COMMENTBOLD
 
-static Comment *CPPhead, *CPPtail;		/* list of CPP statements */
-static Comment *COMhead, *COMtail;		/* list of Comments */
+static struct comment *CPPhead, *CPPtail;	/* list of CPP statements */
+static struct comment *COMhead, *COMtail;	/* list of Comments */
 
-static Comment *new_comment(Mark *start, Mark *end, int type)
+static struct comment *new_comment(Mark *start, Mark *end, int type)
 {
-	Comment *new = calloc(sizeof(Comment), 1);
+	struct comment *new = calloc(sizeof(struct comment), 1);
 	if (!new)
 		return NULL;
 	new->start = Bcremrk();
@@ -27,7 +27,7 @@ static Comment *new_comment(Mark *start, Mark *end, int type)
  */
 static void NewComment(Mark *start, Mark *end)
 {
-	Comment *new = new_comment(start, end, T_COMMENT);
+	struct comment *new = new_comment(start, end, T_COMMENT);
 	if (!new)
 		return;
 
@@ -40,7 +40,7 @@ static void NewComment(Mark *start, Mark *end)
 
 static void NewCPP(Mark *start, Mark *end, int type)
 {
-	Comment *new = new_comment(start, end, type);
+	struct comment *new = new_comment(start, end, type);
 	if (!new)
 		return;
 
@@ -169,7 +169,7 @@ again:
 /* Remove all comments from buffer and mark unscanned */
 static void UnComment(Buffer *buff)
 {
-	Comment *com, *next;
+	struct comment *com, *next;
 	int i;
 
 	for (com = buff->comments; com; com = next) {
@@ -196,7 +196,7 @@ static void ScanBuffer(void)
 
 	/* free existings comments */
 	while (Curbuff->comments) {
-		Comment *com = Curbuff->comments;
+		struct comment *com = Curbuff->comments;
 		Curbuff->comments = Curbuff->comments->next;
 		Unmark(com->start);
 		Unmark(com->end);
@@ -251,7 +251,7 @@ static void ScanBuffer(void)
 }
 
 /* The following are called by the Innerdsp routine. */
-static Comment *start;
+static struct comment *start;
 
 /* Called from Innerdsp before display loop */
 void ResetComments(void)

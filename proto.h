@@ -166,7 +166,7 @@ struct llist *Add ARGS((struct llist**, char*));
 char *Addbname ARGS((char*));
 void Addtocnames ARGS((int, char*));
 int Ask ARGS((char*));
-char *Bakname ARGS((char*, char*));
+char *Bakname(char*, char*);
 int Batoi NOARGS;
 int Bcopyrgn ARGS((Mark*, Buffer*));
 Buffer *Bcreate NOARGS;

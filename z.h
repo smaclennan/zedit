@@ -188,6 +188,9 @@ extern Byte tline[];
 extern char *Cwd;
 extern int Cmask;
 extern unsigned Cmd;
+extern char *Shell;
+extern char *Thispath;
+extern char *ConfigDir;
 
 extern struct cnames Cnames[];
 extern void (*Cmds[])(), (*Vcmds[])(), (*Pawcmds[])();
@@ -220,6 +223,11 @@ extern Byte CRdefault;
 
 extern char Calc_str[];
 extern char Savetag[];
+extern char Command[];
+extern char old[], new[];
+extern Boolean searchdir[];
+
+extern int circf;
 
 #define Stricmp				strcasecmp
 #define Strnicmp			strncasecmp

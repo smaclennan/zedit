@@ -1,17 +1,26 @@
-/****************************************************************************
- *																			*
- *				 The software found in this file is the						*
- *					  Copyright of Sean MacLennan							*
- *						  All rights reserved.								*
- *																			*
- ****************************************************************************/
+/* shell.c - shell commands and routines
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "z.h"
 #if BSD
 #include <signal.h>
 #endif
-
-extern char Command[];
-
 
 /* Do one shell command to the screen */
 #if XWINDOWS
@@ -19,21 +28,18 @@ Proc Zcmd() { Tbell(); }	/* no screen */
 #elif !BSD
 Proc Zcmd()
 {
-	extern char *Shell;
-	char tb[ STRMAX * 2 ];
+	char tb[STRMAX * 2];
 
 	Arg = 0;
-	if( Getarg("! ", Command, STRMAX) == 0 )
-	{
+	if (Getarg("! ", Command, STRMAX) == 0) {
 		Tfini();
-		sprintf( tb, "%s -c \"%s\"", Shell, Command );
-		if( system(tb) == EOF )
-			Echo( "command failed" );
-		else
-		{
-			fputs( "\n[Hit Return to continue]", stdout );
+		sprintf(tb, "%s -c \"%s\"", Shell, Command);
+		if (system(tb) == EOF)
+			Echo("command failed");
+		else {
+			fputs("\n[Hit Return to continue]", stdout);
 			Tgetcmd();
-			putchar( '\n' );
+			putchar('\n');
 		}
 		Tinit();
 	}
@@ -50,14 +56,12 @@ Proc Zcmdtobuff()
 	int rc;
 
 	Arg = 0;
-	if(Getarg("@ ", Command, STRMAX) == 0)
-	{
+	if (Getarg("@ ", Command, STRMAX) == 0) {
 		save = Curwdo;
-		if(WuseOther(SHELLBUFF))
-		{
+		if (WuseOther(SHELLBUFF)) {
 			Echo("Please wait...");
-			if((rc = PipeToBuff(Curbuff, Command)) == 0)
-			{
+			rc = PipeToBuff(Curbuff, Command);
+			if (rc == 0) {
 				Message(Curbuff, Command);
 				Btostart();
 			}
@@ -68,11 +72,10 @@ Proc Zcmdtobuff()
 	}
 #else
 	Arg = 0;
-	if(Getarg("@ ", Command, STRMAX) == 0)
-		Cmdtobuff( SHELLBUFF, Command);
+	if (Getarg("@ ", Command, STRMAX) == 0)
+		Cmdtobuff(SHELLBUFF, Command);
 #endif
 }
-
 
 /* Perform man command on pipe, wait for completion, and format */
 Proc Zman()
@@ -86,32 +89,33 @@ Proc Zman()
 	strcpy(entry, "man ");
 	p = entry + strlen(entry);
 	Getbword(p, STRMAX, Istoken);	/* get word */
-	if( Getarg("Man: ", p, STRMAX) ) return;
+	if (Getarg("Man: ", p, STRMAX))
+		return;
 
 #ifndef BORDER3D
 	/*  BORDER3D always pops up man page */
-	if(Vars[VPOPMAN].val)
+	if (Vars[VPOPMAN].val) {
 #endif
-	{
 		Buffer *buff;
 		FILE *pfp;
 
 		sprintf(PawStr, "show -t \"man %s\"", p);
-		if((buff = Bcreate()) && (pfp = popen(PawStr, "w")))
-		{
+		buff = Bcreate();
+		pfp = popen(PawStr, "w");
+		if (buff && pfp) {
 			Buffer *bsave = Curbuff;
 			Bswitchto(buff);
 			Echo("Please wait...");
-			if((rc = PipeToBuff(buff, entry)) == 0)
-			{	/* remove the underlines */
+			rc = PipeToBuff(buff, entry);
+			if (rc == 0) {
+				/* remove the underlines */
 				Btoend();
-				while(Bcrsearch('\010'))
-				{
+				while (Bcrsearch('\010')) {
 					Bmove(-1);
 					Bdelete(2);
 				}
 
-				for(Btostart(); !Bisend(); Bmove1())
+				for (Btostart(); !Bisend(); Bmove1())
 					fputc(Buff(), pfp);
 			}
 			Bswitchto(bsave);
@@ -119,25 +123,23 @@ Proc Zman()
 			Bdelbuff(buff);
 			PrintExit(rc);
 			return;
-		}
-		else
-		{
-			if(buff) Bdelbuff(buff);
+		} else {
+			if (buff)
+				Bdelbuff(buff);
 			Echo("\7Unable to popup man page.");
 		}
 	}
 
 #ifndef BORDER3D
 	save = Curwdo;
-	if(WuseOther(MANBUFF))
-	{
+	if (WuseOther(MANBUFF)) {
 		Echo("Please wait...");
-		if((rc = PipeToBuff(Curbuff, entry)) == 0)
-		{	/* remove the underlines */
+		rc = PipeToBuff(Curbuff, entry);
+		if (rc == 0) {
+			/* remove the underlines */
 			Message(Curbuff, p);
 			Btoend();
-			while(Bcrsearch('\010'))
-			{
+			while (Bcrsearch('\010')) {
 				Bmove(-1);
 				Bdelete(2);
 			}
@@ -150,7 +152,6 @@ Proc Zman()
 #endif
 }
 
-
 #if BSD
 #if PIPESH
 Proc Zcmd()
@@ -159,7 +160,7 @@ Proc Zshell()	/*for tags*/
 #endif
 {
 	Tfini();
-	kill( getpid(), SIGTSTP );
+	kill(getpid(), SIGTSTP);
 }
 #endif
 
@@ -172,19 +173,17 @@ Proc Zshell()
 	int i = 0;
 
 	/* create a unique buffer name */
-	if(Cfindbuff(strcpy(bname, SHELLBUFF)))
+	if (Cfindbuff(strcpy(bname, SHELLBUFF)))
 		do
 			sprintf(bname, "%s%d", SHELLBUFF, ++i);
-		while(Cfindbuff(bname));
+		while (Cfindbuff(bname));
 
-	if(!WuseOther(bname) || !Doshell())
+	if (!WuseOther(bname) || !Doshell())
 		Tbell();
 }
 
-
 Boolean Doshell()
 {
-	extern char *Shell;
 	char *argv[3];
 
 	argv[0] = Shell;
@@ -195,14 +194,15 @@ Boolean Doshell()
 #elif SYSV2
 Proc Zshell()	/*for tags*/
 {
-	extern char *Shell;
 	int err = EOF;
 
 	Arg = 0;
 	Tfini();
-	if( system(Shell) == EOF ) err = errno;
+	if (system(Shell) == EOF)
+		err = errno;
 	Tinit();
-	if( err != EOF ) Syerr( err );
+	if (err != EOF)
+		Syerr(err);
 }
 #endif
 
@@ -212,17 +212,18 @@ Proc Zmail()
 	char to[STRMAX + 1], subject[STRMAX + 1], cmd[STRMAX * 2 + 20];
 
 	*to = '\0';
-	if(Getarg("Mail To: ", to, STRMAX)) return;
+	if (Getarg("Mail To: ", to, STRMAX))
+		return;
 	*subject = '\0';
-	switch(Getarg("Subject: ", subject, STRMAX))
-	{
-		case 0:
-			break;
-		case 1:
-			if(Ask("Send with empty subject? ") != YES) return;
-			break;
-		case ABORT:
+	switch (Getarg("Subject: ", subject, STRMAX)) {
+	case 0:
+		break;
+	case 1:
+		if (Ask("Send with empty subject? ") != YES)
 			return;
+		break;
+	case ABORT:
+		return;
 	}
 
 	Echo("Sending...");
@@ -230,8 +231,9 @@ Proc Zmail()
 	 * We do not check the return code from the system calls because some
 	 * systems (Motorola...) always returns -1 (EINTR).
 	 */
-	if(*subject)
-		sprintf(cmd, "%s -s \"%s\" %s", (char *)Vars[VMAIL].val, subject, to);
+	if (*subject)
+		sprintf(cmd, "%s -s \"%s\" %s",
+			(char *)Vars[VMAIL].val, subject, to);
 	else
 		sprintf(cmd, "%s %s", (char *)Vars[VMAIL].val, to);
 	BuffToPipe(Curbuff, cmd);
@@ -250,69 +252,59 @@ Proc Zprint()
 }
 
 #ifdef BORDER3D
-Buffer *Cmdtobuff(bname, cmd)
-char *bname, *cmd;
+Buffer *Cmdtobuff(char *bname, char *cmd)
 {
 	return 0;
 }
 #elif PIPESH || XWINDOWS
-Buffer *Cmdtobuff(bname, cmd)
-char *bname, *cmd;
+Buffer *Cmdtobuff(char *bname, char *cmd)
 {
 	Buffer *tbuff = NULL;
 	WDO *save;
 
 	save = Curwdo;
-	if(WuseOther(bname))
-	{
-		if(Dopipe(Curbuff, cmd))
+	if (WuseOther(bname)) {
+		if (Dopipe(Curbuff, cmd))
 			tbuff = Curbuff;
 		Wswitchto(save);
 	}
 	return tbuff;
 }
 #else
-Buffer *Cmdtobuff(bname, cmd)
-char *bname, *cmd;
+Buffer *Cmdtobuff(char *bname, char *cmd)
 {
-	extern char *strcpy();
-
-	char fname[ 20 ];
+	char fname[20];
 	int err, one;
 	Buffer *sbuff, *tbuff;
 
 	Arg = Argp = 0;
-	Echo( "Working..." );
-	mktemp( strcpy(fname, ZSHFILE) );
-	if( err = Dopipe(fname, cmd) )
-		Syerr( err );
-	else
-	{
-/* SAM MAJOR MODS, CHECK */
+	Echo("Working...");
+	mktemp(strcpy(fname, ZSHFILE));
+	err = Dopipe(fname, cmd);
+	if (err)
+		Syerr(err);
+	else {
 		WuseOther(bname);
 		Breadfile(fname);
 		unlink(fname);
 		Curbuff->bmodf = FALSE;
 		Clrecho();
 	}
-	return( err ? NULL : tbuff );
+	return err ? NULL : tbuff;
 }
 #endif
 
-/* SAM */
-#if!XWINDOWS && !PIPESH
-int Dopipe( fname, cmd )
-char *fname, *cmd;
+#if !XWINDOWS && !PIPESH
+int Dopipe(char *fname, char *cmd)
 {
-	char command[ STRMAX + 1 ];
+	char command[STRMAX + 1];
 
-	sprintf( command, "%s >%s 2>&1", cmd, fname );
-	if( system(command) == EOF )
-		return( errno );
-	return( 0 );
+	sprintf(command, "%s >%s 2>&1", cmd, fname);
+	if (system(command) == EOF)
+		return errno;
+	return 0;
 }
 #endif
-
 
 /* beautify the current buffer */
 #define INDENT		"indent"
@@ -324,8 +316,7 @@ Proc Zbeauty()
 	int status, fd1;
 
 	Arg = 0;
-	if(!(Curbuff->bmode & PROGMODE))
-	{
+	if (!(Curbuff->bmode & PROGMODE)) {
 		Echo("Not a program buffer!");
 		return;
 	}
@@ -348,10 +339,10 @@ Proc Zbeauty()
 
 #if PIPESH
 	sprintf(cmdStr, "%s %s %s", INDENT, fileName1, fileName2);
-	if(!Dopipe(Curbuff, cmdStr))
+	if (!Dopipe(Curbuff, cmdStr))
 		return;
 
-	while(Curbuff->child != EOF)
+	while (Curbuff->child != EOF)
 		Checkpipes(2);
 #else
 	sprintf(cmdStr, "%s %s %s >/dev/null 2>&1", INDENT, fileName1,
@@ -360,13 +351,10 @@ Proc Zbeauty()
 		return;
 #endif
 
-	if(access(fileName2, 0))
-	{
+	if (access(fileName2, 0)) {
 		sprintf(PawStr, "Unable to execute %s.", INDENT);
 		Error(PawStr);
-	}
-	else
-	{
+	} else {
 		Breadfile(fileName2);
 		Curbuff->bmodf = MODIFIED;
 		Clrecho();
@@ -376,73 +364,67 @@ Proc Zbeauty()
 	unlink(fileName2);
 }
 
-
-void Syerr( err )
+void Syerr(err)
 int err;
 {
-	switch( err )
-	{
-		case E2BIG:
-		case ENOMEM:
-			Error( "Not enough memory" );
-			break;
+	switch (err) {
+	case E2BIG:
+	case ENOMEM:
+		Error("Not enough memory");
+		break;
 
-		case ENOENT:
-			Error( "Command not found" );
-			break;
+	case ENOENT:
+		Error("Command not found");
+		break;
 
-		default:
-			Error( "Unable to execute" );
+	default:
+		Error("Unable to execute");
 	}
 }
 
-
 /* Echo 'str' to the paw and as the filename for 'buff' */
-void Message(buff, str)
-Buffer *buff;
-char *str;
+void Message(Buffer *buff, char *str)
 {
 #ifndef BORDER3D
 	WDO *wdo;
 #endif
 
-	if(buff->fname) free(buff->fname);
+	if (buff->fname)
+		free(buff->fname);
 	buff->fname = strdup(str);
 #ifdef BORDER3D
 	Curwdo->modeflags = INVALID;
 #else
-	for(wdo = Whead; wdo; wdo = wdo->next)
-		if(wdo->wbuff == buff)
+	for (wdo = Whead; wdo; wdo = wdo->next)
+		if (wdo->wbuff == buff)
 			wdo->modeflags = INVALID;
 #endif
 	Echo(str);
 }
 
-
 /* Returns -1 if popen failed, else exit code.
  * Leaves Point and Mark where they where.
  */
-int BuffToPipe(buff, cmd)
-Buffer *buff;
-char *cmd;
+int BuffToPipe(Buffer *buff, char *cmd)
 {
 	FILE *pfp;
 	Mark spnt, end;
 	Buffer *was = Curbuff;
 
 	strcat(cmd, ">/dev/null 2>&1");
-	if((pfp = popen(cmd, "w")) == NULL) return -1;
+	pfp = popen(cmd, "w");
+	if (pfp == NULL)
+		return -1;
 
 	Bswitchto(buff);
 	Bmrktopnt(&spnt);	/* save current Point */
-	if(Argp)
-	{	/* Use the region - make sure mark is after Point */
+	if (Argp) {
+		/* Use the region - make sure mark is after Point */
 		Mrktomrk(&end, Curbuff->mark);
-		if(Bisaftermrk(&end))
+		if (Bisaftermrk(&end))
 			Bswappnt(&end);
-	}
-	else
-	{	/* use entire buffer */
+	} else {
+		/* use entire buffer */
 		Btoend();
 		Bmrktopnt(&end);
 		Btostart();
@@ -450,7 +432,8 @@ char *cmd;
 	Argp = FALSE;
 	Arg = 0;
 
-	for(; Bisbeforemrk(&end); Bmove1()) putc(Buff(), pfp);
+	for (; Bisbeforemrk(&end); Bmove1())
+		putc(Buff(), pfp);
 
 	Bpnttomrk(&spnt);
 	Bswitchto(was);
@@ -461,32 +444,30 @@ char *cmd;
 /* Returns -1 if popen failed, else exit code.
  * Leaves Point at end of new text.
  */
-int PipeToBuff(buff, instr)
-Buffer *buff;
-char *instr;
+int PipeToBuff(Buffer *buff, char *instr)
 {
 	FILE *pfp;
 	int c;
-	char *cmd;
-
-	if((cmd = malloc(strlen(instr) + 10)) == NULL) return -1;
+	char *cmd = malloc(strlen(instr) + 10);
+	if (cmd == NULL)
+		return -1;
 	sprintf(cmd, "%s 2>&1", instr);
-	if((pfp = popen(cmd, "r")) == NULL) return -1;
-	while((c = getc(pfp)) != EOF) Binsert((char)c);
+	pfp = popen(cmd, "r");
+	if (pfp == NULL)
+		return -1;
+	while ((c = getc(pfp)) != EOF)
+		Binsert((char)c);
 	free(cmd);
 	return pclose(pfp) >> 8;
 }
 
-
-void PrintExit(code)
-int code;
+void PrintExit(int code)
 {
-	if(code == 0)
+	if (code == 0)
 		Echo("Done.");
-	else if(code == -1)
+	else if (code == -1)
 		Echo("Unable to execute.");
-	else
-	{
+	else {
 		sprintf(PawStr, "Exit %d.", code);
 		Echo(PawStr);
 	}

@@ -18,8 +18,7 @@
 */
 
 /* Always scroll +/- 1 line for now... */
-void ScrollWindow(n)
-int n;
+void ScrollWindow(int n)
 {
 	extern Mark Scrnmarks[], *Sstart, *Psstart, *Send;
 	extern Boolean Sendp;

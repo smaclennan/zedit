@@ -44,7 +44,7 @@ Proc Zdeleol()
 
 	if (!Bisend() && Buff() == NL)
 		Bmove1();
-	else if (Vars[VKILLLINE].val) {
+	else if (VAR(VKILLLINE)) {
 		Boolean atstart;
 
 		Tobegline();

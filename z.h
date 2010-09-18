@@ -24,7 +24,6 @@
 #include <string.h>
 #include <memory.h>
 #include "typedefs.h"
-#include "global.h"
 #include "vars.h"
 #include "term.h"
 #include "funcs.h"
@@ -58,9 +57,9 @@ extern struct passwd *Me;
 #include <stdlib.h>
 
 
-#define ZSTR		"Zedit"
+#define ZSTR	"Zedit"
 #define VERSION	"5 beta"
-#define ZFMT		"%s %s  (%s)  %s: "
+#define ZFMT	"%s %s  (%s)  %s: "
 
 /* These are portable across different Unix's */
 #define TOLOWER(c)		(isupper(c) ? tolower(c) : c)
@@ -183,8 +182,8 @@ struct llist {
 
 struct cnames {
 	char *name;
-	Short fnum;
-	Short htype;
+	short fnum;
+	short htype;
 };
 #define CNAMESIZE sizeof(struct cnames)
 

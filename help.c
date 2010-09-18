@@ -270,7 +270,7 @@ void Help(int code, Boolean func)
 				dump_bindings(buff, Cnames[code].fnum);
 		} else {
 			Binstr("\nCurrent value: ");
-			Varval(&Vars[code]);
+			Varval(code);
 		}
 		Btostart();
 	}

@@ -480,10 +480,6 @@ void Fcheck(void)
 	/* check sizes of various stuff */
 	if (sizeof(Byte)  != 1)
 		Error("Byte  size wrong!");
-	if (sizeof(Short) != 2)
-		Error("Short  size wrong!");
-	if (sizeof(Word)  != 4)
-		Error("Word size wrong!");
 	if (sizeof(struct cnames) % sizeof(char *)) {
 		++error;
 		Dbg("cnames struct size bad: %d\n", sizeof(struct cnames));

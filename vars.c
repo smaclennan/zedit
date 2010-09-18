@@ -20,7 +20,6 @@
 #define INCLUDE_VARS_STRUCT
 #include "z.h"
 
-
 static char *Readstr(char *str, FILE *fp)
 {
 	if (fgets(str, STRMAX, fp)) {
@@ -49,12 +48,12 @@ Proc Zsetavar()
 	if (!Argp || Vars[rc].vtype == STRING) {
 		sprintf(pstr, "%s: ", Vars[rc].vname);
 		if (Vars[rc].vtype == STRING)
-			if (Vars[rc].val)
-				strcpy(arg, (char *)Vars[rc].val);
+			if (VARSTR(rc))
+				strcpy(arg, VARSTR(rc));
 			else
 				*arg = '\0';
 		else
-			sprintf(arg, "%d", Vars[rc].val);
+			sprintf(arg, "%d", VAR(rc));
 		if (Getarg(pstr, arg, STRMAX))
 			return;
 		sprintf(pstr, "%s %s", Vars[rc].vname, arg);
@@ -113,31 +112,31 @@ void ReadVfile()
 		getchar();
 	}
 #endif
-	if (!Vars[VMAIL].val)
-		Vars[VMAIL].val = (Word)strdup("mail");
-	if (!Vars[VMAKE].val)
-		Vars[VMAKE].val = (Word)strdup("make");
-	if (!Vars[VPRINT].val)
-		Vars[VPRINT].val = (Word)strdup("lp");
-	if (!Vars[VCEXTS].val) {
-		Vars[VCEXTS].val =
-			(Word)strdup(".c:.h:.cpp:.cc:.cxx:.y:.l:.m:.m4");
-		parsem((char *)Vars[VCEXTS].val, CMODE);
+	if (!VARSTR(VMAIL))
+		VARSTR(VMAIL) = strdup("mail");
+	if (!VARSTR(VMAKE))
+		VARSTR(VMAKE) = strdup("make");
+	if (!VARSTR(VPRINT))
+		VARSTR(VPRINT) = strdup("lp");
+	if (!VARSTR(VCEXTS)) {
+		VARSTR(VCEXTS) =
+			strdup(".c:.h:.cpp:.cc:.cxx:.y:.l:.m:.m4");
+		parsem(VARSTR(VCEXTS), CMODE);
 	}
-	if (!Vars[VSEXTS].val) {
-		Vars[VSEXTS].val = (Word)strdup(".tcl");
-		parsem((char *)Vars[VSEXTS].val, TCL);
+	if (!VARSTR(VSEXTS)) {
+		VARSTR(VSEXTS) = strdup(".tcl");
+		parsem(VARSTR(VSEXTS), TCL);
 	}
-	if (!Vars[VTEXTS].val) {
-		Vars[VTEXTS].val = (Word)strdup(".DOC:.doc:.tex:.txt:.d");
-		parsem((char *)Vars[VTEXTS].val, TEXT);
+	if (!VARSTR(VTEXTS)) {
+		VARSTR(VTEXTS) = strdup(".DOC:.doc:.tex:.txt:.d");
+		parsem(VARSTR(VTEXTS), TEXT);
 	}
-	if (!Vars[VASEXTS].val) {
-		Vars[VASEXTS].val = (Word)strdup(".s:.asm");
-		parsem((char *)Vars[VASEXTS].val, ASMMODE);
+	if (!VARSTR(VASEXTS)) {
+		VARSTR(VASEXTS) = strdup(".s:.asm");
+		parsem(VARSTR(VASEXTS), ASMMODE);
 	}
-	if (!Vars[VASCHAR].val)
-		Vars[VASCHAR].val = (Word)strdup(";");
+	if (!VARSTR(VASCHAR))
+		VARSTR(VASCHAR) = strdup(";");
 
 
 	/* If ConfigDir is really a file, read the file and set to 0. */
@@ -182,18 +181,18 @@ static void ReadConfigFile(char *fname)
 static void setit(int i, char *ptr)
 {
 	if (Vars[i].vtype == STRING) {
-		if (Vars[i].val)
-			free((char *)Vars[i].val);
-		Vars[i].val = (Word)strdup(ptr);
+		if (VARSTR(i))
+			free(VARSTR(i));
+		VARSTR(i) = strdup(ptr);
 	} else if (Vars[i].vtype == FLAG) {
 		if (Strnicmp(ptr, "true", 4) == 0)
-			Vars[i].val = 1;
+			VAR(i) = 1;
 		else if (Strnicmp(ptr, "false", 5) == 0)
-			Vars[i].val = 0;
+			VAR(i) = 0;
 		else
-			Vars[i].val = (int)strtol(ptr, NULL, 0);
+			VAR(i) = strtol(ptr, NULL, 0);
 	} else
-		Vars[i].val = (int)strtol(ptr, NULL, 0);
+		VAR(i) = strtol(ptr, NULL, 0);
 }
 
 static void do_var_match(int i, char *vin)
@@ -203,7 +202,7 @@ static void do_var_match(int i, char *vin)
 	if (Verbose > 1)
 		Dbg("ok\n");
 	if (Argp && Vars[i].vtype != STRING)
-		Vars[i].val = Arg;
+		VAR(i) = Arg;
 	else {
 		for (ptr = vin; *ptr && !isspace(*ptr); ++ptr)
 			;
@@ -227,38 +226,36 @@ static void do_var_match(int i, char *vin)
 
 		/* This block handles the Wordprocessing variables */
 		if (i == VFILLWIDTH || i == VMARGIN) {
-			/* These values MUST be positive */
-			Vars[i].val = abs(Vars[i].val);
 			/* Fillwidth must be > 0 */
-			if (Vars[VFILLWIDTH].val == 0)
-				Vars[VFILLWIDTH].val = 1;
+			if (VAR(VFILLWIDTH) == 0)
+				VAR(VFILLWIDTH) = 1;
 			/* Fillwidth must be greater than Margin */
-			if (Vars[VFILLWIDTH].val <= Vars[VMARGIN].val) {
+			if (VAR(VFILLWIDTH) <= VAR(VMARGIN)) {
 				if (i == VMARGIN)
-					Vars[VMARGIN].val =
-						Vars[VFILLWIDTH].val - 1;
+					VAR(VMARGIN) =
+						VAR(VFILLWIDTH) - 1;
 				else
-					Vars[VFILLWIDTH].val =
-						Vars[VMARGIN].val + 1;
+					VAR(VFILLWIDTH) =
+						VAR(VMARGIN) + 1;
 				}
 		} else if (i == VMAKE)
-			strcpy(mkcmd, (char *)Vars[i].val);
+			strcpy(mkcmd, VARSTR(i));
 		else if (i == VGREP)
-			strcpy(grepcmd, (char *)Vars[i].val);
+			strcpy(grepcmd, VARSTR(i));
 		else if (i == VCEXTS)
-			parsem((char *)Vars[i].val, CMODE);
+			parsem(VARSTR(i), CMODE);
 		else if (i == VASEXTS)
-			parsem((char *)Vars[i].val, ASMMODE);
+			parsem(VARSTR(i), ASMMODE);
 		else if (i == VASCHAR) {
 			/* set current buffer and redisplay */
 #if COMMENTBOLD
-			Curbuff->comchar = *(char *)Vars[VASCHAR].val;
+			Curbuff->comchar = *(char *)VARSTR(VASCHAR);
 			Zredisplay();
 #endif
 		} else if (i == VSEXTS)
-			parsem((char *)Vars[i].val, TCL);
+			parsem(VARSTR(i), TCL);
 		else if (i == VTEXTS)
-			parsem((char *)Vars[i].val, TEXT);
+			parsem(VARSTR(i), TEXT);
 }
 
 void Setavar(char *vin, Boolean display)
@@ -284,18 +281,18 @@ void Setavar(char *vin, Boolean display)
 					Settabsize(Curbuff->bmode);
 					Zredisplay();
 				} else if (i == VSHOWCWD)
-					Newtitle(Vars[i].val ? Cwd : NULL);
+					Newtitle(VAR(i) ? Cwd : NULL);
 				if (Vars[i].vtype == STRING) {
-					if (Vars[i].val)
+					if (VARSTR(i))
 						sprintf(msg, "%s = %s",
 							Vars[i].vname,
-							(char *)Vars[i].val);
+							VARSTR(i));
 					else
 						sprintf(msg, "%s = NONE",
 							Vars[i].vname);
 				} else
 					sprintf(msg, "%s = %d",
-						Vars[i].vname, Vars[i].val);
+						Vars[i].vname, VAR(i));
 				Echo(msg);
 				if (i == VLINES)
 					Curwdo->modeflags = INVALID;
@@ -334,26 +331,25 @@ int Settabsize(unsigned mode)
 		i = VCTABS;
 	else
 		i = VTABS;
-	Vars[i].val = abs(Vars[i].val);
 	if (Tmaxcol() != EOF)
-		if (Vars[i].val > Tmaxcol() - 4)
-			Vars[i].val = Tmaxcol() - 4;
-	if (Vars[i].val == 0)
-		Vars[i].val = 1;
-	return Tabsize = Vars[i].val;
+		if (VAR(i) > Tmaxcol() - 4)
+			VAR(i) = Tmaxcol() - 4;
+	if (VAR(i) == 0)
+		VAR(i) = 1;
+	return Tabsize = VAR(i);
 }
 
-void Varval(struct avar *var)
+void Varval(int code)
 {
-	switch ((int)var->vtype) {
+	switch (Vars[code].vtype) {
 	case STRING:
-		Binstr(var->val ? (char *)var->val : "NONE");
+		Binstr(VARSTR(code) ? VARSTR(code) : "NONE");
 		break;
 	case FLAG:
-		Binstr(var->val ? "On" : "Off");
+		Binstr(VAR(code) ? "On" : "Off");
 		break;
 	case DECIMAL:
-		sprintf(PawStr, "%d", var->val);
+		sprintf(PawStr, "%d", VAR(code));
 		Binstr(PawStr);
 	}
 }
@@ -397,9 +393,9 @@ Proc Zsaveconfig()
 	fprintf(fp, "# String variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
 		if (Vars[i].vtype == STRING) {
-			if (Vars[i].val)
+			if (VARSTR(i))
 				fprintf(fp, "%-15s %s\n",
-					Vars[i].vname, (char *)Vars[i].val);
+					Vars[i].vname, VARSTR(i));
 			else
 				fprintf(fp, "%-15s 0\n",
 					Vars[i].vname);
@@ -408,13 +404,13 @@ Proc Zsaveconfig()
 	fprintf(fp, "\n# Decimal variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
 		if (Vars[i].vtype == DECIMAL)
-			fprintf(fp, "%-15s %d\n", Vars[i].vname, Vars[i].val);
+			fprintf(fp, "%-15s %d\n", Vars[i].vname, VAR(i));
 
 	fprintf(fp, "\n# Flag variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
 		if (Vars[i].vtype == FLAG)
 			fprintf(fp, "%-15s %s\n", Vars[i].vname,
-				Vars[i].val ? "True" : "False");
+				VAR(i) ? "True" : "False");
 
 	fclose(fp);
 	Echo("Saved.");

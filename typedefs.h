@@ -36,5 +36,3 @@ typedef int Boolean;
 #endif
 
 typedef unsigned char Byte;
-typedef unsigned short Short;
-typedef unsigned Word;

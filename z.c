@@ -212,11 +212,11 @@ void Setup(int argc, char **argv)
 
 	/* User wants Text mode as default */
 	if (textMode)
-		Vars[VNORMAL].val = 0;
+		VAR(VNORMAL) = 0;
 
 	/* Command line overrides config.z */
 	if (xor)
-		Vars[VXORCURSOR].val = 1;
+		VAR(VXORCURSOR) = 1;
 
 	initScrnmarks(); /* init the screen marks and mark list */
 
@@ -266,7 +266,7 @@ void Setup(int argc, char **argv)
 		Bswitchto(tbuff->prev ? tbuff->prev : tbuff);
 
 		/* if VUSEOTHER try to load two buffers */
-		if (Vars[VUSEOTHER].val && Curbuff->prev) {
+		if (VAR(VUSEOTHER) && Curbuff->prev) {
 			other = Curbuff->prev;
 			strcpy(Lbufname,
 			       other->prev ? other->prev->bname : MAINBUFF);
@@ -490,7 +490,7 @@ Proc Zcwd()
 		else if (chdir(p) == 0) {
 			Cwd = p;
 #if XWINDOWS
-			if (Vars[VSHOWCWD].val)
+			if (VAR(VSHOWCWD))
 				Newtitle(Cwd);
 #endif
 		} else

@@ -84,7 +84,7 @@ void Tinit()
 #if LINUX
 	tcgetattr(fileno(stdin), &Savetty);
 	tcgetattr(fileno(stdin), &settty);
-	settty.c_iflag = Vars[VFLOW].val ? (IXON | IXOFF) : 0;
+	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
 	settty.c_oflag = TAB3;
 	settty.c_lflag = ECHOE | ECHOK;
 	settty.c_cc[VMIN] = (char) 1;
@@ -93,7 +93,7 @@ void Tinit()
 #elif SYSV2
 	ioctl(fileno(stdin), TCGETA, &Savetty);
 	ioctl(fileno(stdin), TCGETA, &settty);
-	settty.c_iflag = Vars[VFLOW].val ? (IXON | IXOFF) : 0;
+	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
 	settty.c_oflag = TAB3;
 	settty.c_lflag = ECHOE | ECHOK;
 	settty.c_cc[VMIN] = (char) 1;
@@ -157,7 +157,7 @@ void Tfini()
 	ioctl(fileno(stdin), TIOCSLTC, &Savelchars);
 #endif
 
-	if (Vars[VCLEAR].val)
+	if (VAR(VCLEAR))
 		Tclrwind();
 	else {
 		Clrecho();
@@ -172,7 +172,7 @@ void Tfini()
 void Tbell()
 {
 #if TERMINFO || ANSI
-	if (Vars[VVISBELL].val) {
+	if (VAR(VVISBELL)) {
 #ifdef __linux__
 		fputs("\033[?5h", stdout);
 		fflush(stdout);
@@ -183,7 +183,7 @@ void Tbell()
 #endif
 	} else
 #endif
-		if (Vars[VSILENT].val == 0)
+		if (VAR(VSILENT) == 0)
 			putchar('\7');
 }
 

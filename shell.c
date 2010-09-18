@@ -94,7 +94,7 @@ Proc Zman()
 
 #ifndef BORDER3D
 	/*  BORDER3D always pops up man page */
-	if (Vars[VPOPMAN].val) {
+	if (VAR(VPOPMAN)) {
 #endif
 		Buffer *buff;
 		FILE *pfp;
@@ -233,9 +233,9 @@ Proc Zmail()
 	 */
 	if (*subject)
 		sprintf(cmd, "%s -s \"%s\" %s",
-			(char *)Vars[VMAIL].val, subject, to);
+			VARSTR(VMAIL), subject, to);
 	else
-		sprintf(cmd, "%s %s", (char *)Vars[VMAIL].val, to);
+		sprintf(cmd, "%s %s", VARSTR(VMAIL), to);
 	BuffToPipe(Curbuff, cmd);
 	Echo("Mail sent.");
 }
@@ -247,7 +247,7 @@ Proc Zprint()
 
 	Echo("Printing...");
 	/* note that BuffToPipe updates cmd */
-	strcpy(cmd, (char *)Vars[VPRINT].val);
+	strcpy(cmd, VARSTR(VPRINT));
 	PrintExit(BuffToPipe(Curbuff, cmd));
 }
 

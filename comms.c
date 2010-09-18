@@ -107,9 +107,9 @@ Proc Zcenter()
 	Zdelwhite();
 	Toendline();
 	tmp = Bgetcol(TRUE, 0);
-	if (tmp <= Fillwidth()) {
+	if (tmp <= VAR(VFILLWIDTH)) {
 		Tobegline();
-		Tindent((Fillwidth() - tmp) / 2);
+		Tindent((VAR(VFILLWIDTH) - tmp) / 2);
 		Toendline();
 	}
 }
@@ -122,7 +122,7 @@ static void handle_close_bracket(Mark *tmark, int crfound)
 	int cnt;
 
 	Tobegline();
-	if (Vars[VMATCH].val & 0x100) {
+	if (VAR(VMATCH) & 0x100) {
 		/* show the rest of the line in the PAW */
 		Mark t;
 		int i, col;
@@ -339,7 +339,7 @@ Proc Zfillcomment()
 		/* main loop */
 		while (Bisbeforemrk(tmp)) {
 			Moveto(Isspace, FORWARD);
-			if (Bgetcol(TRUE, 0) > Fillwidth()) {
+			if (Bgetcol(TRUE, 0) > VAR(VFILLWIDTH)) {
 				Moveto(Isspace, BACKWARD);
 				Zdelwhite();
 				Binsert(NL);
@@ -379,18 +379,18 @@ Proc Zfillchk()
 
 	if (Cmd == CR)
 		Cmd = NL;
-	if (Bgetcol(TRUE, 0) < Fillwidth() || InPaw)
+	if (Bgetcol(TRUE, 0) < VAR(VFILLWIDTH) || InPaw)
 		(*Funcs[Cmd == NL ? ZNEWLINE : ZINSERT])();
 	else {
 		tmark = Bcremrk();
-		while (Bgetcol(TRUE, 0) > Fillwidth()) {
+		while (Bgetcol(TRUE, 0) > VAR(VFILLWIDTH)) {
 			Moveto(Isspace, BACKWARD);
 			Movepast(Isspace, BACKWARD);
 		}
 		Zdelwhite();
 		tmp = !Bisatmrk(tmark);
 		Binsert(NL);
-		Tindent(Margin());
+		Tindent(VAR(VMARGIN));
 		if (tmp) {
 			Bpnttomrk(tmark);
 			Binsert(Cmd);
@@ -447,12 +447,12 @@ Proc Zfillpara()
 		/* main loop */
 		while (Bisbeforemrk(tmp)) {
 			Moveto(Isspace, FORWARD);
-			if (Bgetcol(TRUE, 0) > Fillwidth()) {
+			if (Bgetcol(TRUE, 0) > VAR(VFILLWIDTH)) {
 				Moveto(Isspace, BACKWARD);
 				Zdelwhite();
 				Binsert(NL);
-				if (Margin())
-					Tindent(Margin());
+				if (VAR(VMARGIN))
+					Tindent(VAR(VMARGIN));
 				Moveto(Isspace, FORWARD);
 			}
 			Movepast(Iswhite, FORWARD);
@@ -566,7 +566,7 @@ static void Quit()
 	Checkpipes(0);		/* make sure waited for ALL children */
 #endif
 
-	if (Vars[VDOSAVE].val)
+	if (VAR(VDOSAVE))
 		Save(Curbuff);
 	Exitflag = TRUE;
 	KillHelp();
@@ -624,14 +624,14 @@ static Boolean Promptsave(Buffer *tbuff, Boolean must)
 	int ok = YES;
 
 	if (tbuff->bmodf) {
-		if (!must && !Vars[VSAVE].val) {
+		if (!must && !VAR(VSAVE)) {
 			sprintf(str, "Save buffer %s? ", tbuff->bname);
 			ok = Ask(str);
 			if (ok == ABORT)
 				return FALSE;
 		}
 
-		if (ok == YES || Vars[VSAVE].val) {
+		if (ok == YES || VAR(VSAVE)) {
 			Bswitchto(tbuff);
 			if (Filesave() != TRUE)
 				return FALSE;
@@ -828,7 +828,7 @@ Proc Ztab()
 {
 	int tcol;
 
-	if (Vars[VSPACETAB].val) {
+	if (VAR(VSPACETAB)) {
 		tcol = Tabsize - (Bgetcol(FALSE, 0) % Tabsize);
 		Sindent(tcol);
 	} else

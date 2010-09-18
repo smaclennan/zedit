@@ -273,7 +273,7 @@ Proc Pinsert()
 			case 1:		/* partial match */
 				break;
 			case 2:		/* full match */
-				if (Vars[VEXECONMATCH].val)
+				if (VAR(VEXECONMATCH))
 					InPaw = FALSE;
 				break;
 			}

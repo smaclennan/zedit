@@ -106,7 +106,7 @@ static void Modeline(WDO *wdo)
 		wdo->wbuff->bname);
 	Tprntstr(str);
 	if (wdo->wbuff->fname) {
-		len = (Vars[VLINES].val ? 13 : 3) + strlen(str);
+		len = (VAR(VLINES) ? 13 : 3) + strlen(str);
 		Tprntstr(Limit(wdo->wbuff->fname, len));
 	}
 	wdo->modecol = Tgetcol();
@@ -130,7 +130,7 @@ void Modeflags(WDO *wdo)
 
 	Tstyle(T_STANDOUT);
 
-	if (Vars[VLINES].val) {
+	if (VAR(VLINES)) {
 		Buffer *was = Curbuff;
 		Bswitchto(wdo->wbuff);
 		Blocation(&line);

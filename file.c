@@ -289,7 +289,7 @@ int Pathfixup(char *to, char *from)
 		if (*from && !Psep(*from) && !Psep(*(to - 1)))
 			*to++ = PSEP;
 	} else {
-		if (Vars[VEXPAND].val && !Psep(*from)) {
+		if (VAR(VEXPAND) && !Psep(*from)) {
 			/* add the current directory */
 			strcpy(to, Cwd);
 			to += strlen(to);
@@ -298,7 +298,7 @@ int Pathfixup(char *to, char *from)
 		}
 	}
 
-	if (Vars[VEXPAND].val) {
+	if (VAR(VEXPAND)) {
 		/* now handle the filename */
 		for (; *from; ++from)
 			if (*from == '.') {

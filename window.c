@@ -544,7 +544,7 @@ void Bgoto(Buffer *buff)
 		return;
 	}
 
-	if (Vars[VUSEOTHER].val) {
+	if (VAR(VUSEOTHER)) {
 		if (Curwdo->next)
 			Wswitchto(Curwdo->next);
 		else if (Curwdo->prev)
@@ -560,7 +560,7 @@ void Bgoto(Buffer *buff)
  */
 void Loadwdo(char *bname)
 {
-	if (Vars[VUSEOTHER].val) {
+	if (VAR(VUSEOTHER)) {
 		if (strcmp(Curwdo->wbuff->bname, bname) == 0)
 			return;
 		if (strcmp(Curwdo->wbuff->bname, MAINBUFF) == 0)

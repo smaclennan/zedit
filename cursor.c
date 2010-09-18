@@ -48,7 +48,7 @@ static void ScrollLine(Boolean forward)
 {
 	Mark save;
 
-	if (Vars[VSINGLE].val) {
+	if (VAR(VSINGLE)) {
 		Bmrktopnt(&save);
 		Bpnttomrk(Sstart);
 		forward ? Bcsearch(NL) : Bcrsearch(NL);

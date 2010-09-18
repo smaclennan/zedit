@@ -356,7 +356,7 @@ void Tstyle ARGS((int));
 void Tungetkb NOARGS;
 void Unmark ARGS((Mark*));
 void Usage ARGS((char*));
-void Varval ARGS((struct avar*));
+void Varval ARGS((int var));
 void Vsetmod ARGS((Boolean));
 void Vsetmrk ARGS((Mark*));
 void Walign ARGS((Buffer*));

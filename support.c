@@ -278,7 +278,7 @@ char *Strup(char *str)
 /* Put in the right number of tabs and spaces */
 void Tindent(int arg)
 {
-	if (Vars[VSPACETAB].val == 0)
+	if (VAR(VSPACETAB) == 0)
 		for (; arg >= Tabsize; arg -= Tabsize)
 			Binsert('\t');
 	Sindent(arg);

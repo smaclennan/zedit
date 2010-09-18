@@ -125,9 +125,9 @@ Buffer *Bcreate(void)
 		new->mark = Bcremrk();
 		new->mark->mbuff = new;
 		new->pnt_page = new->mark->mpage = fpage;
-		new->bmode = (Vars[VNORMAL].val ? NORMAL : TEXT) |
-			(Vars[VEXACT].val ? EXACT     : 0) |
-			(Vars[VOVWRT].val ? OVERWRITE : 0);
+		new->bmode = (VAR(VNORMAL) ? NORMAL : TEXT) |
+			(VAR(VEXACT) ? EXACT     : 0) |
+			(VAR(VOVWRT) ? OVERWRITE : 0);
 #if PIPESH || XWINDOWS
 		new->child = EOF;
 #endif
@@ -728,7 +728,7 @@ int Bwritefd(int fd)
 }
 
 /*	Write the current buffer to the file 'fname'.
- *	Handles the backup scheme according to Vars[VBACKUP].val.
+ *	Handles the backup scheme according to VAR(VBACKUP).
  *	Returns:	TRUE	if write successfull
  *				FALSE	if write failed
  *				ABORT	if user didn't want to overwrite
@@ -766,11 +766,11 @@ int Bwritefile(char *fname)
 			Lastpart(fname));
 		switch (Ask(PawStr)) {
 		case YES:
-			if (Vars[VBACKUP].val)
+			if (VAR(VBACKUP))
 				bak = Cp(fname, bakname);
 			break;
 		case NO:
-			if (Vars[VBACKUP].val)
+			if (VAR(VBACKUP))
 				bak = Mv(fname, bakname);
 			else
 				unlink(fname);	/* break link */
@@ -778,7 +778,7 @@ int Bwritefile(char *fname)
 		case ABORT:
 			return ABORT;
 		}
-	} else if (Vars[VBACKUP].val)
+	} else if (VAR(VBACKUP))
 		bak = Mv(fname, bakname);
 
 	/* Write the output file */
@@ -983,7 +983,7 @@ static Boolean XBput(int fd, Byte *addr, unsigned len)
 		return TRUE;
 	if (len == EOF) {
 		/* flush the buffer and reset */
-		if (Vars[VADDNL].val) {
+		if (VAR(VADDNL)) {
 			if (buflen > 0)
 				lastch = buf[buflen - 1];
 			if (lastch != '\n')
@@ -1013,7 +1013,7 @@ static Boolean XBput(int fd, Byte *addr, unsigned len)
 		return TRUE;
 	if (len == EOF) {
 		/* handle ADDNL */
-		if (Vars[VADDNL].val && lastch != '\n') {
+		if (VAR(VADDNL) && lastch != '\n') {
 			char buf = '\n';
 			return write(fd, &buf, 1) == 1;
 		} else {

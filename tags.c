@@ -290,7 +290,7 @@ static Boolean GetTagsFile()
 		else if (access("TAGS", 0) == 0)
 			tagfname = "TAGS";
 		else {
-			tagfname = (char *)Vars[VTAG].val;
+			tagfname = (char *)VAR(VTAG);
 			if (!tagfname  || access(tagfname, 0)) {
 				Error("No tags file found.");
 				return FALSE;

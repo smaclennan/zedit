@@ -87,7 +87,7 @@ void Loadsaved()
 	int mode;
 	unsigned long ploc, mloc, sloc;
 
-	if (!Vars[VDOSAVE].val)
+	if (!VAR(VDOSAVE))
 		return;
 
 	fp = fopen(SaveFileName(fname), "r");
@@ -321,7 +321,7 @@ void Toggle_mode(int mode)
 		else if (mode != TCL && extmatch(Bfname(), TCL))
 			new = TCL;
 		else if (mode != TEXT &&
-			 (!Vars[VNORMAL].val || extmatch(Bfname(), TEXT)))
+			 (!VAR(VNORMAL) || extmatch(Bfname(), TEXT)))
 			new = TEXT;
 		else
 			new = NORMAL;
@@ -330,7 +330,7 @@ void Toggle_mode(int mode)
 
 #if COMMENTBOLD
 	if (mode == 0)
-		Curbuff->comchar = *(char *)Vars[VASCHAR].val;
+		Curbuff->comchar = *(char *)VAR(VASCHAR);
 #endif
 
 	Curbuff->bmode = (Curbuff->bmode & MODEMASK) | new;
@@ -360,7 +360,7 @@ Proc Zdate()
 	long t;
 
 	time(&t);
-	strftime(date, MAXDATE, (char *)Vars[VDATESTR].val, localtime(&t));
+	strftime(date, MAXDATE, (char *)VAR(VDATESTR), localtime(&t));
 	if ((Argp || (Curbuff->bmode & VIEW)) && !InPaw)
 		Echo(date);
 	else
@@ -454,7 +454,7 @@ unsigned ch;
 
 	if (!(Curbuff->bmode & PROGMODE) || InPaw || Tkbrdy())
 		return;
-	if (Vars[VMATCH].val & 1) {
+	if (VAR(VMATCH) & 1) {
 		switch (ch) {
 		case ')':
 			match = '('; break;
@@ -482,7 +482,7 @@ unsigned ch;
 			ShowCursor(FALSE);
 		}
 		Bpnttomrk(&save);
-	} else if (Vars[VMATCH].val & 2) {
+	} else if (VAR(VMATCH) & 2) {
 		switch (ch) {
 		case '(':
 			match = ')'; break;

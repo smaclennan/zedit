@@ -44,7 +44,7 @@ char *Htype[] = {
 
 int HelpChild;
 
-Proc Zhelp()
+void Zhelp()
 {
 	KillHelp();
 	HelpChild = fork();
@@ -89,9 +89,9 @@ int Issentence()
 }
 
 #if FORK_ZHELP
-Proc TextHelp()
+void TextHelp()
 #else
-Proc Zhelp()
+void Zhelp()
 #endif
 {
 	static Byte level = 0, z;

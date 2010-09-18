@@ -19,16 +19,16 @@
 
 #include "z.h"
 
-static void Scroll ARGS((Boolean));
+static void Scroll(Boolean);
 
-Proc Zbegline()
+void Zbegline()
 {
 	Bmove(-1);
 	Tobegline();
 }
 
 
-Proc Zendline()
+void Zendline()
 {
 	Bmove1();
 	Toendline();
@@ -61,7 +61,7 @@ static void ScrollLine(Boolean forward)
 	}
 }
 
-Proc Zprevline()
+void Zprevline()
 {
 	int col = Forcecol();
 
@@ -74,7 +74,7 @@ Proc Zprevline()
 	Bmakecol(col, FALSE);
 }
 
-Proc Znextline()
+void Znextline()
 {
 	int col = Forcecol();
 
@@ -87,19 +87,19 @@ Proc Znextline()
 	Bmakecol(col, FALSE);
 }
 
-Proc Zprevchar()
+void Zprevchar()
 {
 	Bmove(-Arg);
 	Arg = 0;
 }
 
-Proc Znextchar()
+void Znextchar()
 {
 	Bmove(Arg);
 	Arg = 0;
 }
 
-Proc Zprevpage()
+void Zprevpage()
 {
 	int i, n, col = Forcecol();
 
@@ -110,7 +110,7 @@ Proc Zprevpage()
 	Reframe();
 }
 
-Proc Znextpage()
+void Znextpage()
 {
 	int i, col = Forcecol();
 
@@ -126,29 +126,29 @@ Proc Znextpage()
 
 #define ISWORD	Istoken
 
-Proc Zbword()
+void Zbword()
 {
 	Moveto(ISWORD, BACKWARD);
 	Movepast(ISWORD, BACKWARD);
 }
 
-Proc Zfword()
+void Zfword()
 {
 	Movepast(ISWORD, FORWARD);
 	Moveto(ISWORD, FORWARD);
 }
 
-Proc Ztostart()
+void Ztostart()
 {
 	Btostart();
 }
 
-Proc Ztoend()
+void Ztoend()
 {
 	Btoend();
 }
 
-Proc Zswapmrk()
+void Zswapmrk()
 {
 	Mark tmark;
 
@@ -158,13 +158,13 @@ Proc Zswapmrk()
 	Bpnttomrk(&tmark);
 }
 
-Proc Zopenline()
+void Zopenline()
 {
 	Binsert(NL);
 	Bmove(-1);
 }
 
-Proc Zlgoto()
+void Zlgoto()
 {
 	long line, cnt = 0;
 	Page *tpage;
@@ -197,7 +197,7 @@ Proc Zlgoto()
 		Bcsearch(NL);
 }
 
-Proc Zcgoto()
+void Zcgoto()
 {
 	int col = (int)Getnum("Column: ");
 	if (col == -1)
@@ -227,7 +227,7 @@ int  Bookmark = -1;		/* current book mark */
 int  Lastbook = -1;		/* last bookmark */
 
 
-Proc Zsetbookmrk()
+void Zsetbookmrk()
 {
 	if (Argp) {
 		Arg = 0;
@@ -257,7 +257,7 @@ Proc Zsetbookmrk()
 }
 
 
-Proc Znxtbookmrk()
+void Znxtbookmrk()
 {
 	if (Bookmark < 0) {
 		Echo("No bookmarks set.");
@@ -286,7 +286,7 @@ Proc Znxtbookmrk()
 		Bookmark = Lastbook;
 }
 
-Proc Zviewline()
+void Zviewline()
 {
 	Mark pmark;
 
@@ -299,7 +299,7 @@ Proc Zviewline()
 	Bpnttomrk(&pmark);
 }
 
-Proc Zredisplay()
+void Zredisplay()
 {
 #ifndef BORDER3D
 	WDO *wdo;
@@ -322,12 +322,12 @@ Proc Zredisplay()
 #endif
 }
 
-Proc Zbegwind()
+void Zbegwind()
 {
 	Bpnttomrk(Sstart);
 }
 
-Proc Zendwind()
+void Zendwind()
 {
 	int i;
 
@@ -336,12 +336,12 @@ Proc Zendwind()
 		;
 }
 
-Proc Zscrollup()
+void Zscrollup()
 {
 	Scroll(FALSE);
 }
 
-Proc Zscrolldown()
+void Zscrolldown()
 {
 	Scroll(TRUE);
 }

@@ -79,7 +79,7 @@ static int getname(char *prompt, char *path, Boolean isdir)
 	return rc;
 }
 
-Proc Zfname()
+void Zfname()
 {
 	Boolean update;
 	struct llist *list;
@@ -115,7 +115,7 @@ Proc Zfname()
 		Tbell();
 }
 
-Proc Zmatch()
+void Zmatch()
 {
 	struct llist *list;
 	char dir[PATHMAX + 1], *fname, *p;

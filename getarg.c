@@ -226,7 +226,7 @@ void Pout(char *str, Boolean check)
 }
 
 /* Use instead of Zinsert when in PAW */
-Proc Pinsert()
+void Pinsert()
 {
 	char savech;
 	Mark tmark;
@@ -282,7 +282,7 @@ Proc Pinsert()
 }
 
 /* Use instead of Znewline when in PAW */
-Proc Pnewline()
+void Pnewline()
 {
 	char cmdstr[STRMAX + 1], **ptr;
 
@@ -300,7 +300,7 @@ Proc Pnewline()
 	InPaw = FALSE;
 }
 
-Proc Zpart()
+void Zpart()
 {
 	char word[STRMAX + 1];
 	Buffer *tbuff;

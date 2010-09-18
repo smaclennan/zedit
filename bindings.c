@@ -26,7 +26,7 @@ Byte CRdefault = ZNEWLINE;
 static Boolean Bindfile(char *fname, int mode);
 static Boolean Bindone(char *prompt, int first, int *key);
 
-Proc Zbind(void)
+void Zbind(void)
 {
 	int f, key;
 
@@ -49,7 +49,7 @@ Proc Zbind(void)
 }
 
 
-Proc Zkeybind(void)
+void Zkeybind(void)
 {
 	char str[STRMAX];
 	int rc;
@@ -84,7 +84,7 @@ Boolean notdup_key(int k)
 		Keys[k] != Keys[k - ('a' - 'A')];
 }
 
-Proc Zcmdbind(void)
+void Zcmdbind(void)
 {
 	char line[STRMAX];
 	int f, k, found = 0;
@@ -126,7 +126,7 @@ static void Outto(FILE *fp, int col)
 		Out(" ", fp);
 }
 
-Proc Zdispbinds(void)
+void Zdispbinds(void)
 {
 	Boolean found;
 	FILE *fp;
@@ -212,7 +212,7 @@ void Loadbind()
  * save the bindings file. If no bindings file exists, save in the
  * $HOME dir.
  */
-Proc Zsavebind()
+void Zsavebind()
 {
 	char fname[30], path[PATHMAX + 1];
 	int i, n;

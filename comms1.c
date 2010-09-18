@@ -156,7 +156,7 @@ void Boffset(unsigned long off)
 	Bmove(off);
 }
 
-Proc Zcount()
+void Zcount()
 {
 	Boolean word, swapped = FALSE;
 	char str[STRMAX];
@@ -195,7 +195,7 @@ Proc Zcount()
 	Unmark(tmark);
 }
 
-Proc Zispace()
+void Zispace()
 {
 	Binsert(' ');
 	Bmove(-1);
@@ -219,7 +219,7 @@ static struct _amode
 #define AMODESIZE	sizeof(struct _amode)
 #define NUMMODES	(sizeof(modes) / AMODESIZE)
 
-Proc Zmode()
+void Zmode()
 {
 	int i, rc;
 
@@ -342,7 +342,7 @@ void Toggle_mode(int mode)
 	}
 }
 
-Proc Zmrkpara()
+void Zmrkpara()
 {
 	Bmove1();	/* make sure we are not at the start of a paragraph */
 	Zbpara();
@@ -354,7 +354,7 @@ Proc Zmrkpara()
 
 #define MAXDATE	80
 
-Proc Zdate()
+void Zdate()
 {
 	char date[MAXDATE + 1];
 	long t;
@@ -395,12 +395,12 @@ static void Setregion(int (*convert)())
 	Zredisplay();
 }
 
-Proc Zupregion()
+void Zupregion()
 {
 	Setregion(Toupper);
 }
 
-Proc Zlowregion()
+void Zlowregion()
 {
 	Setregion(Tolower);
 }
@@ -435,17 +435,17 @@ static void Indent(Boolean flag)
 	}
 }
 
-Proc Zindent()
+void Zindent()
 {
 	Indent(TRUE);
 }
 
-Proc Zundent()
+void Zundent()
 {
 	Indent(FALSE);
 }
 
-Proc Mshow(ch)
+void Mshow(ch)
 unsigned ch;
 {
 	Byte match;
@@ -498,7 +498,7 @@ unsigned ch;
 	}
 }
 
-Proc Zsetenv()
+void Zsetenv()
 {
 	char env[STRMAX + 2], set[STRMAX + 1], *p;
 

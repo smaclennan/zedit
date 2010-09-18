@@ -485,9 +485,9 @@ void Fcheck(void)
 		Dbg("cnames struct size bad: %d\n", sizeof(struct cnames));
 	}
 	s1 = sizeof(Cnames) / sizeof(struct cnames);
-	s2 = sizeof(Cmds) / sizeof(Proc *);
-	s3 = sizeof(Vcmds) / sizeof(Proc *);
-	s4 = sizeof(Pawcmds) / sizeof(Proc *) - 2;	/* Paw has 2 extra */
+	s2 = sizeof(Cmds) / sizeof(void *);
+	s3 = sizeof(Vcmds) / sizeof(void *);
+	s4 = sizeof(Pawcmds) / sizeof(void *) - 2;	/* Paw has 2 extra */
 	if ((s1 - s2 + s3 - s4) || s1 != NUMFUNCS) {
 		++error;
 		Dbg("Cnames: %d Cmds: %d Vcmds: %d Pawcmds: %d NUMFUNCS: %d\n",

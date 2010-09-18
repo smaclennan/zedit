@@ -26,7 +26,7 @@
 static int NextErrorCalled;
 
 /* Do a "make" command - basically a shell command in the ".make" buffer */
-Proc Zmake()
+void Zmake()
 {
 #ifndef BORDER3D
 	Buffer *mbuff;
@@ -68,7 +68,7 @@ Proc Zmake()
 }
 
 /* Do a "make" command - basically a shell command in the ".make" buffer */
-Proc Zgrep()
+void Zgrep()
 {
 	Buffer *mbuff;
 	char cmd[STRMAX * 2];
@@ -100,7 +100,7 @@ Proc Zgrep()
 		Error("Unable to execute grep.");
 }
 
-Proc Znexterr()
+void Znexterr()
 {
 #ifdef BORDER3D
 	ZmakeNextErr();
@@ -156,12 +156,12 @@ Proc Znexterr()
 
 #if PIPESH || XWINDOWS
 /* kill the make */
-Proc Zkill()
+void Zkill()
 {
 	Unvoke(Cfindbuff(MAKEBUFF), FALSE);
 }
 #else
-Proc Zkill() { Tbell(); }
+void Zkill() { Tbell(); }
 #endif
 
 /* Check if it is a warning or an error.

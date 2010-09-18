@@ -20,7 +20,7 @@
 #include "z.h"
 #include <sys/stat.h>
 
-Proc Zswitchto(void)
+void Zswitchto(void)
 {
 	char *was;
 	int rc;
@@ -42,7 +42,7 @@ Proc Zswitchto(void)
 	Cswitchto(Cfindbuff(Bnames[rc]));
 }
 
-Proc Znextbuff(void)
+void Znextbuff(void)
 {
 	Buffer *next = Curbuff->prev;
 
@@ -58,7 +58,7 @@ Proc Znextbuff(void)
 		Tbell();
 }
 
-Proc Zkillbuff(void)
+void Zkillbuff(void)
 {
 	Buffer *tbuff;
 	char bname[BUFNAMMAX + 1];
@@ -82,7 +82,7 @@ Proc Zkillbuff(void)
 }
 
 
-Proc Delbuff(Buffer *buff)
+void Delbuff(Buffer *buff)
 {
 	char bname[BUFNAMMAX + 1];
 	int wascur;
@@ -134,7 +134,7 @@ static void lstbuff(Buffer *tbuff)
 	Binsert('\n');
 }
 
-Proc Zlstbuff(void)
+void Zlstbuff(void)
 {
 #ifdef BORDER3D
 	/* SAM FIX FOR BORDER3D */
@@ -162,7 +162,7 @@ Proc Zlstbuff(void)
 #endif
 }
 
-Proc Zunmodf(void)
+void Zunmodf(void)
 {
 	Curbuff->bmodf = FALSE;
 }

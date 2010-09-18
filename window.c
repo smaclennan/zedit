@@ -25,9 +25,9 @@ WDO *Whead, *Curwdo;
 
 #define MINWDO		5		/* minimum window size */
 
-static void Wfree ARGS((WDO *));
-static Boolean Wdelete ARGS((WDO *));
-static Boolean Wsplit ARGS((void));
+static void Wfree(WDO *);
+static Boolean Wdelete(WDO *);
+static Boolean Wsplit(void);
 
 
 /* Create a new window pointer - screen info invalid */
@@ -395,14 +395,14 @@ void Winvalid(WDO *wdo)
 }
 
 /* Split the current window and enter new (bottom) window */
-Proc Z2wind()
+void Z2wind()
 {
 	if (!Wsplit())
 		Tbell();
 }
 
 /* Tear down all but one (current) window */
-Proc Z1wind()
+void Z1wind()
 {
 	WDO *wdo;
 	int i;
@@ -431,14 +431,14 @@ Proc Z1wind()
 }
 
 /* Delete current window if more than one */
-Proc Zdelwind()
+void Zdelwind()
 {
 	if (!Wdelete(Curwdo))
 		Tbell();
 }
 
 /* Make previous window current */
-Proc Zprevwind()
+void Zprevwind()
 {
 	WDO *wdo;
 
@@ -455,7 +455,7 @@ Proc Zprevwind()
 }
 
 /* Make next window current */
-Proc Znextwind()
+void Znextwind()
 {
 	if (Curwdo->next)
 		Wswitchto(Curwdo->next);
@@ -466,21 +466,21 @@ Proc Znextwind()
 }
 
 /* Make current window bigger */
-Proc Zgrowwind()
+void Zgrowwind()
 {
 	Sizewindow(Arg);
 	Arg = 0;
 }
 
 /* Make current window smaller */
-Proc Zshrinkwind()
+void Zshrinkwind()
 {
 	Sizewindow(-Arg);
 	Arg = 0;
 }
 
 /* Make current window an absolute size */
-Proc Zsizewind()
+void Zsizewind()
 {
 	if (!Sizewindow(Arg - Wheight() + 1))
 		Tbell();
@@ -515,7 +515,7 @@ static WDO *Otherwind()
 	return wdo;
 }
 
-Proc Znxtothrwind()
+void Znxtothrwind()
 {
 	WDO *save = Curwdo;
 	Otherwind();
@@ -523,7 +523,7 @@ Proc Znxtothrwind()
 	Wswitchto(save);
 }
 
-Proc Zprevothrwind()
+void Zprevothrwind()
 {
 	WDO *save = Curwdo;
 	Otherwind();

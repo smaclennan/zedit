@@ -21,7 +21,7 @@
 #include <sys/stat.h>
 #include <assert.h>
 
-Proc Zfindfile()
+void Zfindfile()
 {
 #if XWINDOWS
 	if (Argp && StartProg("Zfindfile") == 0) {
@@ -33,7 +33,7 @@ Proc Zfindfile()
 		Findfile(Fname, FALSE);
 }
 
-Proc Zviewfile()
+void Zviewfile()
 {
 	if (Getfname("View File: ", Fname))
 		return;
@@ -42,7 +42,7 @@ Proc Zviewfile()
 	Curwdo->modeflags = INVALID;
 }
 
-Proc Zeditfile()
+void Zeditfile()
 {
 	unsigned long offset;
 
@@ -115,7 +115,7 @@ Boolean Findfile(char *path, int startup)
 	return rc;
 }
 
-Proc Zsaveall()
+void Zsaveall()
 {
 	if (Argp) {
 		Buffer *tbuff;
@@ -127,7 +127,7 @@ Proc Zsaveall()
 	Saveall(TRUE);
 }
 
-Proc Zfilesave()
+void Zfilesave()
 {
 	if (Argp)
 		Saveall(FALSE);
@@ -154,7 +154,7 @@ Boolean Filesave()
 }
 
 
-Proc Zfilewrite()
+void Zfilewrite()
 {
 	char path[PATHMAX + 1], *prompt;
 
@@ -202,7 +202,7 @@ int Write_rgn(char *path)
 	return rc;
 }
 
-Proc Zfileread()
+void Zfileread()
 {
 	if (Getfname("Read File: ", Fname))
 		return;
@@ -250,7 +250,7 @@ Returns -1 if the 'from' is a directory
 NOTE: assumes a valid path (in particular /.. would not work)
 */
 
-static struct passwd *Getpwnam ARGS((char *name));
+static struct passwd *Getpwnam(char *name);
 
 int Pathfixup(char *to, char *from)
 {

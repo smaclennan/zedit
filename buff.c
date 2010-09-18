@@ -1027,7 +1027,7 @@ static Boolean XBput(int fd, Byte *addr, unsigned len)
 }
 #endif
 
-Proc Zstat()
+void Zstat()
 {
 	sprintf(PawStr, "Buffers: %d   Pages: %d", Numbuffs, NumPages);
 #if XWINDOWS

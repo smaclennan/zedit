@@ -100,7 +100,7 @@ void Execute()
 
 
 /* NOTE: Dotty blocks */
-Proc Dotty()
+void Dotty()
 {
 	Cmd = Tgetcmd();
 	Arg = 1;
@@ -478,7 +478,7 @@ char *prog;
 	exit(1);
 }
 
-Proc Zcwd()
+void Zcwd()
 {
 	char path[PATHMAX], *p;
 

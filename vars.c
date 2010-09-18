@@ -31,7 +31,7 @@ static char *Readstr(char *str, FILE *fp)
 	return NULL;
 }
 
-Proc Zsetavar()
+void Zsetavar()
 {
 	char pstr[STRMAX], arg[STRMAX];
 	int rc;
@@ -367,7 +367,7 @@ void Dline(int trow)
 }
 
 /* Save the current variables in the config.z file */
-Proc Zsaveconfig()
+void Zsaveconfig()
 {
 	FILE *fp;
 	char fname[PATHMAX];

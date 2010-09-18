@@ -25,10 +25,10 @@
 #define SPELLSTRING "<space>(skip)  A(ccept)  I(nsert)  R(eplace)  #"
 #define PROMPT		"Replace with: "
 
-static void Mclear ARGS((void));
-static int ispell ARGS((FILE *, FILE *, char *, char *));
+static void Mclear(void);
+static int ispell(FILE *, FILE *, char *, char *);
 
-Proc Zspell()
+void Zspell()
 {
 	static char *argv[] = { "ispell", "-a", NULL };
 	Buffer *was;
@@ -207,5 +207,5 @@ int Isalpha()
 	return isalpha(Buff());
 }
 #else
-Proc Zspell() { Tbell(); }
+void Zspell() { Tbell(); }
 #endif

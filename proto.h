@@ -1,370 +1,374 @@
-/****************************************************************************
- *																			*
- *				 The software found in this file is the						*
- *					  Copyright of Sean MacLennan							*
- *						  All rights reserved.								*
- *																			*
- ****************************************************************************/
-
-/* types */
-/* assume ansi compilers can handle void ... */
-#define ARGS(x)		x
-#define NOARGS		(void)
-#define ZPROC(x)	Proc x (void);
-
+/* proto.h - Zedit function prototypes
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 /* The Zedit commands */
-ZPROC(Z1wind)
-ZPROC(Z2wind)
-ZPROC(Zabort)
-ZPROC(Zagain)
-ZPROC(Zarg)
-ZPROC(Zbeauty)
-ZPROC(Zbegline)
-ZPROC(Zbegwind)
-ZPROC(Zbind)
-ZPROC(Zbpara)
-ZPROC(Zbword)
-ZPROC(Zcalc)
-ZPROC(Zcapword)
-ZPROC(Zcase)
-ZPROC(Zcenter)
-ZPROC(Zcexpand)
-ZPROC(Zcfindexpand)
-ZPROC(Zcgoto)
-ZPROC(Zcindent)
-ZPROC(Zcinsert)
-ZPROC(Zcmd)
-ZPROC(Zcmdtobuff)
-ZPROC(Zcmdbind)
-ZPROC(Zcmode)
-ZPROC(Zcopyrgn)
-ZPROC(Zcount)
-ZPROC(Zctrlx)
-ZPROC(Zcwd)
-ZPROC(Zdate)
-ZPROC(Zdelblanks)
-ZPROC(Zdelchar)
-ZPROC(Zdeleol)
-ZPROC(Zdelline)
-ZPROC(Zdelrgn)
-ZPROC(Zdelwhite)
-ZPROC(Zdelwind)
-ZPROC(Zdelword)
-ZPROC(Zdispbinds)
-ZPROC(Zeditfile)
-ZPROC(Zempty)
-ZPROC(Zendline)
-ZPROC(Zendwind)
-ZPROC(Zexit)
-ZPROC(Zfileread)
-ZPROC(Zfilesave)
-ZPROC(Zfilewrite)
-ZPROC(Zfillchk)
-ZPROC(Zfillmode)
-ZPROC(Zfillpara)
-ZPROC(Zfindfile)
-ZPROC(Zfindtag)
-ZPROC(Zformtab)
-ZPROC(Zfpara)
-ZPROC(Zfword)
-ZPROC(Zgetbword)
-ZPROC(Zgrep)
-ZPROC(Zgsearch)
-ZPROC(Zgrowwind)
-ZPROC(Zhelp)
-ZPROC(Zhexout)
-ZPROC(Zincsrch)
-ZPROC(Zindent)
-ZPROC(Zindent)
-ZPROC(Zinsert)
-ZPROC(Zispace)
-ZPROC(Zjoin)
-ZPROC(Zkeybind)
-ZPROC(Zkill)
-ZPROC(Zkillbuff)
-ZPROC(Zlgoto)
-ZPROC(Zlowregion)
-ZPROC(Zlowword)
-ZPROC(Zlstbuff)
-ZPROC(Zmake)
-ZPROC(Zmakedel)
-ZPROC(Zman)
-ZPROC(Zmeta)
-ZPROC(Zmetax)
-ZPROC(Zmode)
-ZPROC(Zmrkpara)
-ZPROC(Znewline)
-ZPROC(Znextbuff)
-ZPROC(Znextchar)
-ZPROC(Znexterr)
-ZPROC(Znextline)
-ZPROC(Znextpage)
-ZPROC(Znextwind)
-ZPROC(Znotimpl)
-ZPROC(Znxtbookmrk)
-ZPROC(Znxtothrwind)
-ZPROC(Zopenline)
-ZPROC(Zoverin)
-ZPROC(Zpart)
-ZPROC(Zprevchar)
-ZPROC(Zprevline)
-ZPROC(Zprevothrwind)
-ZPROC(Zprevpage)
-ZPROC(Zprevwind)
-ZPROC(Zprint)
-ZPROC(Zprintpos)
-ZPROC(Zquery)
-ZPROC(Zquit)
-ZPROC(Zquote)
-ZPROC(Zrcsci)
-ZPROC(Zrcsco)
-ZPROC(Zrdelchar)
-ZPROC(Zrdelword)
-ZPROC(Zredisplay)
-ZPROC(Zref)
-ZPROC(Zreplace)
-ZPROC(Zrereplace)
-ZPROC(Zresrch)
-ZPROC(Zgresrch)
-ZPROC(Zrincsrch)
-ZPROC(Zrsearch)
-ZPROC(Zsaveall)
-ZPROC(Zsavebind)
-ZPROC(Zsaveconfig)
-ZPROC(Zscrolldown)
-ZPROC(Zscrollup)
-ZPROC(Zsearch)
-ZPROC(Zsetavar)
-ZPROC(Zsetbookmrk)
-ZPROC(Zsetenv)
-ZPROC(Zsetmrk)
-ZPROC(Zshell)
-ZPROC(Zshrinkwind)
-ZPROC(Zsizewind)
-ZPROC(Zspell)
-ZPROC(Zstat)
-ZPROC(Zswapchar)
-ZPROC(Zswapmrk)
-ZPROC(Zswapword)
-ZPROC(Zswitchto)
-ZPROC(Ztab)
-ZPROC(Ztoend)
-ZPROC(Ztostart)
-ZPROC(Zundent)
-ZPROC(Zunmodf)
-ZPROC(Zupregion)
-ZPROC(Zupword)
-ZPROC(Zviewfile)
-ZPROC(Zviewline)
-ZPROC(Zvmode)
-ZPROC(Zyank)
-ZPROC(Zzoom)
+void Z1wind(void);
+void Z2wind(void);
+void Zabort(void);
+void Zagain(void);
+void Zarg(void);
+void Zbeauty(void);
+void Zbegline(void);
+void Zbegwind(void);
+void Zbind(void);
+void Zbpara(void);
+void Zbword(void);
+void Zcalc(void);
+void Zcapword(void);
+void Zcase(void);
+void Zcenter(void);
+void Zcexpand(void);
+void Zcfindexpand(void);
+void Zcgoto(void);
+void Zcindent(void);
+void Zcinsert(void);
+void Zcmd(void);
+void Zcmdtobuff(void);
+void Zcmdbind(void);
+void Zcmode(void);
+void Zcopyrgn(void);
+void Zcount(void);
+void Zctrlx(void);
+void Zcwd(void);
+void Zdate(void);
+void Zdelblanks(void);
+void Zdelchar(void);
+void Zdeleol(void);
+void Zdelline(void);
+void Zdelrgn(void);
+void Zdelwhite(void);
+void Zdelwind(void);
+void Zdelword(void);
+void Zdispbinds(void);
+void Zeditfile(void);
+void Zempty(void);
+void Zendline(void);
+void Zendwind(void);
+void Zexit(void);
+void Zfileread(void);
+void Zfilesave(void);
+void Zfilewrite(void);
+void Zfillchk(void);
+void Zfillmode(void);
+void Zfillpara(void);
+void Zfindfile(void);
+void Zfindtag(void);
+void Zformtab(void);
+void Zfpara(void);
+void Zfword(void);
+void Zgetbword(void);
+void Zgrep(void);
+void Zgsearch(void);
+void Zgrowwind(void);
+void Zhelp(void);
+void Zhexout(void);
+void Zincsrch(void);
+void Zindent(void);
+void Zindent(void);
+void Zinsert(void);
+void Zispace(void);
+void Zjoin(void);
+void Zkeybind(void);
+void Zkill(void);
+void Zkillbuff(void);
+void Zlgoto(void);
+void Zlowregion(void);
+void Zlowword(void);
+void Zlstbuff(void);
+void Zmake(void);
+void Zmakedel(void);
+void Zman(void);
+void Zmeta(void);
+void Zmetax(void);
+void Zmode(void);
+void Zmrkpara(void);
+void Znewline(void);
+void Znextbuff(void);
+void Znextchar(void);
+void Znexterr(void);
+void Znextline(void);
+void Znextpage(void);
+void Znextwind(void);
+void Znotimpl(void);
+void Znxtbookmrk(void);
+void Znxtothrwind(void);
+void Zopenline(void);
+void Zoverin(void);
+void Zpart(void);
+void Zprevchar(void);
+void Zprevline(void);
+void Zprevothrwind(void);
+void Zprevpage(void);
+void Zprevwind(void);
+void Zprint(void);
+void Zprintpos(void);
+void Zquery(void);
+void Zquit(void);
+void Zquote(void);
+void Zrcsci(void);
+void Zrcsco(void);
+void Zrdelchar(void);
+void Zrdelword(void);
+void Zredisplay(void);
+void Zref(void);
+void Zreplace(void);
+void Zrereplace(void);
+void Zresrch(void);
+void Zgresrch(void);
+void Zrincsrch(void);
+void Zrsearch(void);
+void Zsaveall(void);
+void Zsavebind(void);
+void Zsaveconfig(void);
+void Zscrolldown(void);
+void Zscrollup(void);
+void Zsearch(void);
+void Zsetavar(void);
+void Zsetbookmrk(void);
+void Zsetenv(void);
+void Zsetmrk(void);
+void Zshell(void);
+void Zshrinkwind(void);
+void Zsizewind(void);
+void Zspell(void);
+void Zstat(void);
+void Zswapchar(void);
+void Zswapmrk(void);
+void Zswapword(void);
+void Zswitchto(void);
+void Ztab(void);
+void Ztoend(void);
+void Ztostart(void);
+void Zundent(void);
+void Zunmodf(void);
+void Zupregion(void);
+void Zupword(void);
+void Zviewfile(void);
+void Zviewline(void);
+void Zvmode(void);
+void Zyank(void);
+void Zzoom(void);
 
 /* General routines */
 
-void Dbg ARGS((char *fmt, ...));
+void Dbg(char *fmt, ...);
 #if BSD
-int access ARGS((char *, int));
+int access(char *, int);
 #endif
-struct passwd *dup_pwent ARGS((struct passwd *));
-char *AddHome ARGS((char*, char*));
-void initScrnmarks NOARGS;
-struct llist *Add ARGS((struct llist**, char*));
-char *Addbname ARGS((char*));
-void Addtocnames ARGS((int, char*));
-int Ask ARGS((char*));
-char *Bakname(char*, char*);
-int Batoi NOARGS;
-int Bcopyrgn ARGS((Mark*, Buffer*));
-Buffer *Bcreate NOARGS;
-Mark *Bcremrk NOARGS;
-Page *Bcrepage ARGS((Buffer*, Page*, Page*, int));
-Boolean Bcrsearch ARGS((Byte));
-Boolean Bcsearch ARGS((Byte));
-Boolean Bdelbuff ARGS((Buffer*));
-void Bdelete ARGS((unsigned));
-void Bdeltomrk ARGS((Mark*));
-void Bempty NOARGS;
-void Bflush NOARGS;
-int Bgetcol ARGS((Boolean, int));
-void Bgoto ARGS((Buffer *));
-void Bind NOARGS;
-void Binsert ARGS((Byte));
-void Binstr ARGS((char*));
-Boolean Bisaftermrk ARGS((Mark*));
-Boolean Bisbeforemrk ARGS((Mark*));
-int Bitcnt ARGS((int));
-long Blength ARGS((Buffer*));
-long Blines ARGS((Buffer*));
-unsigned long Blocation ARGS((unsigned*));
-void Blockmove ARGS((Mark*, Mark*));
-int Bmakecol ARGS((int, Boolean));
-Boolean Bmove ARGS((int));
-Boolean Bmove1 ARGS((void));
-void Bmrktopnt ARGS((Mark*));
-void Boffset ARGS((unsigned long));
-void Bpnttomrk ARGS((Mark*));
-int Breadfile ARGS((char*));
-Boolean Bsearch ARGS((char*, Boolean));
-void Bshoveit NOARGS;
-void Bswappnt ARGS((Mark*));
-void Bswitchto ARGS((Buffer*));
-void Btoend NOARGS;
-void Btostart NOARGS;
-int Bwritefd ARGS((int));
-int Bwritefile ARGS((char*));
-int Checkpipes ARGS((int type));
-Buffer *Cfindbuff ARGS((char*));
-void Clrecho NOARGS;
-Buffer *Cmakebuff ARGS((char*, char*));
-Buffer *Cmdtobuff ARGS((char*, char*));
-int Cntlines ARGS((int));
-int Compile ARGS((Byte*, Byte*, Byte*));
-void Copytomrk ARGS((Mark*));
-Boolean CreateRing NOARGS;
-void Cswitchto ARGS((Buffer*));
-Boolean zCursor NOARGS;
-Boolean Delay NOARGS;
-Boolean Delayprompt ARGS((char*));
-Boolean Delbname ARGS((char*));
-Proc Delbuff ARGS((Buffer *));
-Boolean Delcmd NOARGS;
-Boolean DelcmdAll NOARGS;
-char *Dispkey ARGS((unsigned, char*));
-void Dispit ARGS((char*, int*));
-void Doincsrch ARGS((char*, Boolean));
-void Doreplace ARGS((int));
-Proc Dotty NOARGS;
-void Dline ARGS((int));
-void Dwait ARGS((int));
-void Edit NOARGS;
-void Execute NOARGS;
-void ExtendedLineMarker NOARGS;
-int Fileread ARGS((char*));
-Boolean Filesave NOARGS;
-Boolean Findfile ARGS((char*, int));
-char *Findfirst ARGS((char*));
-char *Findnext NOARGS;
-FILE *Findhelp ARGS((int, int, char *));
-int Findpath ARGS((char*, char*, int, Boolean));
-WDO *Findwdo ARGS((Buffer *));
-int Forcecol NOARGS;
-void Freelist ARGS((struct llist**));
-Boolean Getarg ARGS((char*, char*, int));
-char *Getbtxt ARGS((char*, int));
-Boolean Getbword ARGS((char*, int, int (*)()));
-int Getdname ARGS((char *prompt, char *path));
-long Getnum ARGS((char*));
-int Getplete ARGS((char*, char*, char **, int, int));
-void Help ARGS((int, Boolean));
-void Helpit ARGS((int));
-void Initline NOARGS;
-int Innerdsp ARGS((int, int, Mark*));
-void Intomem ARGS((Page*));
-Boolean Isdir ARGS((char*));
-Boolean Isext ARGS((char*, char*));
-Boolean Isfile ARGS((char*, char*, char*, Boolean));
-Boolean Ispara ARGS((char, char));
-int Isspace NOARGS;
-int Isnotws NOARGS;
-int Istoken NOARGS;
-int Iswhite NOARGS;
-int Isword NOARGS;
-void Killtomrk ARGS((Mark*));
-char *Lastpart ARGS((char*));
-char *Limit ARGS((char*, int));
-void Loadbind NOARGS;
-void Loadsaved NOARGS;
-void Loadwdo ARGS((char *));
-void Makecur ARGS((Page*));
-void Makeoffset ARGS((int));
-void Makepaw ARGS((char*, Boolean));
-void Modeflags ARGS((WDO *));
-void Movepast ARGS((int (*pred)(), Boolean forward));
-void Moveto ARGS((int (*pred)(), Boolean forward));
-Boolean Mrkaftermrk ARGS((Mark*, Mark*));
-Boolean Mrkatmrk ARGS((Mark*, Mark*));
-Boolean Mrkbeforemrk ARGS((Mark*, Mark*));
-Proc Mshow ARGS((unsigned));
-Boolean Mv ARGS((char*, char*));
-Boolean Cp ARGS((char*, char*));
-int main ARGS((int, char**));
-void Newtitle ARGS((char *));
-char *Nocase ARGS((char*));
-void NoMem NOARGS;
-int Parse ARGS((char*));
-void parsem ARGS((char*, Boolean));
-int Pathfixup ARGS((char*, char*));
-Boolean Pcmdplete ARGS((Boolean));
-Proc Pinsert NOARGS;
-int PipeToBuff ARGS((Buffer *buff, char *instr));
-int BuffToPipe ARGS((Buffer *buff, char *instr));
-Proc Pnewline NOARGS;
-void Pntmove ARGS((int, int));
-void Pout ARGS((char *, Boolean));
-void Pset ARGS((int, int, int));
-int Prefline NOARGS;
-void PutPaw ARGS((char*, int));
-void ReadVfile NOARGS;
-Boolean Readone ARGS((char*, char*));
-void Redisplay NOARGS;
-void Reframe NOARGS;
-void Refresh NOARGS;
-void Regerr ARGS((int));
-Boolean Resize ARGS((int));
-void Save ARGS((Buffer*));
-Boolean Saveall ARGS((Boolean));
-void Setavar ARGS((char*, Boolean));
-char *Setmodes ARGS((Buffer *));
-int Settabsize ARGS((unsigned));
-void Setup ARGS((int, char**));
-Boolean Step ARGS((Byte*));
-void SetMark ARGS((Boolean));
-char *Strstr ARGS((char*, char*));
-char *Strup ARGS((char*));
-void Syerr ARGS((int));
-void Tbell NOARGS;
-void Tcleol NOARGS;
-void Tclrwind NOARGS;
-void Termsize NOARGS;
-void Tfini NOARGS;
+struct passwd *dup_pwent(struct passwd *);
+char *AddHome(char*, char*);
+void initScrnmarks(void);
+struct llist *Add(struct llist**, char*);
+char *Addbname(char *);
+void Addtocnames(int, char *);
+int Ask(char *);
+char *Bakname(char *, char *);
+int Batoi(void);
+int Bcopyrgn(Mark *, Buffer*);
+Buffer *Bcreate(void);
+Mark *Bcremrk(void);
+Page *Bcrepage(Buffer*, Page *, Page *, int);
+Boolean Bcrsearch(Byte);
+Boolean Bcsearch(Byte);
+Boolean Bdelbuff(Buffer *);
+void Bdelete(unsigned);
+void Bdeltomrk(Mark *);
+void Bempty(void);
+void Bflush(void);
+int Bgetcol(Boolean, int);
+void Bgoto(Buffer *);
+void Bind(void);
+void Binsert(Byte);
+void Binstr(char *);
+Boolean Bisaftermrk(Mark *);
+Boolean Bisbeforemrk(Mark *);
+int Bitcnt(int);
+long Blength(Buffer *);
+long Blines(Buffer *);
+unsigned long Blocation(unsigned *);
+void Blockmove(Mark *, Mark *);
+int Bmakecol(int, Boolean);
+Boolean Bmove(int);
+Boolean Bmove1(void);
+void Bmrktopnt(Mark *);
+void Boffset(unsigned long);
+void Bpnttomrk(Mark *);
+int Breadfile(char *);
+Boolean Bsearch(char *, Boolean);
+void Bshoveit(void);
+void Bswappnt(Mark *);
+void Bswitchto(Buffer *);
+void Btoend(void);
+void Btostart(void);
+int Bwritefd(int);
+int Bwritefile(char *);
+int Checkpipes(int type);
+Buffer *Cfindbuff(char *);
+void Clrecho(void);
+Buffer *Cmakebuff(char *, char *);
+Buffer *Cmdtobuff(char *, char *);
+int Cntlines(int);
+int Compile(Byte*, Byte*, Byte*);
+void Copytomrk(Mark *);
+Boolean CreateRing(void);
+void Cswitchto(Buffer *);
+Boolean zCursor(void);
+Boolean Delay(void);
+Boolean Delayprompt(char *);
+Boolean Delbname(char *);
+void Delbuff(Buffer *);
+Boolean Delcmd(void);
+Boolean DelcmdAll(void);
+char *Dispkey(unsigned, char *);
+void Dispit(char *, int *);
+void Doincsrch(char *, Boolean);
+void Doreplace(int);
+void Dotty(void);
+void Dline(int);
+void Dwait(int);
+void Edit(void);
+void Execute(void);
+void ExtendedLineMarker(void);
+int Fileread(char *);
+Boolean Filesave(void);
+Boolean Findfile(char *, int);
+char *Findfirst(char *);
+char *Findnext(void);
+FILE *Findhelp(int, int, char *);
+int Findpath(char *, char *, int, Boolean);
+WDO *Findwdo(Buffer *);
+int Forcecol(void);
+void Freelist(struct llist **);
+Boolean Getarg(char *, char *, int);
+char *Getbtxt(char *, int);
+Boolean Getbword(char *, int, int (*)());
+int Getdname(char *prompt, char *path);
+long Getnum(char *);
+int Getplete(char *, char *, char **, int, int);
+void Help(int, Boolean);
+void Helpit(int);
+void Initline(void);
+int Innerdsp(int, int, Mark *);
+void Intomem(Page *);
+Boolean Isdir(char *);
+Boolean Isext(char *, char *);
+Boolean Isfile(char *, char *, char *, Boolean);
+Boolean Ispara(char, char);
+int Isspace(void);
+int Isnotws(void);
+int Istoken(void);
+int Iswhite(void);
+int Isword(void);
+void Killtomrk(Mark *);
+char *Lastpart(char *);
+char *Limit(char *, int);
+void Loadbind(void);
+void Loadsaved(void);
+void Loadwdo(char *);
+void Makecur(Page *);
+void Makeoffset(int);
+void Makepaw(char *, Boolean);
+void Modeflags(WDO *);
+void Movepast(int (*pred)(), Boolean forward);
+void Moveto(int (*pred)(), Boolean forward);
+Boolean Mrkaftermrk(Mark *, Mark *);
+Boolean Mrkatmrk(Mark *, Mark *);
+Boolean Mrkbeforemrk(Mark *, Mark *);
+void Mshow(unsigned);
+Boolean Mv(char *, char *);
+Boolean Cp(char *, char *);
+int main(int, char **);
+void Newtitle(char *);
+char *Nocase(char *);
+void NoMem(void);
+int Parse(char *);
+void parsem(char *, Boolean);
+int Pathfixup(char *, char *);
+Boolean Pcmdplete(Boolean);
+void Pinsert(void);
+int PipeToBuff(Buffer *buff, char *instr);
+int BuffToPipe(Buffer *buff, char *instr);
+void Pnewline(void);
+void Pntmove(int, int);
+void Pout(char *, Boolean);
+void Pset(int, int, int);
+int Prefline(void);
+void PutPaw(char *, int);
+void ReadVfile(void);
+Boolean Readone(char *, char *);
+void Redisplay(void);
+void Reframe(void);
+void Refresh(void);
+void Regerr(int);
+Boolean Resize(int);
+void Save(Buffer *);
+Boolean Saveall(Boolean);
+void Setavar(char *, Boolean);
+char *Setmodes(Buffer *);
+int Settabsize(unsigned);
+void Setup(int, char **);
+Boolean Step(Byte *);
+void SetMark(Boolean);
+char *Strstr(char *, char *);
+char *Strup(char *);
+void Syerr(int);
+void Tbell(void);
+void Tcleol(void);
+void Tclrwind(void);
+void Termsize(void);
+void Tfini(void);
 #if XWINDOWS
-void Tflush NOARGS;
+void Tflush(void);
 #endif
-void Tforce NOARGS;
-int Tgetcmd NOARGS;
-Byte Tgetkb NOARGS;
-void Tgoto ARGS((int, int));
-void Tindent ARGS((int));
+void Tforce(void);
+int Tgetcmd(void);
+Byte Tgetkb(void);
+void Tgoto(int, int);
+void Tindent(int);
 #if XWINDOWS
-void Tinit ARGS((int, char**));
+void Tinit(int, char **);
 #else
-void Tinit NOARGS;
+void Tinit(void);
 #endif
-void Titot ARGS((unsigned));
-int Tkbrdy NOARGS;
-void Tobegline NOARGS;
-void Toendline NOARGS;
-int Tolower ARGS((int));
-int Toupper ARGS((int));
-void Toggle_mode ARGS((int));
-void Tprntchar ARGS((Byte));
-void Tprntstr ARGS((char*));
-void Tsize ARGS((int*, int*));
-void Tstyle ARGS((int));
-void Tungetkb NOARGS;
-void Unmark ARGS((Mark*));
-void Usage ARGS((char*));
-void Varval ARGS((int var));
-void Vsetmod ARGS((Boolean));
-void Vsetmrk ARGS((Mark*));
-void Walign ARGS((Buffer*));
-int Width ARGS((Byte, int, Boolean));
-void Wload ARGS((char *, int, int, unsigned long, int));
-int Write_rgn ARGS((char *));
-void free_pwent ARGS((struct passwd *pw));
-void Hangup ARGS((int));
+void Titot(unsigned);
+int Tkbrdy(void);
+void Tobegline(void);
+void Toendline(void);
+int Tolower(int);
+int Toupper(int);
+void Toggle_mode(int);
+void Tprntchar(Byte);
+void Tprntstr(char *);
+void Tsize(int *, int *);
+void Tstyle(int);
+void Tungetkb(void);
+void Unmark(Mark *);
+void Usage(char *);
+void Varval(int var);
+void Vsetmod(Boolean);
+void Vsetmrk(Mark *);
+void Walign(Buffer *);
+int Width(Byte, int, Boolean);
+void Wload(char *, int, int, unsigned long, int);
+int Write_rgn(char *);
+void free_pwent(struct passwd *pw);
+void Hangup(int);
 Boolean notdup_key(int k);
 
 
@@ -372,115 +376,115 @@ Boolean notdup_key(int k);
 
 
 #if TERMINFO || ANSI
-void TIinit NOARGS;
-void TIfini NOARGS;
+void TIinit(void);
+void TIfini(void);
 #endif
 
 
 /* compile switched routines */
 
 
-void Message ARGS((Buffer *, char *));
-void PrintExit ARGS((int code));
+void Message(Buffer *, char *);
+void PrintExit(int code);
 
-int Dopipe ARGS((Buffer*, char*));
-void Winit NOARGS;
+int Dopipe(Buffer *, char *);
+void Winit(void);
 
 #if PIPESH
-int Checkpipes ARGS((int));
-Boolean Doshell NOARGS;
-Boolean Invoke ARGS((Buffer*, char **));
-int Readpipes ARGS((fd_set *));
-void Sendtopipe NOARGS;
-void Sigchild ARGS((int));
-char *Wordit ARGS((char**));
+int Checkpipes(int);
+Boolean Doshell(void);
+Boolean Invoke(Buffer *, char **);
+int Readpipes(fd_set *);
+void Sendtopipe(void);
+void Sigchild(int);
+char *Wordit(char **);
 #endif
 
-int Isalpha NOARGS;
+int Isalpha(void);
 
-void Unvoke ARGS((Buffer*, Boolean));
+void Unvoke(Buffer *, Boolean);
 
-Proc Zmail NOARGS;
+void Zmail(void);
 
 
 #if DBG
-Boolean Dbgname ARGS((char*));
-void Dbgsig ARGS((int));
-void Fcheck NOARGS;
+Boolean Dbgname(char *);
+void Dbgsig(int);
+void Fcheck(void);
 
-char *XEventName ARGS((int type));
+char *XEventName(int type);
 #endif
 
 
 /* for getfname */
 
-int Getfname ARGS((char*, char*));
-Proc Zfname NOARGS;
-Proc Zmatch NOARGS;
-struct llist *GetFill ARGS((char*, char**, int*, Boolean*));
-struct llist *Fill_list ARGS((char*));
-int nmatch ARGS((char*, char*));
+int Getfname(char *, char *);
+void Zfname(void);
+void Zmatch(void);
+struct llist *GetFill(char *, char **, int *, Boolean*);
+struct llist *Fill_list(char *);
+int nmatch(char *, char *);
 
 
 #ifdef SPELL
-void sreplace ARGS((char *));
+void sreplace(char *);
 #endif
 
-void Wswitchto ARGS((WDO *wdo));
-void Winvalid ARGS((WDO *wdo));
-void Wsize NOARGS;
-Boolean WuseOther ARGS((char *));
+void Wswitchto(WDO *wdo);
+void Winvalid(WDO *wdo);
+void Wsize(void);
+Boolean WuseOther(char *);
 
 #ifdef MEMLOG
-void loginit ARGS((char*));
-void logfini NOARGS;
-char *logmalloc ARGS((unsigned, char*, unsigned));
-char *logdup ARGS((char*, char*, unsigned));
-void logfree ARGS((char*, char*, unsigned));
+void loginit(char *);
+void logfini(void);
+char *logmalloc(unsigned, char *, unsigned);
+char *logdup(char *, char *, unsigned);
+void logfree(char *, char *, unsigned);
 
 #define malloc(n)		logmalloc((n), __FILE__, __LINE__)
 #define strdup(m)		logdup((m), __FILE__, __LINE__)
 #define free(m)			logfree((m), __FILE__, __LINE__)
 #endif
 
-void KillHelp NOARGS;
+void KillHelp(void);
 
 #if XWINDOWS
-char *KeyToName ARGS((int, char*));
-void ShowCursor ARGS((Boolean));
-void ShowMark ARGS((Boolean));
-int Pinvoke ARGS((char *argv[], FILE **in, FILE **out));
-int ColorResource ARGS((char *name, char *class, int *pixel));
-void Tputchar ARGS((char));
-int GetColor ARGS((char*, int*));
-int GetXColor ARGS((char*, void*));
-void LoadFonts NOARGS;
-void Xinit ARGS((char *app, int *argc, char **argv));
-void XShellInput NOARGS;
+char *KeyToName(int, char *);
+void ShowCursor(Boolean);
+void ShowMark(Boolean);
+int Pinvoke(char *argv[], FILE **in, FILE **out);
+int ColorResource(char *name, char *class, int *pixel);
+void Tputchar(char);
+int GetColor(char *, int *);
+int GetXColor(char *, void *);
+void LoadFonts(void);
+void Xinit(char *app, int *argc, char **argv);
+void XShellInput(void);
 
-void PopupSearch NOARGS;
-char GetQueryCmd ARGS((char prev));
-void QueryDone   NOARGS;
+void PopupSearch(void);
+char GetQueryCmd(char prev);
+void QueryDone(void);
 
-void xusage NOARGS;
+void xusage(void);
 
-int StartProg ARGS((char *prog));
-void XDeleteBuffer ARGS((char *bname));
-void ProcessFDs NOARGS;
-void CleanupSocket ARGS((int i));
-void closeSockets NOARGS;
-void audioExit NOARGS;
+int StartProg(char *prog);
+void XDeleteBuffer(char *bname);
+void voidessFDs(void);
+void CleanupSocket(int i);
+void closeSockets(void);
+void audioExit(void);
 
 void GrabKeyboard();
-void Xfindtag NOARGS;
+void Xfindtag(void);
 #endif
 
 #if COMMENTBOLD
-void AddComment NOARGS;
-void ResetComments NOARGS;
-void CheckComment NOARGS;
-void Recomment NOARGS;
-void AddCPP NOARGS;
+void AddComment(void);
+void ResetComments(void);
+void CheckComment(void);
+void Recomment(void);
+void AddCPP(void);
 #endif
 
 #ifdef SCROLLBARS
@@ -490,4 +494,4 @@ void UpdateScrollbars();
 void undo_add(int size);
 void undo_del(int size);
 void undo_clear(Buffer *buff);
-Proc Zundo(void);
+void Zundo(void);

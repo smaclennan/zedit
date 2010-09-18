@@ -29,8 +29,6 @@ typedef struct buff Buffer;
 typedef struct wdo WDO;
 
 /* from old global.h */
-typedef void Proc;
-
 #ifndef _XtIntrinsic_h
 typedef int Boolean;
 #endif

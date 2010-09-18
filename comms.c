@@ -42,7 +42,7 @@ static Boolean Findstart()
 	return !Bisend();
 }
 
-Proc Zcapword()
+void Zcapword()
 {
 	if (Findstart()) {
 		Buff() = Toupper(Buff());
@@ -54,7 +54,7 @@ Proc Zcapword()
 }
 
 
-Proc Zlowword()
+void Zlowword()
 {
 	if (Findstart()) {
 		for ( ; !Bisend() && Istoken(); Bmove1()) {
@@ -66,7 +66,7 @@ Proc Zlowword()
 }
 
 
-Proc Zupword()
+void Zupword()
 {
 	if (Findstart()) {
 		for ( ; !Bisend() && Istoken(); Bmove1()) {
@@ -78,7 +78,7 @@ Proc Zupword()
 }
 
 
-Proc Zswapword()
+void Zswapword()
 {
 	Mark *tmark, *tmp;
 
@@ -99,7 +99,7 @@ Proc Zswapword()
 }
 
 
-Proc Zcenter()
+void Zcenter()
 {
 	int tmp;
 
@@ -150,7 +150,7 @@ static void handle_close_bracket(Mark *tmark, int crfound)
 
 
 /* This code must handle any char so that expansion will work */
-Proc Zcinsert()
+void Zcinsert()
 {
 	int cnt, crfound = FALSE;
 	Mark tmark;
@@ -232,7 +232,7 @@ Proc Zcinsert()
 
 
 /* 'C' indent. Called for NL. */
-Proc Zcindent()
+void Zcindent()
 {
 	int width;
 	Mark tmark;
@@ -278,7 +278,7 @@ Proc Zcindent()
  *			...
  *		[<ws>] [*] <end_comment> [<text>]
  */
-Proc Zfillcomment()
+void Zfillcomment()
 {
 	Mark *start, *end, *tmp, tmark;
 	int col;
@@ -372,7 +372,7 @@ Proc Zfillcomment()
 
 /* FILL MODE COMMANDS */
 
-Proc Zfillchk()
+void Zfillchk()
 {
 	Boolean tmp;
 	Mark *tmark;
@@ -399,7 +399,7 @@ Proc Zfillchk()
 	}
 }
 
-Proc Zdelwhite()
+void Zdelwhite()
 {
 	while (!Bisend() && Iswhite())
 		Bdelete(1);
@@ -415,7 +415,7 @@ Proc Zdelwhite()
 }
 
 /* Not reentrant - must iterate for arg */
-Proc Zfillpara()
+void Zfillpara()
 {
 	Boolean all;
 	Mark *tmark, *tmp;
@@ -477,7 +477,7 @@ Proc Zfillpara()
 	Unmark(tmark);
 }
 
-Proc Zfpara()
+void Zfpara()
 {
 	char pc = '\0';
 
@@ -491,7 +491,7 @@ Proc Zfpara()
 	Movepast(Isspace, FORWARD);
 }
 
-Proc Zbpara()
+void Zbpara()
 {
 	char pc = '\0';
 
@@ -515,7 +515,7 @@ Boolean Ispara(char pc, char ch)
 
 /* FORM MODE COMMANDS */
 
-Proc Zformtab()
+void Zformtab()
 {
 	if (Bsearch(FORMSTRING, TRUE))
 		Bdelete(strlen(FORMSTRING));
@@ -525,7 +525,7 @@ Proc Zformtab()
 
 /* MISC COMMANDS */
 
-Proc Zprintpos()
+void Zprintpos()
 {
 	char str[STRMAX];
 	unsigned long mark, point;
@@ -542,13 +542,13 @@ Proc Zprintpos()
 
 
 /* Key has no binding */
-Proc Znotimpl()
+void Znotimpl()
 {
 	Tbell();
 }
 
 
-Proc Zsetmrk()
+void Zsetmrk()
 {
 	Bmrktopnt(Curbuff->mark);
 	Echo("Mark Set.");
@@ -579,7 +579,7 @@ static void Quit()
 	exit(0);
 }
 
-Proc Zquit()
+void Zquit()
 {
 	Buffer *tbuff;
 	Boolean modf = FALSE;
@@ -600,7 +600,7 @@ Proc Zquit()
  * If a buffer is modified, ask to write it out.
  * Dosen't save the system buffers.
  */
-Proc Zexit()
+void Zexit()
 {
 #if PIPESH || XWINDOWS
 	Buffer *make = Cfindbuff(MAKEBUFF);
@@ -661,7 +661,7 @@ Boolean Saveall(Boolean must)
 }
 
 /* Self inserting commands */
-Proc Zinsert()
+void Zinsert()
 {
 	if (Curbuff->bmode & OVERWRITE) {
 		if (!Bisend() && Buff() != NL)
@@ -678,7 +678,7 @@ Proc Zinsert()
  * In insert mode, its just inserted.
  * This also causes the current line of text to be sent to the down the pipe.
  */
-Proc Znewline()
+void Znewline()
 {
 	if (Curbuff->bmode & OVERWRITE)
 		Bcsearch(NL);
@@ -690,7 +690,7 @@ Proc Znewline()
 #endif
 }
 
-Proc Zoverin()
+void Zoverin()
 {
 	Curbuff->bmode ^= OVERWRITE;
 	if (!InPaw)
@@ -698,7 +698,7 @@ Proc Zoverin()
 	Arg = 0;
 }
 
-Proc Zcase()
+void Zcase()
 {
 	Curbuff->bmode ^= EXACT;
 	if (InPaw && Insearch) {
@@ -709,7 +709,7 @@ Proc Zcase()
 	Arg = 0;
 }
 
-Proc Zarg()
+void Zarg()
 {
 	char str[STRMAX], *p;
 
@@ -729,8 +729,8 @@ Proc Zarg()
 }
 
 
-/* Process Meta (ESC) commands. */
-Proc Zmeta()
+/* voidess Meta (ESC) commands. */
+void Zmeta()
 {
 	Boolean tmp;
 
@@ -741,8 +741,8 @@ Proc Zmeta()
 	(*Funcs[Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL])();
 }
 
-/* Process ^X commands. */
-Proc Zctrlx()
+/* voidess ^X commands. */
+void Zctrlx()
 {
 	Boolean tmp;
 
@@ -753,8 +753,8 @@ Proc Zctrlx()
 	(*Funcs[Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL])();
 }
 
-/* Process the M-X command */
-Proc Zmetax()
+/* voidess the M-X command */
+void Zmetax()
 {
 	int rc = Getplete("M-X: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
 	if (rc != -1) {
@@ -765,7 +765,7 @@ Proc Zmetax()
 	}
 }
 
-Proc Zabort()
+void Zabort()
 {
 	Tbell();
 	Arg = 0;
@@ -773,7 +773,7 @@ Proc Zabort()
 		InPaw = ABORT;
 }
 
-Proc Zquote()
+void Zquote()
 {
 	Boolean tmp;
 	char n[3];
@@ -796,7 +796,7 @@ Proc Zquote()
 	Arg = 0;
 }
 
-Proc Zhexout()
+void Zhexout()
 {
 	char str[STRMAX], *p;
 
@@ -810,7 +810,7 @@ Proc Zhexout()
 	Echo(str);
 }
 
-Proc Zswapchar()
+void Zswapchar()
 {
 	int tmp;
 
@@ -824,7 +824,7 @@ Proc Zswapchar()
 	Binsert(tmp);
 }
 
-Proc Ztab()
+void Ztab()
 {
 	int tcol;
 
@@ -836,5 +836,5 @@ Proc Ztab()
 }
 
 #if !XWINDOWS
-Proc Zzoom()	{ Tbell(); }
+void Zzoom()	{ Tbell(); }
 #endif

@@ -39,7 +39,7 @@
 static void CalcFloat(char *str);
 #endif
 
-Proc Zcalc(void)
+void Zcalc(void)
 {
 	char *ptr, op;
 	long n1, n2;

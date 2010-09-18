@@ -139,7 +139,7 @@ void undo_clear(Buffer *buff)
 		recycle_undo(buff);
 }
 
-Proc Zundo(void)
+void Zundo(void)
 {
 	struct undo *undo = Curbuff->undo_tail;
 	int i;
@@ -165,7 +165,7 @@ Proc Zundo(void)
 	recycle_undo(Curbuff);
 }
 #else
-Proc Zundo(void) { Tbell(); }
+void Zundo(void) { Tbell(); }
 void undo_add(int size) {}
 void undo_del(int size) {}
 void undo_clear(Buffer *buff) {}

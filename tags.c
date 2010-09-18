@@ -41,7 +41,7 @@ static Boolean GetTagsFile(void);
  * line offset. In the ctags format, the ^ and $ are optional and are stripped
  * out if at the begining and end of line respectively.
  */
-Proc Zfindtag()
+void Zfindtag()
 {
 	char tag[STRMAX + 1], word[PATHMAX + 1];
 	Boolean best, found;
@@ -324,7 +324,7 @@ int Batoi()
 }
 
 
-Proc Zref()
+void Zref()
 {
 	Buffer *mbuff;
 	char tag[STRMAX + 40], *p;

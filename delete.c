@@ -23,22 +23,22 @@
 Buffer *Killbuff;
 
 
-Proc Zmakedel() {}
+void Zmakedel() {}
 
-Proc Zdelchar()
+void Zdelchar()
 {
 	Bdelete(Arg);
 	Arg = 0;
 }
 
-Proc Zrdelchar()
+void Zrdelchar()
 {
 	Bmove(-Arg);
 	Bdelete(Arg);
 	Arg = 0;
 }
 
-Proc Zdeleol()
+void Zdeleol()
 {
 	Mark *tmark = Bcremrk();
 
@@ -58,7 +58,7 @@ Proc Zdeleol()
 	Unmark(tmark);
 }
 
-Proc Zdelline()
+void Zdelline()
 {
 	Mark *tmark;
 
@@ -70,21 +70,21 @@ Proc Zdelline()
 }
 
 /* Delete from the point to the mark */
-Proc Zdelrgn()
+void Zdelrgn()
 {
 	Killtomrk(Curbuff->mark);
 }
 
 
 /* Copy from point to the mark into delbuff */
-Proc Zcopyrgn()
+void Zcopyrgn()
 {
 	Copytomrk(Curbuff->mark);
 }
 
 
 /* Insert the delete buffer at the point */
-Proc Zyank()
+void Zyank()
 {
 	Buffer *tbuff;
 	int yanked;
@@ -110,7 +110,7 @@ Proc Zyank()
 		Reframe();
 }
 
-Proc Zdelword()
+void Zdelword()
 {
 	Mark *tmark;
 
@@ -121,7 +121,7 @@ Proc Zdelword()
 	Unmark(tmark);
 }
 
-Proc Zrdelword()
+void Zrdelword()
 {
 	Mark *tmark;
 
@@ -131,7 +131,7 @@ Proc Zrdelword()
 	Unmark(tmark);
 }
 
-Proc Zgetbword()
+void Zgetbword()
 {
 	char word[STRMAX], *ptr;
 	Mark *tmark, *start;
@@ -158,7 +158,7 @@ Proc Zgetbword()
 	Arg = 0;
 }
 
-Proc Zdelblanks()
+void Zdelblanks()
 {
 	Mark *tmark, *pmark;
 
@@ -186,7 +186,7 @@ Proc Zdelblanks()
 	Unmark(pmark);
 }
 
-Proc Zjoin()
+void Zjoin()
 {
 	Toendline();
 	Bdelete(1);
@@ -194,7 +194,7 @@ Proc Zjoin()
 	Binsert(' ');
 }
 
-Proc Zempty()
+void Zempty()
 {
 	if (Ask("Empty buffer? ") != YES)
 		return;

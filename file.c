@@ -1,49 +1,57 @@
-/****************************************************************************
- *																			*
- *				 The software found in this file is the						*
- *					  Copyright of Sean MacLennan							*
- *						  All rights reserved.								*
- *																			*
- ****************************************************************************/
+/* file.c - Zedit file commands
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "z.h"
 #include <sys/stat.h>
 #include <assert.h>
 
-extern char Lbufname[], Fname[];
-
 Proc Zfindfile()
 {
 #if XWINDOWS
-	if(Argp && StartProg("Zfindfile") == 0)
-	{
+	if (Argp && StartProg("Zfindfile") == 0) {
 		Arg = 0;
 		return;
 	}
 #endif
-	if(Getfname("Find File: ", Fname) == 0)
+	if (Getfname("Find File: ", Fname) == 0)
 		Findfile(Fname, FALSE);
 }
 
-
 Proc Zviewfile()
 {
-	if( Getfname("View File: ", Fname) ) return;
+	if (Getfname("View File: ", Fname))
+		return;
 	Findfile(Fname, FALSE);
 	Curbuff->bmode |= VIEW;
 	Curwdo->modeflags = INVALID;
 }
 
-
 Proc Zeditfile()
 {
 	unsigned long offset;
-	
-	if(!Curbuff->fname)
+
+	if (!Curbuff->fname)
 	{
 		Tbell();
 		return;
 	}
-	if(Curbuff->bmodf && Ask("File modifed. Ok to loose changes?") != YES)
+	if (Curbuff->bmodf && Ask("File modifed. Ok to loose changes?") != YES)
 		return;
 	offset = Blocation(0);
 	Breadfile(Curbuff->fname);
@@ -53,7 +61,7 @@ Proc Zeditfile()
 #endif
 }
 
-	
+
 Boolean Findfile(path, startup)
 char *path;
 int startup;
@@ -69,43 +77,43 @@ int startup;
 	Arg = 0;
 	was = Curbuff->bname;
 
-	/* limit name to BUFNAMMAX */	
+	/* limit name to BUFNAMMAX */
 	strncpy(tbname, Lastpart(path), BUFNAMMAX);
 	tbname[BUFNAMMAX] = '\0';
 
 	/* If is this file already in a buffer - use it.
 	 * At startup, we are done.
 	 */
-	for( tbuff = Bufflist; tbuff; tbuff = tbuff->next )
-		if( tbuff->fname && strcmp(path, tbuff->fname) == 0 )
+	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+		if (tbuff->fname && strcmp(path, tbuff->fname) == 0)
 		{
-			if(startup) return TRUE;
-			Bswitchto( tbuff );
-			strcpy( Lbufname, was );
+			if (startup) return TRUE;
+			Bswitchto(tbuff);
+			strcpy(Lbufname, was);
 			break;
 		}
 
-	if( !tbuff )
+	if (!tbuff)
 	{
-		if(Cfindbuff(tbname))
+		if (Cfindbuff(tbname))
 		{	/* Resolve buffer name collisions by creating a unique name */
 			char *p;
 			int i;
-			
+
 			i = strlen(tbname);
 			p = &tbname[i < BUFNAMMAX - 3 ? i : BUFNAMMAX - 3];
 			i = 0;
 			do
 				sprintf(p, ".%d", ++i);
-			while(Cfindbuff(tbname));
+			while (Cfindbuff(tbname));
 		}
 
-		if(!startup) Loadwdo(tbname);
+		if (!startup) Loadwdo(tbname);
 
-		rc = Readone( tbname, path );
+		rc = Readone(tbname, path);
 	}
 
-	if(!startup)
+	if (!startup)
 	{
 		Cswitchto(Curbuff);
 		Reframe();
@@ -117,13 +125,13 @@ int startup;
 
 Proc Zsaveall()
 {
-	if(Argp)
+	if (Argp)
 	{
 		extern Buffer *Bufflist;
 		Buffer *tbuff;
-		
-		for(tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-			if(!(tbuff->bmode & SYSBUFF) && tbuff->fname)
+
+		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+			if (!(tbuff->bmode & SYSBUFF) && tbuff->fname)
 				tbuff->bmodf = MODIFIED;
 	}
 	Saveall(TRUE);
@@ -132,7 +140,7 @@ Proc Zsaveall()
 
 Proc Zfilesave()
 {
-	if(Argp)
+	if (Argp)
 		Saveall(FALSE);
 	else
 		Filesave();
@@ -142,43 +150,43 @@ Proc Zfilesave()
 Boolean Filesave()
 {
 	char path[ PATHMAX + 1 ];
-	
+
 	Arg = 0;
-	if(Curbuff->fname == NULL)
+	if (Curbuff->fname == NULL)
 	{
 		*path = '\0';
-		if( Getfname("File Name: ", path) == 0 )
-			Curbuff->fname = strdup( path );
+		if (Getfname("File Name: ", path) == 0)
+			Curbuff->fname = strdup(path);
 		else
-			return( FALSE );
+			return(FALSE);
 		Curwdo->modeflags = INVALID;
 	}
-	sprintf( PawStr, "Writing %s", Lastpart(Curbuff->fname) );
-	Echo( PawStr );
-	return( Bwritefile(Curbuff->fname) );
+	sprintf(PawStr, "Writing %s", Lastpart(Curbuff->fname));
+	Echo(PawStr);
+	return(Bwritefile(Curbuff->fname));
 }
 
 
 Proc Zfilewrite()
 {
 	char path[ PATHMAX + 1 ], *prompt;
-		
+
 	Arg = 0;
 	prompt = Argp ? "Write Region: " : "Write File: ";
 	*path = '\0';
-	if( Getfname(prompt, path) == 0 )
+	if (Getfname(prompt, path) == 0)
 	{
-		if( Argp )
+		if (Argp)
 		{
-			sprintf( PawStr, "Writing %s", path );
-			Echo( PawStr );
+			sprintf(PawStr, "Writing %s", path);
+			Echo(PawStr);
 			Write_rgn(path);
 			Clrecho();
 		}
 		else
 		{
-			if( Curbuff->fname ) free( Curbuff->fname );
-			Curbuff->fname = strdup( path );
+			if (Curbuff->fname) free(Curbuff->fname);
+			Curbuff->fname = strdup(path);
 			Curbuff->mtime = 0;	/* this is no longer valid */
 			Zfilesave();
 			Curwdo->modeflags = INVALID;
@@ -198,15 +206,15 @@ char *path;
 	int rc = FALSE;
 
 	save = Curbuff;
-	if((tbuff = Cmakebuff("___tmp___", (char *)NULL)) != 0)
+	if ((tbuff = Cmakebuff("___tmp___", (char *)NULL)) != 0)
 	{
-		Bswitchto( save );
-		Bcopyrgn( Curbuff->mark, tbuff );
-		Bswitchto( tbuff );
+		Bswitchto(save);
+		Bcopyrgn(Curbuff->mark, tbuff);
+		Bswitchto(tbuff);
 		Curbuff->bmode = save->bmode;
-		rc = Bwritefile( path );
-		Bswitchto( save );
-		Bdelbuff( tbuff );
+		rc = Bwritefile(path);
+		Bswitchto(save);
+		Bdelbuff(tbuff);
 	}
 	return(rc);
 }
@@ -215,12 +223,12 @@ char *path;
 Proc Zfileread()
 {
 	int rc;
-	
-	if( Getfname("Read File: ", Fname) ) return;
-	if((rc = Fileread(Fname)) > 0)
+
+	if (Getfname("Read File: ", Fname)) return;
+	if ((rc = Fileread(Fname)) > 0)
 	{
-		sprintf( PawStr, "Unable to read %s", Fname );
-		Error( PawStr );
+		sprintf(PawStr, "Unable to read %s", Fname);
+		Error(PawStr);
 	}
 }
 
@@ -234,20 +242,20 @@ char *fname;
 	int rc = 1;
 
 	save = Curbuff;
-	if((tbuff = Bcreate()) != NULL)
+	if ((tbuff = Bcreate()) != NULL)
 	{
 		Bswitchto(tbuff);
 		Curbuff->bmode = save->bmode;
-		if((rc = Breadfile(fname)) == 0)
+		if ((rc = Breadfile(fname)) == 0)
 		{
 			Btoend();
 			tmark = Bcremrk();
 			Btostart();
-			Bcopyrgn( tmark, save );
-			Unmark( tmark );
+			Bcopyrgn(tmark, save);
+			Unmark(tmark);
 		}
-		Bswitchto( save );
-		Bdelbuff( tbuff );
+		Bswitchto(save);
+		Bdelbuff(tbuff);
 	}
 	return rc;
 }
@@ -280,13 +288,13 @@ char *to, *from;
 
 	start = to;
 	*to = '\0';
-	if(*from == '~')
+	if (*from == '~')
 	{
-		for(p = dir, ++from; *from && !Psep(*from); ++from, ++p ) *p = *from;
+		for (p = dir, ++from; *from && !Psep(*from); ++from, ++p) *p = *from;
 		*p = '\0';
-		if(*dir)
+		if (*dir)
 		{
-			if((pwd = Getpwnam(dir)) == NULL) return 2;
+			if ((pwd = Getpwnam(dir)) == NULL) return 2;
 			strcpy(to, pwd->pw_dir);
 			free_pwent(pwd);
 		}
@@ -294,49 +302,49 @@ char *to, *from;
 			strcpy(to, Me->pw_dir);
 		to += strlen(to);
 
-		if(*from && !Psep(*from) && !Psep(*(to - 1))) *to++ = PSEP;
+		if (*from && !Psep(*from) && !Psep(*(to - 1))) *to++ = PSEP;
 	}
-	else if(*from == '$')
+	else if (*from == '$')
 	{
-		for(p = dir, ++from; *from && !Psep(*from); ++from, ++p ) *p = *from;
+		for (p = dir, ++from; *from && !Psep(*from); ++from, ++p) *p = *from;
 		*p = '\0';
-		if((p = getenv(dir)) == NULL) return 2;
+		if ((p = getenv(dir)) == NULL) return 2;
 		strcpy(to, p);
 		to += strlen(to);
 
-		if(*from && !Psep(*from) && !Psep(*(to - 1))) *to++ = PSEP;
+		if (*from && !Psep(*from) && !Psep(*(to - 1))) *to++ = PSEP;
 	}
 	else
 	{
-		if(Vars[VEXPAND].val && !Psep(*from))
+		if (Vars[VEXPAND].val && !Psep(*from))
 		{	/* add the current directory */
 			strcpy(to, Cwd);
 			to += strlen(to);
-			if( !Psep(*(to - 1)) ) *to++ = PSEP;
+			if (!Psep(*(to - 1))) *to++ = PSEP;
 		}
 	}
 
-	if(Vars[VEXPAND].val)
+	if (Vars[VEXPAND].val)
 	{	/* now handle the filename */
-		for( ; *from; ++from )
-			if( *from == '.' )
+		for (; *from; ++from)
+			if (*from == '.')
 			{
-				if( Psep(*(from + 1)) )
+				if (Psep(*(from + 1)))
 					++from;
-				else if( *(from + 1) == '.' &&
-						(Psep(*(from + 2)) || *(from + 2) == '\0') )
+				else if (*(from + 1) == '.' &&
+						(Psep(*(from + 2)) || *(from + 2) == '\0'))
 				{
 					to -= 2;
-					while( to > start && !Psep(*to) ) --to;
+					while (to > start && !Psep(*to)) --to;
 					++to;
-					if( *(++from + 1) ) ++from;
+					if (*(++from + 1)) ++from;
 				}
 				else
 					*to++ = *from;
 			}
-			else if( Psep(*from) )
+			else if (Psep(*from))
 			{	/* strip redundant seperators */
-				if( to == start || !Psep(*(to - 1)) )
+				if (to == start || !Psep(*(to - 1)))
 					*to++ = PSEP;
 			}
 			else
@@ -349,48 +357,48 @@ char *to, *from;
 	}
 
 	/* validate the filename */
-	if( stat(start, &sbuf) == EOF )
+	if (stat(start, &sbuf) == EOF)
 	{	/* file does not exit - validate the path */
-		if((to = strrchr(start, PSEP)) != NULL)
+		if ((to = strrchr(start, PSEP)) != NULL)
 		{
 			save = *to;
 			*to = '\0';
-			rc = !Isdir( start );
+			rc = !Isdir(start);
 			*to = save;
 		}
 		else rc = 0;
 	}
-	else if( sbuf.st_mode & S_IFDIR )
+	else if (sbuf.st_mode & S_IFDIR)
 		rc = -1;
 	else
 		rc = 0;
 #if DBG
-	if(strlen(start) >= PATHMAX)
+	if (strlen(start) >= PATHMAX)
 		Dbg("TOO LONG %d '%s'\n", strlen(start), start);
 #endif
-	return( rc );
+	return(rc);
 }
 
 
-Boolean Isdir( path )
+Boolean Isdir(path)
 char *path;
 {
 	struct stat sbuf;
 
-	return( stat(path, &sbuf) == 0 && (sbuf.st_mode & S_IFDIR) );
+	return(stat(path, &sbuf) == 0 && (sbuf.st_mode & S_IFDIR));
 }
 
 
-Boolean Isfile( path, dir, fname, must )
+Boolean Isfile(path, dir, fname, must)
 char *path, *dir, *fname;
 Boolean must;
 {
-	if(!dir || !fname) return FALSE;
-	strcpy( path, dir );
-	if( !Psep(*(path + strlen(path) - 1)) )
-		strcat( path, "/" );
-	strcat( path, fname );
-	return( !must || access(path, 0) == 0 );
+	if (!dir || !fname) return FALSE;
+	strcpy(path, dir);
+	if (!Psep(*(path + strlen(path) - 1)))
+		strcat(path, "/");
+	strcat(path, fname);
+	return(!must || access(path, 0) == 0);
 }
 
 /* Same as getpwnam but handles partial matches. */
@@ -401,15 +409,15 @@ char *name;
 	int len = strlen(name);
 
 	setpwent();
-	while((pwd = getpwent()))
-		if(strncmp(pwd->pw_name, name, len) == 0)
+	while ((pwd = getpwent()))
+		if (strncmp(pwd->pw_name, name, len) == 0)
 		{
-			if(strcmp(pwd->pw_name, name) == 0)
+			if (strcmp(pwd->pw_name, name) == 0)
 			{	/* full match */
 				endpwent();
 				return dup_pwent(pwd);
 			}
-			else if(!match)
+			else if (!match)
 				/* partial match - return first match */
 				match = dup_pwent(pwd);
 		}

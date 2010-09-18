@@ -1,10 +1,22 @@
-/****************************************************************************
- *																			*
- *				 The software found in this file is the						*
- *					  Copyright of Sean MacLennan							*
- *						  All rights reserved.								*
- *																			*
- ****************************************************************************/
+/* getfname.c - get a file name with completion
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "z.h"
 #if SYSV4
 #include <dirent.h>
@@ -12,108 +24,96 @@
 #include <sys/dir.h>
 #endif
 
-struct llist *Flist = NULL;
-Boolean Didmatch = FALSE;
+struct llist *Flist;
+Boolean Didmatch;
 
 
-static int getname ARGS((char*, char*, Boolean));
+static int getname(char*, char*, Boolean);
 
-int Getfname(prompt, path)
-char *prompt, *path;
+int Getfname(char *prompt, char *path)
 {
-	int rc;
-
-	if((rc = getname(prompt, path, FALSE)) > 0)
+	int rc = getname(prompt, path, FALSE);
+	if (rc > 0)
 		Error("Invalid path.");
 	return rc;
 }
 
-
-int Getdname(prompt, path)
-char *prompt, *path;
+int Getdname(char *prompt, char *path)
 {
-	int rc;
-
-	if((rc = getname(prompt, path, TRUE)) > 0)
+	int rc = getname(prompt, path, TRUE);
+	if (rc > 0)
 		Error("Invalid dir.");
 	return rc;
 }
-
 
 /* Returns:
  *		0 for ok
  *		ABORT(-1) for abort
  *		> 0 for error
  */
-static int getname(prompt, path, isdir)
-char *prompt, *path;
-Boolean isdir;
+static int getname(char *prompt, char *path, Boolean isdir)
 {
-	extern char *strcpy();
-	extern Byte Keys[];
-	char tmp[ PATHMAX + 1 ];
+	char tmp[PATHMAX + 1];
 	int tab, space, metameta, rc;
 
-	metameta = Keys[ 128 + 27 ];	/* for people who use csh/ksh */
-	Keys[ 128 + 27 ] = ZFNAME;
-	tab = Keys[ '\t' ];
-	Keys[ '\t'  ] = ZFNAME;
-	space = Keys[ ' ' ];
-	Keys[ ' ' ]   = ZMATCH;
-	if( (rc = Getarg(prompt, strcpy(tmp, path), PATHMAX)) == 0 )
-		if((rc = Pathfixup(path, tmp)) == -1)
+	metameta = Keys[128 + 27];	/* for people who use csh/ksh */
+	Keys[128 + 27] = ZFNAME;
+	tab = Keys['\t'];
+	Keys['\t'] = ZFNAME;
+	space = Keys[' '];
+	Keys[' ']   = ZMATCH;
+	rc = Getarg(prompt, strcpy(tmp, path), PATHMAX);
+	if (rc == 0) {
+		rc = Pathfixup(path, tmp);
+		if (rc == -1)
 			rc = isdir ? 0 : 1;
-	Keys[ ' '  ] = space;
-	Keys[ '\t' ] = tab;
-	Keys[ 128 + 27 ] = metameta;
-	Freelist( &Flist );
-	if( Didmatch )
-	{
+	}
+	Keys[' '] = space;
+	Keys['\t'] = tab;
+	Keys[128 + 27] = metameta;
+	Freelist(&Flist);
+	if (Didmatch) {
 		Zredisplay();
 		Didmatch = FALSE;
 	}
-	return( rc );
+	return rc;
 }
-
 
 Proc Zfname()
 {
-	extern int Pawlen;
 	Boolean update;
 	struct llist *list;
-	char txt[ PATHMAX + 1 ], *fname, *match = NULL;
+	char txt[PATHMAX + 1], *fname, *match = NULL;
 	int len, n = 0, f = 0, rc;
 
-	if( !(list = GetFill( txt, &fname, &len, &update)) )
-	{
+	list = GetFill(txt, &fname, &len, &update);
+	if (!list) {
 		Tbell();
 		return;
 	}
-	if( *fname )
-		for(; list && (rc=strncmp(fname,list->fname,len))>=0; list=list->next)
-			if( rc == 0 )
-			{
-				if( match )
-					n = f = nmatch( match, list->fname );
+	if (*fname)
+		while ((rc = strncmp(fname, list->fname, len)) >= 0) {
+			if (rc == 0) {
+				if (match)
+					n = f = nmatch(match, list->fname);
 				else
-					n = strlen( match = list->fname );
+					n = strlen(match = list->fname);
 			}
-	if( match )
-	{
-		if( n > len )
-		{
-			Btoend();
-			while( len < n && Curplen < Pawlen )		/* SAM */
-				Binsert( match[len++] );
-			if(len < n) Tbell();
+			list = list->next;
 		}
-		if( f == 0 && Isdir(Getbtxt(txt, PATHMAX)) && Curplen < Pawlen)	/*SAM*/
-			Binsert( PSEP );
-	}
-	else if( !update )
+	if (match) {
+		if (n > len) {
+			Btoend();
+			while (len < n && Curplen < Pawlen)
+				Binsert(match[len++]);
+			if (len < n)
+				Tbell();
+		}
+		if (f == 0 && Isdir(Getbtxt(txt, PATHMAX)) && Curplen < Pawlen)
+			Binsert(PSEP);
+	} else if (!update)
 		Tbell();
 }
-
 
 Proc Zmatch()
 {
@@ -121,8 +121,8 @@ Proc Zmatch()
 	char dir[PATHMAX + 1], *fname, *p;
 	int row, col, len;
 
-	if((list = GetFill(dir, &fname, &len, &col)) == NULL)
-	{
+	list = GetFill(dir, &fname, &len, &col);
+	if (list == NULL) {
 		Tbell();
 		return;
 	}
@@ -133,72 +133,68 @@ Proc Zmatch()
 	Tprntstr("Choose one of:");
 	Tcleol();
 	row = Tstart + 1; col = 0;
-	for( ; list; list = list->next)
-		if(len == 0 || strncmp(fname, list->fname, len) == 0)
-		{
+	for (; list; list = list->next)
+		if (len == 0 || strncmp(fname, list->fname, len) == 0) {
 			Tgoto(row, col);
 			strcpy(p, list->fname);
-			if(strlen(list->fname) > 23) list->fname[23] = '\0';
+			if (strlen(list->fname) > 23)
+				list->fname[23] = '\0';
 			Tprntstr(list->fname);
-			if(Isdir(dir)) Tputchar(PSEP);
+			if (Isdir(dir))
+				Tputchar(PSEP);
 			Tcleol();
-			if((col += 25) > 72)
-			{
-				if(++row < Rowmax - 2)
+			col += 25;
+			if (col > 72) {
+				if (++row < Rowmax - 2)
 					col = 0;
 				else
 					break;
 			}
 		}
-	if(col) row++;
-	while(row < Rowmax - 2)
-	{
+	if (col)
+		row++;
+	while (row < Rowmax - 2) {
 		Tgoto(row++, 0);
 		Tcleol();
 	}
 }
 
 
-struct llist *GetFill( dir, fname, len, update )
-char *dir, **fname;
-int *len;
-Boolean *update;
+struct llist *GetFill(char *dir, char **fname, int *len, Boolean *update)
 {
-	extern Boolean First;
-	char txt[ PATHMAX + 1 ];
+	char txt[PATHMAX + 1];
 
-	if( First )
-	{
-		Bdelete( Curplen );
+	if (First) {
+		Bdelete(Curplen);
 		First = FALSE;
 	}
-	Getbtxt( txt, PATHMAX );
-	if( Pathfixup(dir, txt) > 0 ) return( NULL );
-	if((*update = strcmp(dir, txt)))
-		Makepaw( dir, FALSE );
-	*fname = Lastpart( dir );
-	*len = strlen( *fname );
+	Getbtxt(txt, PATHMAX);
+	if (Pathfixup(dir, txt) > 0)
+		return NULL;
+	*update = strcmp(dir, txt);
+	if (*update)
+		Makepaw(dir, FALSE);
+	*fname = Lastpart(dir);
+	*len = strlen(*fname);
 
 	/* If ExpandPaths not set, may be no directory specified! */
-	if(*fname == dir)
+	if (*fname == dir)
 		return Fill_list("./");
 
-	if( *fname - dir == 1 )
-	{	/* special case for root dir */
-		strcpy( txt, *fname );
-		strcpy( ++*fname, txt );
+	if (*fname - dir == 1) {
+		/* special case for root dir */
+		strcpy(txt, *fname);
+		strcpy(++*fname, txt);
 	}
 	*(*fname - 1) = '\0';
-	return( Fill_list(dir) );
+	return Fill_list(dir);
 }
-
 
 #define OBJEXT		".o"
 
-struct llist *Fill_list( dir )
-char *dir;
+struct llist *Fill_list(char *dir)
 {
-	static char savedir[ PATHMAX + 1 ];
+	static char savedir[PATHMAX + 1];
 	DIR *dp;
 #if SYSV4
 	struct dirent *dirp;
@@ -206,78 +202,74 @@ char *dir;
 	struct direct *dirp;
 #endif
 
-	if( Flist && strcmp(dir, savedir) == 0 )
-		return( Flist );
-	strcpy( savedir, dir );
-	Freelist( &Flist );
+	if (Flist && strcmp(dir, savedir) == 0)
+		return Flist;
+	strcpy(savedir, dir);
+	Freelist(&Flist);
 
-	if((dp = opendir(dir)) == NULL)
+	dp = opendir(dir);
+	if (dp == NULL)
 		return Flist;
 
-	while((dirp = readdir(dp)))
-	{
+	while ((dirp = readdir(dp))) {
 #if ULTRIX
 		char *fname = dirp->gd_name;
 #else
 		char *fname = dirp->d_name;
 #endif
-		if(!Isext(fname, OBJEXT))
-			Add( &Flist, fname );
+		if (!Isext(fname, OBJEXT))
+			Add(&Flist, fname);
 	}
 
 	closedir(dp);
 
-	return( Flist );
+	return Flist;
 }
 
-
-int nmatch( s1, s2 )
-char *s1, *s2;
+int nmatch(char *s1, char *s2)
 {
 	int i;
 
-	for( i = 0; Tolower(*s1) == Tolower(*s2); ++i, ++s1, ++s2 ) ;
-	return( i );
+	for (i = 0; Tolower(*s1) == Tolower(*s2); ++i, ++s1, ++s2)
+		;
+	return i;
 }
 
 
-struct llist *Add( list, fname )
-struct llist **list;
-char *fname;
+struct llist *Add(struct llist **list, char *fname)
 {
 	struct llist *new, *l;
 
-	if((new = (struct llist *)malloc(sizeof(struct llist))))
-	{
-		strcpy( new->fname, fname );
-		if( *list == NULL || strcmp(fname, (*list)->fname) < 0 )
-		{
+	new = malloc(sizeof(struct llist));
+	if (new) {
+		strcpy(new->fname, fname);
+		if (*list == NULL || strcmp(fname, (*list)->fname) < 0) {
 			new->next = *list;
-			if( *list ) (*list)->prev = new;
+			if (*list)
+				(*list)->prev = new;
 			new->prev = NULL;
 			*list = new;
-		}
-		else
-		{
-			for( l = *list; l->next && strcmp(l->next->fname, fname) < 0;
-				 l = l->next ) ;
-			if( l->next ) l->next->prev = new;
+		} else {
+			for (l = *list;
+			     l->next && strcmp(l->next->fname, fname) < 0;
+			     l = l->next)
+				;
+			if (l->next)
+				l->next->prev = new;
 			new->next = l->next;
 			l->next = new;
 			new->prev = l;
 		}
 	}
-	return( new );
+	return new;
 }
 
 
-void Freelist( list )
-struct llist **list;
+void Freelist(struct llist **list)
 {
 	struct llist *next;
 
-	while( *list )
-	{
+	while (*list) {
 		next = (*list)->next;
 		free((char *)(*list));
 		*list = next;

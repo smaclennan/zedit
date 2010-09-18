@@ -218,7 +218,7 @@ void Setup(int argc, char **argv)
 	if (xor)
 		Vars[VXORCURSOR].val = 1;
 
-	Binit();
+	initScrnmarks(); /* init the screen marks and mark list */
 
 	/* create the needed buffers */
 	Killbuff = Bcreate();

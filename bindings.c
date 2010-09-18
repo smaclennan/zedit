@@ -77,7 +77,7 @@ Proc Zkeybind(void)
 }
 
 /* Don't display both C-X A and C-X a if bound to same Ditto for Meta */
-static inline Boolean notdup_key(int k)
+Boolean notdup_key(int k)
 {
 	return ((k < (256 + 'a') || k > (256 + 'z')) &&
 		(k < (128 + 'a') || k > (128 + 'z'))) ||

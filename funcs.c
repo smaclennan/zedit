@@ -1,17 +1,28 @@
-/****************************************************************************
- *																			*
- *				 The software found in this file is the						*
- *					  Copyright of Sean MacLennan							*
- *						  All rights reserved.								*
- *																			*
- ****************************************************************************/
+/* funcs.c - func lists
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "z.h"
 
 /* the following include file contains the definition of the Cnames array */
 #include "cnames.h"
 
-Proc (*Cmds[])() =
-{
+void (*Cmds[])() = {
 	Z1wind,
 	Z2wind,
 	Zabort,
@@ -153,9 +164,7 @@ Proc (*Cmds[])() =
 	Zundo,
 };
 
-
-Proc (*Vcmds[])() =
-{
+void (*Vcmds[])() = {
 	Z1wind,
 	Z2wind,
 	Zabort,
@@ -302,9 +311,7 @@ Proc (*Vcmds[])() =
 	Znotimpl,
 };
 
-
-Proc (*Pawcmds[])() =
-{
+void (*Pawcmds[])() = {
 	Znotimpl,
 	Znotimpl,
 	Zabort,
@@ -448,76 +455,71 @@ Proc (*Pawcmds[])() =
 	Zmatch,			/* put these AFTER all others */
 };
 
-Proc (**Funcs)() = Cmds;
+void (**Funcs)() = Cmds;
 
 
 #if DBG
-static int Testit ARGS((Proc (*)(), Proc (*)(), int, char));
+static int Testit(void (*p1)(), void (*p2)(), int num, char type)
+{
+	if (p1 != Znotimpl && p2 != Znotimpl && p1 != p2) {
+		Dbg("Alignment %c: %d\n", type, num);
+		return 1;
+	}
+	return 0;
+}
 
-void Fcheck()
+void Fcheck(void)
 {
 	int s1, s2, s3, s4;
 	int error = 0;
 
 	/* check the TOLOWER macro */
-	if(TOLOWER('c') != 'c') Error("OLDLOWER set wrong in config.h");
+	if (TOLOWER('c') != 'c')
+		Error("OLDLOWER set wrong in config.h");
 
 	/* check sizes of various stuff */
-	if(sizeof(Byte)  != 1) Error("Byte  size wrong!");
-	if(sizeof(Short) != 2) Error("Short  size wrong!");
-	if(sizeof(Word)  != 4) Error("Word size wrong!");
-	if(sizeof(struct cnames) % sizeof(char *))
-	{
+	if (sizeof(Byte)  != 1)
+		Error("Byte  size wrong!");
+	if (sizeof(Short) != 2)
+		Error("Short  size wrong!");
+	if (sizeof(Word)  != 4)
+		Error("Word size wrong!");
+	if (sizeof(struct cnames) % sizeof(char *)) {
 		++error;
 		Dbg("cnames struct size bad: %d\n", sizeof(struct cnames));
 	}
-	s1 = sizeof(Cnames)	/ sizeof(struct cnames);
-	s2 = sizeof(Cmds)	/ sizeof(Proc *);
-	s3 = sizeof(Vcmds)	/ sizeof(Proc *);
-	s4 = sizeof(Pawcmds)/ sizeof(Proc *) - 2;	/* Paw has 2 extra */
-	if((s1 - s2 + s3 - s4) || s1 != NUMFUNCS)
-	{
+	s1 = sizeof(Cnames) / sizeof(struct cnames);
+	s2 = sizeof(Cmds) / sizeof(Proc *);
+	s3 = sizeof(Vcmds) / sizeof(Proc *);
+	s4 = sizeof(Pawcmds) / sizeof(Proc *) - 2;	/* Paw has 2 extra */
+	if ((s1 - s2 + s3 - s4) || s1 != NUMFUNCS) {
 		++error;
 		Dbg("Cnames: %d Cmds: %d Vcmds: %d Pawcmds: %d NUMFUNCS: %d\n",
 			 s1, s2, s3, s4, NUMFUNCS);
 	}
 
 	/* validate the Cnames array the best we can */
-	for( s1 = 1; s1 < NUMFUNCS; ++s1 )
-	{
-		if( Stricmp(Cnames[s1].name, Cnames[s1 - 1].name) <= 0 )
-		{
+	for (s1 = 1; s1 < NUMFUNCS; ++s1) {
+		if (Stricmp(Cnames[s1].name, Cnames[s1 - 1].name) <= 0) {
 			++error;
 			Dbg("Problem: (%d) %s and %s\n",
-				s1, Cnames[s1 - 1].name, Cnames[s1].name );
+			    s1, Cnames[s1 - 1].name, Cnames[s1].name);
 		}
-		if( strlen(Cnames[s1].name) > (size_t)30 )
-	 	{
+		if (strlen(Cnames[s1].name) > (size_t)30) {
 			++error;
-			Dbg("%s too long\n", Cnames[s1].name );
+			Dbg("%s too long\n", Cnames[s1].name);
 		}
-		if( strncmp(Cnames[s1].name, "Top", 3) == 0 )
-		{
+		if (strncmp(Cnames[s1].name, "Top", 3) == 0) {
 			++error;
-			Dbg("Zhelp() Top: %s\n", Cnames[s1].name );
+			Dbg("Zhelp() Top: %s\n", Cnames[s1].name);
 		}
-		error += Testit( Cmds[s1], Vcmds[s1], s1, 'V' );
-		if( Pawcmds[s1] != Pinsert && Pawcmds[s1] != Zpart &&
-			Pawcmds[s1] != Pnewline )
-				error += Testit( Cmds[s1], Pawcmds[s1], s1, 'P' );
+		error += Testit(Cmds[s1], Vcmds[s1], s1, 'V');
+		if (Pawcmds[s1] != Pinsert && Pawcmds[s1] != Zpart &&
+		    Pawcmds[s1] != Pnewline)
+			error += Testit(Cmds[s1], Pawcmds[s1], s1, 'P');
 	}
 
-	if(error) Error("INTERNAL ERRORS: check z.out file");
-}
-
-
-static int Testit(Proc (*p1)(), Proc (*p2)(), int num, char type)
-{
-	if( p1 != Znotimpl && p2 != Znotimpl && p1 != p2 )
-	{
-		Dbg("Alignment %c: %d\n", type, num);
-		return 1;
-	}
-	return 0;
+	if (error)
+		Error("INTERNAL ERRORS: check z.out file");
 }
 #endif

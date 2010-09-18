@@ -32,6 +32,12 @@ Buffer	*Curbuff;	/* the current buffer */
 Mark	*Mrklist;	/* the marks list */
 Page	*Curpage;	/* the current page */
 
+static int NumPages;
+
+static Page *Newpage(Buffer *tbuff, Page *ppage, Page *npage);
+static void Freepage(Buffer *tbuff, Page *page);
+static Boolean Pagesplit();
+static Boolean XBput(int fd, Byte *addr, unsigned len);
 
 /* Copy from Point to tmark to tbuff. Returns number of bytes
  * copied. Caller must handle undo. */
@@ -879,4 +885,153 @@ void Unmark(Mark *mptr)
 			Mrklist = mptr->prev;
 		free((char *)mptr);
 	}
+}
+
+
+/* Low level memory buffer routines */
+
+/* Create a new memory page and link into chain */
+static Page *Newpage(Buffer *tbuff, Page *ppage, Page *npage)
+{
+	Page *new = malloc(sizeof(Page));
+
+	if (new) {
+		new->nextp = npage;
+		new->prevp = ppage;
+		npage ? (npage->prevp = new) : (tbuff->lastp = new);
+		ppage ? (ppage->nextp = new) : (tbuff->firstp = new);
+		new->plen  = 0;
+		new->lines = EOF;	/* undefined */
+		++NumPages;
+	}
+
+	return new;
+}
+
+/* Free a memory page */
+static void Freepage(Buffer *tbuff, Page *page)
+{
+	if (page->nextp)
+		page->nextp->prevp = page->prevp;
+	else
+		tbuff->lastp = page->prevp;
+	if (page->prevp)
+		page->prevp->nextp = page->nextp;
+	else
+		tbuff->firstp = page->nextp;
+	free((char *)page);
+	--NumPages;
+}
+
+/* Make page current*/
+void Makecur(Page *page)
+{
+	if (Curpage == page)
+		return;
+	if (Curpage) {
+		Curpage->plen = Curplen;
+		if (Curmodf || Curpage->lines == EOF)
+			Curpage->lines = Cntlines(Curplen);
+	}
+	Curpage = page;
+	Cpstart = page->pdata;
+	Curmodf = FALSE;
+	Curplen = Curpage->plen;
+}
+
+/* Split the current (full) page. */
+static Boolean Pagesplit()
+{
+	Page *new;
+	Mark *btmark;
+
+	new = Newpage(Curbuff, Curpage, Curpage->nextp);
+	if (new == NULL)
+		return FALSE;
+
+	memmove(new->pdata, Cpstart + HALFP, HALFP);
+	Curmodf = TRUE;
+	Curplen = HALFP;
+	new->plen = HALFP;
+	for (btmark = Mrklist; btmark; btmark = btmark->prev)
+		if (btmark->mpage == Curpage && btmark->moffset >= HALFP) {
+			btmark->mpage = new;
+			btmark->moffset -= HALFP;
+		}
+	if (Curchar >= HALFP) {
+		/* new page has Point in it */
+		Makecur(new);
+		Makeoffset(Curchar - HALFP);
+	}
+	return TRUE;
+}
+
+/* High level write for non-block writes.
+ * SLOW_DISK version buffers up the input until a PSIZE block is
+ * reached, then sends it to XBwrite.  Can only be used on ONE file at
+ * a time!  A 'XBput(fd, NULL, EOF)' call should be made before
+ * closing the file to handle AddNL.
+ */
+#if SLOW_DISK
+static Boolean XBput(int fd, Byte *addr, unsigned len)
+{
+	static Byte buf[PSIZE];
+	static int buflen, lastch;
+	int wrlen, rc = TRUE;
+
+	if (len == 0)
+		return TRUE;
+	if (len == EOF) {
+		/* flush the buffer and reset */
+		if (Vars[VADDNL].val) {
+			if (buflen > 0)
+				lastch = buf[buflen - 1];
+			if (lastch != '\n')
+				XBput(fd, (Byte *)"\n", 1);
+		}
+		rc = write(fd, buf, buflen) == buflen;
+		buflen = lastch = 0;
+	} else {
+		wrlen = (buflen + len > PSIZE) ? (PSIZE - buflen) : len;
+		memcpy(&buf[buflen], addr, wrlen);
+		buflen += wrlen;
+		if (buflen == PSIZE) {
+			rc = write(fd, buf, PSIZE) == PSIZE;
+			lastch = buf[PSIZE - 1];
+			buflen = 0;
+			rc &= XBput(fd, &addr[wrlen], len - wrlen);
+		}
+	}
+	return rc;
+}
+#else
+static Boolean XBput(int fd, Byte *addr, unsigned len)
+{
+	static int lastch;
+
+	if (len == 0)
+		return TRUE;
+	if (len == EOF) {
+		/* handle ADDNL */
+		if (Vars[VADDNL].val && lastch != '\n') {
+			char buf = '\n';
+			return write(fd, &buf, 1) == 1;
+		} else {
+			lastch = 0;
+			return TRUE;
+		}
+	}
+
+	lastch = addr[len - 1];
+	return write(fd, addr, len) == len;
+}
+#endif
+
+Proc Zstat()
+{
+	sprintf(PawStr, "Buffers: %d   Pages: %d", Numbuffs, NumPages);
+#if XWINDOWS
+	AddWindowSizes(PawStr + strlen(PawStr));
+#endif
+	Echo(PawStr);
 }

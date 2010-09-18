@@ -183,11 +183,15 @@ extern int Arg;				/* must be signed */
 extern Boolean InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
 extern int Pawcol, Pawlen, Pshift;
+extern Byte tline[];
 
+extern char *Cwd;
 extern int Cmask;
 extern unsigned Cmd;
 
-extern Proc (**Funcs)();
+extern struct cnames Cnames[];
+extern void (*Cmds[])(), (*Vcmds[])(), (*Pawcmds[])();
+extern void (**Funcs)();
 extern Byte Keys[], Lfunc;
 extern Boolean First;
 
@@ -198,6 +202,7 @@ extern int NumFDs;
 extern Boolean Sendp;
 extern Buffer *Killbuff;
 extern char Lbufname[];
+extern char Fname[];
 extern struct avar Vars[];
 extern Buffer *Bufflist, *Paw;
 extern Buffer *Buff_save;
@@ -211,10 +216,10 @@ extern char **Bnames;
 extern int Numbuffs;
 extern unsigned Nextpart;
 
-extern Proc (*Vcmds[])(), (*Pawcmds[])();
-extern struct cnames Cnames[];
+extern Byte CRdefault;
 
 extern char Calc_str[];
+extern char Savetag[];
 
 #define Stricmp				strcasecmp
 #define Strnicmp			strncasecmp

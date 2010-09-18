@@ -15,7 +15,7 @@ FILES=	$D/bcmds.o $D/bind.o $D/bindings.o \
 	$D/reg.o $D/shell.o $D/srch.o $D/support.o \
 	$D/tags.o $D/term.o $D/terminfo.o \
 	$D/unix.o $D/vars.o $D/window.o $D/z.o \
-	$D/getfname.o $D/mbuff.o $D/spell.o $D/make.o \
+	$D/getfname.o $D/spell.o $D/make.o \
 	$D/comment.o $D/undo.o $D/ansi.o
 
 XFILES= $D/xinit.o $D/xwind.o \

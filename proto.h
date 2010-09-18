@@ -182,7 +182,6 @@ void Bflush NOARGS;
 int Bgetcol ARGS((Boolean, int));
 void Bgoto ARGS((Buffer *));
 void Bind NOARGS;
-void Binit NOARGS;
 void Binsert ARGS((Byte));
 void Binstr ARGS((char*));
 Boolean Bisaftermrk ARGS((Mark*));
@@ -244,7 +243,6 @@ int Findpath ARGS((char*, char*, int, Boolean));
 WDO *Findwdo ARGS((Buffer *));
 int Forcecol NOARGS;
 void Freelist ARGS((struct llist**));
-void Freepage ARGS((Buffer*, Page*));
 Boolean Getarg ARGS((char*, char*, int));
 char *Getbtxt ARGS((char*, int));
 Boolean Getbword ARGS((char*, int, int (*)()));
@@ -284,11 +282,9 @@ Proc Mshow ARGS((unsigned));
 Boolean Mv ARGS((char*, char*));
 Boolean Cp ARGS((char*, char*));
 int main ARGS((int, char**));
-Page *Newpage ARGS((Buffer*, Page*, Page*));
 void Newtitle ARGS((char *));
 char *Nocase ARGS((char*));
 void NoMem NOARGS;
-Boolean Pagesplit NOARGS;
 int Parse ARGS((char*));
 void parsem ARGS((char*, Boolean));
 int Pathfixup ARGS((char*, char*));
@@ -359,9 +355,9 @@ void Walign ARGS((Buffer*));
 int Width ARGS((Byte, int, Boolean));
 void Wload ARGS((char *, int, int, unsigned long, int));
 int Write_rgn ARGS((char *));
-Boolean XBput ARGS((int, Byte*, unsigned));
 void free_pwent ARGS((struct passwd *pw));
 void Hangup ARGS((int));
+Boolean notdup_key(int k);
 
 
 /* Terminal driver specific routines */

@@ -64,19 +64,17 @@ void Save(Buffer *bsave)
 	/* end of buffers marker */
 	fputs("M M M 0 0 0\n", fp);
 
-#ifdef BORDER3D
-	wdo = Curwdo;
-#else
+#ifndef BORDER3D
 	/* save the windows */
-	for (wdo = Whead; wdo; wdo = wdo->next)
-#endif
-	{
+	for (wdo = Whead; wdo; wdo = wdo->next) {
 		Bswitchto(wdo->wbuff);
 		Bpnttomrk(wdo->wstart);
 		mloc = Blocation(&junk);
 		fprintf(fp, "W %s %u %u %lu %u\n",
-			wdo->wbuff->bname, wdo->first, wdo->last, mloc, wdo == Curwdo);
+			wdo->wbuff->bname, wdo->first, wdo->last, mloc,
+			wdo == Curwdo);
 	}
+#endif
 
 	fclose(fp);
 }
@@ -112,8 +110,8 @@ void Loadsaved()
 	/* load the buffers */
 	strcpy(save, Lbufname);
 	while (fscanf(fp, "%c %s %s %lu %lu %u\n",
-			&ch, bname, fname, &ploc, &mloc, &mode) == 6 && ch == 'B')
-	{
+			&ch, bname, fname, &ploc, &mloc, &mode) == 6 &&
+	       ch == 'B') {
 #if COMMENTBOLD
 		char comchar;
 #endif
@@ -148,7 +146,7 @@ void Loadsaved()
  * this limitation.
  * NOTE: Can only move forward.
  */
-#define MAXMOVE		0x7fff - 1024
+#define MAXMOVE		(0x7fff - 1024)
 
 void Boffset(unsigned long off)
 {
@@ -166,27 +164,24 @@ Proc Zcount()
 	Mark *tmark;
 
 	Arg = 0;
-	if (Argp)
-	{
+	if (Argp) {
 		tmark = Bcremrk();
 		Btostart();
-	}
-	else
-	{
+	} else {
 		swapped = Bisaftermrk(Curbuff->mark);
-		if (swapped) Bswappnt(Curbuff->mark);
+		if (swapped)
+			Bswappnt(Curbuff->mark);
 		tmark = Bcremrk();
 	}
 	l = w = c = 0;
 	Echo("Counting...");
 	word = FALSE;
-	for (; Argp ? !Bisend() : Bisbeforemrk(Curbuff->mark); Bmove1(), ++c)
-	{
-		if (ISNL(Buff())) ++l;
+	for (; Argp ? !Bisend() : Bisbeforemrk(Curbuff->mark); Bmove1(), ++c) {
+		if (ISNL(Buff()))
+			++l;
 		if (!Istoken())
 			word = FALSE;
-		else if (!word)
-		{
+		else if (!word) {
 			++w;
 			word = TRUE;
 		}
@@ -216,8 +211,8 @@ static struct _amode
 	{ "C",		CMODE	},
 	{ "Normal",	NORMAL	},
 	{ "TCL",	TCL		},
-	{ "Text", 	TEXT	},
-	{ "View", 	VIEW	},
+	{ "Text",	TEXT	},
+	{ "View",	VIEW	},
 #define TEXTMODE	4
 #define VIEWMODE	5
 };
@@ -229,74 +224,80 @@ Proc Zmode()
 	int i, rc;
 
 	/* find the current mode for default */
-	for (i = 0; i < NUMMODES && !(modes[i].mode & Curbuff->bmode); ++i);
+	for (i = 0; i < NUMMODES && !(modes[i].mode & Curbuff->bmode); ++i)
+		;
 	if (Curbuff->bmode & VIEW)
 		i = VIEWMODE;
 	else if (i == NUMMODES)
 		i = TEXTMODE;
-	rc = Getplete("Mode: ", modes[i].str, (char **)modes, AMODESIZE, NUMMODES);
-	if (rc == VIEWMODE)
-	{
+	rc = Getplete("Mode: ", modes[i].str, (char **)modes,
+		      AMODESIZE, NUMMODES);
+	if (rc == VIEWMODE) {
 		Curbuff->bmode ^= VIEW;
 		Curwdo->modeflags = INVALID;
-	}
-	else if (rc != -1)
+	} else if (rc != -1)
 		Toggle_mode(modes[rc].mode);
 }
 
 /* we allow 8 extensions per type */
-static int NoExt = 0;
+static int NoExt;
 static char *cexts[9] = { 0 };
 static char *texts[9] = { 0 };
 static char *sexts[9] = { 0 };	/* s for shell */
 static char *asexts[9] = { 0 };
 
-/* This is called to set the cexts/texts/aexts array */
-void parsem(char *in, Boolean mode)
+static int get_mode(int mode, char ***exts)
 {
-	extern char *strtok();
+	switch (mode & PROGMODE) {
+	case CMODE:
+		mode = CMODE;	*exts = cexts; break;
+	case ASMMODE:
+		mode = ASMMODE;	*exts = asexts; break;
+	case TCL:
+		mode = TCL;	*exts = sexts; break;
+	case TEXT:
+	default:
+		mode = TEXT;	*exts = texts; break;
+	}
+
+	return mode;
+}
+
+/* This is called to set the cexts/texts/aexts array */
+void parsem(char *in, int mode)
+{
 	char **o, *str, *start;
 	int i = 0;
 
-	switch (mode & PROGMODE)
-	{
-		case CMODE:		mode = CMODE;	o = cexts;	break;
-		case ASMMODE:	mode = ASMMODE;	o = asexts; break;
-		case TCL:		mode = TCL;		o = sexts;	break;
-		case TEXT:
-		default:		mode = TEXT;	o = texts;	break;
-	}
-	if ((start = str = strdup(in)) != NULL)
-	{
-		if ((str = strtok(str, ":")) != 0)
-		{
+	mode = get_mode(mode, &o);
+	start = str = strdup(in);
+	if (str) {
+		str = strtok(str, ":");
+		if (str) {
 			do
 				if (strcmp(str, ".") == 0)
 					NoExt = mode;
 				else
 					o[i++] = strdup(str);
-			while (i < 8 && (str = strtok(NULL, ":")) != 0);
+			while (i < 8 && (str = strtok(NULL, ":")) != 0)
+				;
 			o[i] = NULL;
 		}
 		free(start);
 	}
 }
 
-Boolean extmatch(char *str, Boolean mode)
+static Boolean extmatch(char *str, Boolean mode)
 {
 	char **o;
 	int i;
 
-	if (!str) return FALSE;
+	if (!str)
+		return FALSE;
 
-	switch (mode & PROGMODE)
-	{
-		case CMODE:		mode = CMODE;	o = cexts;	break;
-		case TCL:		mode = TCL;		o = sexts;	break;
-		case ASMMODE:	mode = ASMMODE;	o = asexts; break;
-		default:		mode = TEXT;	o = texts;	break;
-	}
-	if ((str = strrchr(str, '.')) == 0)
+	mode = get_mode(mode, &o);
+	str = strrchr(str, '.');
+	if (!str)
 		return NoExt == mode;
 	else
 		for (i = 0; o[i]; ++i)
@@ -320,7 +321,7 @@ void Toggle_mode(int mode)
 		else if (mode != TCL && extmatch(Bfname(), TCL))
 			new = TCL;
 		else if (mode != TEXT &&
-				(!Vars[VNORMAL].val || extmatch(Bfname(), TEXT)))
+			 (!Vars[VNORMAL].val || extmatch(Bfname(), TEXT)))
 			new = TEXT;
 		else
 			new = NORMAL;
@@ -329,12 +330,11 @@ void Toggle_mode(int mode)
 
 #if COMMENTBOLD
 	if (mode == 0)
-		Curbuff->comchar = *(char*)Vars[VASCHAR].val;
+		Curbuff->comchar = *(char *)Vars[VASCHAR].val;
 #endif
 
 	Curbuff->bmode = (Curbuff->bmode & MODEMASK) | new;
-	if (mode)
-	{
+	if (mode) {
 		Curwdo->modeflags = INVALID;
 		tsave = Tabsize;
 		if (Settabsize(new) != tsave)
@@ -422,8 +422,7 @@ static void Indent(Boolean flag)
 			if (Buff() != '#')
 				for (i = 0; i < Arg; ++i)
 					Binsert('\t');
-		}
-		else
+		} else
 			for (i = 0; i < Arg && Buff() == '\t'; ++i)
 				Bdelete(1);
 		Bcsearch(NL);
@@ -453,45 +452,46 @@ unsigned ch;
 	int cnt = 0;
 	Mark save;
 
-	if (!(Curbuff->bmode & PROGMODE) || InPaw || Tkbrdy()) return;
-	if (Vars[VMATCH].val & 1)
-	{
-		switch (ch)
-		{
-			case ')': match = '('; break;
-			case ']': match = '['; break;
-			case '}': match = '{'; break;
-			default:  return;
+	if (!(Curbuff->bmode & PROGMODE) || InPaw || Tkbrdy())
+		return;
+	if (Vars[VMATCH].val & 1) {
+		switch (ch) {
+		case ')':
+			match = '('; break;
+		case ']':
+			match = '['; break;
+		case '}':
+			match = '{'; break;
+		default:
+			return;
 		}
 		Bmrktopnt(&save);
-		do
-		{
+		do {
 			Bmove(-1);
 			if (Buff() == match)
 				--cnt;
 			else if (Buff() == ch)
 				++cnt;
-		}
-		while (cnt && !Bisstart());
+		} while (cnt && !Bisstart());
 		if (cnt)
 			Tbell();
-		else
-		{
+		else {
 			Refresh();
 			ShowCursor(TRUE);	/* show the match! */
 			Delay();
 			ShowCursor(FALSE);
 		}
 		Bpnttomrk(&save);
-	}
-	else if (Vars[VMATCH].val & 2)
-	{
-		switch (ch)
-		{
-			case '(': match = ')'; break;
-			case '[': match = ']'; break;
-			case '{': match = '}'; break;
-			default: return;
+	} else if (Vars[VMATCH].val & 2) {
+		switch (ch) {
+		case '(':
+			match = ')'; break;
+		case '[':
+			match = ']'; break;
+		case '{':
+			match = '}'; break;
+		default:
+			return;
 		}
 		Binsert(match);
 		Bmove(-1);
@@ -503,8 +503,10 @@ Proc Zsetenv()
 	char env[STRMAX + 2], set[STRMAX + 1], *p;
 
 	*env = '\0';
-	if (Getarg("Env: ", env, STRMAX)) return;
-	if ((p = getenv(env)) != 0) {
+	if (Getarg("Env: ", env, STRMAX))
+		return;
+	p = getenv(env);
+	if (p) {
 		if (strlen(p) >= STRMAX) {
 			Error("Variable is too long.");
 			return;

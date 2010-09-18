@@ -1,25 +1,35 @@
-/****************************************************************************
- *																			*
- *				 The software found in this file is the						*
- *					  Copyright of Sean MacLennan							*
- *						  All rights reserved.								*
- *																			*
- ****************************************************************************/
+/* delete.c - Zedit delete commands
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "z.h"
 
 
-Buffer *Killbuff;			/* the kill buffer */
+Buffer *Killbuff;
 
 
 Proc Zmakedel() {}
 
-
 Proc Zdelchar()
 {
-	Bdelete( Arg );
+	Bdelete(Arg);
 	Arg = 0;
 }
-
 
 Proc Zrdelchar()
 {
@@ -28,28 +38,25 @@ Proc Zrdelchar()
 	Arg = 0;
 }
 
-
 Proc Zdeleol()
 {
 	Mark *tmark = Bcremrk();
 
-	if( !Bisend() && Buff() == NL )
+	if (!Bisend() && Buff() == NL)
 		Bmove1();
-	else if(Vars[VKILLLINE].val)
-	{
+	else if (Vars[VKILLLINE].val) {
 		Boolean atstart;
 
 		Tobegline();
 		atstart = Bisatmrk(tmark);
 		Toendline();
-		if(atstart) Bmove1(); /* delete the NL */
-	}
-	else
+		if (atstart)
+			Bmove1(); /* delete the NL */
+	} else
 		Toendline();
-	Killtomrk( tmark );
-	Unmark( tmark );
+	Killtomrk(tmark);
+	Unmark(tmark);
 }
-
 
 Proc Zdelline()
 {
@@ -57,16 +64,15 @@ Proc Zdelline()
 
 	Tobegline();
 	tmark = Bcremrk();
-	Bcsearch( NL );
-	Killtomrk( tmark );
-	Unmark( tmark );
+	Bcsearch(NL);
+	Killtomrk(tmark);
+	Unmark(tmark);
 }
 
-	
-Proc Zdelrgn()
 /* Delete from the point to the mark */
+Proc Zdelrgn()
 {
-	Killtomrk( Curbuff->mark );
+	Killtomrk(Curbuff->mark);
 }
 
 
@@ -77,18 +83,15 @@ Proc Zcopyrgn()
 }
 
 
-/* UNDO */
 /* Insert the delete buffer at the point */
 Proc Zyank()
 {
-	extern Boolean First;
-	extern Mark *Send;
 	Buffer *tbuff;
 	int yanked;
 	Mark *tmark, save;	/* save must NOT be a pointer */
 
 	if (InPaw && First) {
-		Bdelete( Curplen );
+		Bdelete(Curplen);
 		First = FALSE;
 	}
 
@@ -99,14 +102,13 @@ Proc Zyank()
 	Btoend();
 	tmark = Bcremrk();
 	Btostart();
-	yanked = Bcopyrgn( tmark, tbuff );
-	Unmark( tmark );
-	Bswitchto( tbuff );
+	yanked = Bcopyrgn(tmark, tbuff);
+	Unmark(tmark);
+	Bswitchto(tbuff);
 	undo_add(yanked);
-	if( Bisaftermrk(&save) )
+	if (Bisaftermrk(&save))
 		Reframe();
 }
-
 
 Proc Zdelword()
 {
@@ -115,10 +117,9 @@ Proc Zdelword()
 	tmark = Bcremrk();
 	Moveto(Isword, FORWARD);
 	Movepast(Isword, FORWARD);
-	Killtomrk( tmark );
-	Unmark( tmark );
+	Killtomrk(tmark);
+	Unmark(tmark);
 }
-
 
 Proc Zrdelword()
 {
@@ -126,87 +127,77 @@ Proc Zrdelword()
 
 	tmark = Bcremrk();
 	Zbword();
-	Killtomrk( tmark );
-	Unmark( tmark );
+	Killtomrk(tmark);
+	Unmark(tmark);
 }
-
 
 Proc Zgetbword()
 {
-	extern int Arg;
-	extern unsigned Cmd;
-	extern Buffer *Buff_save, *Paw;
-	char word[ STRMAX ], *ptr;
+	char word[STRMAX], *ptr;
 	Mark *tmark, *start;
-	
-	if( InPaw )
-	{
-		Bswitchto( Buff_save );
-		Getbword( word, STRMAX, Istoken );
-		Bswitchto( Paw );
-		for( ptr = word; *ptr; ++ptr )
-		{
+
+	if (InPaw) {
+		Bswitchto(Buff_save);
+		Getbword(word, STRMAX, Istoken);
+		Bswitchto(Paw);
+		for (ptr = word; *ptr; ++ptr) {
 			Cmd = *ptr;
 			Pinsert();
 		}
-	}
-	else
-	{
-		tmark = Bcremrk();					/* save current Point */
-		Moveto( Istoken, FORWARD );			/* find start of word */
-		Movepast( Istoken, BACKWARD );
+	} else {
+		tmark = Bcremrk();	/* save current Point */
+		Moveto(Istoken, FORWARD); /* find start of word */
+		Movepast(Istoken, BACKWARD);
 		start = Bcremrk();
-		Movepast( Istoken, FORWARD );		/* move Point to end of word */
-		Copytomrk( start );					/* copy to Kill buffer */
-		Bpnttomrk( tmark );					/* move Point back */
-		Unmark( tmark );
-		Unmark( start );
+		Movepast(Istoken, FORWARD); /* move Point to end of word */
+		Copytomrk(start); /* copy to Kill buffer */
+		Bpnttomrk(tmark); /* move Point back */
+		Unmark(tmark);
+		Unmark(start);
 	}
 	Arg = 0;
 }
-
 
 Proc Zdelblanks()
 {
 	Mark *tmark, *pmark;
 
 	pmark = Bcremrk();
-	if( Bcrsearch(NL) )
-	{
+	if (Bcrsearch(NL)) {
 		Bmove1();
 		tmark = Bcremrk();
-		Movepast( Isspace, BACKWARD );
-		if( !Bisstart() ) Bcsearch( NL );
-		if( Bisbeforemrk(tmark) )
-			Bdeltomrk( tmark );
-		Unmark( tmark );
+		Movepast(Isspace, BACKWARD);
+		if (!Bisstart())
+			Bcsearch(NL);
+		if (Bisbeforemrk(tmark))
+			Bdeltomrk(tmark);
+		Unmark(tmark);
 	}
-	if( Bcsearch(NL) )
-	{
+	if (Bcsearch(NL)) {
 		tmark = Bcremrk();
-		Movepast( Isspace, FORWARD );
-		if( Bcrsearch(NL) ) Bmove1();
-		if( Bisaftermrk(tmark) )
-			Bdeltomrk( tmark );
-		Unmark( tmark );
+		Movepast(Isspace, FORWARD);
+		if (Bcrsearch(NL))
+			Bmove1();
+		if (Bisaftermrk(tmark))
+			Bdeltomrk(tmark);
+		Unmark(tmark);
 	}
-	Bpnttomrk( pmark );
-	Unmark( pmark );
+	Bpnttomrk(pmark);
+	Unmark(pmark);
 }
-
 
 Proc Zjoin()
 {
 	Toendline();
-	Bdelete( 1 );
+	Bdelete(1);
 	Zdelwhite();
-	Binsert( ' ' );
+	Binsert(' ');
 }
-
 
 Proc Zempty()
 {
-	if(Ask("Empty buffer? ") != YES) return;
+	if (Ask("Empty buffer? ") != YES)
+		return;
 	Bempty();
 	Curbuff->bmodf = MODIFIED;
 }

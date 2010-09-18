@@ -182,6 +182,7 @@ extern Boolean Argp;
 extern int Arg;				/* must be signed */
 extern Boolean InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
+extern int Pawcol, Pawlen, Pshift;
 
 extern int Cmask;
 extern unsigned Cmd;
@@ -199,6 +200,7 @@ extern Buffer *Killbuff;
 extern char Lbufname[];
 extern struct avar Vars[];
 extern Buffer *Bufflist, *Paw;
+extern Buffer *Buff_save;
 extern Mark *Sstart, *Psstart, *Send, *REstart;
 extern Mark Scrnmarks[];
 

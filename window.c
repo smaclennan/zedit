@@ -1,18 +1,27 @@
-/****************************************************************************
- *																			*
- *				 The software found in this file is the						*
- *					  Copyright of Sean MacLennan							*
- *						  All rights reserved.								*
- *																			*
- ****************************************************************************/
+/* window.c - Zedit windowing commands and functions
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "z.h"
 
 #ifndef BORDER3D
 
-extern Mark Scrnmarks[], *Sstart;
-extern int Sendp;
-
-WDO *Whead = NULL, *Curwdo = NULL;
+WDO *Whead, *Curwdo;
 
 #define MINWDO		5		/* minimum window size */
 
@@ -22,33 +31,28 @@ static Boolean Wsplit ARGS((void));
 
 
 /* Create a new window pointer - screen info invalid */
-static WDO *Wcreate(first, last)
-int first, last;
+static WDO *Wcreate(int first, int last)
 {
-	WDO *new;
+	WDO *new = calloc(sizeof(WDO), 1);
 
-	if((new = (WDO *)malloc(sizeof(WDO))) != NULL)
-	{
-		memset((char *)new, '\0', sizeof(WDO));
-		new->wbuff		= Curbuff;
-		new->wpnt		= Bcremrk();
-		new->wmrk		= Bcremrk();
-		new->wstart		= Bcremrk();
+	if (new) {
+		new->wbuff	= Curbuff;
+		new->wpnt	= Bcremrk();
+		new->wmrk	= Bcremrk();
+		new->wstart	= Bcremrk();
 		new->modeflags	= INVALID;
-		new->first		= first;
-		new->last		= last;
+		new->first	= first;
+		new->last	= last;
 		Mrktomrk(new->wmrk, Curbuff->mark);
 #ifdef SCROLLBARS
 		CreateScrollBars(new);
 #endif
 	}
-	return(new);
+	return new;
 }
 
-
 /* free wdo - may invalidate Curwdo and Whead */
-static void Wfree(wdo)
-WDO *wdo;
+static void Wfree(WDO *wdo)
 {
 	Unmark(wdo->wpnt);
 	Unmark(wdo->wmrk);
@@ -59,42 +63,39 @@ WDO *wdo;
 	free((char *)wdo);
 }
 
-
-static Boolean Wdelete(wdo)
-WDO *wdo;
+static Boolean Wdelete(WDO *wdo)
 {
 	WDO *new;
 
 	/* can't delete last window */
-	if(!Whead->next) return FALSE;
-	
+	if (!Whead->next)
+		return FALSE;
+
 	/* give more space to the smaller of the 2 windows (favour next) */
-	if((wdo->next ? wdo->next->last - wdo->next->first : ROWMAX + 1) <=
-	   (wdo->prev ? wdo->prev->last - wdo->prev->first : ROWMAX + 1))
-	{	/* give it to the next window */
+	if ((wdo->next ? wdo->next->last - wdo->next->first : ROWMAX + 1) <=
+	   (wdo->prev ? wdo->prev->last - wdo->prev->first : ROWMAX + 1)) {
+		/* give it to the next window */
 		new = wdo->next;
 		new->first = wdo->first;
 		new->prev = wdo->prev;
-		if(wdo->prev)
+		if (wdo->prev)
 			wdo->prev->next = new;
 		else
 			Whead = new;
-	}
-	else if(wdo->prev)
-	{	/* give it to the previous window */
+	} else if (wdo->prev) {
+		/* give it to the previous window */
 		new = wdo->prev;
 		new->last = wdo->last;
 		new->next = wdo->next;
-		if(wdo->next) wdo->next->prev = new;
+		if (wdo->next)
+			wdo->next->prev = new;
 		new->modeflags = INVALID;
-	}
-	else
-		return(FALSE);
-	
+	} else
+		return FALSE;
+
 	Winvalid(wdo);
-	
-	if(wdo == Curwdo)
-	{
+
+	if (wdo == Curwdo) {
 		Wswitchto(new);
 		Reframe();	/*SAM*/
 	}
@@ -102,11 +103,10 @@ WDO *wdo;
 #ifdef SCROLLBARS
 	ResizeScrollBars(new);
 #endif
-	return(TRUE);
+	return TRUE;
 }
 
-
-/* 
+/*
  * Split the current window in 2, putting the same buffer in both windows.
  * Leaves the user in the new window.
  */
@@ -114,13 +114,16 @@ static Boolean Wsplit()
 {
 	WDO *new;
 	int first, last;
-	
-	if(Wheight() < MINWDO) return FALSE;
-	
+
+	if (Wheight() < MINWDO)
+		return FALSE;
+
 	/* Create the new window. */
 	first = Curwdo->first + (Wheight() / 2) + 1;
 	last = Curwdo->last;
-	if((new = Wcreate(first, last)) == 0) return FALSE;
+	new = Wcreate(first, last);
+	if (!new)
+		return FALSE;
 
 	/* resize the old window */
 	Curwdo->last = first - 1;
@@ -133,9 +136,10 @@ static Boolean Wsplit()
 	/* link it into chain */
 	new->prev = Curwdo;
 	new->next = Curwdo->next;
-	if(Curwdo->next) Curwdo->next->prev = new;
+	if (Curwdo->next)
+		Curwdo->next->prev = new;
 	Curwdo->next = new;
-	
+
 	/* Point may be off new screen, reframe just in case... */
 	Reframe();
 
@@ -143,34 +147,29 @@ static Boolean Wsplit()
 	Wswitchto(new);
 	Reframe();
 	Mrktomrk(Curwdo->wstart, Sstart);
-	return(TRUE);
+	return TRUE;
 }
 
-
 /* Find the window associated with buffer */
-WDO *Findwdo(buff)
-Buffer *buff;
+WDO *Findwdo(Buffer *buff)
 {
 	WDO *wdo;
-	
-	for(wdo = Whead; wdo; wdo = wdo->next)
-		if(wdo->wbuff == buff)
-			return(wdo);
-	return(NULL);
+
+	for (wdo = Whead; wdo; wdo = wdo->next)
+		if (wdo->wbuff == buff)
+			return wdo;
+	return NULL;
 }
 
 /* Switch to another window. */
-void Wswitchto(wdo)
-WDO *wdo;
+void Wswitchto(WDO *wdo)
 {
-	if(wdo != Curwdo)
-	{
-		if(Curwdo)
-		{
+	if (wdo != Curwdo) {
+		if (Curwdo) {
 			Bmrktopnt(Curwdo->wpnt);
 			Mrktomrk(Curwdo->wmrk, Curbuff->mark);
 			/* don't update wstart unless Sstart for this window */
-			if(Sstart->mbuff == Curwdo->wbuff)
+			if (Sstart->mbuff == Curwdo->wbuff)
 				Mrktomrk(Curwdo->wstart, Sstart);
 		}
 		Curwdo = wdo;
@@ -186,30 +185,25 @@ WDO *wdo;
 	Curwdo->modeflags = INVALID;
 }
 
-
 /* Switch to a new buffer in the current window. */
-void Cswitchto(buff)
-Buffer *buff;
+void Cswitchto(Buffer *buff)
 {
-	extern Mark *Sstart;
-
 	Bswitchto(buff);
-	if(Curwdo->wbuff != Curbuff)
-	{	
+	if (Curwdo->wbuff != Curbuff) {
 		Curwdo->wbuff = Curbuff;
 		Bmrktopnt(Curwdo->wpnt);
 		Mrktomrk(Curwdo->wmrk, Curbuff->mark);
-		if(Sstart->mbuff == Curbuff)
+		if (Sstart->mbuff == Curbuff)
 			Mrktomrk(Curwdo->wstart, Sstart);
-		else
-		{	/* bring to start of buffer - just in case */
+		else {
+			/* bring to start of buffer - just in case */
 			Curwdo->wstart->mbuff = Curbuff;
 			Curwdo->wstart->mpage = Curbuff->firstp;
 			Curwdo->wstart->moffset = 0;
 		}
 		Curwdo->modeflags = INVALID;
-	
-		Settabsize( buff->bmode );
+
+		Settabsize(buff->bmode);
 	}
 
 #if XWINDOWS
@@ -217,30 +211,27 @@ Buffer *buff;
 #endif
 }
 
-
 /* Local routine to change the current window by 'size' lines */
-static Boolean Sizewindow(size)
-int size;
+static Boolean Sizewindow(int size)
 {
 	WDO *other;
-	
-	if(Wheight() + size < MINWDO) return(FALSE);
-	if((other = Curwdo->next) &&
-		other->last - other->first - size > MINWDO)
-	{
+
+	if (Wheight() + size < MINWDO)
+		return FALSE;
+	other = Curwdo->next;
+	if (other && other->last - other->first - size > MINWDO) {
 		Curwdo->last += size;
 		other->first += size;
+	} else {
+		other = Curwdo->prev;
+		if (other && other->last - other->first - size > MINWDO) {
+			Curwdo->first -= size;
+			other->last   -= size;
+		} else
+			return FALSE;
 	}
-	else if((other = Curwdo->prev) &&
-		other->last - other->first - size > MINWDO)
-	{
-		Curwdo->first -= size;
-		other->last   -= size;
-	}
-	else
-		return(FALSE);
 
-	/* invalidate the windows */		
+	/* invalidate the windows */
 	Winvalid(Curwdo);
 	Winvalid(other);
 
@@ -248,90 +239,92 @@ int size;
 	ResizeScrollBars(Curwdo);
 	ResizeScrollBars(other);
 #endif
-	return(TRUE);
+	return TRUE;
 }
 
+int noResize;
 
-int noResize = 0;
+static inline void do_wsize(int orow)
+{
+	WDO *wdo;
+	Boolean changed = TRUE;
+	int i, d = Rowmax - orow;
+
+	if (d > 0) {
+		/* make the windows bigger starting at the top */
+		while (d > 0)
+			for (i = 1, wdo = Whead; wdo; wdo = wdo->next) {
+				wdo->last += i;
+				if (wdo->next)
+					wdo->next->first += i;
+				if (--d > 0)
+					++i;
+			}
+	} else {
+		/* make the windows smaller starting at the bottom */
+		d = -d;
+		while (d > 0 && changed) {
+			changed = FALSE;
+			for (i = 1, wdo = Whead; wdo; wdo = wdo->next) {
+				if (wdo->last - wdo->first - 1 > 3 && d > 0) {
+					wdo->last -= i;
+					if (wdo->next)
+						wdo->next->first -= i;
+					if (d-- > 0)
+						++i;
+					changed = TRUE;
+				} else {
+					wdo->last -= i - 1;
+					if (wdo->next)
+						wdo->next->first -= i - 1;
+				}
+			}
+		}
+		if (d > 0)
+			Z1wind();
+	}
+}
 
 /* See if window size has changed */
 void Wsize()
 {
-	WDO *wdo;
-	int orow, d, i;
-	Boolean changed = TRUE;
+	int orow;
 
-	if(noResize) return;
+	if (noResize)
+		return;
 
 	orow = Rowmax;
 	Termsize();
 
 	/* if Rowmax changed we must update window sizes */
-	if(Rowmax != orow)
-	{
-		if(Whead->next)
-			if((d = Rowmax - orow) > 0)
-			{	/* make the windows bigger starting at the top */
-				while(d > 0)
-					for(i = 1, wdo = Whead; wdo; wdo = wdo->next)
-					{
-						wdo->last += i;
-						if(wdo->next) wdo->next->first += i;
-						if(--d > 0) ++i;
-					}
-			}
-			else
-			{	/* make the windows smaller starting at the bottom */
-				d = -d;
-				while(d > 0 && changed)
-				{
-					changed = FALSE;
-					for(i = 1, wdo = Whead; wdo; wdo = wdo->next)
-					{
-						if(wdo->last - wdo->first - 1 > 3 && d > 0)
-						{
-							wdo->last -= i;
-							if(wdo->next) wdo->next->first -= i;
-							if(d-- > 0) ++i;
-							changed = TRUE;
-						}
-						else
-						{
-							wdo->last -= i - 1;
-							if(wdo->next) wdo->next->first -= i - 1;
-						}
-					}
-				}
-				if(d > 0) Z1wind();
-			}
+	if (Rowmax != orow) {
+		if (Whead->next)
+			do_wsize(orow);
 		else
-		{
 			Whead->last = Rowmax - 2;
-		}
 	}
 
 #ifdef SCROLLBARS
 	/* We always update scrollbars since width may have changed. */
-	for(wdo = Whead; wdo; wdo = wdo->next)
+	for (wdo = Whead; wdo; wdo = wdo->next)
 		ResizeScrollBars(wdo);
 #endif
 }
 
-
-
 /* Resize PAW by moving bottom window by 'diff' lines, if possible. */
-Boolean Resize(diff)
-int diff;
+Boolean Resize(int diff)
 {
 	WDO *last;
 	int i;
-	
-	/* find the last window */
-	for(last = Whead; last->next; last = last->next) ;
 
-	if(last->last - last->first + diff < 1) return FALSE;
-	if(diff > 0)
-		for(i = 0; i < diff; ++i)
+	/* find the last window */
+	for (last = Whead; last->next; last = last->next)
+		;
+
+	if (last->last - last->first + diff < 1)
+		return FALSE;
+	if (diff > 0)
+		for (i = 0; i < diff; ++i)
 			Scrnmarks[i + last->last].modf = TRUE;
 	last->last += diff;
 	Rowmax += diff;
@@ -339,7 +332,6 @@ int diff;
 	Clrecho();
 	return TRUE;
 }
-
 
 /*
  * Create/Reuse a buffer in another window. Window to use:
@@ -350,24 +342,24 @@ int diff;
  * Makes new window and buffer current.
  * NOTE: Blows away previous buffer.
  */
-Boolean WuseOther(bname)
-char *bname;
+Boolean WuseOther(char *bname)
 {
 	WDO *wdo, *last;
 	Buffer *buff;
 
-	for(wdo = Whead, last = NULL; wdo; last = wdo, wdo = wdo->next)
-		if(strcmp(wdo->wbuff->bname, bname) == 0) break;
-	if(wdo)
+	for (wdo = Whead, last = NULL; wdo; last = wdo, wdo = wdo->next)
+		if (strcmp(wdo->wbuff->bname, bname) == 0)
+			break;
+	if (wdo)
 		Wswitchto(wdo);
-	else if(last != Whead)
+	else if (last != Whead)
 		Wswitchto(last);
-	else
-	{
+	else {
 		Wsplit();
-		if((strcmp(bname, MAKEBUFF) == 0 || strcmp(bname, REFBUFF) == 0)
-			&& Wheight() > 8)
-		{	/* .make/.ref buffers are smaller */
+		if ((strcmp(bname, MAKEBUFF) == 0 ||
+		     strcmp(bname, REFBUFF) == 0)
+			&& Wheight() > 8) {
+			/* .make/.ref buffers are smaller */
 			Curwdo->first = Curwdo->last - 8;
 			Curwdo->prev->last = Curwdo->first - 1;
 #ifdef SCROLLBARS
@@ -377,43 +369,37 @@ char *bname;
 		}
 	}
 	Winvalid(Curwdo);
-	if((buff = Cmakebuff(bname, NULL)) == NULL) return(FALSE);
+	buff = Cmakebuff(bname, NULL);
+	if (buff == NULL)
+		return FALSE;
 	buff->bmode |= SYSBUFF;
 	Cswitchto(buff);
 	Bempty();
-	return(TRUE);
+	return TRUE;
 }
-
 
 /*
  * Invalidate an entire window. i.e. next Refresh will do a complete update.
  * Note that the line BEFORE the window must be invalidated to make sure that
  * the window is updated correctly.
  */
-void Winvalid(wdo)
-WDO *wdo;
+void Winvalid(WDO *wdo)
 {
 	int i;
 
-	if(wdo->first > Tstart) Scrnmarks[wdo->first - 1].modf = TRUE;
-	for(i = wdo->first; i <= wdo->last; ++i)
+	if (wdo->first > Tstart)
+		Scrnmarks[wdo->first - 1].modf = TRUE;
+	for (i = wdo->first; i <= wdo->last; ++i)
 		Scrnmarks[i].modf = TRUE;
 	wdo->modeflags = INVALID;
 }
 
-
-/****************************************************************************
- *																			*
- *					Zedit interface to window routines						*
- *																			*
- ****************************************************************************/
-
 /* Split the current window and enter new (bottom) window */
 Proc Z2wind()
 {
-	if(!Wsplit()) Tbell();
+	if (!Wsplit())
+		Tbell();
 }
-
 
 /* Tear down all but one (current) window */
 Proc Z1wind()
@@ -421,11 +407,11 @@ Proc Z1wind()
 	WDO *wdo;
 	int i;
 
-	while(Whead)
-	{
+	while (Whead) {
 		wdo = Whead;
 		Whead = Whead->next;
-		if(wdo != Curwdo) Wfree(wdo);
+		if (wdo != Curwdo)
+			Wfree(wdo);
 	}
 
 	Curwdo->first = Tstart;
@@ -434,7 +420,8 @@ Proc Z1wind()
 	Curwdo->prev = Curwdo->next = NULL;
 	Whead = Curwdo;
 
-	for(i = 0; i < Curwdo->last; ++i)			Scrnmarks[i].modf = TRUE;
+	for (i = 0; i < Curwdo->last; ++i)
+		Scrnmarks[i].modf = TRUE;
 
 	Tclrwind();
 
@@ -443,43 +430,40 @@ Proc Z1wind()
 #endif
 }
 
-
 /* Delete current window if more than one */
 Proc Zdelwind()
 {
-	if(!Wdelete(Curwdo)) Tbell();
+	if (!Wdelete(Curwdo))
+		Tbell();
 }
-
 
 /* Make previous window current */
 Proc Zprevwind()
 {
 	WDO *wdo;
-	
-	if(Curwdo->prev)
+
+	if (Curwdo->prev)
 		Wswitchto(Curwdo->prev);
-	else
-	{
-		for(wdo = Whead; wdo->next; wdo = wdo->next) ;
-		if(wdo != Curwdo)
+	else {
+		for (wdo = Whead; wdo->next; wdo = wdo->next)
+			;
+		if (wdo != Curwdo)
 			Wswitchto(wdo);
 		else
 			Tbell();
 	}
 }
 
-
 /* Make next window current */
 Proc Znextwind()
 {
-	if(Curwdo->next)
+	if (Curwdo->next)
 		Wswitchto(Curwdo->next);
-	else if(Curwdo != Whead)
+	else if (Curwdo != Whead)
 		Wswitchto(Whead);
 	else
 		Tbell();
 }
-
 
 /* Make current window bigger */
 Proc Zgrowwind()
@@ -488,7 +472,6 @@ Proc Zgrowwind()
 	Arg = 0;
 }
 
-
 /* Make current window smaller */
 Proc Zshrinkwind()
 {
@@ -496,14 +479,13 @@ Proc Zshrinkwind()
 	Arg = 0;
 }
 
-
 /* Make current window an absolute size */
 Proc Zsizewind()
 {
-	if(!Sizewindow(Arg - Wheight() + 1)) Tbell();
+	if (!Sizewindow(Arg - Wheight() + 1))
+		Tbell();
 	Arg = 0;
 }
-
 
 /*
  * Find the "other" window:
@@ -517,18 +499,21 @@ Proc Zsizewind()
 static WDO *Otherwind()
 {
 	WDO *wdo;
-	
-	if(Argp)
-		for(wdo = Whead; --Arg > 0; wdo = wdo->next ? wdo->next : Whead) ;
-	else
-	{
-		for(wdo = Whead; wdo->next; wdo = wdo->next) ;
-		if(wdo == Curwdo) wdo = Whead;
+
+	if (Argp)
+		for (wdo = Whead;
+		     --Arg > 0;
+		     wdo = wdo->next ? wdo->next : Whead)
+			;
+	else {
+		for (wdo = Whead; wdo->next; wdo = wdo->next)
+			;
+		if (wdo == Curwdo)
+			wdo = Whead;
 	}
 	Wswitchto(wdo);
 	return wdo;
 }
-
 
 Proc Znxtothrwind()
 {
@@ -538,7 +523,6 @@ Proc Znxtothrwind()
 	Wswitchto(save);
 }
 
-
 Proc Zprevothrwind()
 {
 	WDO *save = Curwdo;
@@ -547,112 +531,104 @@ Proc Zprevothrwind()
 	Wswitchto(save);
 }
 
-
 /*
  * If buffer is in a current window, switchto that window, else put the buffer
  * in the current or other window.
  */
-void Bgoto(buff)
-Buffer *buff;
+void Bgoto(Buffer *buff)
 {
-	WDO *wdo;
-	
-	if((wdo = Findwdo(buff)))
-	{
+	WDO *wdo = Findwdo(buff);
+
+	if (wdo) {
 		Wswitchto(wdo);
 		return;
 	}
-		
-	if(Vars[VUSEOTHER].val)
-	{
-		if(Curwdo->next)
+
+	if (Vars[VUSEOTHER].val) {
+		if (Curwdo->next)
 			Wswitchto(Curwdo->next);
-		else if(Curwdo->prev)
+		else if (Curwdo->prev)
 			Wswitchto(Curwdo->prev);
 	}
 
 	Cswitchto(buff);
 }
 
-
 /* Load into correct window based on UseOtherWdo.
  * Always munch Main
  * Never  munch .make
  */
-void Loadwdo(bname)
-char *bname;
+void Loadwdo(char *bname)
 {
-	if(Vars[VUSEOTHER].val)
-	{
-		if(strcmp(Curwdo->wbuff->bname, bname) == 0)
+	if (Vars[VUSEOTHER].val) {
+		if (strcmp(Curwdo->wbuff->bname, bname) == 0)
 			return;
-		if(strcmp(Curwdo->wbuff->bname, MAINBUFF) == 0)
+		if (strcmp(Curwdo->wbuff->bname, MAINBUFF) == 0)
 			return;
-		if(Whead->next)
-		{
+		if (Whead->next) {
 			Znextwind();
 			/* SAM never munch on .make buffer */
-			if(strcmp(Curwdo->wbuff->bname, MAKEBUFF) == 0)
+			if (strcmp(Curwdo->wbuff->bname, MAKEBUFF) == 0)
 				Znextwind();
-		}
-		else
+		} else
 			Z2wind();
 	}
 }
 
-
 /* These routines are ONLY callable at startup. */
 
-static WDO *Wstart = NULL;	/* Set in Wload */
+static WDO *Wstart;	/* Set in Wload */
 
 void Winit()
 {
-	if(Wstart == NULL)
-	{	/* Create first window over entire screen. */
+	if (Wstart == NULL) {
+		/* Create first window over entire screen. */
 		Whead = Wcreate(Tstart, Rowmax - 2);
 		Wswitchto(Whead);
-	}
-	else
-	{	/* We created the window[s] with Wload[s]. */
-		for(; Whead->prev; Whead = Whead->prev) ;
+	} else {
+		/* We created the window[s] with Wload[s]. */
+		while (Whead->prev)
+			Whead = Whead->prev;
 		Wswitchto(Wstart);
 		Wsize();
 	}
 }
 
-
-void Wload(bname, first, last, sloc, iscurrent)
-char *bname;
-int first, last, iscurrent;
-unsigned long sloc;
+void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 {
 	WDO *new;
 	Buffer *buff;
 
 #if PIPESH
-	if(strcmp(bname, SHELLBUFF) == 0)
-	{	/* invoke the shell */
-		if((buff = Cmakebuff(SHELLBUFF, NULL)) == NULL) NoMem();
+	if (strcmp(bname, SHELLBUFF) == 0) {
+		/* invoke the shell */
+		buff = Cmakebuff(SHELLBUFF, NULL);
+		if (buff == NULL)
+			NoMem();
 		buff->bmode |= SYSBUFF;
 		Doshell();
 	}
 #endif
-	if((buff = Cfindbuff(bname)) == NULL) buff = Cfindbuff(MAINBUFF);
+	buff = Cfindbuff(bname);
+	if (buff == NULL)
+		buff = Cfindbuff(MAINBUFF);
 	Bswitchto(buff);
-	if((new = Wcreate(first, last)) == NULL) NoMem();
+	new = Wcreate(first, last);
+	if (new == NULL)
+		NoMem();
 	Mrktomrk(buff->mark, new->wmrk);
 	Boffset(sloc);
 	Bmrktopnt(new->wstart);
 	Bpnttomrk(new->wpnt);	/* return it */
 	new->first = first;
 	new->last  = last;
-	if(Whead)
-	{
+	if (Whead) {
 		Whead->next = new;
 		new->prev = Whead;
 	}
 	Whead = new;
-	if(iscurrent) Wstart = new;
+	if (iscurrent)
+		Wstart = new;
 	Rowmax = new->last + 2;
 }
 

@@ -6,6 +6,13 @@
  *																			*
  ****************************************************************************/
 
+/* types */
+/* assume ansi compilers can handle void ... */
+#define ARGS(x)		x
+#define NOARGS		(void)
+#define ZPROC(x)	Proc x (void);
+
+
 /* The Zedit commands */
 ZPROC(Z1wind)
 ZPROC(Z2wind)
@@ -156,6 +163,7 @@ ZPROC(Zzoom)
 
 /* General routines */
 
+void Dbg ARGS((char *fmt, ...));
 #if BSD
 int access ARGS((char *, int));
 #endif

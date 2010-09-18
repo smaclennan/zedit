@@ -1,6 +1,11 @@
 #if XWINDOWS
 #include <X11/Xlib.h>
 
+
+#ifdef sun4
+typedef unsigned long ulong;
+#endif
+
 /* defined in xinit.c */
 extern Display *display;
 extern int screen;

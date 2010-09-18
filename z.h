@@ -21,6 +21,9 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/types.h>
+#include <string.h>
+#include <memory.h>
+#include "typedefs.h"
 #include "global.h"
 #include "vars.h"
 #include "term.h"
@@ -59,7 +62,15 @@ extern struct passwd *Me;
 #define VERSION	"5 beta"
 #define ZFMT		"%s %s  (%s)  %s: "
 
+/* These are portable across different Unix's */
+#define TOLOWER(c)		(isupper(c) ? tolower(c) : c)
+#define TOUPPER(c)		(islower(c) ? toupper(c) : c)
 
+#ifndef TRUE
+#define FALSE		0
+#define TRUE		1
+#endif
+#define INVALID		-1
 
 #define READ_MODE	O_RDONLY
 #define READ_BINARY	O_RDONLY
@@ -170,13 +181,12 @@ struct llist {
 	struct llist *prev, *next;
 };
 
-struct cnames
-{
+struct cnames {
 	char *name;
 	Short fnum;
 	Short htype;
 };
-#define CNAMESIZE			sizeof( struct cnames )
+#define CNAMESIZE sizeof(struct cnames)
 
 extern Boolean Argp;
 extern int Arg;				/* must be signed */
@@ -221,6 +231,7 @@ extern unsigned Nextpart;
 
 extern Byte CRdefault;
 
+extern char G_start[], G_end[];
 extern char Calc_str[];
 extern char Savetag[];
 extern char Command[];

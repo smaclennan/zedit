@@ -17,6 +17,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
+
+/* The memory usage for screen stuff is approx:  (ROWMAX + 1) x 25 + COLMAX */
+/*                               Xwindows adds:	 ROWMAX * 4 + COLMAX * 4    */
+
+/* NOTE: We assume COLMAX >= ROWMAX (xinit.c) */
+#define	ROWMAX				110
+#define	COLMAX				256
+
 #define PREFLINE			10
 
 #define	CR	'\r'
@@ -34,9 +42,9 @@
 #define T_CPPIF				12	/* COMMENTBOLD only */
 
 #if LINUX
-int _putchar ARGS((int));
+int _putchar(int);
 #else
-int _putchar ARGS((char));
+int _putchar(char);
 #endif
 
 #if TERMINFO

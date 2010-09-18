@@ -35,21 +35,21 @@ extern jmp_buf zenv;
 #define BMODF_HINT	2		/* Modified since last display */
 #define MODIFIED	(BMODF | BMODF_HINT)
 
-typedef struct page {
+struct page {
 	Byte pdata[PSIZE];		/* the page data */
 	int plen;			/* current length of the page */
 	int lines;			/* number of lines in page */
 	struct page *nextp, *prevp;	/* list of pages in buffer */
-} Page;
+};
 
 
-typedef struct mark {
+struct mark {
 	Page *mpage;			/* page in the buffer */
 	struct buff *mbuff;		/* buffer the mark is in */
 	int moffset;			/* offset in the page */
 	Boolean modf;			/* screen mark modified flags */
 	struct mark *prev, *next;	/* list of marks */
-} Mark;
+};
 
 #if COMMENTBOLD
 struct comment {
@@ -60,7 +60,7 @@ struct comment {
 };
 #endif
 
-typedef struct buff {
+struct buff {
 	Boolean bmodf;			/* buffer modified? */
 	Page *firstp, *lastp;		/* describe the pages */
 	Page *pnt_page;			/* the position of the point */
@@ -85,10 +85,10 @@ typedef struct buff {
 #if UNDO
 	void *undo_tail;
 #endif
-} Buffer;
+};
 
-typedef struct wdo {
-	Buffer	*wbuff;			/* buffer window looks on */
+struct wdo {
+	Buffer *wbuff;			/* buffer window looks on */
 	Mark	*wpnt;			/* saved Point */
 	Mark	*wmrk;			/* saved Mark */
 	Mark	*wstart;		/* screen start */
@@ -101,7 +101,7 @@ typedef struct wdo {
 	ulong	hscroll, hthumb;	/* windows for horiz scrollbar */
 #endif
 	struct wdo	*prev, *next;
-} WDO;
+};
 
 extern Byte *Curcptr, *Cpstart;
 extern int Curchar, Curplen;

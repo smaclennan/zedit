@@ -184,12 +184,6 @@ int Innerdsp(int from, int to, Mark *pmark)
 #endif
 		if (Btstmrk(&Scrnmarks[trow]) || !Bisatmrk(&Scrnmarks[trow])) {
 			Bmrktopnt(&Scrnmarks[trow]); /* Do this before Tkbrdy */
-#if ABORT_DISP
-			if (Tkbrdy()) {
-				Scrnmarks[trow].modf = TRUE;
-				return pntrow;
-			}
-#endif
 			lptr = tline;
 			col = Tstart;
 			Tsetpoint(trow, col);

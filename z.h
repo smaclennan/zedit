@@ -224,6 +224,8 @@ extern Byte CRdefault;
 extern char Calc_str[];
 extern char Savetag[];
 extern char Command[];
+extern char mkcmd[];
+extern char grepcmd[];
 extern char old[], new[];
 extern Boolean searchdir[];
 

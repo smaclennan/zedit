@@ -159,6 +159,11 @@ static inline Boolean Btstmrk(Mark *tmark)
 	return temp;
 }
 
+static inline int buff_col(void)
+{	/* Current column after current buffer char */
+	return Tgetcol() + Twidth(Buff());
+}
+
 /*
  * Do the acutal screen update.
  * Curwdo is not valid.
@@ -184,8 +189,8 @@ int Innerdsp(int from, int to, Mark *pmark)
 			lptr = tline;
 			col = Tstart;
 			Tsetpoint(trow, col);
-			col = Tgetcol() + Twidth(Buff());
-			while (!Bisend() && !ISNL(Buff()) && col < Tmaxcol()) {
+			while (!Bisend() && !ISNL(Buff()) &&
+			       (col = buff_col()) < Tmaxcol()) {
 				if (trow == Tlrow &&
 				    Buff() == *lptr &&
 				    Buff() != (Byte)'\376')

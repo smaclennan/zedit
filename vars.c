@@ -9,6 +9,17 @@
 #include "z.h"
 
 
+static char *Readstr(char *str, FILE *fp)
+{
+	if (fgets(str, STRMAX, fp)) {
+		char *ptr = strchr(str, '\n');
+		if (ptr)
+			*ptr = '\0';
+		return str;
+	}
+	return NULL;
+}
+
 Proc Zsetavar()
 {
 	char pstr[ STRMAX ], arg[ STRMAX ];

@@ -53,3 +53,5 @@ typedef unsigned long ulong;
 #endif
 
 void Dbg ARGS((char *fmt, ...));
+
+extern char G_start[], G_end[];

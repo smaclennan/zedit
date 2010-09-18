@@ -96,7 +96,9 @@ zedit3d:
 
 $(ZEXE): $(FILES)
 	$(do_link)
-#	$(do_strip)
+ifneq ($(ARCH),)
+	$(do_strip)
+endif
 
 x$(ZEXE): $(FILES) $(XFILES)
 	$(CC) $(CFLAGS) -o x$(ZEXE) $(FILES) $(XFILES) $(LIBS)

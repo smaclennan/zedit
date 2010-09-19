@@ -107,7 +107,7 @@ static Boolean advance(Byte *ep)
 			return TRUE;
 
 		case CCL:
-			if (ISTHERE(((unsigned char)STRIP(Buff())))) {
+			if (ISTHERE(((Byte)STRIP(Buff())))) {
 				ep += 16;
 				break;
 			}

@@ -1,4 +1,4 @@
-#if defined(SCROLLBARS) && !defined(BORDER3D)
+#ifdef SCROLLBARS
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

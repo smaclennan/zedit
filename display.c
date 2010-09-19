@@ -47,10 +47,8 @@ void Refresh()
 {
 	int pntrow, col, bcol;
 	struct mark *pmark;
-#ifndef BORDER3D
 	struct wdo *wdo;
 	int tsave;
-#endif
 	static struct mark *was;	/* last location of user mark */
 
 	if (was == NULL)
@@ -94,7 +92,6 @@ void Refresh()
 	}
 
 	/* update the other windows except Curwdo */
-#ifndef BORDER3D
 	tsave = Tabsize;
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (wdo != Curwdo) {
@@ -110,7 +107,6 @@ void Refresh()
 			Bswitchto(Curwdo->wbuff);
 		}
 	Tabsize = tsave;
-#endif
 
 	Bpnttomrk(pmark);
 	Unmark(pmark);
@@ -316,15 +312,11 @@ static void Subset(int from, int to, int flag)
 /* Insert the correct modified flags. */
 void Vsetmod(int flag)
 {
-#ifdef BORDER3D
-	Subset(Curwdo->first, Curwdo->last, flag);
-#else
 	struct wdo *wdo;
 
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (wdo->wbuff == Curbuff)
 			Subset(wdo->first, wdo->last, flag);
-#endif
 }
 
 void Vsetmrk(struct mark *mrk)
@@ -359,16 +351,7 @@ static void Pawdisplay(struct mark *pmark, struct mark *was)
 #if !XWINDOWS
 	Boolean mrkmoved = !Mrkatmrk(was, Curbuff->mark);
 #endif
-#ifdef BORDER3D
-	GC savegc = curgc;
-
-	Tflush();	/* make sure text flushed before zwindow change */
-	zwindow = PAWwindow;
-	curgc = PAWgc;
-	Prow = 0;
-#else
 	Prow = Rowmax - 1;
-#endif
 pawshift:
 	Btostart(); Bmove(Pshift);
 	for (i = 0, Pcol = Pawcol;
@@ -459,10 +442,6 @@ pawshift:
 	--NESTED;
 	Tforce();
 	Tflush();
-#ifdef BORDER3D
-	zwindow = textwindow;
-	curgc = savegc;
-#endif
 }
 
 void initScrnmarks()

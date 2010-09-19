@@ -29,9 +29,7 @@ static int NextErrorCalled;
 /* Do a "make" command - basically a shell command in the ".make" buffer */
 void Zmake()
 {
-#ifndef BORDER3D
 	struct buff *mbuff;
-#endif
 
 	NextErrorCalled = 0;	/* reset it */
 	Arg = 0;
@@ -41,10 +39,6 @@ void Zmake()
 			return;
 	}
 	Saveall(TRUE);
-#ifdef BORDER3D
-	Refresh();		/* update mode lines from Saveall */
-	RunMakeCmd();
-#else
 #if XWINDOWS
 	if (VAR(VPOPMAKE)) {
 		RunMakeCmd();
@@ -65,7 +59,6 @@ void Zmake()
 		Message(mbuff, mkcmd);
 	else
 		Error("Unable to execute make.");
-#endif
 }
 
 /* Do a "make" command - basically a shell command in the ".make" buffer */
@@ -103,9 +96,6 @@ void Zgrep()
 
 void Znexterr()
 {
-#ifdef BORDER3D
-	ZmakeNextErr();
-#else
 	struct wdo *wdo;
 	struct buff *save, *mbuff;
 	char fname[STRMAX + 1];
@@ -152,7 +142,6 @@ void Znexterr()
 	}
 	Argp = FALSE;
 	Arg = 0;
-#endif
 }
 
 #if PIPESH || XWINDOWS

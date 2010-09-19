@@ -51,9 +51,7 @@ void Zcmd()
 /* Do one shell command to the .shell buffer */
 void Zcmdtobuff()
 {
-#ifdef BORDER3D
-	Tbell();
-#elif XWINDOWS || PIPESH
+#if XWINDOWS || PIPESH
 	struct wdo *save;
 	int rc;
 
@@ -86,9 +84,7 @@ void Zman()
 	int rc;
 	struct buff *buff;
 	FILE *pfp;
-#ifndef BORDER3D
 	struct wdo *save;
-#endif
 
 	strcpy(entry, "man ");
 	p = entry + strlen(entry);
@@ -96,10 +92,7 @@ void Zman()
 	if (Getarg("Man: ", p, STRMAX))
 		return;
 
-#ifndef BORDER3D
-	/*  BORDER3D always pops up man page */
 	if (VAR(VPOPMAN)) {
-#endif
 		sprintf(PawStr, "show -t \"man %s\"", p);
 		buff = Bcreate();
 		pfp = popen(PawStr, "w");
@@ -129,7 +122,6 @@ void Zman()
 				Bdelbuff(buff);
 			Echo("\7Unable to popup man page.");
 		}
-#ifndef BORDER3D
 	}
 
 	save = Curwdo;
@@ -150,7 +142,6 @@ void Zman()
 		PrintExit(rc);
 		Wswitchto(save);
 	}
-#endif
 }
 
 #if BSD
@@ -165,9 +156,7 @@ void Zshell()	/*for tags*/
 }
 #endif
 
-#ifdef BORDER3D
-void Zshell() { Tbell(); }
-#elif PIPESH
+#if PIPESH
 void Zshell()
 {
 	char bname[BUFNAMMAX + 1];
@@ -252,12 +241,7 @@ void Zprint()
 	PrintExit(BuffToPipe(Curbuff, cmd));
 }
 
-#ifdef BORDER3D
-struct buff *Cmdtobuff(char *bname, char *cmd)
-{
-	return 0;
-}
-#elif PIPESH || XWINDOWS
+#if PIPESH || XWINDOWS
 struct buff *Cmdtobuff(char *bname, char *cmd)
 {
 	struct buff *tbuff = NULL;

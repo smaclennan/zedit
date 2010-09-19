@@ -53,20 +53,10 @@ Boolean Getarg(char *prompt, char *arg, int max)
 	PromptString = prompt;
 	Tstyle(T_NORMAL);		/* always display paw in normal */
 #endif
-#ifdef BORDER3D
-	Echo(prompt);
-	Tflush();
-	GrabKeyboard(PAWwindow);
-#else
 	Tgoto(Tmaxrow() - 1 , 0);			/* display the prompt */
 	Tprntstr(prompt);
-#endif
 	Pawcol = Pcol = strlen(prompt); /* prompts are always simple ascii */
 
-#if 0
-	/* SAM done in Makepaw */
-	memset(tline, '\376', COLMAX + 1);
-#endif
 	argp_save = Argp;
 	arg_save = Arg;
 	Buff_save = Curbuff;
@@ -104,9 +94,6 @@ Boolean Getarg(char *prompt, char *arg, int max)
 	Funcs = (Curbuff->bmode & VIEW) ? Vcmds : Cmds;	/* SAM */
 	Clrecho();
 #if XWINDOWS
-# ifdef BORDER3D
-	GrabKeyboard(textwindow);
-# endif
 	Tflush();
 	ShowCursor(TRUE);
 	ShowCursor(FALSE);
@@ -177,24 +164,17 @@ static int p_ncols = PNUMCOLS;
 void Pclear()
 {
 	int i;
-#ifdef BORDER3D
-	struct wdo *wdo = Curwdo;
-	wdo->modeflags = INVALID;
-#else
 	struct wdo *wdo = Whead;
-#endif
 
 	for (i = 0; i < Rowmax - 2; ++i) {
 		Tsetpoint(i, 0);
 		Tcleol();
 		Scrnmarks[i].modf = TRUE;
-#ifndef BORDER3D
 		if (wdo->last == i) {
 			wdo->modeflags = INVALID;
 			if (wdo->next)
 				wdo = wdo->next;
 		}
-#endif
 	}
 	Pset(0, 0, PNUMCOLS);
 }
@@ -336,9 +316,7 @@ void Makepaw(char *word, Boolean start)
 	Btostart();
 	Bdelete(Curplen);
 	Binstr(word);
-#ifndef BORDER3D
 	Tcleol();
-#endif
 	memset(tline, '\376', COLMAX);	/* invalidate it */
 	if (start)
 		Btostart();

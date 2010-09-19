@@ -95,7 +95,7 @@ struct wdo {
 	int	first, last;		/* screen line boundries */
 	int	modecol;		/* column for Modeflags */
 	int	modeflags;		/* flags for Modeflags */
-#if XWINDOWS && !defined(BORDER3D)
+#if XWINDOWS
 	ulong	vscroll, vthumb;	/* windows for vert scrollbar */
 	int		vheight;	/* height of vert scrollbar */
 	ulong	hscroll, hthumb;	/* windows for horiz scrollbar */

@@ -86,10 +86,6 @@ static void SetTimer(XEvent *event, unsigned timeout);
 static void Paste(Atom paste);
 
 Window Zroot, zwindow;
-#ifdef BORDER3D
-Window textwindow, PAWwindow;
-GC PAWgc;
-#endif
 
 /* Note: LoadFontByName needs to know all the gcs */
 GC curgc;
@@ -104,9 +100,6 @@ int border_width = 2, highlight = 2;
 
 Boolean HasColor = FALSE;
 int foreground, background;
-#ifdef BORDER3D
-static int oldfg, oldbg;
-#endif
 
 Atom WM_PROTOCOLS;	/* message sent by window manager (twm) */
 Atom WM_DELETE_WINDOW;	/* subtype of WM_PROTOCOLS */
@@ -120,9 +113,6 @@ void Tinit(int argc, char **argv)
 	uint valuemask;
 	int ccolor;
 	int width, height;
-#ifdef BORDER3D
-	char *env;
-#endif
 	XEvent event;
 
 	Term = getenv("TERM");
@@ -141,12 +131,6 @@ void Tinit(int argc, char **argv)
 	 */
 	foreground = BlackPixel(display, screen);
 	background = WhitePixel(display, screen);
-#ifdef BORDER3D
-	if (HasColor) {
-		ColorResource(".foreground", ".Foreground", &foreground);
-		ColorResource(".background", ".Background", &background);
-	}
-#else
 	if (HasColor) {
 		/* override with these values if available */
 		if (!ColorResource(".text.foreground", ".text.Foreground",
@@ -158,64 +142,14 @@ void Tinit(int argc, char **argv)
 			ColorResource(".background", ".Background",
 				      &background);
 	}
-#endif
 
 	LoadFonts();
-
-#ifdef BORDER3D
-	/* These are needed in CreateRootWindow to correctly size the window. */
-	env = GetResource(".scrollbar.width", ".scrollbar.Width");
-	if (env)
-		ScrollBarWidth = atoi(env);
-	env = GetResource(".scrollbar.borderwidth", ".scrollbar.BorderWidth");
-	if (env)
-		SBborderwidth = atoi(env);
-	env = GetResource(".scrollbar.highlight", ".scrollbar.Highlight");
-	if (env)
-		SBhighlight = atoi(env);
-#endif
 
 	/* Create root window */
 	CreateRootWindow(argc, argv, &width, &height);
 
-#ifdef BORDER3D
-	PAWwindow  = CreateWindow(Zroot,
-					border_width, Y_PAW(height),
-					width, fontheight,
-					KeyPressMask    | KeyReleaseMask    |
-					ButtonPressMask | ButtonReleaseMask |
-					PointerMotionMask);
-
-	/* GC for paw text */
-	values.font = fontid;
-	values.foreground = foreground;
-	values.background = background;
-	valuemask = GCForeground | GCBackground | GCFont;
-	PAWgc = XCreateGC(display, PAWwindow, valuemask, &values);
-
-	/* For the text window and text GCs we use text.* as fore/background */
-	oldbg = background;
-	oldfg = foreground;
-	if (HasColor) {
-		ColorResource(".text.foreground", ".text.Foreground",
-			      &foreground);
-		ColorResource(".text.background", ".text.Background",
-			      &background);
-	}
-
-	textwindow = zwindow = CreateWindow(Zroot, 0, H_MENUBAR, width, height,
-			KeyPressMask    | KeyReleaseMask    |
-			ButtonPressMask | ButtonReleaseMask |
-			PointerMotionMask);
-
-	XSetWindowBorderWidth(display, textwindow, 1);
-	XSetWindowBorder(display, textwindow, oldfg);
-
-	InitMenuBar();
-#else
 	/* only root window exists */
 	zwindow = Zroot;
-#endif
 
 	/* GC for reverse text */
 	values.font = fontid;
@@ -333,11 +267,6 @@ void Tinit(int argc, char **argv)
 	Srow = Scol = -1;	/* undefined */
 	Pcol = Prow = 0;	/* start 'em off */
 
-#ifdef BORDER3D
-	/* Draw the border around the window */
-	BorderInit();
-#endif
-
 	Termsize();
 }
 
@@ -367,11 +296,7 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 
 	*width  = size_hints.width;
 	*height = size_hints.height;
-#ifdef BORDER3D
-	size_hints.width += SCROLLBAR_WIDTH + SBhighlight + 2;
-	size_hints.height += H_MENUBAR + H_PAW + H_MODELINE +
-		SCROLLBAR_WIDTH + SBhighlight + 2;
-#elif defined(SCROLLBARS)
+#if defined(SCROLLBARS)
 	size_hints.width += SCROLLBAR_WIDTH;
 #  ifdef HSCROLL
 	size_hints.height += SCROLLBAR_WIDTH;
@@ -379,11 +304,7 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 #endif
 	Zroot = XCreateWindow(display,  RootWindow(display, screen),
 		size_hints.x, size_hints.y, size_hints.width, size_hints.height,
-#ifdef BORDER3D
-		0, CopyFromParent, InputOutput, CopyFromParent,
-#else
 		border_width, CopyFromParent, InputOutput, CopyFromParent,
-#endif
 		CWBackPixel | CWEventMask | CWOverrideRedirect, &attr);
 
 	wm_hints.flags = InputHint | StateHint | IconPixmapHint;
@@ -482,12 +403,7 @@ Window CreateWindow(Window parent, int x, int y, int width, int height,
 
 	attr.background_pixel = background;
 	attr.event_mask = events;
-	window = XCreateWindow(display,  parent, x, y, width, height,
-#ifdef BORDER3D
-		0,
-#else
-		1,
-#endif
+	window = XCreateWindow(display,  parent, x, y, width, height, 1,
 		CopyFromParent, InputOutput, CopyFromParent,
 		CWBackPixel | CWEventMask, &attr);
 
@@ -524,15 +440,11 @@ void Tclrwind()
 
 void Tcleol()
 {
-#ifdef BORDER3D
-	XClearArea(display, zwindow, Xcol[Pcol], Xrow[Prow], 0, fontheight, 0);
-#else
 	if (Pcol < Clrcol[Prow]) {
 		XClearArea(display, zwindow, Xcol[Pcol], Xrow[Prow],
 			   0, fontheight, 0);
 		Clrcol[Prow] = Pcol;
 	}
-#endif
 }
 
 static int s_row = -1, s_col = -1, s_len;
@@ -586,7 +498,6 @@ void Tstyle(int style)
 }
 
 
-#ifndef BORDER3D
 #ifdef SCROLLBARS
 #define VSCROLL_EXTRA SCROLLBAR_WIDTH
 #else
@@ -611,7 +522,6 @@ void Termsize()
 		XMaskEvent(display, StructureNotifyMask, &event);
 	}
 }
-#endif
 
 Byte Tgetkb()
 {
@@ -655,14 +565,6 @@ static Boolean PointerScroll(row, down)
 int row;
 Boolean down;
 {
-#ifdef BORDER3D
-	if (row == Curwdo->last) {
-		/* on a modeline - scroll it */
-		down ? Znextpage() : Zprevpage();
-		Refresh();
-		return TRUE;
-	}
-#else
 	struct wdo *wdo;
 
 	for (wdo = Whead; wdo; wdo = wdo->next)
@@ -675,7 +577,6 @@ Boolean down;
 			Refresh();
 			return TRUE;
 		}
-#endif
 	return FALSE;
 }
 
@@ -806,26 +707,11 @@ int Tgetcmd()
 			continue;
 		}
 
-#ifdef BORDER3D
-		if (event.xany.window == Zroot && ProcessMenuBar(&event)) {
-			ExposeWindow();
-			continue;
-		}
-#endif
 #ifdef SCROLLBARS
-# ifdef BORDER3D
-		if (event.xany.window != textwindow &&
-		    event.xany.window != PAWwindow  &&
-		    event.xany.window != Zroot) {
-			ScrollEvent(&event);
-			continue;
-		}
-# else
 		if (event.xany.window != zwindow) {
 			ScrollEvent(&event);
 			continue;
 		}
-# endif
 #endif
 		switch (event.type) {
 		case ButtonPress:
@@ -1009,12 +895,6 @@ int Tgetcmd()
 			break;
 
 		case FocusIn:
-#ifdef BORDER3D
-			GrabKeyboard(InPaw ? PAWwindow : zwindow);
-			XSetWindowBorder(display, textwindow, oldfg);
-#else
-			GrabKeyboard(zwindow);
-#endif
 			Focus = TRUE;
 			ShowCursor(TRUE);
 			break;
@@ -1025,9 +905,6 @@ int Tgetcmd()
 			if (event.xfocus.detail != NotifyInferior) {
 				Focus = FALSE;
 				ShowCursor(FALSE);
-#ifdef BORDER3D
-				XSetWindowBorder(display, textwindow, oldbg);
-#endif
 			}
 			break;
 
@@ -1108,11 +985,7 @@ void ShowCursor(Boolean set)
 	static Byte wasch = ' ';		/* color only */
 	static GC wasgc;
 
-#ifdef BORDER3D
-	window = InPaw ? PAWwindow : zwindow;
-#else
 	window = zwindow;
-#endif
 	if (set) {
 		point_x = Xcol[Pcol];
 		point_y = Xrow[Prow];
@@ -1271,10 +1144,7 @@ static void Modeline(struct wdo *wdo, int y)
 
 	modeline[wdo->modecol - 1] = ' ';	/* replace null */
 
-#ifdef BORDER3D
-	XDrawImageString(display, Zroot, modegc, 0, y, modeline,
-		COLMAX);
-#elif defined(SCROLLBARS)
+#ifdef SCROLLBARS
 	XDrawImageString(display, Zroot, modegc, 0, y, modeline, Colmax + 3);
 #else
 	XDrawImageString(display, Zroot, modegc, 0, y, modeline, Colmax);
@@ -1285,9 +1155,7 @@ static void Modeline(struct wdo *wdo, int y)
 void Modeflags(struct wdo *wdo)
 {
 	unsigned line, col, mask;
-#ifdef BORDER3D
-	int y = win_height - H_PAW - fontheight - border_width + fontbase;
-#elif defined(HSCROLL)
+#ifdef HSCROLL
 	int y = Xrow[wdo->last] + fontbase + SCROLLBAR_WIDTH + 2;
 #else
 	int y = Xrow[wdo->last] + fontbase;
@@ -1347,12 +1215,7 @@ void Modeflags(struct wdo *wdo)
 
 void Clrecho()
 {
-#ifdef BORDER3D
-	XClearWindow(display, PAWwindow);
-	Xflush();
-#else
 	XClearArea(display, Zroot, 0, Xrow[Rowmax - 1], 0, fontheight, 0);
-#endif
 }
 
 /* Put a string into the PAW.
@@ -1368,14 +1231,9 @@ void PutPaw(char *str, int type)
 		Tbell();
 	if (!InPaw) {
 		Clrecho();
-#ifdef BORDER3D
-		XDrawString(display, PAWwindow, PAWgc, 0, fontbase,
-			    str, strlen(str));
-#else
 		XDrawString(display, Zroot, normgc, 0,
 			    Xrow[Rowmax - 1] + fontbase,
 			    str, strlen(str));
-#endif
 	}
 }
 
@@ -1388,14 +1246,8 @@ static void ExposeWindow()
 	struct mark *psave = Bcremrk();
 	int inpaw = InPaw;
 	int prow = Prow, pcol = Pcol;
-#ifndef BORDER3D
 	struct buff *bsave = Curbuff;
 	struct wdo *wdo;
-#else
-
-	/* Draw the border around the window */
-	DrawBorders();
-#endif
 
 	/* invalidate the windows */
 	for (i = 0; i < Tmaxrow() - 1; ++i)
@@ -1406,12 +1258,6 @@ static void ExposeWindow()
 	InPaw = FALSE;
 
 	Mrktomrk(Curwdo->wstart, Sstart);
-#ifdef BORDER3D
-	Bpnttomrk(Curwdo->wstart);
-	Innerdsp(Curwdo->first, Curwdo->last, NULL);
-	Curwdo->modeflags = INVALID;
-	Modeflags(Curwdo);
-#else
 	for (wdo = Whead; wdo; wdo = wdo->next) {
 		Bswitchto(wdo->wbuff);
 		Settabsize(Curbuff->bmode);
@@ -1422,21 +1268,15 @@ static void ExposeWindow()
 	}
 	Bswitchto(bsave);
 	Settabsize(Curbuff->bmode);
-#endif
 	Bpnttomrk(psave);
 	Unmark(psave);
 
 	/* Update paw if necessary */
 	InPaw = inpaw;
 	if (InPaw) {
-#ifdef BORDER3D
-		XDrawImageString(display, PAWwindow, PAWgc,
-			0, fontbase, PromptString, strlen(PromptString));
-#else
 		XDrawImageString(display, Zroot, normgc,
 			0, Xrow[Rowmax - 1] + fontbase,
 			PromptString, strlen(PromptString));
-#endif
 
 		/* We may have changed these above */
 		Funcs = Pawcmds;
@@ -1460,14 +1300,6 @@ void Foreground(unsigned long foreground)
 void Xflush()
 {
 	XFlush(display);
-}
-
-void GrabKeyboard(Window window)
-{
-#ifdef BORDER3D
-	/* XGrabKeyboard too drastic here. */
-	XSetInputFocus(display, window, RevertToPointerRoot, CurrentTime);
-#endif
 }
 
 static XEvent motion;

@@ -169,20 +169,14 @@ void PutPaw(char *str, int type)
 /* Echo 'str' to the paw and as the filename for 'buff' */
 void Message(struct buff *buff, char *str)
 {
-#ifndef BORDER3D
 	struct wdo *wdo;
-#endif
 
 	if (buff->fname)
 		free(buff->fname);
 	buff->fname = strdup(str);
-#ifdef BORDER3D
-	Curwdo->modeflags = INVALID;
-#else
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (wdo->wbuff == buff)
 			wdo->modeflags = INVALID;
-#endif
 	Echo(str);
 }
 
@@ -400,25 +394,6 @@ void Pntmove(int row, int col)
 		return;
 	}
 
-#ifdef BORDER3D
-	if (row < Curwdo->first || row >= Curwdo->last) {
-		Tbell();
-		return;
-	}
-	for (i = Curwdo->first; i < row; ++i) {
-		Bpnttomrk(&Scrnmarks[i]);
-		if (Bisend()) {
-			/* at end of buffer - stop */
-			if (i > wdo->first)
-				--i;
-			col = Colmax;
-			break;
-		}
-	}
-	Bpnttomrk(&Scrnmarks[i]);
-	col = Bmakecol(col, FALSE);
-	Tsetpoint(i, col);
-#else
 	/* don't move Point into Paw or mode row */
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (row >= wdo->first && row < wdo->last) {
@@ -440,7 +415,6 @@ void Pntmove(int row, int col)
 			return;
 		}
 	Tbell();
-#endif
 }
 #endif
 

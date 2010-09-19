@@ -19,8 +19,6 @@
 
 #include "z.h"
 
-#ifndef BORDER3D
-
 struct wdo *Whead, *Curwdo;
 
 #define MINWDO		5		/* minimum window size */
@@ -632,5 +630,3 @@ void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 		Wstart = new;
 	Rowmax = new->last + 2;
 }
-
-#endif

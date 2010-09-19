@@ -43,7 +43,9 @@ char *Htype[] = {
 #include <signal.h>
 #include <sys/wait.h>
 
-int HelpChild;
+static int HelpChild;
+
+static void TextHelp();
 
 void Zhelp()
 {
@@ -57,11 +59,7 @@ void Zhelp()
 	}
 
 	if (HelpChild == 0)
-#ifdef BORDER3D
-		Tbell();
-#else
 		TextHelp();
-#endif
 }
 
 void KillHelp()
@@ -77,7 +75,6 @@ void KillHelp()
 void KillHelp()	{}
 #endif
 
-#ifndef BORDER3D
 /* a "sentence" ends in a tab, NL, or two consecutive spaces */
 int Issentence()
 {
@@ -90,7 +87,7 @@ int Issentence()
 }
 
 #if FORK_ZHELP
-void TextHelp()
+static void TextHelp()
 #else
 void Zhelp()
 #endif
@@ -302,7 +299,6 @@ FILE *Findhelp(int code, Boolean func, char *buff)
 	Echo("No Help");
 	return NULL;
 }
-#endif	/* !BORDER3D */
 
 #else
 void Zhelp(void) { Tbell(); }

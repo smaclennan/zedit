@@ -144,13 +144,8 @@ void Zdispbinds(void)
 			return;
 		}
 	} else {
-#ifdef BORDER3D
-		Tbell();
-		return;
-#else
 		fp = NULL;
 		WuseOther(LISTBUFF);
-#endif
 	}
 	Echo("Please Wait...");
 	Out("COMMAND                            PERMS     BINDING\n", fp);

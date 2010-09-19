@@ -104,13 +104,8 @@ void Delbuff(struct buff *buff)
 		}
 		Cswitchto(Curbuff);
 
-#ifdef BORDER3D
-		/* if window pointed to deleted buff then update it */
-		wdo = Curwdo;
-#else
 		/* make sure all windows pointed to deleted buff are updated */
 		for (wdo = Whead; wdo; wdo = wdo->next)
-#endif
 			if (wdo->wbuff == buff) {
 				wdo->wbuff = Curbuff;
 				Bmrktopnt(wdo->wpnt);
@@ -136,10 +131,6 @@ static void lstbuff(struct buff *tbuff)
 
 void Zlstbuff(void)
 {
-#ifdef BORDER3D
-	/* SAM FIX FOR BORDER3D */
-	StartProg("Zblist");
-#else
 	struct wdo *was = Curwdo;
 	int i;
 
@@ -159,7 +150,6 @@ void Zlstbuff(void)
 	} else
 		Tbell();
 	Arg = 0;
-#endif
 }
 
 void Zunmodf(void)

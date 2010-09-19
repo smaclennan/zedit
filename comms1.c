@@ -27,9 +27,7 @@ static char *SaveFileName(char *fname)
 
 void Save(struct buff *bsave)
 {
-#ifndef BORDER3D
 	struct wdo *wdo;
-#endif
 	struct buff *tbuff;
 	char fname[30];
 	unsigned junk;
@@ -66,7 +64,6 @@ void Save(struct buff *bsave)
 	/* end of buffers marker */
 	fputs("M M M 0 0 0\n", fp);
 
-#ifndef BORDER3D
 	/* save the windows */
 	for (wdo = Whead; wdo; wdo = wdo->next) {
 		Bswitchto(wdo->wbuff);
@@ -76,7 +73,6 @@ void Save(struct buff *bsave)
 			wdo->wbuff->bname, wdo->first, wdo->last, mloc,
 			wdo == Curwdo);
 	}
-#endif
 
 	fclose(fp);
 }

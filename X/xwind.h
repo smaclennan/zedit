@@ -6,10 +6,6 @@
 
 #include <X11/Xlib.h>
 
-#ifdef BORDER3D
-#include "z3d.h"
-#endif
-
 #ifdef sun4
 typedef unsigned long ulong;
 #endif
@@ -23,9 +19,6 @@ extern int Xrow[], Xcol[];
 /* defined in xwind.c */
 extern Window Zroot, zwindow, textwindow, PAWwindow;
 extern GC curgc, normgc;
-#ifdef BORDER3D
-extern GC PAWgc;
-#endif
 extern Boolean HasColor;
 extern int foreground, background;
 extern int border_width, highlight;
@@ -46,13 +39,7 @@ void ScrollEvent(XEvent *event);
 void VscrollEvent(XEvent *event, WDO *wdo);
 void HscrollEvent(XEvent *event, WDO *wdo);
 #endif
-# ifdef BORDER3D
-extern int ScrollBarWidth;
-extern int SBborderwidth, SBhighlight;
-#  define SCROLLBAR_WIDTH		ScrollBarWidth
-# else
-#  define SCROLLBAR_WIDTH		11
-# endif
+#define SCROLLBAR_WIDTH		11
 #else
 #define SCROLLBAR_WIDTH		0
 #endif

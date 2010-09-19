@@ -301,24 +301,14 @@ void Zviewline()
 
 void Zredisplay()
 {
-#ifndef BORDER3D
 	struct wdo *wdo;
-#endif
 
 	Wsize();
-#ifdef BORDER3D
-	Curwdo->modeflags = INVALID;
-#else
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		wdo->modeflags = INVALID;
-#endif
 	Redisplay();
 #if COMMENTBOLD
 	Recomment();
-#endif
-#ifdef BORDER3D
-	/* Draw the boarder around the window */
-	DrawBorders();
 #endif
 }
 

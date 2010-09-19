@@ -234,17 +234,12 @@ XFontStruct *LoadFontByName(char *fontname)
 		XSetFont(display, modegc,	fontid);
 
 		/* resize the root window */
-#ifdef BORDER3D
- 		win_width  = (Colmax  * fontwidth) + (border_width * 4);
-		win_height = (win_height * fontheight) + (border_width * 4);
-#else
 		win_width  = Colmax * fontwidth;
 		win_height = Rowmax * fontheight;
-# ifdef SCROLLBARS
+#ifdef SCROLLBARS
 		win_width += SCROLLBAR_WIDTH;
-#  ifdef HSCROLL
+# ifdef HSCROLL
 		win_height += SCROLLBAR_WIDTH;
-#  endif
 # endif
 #endif
 		XResizeWindow(display, Zroot, win_width, win_height);

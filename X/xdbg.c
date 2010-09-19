@@ -47,9 +47,6 @@ char *XEventName(int type)
 
 /* This is tied to Zedit */
 Window Zroot, zwindow;
-#ifdef BORDER3D
-Window textwindow, scrollwindow, PAWwindow;
-#endif
 
 char *XWindowName(Window window)
 {
@@ -59,14 +56,6 @@ char *XWindowName(Window window)
 		return "zwindow";
 	else if(window == Zroot)
 		return "Zroot";
-#ifdef BORDER3D
-	else if(window == textwindow)
-		return "textwindow";
-	else if(window == scrollwindow)
-		return "scrollwindow";
-	else if(window == PAWwindow)
-		return "PAWwindow";
-#endif
 
 	sprintf(wstr, "%x", window);
 	return wstr;

@@ -599,7 +599,7 @@ void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 	struct wdo *new;
 	struct buff *buff;
 
-#if PIPESH && SHELL
+#if PIPESH && defined(SHELL)
 	if (strcmp(bname, SHELLBUFF) == 0) {
 		/* invoke the shell */
 		buff = Cmakebuff(SHELLBUFF, NULL);

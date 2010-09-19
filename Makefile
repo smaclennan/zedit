@@ -47,11 +47,11 @@ cmd_dep = $(CC) -M -MM -MT $@ $(CFLAGS) -o .$<.dep $<
 do_dep = @$(call echo-cmd,dep) $(cmd_dep)
 
 quiet_cmd_link = LD $@
-cmd_link = $(CC) -o $@ $+ $(LIBS)
+cmd_link = $(CC) -o $D/$@ $+ $(LIBS)
 do_link = @$(call echo-cmd,link) $(cmd_link)
 
 quiet_cmd_strip = STRIP $@
-cmd_strip = $(CROSS_COMPILE)strip $@
+cmd_strip = $(CROSS_COMPILE)strip $D/$@
 do_strip = @$(call echo-cmd,strip) $(cmd_strip)
 
 # No quiet for tags
@@ -60,11 +60,18 @@ do_tags =  @$(call echo-cmd,tags) $(cmd_tags)
 
 #################
 
+ifneq ($(ARCH),)
+# It is assumed if ARCH is set you are cross-compiling.
+SUFFIX="-$(ARCH)"
+CDEFS="-DMINCONFIG"
+endif
+
 $D/%.o : %.c
 	$(do_dep)
 	$(do_cc)
 
 $D/%.o : X/%.c
+	$(do_dep)
 	$(do_cc)
 
 # WARNING: Full dependencies only work for one target and do not catch
@@ -73,9 +80,11 @@ $D/%.o : X/%.c
 all:	zedit TAGS
 
 zedit:
-	@$(MAKE) $(MFLAGS) "D=zos" $(ZEXE)
+	@mkdir -p zo$(SUFFIX)
+	@$(MAKE) $(MFLAGS) "D=zo$(SUFFIX)" $(ZEXE)
 
 xzedit:
+	@mkdir -p zox$(SUFFIX)
 	@$(MAKE) $(MFLAGS) \
 		"CDEFS=-DXWINDOWS=1 -DSCROLLBARS -I./X" \
 		"D=zxos" \
@@ -84,12 +93,17 @@ xzedit:
 
 $(ZEXE): $(FILES)
 	$(do_link)
-ifneq ($(ARCH),)
+ifeq ($(ARCH),)
+	@rm -f ./ze
+	@ln -s zo/ze ./ze
+else
 	$(do_strip)
 endif
 
 x$(ZEXE): $(FILES) $(XFILES)
-	$(CC) $(CFLAGS) -o x$(ZEXE) $(FILES) $(XFILES) $(LIBS)
+	$(do_link)
+	@rm -f ./xze
+	@ln -s zox/xze ./xze
 
 xkey:	X/xkey.c
 	$(CC) -Wall -o xkey X/xkey.c -L/usr/X11R6/lib -lX11

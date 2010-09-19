@@ -281,7 +281,7 @@ void Zpart()
 	char word[STRMAX + 1];
 	struct buff *tbuff;
 
-#if TAGS
+#ifdef TAGS
 	if (Nextpart == ZFINDTAG) {
 		Bswitchto(Cfindbuff(TAGBUFNAME));
 		for (Bcsearch(NL); !Bisend(); Bcsearch(NL)) {

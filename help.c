@@ -20,7 +20,7 @@
 #include "z.h"
 #include "keys.h"
 
-#if HELP
+#ifdef HELP
 char *Htype[] = {
 	"Special",
 	"Other",

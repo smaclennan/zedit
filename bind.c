@@ -86,7 +86,7 @@ void Bind(void)
 	Keys[128 + '.']			  = ZFINDTAG;
 	Keys[128 + '<']			  = ZTOSTART;
 	Keys[128 + '>']			  = ZTOEND;
-#if SPELL
+#ifdef SPELL
 	Keys[128 + '/'] = Keys[128 + '?'] = ZSPELL;
 #endif
 	Keys[128 + '_']			  = ZREF;

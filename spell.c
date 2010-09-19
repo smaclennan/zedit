@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-#if SPELL
+#ifdef SPELL
 #include <signal.h>
 
 #define SPELLSTRING "<space>(skip)  A(ccept)  I(nsert)  R(eplace)  #"

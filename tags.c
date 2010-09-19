@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-#if TAGS
+#ifdef TAGS
 #include <sys/stat.h>
 
 char Savetag[STRMAX + 1];

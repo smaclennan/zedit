@@ -43,7 +43,7 @@
 #define HAS_RESIZE	0		/* define this if have the
 					 * resize command
 					 */
-#define XORCURSOR	0		/* Some machined (e.g. sun3 &&
+#define XORCURSOR	1		/* Some machined (e.g. sun3 &&
 					 * sun4) xor the attribute for
 					 * the cursor. This means that
 					 * when the cursor is on the
@@ -52,15 +52,16 @@
 					 */
 #define UNDO            1		/* EXPERIMENTAL undo code */
 #define COMMENTBOLD	1		/* bold C comments */
+#define FLOATCALC	1		/* Allow floats in calc */
 
-/* apps */
-#define CALC		1		/* Calculator */
-# define FLOATCALC	1		/* Allow floats in calc */
-#define HELP		1		/* Help */
-#define MAKE		1		/* make interface */
-#define SHELL		1		/* shell interface */
-#define SPELL		1		/* ispell interface */
-#define TAGS		1		/* tag file support */
+#ifndef MINCONFIG
+/* Warning: These are ifdefs, you must comment them out to disable them! */
+#define CALC				/* Calculator */
+#define HELP				/* Help */
+#define SHELL				/* shell interface */
+#define SPELL				/* ispell interface */
+#define TAGS				/* tag file support */
+#endif
 
 /* DON'T TOUCH THESE */
 #if SUNBSD || ULTRIX
@@ -75,7 +76,7 @@
 #undef  SYSV2
 #define SYSV2		1
 #endif
-#if HELP || MAKE || SHELL || SPELL || TAGS
+#if defined(HELP) || defined(SHELL) || defined(SPELL) || defined(TAGS)
 #define PIPESH		1
 #else
 #define PIPESH		0

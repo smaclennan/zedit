@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-#if CALC
+#ifdef CALC
 /*
  * EXTREMELY simple calculator.
  *

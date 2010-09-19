@@ -53,8 +53,8 @@ struct mark {
 
 #if COMMENTBOLD
 struct comment {
-	Mark *start;
-	Mark *end;
+	struct mark *start;
+	struct mark *end;
 	int  type;
 	struct comment *next;
 };
@@ -65,7 +65,7 @@ struct buff {
 	struct page *firstp, *lastp;	/* describe the pages */
 	struct page *pnt_page;		/* the position of the point */
 	unsigned pnt_offset;
-	Mark *mark;			/* position of mark in this buffer */
+	struct mark *mark;		/* position of mark in this buffer */
 	unsigned bmode;			/* buffer mode */
 	char *bname;			/* buffer name */
 	char *fname;			/* file name associated with buffer */
@@ -89,9 +89,9 @@ struct buff {
 
 struct wdo {
 	Buffer *wbuff;			/* buffer window looks on */
-	Mark	*wpnt;			/* saved Point */
-	Mark	*wmrk;			/* saved Mark */
-	Mark	*wstart;		/* screen start */
+	struct mark *wpnt;		/* saved Point */
+	struct mark *wmrk;		/* saved Mark */
+	struct mark *wstart;		/* screen start */
 	int	first, last;		/* screen line boundries */
 	int	modecol;		/* column for Modeflags */
 	int	modeflags;		/* flags for Modeflags */
@@ -107,11 +107,11 @@ extern Byte *Curcptr, *Cpstart;
 extern int Curchar, Curplen;
 extern Buffer *Curbuff;
 extern struct page *Curpage;
-extern Mark *Mrklist;
+extern struct mark *Mrklist;
 extern struct wdo *Curwdo, *Whead;
 extern int Curmodf;
 
-#define MRKSIZE		(sizeof(Mark) - (sizeof(Mark *) << 1))
+#define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
 
 #define Buff()		(*Curcptr)
 #define Bisstart()	((Curpage == Curbuff->firstp) && (Curchar == 0))

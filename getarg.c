@@ -225,7 +225,7 @@ void Pout(char *str, Boolean check)
 void Pinsert()
 {
 	char savech;
-	Mark tmark;
+	struct mark tmark;
 	int width;
 
 	if (Cmd == '?' && Cnum) {

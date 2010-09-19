@@ -18,12 +18,10 @@
  */
 
 /* Ok, I admit it.... this is a hack to get around the checkpatch
- * typedef errors. Easier to just put them all in one file and ignore
- * them :(
+ * typedef errors. Easier to put them in one file and ignore them :(
  */
 
 /* from buff.h */
-typedef struct mark Mark;
 typedef struct buff Buffer;
 
 /* from old global.h */

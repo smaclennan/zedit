@@ -51,7 +51,7 @@ int Ask(char *msg)
 /* Move a block of chars around point and "from" to "to".
  * Assumes point is before "from".
 */
-void Blockmove(Mark *from, Mark *to)
+void Blockmove(struct mark *from, struct mark *to)
 {
 	char tmp;
 
@@ -207,7 +207,7 @@ int Findpath(char *p, char *f, int s, Boolean m)
 Boolean Getbword(char word[], int max, int (*valid)())
 {
 	int i;
-	Mark tmark;
+	struct mark tmark;
 
 	Bmrktopnt(&tmark);
 	Moveto(Istoken, FORWARD);
@@ -228,7 +228,7 @@ Boolean Getbword(char word[], int max, int (*valid)())
 char *Getbtxt(char txt[], int max)
 {
 	int i;
-	Mark tmark;
+	struct mark tmark;
 
 	Bmrktopnt(&tmark);
 	for (Btostart(), i = 0; !Bisend() && i < max; Bmove1(), ++i)
@@ -238,7 +238,7 @@ char *Getbtxt(char txt[], int max)
 	return txt;
 }
 
-void Killtomrk(Mark *tmark)
+void Killtomrk(struct mark *tmark)
 {
 	Copytomrk(tmark);
 	Bdeltomrk(tmark);

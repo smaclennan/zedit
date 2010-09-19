@@ -216,7 +216,7 @@ void Zfileread()
 int Fileread(char *fname)
 {
 	Buffer *tbuff, *save;
-	Mark *tmark;
+	struct mark *tmark;
 	int rc = 1;
 
 	save = Curbuff;

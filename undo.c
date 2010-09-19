@@ -26,7 +26,7 @@
 
 struct undo {
 	int action;
-	Mark *end;
+	struct mark *end;
 	Byte *data;
 	int size;
 	struct undo *prev, *next;

@@ -408,7 +408,7 @@ void Message(Buffer *buff, char *str)
 int BuffToPipe(Buffer *buff, char *cmd)
 {
 	FILE *pfp;
-	Mark spnt, end;
+	struct mark spnt, end;
 	Buffer *was = Curbuff;
 
 	strcat(cmd, ">/dev/null 2>&1");

@@ -28,7 +28,7 @@ static Boolean Replaceone(int, Boolean *, Boolean *, Byte *, Boolean);
 
 Boolean Insearch;	/* set by Nocase, reset by Getarg */
 
-Mark *Gmark;		/* used by global search routines */
+struct mark *Gmark;		/* used by global search routines */
 
 #define QHELP	\
 "Options: ' ' 'y'=change; 'n'=don't; '.'=change & quit; 'u'=undo; '^G'=quit"
@@ -48,7 +48,7 @@ void Doincsrch(char *prompt, Boolean forward)
 	Boolean go = TRUE;
 	char str[STRMAX + 1], *p;
 	int cmd, i = 0;
-	Mark marks[STRMAX];
+	struct mark marks[STRMAX];
 
 	memset(str, '\0', STRMAX);
 	strcpy(str, Nocase(prompt));
@@ -193,7 +193,7 @@ void Doreplace(int type)
 {
 	Boolean exit = FALSE, crgone, query;
 	Byte ebuf[ESIZE];
-	Mark *pmark, tmark;
+	struct mark *pmark, tmark;
 	Buffer *tbuff;
 	int rc = 0;
 
@@ -235,7 +235,7 @@ static Boolean Replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
 	Boolean found = FALSE;
 	char tchar = ',', *ptr;
 	int dist, changeprev = 0;
-	Mark *prevmatch;
+	struct mark *prevmatch;
 
 	prevmatch = Bcremrk();
 	Echo("Searching...");
@@ -380,7 +380,7 @@ static Boolean Dosearch()
 	Boolean found = TRUE;
 	Byte ebuf[ESIZE];
 	int fcnt = 0, rc;
-	Mark *tmark;
+	struct mark *tmark;
 
 	tmark = Bcremrk();
 	Bmove(searchdir[0] == BACKWARD ? -1 : 1);

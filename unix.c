@@ -126,7 +126,7 @@ static int Readapipe(Buffer *tbuff)
 	cnt = i = read(tbuff->in_pipe, ptr = buff, BUFSIZ);
 	if (i > 0) {
 		/* Yup! Read somethin' */
-		Mark tmark;
+		struct mark tmark;
 		Buffer *save = Curbuff;
 
 		Bswitchto(tbuff);
@@ -153,7 +153,7 @@ void Sendtopipe()
 {
 	char line[256 + 1];
 	int i;
-	Mark tmark;
+	struct mark tmark;
 
 	Mrktomrk(&tmark, Curbuff->mark);
 	if (Bisaftermrk(&tmark))

@@ -1385,7 +1385,7 @@ void PutPaw(char *str, int type)
 static void ExposeWindow()
 {
 	int i;
-	Mark *psave = Bcremrk();
+	struct mark *psave = Bcremrk();
 	int inpaw = InPaw;
 	int prow = Prow, pcol = Pcol;
 #ifndef BORDER3D

@@ -5,7 +5,7 @@
 static struct comment *CPPhead, *CPPtail;	/* list of CPP statements */
 static struct comment *COMhead, *COMtail;	/* list of Comments */
 
-static struct comment *new_comment(Mark *start, Mark *end, int type)
+static struct comment *new_comment(struct mark *start, struct mark *end, int type)
 {
 	struct comment *new = calloc(sizeof(struct comment), 1);
 	if (!new)
@@ -25,7 +25,7 @@ static struct comment *new_comment(Mark *start, Mark *end, int type)
 /* Mark a new comment from start to end.
  * If start or end are NULL, use Point.
  */
-static void NewComment(Mark *start, Mark *end)
+static void NewComment(struct mark *start, struct mark *end)
 {
 	struct comment *new = new_comment(start, end, T_COMMENT);
 	if (!new)
@@ -38,7 +38,7 @@ static void NewComment(Mark *start, Mark *end)
 	COMtail = new;
 }
 
-static void NewCPP(Mark *start, Mark *end, int type)
+static void NewCPP(struct mark *start, struct mark *end, int type)
 {
 	struct comment *new = new_comment(start, end, type);
 	if (!new)
@@ -99,7 +99,7 @@ static void MergeComments(void)
 /* Highlight a CPP. */
 static void CPPstatement(void)
 {
-	Mark start;
+	struct mark start;
 	int type;
 
 	Bmrktopnt(&start);
@@ -188,8 +188,8 @@ static void UnComment(Buffer *buff)
 /* Scan an entire buffer for comments. */
 static void ScanBuffer(void)
 {
-	Mark tmark;
-	Mark start;
+	struct mark tmark;
+	struct mark start;
 	char comchar = (Curbuff->bmode & ASMMODE) ? Curbuff->comchar : 0;
 
 	COMhead = COMtail = CPPhead = CPPtail = 0;

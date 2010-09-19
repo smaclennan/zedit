@@ -46,7 +46,7 @@ int Forcecol()
 
 static void ScrollLine(Boolean forward)
 {
-	Mark save;
+	struct mark save;
 
 	if (VAR(VSINGLE)) {
 		Bmrktopnt(&save);
@@ -150,7 +150,7 @@ void Ztoend()
 
 void Zswapmrk()
 {
-	Mark tmark;
+	struct mark tmark;
 
 	Arg = 0;
 	Mrktomrk(&tmark, Curbuff->mark);
@@ -221,10 +221,10 @@ long Getnum(char *prompt)
 }
 
 
-Mark *Bookmrks[BOOKMARKS];	/* stack of book marks */
-char *Bookname[BOOKMARKS];	/* stack of book names */
-int  Bookmark = -1;		/* current book mark */
-int  Lastbook = -1;		/* last bookmark */
+struct mark *Bookmrks[BOOKMARKS];	/* stack of book marks */
+char *Bookname[BOOKMARKS];		/* stack of book names */
+int  Bookmark = -1;			/* current book mark */
+int  Lastbook = -1;			/* last bookmark */
 
 
 void Zsetbookmrk()
@@ -288,7 +288,7 @@ void Znxtbookmrk()
 
 void Zviewline()
 {
-	Mark pmark;
+	struct mark pmark;
 
 	Bmrktopnt(&pmark);
 	Tobegline();
@@ -348,7 +348,7 @@ void Zscrolldown()
 
 static void Scroll(Boolean forward)
 {
-	Mark *pmark = Bcremrk();
+	struct mark *pmark = Bcremrk();
 
 	Bpnttomrk(Sstart);
 	if (forward)

@@ -20,12 +20,12 @@
 #include "z.h"
 #include "assert.h"
 
-static void Pawdisplay(Mark *, Mark *);
+static void Pawdisplay(struct mark *, struct mark *);
 
-Mark *Sstart, *Psstart;		/* Screen start and 'prestart' */
-Mark *Send;			/* Screen end */
+struct mark *Sstart, *Psstart;	/* Screen start and 'prestart' */
+struct mark *Send;		/* Screen end */
 Boolean Sendp;			/* Screen end set */
-Mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
+struct mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
 int Tlrow;			/* Last row displayed */
 
 int NESTED;			/* Refresh can go recursive... */
@@ -46,12 +46,12 @@ void Redisplay()
 void Refresh()
 {
 	int pntrow, col, bcol;
-	Mark *pmark;
+	struct mark *pmark;
 #ifndef BORDER3D
 	struct wdo *wdo;
 	int tsave;
 #endif
-	static Mark *was;	/* last location of user mark */
+	static struct mark *was;	/* last location of user mark */
 
 	if (was == NULL)
 		was = Bcremrk();
@@ -98,7 +98,7 @@ void Refresh()
 	tsave = Tabsize;
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (wdo != Curwdo) {
-			Mark *point;
+			struct mark *point;
 			Bswitchto(wdo->wbuff);
 			Settabsize(Curbuff->bmode);
 			point = Bcremrk();
@@ -152,7 +152,7 @@ void Refresh()
 }
 
 /* Test and clear modified flag on screen mark. */
-static inline Boolean Btstmrk(Mark *tmark)
+static inline Boolean Btstmrk(struct mark *tmark)
 {
 	Boolean temp = tmark->modf;
 	tmark->modf  = FALSE;
@@ -168,7 +168,7 @@ static inline int buff_col(void)
  * Do the acutal screen update.
  * Curwdo is not valid.
  */
-int Innerdsp(int from, int to, Mark *pmark)
+int Innerdsp(int from, int to, struct mark *pmark)
 {
 	int trow;
 	 Byte *lptr;
@@ -260,7 +260,7 @@ int Innerdsp(int from, int to, Mark *pmark)
 void Reframe()
 {
 	int cnt;
-	Mark *pmark;
+	struct mark *pmark;
 
 	pmark = Bcremrk();
 	for (cnt = Prefline(); cnt > 0 && Bcrsearch(NL); --cnt)
@@ -280,7 +280,7 @@ void Reframe()
 /* Set one windows modified flags. */
 static void Subset(int from, int to, int flag)
 {
-	Mark *btmark, *ltmark;
+	struct mark *btmark, *ltmark;
 
 	if (Scrnmarks[from].mbuff != Curbuff)
 		return;
@@ -327,7 +327,7 @@ void Vsetmod(int flag)
 #endif
 }
 
-void Vsetmrk(Mark *mrk)
+void Vsetmrk(struct mark *mrk)
 {
 	int row;
 
@@ -353,7 +353,7 @@ void Toendline()
 
 #define SHIFT	(Colmax / 4 + 1)
 
-static void Pawdisplay(Mark *pmark, Mark *was)
+static void Pawdisplay(struct mark *pmark, struct mark *was)
 {
 	int bcol = 0, i, nested = 0;
 #if !XWINDOWS

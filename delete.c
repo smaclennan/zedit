@@ -40,7 +40,7 @@ void Zrdelchar()
 
 void Zdeleol()
 {
-	Mark *tmark = Bcremrk();
+	struct mark *tmark = Bcremrk();
 
 	if (!Bisend() && Buff() == NL)
 		Bmove1();
@@ -60,7 +60,7 @@ void Zdeleol()
 
 void Zdelline()
 {
-	Mark *tmark;
+	struct mark *tmark;
 
 	Tobegline();
 	tmark = Bcremrk();
@@ -88,7 +88,7 @@ void Zyank()
 {
 	Buffer *tbuff;
 	int yanked;
-	Mark *tmark, save;	/* save must NOT be a pointer */
+	struct mark *tmark, save;	/* save must NOT be a pointer */
 
 	if (InPaw && First) {
 		Bdelete(Curplen);
@@ -112,7 +112,7 @@ void Zyank()
 
 void Zdelword()
 {
-	Mark *tmark;
+	struct mark *tmark;
 
 	tmark = Bcremrk();
 	Moveto(Isword, FORWARD);
@@ -123,7 +123,7 @@ void Zdelword()
 
 void Zrdelword()
 {
-	Mark *tmark;
+	struct mark *tmark;
 
 	tmark = Bcremrk();
 	Zbword();
@@ -134,7 +134,7 @@ void Zrdelword()
 void Zgetbword()
 {
 	char word[STRMAX], *ptr;
-	Mark *tmark, *start;
+	struct mark *tmark, *start;
 
 	if (InPaw) {
 		Bswitchto(Buff_save);
@@ -160,7 +160,7 @@ void Zgetbword()
 
 void Zdelblanks()
 {
-	Mark *tmark, *pmark;
+	struct mark *tmark, *pmark;
 
 	pmark = Bcremrk();
 	if (Bcrsearch(NL)) {
@@ -203,7 +203,7 @@ void Zempty()
 }
 
 
-void Copytomrk(Mark *tmark)
+void Copytomrk(struct mark *tmark)
 {
 	Buffer *save = Curbuff;
 	Bswitchto(Killbuff);

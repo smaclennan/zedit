@@ -161,7 +161,7 @@ void Zcount()
 	Boolean word, swapped = FALSE;
 	char str[STRMAX];
 	unsigned l, w, c;
-	Mark *tmark;
+	struct mark *tmark;
 
 	Arg = 0;
 	if (Argp) {
@@ -371,7 +371,7 @@ void Zdate()
 static void Setregion(int (*convert)())
 {
 	Boolean swapped;
-	Mark tmark;
+	struct mark tmark;
 
 	if (Curbuff->bmode & PROGMODE) {
 		Echo("Not in program mode");
@@ -407,7 +407,7 @@ void Zlowregion()
 
 static void Indent(Boolean flag)
 {
-	Mark *psave, *msave = NULL;
+	struct mark *psave, *msave = NULL;
 	int i;
 
 	psave = Bcremrk();
@@ -450,7 +450,7 @@ unsigned ch;
 {
 	Byte match;
 	int cnt = 0;
-	Mark save;
+	struct mark save;
 
 	if (!(Curbuff->bmode & PROGMODE) || InPaw || Tkbrdy())
 		return;

@@ -220,8 +220,8 @@ extern char Fname[];
 extern struct avar Vars[];
 extern Buffer *Bufflist, *Paw;
 extern Buffer *Buff_save;
-extern Mark *Sstart, *Psstart, *Send, *REstart;
-extern Mark Scrnmarks[];
+extern struct mark *Sstart, *Psstart, *Send, *REstart;
+extern struct mark Scrnmarks[];
 
 extern Boolean Exitflag;
 extern Boolean Insearch;

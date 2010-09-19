@@ -24,7 +24,7 @@
 char Savetag[STRMAX + 1];
 Buffer *Bsave;
 
-static void GotoMatch(Mark *smark);
+static void GotoMatch(struct mark *smark);
 static Boolean Tagfparse(Buffer *);
 static Boolean GetTagsFile(void);
 
@@ -45,7 +45,7 @@ void Zfindtag()
 {
 	char tag[STRMAX + 1], word[PATHMAX + 1];
 	Boolean best, found;
-	Mark tmark, smark;
+	struct mark tmark, smark;
 
 	/* do BEFORE switching buffer! */
 	Arg = 0;
@@ -103,7 +103,7 @@ void Zfindtag()
 void Xfindtag()
 {
 	char tag[STRMAX + 1], word[PATHMAX + 1];
-	Mark smark;
+	struct mark smark;
 
 	/* do BEFORE switching buffer! */
 	Arg = 0;
@@ -131,9 +131,9 @@ void Xfindtag()
 }
 #endif
 
-static void GotoMatch(Mark *smark)
+static void GotoMatch(struct mark *smark)
 {
-	Mark tmark;
+	struct mark tmark;
 
 	if (Tagfparse(Bsave))
 		if (strcmp(Bsave->bname, Curbuff->bname))
@@ -152,7 +152,7 @@ static Boolean Tagfparse(Buffer *bsave)
 #else
 	Boolean byte = 0, smatch = 0, ematch = 0, found;	/*shutup*/
 	Byte mch;
-	Mark tmark;
+	struct mark tmark;
 	char fname[PATHMAX + 1], path[PATHMAX + 1], str[STRMAX], *ptr;
 	int i;
 	long num = -1;

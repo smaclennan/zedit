@@ -80,7 +80,7 @@ void Zupword()
 
 void Zswapword()
 {
-	Mark *tmark, *tmp;
+	struct mark *tmark, *tmp;
 
 	Moveto(Istoken, FORWARD);
 	if (Bisend())
@@ -117,14 +117,14 @@ void Zcenter()
 
 /* C MODE COMMANDS */
 
-static void handle_close_bracket(Mark *tmark, int crfound)
+static void handle_close_bracket(struct mark *tmark, int crfound)
 {
 	int cnt;
 
 	Tobegline();
 	if (VAR(VMATCH) & 0x100) {
 		/* show the rest of the line in the PAW */
-		Mark t;
+		struct mark t;
 		int i, col;
 
 		Bmrktopnt(&t);
@@ -153,7 +153,7 @@ static void handle_close_bracket(Mark *tmark, int crfound)
 void Zcinsert()
 {
 	int cnt, crfound = FALSE;
-	Mark tmark;
+	struct mark tmark;
 
 	if (STRIP(Cmd) == '}') {
 		/* line it up with last unmatched '{' */
@@ -174,7 +174,7 @@ void Zcinsert()
 		Bpnttomrk(&tmark);	/* no match - go back */
 		Tbell();				/* and warn user */
 	} else if (STRIP(Cmd) == '#') {
-		Mark *tmark = Bcremrk();
+		struct mark *tmark = Bcremrk();
 
 		do
 			Bmove(-1);
@@ -194,7 +194,7 @@ void Zcinsert()
 		if (strcmp(word, "public")    == 0 ||
 		   strcmp(word, "private")   == 0 ||
 		   strcmp(word, "protected") == 0) {
-			Mark *tmark = Bcremrk();
+			struct mark *tmark = Bcremrk();
 			Tobegline();
 			while (Isspace())
 				Bdelete(1);
@@ -235,7 +235,7 @@ void Zcinsert()
 void Zcindent()
 {
 	int width;
-	Mark tmark;
+	struct mark tmark;
 
 	if ((Curbuff->bmode & OVERWRITE))
 		Bcsearch(NL);
@@ -280,7 +280,7 @@ void Zcindent()
  */
 void Zfillcomment()
 {
-	Mark *start, *end, *tmp, tmark;
+	struct mark *start, *end, *tmp, tmark;
 	int col;
 
 	if (Ask("Are you sure? ") != YES)
@@ -375,7 +375,7 @@ void Zfillcomment()
 void Zfillchk()
 {
 	Boolean tmp;
-	Mark *tmark;
+	struct mark *tmark;
 
 	if (Cmd == CR)
 		Cmd = NL;
@@ -418,7 +418,7 @@ void Zdelwhite()
 void Zfillpara()
 {
 	Boolean all;
-	Mark *tmark, *tmp;
+	struct mark *tmark, *tmp;
 
 	if (Curbuff->bmode & CMODE) {
 		Zfillcomment();

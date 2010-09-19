@@ -8,7 +8,7 @@
  */
 
 static Boolean advance(Byte *);
-static Boolean ecmp(Mark *, int);
+static Boolean ecmp(struct mark *, int);
 static void getrnge(Byte *);
 
 #define	CBRA	2
@@ -33,9 +33,9 @@ static void getrnge(Byte *);
 #define RETURN(c)   return(0)
 #define ERROR(c)    return(c)
 
-Mark *REstart;		/* assigned in Setup */
-Mark braslist[NBRA];
-Mark braelist[NBRA];
+struct mark *REstart;		/* assigned in Setup */
+struct mark braslist[NBRA];
+struct mark braelist[NBRA];
 int ebra, nbra;
 
 int	circf;
@@ -84,7 +84,7 @@ Boolean Step(Byte *ep)
 static Boolean advance(Byte *ep)
 {
 	int c, ct;
-	Mark *bbeg, curlp, tmark;
+	struct mark *bbeg, curlp, tmark;
 
 	while (!Bisend()) {
 		switch (*ep++) {
@@ -239,7 +239,7 @@ static void getrnge(Byte *str)
  * Returns TRUE if matched.
  * Moves the buffer point and start mrk.
  */
-static Boolean ecmp(Mark *start, int cnt)
+static Boolean ecmp(struct mark *start, int cnt)
 {
 	Byte c;
 

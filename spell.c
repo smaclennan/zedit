@@ -33,8 +33,8 @@ void Zspell()
 	static char *argv[] = { "ispell", "-a", NULL };
 	Buffer *was;
 	Buffer *sbuff;
-	Mark *emark;
-	Mark *point, *mark;
+	struct mark *emark;
+	struct mark *point, *mark;
 	Byte cmd;
 	char send[STRMAX + 2], buff[1024], *p, *e;
 	char word[6][STRMAX + 1];

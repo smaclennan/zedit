@@ -118,11 +118,8 @@ Atom WM_DELETE_WINDOW;		/* subtype of WM_PROTOCOLS */
 
 char *Term;
 
-void Tinit(argc, argv)
-int argc;
-char **argv;
+void Tinit(int argc, char **argv)
 {
-	extern char *getenv();
 	XGCValues values;
 	uint valuemask;
 	int ccolor;
@@ -354,7 +351,6 @@ printf("Scrollbar width %d border %d highlight  %d\n",
 #endif
 }
 
-
 /* Create the root window for the editor.
  * Note that width and height are the sizes
  * specified by the user for the source window.
@@ -477,11 +473,8 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 	return Zroot;
 }
 
-
-Window CreateWindow(parent, x, y, width, height, events)
-Window parent;
-int x, y, width, height;
-long events;
+Window CreateWindow(Window parent, int x, int y, int width, int height,
+		    long events)
 {
 	Window window;
 	XSetWindowAttributes attr;
@@ -502,8 +495,7 @@ long events;
 	return window;
 }
 
-void Newtitle(title)
-char *title;
+void Newtitle(char *title)
 {
 	if(title)
 		sprintf(PawStr, "%s  %s", ZSTR, title);
@@ -512,7 +504,6 @@ char *title;
 	XStoreName(display, Zroot, PawStr);
 }
 
-
 void Tbell()
 {
 #define BELLTIME	100
@@ -520,18 +511,15 @@ void Tbell()
 		XBell(display, BELLTIME);
 }
 
-
 void Tfini()
 {
 	CleanupSocket(-1);
 }
 
-
 void Tclrwind()
 {
 	XClearWindow(display, zwindow);
 }
-
 
 void Tcleol()
 {
@@ -547,12 +535,7 @@ void Tcleol()
 static int s_row = -1, s_col = -1, s_len = 0;
 static char outline[COLMAX];		/* buffer of chars */
 
-#ifdef __STDC__
 void Tputchar(char c)
-#else
-void Tputchar(c)
-char c;
-#endif
 {
 	if(Prow != s_row || Pcol != s_col)
 		Tflush();
@@ -575,8 +558,7 @@ void Tflush()
 
 
 /* SAM How do we handle T_BOLD/T_NORMAL pairs when in comment? */
-void Tstyle(style)
-int style;
+void Tstyle(int style)
 {
 	static int cur_style = -1;
 	
@@ -598,26 +580,27 @@ int style;
 
 
 #ifndef BORDER3D
+#ifdef SCROLLBARS
+#define VSCROLL_EXTRA SCROLLBAR_WIDTH
+#else
+#define VSCROLL_EXTRA 0
+#endif
+#ifdef HSCROLL
+#define HSCROLL_EXTRA (SCROLLBAR_WIDTH + 2)
+#else
+#define HSCROLL_EXTRA 0
+#endif
+
 void Termsize()
 {
 	XEvent event;
 
 	Rowmax = win_height / fontheight;
-# ifdef SCROLLBARS
-	Colmax = (win_width - SCROLLBAR_WIDTH) / fontwidth;
-# else
-	Colmax = win_width / fontwidth;
-# endif
+	Colmax = (win_width - VSCROLL_EXTRA) / fontwidth;
 
-#ifdef HSCROLL
-	if(Xrow[Rowmax] != win_height + SCROLLBAR_WIDTH + 2)
+	if(Xrow[Rowmax] != win_height + HSCROLL_EXTRA)
 	{
-		win_height = Xrow[Rowmax] + SCROLLBAR_WIDTH + 2;
-#else
-	if(Xrow[Rowmax] != win_height)
-	{
-		win_height = Xrow[Rowmax];
-#endif
+		win_height = Xrow[Rowmax] + HSCROLL_EXTRA;
 		XResizeWindow(display, zwindow, win_width, win_height);
 		XMaskEvent(display, StructureNotifyMask, &event);
 	}

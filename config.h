@@ -57,7 +57,7 @@
 #define CALC		1		/* Calculator */
 # define FLOATCALC	1		/* Allow floats in calc */
 #define HELP		1		/* Help */
-# define FORK_ZHELP	0		/* Fork zhelp */
+# define FORK_ZHELP	1		/* Fork zhelp */
 #define MAKE		1		/* make interface */
 #define SHELL		1		/* shell interface */
 #define SPELL		1		/* ispell interface */

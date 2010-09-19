@@ -25,6 +25,14 @@ void BorderInit()
 	XGCValues values;
 	int mask = GCFont;
 
+	/* Default everything to black */
+	GetXColor("black", &ccolor);
+	values.foreground = ccolor.pixel; // SAM why?
+	mask |= GCForeground;
+	values.background = ccolor.pixel;
+	mask |= GCBackground;
+	Zborder.bgColorPtr = &ccolor;
+
 	if((color = GetResource(".background", ".background")) &&
 		GetXColor(color, &ccolor))
 	{

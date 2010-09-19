@@ -18,13 +18,14 @@
  */
 
 /* OPERATING SYSTEM - We attempt to autodetect.
- * I have not tested anything other than Linux in decades, you have
+ * I have not tested anything other than Linux in a decade, you have
  * been warned!
  */
 #ifdef __linux__
 # define LINUX
 #elif defined(__BSD__)
 # define BSD
+/* You can also set either of these variations. */
 /* # define SUNBSD */
 /* # define ULTRIX */
 #elif defined(__unix__)

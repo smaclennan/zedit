@@ -158,6 +158,5 @@
 #define ZUNDO		138
 #define NUMFUNCS	139
 
-/* these are used by the Getfname command in the PAW for command completion */
+/* this is used by the Getfname command in the PAW for command completion */
 #define ZFNAME		NUMFUNCS
-#define ZMATCH		(NUMFUNCS + 1)

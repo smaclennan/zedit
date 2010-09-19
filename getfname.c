@@ -54,21 +54,18 @@ int Getdname(char *prompt, char *path)
 static int getname(char *prompt, char *path, Boolean isdir)
 {
 	char tmp[PATHMAX + 1];
-	int tab, space, metameta, rc;
+	int tab, metameta, rc;
 
 	metameta = Keys[128 + 27];	/* for people who use csh/ksh */
 	Keys[128 + 27] = ZFNAME;
 	tab = Keys['\t'];
 	Keys['\t'] = ZFNAME;
-	space = Keys[' '];
-	Keys[' ']   = ZMATCH;
 	rc = Getarg(prompt, strcpy(tmp, path), PATHMAX);
 	if (rc == 0) {
 		rc = Pathfixup(path, tmp);
 		if (rc == -1)
 			rc = isdir ? 0 : 1;
 	}
-	Keys[' '] = space;
 	Keys['\t'] = tab;
 	Keys[128 + 27] = metameta;
 	Freelist(&Flist);
@@ -82,17 +79,22 @@ static int getname(char *prompt, char *path, Boolean isdir)
 void Zfname()
 {
 	Boolean update;
-	struct llist *list;
+	struct llist *head, *list;
 	char txt[PATHMAX + 1], *fname, *match = NULL;
+	char dir[PATHMAX + 1], *p;
+	int row, col;
 	int len, n = 0, f = 0, rc;
+	int did_something = 0;
 
-	list = GetFill(txt, &fname, &len, &update);
+	head = list = GetFill(dir, &fname, &len, &update);
 	if (!list) {
 		Tbell();
 		return;
 	}
+
+	/* Possibly expand name */
 	if (*fname)
-		while ((rc = strncmp(fname, list->fname, len)) >= 0) {
+		while (list && (rc = strncmp(fname, list->fname, len)) >= 0) {
 			if (rc == 0) {
 				if (match)
 					n = f = nmatch(match, list->fname);
@@ -104,8 +106,10 @@ void Zfname()
 	if (match) {
 		if (n > len) {
 			Btoend();
-			while (len < n && Curplen < Pawlen)
+			while (len < n && Curplen < Pawlen) {
 				Binsert(match[len++]);
+				++did_something;
+			}
 			if (len < n)
 				Tbell();
 		}
@@ -113,19 +117,12 @@ void Zfname()
 			Binsert(PSEP);
 	} else if (!update)
 		Tbell();
-}
 
-void Zmatch()
-{
-	struct llist *list;
-	char dir[PATHMAX + 1], *fname, *p;
-	int row, col, len;
-
-	list = GetFill(dir, &fname, &len, &col);
-	if (list == NULL) {
-		Tbell();
+	if (update || did_something)
 		return;
-	}
+
+	/* show possible matches */
+	list = head; /* reset */
 	p = dir + strlen(dir);
 	*p++ = PSEP;
 	Didmatch = TRUE;
@@ -158,7 +155,6 @@ void Zmatch()
 		Tcleol();
 	}
 }
-
 
 struct llist *GetFill(char *dir, char **fname, int *len, Boolean *update)
 {

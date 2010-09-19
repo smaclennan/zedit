@@ -452,7 +452,6 @@ void (*Pawcmds[])() = {
 	Znotimpl,
 	Znotimpl,
 	Zfname,			/* only in the PAW you say? pity... */
-	Zmatch,			/* put these AFTER all others */
 };
 
 void (**Funcs)() = Cmds;
@@ -487,7 +486,7 @@ void Fcheck(void)
 	s1 = sizeof(Cnames) / sizeof(struct cnames);
 	s2 = sizeof(Cmds) / sizeof(void *);
 	s3 = sizeof(Vcmds) / sizeof(void *);
-	s4 = sizeof(Pawcmds) / sizeof(void *) - 2;	/* Paw has 2 extra */
+	s4 = sizeof(Pawcmds) / sizeof(void *) - 1;	/* Paw has 1 extra */
 	if ((s1 - s2 + s3 - s4) || s1 != NUMFUNCS) {
 		++error;
 		Dbg("Cnames: %d Cmds: %d Vcmds: %d Pawcmds: %d NUMFUNCS: %d\n",

@@ -421,7 +421,6 @@ char *XEventName(int type);
 
 int Getfname(char *, char *);
 void Zfname(void);
-void Zmatch(void);
 struct llist *GetFill(char *, char **, int *, Boolean*);
 struct llist *Fill_list(char *);
 int nmatch(char *, char *);

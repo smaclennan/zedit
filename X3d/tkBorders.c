@@ -30,11 +30,6 @@ void BorderInit()
 	{
 		values.foreground = ccolor.pixel;
 		mask |= GCForeground;
-
-		/* default these in case .modelinefg not set */
-		values.background = ccolor.pixel;
-		mask |= GCBackground;
-	 	Zborder.bgColorPtr = &ccolor;
 	}
 	if((color = GetResource(".modelinefg", ".modelinefg")) &&
 		GetXColor(color, &ccolor))

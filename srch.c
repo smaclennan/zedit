@@ -35,19 +35,19 @@ struct mark *Gmark;		/* used by global search routines */
 
 void Zincsrch()
 {
-	Doincsrch("I.Search: ", FORWARD);
+	Doincsrch("I-search: ", FORWARD);
 }
 
 void Zrincsrch()
 {
-	Doincsrch("Reverse I.Search: ", BACKWARD);
+	Doincsrch("Reverse I-search: ", BACKWARD);
 }
 
 void Doincsrch(char *prompt, Boolean forward)
 {
 	Boolean go = TRUE;
 	char str[STRMAX + 1], *p;
-	int cmd, i = 0;
+	int cmd, i = 0, first = 1;
 	struct mark marks[STRMAX];
 
 	memset(str, '\0', STRMAX);
@@ -60,9 +60,30 @@ void Doincsrch(char *prompt, Boolean forward)
 		if (isprint(cmd) && i < STRMAX) {
 			Bmrktopnt(&marks[i]);
 			p[i++] = cmd;
-			if (!Bsearch(p, forward)) {
+			Bmove(-i);
+			if (Bsearch(p, forward)) {
+				Bmove(i);
+			} else {
 				Bpnttomrk(&marks[--i]);
 				p[i] = '\0';
+				Tbell();
+			}
+		} else if (cmd == 19) { /* CTRL-S */
+			struct mark tmark;
+
+			if (first) {
+				/* use last search */
+				int n = strlen(old);
+				strcat(p, old);
+				for (i = 0; i < n; ++i)
+					Bmrktopnt(&marks[i]);
+			}
+
+			Bmrktopnt(&tmark); /* save in case search fails */
+			if (Bsearch(p, forward))
+				Bmove(i);
+			else {
+				Bpnttomrk(&tmark);
 				Tbell();
 			}
 		} else if (Keys[cmd] == ZRDELCHAR && i > 0) {
@@ -73,6 +94,7 @@ void Doincsrch(char *prompt, Boolean forward)
 				Pushcmd(cmd);
 			go = FALSE;
 		}
+		first = 0;
 	}
 	Clrecho();
 	if (Keys[cmd] == ZABORT)

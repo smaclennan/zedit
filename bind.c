@@ -47,7 +47,7 @@ void Bind(void)
 	Keys[16] = ZPREVLINE;		/* C-P */
 	Keys[17] = ZNOTIMPL;		/* C-Q */ /**/
 	Keys[18] = ZRSEARCH;		/* C-R */
-	Keys[19] = ZSEARCH;		/* C-S */
+	Keys[19] = ZINCSRCH;		/* C-S */
 	Keys[20] = ZSWAPCHAR;		/* C-T */
 	Keys[21] = ZARG;		/* C-U */
 	Keys[22] = ZNEXTPAGE;		/* C-V */

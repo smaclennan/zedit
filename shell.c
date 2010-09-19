@@ -51,7 +51,7 @@ void Zcmd()
 /* Do one shell command to the .shell buffer */
 void Zcmdtobuff()
 {
-#if PIPESH
+#ifdef PIPESH
 	struct wdo *save;
 	int rc;
 
@@ -111,7 +111,7 @@ void Zman()
 }
 
 #ifdef BSD
-#if PIPESH
+#ifdef PIPESH
 void Zcmd()
 #else
 void Zshell()	/*for tags*/
@@ -122,7 +122,7 @@ void Zshell()	/*for tags*/
 }
 #endif
 
-#if PIPESH
+#ifdef PIPESH
 void Zshell()
 {
 	char bname[BUFNAMMAX + 1];
@@ -207,7 +207,7 @@ void Zprint()
 	PrintExit(BuffToPipe(Curbuff, cmd));
 }
 
-#if PIPESH
+#ifdef PIPESH
 struct buff *Cmdtobuff(char *bname, char *cmd)
 {
 	struct buff *tbuff = NULL;
@@ -288,7 +288,7 @@ void Zbeauty()
 		return;
 	}
 
-#if PIPESH
+#ifdef PIPESH
 	sprintf(cmdStr, "%s %s %s", INDENT, fileName1, fileName2);
 	if (!Dopipe(Curbuff, cmdStr))
 		return;

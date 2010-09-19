@@ -128,7 +128,7 @@ struct buff *Bcreate(void)
 		new->bmode = (VAR(VNORMAL) ? NORMAL : TEXT) |
 			(VAR(VEXACT) ? EXACT     : 0) |
 			(VAR(VOVWRT) ? OVERWRITE : 0);
-#if PIPESH
+#ifdef PIPESH
 		new->child = EOF;
 #endif
 	}
@@ -209,7 +209,7 @@ Boolean Bdelbuff(struct buff *tbuff)
 		}
 	}
 
-#if PIPESH
+#ifdef PIPESH
 	if (tbuff->child != EOF)
 		Unvoke(tbuff, TRUE);
 #endif

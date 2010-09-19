@@ -71,7 +71,7 @@ void Edit()
 
 void Execute()
 {
-#if PIPESH && !defined(XWINDOWS)
+#if defined(PIPESH) && !defined(XWINDOWS)
 	fd_set fds = SelectFDs;
 
 	Refresh();
@@ -302,7 +302,7 @@ void Setup(int argc, char **argv)
 			return;
 		exit(0);	/* kill parent */
 	}
-#elif PIPESH
+#elif defined(PIPESH)
 	/* For xwindows this is set in initSockets */
 	FD_ZERO(&SelectFDs);
 	FD_SET(1, &SelectFDs);

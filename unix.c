@@ -18,12 +18,12 @@ void Hangup(int signal)
 			Bwritefile(strcmp(Bfname(),
 					  MAINBUFF) ? Bfname() : "MAIN.HUP");
 		}
-#if PIPESH
+#ifdef PIPESH
 		if (tbuff->child != EOF)
 			Unvoke(tbuff, FALSE);
 #endif
 	}
-#if PIPESH
+#ifdef PIPESH
 	Checkpipes(0);
 #endif
 	Save(bsave);
@@ -31,7 +31,7 @@ void Hangup(int signal)
 	exit(1);
 }
 
-#if PIPESH
+#ifdef PIPESH
 static int Readapipe(struct buff *);
 
 int Waiting;

@@ -271,7 +271,7 @@ void (*Vcmds[])() = {
 	Zcgoto,
 	Zmake,
 	Znexterr,
-#if PIPESH
+#ifdef PIPESH
 	Znotimpl,
 	Zkill,
 #else

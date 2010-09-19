@@ -557,7 +557,7 @@ void Zsetmrk()
 /* This does the real work of quiting. */
 void Quit()
 {
-#if PIPESH
+#ifdef PIPESH
 	struct buff *tbuff;
 
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
@@ -601,7 +601,7 @@ void Zquit()
  */
 void Zexit()
 {
-#if PIPESH
+#ifdef PIPESH
 	struct buff *make = Cfindbuff(MAKEBUFF);
 
 	if (make && make->child != EOF)
@@ -683,7 +683,7 @@ void Znewline()
 		Bcsearch(NL);
 	else
 		Binsert(NL);
-#if PIPESH
+#ifdef PIPESH
 	if (Curbuff->out_pipe)
 		Sendtopipe();
 #endif

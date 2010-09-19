@@ -17,7 +17,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/* OPERATING SYSTEM - We attempt to autodetect. */
+/* OPERATING SYSTEM - We attempt to autodetect.
+ * I have not tested anything other than Linux in decades, you have
+ * been warned!
+ */
 #ifdef __linux__
 # define LINUX
 #elif defined(__BSD__)
@@ -31,16 +34,14 @@
 # error OS not detected.
 #endif
 
-/* SCREEN DRIVER - define only one. */
-/* Unless you are running on an ancient dumb terminal, you probably want ANSI.
- * Especially Linux wants ANSI, trust me on this ;)
+/* SCREEN DRIVER - define only one.
+ * XWINDOWS should be set automagically.
+ * Unless you are running on an ancient dumb terminal, you probably want ANSI.
+ * Linux wants ANSI, trust me on this ;)
  */
-#ifdef XWINDOWS
-#define TERMINFO	0		/* don't change this one */
-#define ANSI		0		/* don't change this one */
-#else
-#define TERMINFO	0		/* set terminfo here */
-#define ANSI		1		/* set ANSI here */
+#ifndef XWINDOWS
+#define ANSI
+/* #define TERMINFO */
 #endif
 
 /* USER CONFIGURABLE - don't define any, see if I care */
@@ -52,10 +53,7 @@
 #define FLOATCALC	1		/* Allow floats in calc */
 #define UNDO            1		/* EXPERIMENTAL undo code */
 
-#ifdef MINCONFIG
-#undef DBG
-#define DBG		0
-#else
+#ifndef MINCONFIG
 /* Warning: These are ifdefs, you must comment them out to disable them! */
 #define CALC				/* Calculator */
 #define HELP				/* Help */
@@ -71,8 +69,10 @@
 #ifdef SYSV4
 #define SYSV2
 #endif
-#if defined(HELP) || defined(SHELL) || defined(SPELL) || defined(TAGS) || defined(XWINDOWS)
-#define PIPESH		1
-#else
-#define PIPESH		0
+#if defined(HELP) || defined(SHELL) || defined(SPELL) || defined(TAGS)
+#define PIPESH
+#elif defined(XWINDOWS)
+/* X always needs these */
+#define PIPESH
+#define SHELL
 #endif

@@ -39,7 +39,7 @@ void Zmake()
 			return;
 	}
 	Saveall(TRUE);
-#if PIPESH
+#ifdef PIPESH
 	mbuff = Cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
 		Echo("Killing current make.");
@@ -72,7 +72,7 @@ void Zgrep()
 		return;
 	strcat(cmd, "'");
 	Saveall(TRUE);
-#if PIPESH
+#ifdef PIPESH
 	mbuff = Cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
 		Error("Make buffer in use...");
@@ -132,7 +132,7 @@ void Znexterr()
 	Arg = 0;
 }
 
-#if PIPESH
+#ifdef PIPESH
 /* kill the make */
 void Zkill()
 {

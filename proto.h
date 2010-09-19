@@ -376,7 +376,7 @@ void Quit(void);
 /* Terminal driver specific routines */
 
 
-#if TERMINFO || ANSI
+#ifndef XWINDOWS
 void TIinit(void);
 void TIfini(void);
 #endif
@@ -391,7 +391,7 @@ void PrintExit(int code);
 int Dopipe(struct buff *, char *);
 void Winit(void);
 
-#if PIPESH
+#ifdef PIPESH
 int Checkpipes(int);
 Boolean Doshell(void);
 Boolean Invoke(struct buff *, char **);

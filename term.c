@@ -19,7 +19,7 @@
 
 #include "z.h"
 #include "keys.h"
-#if TERMINFO
+#ifdef TERMINFO
 #include <term.h>
 #endif
 
@@ -74,10 +74,9 @@ void sigwinch(int sig)
 /* Initalize the terminal. */
 void Tinit()
 {
-#if TERMINFO || ANSI
-	/* Initialize from the Terminfo database. Do this first - it may exit */
+	/* Initialize the low level interface.
+	 * Do this first - it may exit */
 	TIinit();
-#endif
 
 	Termsize();
 
@@ -118,7 +117,7 @@ void Tinit()
 
 	signal(SIGHUP,  Hangup);
 	signal(SIGTERM, Hangup);
-#if PIPESH
+#ifdef PIPESH
 #if !defined(SYSV4) || !defined(WNOWAIT)
 	signal(SIGCLD,  Sigchild);
 #endif
@@ -164,25 +163,21 @@ void Tfini()
 		Tgoto(Rowmax - 1, 0);
 	}
 	Tflush();
-#if TERMINFO || ANSI
 	TIfini();
-#endif
 }
 
 void Tbell()
 {
-#if TERMINFO || ANSI
 	if (VAR(VVISBELL)) {
 #ifdef __linux__
 		fputs("\033[?5h", stdout);
 		fflush(stdout);
 		usleep(100000);
 		fputs("\033[?5l", stdout);
-#elif TERMINFO
+#elif defined(TERMINFO)
 		TPUTS(flash_screen);
 #endif
 	} else
-#endif
 		if (VAR(VSILENT) == 0)
 			putchar('\7');
 }
@@ -379,7 +374,7 @@ int Prefline()
 void Tforce()
 {
 	if (Scol != Pcol || Srow != Prow) {
-#if TERMINFO
+#ifdef TERMINFO
 		TPUTS(tparm(cursor_address, Prow, Pcol));
 #else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
@@ -393,7 +388,7 @@ void Tcleol()
 {
 	if (Pcol < Clrcol[Prow]) {
 		Tforce();
-#if TERMINFO
+#ifdef TERMINFO
 		TPUTS(clr_eol);
 #else
 		TPUTS("\033[K");
@@ -404,7 +399,7 @@ void Tcleol()
 
 void Tclrwind()
 {
-#if TERMINFO
+#ifdef TERMINFO
 	TPUTS(clear_screen);
 #else
 	TPUTS("\033[2J");

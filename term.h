@@ -47,9 +47,9 @@ int _putchar(int);
 int _putchar(char);
 #endif
 
-#if TERMINFO
+#if defined(TERMINFO)
 #define TPUTS(s)		tputs(s, 1, _putchar)
-#elif ANSI
+#elif defined(ANSI)
 #define TPUTS(s)		fputs(s, stdout)
 #endif
 

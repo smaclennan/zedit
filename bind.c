@@ -181,7 +181,7 @@ void Bind(void)
 	Keys[256 + 'Z'] = Keys[256 + 'z'] = ZEXIT;		/* C-X Z */
 	Keys[256 + '^'] = ZGROWWINDOW;				/* C-X ^ */
 
-#if TERMINFO || ANSI
+#ifndef XWINDOWS
 	Keys[TC_UP]	= ZPREVLINE;
 	Keys[TC_C_UP]	= ZPREVPAGE;
 

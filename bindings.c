@@ -295,15 +295,14 @@ char *Dispkey(unsigned key, char *s)
 	int j;
 
 	*s = '\0';
-#if TERMINFO || ANSI
+#ifdef XWINDOWS
+	if (key >= ZXK_START && key < NUMKEYS)
+		return strcpy(s, KeyNames[key - ZXK_START]);
+#else
 	if (key > SPECIAL_START)
 		return strcpy(s, Tkeys[key - SPECIAL_START].label);
 	if (key > 127)
 		strcpy(s, key < 256 ? "M-" : "C-X ");
-#endif
-#ifdef XWINDOWS
-	if (key >= ZXK_START && key < NUMKEYS)
-		return strcpy(s, KeyNames[key - ZXK_START]);
 #endif
 	j = key & 0x7f;
 	if (j == 27)

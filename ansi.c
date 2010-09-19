@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-#if ANSI
+#ifdef ANSI
 #include "keys.h"
 
 struct key_array Tkeys[] = {

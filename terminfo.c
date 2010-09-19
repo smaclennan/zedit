@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-#if TERMINFO
+#ifdef TERMINFO
 #undef TRUE
 #undef FALSE
 #undef SYSV2

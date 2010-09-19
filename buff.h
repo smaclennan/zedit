@@ -71,7 +71,7 @@ struct buff {
 	char *fname;			/* file name associated with buffer */
 	long mtime;			/* file time at read */
 	struct buff *prev, *next;	/* list of buffers */
-#if PIPESH
+#ifdef PIPESH
 	int child;			/* PID of shell or EOF */
 	int in_pipe;			/* the pipes */
 	FILE *out_pipe;

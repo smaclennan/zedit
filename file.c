@@ -23,12 +23,6 @@
 
 void Zfindfile()
 {
-#if XWINDOWS
-	if (Argp && StartProg("Zfindfile") == 0) {
-		Arg = 0;
-		return;
-	}
-#endif
 	if (Getfname("Find File: ", Fname) == 0)
 		Findfile(Fname, FALSE);
 }

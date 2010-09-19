@@ -469,11 +469,6 @@ void QueryDone(void);
 
 void xusage(void);
 
-int StartProg(char *prog);
-void XDeleteBuffer(char *bname);
-void voidessFDs(void);
-void CleanupSocket(int i);
-void closeSockets(void);
 void audioExit(void);
 
 void GrabKeyboard();

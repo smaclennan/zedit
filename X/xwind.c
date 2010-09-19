@@ -10,6 +10,9 @@
 #include <X11/cursorfont.h>
 #include "xcursors.h"
 
+#include "xwind.h"
+#include "../keys.h"
+
 #define zedit_width 64
 #define zedit_height 64
 static char zedit_bits[] = {
@@ -58,10 +61,6 @@ static char zedit_bits[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-#include "xwind.h"
-#include "../keys.h"
-
-#if XWINDOWS
 char *KeyNames[] = {
 	"Home", "Left", "Up", "Right", "Down", "Prior",
 	"Next", "End", "Begin", "Select", "Print", "Execute",
@@ -74,7 +73,6 @@ char *KeyNames[] = {
 	"F34", "F35", "Ctrl Home", "Ctrl Left", "Ctrl Up", "Ctrl Right",
 	"Ctrl Down", "Ctrl Prior", "Ctrl Next", "Ctrl End", "Ctrl Begin"
 };
-#endif
 
 #define DOUBLE_CLICK		500		/* 1/2 second */
 
@@ -320,7 +318,8 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 
 	resource = GetResource("*icongeometry", "*iconGeometry");
 	if (resource != NULL) {
-		int flags, dummy;
+		int flags;
+		unsigned dummy;
 		flags = XParseGeometry(resource,
 				       &wm_hints.icon_x, &wm_hints.icon_y,
 				       &dummy, &dummy);
@@ -644,10 +643,10 @@ static int HomeCnt, EndCnt;
 int Tgetcmd()
 {
 	XEvent event;
-	Byte c;
+	char c;
 	KeySym key;
 	int row, col;
-	Atom paste;
+	Atom paste = 0; /*shutup*/
 	static int PushRow, PushCol;
 	static Time ButtonTime;		/* time of last button click */
 
@@ -926,7 +925,7 @@ int Tgetcmd()
 					event.xselectionrequest.type,
 					8,
 					PropModeReplace,
-					SelectionData,
+					(Byte *)SelectionData,
 					SelectionSize);
 			else
 				event.xselectionrequest.property = None;
@@ -982,7 +981,7 @@ void ShowCursor(Boolean set)
 {
 	Window window;
 	static int point_x, point_y;
-	static Byte wasch = ' ';		/* color only */
+	static char wasch = ' '; /* color only */
 	static GC wasgc;
 
 	window = zwindow;
@@ -1060,7 +1059,8 @@ static void GetGeometry(XSizeHints *sh, int bw)
 	gstr = GetResource(".geometry", ".Geometry");
 	if (gstr != NULL) {
 		flags = XParseGeometry(gstr, &sh->x, &sh->y,
-				       &sh->width, &sh->height);
+				       (unsigned *)&sh->width,
+				       (unsigned *)&sh->height);
 		if (flags & (XValue | YValue))
 			sh->flags |= USPosition;
 		if (flags & (WidthValue | HeightValue))

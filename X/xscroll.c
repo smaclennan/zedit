@@ -13,10 +13,11 @@ extern int win_width;
 
 #define THUMB_WIDTH		(SCROLLBAR_WIDTH - 2)
 
+static void VscrollEvent(XEvent *event, struct wdo *wdo);
+
 /* Called by Wcreate to create scrollbars from line first to last */
 void CreateScrollBars(struct wdo *wdo)
 {
-	extern Cursor vscrollcursor, hscrollcursor;
 	static int set = 0, thumbColor, troughColor;
 
 	if(!set)
@@ -151,9 +152,7 @@ XEvent *event;
 }
 
 /* We received a ButtonPress event in a vscroll window */
-void VscrollEvent(event, wdo)
-XEvent *event;
-struct wdo *wdo;
+static void VscrollEvent(XEvent *event, struct wdo *wdo)
 {
 	int lines;
 
@@ -178,7 +177,8 @@ struct wdo *wdo;
 /*SAM Optimize could make use of window changed? */
 void UpdateScrollbars()
 {
-	int line, lines = Blines(Curwdo->wbuff);
+	unsigned line;
+	int lines = Blines(Curwdo->wbuff);
 
 	if(lines < Curwdo->last)
 	{	/* thumb fills entire window */

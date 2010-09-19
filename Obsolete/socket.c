@@ -85,7 +85,7 @@ void closeSockets()
 	close(MySock);
 }
 
-/* voidess socket calls. Return only if we get an Xevent. */
+/* Process socket calls. Return only if we get an Xevent. */
 void ProcessFDs()
 {
 	fd_set readfds, exceptFDs;

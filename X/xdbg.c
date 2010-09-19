@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <X11/X.h>
 
 char *XEventName(int type)
@@ -57,7 +58,7 @@ char *XWindowName(Window window)
 	else if(window == Zroot)
 		return "Zroot";
 
-	sprintf(wstr, "%x", window);
+	sprintf(wstr, "%lx", (unsigned long)window);
 	return wstr;
 }
 		

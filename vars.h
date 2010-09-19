@@ -57,9 +57,7 @@ extern struct avar Vars[];
 #define VMATCH		(VMARGIN + 1)
 #define VNORMAL		(VMATCH + 1)
 #define VOVWRT		(VNORMAL + 1)
-#define VPOPMAKE	(VOVWRT + 1)
-#define VPOPMAN		(VPOPMAKE + 1)
-#define VPRINT		(VPOPMAN + 1)
+#define VPRINT		(VOVWRT + 1)
 #define VSAVE		(VPRINT + 1)
 #define VSHOWCWD	(VSAVE + 1)
 #define VSILENT		(VSHOWCWD + 1)
@@ -120,8 +118,6 @@ struct avar Vars[] = {
 	{ "Match",		DECIMAL,	DEFAULT(1) },
 	{ "Normal",		FLAG,		DEFAULT(1) },
 	{ "Overwrite",		FLAG,		DEFAULT(0) },
-	{ "PopupMake",		FLAG,		DEFAULT(0) },
-	{ "PopupMan",		FLAG,		DEFAULT(0) },
 	{ "Print",		STRING,		DEFAULT(0) },
 	{ "SaveOnExit",		FLAG,		DEFAULT(0) },
 	{ "ShowCWD",		FLAG,		DEFAULT(1) },

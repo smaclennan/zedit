@@ -39,13 +39,6 @@ void Zmake()
 			return;
 	}
 	Saveall(TRUE);
-#if XWINDOWS
-	if (VAR(VPOPMAKE)) {
-		RunMakeCmd();
-		Refresh();	/* update mode lines from Saveall */
-		return;
-	}
-#endif
 #if PIPESH || XWINDOWS
 	mbuff = Cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
@@ -101,11 +94,6 @@ void Znexterr()
 	char fname[STRMAX + 1];
 	char path[PATHMAX + 1];
 	int line;
-
-#if XWINDOWS
-	if (VAR(VPOPMAKE) && ZmakeNextErr())
-		return;
-#endif
 
 	mbuff = Cfindbuff(MAKEBUFF);
 	if (!mbuff) {

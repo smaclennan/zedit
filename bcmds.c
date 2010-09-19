@@ -26,11 +26,6 @@ void Zswitchto(void)
 	int rc;
 
 	Arg = 0;
-#if XWINDOWS
-	/* If an arg specified, try to start Zblist */
-	if (Argp && StartProg("Zblist") == 0)
-		return;
-#endif
 	was = Curbuff->bname;
 	Nextpart = ZSWITCHTO;
 	rc = Getplete("Buffer: ", Lbufname, Bnames, sizeof(char *), Numbuffs);

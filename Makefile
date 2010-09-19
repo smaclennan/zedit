@@ -5,7 +5,7 @@ CC ?= gcc
 CFLAGS += -O3 -Wall -g $(CDEFS)
 MFLAGS += -rR --no-print-directory
 
-LIBS=-lncurses
+#LIBS=-lncurses
 
 FILES=	$D/bcmds.o $D/bind.o $D/bindings.o \
 	$D/buff.o $D/calc.o $D/comms.o $D/comms1.o \
@@ -18,9 +18,7 @@ FILES=	$D/bcmds.o $D/bind.o $D/bindings.o \
 	$D/getfname.o $D/spell.o $D/make.o \
 	$D/comment.o $D/undo.o $D/ansi.o
 
-XFILES= $D/xinit.o $D/xwind.o \
-	$D/xscroll.o $D/socket.o \
-	$D/xdbg.o $D/xzoom.o
+XFILES= $D/xinit.o $D/xwind.o $D/xscroll.o $D/xdbg.o $D/xzoom.o
 
 #################
 

@@ -82,8 +82,6 @@ void Zman()
 {
 	char entry[STRMAX + 5], *p;
 	int rc;
-	struct buff *buff;
-	FILE *pfp;
 	struct wdo *save;
 
 	strcpy(entry, "man ");
@@ -91,38 +89,6 @@ void Zman()
 	Getbword(p, STRMAX, Istoken);	/* get word */
 	if (Getarg("Man: ", p, STRMAX))
 		return;
-
-	if (VAR(VPOPMAN)) {
-		sprintf(PawStr, "show -t \"man %s\"", p);
-		buff = Bcreate();
-		pfp = popen(PawStr, "w");
-		if (buff && pfp) {
-			struct buff *bsave = Curbuff;
-			Bswitchto(buff);
-			Echo("Please wait...");
-			rc = PipeToBuff(buff, entry);
-			if (rc == 0) {
-				/* remove the underlines */
-				Btoend();
-				while (Bcrsearch('\010')) {
-					Bmove(-1);
-					Bdelete(2);
-				}
-
-				for (Btostart(); !Bisend(); Bmove1())
-					fputc(Buff(), pfp);
-			}
-			Bswitchto(bsave);
-			pclose(pfp);
-			Bdelbuff(buff);
-			PrintExit(rc);
-			return;
-		} else {
-			if (buff)
-				Bdelbuff(buff);
-			Echo("\7Unable to popup man page.");
-		}
-	}
 
 	save = Curwdo;
 	if (WuseOther(MANBUFF)) {

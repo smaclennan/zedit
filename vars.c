@@ -35,11 +35,6 @@ void Zsetavar()
 {
 	char pstr[STRMAX], arg[STRMAX];
 	int rc;
-#if XWINDOWS
-	/* If an arg specified, try to start Zvarhelp */
-	if (Argp && StartProg("Zvarhelp") == 0)
-		return;
-#endif
 
 	rc = Getplete("Variable: ", NULL, (char **)Vars, VARSIZE, NUMVARS);
 	if (rc == -1)

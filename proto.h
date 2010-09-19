@@ -371,7 +371,7 @@ int Write_rgn(char *);
 void free_pwent(struct passwd *pw);
 void Hangup(int);
 Boolean notdup_key(int k);
-
+void Quit(void);
 
 /* Terminal driver specific routines */
 

@@ -27,7 +27,9 @@ static char *SaveFileName(char *fname)
 
 void Save(struct buff *bsave)
 {
+#ifndef BORDER3D
 	struct wdo *wdo;
+#endif
 	struct buff *tbuff;
 	char fname[30];
 	unsigned junk;

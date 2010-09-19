@@ -22,8 +22,8 @@ XFILES= $D/xinit.o $D/xwind.o \
 	$D/xpopup.o $D/xscroll.o $D/socket.o \
 	$D/xdbg.o $D/xzoom.o
 
-X3DFILES=$D/3dwindow.o \
-	 $D/tk3d.o $D/tkScrollbar.o $D/tkBorders.o $D/xmenu.o
+X3DFILES=$D/3dwindow.o $D/xmenu.o \
+	 $D/tk3d.o $D/tkScrollbar.o $D/tkBorders.o
 
 #################
 
@@ -72,6 +72,9 @@ $D/%.o : %.c
 $D/%.o : X/%.c
 	$(do_cc)
 
+$D/%.o : X3d/%.c
+	$(do_cc)
+
 # WARNING: Full dependencies only work for one target and do not catch
 # X/*.c files
 #all:	zedit xzedit zedit3d TAGS
@@ -89,7 +92,7 @@ xzedit:
 
 zedit3d:
 	@$(MAKE) $(MFLAGS) \
-		"CDEFS=-DXWINDOWS=1 -DSCROLLBARS -I./X -DHSCROLL -DBORDER3D" \
+		"CDEFS=-DXWINDOWS=1 -DSCROLLBARS -I./X -I./X3d -DHSCROLL -DBORDER3D" \
 		"D=x3d" \
 		"LIBS=-L/usr/X11R6/lib -lX11" \
 		x3d$(ZEXE)

@@ -555,7 +555,7 @@ void Zsetmrk()
 }
 
 /* This does the real work of quiting. */
-static void Quit()
+void Quit()
 {
 #if PIPESH || XWINDOWS
 	struct buff *tbuff;

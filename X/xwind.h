@@ -6,6 +6,10 @@
 
 #include <X11/Xlib.h>
 
+#ifdef BORDER3D
+#include "z3d.h"
+#endif
+
 #ifdef sun4
 typedef unsigned long ulong;
 #endif

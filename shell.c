@@ -84,6 +84,8 @@ void Zman()
 {
 	char entry[STRMAX + 5], *p;
 	int rc;
+	struct buff *buff;
+	FILE *pfp;
 #ifndef BORDER3D
 	struct wdo *save;
 #endif
@@ -98,9 +100,6 @@ void Zman()
 	/*  BORDER3D always pops up man page */
 	if (VAR(VPOPMAN)) {
 #endif
-		struct buff *buff;
-		FILE *pfp;
-
 		sprintf(PawStr, "show -t \"man %s\"", p);
 		buff = Bcreate();
 		pfp = popen(PawStr, "w");
@@ -130,9 +129,9 @@ void Zman()
 				Bdelbuff(buff);
 			Echo("\7Unable to popup man page.");
 		}
+#ifndef BORDER3D
 	}
 
-#ifndef BORDER3D
 	save = Curwdo;
 	if (WuseOther(MANBUFF)) {
 		Echo("Please wait...");

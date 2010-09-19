@@ -178,10 +178,10 @@ void Pclear()
 {
 	int i;
 #ifdef BORDER3D
-	WDO *wdo = Curwdo;
+	struct wdo *wdo = Curwdo;
 	wdo->modeflags = INVALID;
 #else
-	WDO *wdo = Whead;
+	struct wdo *wdo = Whead;
 #endif
 
 	for (i = 0; i < Rowmax - 2; ++i) {

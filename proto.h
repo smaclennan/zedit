@@ -252,7 +252,7 @@ char *Findfirst(char *);
 char *Findnext(void);
 FILE *Findhelp(int, int, char *);
 int Findpath(char *, char *, int, Boolean);
-WDO *Findwdo(Buffer *);
+struct wdo *Findwdo(Buffer *);
 int Forcecol(void);
 void Freelist(struct llist **);
 Boolean Getarg(char *, char *, int);
@@ -284,7 +284,7 @@ void Loadwdo(char *);
 void Makecur(Page *);
 void Makeoffset(int);
 void Makepaw(char *, Boolean);
-void Modeflags(WDO *);
+void Modeflags(struct wdo *);
 void Movepast(int (*pred)(), Boolean forward);
 void Moveto(int (*pred)(), Boolean forward);
 Boolean Mrkaftermrk(Mark *, Mark *);
@@ -431,8 +431,8 @@ int nmatch(char *, char *);
 void sreplace(char *);
 #endif
 
-void Wswitchto(WDO *wdo);
-void Winvalid(WDO *wdo);
+void Wswitchto(struct wdo *wdo);
+void Winvalid(struct wdo *wdo);
 void Wsize(void);
 Boolean WuseOther(char *);
 

@@ -95,7 +95,7 @@ void Initline()
 }
 
 /* Redraw the modeline except for flags. */
-static void Modeline(WDO *wdo)
+static void Modeline(struct wdo *wdo)
 {
 	char str[COLMAX + 1]; /* can't use PawStr because of Setmodes */
 	int len;
@@ -118,7 +118,7 @@ static void Modeline(WDO *wdo)
 }
 
 /* This routine will call Modeline if wdo->modeflags == INVALID */
-void Modeflags(WDO *wdo)
+void Modeflags(struct wdo *wdo)
 {
 	unsigned trow, tcol, line, col, mask;
 

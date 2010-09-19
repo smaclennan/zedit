@@ -302,7 +302,7 @@ void Zviewline()
 void Zredisplay()
 {
 #ifndef BORDER3D
-	WDO *wdo;
+	struct wdo *wdo;
 #endif
 
 	Wsize();

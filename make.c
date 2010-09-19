@@ -105,7 +105,7 @@ void Znexterr()
 #ifdef BORDER3D
 	ZmakeNextErr();
 #else
-	WDO *wdo;
+	struct wdo *wdo;
 	Buffer *save, *mbuff;
 	char fname[STRMAX + 1];
 	char path[PATHMAX + 1];

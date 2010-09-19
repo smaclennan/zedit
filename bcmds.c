@@ -86,7 +86,7 @@ void Delbuff(Buffer *buff)
 {
 	char bname[BUFNAMMAX + 1];
 	int wascur;
-	WDO *wdo;
+	struct wdo *wdo;
 
 	wascur = buff == Curbuff;
 	strcpy(bname, buff->bname);	/* save it for Delbname */
@@ -140,7 +140,7 @@ void Zlstbuff(void)
 	/* SAM FIX FOR BORDER3D */
 	StartProg("Zblist");
 #else
-	WDO *was = Curwdo;
+	struct wdo *was = Curwdo;
 	int i;
 
 	if (WuseOther(LISTBUFF)) {

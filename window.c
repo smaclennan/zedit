@@ -21,19 +21,19 @@
 
 #ifndef BORDER3D
 
-WDO *Whead, *Curwdo;
+struct wdo *Whead, *Curwdo;
 
 #define MINWDO		5		/* minimum window size */
 
-static void Wfree(WDO *);
-static Boolean Wdelete(WDO *);
+static void Wfree(struct wdo *);
+static Boolean Wdelete(struct wdo *);
 static Boolean Wsplit(void);
 
 
 /* Create a new window pointer - screen info invalid */
-static WDO *Wcreate(int first, int last)
+static struct wdo *Wcreate(int first, int last)
 {
-	WDO *new = calloc(sizeof(WDO), 1);
+	struct wdo *new = calloc(sizeof(struct wdo), 1);
 
 	if (new) {
 		new->wbuff	= Curbuff;
@@ -52,7 +52,7 @@ static WDO *Wcreate(int first, int last)
 }
 
 /* free wdo - may invalidate Curwdo and Whead */
-static void Wfree(WDO *wdo)
+static void Wfree(struct wdo *wdo)
 {
 	Unmark(wdo->wpnt);
 	Unmark(wdo->wmrk);
@@ -63,9 +63,9 @@ static void Wfree(WDO *wdo)
 	free((char *)wdo);
 }
 
-static Boolean Wdelete(WDO *wdo)
+static Boolean Wdelete(struct wdo *wdo)
 {
-	WDO *new;
+	struct wdo *new;
 
 	/* can't delete last window */
 	if (!Whead->next)
@@ -112,7 +112,7 @@ static Boolean Wdelete(WDO *wdo)
  */
 static Boolean Wsplit()
 {
-	WDO *new;
+	struct wdo *new;
 	int first, last;
 
 	if (Wheight() < MINWDO)
@@ -151,9 +151,9 @@ static Boolean Wsplit()
 }
 
 /* Find the window associated with buffer */
-WDO *Findwdo(Buffer *buff)
+struct wdo *Findwdo(Buffer *buff)
 {
-	WDO *wdo;
+	struct wdo *wdo;
 
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (wdo->wbuff == buff)
@@ -162,7 +162,7 @@ WDO *Findwdo(Buffer *buff)
 }
 
 /* Switch to another window. */
-void Wswitchto(WDO *wdo)
+void Wswitchto(struct wdo *wdo)
 {
 	if (wdo != Curwdo) {
 		if (Curwdo) {
@@ -214,7 +214,7 @@ void Cswitchto(Buffer *buff)
 /* Local routine to change the current window by 'size' lines */
 static Boolean Sizewindow(int size)
 {
-	WDO *other;
+	struct wdo *other;
 
 	if (Wheight() + size < MINWDO)
 		return FALSE;
@@ -246,7 +246,7 @@ int noResize;
 
 static inline void do_wsize(int orow)
 {
-	WDO *wdo;
+	struct wdo *wdo;
 	Boolean changed = TRUE;
 	int i, d = Rowmax - orow;
 
@@ -307,7 +307,7 @@ void Wsize()
 #ifdef SCROLLBARS
 	/* We always update scrollbars since width may have changed. */
 	{
-		WDO *wdo;
+		struct wdo *wdo;
 		for (wdo = Whead; wdo; wdo = wdo->next)
 			ResizeScrollBars(wdo);
 	}
@@ -317,7 +317,7 @@ void Wsize()
 /* Resize PAW by moving bottom window by 'diff' lines, if possible. */
 Boolean Resize(int diff)
 {
-	WDO *last;
+	struct wdo *last;
 	int i;
 
 	/* find the last window */
@@ -347,7 +347,7 @@ Boolean Resize(int diff)
  */
 Boolean WuseOther(char *bname)
 {
-	WDO *wdo, *last;
+	struct wdo *wdo, *last;
 	Buffer *buff;
 
 	for (wdo = Whead, last = NULL; wdo; last = wdo, wdo = wdo->next)
@@ -385,7 +385,7 @@ Boolean WuseOther(char *bname)
  * Note that the line BEFORE the window must be invalidated to make sure that
  * the window is updated correctly.
  */
-void Winvalid(WDO *wdo)
+void Winvalid(struct wdo *wdo)
 {
 	int i;
 
@@ -406,7 +406,7 @@ void Z2wind()
 /* Tear down all but one (current) window */
 void Z1wind()
 {
-	WDO *wdo;
+	struct wdo *wdo;
 	int i;
 
 	while (Whead) {
@@ -442,7 +442,7 @@ void Zdelwind()
 /* Make previous window current */
 void Zprevwind()
 {
-	WDO *wdo;
+	struct wdo *wdo;
 
 	if (Curwdo->prev)
 		Wswitchto(Curwdo->prev);
@@ -498,9 +498,9 @@ void Zsizewind()
  * Makes new window current.
  * Never fails.
  */
-static WDO *Otherwind()
+static struct wdo *Otherwind()
 {
-	WDO *wdo;
+	struct wdo *wdo;
 
 	if (Argp)
 		for (wdo = Whead;
@@ -519,7 +519,7 @@ static WDO *Otherwind()
 
 void Znxtothrwind()
 {
-	WDO *save = Curwdo;
+	struct wdo *save = Curwdo;
 	Otherwind();
 	Znextpage();
 	Wswitchto(save);
@@ -527,7 +527,7 @@ void Znxtothrwind()
 
 void Zprevothrwind()
 {
-	WDO *save = Curwdo;
+	struct wdo *save = Curwdo;
 	Otherwind();
 	Zprevpage();
 	Wswitchto(save);
@@ -539,7 +539,7 @@ void Zprevothrwind()
  */
 void Bgoto(Buffer *buff)
 {
-	WDO *wdo = Findwdo(buff);
+	struct wdo *wdo = Findwdo(buff);
 
 	if (wdo) {
 		Wswitchto(wdo);
@@ -579,7 +579,7 @@ void Loadwdo(char *bname)
 
 /* These routines are ONLY callable at startup. */
 
-static WDO *Wstart;	/* Set in Wload */
+static struct wdo *Wstart;	/* Set in Wload */
 
 void Winit()
 {
@@ -598,7 +598,7 @@ void Winit()
 
 void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 {
-	WDO *new;
+	struct wdo *new;
 	Buffer *buff;
 
 #if PIPESH

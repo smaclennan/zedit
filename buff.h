@@ -108,7 +108,7 @@ extern int Curchar, Curplen;
 extern Buffer *Curbuff;
 extern Page *Curpage;
 extern Mark *Mrklist;
-extern WDO *Curwdo, *Whead;
+extern struct wdo *Curwdo, *Whead;
 extern int Curmodf;
 
 #define MRKSIZE		(sizeof(Mark) - (sizeof(Mark *) << 1))

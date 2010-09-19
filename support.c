@@ -365,7 +365,7 @@ Boolean Cp(char *from, char *to)
 /* Move the buffer point to an absolute row, col */
 void Pntmove(int row, int col)
 {
-	WDO *wdo;
+	struct wdo *wdo;
 	int i;
 
 	if (InPaw) {

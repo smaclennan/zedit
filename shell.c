@@ -52,7 +52,7 @@ void Zcmdtobuff()
 #ifdef BORDER3D
 	Tbell();
 #elif XWINDOWS || PIPESH
-	WDO *save;
+	struct wdo *save;
 	int rc;
 
 	Arg = 0;
@@ -83,7 +83,7 @@ void Zman()
 	char entry[STRMAX + 5], *p;
 	int rc;
 #ifndef BORDER3D
-	WDO *save;
+	struct wdo *save;
 #endif
 
 	strcpy(entry, "man ");
@@ -260,7 +260,7 @@ Buffer *Cmdtobuff(char *bname, char *cmd)
 Buffer *Cmdtobuff(char *bname, char *cmd)
 {
 	Buffer *tbuff = NULL;
-	WDO *save;
+	struct wdo *save;
 
 	save = Curwdo;
 	if (WuseOther(bname)) {
@@ -386,7 +386,7 @@ int err;
 void Message(Buffer *buff, char *str)
 {
 #ifndef BORDER3D
-	WDO *wdo;
+	struct wdo *wdo;
 #endif
 
 	if (buff->fname)

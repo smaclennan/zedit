@@ -48,7 +48,7 @@ void Refresh()
 	int pntrow, col, bcol;
 	Mark *pmark;
 #ifndef BORDER3D
-	WDO *wdo;
+	struct wdo *wdo;
 	int tsave;
 #endif
 	static Mark *was;	/* last location of user mark */
@@ -319,7 +319,7 @@ void Vsetmod(int flag)
 #ifdef BORDER3D
 	Subset(Curwdo->first, Curwdo->last, flag);
 #else
-	WDO *wdo;
+	struct wdo *wdo;
 
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (wdo->wbuff == Curbuff)

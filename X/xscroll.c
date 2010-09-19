@@ -14,7 +14,7 @@ extern int win_width;
 #define THUMB_WIDTH		(SCROLLBAR_WIDTH - 2)
 
 /* Called by Wcreate to create scrollbars from line first to last */
-void CreateScrollBars(WDO *wdo)
+void CreateScrollBars(struct wdo *wdo)
 {
 	extern Cursor vscrollcursor, hscrollcursor;
 	static int set = 0, thumbColor, troughColor;
@@ -40,7 +40,7 @@ void CreateScrollBars(WDO *wdo)
 		THUMB_WIDTH, THUMB_SIZE, 0);
 
 	XDefineCursor(display, wdo->vscroll, vscrollcursor);
-	
+
 	XSetWindowBackground(display, wdo->vscroll, troughColor);
 	XSetWindowBackground(display, wdo->vthumb, thumbColor);
 	XClearWindow(display, wdo->vscroll);	/* force update */
@@ -57,7 +57,7 @@ void CreateScrollBars(WDO *wdo)
 		Xcol[Colmax] - 4, THUMB_WIDTH, 0);
 
 	XDefineCursor(display, wdo->hscroll, hscrollcursor);
-	
+
 	XSetWindowBackground(display, wdo->hscroll, troughColor);
 	XSetWindowBackground(display, wdo->hthumb, thumbColor);
 	XClearWindow(display, wdo->hscroll);	/* force update */
@@ -69,7 +69,7 @@ void CreateScrollBars(WDO *wdo)
 
 
 /* Called by Wfree */
-void DeleteScrollBars(WDO *wdo)
+void DeleteScrollBars(struct wdo *wdo)
 {
 	XDestroyWindow(display, wdo->vscroll);	/* this will destroy thumb */
 #ifdef HSCROLL
@@ -78,7 +78,7 @@ void DeleteScrollBars(WDO *wdo)
 }
 
 
-void ResizeScrollBars(WDO *wdo)
+void ResizeScrollBars(struct wdo *wdo)
 {
 	wdo->vheight = Xrow[wdo->last] - Xrow[wdo->first] - 2;
 	XMoveResizeWindow(display, wdo->vscroll,
@@ -95,7 +95,7 @@ void ResizeScrollBars(WDO *wdo)
 
 
 /* Move thumb to pixel value */
-static void ThumbTo(WDO *wdo, int y)
+static void ThumbTo(struct wdo *wdo, int y)
 {
 	if(y < thumbSize) y = 0;
 	else if(y > wdo->vheight - thumbSize) y = wdo->vheight - thumbSize;
@@ -103,7 +103,7 @@ static void ThumbTo(WDO *wdo, int y)
 	XMoveWindow(display, wdo->vthumb, 0, y);
 }
 
-static void ThumbSize(WDO *wdo, int height)
+static void ThumbSize(struct wdo *wdo, int height)
 {
 	if(thumbSize != height)
 	{
@@ -114,7 +114,7 @@ static void ThumbSize(WDO *wdo, int height)
 }
 
 /* Note that GotoLine is an implicit Wswitchto */
-static void GotoLine(WDO *wdo, int line)
+static void GotoLine(struct wdo *wdo, int line)
 {
 	Argp = TRUE;
 	Arg  = line;
@@ -129,7 +129,7 @@ static void GotoLine(WDO *wdo, int line)
 void ScrollEvent(event)
 XEvent *event;
 {
-	WDO *wdo;
+	struct wdo *wdo;
 	Window window = event->xany.window;
 
 	if(event->type != ButtonPress) return;
@@ -149,11 +149,11 @@ XEvent *event;
 		}
 #endif
 }
-	
+
 /* We received a ButtonPress event in a vscroll window */
 void VscrollEvent(event, wdo)
 XEvent *event;
-WDO *wdo;
+struct wdo *wdo;
 {
 	int lines;
 
@@ -203,7 +203,7 @@ void UpdateScrollbars()
 int Hshift = 0;
 
 /* Move thumb to pixel value */
-static void HThumbTo(WDO *wdo, int x)
+static void HThumbTo(struct wdo *wdo, int x)
 {
 	if(x < 0 || x >= Xcol[Colmax] - 3) return;
 
@@ -214,7 +214,7 @@ static void HThumbTo(WDO *wdo, int x)
 /* We received a ButtonPress event in a hscroll window */
 void HscrollEvent(event, wdo)
 XEvent *event;
-WDO *wdo;
+struct wdo *wdo;
 {
 	HThumbTo(wdo, event->xbutton.x);
 

@@ -26,7 +26,6 @@
 typedef struct page Page;
 typedef struct mark Mark;
 typedef struct buff Buffer;
-typedef struct wdo WDO;
 
 /* from old global.h */
 #ifndef _XtIntrinsic_h

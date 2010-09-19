@@ -663,12 +663,12 @@ Boolean down;
 		return TRUE;
 	}
 #else
-	WDO *wdo;
+	struct wdo *wdo;
 
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (row == wdo->last) {
 			/* on a modeline - scroll it */
-			WDO *save = Curwdo;
+			struct wdo *save = Curwdo;
 			Wswitchto(wdo);
 			down ? Znextpage() : Zprevpage();
 			Wswitchto(save);
@@ -1258,7 +1258,7 @@ void Initline()
 static char modeline[COLMAX + 1];
 
 /* Redraw the modeline except for flags. */
-static void Modeline(WDO *wdo, int y)
+static void Modeline(struct wdo *wdo, int y)
 {
 	memset(modeline, ' ', COLMAX);
 	sprintf(modeline, ZFMT, ZSTR, VERSION,
@@ -1282,7 +1282,7 @@ static void Modeline(WDO *wdo, int y)
 }
 
 
-void Modeflags(WDO *wdo)
+void Modeflags(struct wdo *wdo)
 {
 	unsigned line, col, mask;
 #ifdef BORDER3D
@@ -1390,7 +1390,7 @@ static void ExposeWindow()
 	int prow = Prow, pcol = Pcol;
 #ifndef BORDER3D
 	Buffer *bsave = Curbuff;
-	WDO *wdo;
+	struct wdo *wdo;
 #else
 
 	/* Draw the border around the window */

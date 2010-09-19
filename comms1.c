@@ -27,7 +27,7 @@ static char *SaveFileName(char *fname)
 
 void Save(Buffer *bsave)
 {
-	WDO *wdo;
+	struct wdo *wdo;
 	Buffer *tbuff;
 	char fname[30];
 	unsigned junk;

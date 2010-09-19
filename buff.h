@@ -44,7 +44,7 @@ struct page {
 
 
 struct mark {
-	Page *mpage;			/* page in the buffer */
+	struct page *mpage;		/* page in the buffer */
 	struct buff *mbuff;		/* buffer the mark is in */
 	int moffset;			/* offset in the page */
 	Boolean modf;			/* screen mark modified flags */
@@ -62,8 +62,8 @@ struct comment {
 
 struct buff {
 	Boolean bmodf;			/* buffer modified? */
-	Page *firstp, *lastp;		/* describe the pages */
-	Page *pnt_page;			/* the position of the point */
+	struct page *firstp, *lastp;	/* describe the pages */
+	struct page *pnt_page;		/* the position of the point */
 	unsigned pnt_offset;
 	Mark *mark;			/* position of mark in this buffer */
 	unsigned bmode;			/* buffer mode */
@@ -106,7 +106,7 @@ struct wdo {
 extern Byte *Curcptr, *Cpstart;
 extern int Curchar, Curplen;
 extern Buffer *Curbuff;
-extern Page *Curpage;
+extern struct page *Curpage;
 extern Mark *Mrklist;
 extern struct wdo *Curwdo, *Whead;
 extern int Curmodf;

@@ -23,7 +23,6 @@
  */
 
 /* from buff.h */
-typedef struct page Page;
 typedef struct mark Mark;
 typedef struct buff Buffer;
 

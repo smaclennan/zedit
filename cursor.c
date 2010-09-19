@@ -167,7 +167,7 @@ void Zopenline()
 void Zlgoto()
 {
 	long line, cnt = 0;
-	Page *tpage;
+	struct page *tpage;
 
 	if (Argp)
 		line = Arg;

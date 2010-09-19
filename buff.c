@@ -22,20 +22,20 @@
 #include <sys/stat.h>
 #include <time.h>
 
-Boolean	Curmodf;	/* page modified?? */
-Byte	*Cpstart;	/* pim data start */
-Byte	*Curcptr;	/* current character */
-int	Curchar;	/* current offset in Cpstart */
-int	Curplen;	/* current page length */
-Buffer	*Bufflist;	/* the buffer list */
-Buffer	*Curbuff;	/* the current buffer */
-Mark	*Mrklist;	/* the marks list */
-Page	*Curpage;	/* the current page */
+Boolean	Curmodf;		/* page modified?? */
+Byte	*Cpstart;		/* pim data start */
+Byte	*Curcptr;		/* current character */
+int	Curchar;		/* current offset in Cpstart */
+int	Curplen;		/* current page length */
+Buffer	*Bufflist;		/* the buffer list */
+Buffer	*Curbuff;		/* the current buffer */
+Mark	*Mrklist;		/* the marks list */
+struct page	*Curpage;	/* the current page */
 
 static int NumPages;
 
-static Page *Newpage(Buffer *tbuff, Page *ppage, Page *npage);
-static void Freepage(Buffer *tbuff, Page *page);
+static struct page *Newpage(Buffer *tbuff, struct page *ppage, struct page *npage);
+static void Freepage(Buffer *tbuff, struct page *page);
 static Boolean Pagesplit();
 static Boolean XBput(int fd, Byte *addr, unsigned len);
 
@@ -110,7 +110,7 @@ int Bcopyrgn(Mark *tmark, Buffer *tbuff)
 Buffer *Bcreate(void)
 {
 	Buffer *new;
-	Page *fpage;
+	struct page *fpage;
 
 	new = (Buffer *)malloc(sizeof(Buffer));
 	if (new) {
@@ -234,7 +234,7 @@ Boolean Bdelbuff(Buffer *tbuff)
 void Bdelete(unsigned quantity)
 {
 	int quan, noffset;
-	Page *tpage;
+	struct page *tpage;
 	Mark *tmark;
 
 	while (quantity) {
@@ -360,7 +360,7 @@ void Binstr(char *str)
 /* Returns TRUE if point is after the mark. */
 Boolean Bisaftermrk(Mark *tmark)
 {
-	Page *tp;
+	struct page *tp;
 
 	if (!tmark->mpage || tmark->mbuff != Curbuff)
 		return FALSE;
@@ -375,7 +375,7 @@ Boolean Bisaftermrk(Mark *tmark)
 /* True if the point precedes the mark. */
 Boolean Bisbeforemrk(Mark *tmark)
 {
-	register Page *tp;
+	register struct page *tp;
 
 	if (!tmark->mpage || tmark->mbuff != Curbuff)
 		return FALSE;
@@ -390,8 +390,8 @@ Boolean Bisbeforemrk(Mark *tmark)
 /* Returns the length of the buffer. */
 long Blength(Buffer *tbuff)
 {
-	register Page *tpage;
-	Page *spage;
+	register struct page *tpage;
+	struct page *spage;
 	register long len;
 
 	Curpage->plen = Curplen;
@@ -410,7 +410,7 @@ long Blength(Buffer *tbuff)
 unsigned long Blocation(unsigned *lines)
 {
 	unsigned long len;
-	Page *tpage, *spage;
+	struct page *tpage, *spage;
 
 	spage = Curpage;
 	len = 0l;
@@ -436,7 +436,7 @@ unsigned long Blocation(unsigned *lines)
 long Blines(Buffer *buff)
 {
 	unsigned long lines;
-	Page *tpage, *spage;
+	struct page *tpage, *spage;
 
 	if (Curmodf)
 		Curpage->lines = EOF;
@@ -700,7 +700,7 @@ int Breadfile(char *fname)
 int Bwritefd(int fd)
 {
 	Mark pmark;				/* no mallocs! */
-	Page *tpage;
+	struct page *tpage;
 	struct stat sbuf;
 	int status = TRUE;
 
@@ -832,7 +832,7 @@ void Makeoffset(int dist)
 /* True if mark1 follows mark2 */
 Boolean Mrkaftermrk(Mark *mark1, Mark *mark2)
 {
-	Page *tpage;
+	struct page *tpage;
 
 	if (!mark1->mpage || !mark2->mpage || mark1->mbuff != mark2->mbuff)
 		return FALSE;        /* marks in different buffers */
@@ -857,7 +857,7 @@ Boolean Mrkatmrk(Mark *mark1, Mark *mark2)
 /* True if mark1 precedes mark2 */
 Boolean Mrkbeforemrk(Mark *mark1, Mark *mark2)
 {
-	Page *tpage;
+	struct page *tpage;
 
 	if (!mark1->mpage || !mark2->mpage || mark1->mbuff != mark2->mbuff)
 		return FALSE;        /* Marks not in same buffer */
@@ -891,9 +891,9 @@ void Unmark(Mark *mptr)
 /* Low level memory buffer routines */
 
 /* Create a new memory page and link into chain */
-static Page *Newpage(Buffer *tbuff, Page *ppage, Page *npage)
+static struct page *Newpage(Buffer *tbuff, struct page *ppage, struct page *npage)
 {
-	Page *new = malloc(sizeof(Page));
+	struct page *new = malloc(sizeof(struct page));
 
 	if (new) {
 		new->nextp = npage;
@@ -909,7 +909,7 @@ static Page *Newpage(Buffer *tbuff, Page *ppage, Page *npage)
 }
 
 /* Free a memory page */
-static void Freepage(Buffer *tbuff, Page *page)
+static void Freepage(Buffer *tbuff, struct page *page)
 {
 	if (page->nextp)
 		page->nextp->prevp = page->prevp;
@@ -924,7 +924,7 @@ static void Freepage(Buffer *tbuff, Page *page)
 }
 
 /* Make page current*/
-void Makecur(Page *page)
+void Makecur(struct page *page)
 {
 	if (Curpage == page)
 		return;
@@ -942,7 +942,7 @@ void Makecur(Page *page)
 /* Split the current (full) page. */
 static Boolean Pagesplit()
 {
-	Page *new;
+	struct page *new;
 	Mark *btmark;
 
 	new = Newpage(Curbuff, Curpage, Curpage->nextp);

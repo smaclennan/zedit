@@ -29,6 +29,8 @@ extern int win_width, win_height;
 
 extern char *KeyNames[];
 
+extern char *PromptString;
+
 Window CreateWindow(Window parent, int x, int y, int w, int h, long ev);
 char *GetResource(char *name, char *class);
 void initSockets(int xfd);

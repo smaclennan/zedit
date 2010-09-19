@@ -36,12 +36,10 @@ unsigned Nextpart = ZNOTIMPL;
  * Prompt the user for an argument, with an optional default in arg.
  * Only allow max chars.
  * Arg is NOT overwritten if the user aborts, or returns a null string.
- */
-
-#if XWINDOWS
-/* We need this global so we can redisplay on an exposure event */
+ */#if XWINDOWS
 char *PromptString;
 #endif
+
 
 Boolean Getarg(char *prompt, char *arg, int max)
 {
@@ -51,6 +49,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
 
 	tcol = Pcol; trow = Prow;
 #if XWINDOWS
+	/* We need this global so we can redisplay on an exposure event */
 	PromptString = prompt;
 	Tstyle(T_NORMAL);		/* always display paw in normal */
 #endif

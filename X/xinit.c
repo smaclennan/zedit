@@ -22,23 +22,23 @@ int Xrow[ROWMAX + 1], Xcol[COLMAX + 1];
 
 /* command line options table */
 static XrmOptionDescRec opTable[] = {
-{"-bw",				".borderWidth",		XrmoptionSepArg,	(caddr_t) NULL},
-{"-display",		".display",			XrmoptionSepArg,	(caddr_t) NULL},
-{"-font",			"*font",			XrmoptionSepArg,	(caddr_t) NULL},
-{"-bold",			"*boldfont",		XrmoptionSepArg,	(caddr_t) NULL},
+	{ "-bw",	".borderWidth",	 XrmoptionSepArg, (caddr_t)NULL },
+	{ "-display",	".display",	 XrmoptionSepArg, (caddr_t)NULL },
+	{ "-font",	"*font",	 XrmoptionSepArg, (caddr_t)NULL },
+	{ "-bold",	"*boldfont",	 XrmoptionSepArg, (caddr_t)NULL },
 	
-/* colors */
-{"-fg",				"*foreground",		XrmoptionSepArg,	(caddr_t) NULL},
-{"-bg",				"*background",		XrmoptionSepArg,	(caddr_t) NULL},
-{"-cr",				"*cursorColor",		XrmoptionSepArg,	(caddr_t) NULL},
-{"-ms",				"*markColor",		XrmoptionSepArg,	(caddr_t) NULL},
-{"-cc",				"*commentColor",	XrmoptionSepArg,	(caddr_t) NULL},
+	/* colors */
+	{ "-fg",	"*foreground",	 XrmoptionSepArg, (caddr_t)NULL },
+	{ "-bg",	"*background",	 XrmoptionSepArg, (caddr_t)NULL },
+	{ "-cr",	"*cursorColor",	 XrmoptionSepArg, (caddr_t)NULL },
+	{ "-ms",	"*markColor",	 XrmoptionSepArg, (caddr_t)NULL },
+	{ "-cc",	"*commentColor", XrmoptionSepArg, (caddr_t)NULL },
 
-{"-geometry",		".geometry",		XrmoptionSepArg,	(caddr_t) NULL},
-{"-geo",			".geometry",		XrmoptionSepArg,	(caddr_t) NULL},
-{"-iconic",			".iconic",			XrmoptionNoArg,		(caddr_t) "on"},
-{"-geom",			"*iconGeometry",	XrmoptionSepArg,	(caddr_t) NULL},
-{"-ps",				"*pointerShape",	XrmoptionSepArg,	(caddr_t) NULL},
+	{ "-geometry",	".geometry",	 XrmoptionSepArg, (caddr_t)NULL },
+	{ "-geo",	".geometry",	 XrmoptionSepArg, (caddr_t)NULL },
+	{ "-iconic",	".iconic",	 XrmoptionNoArg,  (caddr_t)"on" },
+	{ "-geom",	"*iconGeometry", XrmoptionSepArg, (caddr_t)NULL },
+	{ "-ps",	"*pointerShape", XrmoptionSepArg, (caddr_t)NULL },
 };
 #define OPTABLESZ	(sizeof(opTable) / sizeof(XrmOptionDescRec))
 

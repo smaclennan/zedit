@@ -140,17 +140,16 @@ extern struct passwd *Me;
 
 /* System buffer names */
 #define UNTITLED	"NoFile"	/* for buffers with no fname */
-#define MAINBUFF	"Main"		/* not a system buffer */
-#define PAWBUFNAME	"PAW"		/* Paw - should never be display */
-#define DIRBUFNAME	".dir"
-#define HELPBUFF	".help"
-#define MAKEBUFF	".make"
-#define MANBUFF		".man"
-#define SHELLBUFF	".shell"
-#define TAGBUFNAME	".tags"
-#define SPELLBUFF	".spell"
-#define LISTBUFF	".list"
-#define REFBUFF		".ref"
+#define MAINBUFF	"*scratch*"
+#define PAWBUFNAME	"*PAW*"		/* Paw - should never be display */
+#define HELPBUFF	"*help*"
+#define MAKEBUFF	"*compile*"
+#define MANBUFF		"*man*"
+#define SHELLBUFF	"*shell*"
+#define TAGBUFNAME	"*tags*"
+#define SPELLBUFF	"*spell*"
+#define LISTBUFF	"*list*"
+#define REFBUFF		"*ref*"
 
 /* Ask return values */
 #define YES		1

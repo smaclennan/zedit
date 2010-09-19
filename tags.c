@@ -306,7 +306,6 @@ static Boolean GetTagsFile()
 		return FALSE;
 	}
 
-	tbuff->bmode |= SYSBUFF;
 	Breadfile(fname);
 	return TRUE;
 }

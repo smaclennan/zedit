@@ -375,7 +375,6 @@ Boolean WuseOther(char *bname)
 	buff = Cmakebuff(bname, NULL);
 	if (buff == NULL)
 		return FALSE;
-	buff->bmode |= SYSBUFF;
 	Cswitchto(buff);
 	Bempty();
 	return TRUE;
@@ -608,7 +607,6 @@ void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 		buff = Cmakebuff(SHELLBUFF, NULL);
 		if (buff == NULL)
 			NoMem();
-		buff->bmode |= SYSBUFF;
 		Doshell();
 	}
 #endif

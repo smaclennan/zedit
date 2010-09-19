@@ -374,6 +374,9 @@ Buffer *Cmakebuff(char *bname, char *fname)
 		return NULL;
 	}
 
+	if (*bname == '*')
+		bptr->bmode |= SYSBUFF;
+
 	Bswitchto(bptr);
 	if (fname)
 		bptr->fname = strdup(fname);
@@ -412,6 +415,7 @@ char *Addbname(char *bname)
 	if (strlen(Bnames[i]) > BUFNAMMAX)
 		Bnames[i][BUFNAMMAX] = '\0';
 	++Numbuffs;
+
 	return Bnames[i];
 }
 

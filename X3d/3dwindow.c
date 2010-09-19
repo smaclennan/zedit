@@ -9,22 +9,23 @@
 
 #include "../z.h"
 
-extern Mark Scrnmarks[], *Sstart;
+extern struct mark Scrnmarks[], *Sstart;
 extern int Sendp;
 
-WDO *Curwdo = NULL;
+struct wdo *Curwdo = NULL;
 
 #define MINWDO		5		/* minimum window size */
 
 /* Create a new window pointer - screen info invalid */
-static WDO *Wcreate(first, last)
+static struct wdo *Wcreate(first, last)
 int first, last;
 {
-	if(Curwdo) return;
+	if(Curwdo)
+		return Curwdo;
 
-	if((Curwdo = (WDO *)malloc(sizeof(WDO))) != NULL)
+	if((Curwdo = (struct wdo *)malloc(sizeof(struct wdo))) != NULL)
 	{
-		memset((char *)Curwdo, '\0', sizeof(WDO));
+		memset((char *)Curwdo, '\0', sizeof(struct wdo));
 		Curwdo->wbuff		= Curbuff;
 		Curwdo->wpnt		= Bcremrk();
 		Curwdo->wmrk		= Bcremrk();
@@ -40,13 +41,13 @@ int first, last;
 
 /* Switch to a new buffer in the current window. */
 void Cswitchto(buff)
-Buffer *buff;
+struct buff *buff;
 {
-	extern Mark *Sstart;
+	extern struct mark *Sstart;
 
 	Bswitchto(buff);
 	if(Curwdo->wbuff != Curbuff)
-	{	
+	{
 		Curwdo->wbuff = Curbuff;
 		Bmrktopnt(Curwdo->wpnt);
 		Mrktomrk(Curwdo->wmrk, Curbuff->mark);
@@ -59,7 +60,7 @@ Buffer *buff;
 			Curwdo->wstart->moffset = 0;
 		}
 		Curwdo->modeflags = INVALID;
-	
+
 		Settabsize( buff->bmode );
 	}
 
@@ -77,7 +78,7 @@ Tbell();
 return FALSE;
 #if 0
 /* SAM Rethink this...*/
-	
+
 	if(Wheight() + size < MINWDO) return(FALSE);
 	if((other = Curwdo->next) &&
 		other->last - other->first - size > MINWDO)
@@ -94,7 +95,7 @@ return FALSE;
 	else
 		return(FALSE);
 
-	/* invalidate the windows */		
+	/* invalidate the windows */
 	Winvalid(Curwdo);
 	Winvalid(other);
 
@@ -126,10 +127,10 @@ void Wsize()
 Boolean Resize(diff)
 int diff;
 {
-	WDO *last;
 	int i;
-	
-	if(Curwdo->last - Curwdo->first + diff < 5) return FALSE;
+
+	if(Curwdo->last - Curwdo->first + diff < 5)
+		return FALSE;
 	if(diff > 0)
 		for(i = 0; i < diff; ++i)
 			Scrnmarks[i + Curwdo->last].modf = TRUE;
@@ -147,7 +148,7 @@ int diff;
  * the window is updated correctly.
  */
 void Winvalid(wdo)
-WDO *wdo;
+struct wdo *wdo;
 {
 	int i;
 
@@ -197,7 +198,7 @@ void Zprevothrwind() { Tbell(); }
  * in the current or other window.
  */
 void Bgoto(buff)
-Buffer *buff;
+struct buff *buff;
 {
 	Cswitchto(buff);
 }
@@ -208,7 +209,7 @@ void Loadwdo(bname) char *bname; {}
 
 /* These routines are ONLY callable at startup. */
 
-static WDO *Wstart = NULL;	/* Set in Wload */
+static struct wdo *Wstart = NULL;	/* Set in Wload */
 
 void Winit()
 {
@@ -228,7 +229,7 @@ unsigned long sloc;
 {	/* ignore all but current window */
 	if(iscurrent)
 	{
-		Buffer *buff;
+		struct buff *buff;
 		
 		if((buff = Cfindbuff(bname)) == NULL) buff = Cfindbuff(MAINBUFF);
 		Bswitchto(buff);

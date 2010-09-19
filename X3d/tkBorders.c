@@ -30,6 +30,11 @@ void BorderInit()
 	{
 		values.foreground = ccolor.pixel;
 		mask |= GCForeground;
+
+		/* default these in case .modelinefg not set */
+		values.background = ccolor.pixel;
+		mask |= GCBackground;
+	 	Zborder.bgColorPtr = &ccolor;
 	}
 	if((color = GetResource(".modelinefg", ".modelinefg")) &&
 		GetXColor(color, &ccolor))
@@ -38,7 +43,8 @@ void BorderInit()
 		mask |= GCBackground;
 	 	Zborder.bgColorPtr = &ccolor;
 	}
-	
+
+
 	Zborder.darkGC = Zborder.lightGC = None;
 	Zborder.shadow = None;
 	values.font = fontid;
@@ -178,7 +184,7 @@ void CreateScrollBars()
 {
 	extern Border Zborder;
 	int x, y;
-    XGCValues gcValues;
+	XGCValues gcValues;
 	char *env;
 
 	Vscroll.vertical = 1;
@@ -263,7 +269,7 @@ void UpdateScrollbars()
 void ScrollEvent(event)
 XEvent *event;
 {
-	WDO *wdo;
+	struct wdo *wdo;
 	Window window = event->xany.window;
 
 	if(event->type != ButtonPress) return;
@@ -275,13 +281,13 @@ XEvent *event;
 		HscrollEvent(event);
 #endif
 }
-	
+
 /* We received an event in a scroll window */
 void VscrollEvent(XEvent *event)
 {
 	extern int Arg, Argp;
 	long lines;
-	
+
 	if(event->type != ButtonPress || event->xany.window != Vscroll.win) return;
 
 	Vscroll.activeField = ScrollbarPosition(&Vscroll,
@@ -290,7 +296,7 @@ void VscrollEvent(XEvent *event)
 	ShowCursor(FALSE);
 	DisplayScrollbar(&Vscroll);
 
-	/* Process Motion events until ButtonRelease */			
+	/* Process Motion events until ButtonRelease */
 	do
 	{
 		XNextEvent(display, event);
@@ -336,7 +342,7 @@ int Hshift = 0;
 /* We received a ButtonPress event in a hscroll window */
 void HscrollEvent(event, wdo)
 XEvent *event;
-WDO *wdo;
+struct wdo *wdo;
 {
 	do
 	{
@@ -366,7 +372,7 @@ static Border *CreateBorder(Window win, char *resource, Border *bdefault)
 		   (border->bgColorPtr = (XColor *)malloc(sizeof(XColor))) == 0)
 		{	/* no memory! */
 			if(border) free(border);
-printf("DEFAULT BORDER\n");/*SAM*/
+printf("No memory, DEFAULT BORDER\n");/*SAM*/
 			return bdefault;
 		}
 

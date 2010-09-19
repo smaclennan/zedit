@@ -57,7 +57,6 @@ of the Rights in Technical Data and Computer Software Clause as DFARS
 #include <math.h>
 #endif
 #define XWINDOWS 1
-#include "../global.h"
 #include "xwind.h"
 
 

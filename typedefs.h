@@ -21,10 +21,6 @@
  * typedef errors. Easier to put them in one file and ignore them :(
  */
 
-/* from buff.h */
-typedef struct buff Buffer;
-
-/* from old global.h */
 #ifndef _XtIntrinsic_h
 typedef int Boolean;
 #endif

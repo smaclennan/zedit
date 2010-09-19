@@ -194,7 +194,7 @@ void Doreplace(int type)
 	Boolean exit = FALSE, crgone, query;
 	Byte ebuf[ESIZE];
 	struct mark *pmark, tmark;
-	Buffer *tbuff;
+	struct buff *tbuff;
 	int rc = 0;
 
 	Arg = 0;

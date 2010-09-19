@@ -44,7 +44,7 @@ void Zswitchto(void)
 
 void Znextbuff(void)
 {
-	Buffer *next = Curbuff->prev;
+	struct buff *next = Curbuff->prev;
 
 
 	if (!next && Curbuff->next)
@@ -60,7 +60,7 @@ void Znextbuff(void)
 
 void Zkillbuff(void)
 {
-	Buffer *tbuff;
+	struct buff *tbuff;
 	char bname[BUFNAMMAX + 1];
 
 	if (Argp) {
@@ -82,7 +82,7 @@ void Zkillbuff(void)
 }
 
 
-void Delbuff(Buffer *buff)
+void Delbuff(struct buff *buff)
 {
 	char bname[BUFNAMMAX + 1];
 	int wascur;
@@ -98,7 +98,7 @@ void Delbuff(Buffer *buff)
 #endif
 		Delbname(bname);
 		if (wascur && *Lbufname) {
-			Buffer *tbuff = Cfindbuff(Lbufname);
+			struct buff *tbuff = Cfindbuff(Lbufname);
 			if (tbuff)
 				Bswitchto(tbuff);
 		}
@@ -123,7 +123,7 @@ void Delbuff(Buffer *buff)
 
 #define WASTED		(BUFNAMMAX + 14)
 
-static void lstbuff(Buffer *tbuff)
+static void lstbuff(struct buff *tbuff)
 {
 	sprintf(PawStr, "%-*s %c%c %8lu %s ", BUFNAMMAX, tbuff->bname,
 		(tbuff->bmode & SYSBUFF) ? 'S' : ' ',
@@ -145,7 +145,7 @@ void Zlstbuff(void)
 
 	if (WuseOther(LISTBUFF)) {
 		for (i = 0; i < Numbuffs; ++i) {
-			Buffer *tbuff = Cfindbuff(Bnames[i]);
+			struct buff *tbuff = Cfindbuff(Bnames[i]);
 			if (tbuff)
 				lstbuff(tbuff);
 			else {

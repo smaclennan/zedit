@@ -64,7 +64,7 @@ Boolean Findfile(char *path, int startup)
 {
 	char tbname[BUFNAMMAX + 1];
 	char *was;
-	Buffer *tbuff;
+	struct buff *tbuff;
 	int rc = TRUE;
 
 	Arg = 0;
@@ -118,7 +118,7 @@ Boolean Findfile(char *path, int startup)
 void Zsaveall()
 {
 	if (Argp) {
-		Buffer *tbuff;
+		struct buff *tbuff;
 
 		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 			if (!(tbuff->bmode & SYSBUFF) && tbuff->fname)
@@ -185,7 +185,7 @@ void Zfilewrite()
  */
 int Write_rgn(char *path)
 {
-	Buffer *tbuff, *save;
+	struct buff *tbuff, *save;
 	int rc = FALSE;
 
 	save = Curbuff;
@@ -215,7 +215,7 @@ void Zfileread()
 /* read 'fname' into buffer at Point */
 int Fileread(char *fname)
 {
-	Buffer *tbuff, *save;
+	struct buff *tbuff, *save;
 	struct mark *tmark;
 	int rc = 1;
 

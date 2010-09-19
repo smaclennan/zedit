@@ -21,7 +21,7 @@
 
 
 /* local routine to set PawStr to the correct mode */
-char *Setmodes(Buffer *buff)
+char *Setmodes(struct buff *buff)
 {
 	if (!InPaw)	/* we should never be in the Paw but .... */
 		Funcs = (buff->bmode & VIEW) ? Vcmds : Cmds;
@@ -131,7 +131,7 @@ void Modeflags(struct wdo *wdo)
 	Tstyle(T_STANDOUT);
 
 	if (VAR(VLINES)) {
-		Buffer *was = Curbuff;
+		struct buff *was = Curbuff;
 		Bswitchto(wdo->wbuff);
 		Blocation(&line);
 		col = Bgetcol(FALSE, 0) + 1;

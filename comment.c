@@ -54,7 +54,7 @@ static void NewCPP(struct mark *start, struct mark *end, int type)
 /* Merge the COMlist and the CPPlist into the buffer->comments */
 static void MergeComments(void)
 {
-	Buffer *buff = Curbuff;
+	struct buff *buff = Curbuff;
 
 	if (!CPPhead) {
 		buff->comments = COMhead;
@@ -167,7 +167,7 @@ again:
 #endif
 
 /* Remove all comments from buffer and mark unscanned */
-static void UnComment(Buffer *buff)
+static void UnComment(struct buff *buff)
 {
 	struct comment *com, *next;
 	int i;
@@ -303,7 +303,7 @@ void AddCPP(void)
 /* Called from Zredisplay */
 void Recomment(void)
 {
-	Buffer *buff;
+	struct buff *buff;
 
 	for (buff = Bufflist; buff; buff = buff->next)
 		UnComment(buff);

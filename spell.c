@@ -31,8 +31,8 @@ static int ispell(FILE *, FILE *, char *, char *);
 void Zspell()
 {
 	static char *argv[] = { "ispell", "-a", NULL };
-	Buffer *was;
-	Buffer *sbuff;
+	struct buff *was;
+	struct buff *sbuff;
 	struct mark *emark;
 	struct mark *point, *mark;
 	Byte cmd;

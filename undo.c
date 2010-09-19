@@ -34,7 +34,7 @@ struct undo {
 
 static struct undo *freelist;
 
-static struct undo *new_undo(Buffer *buff)
+static struct undo *new_undo(struct buff *buff)
 {
 	struct undo *undo;
 
@@ -58,7 +58,7 @@ static struct undo *new_undo(Buffer *buff)
 	return undo;
 }
 
-static void recycle_undo(Buffer *buff)
+static void recycle_undo(struct buff *buff)
 {
 	struct undo *undo = buff->undo_tail;
 
@@ -71,7 +71,7 @@ static void recycle_undo(Buffer *buff)
 	freelist = undo;
 }
 
-static inline int no_undo(Buffer *buff)
+static inline int no_undo(struct buff *buff)
 {
 	if (buff == Paw || buff == Killbuff)
 		return TRUE;
@@ -133,7 +133,7 @@ void undo_del(int size)
 	undo->size = size;
 }
 
-void undo_clear(Buffer *buff)
+void undo_clear(struct buff *buff)
 {
 	while (buff->undo_tail)
 		recycle_undo(buff);
@@ -168,5 +168,5 @@ void Zundo(void)
 void Zundo(void) { Tbell(); }
 void undo_add(int size) {}
 void undo_del(int size) {}
-void undo_clear(Buffer *buff) {}
+void undo_clear(struct buff *buff) {}
 #endif

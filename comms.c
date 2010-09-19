@@ -558,7 +558,7 @@ void Zsetmrk()
 static void Quit()
 {
 #if PIPESH || XWINDOWS
-	Buffer *tbuff;
+	struct buff *tbuff;
 
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (tbuff->child != EOF)
@@ -581,7 +581,7 @@ static void Quit()
 
 void Zquit()
 {
-	Buffer *tbuff;
+	struct buff *tbuff;
 	Boolean modf = FALSE;
 
 	if (!Argp) {
@@ -603,7 +603,7 @@ void Zquit()
 void Zexit()
 {
 #if PIPESH || XWINDOWS
-	Buffer *make = Cfindbuff(MAKEBUFF);
+	struct buff *make = Cfindbuff(MAKEBUFF);
 
 	if (make && make->child != EOF)
 		if (Ask("You have a make running. Kill it?") != YES)
@@ -618,7 +618,7 @@ void Zexit()
  * Always saves if 'must' is TRUE or SaveOnExit is set.
  * Returns FALSE if the user ABORTS the prompt.
  */
-static Boolean Promptsave(Buffer *tbuff, Boolean must)
+static Boolean Promptsave(struct buff *tbuff, Boolean must)
 {
 	char str[BUFNAMMAX + 20];
 	int ok = YES;
@@ -648,7 +648,7 @@ static Boolean Promptsave(Buffer *tbuff, Boolean must)
 */
 Boolean Saveall(Boolean must)
 {
-	Buffer *tbuff, *bsave;
+	struct buff *tbuff, *bsave;
 
 	bsave = Curbuff;
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)

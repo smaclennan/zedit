@@ -119,7 +119,7 @@ void Setup(int argc, char **argv)
 	char path[PATHMAX + 1];
 	char *progname;
 	int col = 0, arg, files = 0, textMode = 0;
-	Buffer *tbuff, *other = NULL;
+	struct buff *tbuff, *other = NULL;
 	Boolean xor = FALSE;
 #if XWINDOWS
 	Boolean Spawn = TRUE;
@@ -322,7 +322,7 @@ void Setup(int argc, char **argv)
  */
 Boolean Readone(char *bname, char *path)
 {
-	Buffer *was = Curbuff;
+	struct buff *was = Curbuff;
 
 	if (Cfindbuff(bname))
 		return TRUE;
@@ -350,9 +350,9 @@ Boolean Readone(char *bname, char *path)
 }
 
 /* Create a buffer. */
-Buffer *Cmakebuff(char *bname, char *fname)
+struct buff *Cmakebuff(char *bname, char *fname)
 {
-	Buffer *bptr, *save = Curbuff;
+	struct buff *bptr, *save = Curbuff;
 
 	bptr = Cfindbuff(bname);
 	if (bptr) {
@@ -435,9 +435,9 @@ Boolean Delbname(char *bname)
 }
 
 /* Locate a given buffer */
-Buffer *Cfindbuff(char *bname)
+struct buff *Cfindbuff(char *bname)
 {
-	Buffer *tbuff;
+	struct buff *tbuff;
 
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (Strnicmp(tbuff->bname, bname, BUFNAMMAX) == 0)

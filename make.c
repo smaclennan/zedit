@@ -29,7 +29,7 @@ static int NextErrorCalled;
 void Zmake()
 {
 #ifndef BORDER3D
-	Buffer *mbuff;
+	struct buff *mbuff;
 #endif
 
 	NextErrorCalled = 0;	/* reset it */
@@ -70,7 +70,7 @@ void Zmake()
 /* Do a "make" command - basically a shell command in the ".make" buffer */
 void Zgrep()
 {
-	Buffer *mbuff;
+	struct buff *mbuff;
 	char cmd[STRMAX * 2];
 
 	NextErrorCalled = 0;	/* reset it */
@@ -106,7 +106,7 @@ void Znexterr()
 	ZmakeNextErr();
 #else
 	struct wdo *wdo;
-	Buffer *save, *mbuff;
+	struct buff *save, *mbuff;
 	char fname[STRMAX + 1];
 	char path[PATHMAX + 1];
 	int line;

@@ -23,7 +23,7 @@
 /* globals for Getarg */
 Boolean InPaw, First;
 int Pawcol, Pawlen, Pshift;
-Buffer *Paw, *Buff_save;
+struct buff *Paw, *Buff_save;
 
 /* globals for Getplete */
 char **Carray;
@@ -299,7 +299,7 @@ void Pnewline()
 void Zpart()
 {
 	char word[STRMAX + 1];
-	Buffer *tbuff;
+	struct buff *tbuff;
 
 	if (Nextpart == ZFINDTAG) {
 		Bswitchto(Cfindbuff(TAGBUFNAME));

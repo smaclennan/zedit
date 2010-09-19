@@ -8,7 +8,7 @@
 /* Come here on SIGHUP or SIGTERM */
 void Hangup(int signal)
 {
-	Buffer *bsave, *tbuff;
+	struct buff *bsave, *tbuff;
 
 	InPaw = TRUE;	/* Kludge to turn off Error */
 	bsave = Curbuff;
@@ -32,7 +32,7 @@ void Hangup(int signal)
 }
 
 #if PIPESH
-static int Readapipe(Buffer *);
+static int Readapipe(struct buff *);
 
 int Waiting;
 fd_set SelectFDs;
@@ -42,7 +42,7 @@ int NumFDs;
 /* Read all the active pipe buffers. */
 int Readpipes(fd_set *fds)
 {
-	Buffer *tbuff;
+	struct buff *tbuff;
 	int did_something = 0;
 
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
@@ -61,7 +61,7 @@ int Readpipes(fd_set *fds)
  */
 int Checkpipes(int type)
 {
-	Buffer *tbuff;
+	struct buff *tbuff;
 	int pid = 0, status;
 
 	if (type == 2)
@@ -118,7 +118,7 @@ int Checkpipes(int type)
 }
 
 /* pipe has something for us */
-static int Readapipe(Buffer *tbuff)
+static int Readapipe(struct buff *tbuff)
 {
 	char buff[BUFSIZ], *ptr;
 	int cnt, i;
@@ -127,7 +127,7 @@ static int Readapipe(Buffer *tbuff)
 	if (i > 0) {
 		/* Yup! Read somethin' */
 		struct mark tmark;
-		Buffer *save = Curbuff;
+		struct buff *save = Curbuff;
 
 		Bswitchto(tbuff);
 		Bmrktopnt(&tmark);
@@ -173,7 +173,7 @@ void Sendtopipe()
 Invoke a shell on the other end of a two way pipe.
 Returns true if the invocation succeeded.
 */
-Boolean Invoke(Buffer *tbuff, char *argv[])
+Boolean Invoke(struct buff *tbuff, char *argv[])
 {
 	int from[2], to[2];
 
@@ -224,7 +224,7 @@ Boolean Invoke(Buffer *tbuff, char *argv[])
 /* Invoke 'cmd' on a pipe.
  * Returns true if the invocation succeeded.
 */
-Boolean Dopipe(Buffer *tbuff, char *icmd)
+Boolean Dopipe(struct buff *tbuff, char *icmd)
 {
 	char cmd[STRMAX + 1], *p, *argv[11];
 	int from[2], arg;
@@ -290,7 +290,7 @@ char *Wordit(char **str)
 }
 
 /* Try to kill a child process */
-void Unvoke(Buffer *child, Boolean check)
+void Unvoke(struct buff *child, Boolean check)
 {
 	if (child && child->child != EOF) {
 		kill(child->child, SIGKILL);

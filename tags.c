@@ -22,10 +22,10 @@
 
 
 char Savetag[STRMAX + 1];
-Buffer *Bsave;
+struct buff *Bsave;
 
 static void GotoMatch(struct mark *smark);
-static Boolean Tagfparse(Buffer *);
+static Boolean Tagfparse(struct buff *);
 static Boolean GetTagsFile(void);
 
 /* Routines to handle tag files. Zfindtag looks through the tagfile and if
@@ -146,7 +146,7 @@ static void GotoMatch(struct mark *smark)
 }
 
 /* Parse the line in the tag file and find the correct file and position. */
-static Boolean Tagfparse(Buffer *bsave)
+static Boolean Tagfparse(struct buff *bsave)
 {
 #if ETAGS
 #else
@@ -243,7 +243,7 @@ static Boolean Tagfparse(Buffer *bsave)
 /* Load the tags file into a buffer. */
 static Boolean GetTagsFile()
 {
-	Buffer *tbuff;
+	struct buff *tbuff;
 	char fname[PATHMAX + 1], *tagfname;
 
 	tbuff = Cfindbuff(TAGBUFNAME);
@@ -325,7 +325,7 @@ int Batoi()
 
 void Zref()
 {
-	Buffer *mbuff;
+	struct buff *mbuff;
 	char tag[STRMAX + 40], *p;
 
 	strcpy(tag, "ref ");

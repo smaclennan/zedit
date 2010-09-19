@@ -88,7 +88,7 @@ struct buff {
 };
 
 struct wdo {
-	Buffer *wbuff;			/* buffer window looks on */
+	struct buff *wbuff;		/* buffer window looks on */
 	struct mark *wpnt;		/* saved Point */
 	struct mark *wmrk;		/* saved Mark */
 	struct mark *wstart;		/* screen start */
@@ -105,7 +105,7 @@ struct wdo {
 
 extern Byte *Curcptr, *Cpstart;
 extern int Curchar, Curplen;
-extern Buffer *Curbuff;
+extern struct buff *Curbuff;
 extern struct page *Curpage;
 extern struct mark *Mrklist;
 extern struct wdo *Curwdo, *Whead;

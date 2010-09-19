@@ -25,10 +25,10 @@ static char *SaveFileName(char *fname)
 	return fname;
 }
 
-void Save(Buffer *bsave)
+void Save(struct buff *bsave)
 {
 	struct wdo *wdo;
-	Buffer *tbuff;
+	struct buff *tbuff;
 	char fname[30];
 	unsigned junk;
 	unsigned long ploc, mloc;

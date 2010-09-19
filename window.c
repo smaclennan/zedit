@@ -151,7 +151,7 @@ static Boolean Wsplit()
 }
 
 /* Find the window associated with buffer */
-struct wdo *Findwdo(Buffer *buff)
+struct wdo *Findwdo(struct buff *buff)
 {
 	struct wdo *wdo;
 
@@ -186,7 +186,7 @@ void Wswitchto(struct wdo *wdo)
 }
 
 /* Switch to a new buffer in the current window. */
-void Cswitchto(Buffer *buff)
+void Cswitchto(struct buff *buff)
 {
 	Bswitchto(buff);
 	if (Curwdo->wbuff != Curbuff) {
@@ -348,7 +348,7 @@ Boolean Resize(int diff)
 Boolean WuseOther(char *bname)
 {
 	struct wdo *wdo, *last;
-	Buffer *buff;
+	struct buff *buff;
 
 	for (wdo = Whead, last = NULL; wdo; last = wdo, wdo = wdo->next)
 		if (strcmp(wdo->wbuff->bname, bname) == 0)
@@ -537,7 +537,7 @@ void Zprevothrwind()
  * If buffer is in a current window, switchto that window, else put the buffer
  * in the current or other window.
  */
-void Bgoto(Buffer *buff)
+void Bgoto(struct buff *buff)
 {
 	struct wdo *wdo = Findwdo(buff);
 
@@ -599,7 +599,7 @@ void Winit()
 void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 {
 	struct wdo *new;
-	Buffer *buff;
+	struct buff *buff;
 
 #if PIPESH
 	if (strcmp(bname, SHELLBUFF) == 0) {

@@ -192,8 +192,7 @@ fd_set *readfds;
 	{
 		if(AcceptSock[i] != -1 && FD_ISSET(AcceptSock[i], readfds))
 		{
-			extern Buffer *Bufflist;
-			Buffer *buff;
+			struct buff *buff;
 			char cmd[1024], *p;
 			int n;
 

@@ -214,12 +214,12 @@ extern fd_set SelectFDs;
 extern int NumFDs;
 
 extern Boolean Sendp;
-extern Buffer *Killbuff;
+extern struct buff *Killbuff;
 extern char Lbufname[];
 extern char Fname[];
 extern struct avar Vars[];
-extern Buffer *Bufflist, *Paw;
-extern Buffer *Buff_save;
+extern struct buff *Bufflist, *Paw;
+extern struct buff *Buff_save;
 extern struct mark *Sstart, *Psstart, *Send, *REstart;
 extern struct mark Scrnmarks[];
 

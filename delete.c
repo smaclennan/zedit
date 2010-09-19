@@ -20,7 +20,7 @@
 #include "z.h"
 
 
-Buffer *Killbuff;
+struct buff *Killbuff;
 
 
 void Zmakedel() {}
@@ -86,7 +86,7 @@ void Zcopyrgn()
 /* Insert the delete buffer at the point */
 void Zyank()
 {
-	Buffer *tbuff;
+	struct buff *tbuff;
 	int yanked;
 	struct mark *tmark, save;	/* save must NOT be a pointer */
 
@@ -205,7 +205,7 @@ void Zempty()
 
 void Copytomrk(struct mark *tmark)
 {
-	Buffer *save = Curbuff;
+	struct buff *save = Curbuff;
 	Bswitchto(Killbuff);
 	if (Delcmd())
 		Btoend();

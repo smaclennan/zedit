@@ -96,14 +96,14 @@ void Zman()
 	/*  BORDER3D always pops up man page */
 	if (VAR(VPOPMAN)) {
 #endif
-		Buffer *buff;
+		struct buff *buff;
 		FILE *pfp;
 
 		sprintf(PawStr, "show -t \"man %s\"", p);
 		buff = Bcreate();
 		pfp = popen(PawStr, "w");
 		if (buff && pfp) {
-			Buffer *bsave = Curbuff;
+			struct buff *bsave = Curbuff;
 			Bswitchto(buff);
 			Echo("Please wait...");
 			rc = PipeToBuff(buff, entry);
@@ -252,14 +252,14 @@ void Zprint()
 }
 
 #ifdef BORDER3D
-Buffer *Cmdtobuff(char *bname, char *cmd)
+struct buff *Cmdtobuff(char *bname, char *cmd)
 {
 	return 0;
 }
 #elif PIPESH || XWINDOWS
-Buffer *Cmdtobuff(char *bname, char *cmd)
+struct buff *Cmdtobuff(char *bname, char *cmd)
 {
-	Buffer *tbuff = NULL;
+	struct buff *tbuff = NULL;
 	struct wdo *save;
 
 	save = Curwdo;
@@ -271,11 +271,11 @@ Buffer *Cmdtobuff(char *bname, char *cmd)
 	return tbuff;
 }
 #else
-Buffer *Cmdtobuff(char *bname, char *cmd)
+struct buff *Cmdtobuff(char *bname, char *cmd)
 {
 	char fname[20];
 	int err, one;
-	Buffer *sbuff, *tbuff;
+	struct buff *sbuff, *tbuff;
 
 	Arg = Argp = 0;
 	Echo("Working...");
@@ -383,7 +383,7 @@ int err;
 }
 
 /* Echo 'str' to the paw and as the filename for 'buff' */
-void Message(Buffer *buff, char *str)
+void Message(struct buff *buff, char *str)
 {
 #ifndef BORDER3D
 	struct wdo *wdo;
@@ -405,11 +405,11 @@ void Message(Buffer *buff, char *str)
 /* Returns -1 if popen failed, else exit code.
  * Leaves Point and Mark where they where.
  */
-int BuffToPipe(Buffer *buff, char *cmd)
+int BuffToPipe(struct buff *buff, char *cmd)
 {
 	FILE *pfp;
 	struct mark spnt, end;
-	Buffer *was = Curbuff;
+	struct buff *was = Curbuff;
 
 	strcat(cmd, ">/dev/null 2>&1");
 	pfp = popen(cmd, "w");
@@ -444,7 +444,7 @@ int BuffToPipe(Buffer *buff, char *cmd)
 /* Returns -1 if popen failed, else exit code.
  * Leaves Point at end of new text.
  */
-int PipeToBuff(Buffer *buff, char *instr)
+int PipeToBuff(struct buff *buff, char *instr)
 {
 	FILE *pfp;
 	int c;

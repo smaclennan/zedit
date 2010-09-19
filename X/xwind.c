@@ -623,7 +623,7 @@ static int SelectionSize;
 
 static void SetSelection()
 {
-	Buffer *save = Curbuff;
+	struct buff *save = Curbuff;
 	char *p;
 
 	Copytomrk(Curbuff->mark);
@@ -1310,7 +1310,7 @@ void Modeflags(struct wdo *wdo)
 
 	if (VAR(VLINES) == 2) {
 		/* show as % */
-		Buffer *was = Curbuff;
+		struct buff *was = Curbuff;
 
 		/* SAM this could be optimized */
 		Bswitchto(wdo->wbuff);
@@ -1326,7 +1326,7 @@ void Modeflags(struct wdo *wdo)
 		Bswitchto(was);
 	} else if (VAR(VLINES)) {
 		/* show as line/col */
-		Buffer *was = Curbuff;
+		struct buff *was = Curbuff;
 
 		Bswitchto(wdo->wbuff);
 		Blocation(&line);
@@ -1389,7 +1389,7 @@ static void ExposeWindow()
 	int inpaw = InPaw;
 	int prow = Prow, pcol = Pcol;
 #ifndef BORDER3D
-	Buffer *bsave = Curbuff;
+	struct buff *bsave = Curbuff;
 	struct wdo *wdo;
 #else
 

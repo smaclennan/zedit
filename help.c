@@ -95,7 +95,7 @@ void Zhelp()
 #endif
 {
 	static Byte level = 0, z;
-	Buffer *tbuff, *was;
+	struct buff *tbuff, *was;
 	FILE *fp = NULL;
 	char str[STRMAX + 1];
 	int i;

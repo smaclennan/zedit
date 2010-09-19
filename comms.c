@@ -569,7 +569,6 @@ void Quit()
 	if (VAR(VDOSAVE))
 		Save(Curbuff);
 	Exitflag = TRUE;
-	KillHelp();
 	Tfini();
 
 #if XWINDOWS

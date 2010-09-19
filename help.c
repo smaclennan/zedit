@@ -39,42 +39,6 @@ char *Htype[] = {
 #define HTYPES	(sizeof(Htype) / sizeof(char *))
 
 
-#if FORK_ZHELP
-#include <signal.h>
-#include <sys/wait.h>
-
-static int HelpChild;
-
-static void TextHelp();
-
-void Zhelp()
-{
-	KillHelp();
-	HelpChild = fork();
-	if (HelpChild == 0) {
-		char path[PATHMAX];
-		Findpath(path, "help.z.x", FINDPATHS, TRUE);
-		execlp("zhelp", "zhelp", path, NULL);
-		exit(666);
-	}
-
-	if (HelpChild == 0)
-		TextHelp();
-}
-
-void KillHelp()
-{
-	if (HelpChild == 0)
-		return;
-	if (kill(HelpChild, SIGKILL) == 0)
-		wait(NULL);		/* SAM Should check this */
-	HelpChild = 0;
-}
-
-#else
-void KillHelp()	{}
-#endif
-
 /* a "sentence" ends in a tab, NL, or two consecutive spaces */
 int Issentence()
 {
@@ -86,11 +50,7 @@ int Issentence()
 	return rc;
 }
 
-#if FORK_ZHELP
-static void TextHelp()
-#else
 void Zhelp()
-#endif
 {
 	static Byte level = 0, z;
 	struct buff *tbuff, *was;

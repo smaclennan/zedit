@@ -18,6 +18,8 @@
  */
 
 #include "z.h"
+
+#if SHELL
 #if BSD
 #include <signal.h>
 #endif
@@ -382,26 +384,6 @@ int err;
 	}
 }
 
-/* Echo 'str' to the paw and as the filename for 'buff' */
-void Message(struct buff *buff, char *str)
-{
-#ifndef BORDER3D
-	struct wdo *wdo;
-#endif
-
-	if (buff->fname)
-		free(buff->fname);
-	buff->fname = strdup(str);
-#ifdef BORDER3D
-	Curwdo->modeflags = INVALID;
-#else
-	for (wdo = Whead; wdo; wdo = wdo->next)
-		if (wdo->wbuff == buff)
-			wdo->modeflags = INVALID;
-#endif
-	Echo(str);
-}
-
 /* Returns -1 if popen failed, else exit code.
  * Leaves Point and Mark where they where.
  */
@@ -472,3 +454,12 @@ void PrintExit(int code)
 		Echo(PawStr);
 	}
 }
+#else
+void Zshell(void) { Tbell(); }
+void Zprint(void) { Tbell(); }
+void Zcmd(void) { Tbell(); }
+void Zcmdtobuff(void) { Tbell(); }
+void Zmail(void) { Tbell(); }
+void Zman(void) { Tbell(); }
+void Zbeauty(void) { Tbell(); }
+#endif /* SHELL */

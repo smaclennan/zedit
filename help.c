@@ -20,6 +20,7 @@
 #include "z.h"
 #include "keys.h"
 
+#if HELP
 char *Htype[] = {
 	"Special",
 	"Other",
@@ -303,7 +304,13 @@ FILE *Findhelp(int code, Boolean func, char *buff)
 }
 #endif	/* !BORDER3D */
 
+#else
+void Zhelp(void) { Tbell(); }
+void KillHelp(void) {}
+#endif /* HELP */
+
 int Isnotws()
 {
 	return Buff() != '\n' && Buff() != '\t' && Buff() != ' ';
 }
+

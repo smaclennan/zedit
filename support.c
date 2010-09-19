@@ -165,6 +165,27 @@ void PutPaw(char *str, int type)
 }
 #endif
 
+
+/* Echo 'str' to the paw and as the filename for 'buff' */
+void Message(struct buff *buff, char *str)
+{
+#ifndef BORDER3D
+	struct wdo *wdo;
+#endif
+
+	if (buff->fname)
+		free(buff->fname);
+	buff->fname = strdup(str);
+#ifdef BORDER3D
+	Curwdo->modeflags = INVALID;
+#else
+	for (wdo = Whead; wdo; wdo = wdo->next)
+		if (wdo->wbuff == buff)
+			wdo->modeflags = INVALID;
+#endif
+	Echo(str);
+}
+
 /*
  * Find the correct path for the config files.
  * There are 4 config files: bindings, config, help, and save

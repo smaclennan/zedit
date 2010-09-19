@@ -307,7 +307,7 @@ void Setup(int argc, char **argv)
 			return;
 		exit(0);	/* kill parent */
 	}
-#else
+#elif PIPESH
 	/* For xwindows this is set in initSockets */
 	FD_ZERO(&SelectFDs);
 	FD_SET(1, &SelectFDs);

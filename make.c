@@ -19,6 +19,7 @@
 
 #include "z.h"
 
+#if MAKE
 /* This is cleared in Zmake and set in Znexterror.
  * If clear, the make buffer is scrolled up. Once a next error is
  * called, the buffer is kept at the error line.
@@ -257,3 +258,9 @@ int Parse(char *fname)
 	}
 	return 0;
 }
+#else
+void Zmake(void) { Tbell(); }
+void Znexterr(void) { Tbell(); }
+void Zkill(void) { Tbell(); }
+void Zgrep(void) { Tbell(); }
+#endif /* MAKE */

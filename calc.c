@@ -19,6 +19,7 @@
 
 #include "z.h"
 
+#if CALC
 /*
  * EXTREMELY simple calculator.
  *
@@ -140,3 +141,7 @@ static void CalcFloat(char *str)
 	Echo(PawStr);
 }
 #endif
+
+#else
+void Zcalc(void) { Tbell(); }
+#endif /* CALC */

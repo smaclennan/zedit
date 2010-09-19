@@ -18,8 +18,9 @@
  */
 
 #include "z.h"
-#include <sys/stat.h>
 
+#if TAGS
+#include <sys/stat.h>
 
 char Savetag[STRMAX + 1];
 struct buff *Bsave;
@@ -340,3 +341,8 @@ void Zref()
 	else
 		Message(mbuff, tag);
 }
+
+#else
+void Zfindtag(void) { Tbell(); }
+void Zref(void) { Tbell(); }
+#endif /* TAGS */

@@ -301,6 +301,7 @@ void Zpart()
 	char word[STRMAX + 1];
 	struct buff *tbuff;
 
+#if TAGS
 	if (Nextpart == ZFINDTAG) {
 		Bswitchto(Cfindbuff(TAGBUFNAME));
 		for (Bcsearch(NL); !Bisend(); Bcsearch(NL)) {
@@ -312,8 +313,11 @@ void Zpart()
 		}
 		Bswitchto(Paw);
 		Tbell();
-	} else if (Nextpart == ZSWITCHTO) {
-		Getbtxt(word, STRMAX);
+		return;
+	}
+#endif
+	if (Nextpart == ZSWITCHTO) {
+			Getbtxt(word, STRMAX);
 		tbuff = Cfindbuff(word);
 		if (!tbuff)
 			tbuff = Curbuff;

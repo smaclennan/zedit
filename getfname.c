@@ -54,10 +54,8 @@ int Getdname(char *prompt, char *path)
 static int getname(char *prompt, char *path, Boolean isdir)
 {
 	char tmp[PATHMAX + 1];
-	int tab, metameta, rc;
+	int tab, rc;
 
-	metameta = Keys[128 + 27];	/* for people who use csh/ksh */
-	Keys[128 + 27] = ZFNAME;
 	tab = Keys['\t'];
 	Keys['\t'] = ZFNAME;
 	rc = Getarg(prompt, strcpy(tmp, path), PATHMAX);
@@ -67,7 +65,6 @@ static int getname(char *prompt, char *path, Boolean isdir)
 			rc = isdir ? 0 : 1;
 	}
 	Keys['\t'] = tab;
-	Keys[128 + 27] = metameta;
 	Freelist(&Flist);
 	if (Didmatch) {
 		Zredisplay();

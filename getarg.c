@@ -66,7 +66,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
 	Keys[CR] = ZNEWLINE; /* in case we are in a VIEW buff */
 	Pshift = 0;
 	Pawlen = max;
-	Makepaw(arg, TRUE);
+	Makepaw(arg, FALSE);
 	First = TRUE;
 	while (InPaw == TRUE)
 		Execute();

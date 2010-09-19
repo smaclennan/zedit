@@ -48,9 +48,6 @@
 #define SLOW_DISK	0		/* File writes try to buffer up
 					 * the data to a block size.
 					 */
-#define HAS_RESIZE	1		/* define this if have the
-					 * resize command
-					 */
 #define COMMENTBOLD	1		/* bold C comments */
 #define FLOATCALC	1		/* Allow floats in calc */
 #define UNDO            1		/* EXPERIMENTAL undo code */

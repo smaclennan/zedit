@@ -144,30 +144,9 @@ void TIinit()
 }
 
 void Tsize(int *rows, *cols)
-{
-#if HAS_RESIZE
-	FILE *fp;
-	char buf[1024], name[STRMAX + 1];
-	int n;
-#endif
-
-	/* default to values in terminfo file */
+{	/* default to values in terminfo file */
 	*rows = lines;
 	*cols = columns;
-
-#if HAS_RESIZE
-	fp = popen("resize -u", "r");
-	if (fp) {
-		while (fgets(buf, sizeof(buf), fp))
-			if (sscanf(buf, "%[^=]=%d;\n", name, &n) == 2) {
-				if (strcmp(name, "COLUMNS") == 0)
-					*cols = n;
-				else if (strcmp(name, "LINES") == 0)
-					*rows = n;
-			}
-		pclose(fp);
-	}
-#endif
 }
 
 void TIfini()

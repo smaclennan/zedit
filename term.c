@@ -212,29 +212,39 @@ void SetMark(Boolean prntchar)
 void Termsize()
 {
 	int rows, cols;
-#if !HAS_RESIZE
-	char *n;
-#endif
+	FILE *fp;
 
+	/* Get the defaults from the low level interface */
 	Tsize(&rows, &cols);
 
-#if !HAS_RESIZE
-	n = getenv("LINES");
-	if (n)
-		Rowmax = atoi(n);
-	if (!n || Rowmax <= 0)
-#endif
-		Rowmax = rows <= 0 ? 24 : rows;
+	/* If we have resize, trust it */
+	fp = popen("resize -u", "r");
+	if (fp) {
+		char buf[1024], name[STRMAX + 1];
+		int n;
+
+		while (fgets(buf, sizeof(buf), fp))
+			if (sscanf(buf, "%[^=]=%d;\n", name, &n) == 2) {
+				if (strcmp(name, "COLUMNS") == 0)
+					cols = n;
+				else if (strcmp(name, "LINES") == 0)
+					rows = n;
+			}
+		pclose(fp);
+	} else { /* Check the environment */
+		char *p = getenv("LINES");
+		if (p)
+			rows = atoi(p);
+		p = getenv("COLUMNS");
+		if (p)
+			cols = atoi(p);
+	}
+
+	Rowmax = rows <= 0 ? 24 : rows;
 	if (Rowmax > ROWMAX)
 		Rowmax = ROWMAX;
 
-#if !HAS_RESIZE
-	n = getenv("COLUMNS");
-	if (n)
-		Colmax = atoi(n);
-	if (!n || Colmax <= 0)
-#endif
-		Colmax = cols <= 0 ? 80 : cols;
+	Colmax = cols <= 0 ? 80 : cols;
 	if (Colmax > COLMAX)
 		Colmax = COLMAX;
 }

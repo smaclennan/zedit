@@ -36,7 +36,8 @@ unsigned Nextpart = ZNOTIMPL;
  * Prompt the user for an argument, with an optional default in arg.
  * Only allow max chars.
  * Arg is NOT overwritten if the user aborts, or returns a null string.
- */#if XWINDOWS
+ */
+#ifdef XWINDOWS
 char *PromptString;
 #endif
 
@@ -48,7 +49,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
 	int tcol, trow;
 
 	tcol = Pcol; trow = Prow;
-#if XWINDOWS
+#ifdef XWINDOWS
 	/* We need this global so we can redisplay on an exposure event */
 	PromptString = prompt;
 	Tstyle(T_NORMAL);		/* always display paw in normal */
@@ -93,7 +94,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
 	Curwdo->modeflags = INVALID;
 	Funcs = (Curbuff->bmode & VIEW) ? Vcmds : Cmds;	/* SAM */
 	Clrecho();
-#if XWINDOWS
+#ifdef XWINDOWS
 	Tflush();
 	ShowCursor(TRUE);
 	ShowCursor(FALSE);

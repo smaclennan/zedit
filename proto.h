@@ -168,7 +168,7 @@ void Zzoom(void);
 /* General routines */
 
 void Dbg(char *fmt, ...);
-#if BSD
+#ifdef BSD
 int access(char *, int);
 #endif
 struct passwd *dup_pwent(struct passwd *);
@@ -333,7 +333,7 @@ void Tcleol(void);
 void Tclrwind(void);
 void Termsize(void);
 void Tfini(void);
-#if XWINDOWS
+#ifdef XWINDOWS
 void Tflush(void);
 #else
 void Tforce(void);
@@ -342,7 +342,7 @@ int Tgetcmd(void);
 Byte Tgetkb(void);
 void Tgoto(int, int);
 void Tindent(int);
-#if XWINDOWS
+#ifdef XWINDOWS
 void Tinit(int, char **);
 #else
 void Tinit(void);
@@ -449,7 +449,7 @@ void logfree(char *, char *, unsigned);
 
 void KillHelp(void);
 
-#if XWINDOWS
+#ifdef XWINDOWS
 char *KeyToName(int, char *);
 void ShowCursor(Boolean);
 void ShowMark(Boolean);

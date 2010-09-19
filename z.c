@@ -71,7 +71,7 @@ void Edit()
 
 void Execute()
 {
-#if PIPESH && !XWINDOWS
+#if PIPESH && !defined(XWINDOWS)
 	fd_set fds = SelectFDs;
 
 	Refresh();
@@ -82,7 +82,7 @@ void Execute()
 		/* select returns -1 if a child dies (SIGPIPE) -
 		 * Sigchild handles it */
 		while (select(NumFDs, &fds, 0, 0, 0) == -1) {
-#if SYSV2
+#ifdef SYSV2
 			Checkpipes(1);
 			Refresh();
 #endif
@@ -120,7 +120,7 @@ void Setup(int argc, char **argv)
 	char *progname;
 	int col = 0, arg, files = 0, textMode = 0;
 	struct buff *tbuff, *other = NULL;
-#if XWINDOWS
+#ifdef XWINDOWS
 	Boolean Spawn = TRUE;
 
 	/* This MUST be called before any file IO */
@@ -191,7 +191,7 @@ void Setup(int argc, char **argv)
 		case 'l':
 			Argp = Arg = atoi(optarg);
 			break;
-#if XWINDOWS
+#ifdef XWINDOWS
 		case 'n':
 			Spawn = FALSE;
 			break;
@@ -225,7 +225,7 @@ void Setup(int argc, char **argv)
 	Paw->bname = PAWBUFNAME;
 	InPaw = FALSE;
 
-#if XWINDOWS
+#ifdef XWINDOWS
 	XAddBuffer(MAINBUFF);
 	Tinit(argc, argv);
 #else
@@ -296,7 +296,7 @@ void Setup(int argc, char **argv)
 	if (col > 1)
 		Bmakecol(col - 1, FALSE);
 
-#if XWINDOWS
+#ifdef XWINDOWS
 	if (Spawn) {
 		if (fork() == 0)		/* fork off editor */
 			return;
@@ -331,7 +331,7 @@ Boolean Readone(char *bname, char *path)
 			else if (access(path, R_OK|W_OK) == EOF)
 				Curbuff->bmode |= VIEW;
 			strcpy(Lbufname, was->bname);
-#if XWINDOWS
+#ifdef XWINDOWS
 			XAddBuffer(bname);
 #endif
 		} else { /* error */
@@ -454,13 +454,13 @@ void Usage(prog)
 char *prog;
 {
 	printf(
-#if XWINDOWS
+#ifdef XWINDOWS
 		"usage: %s [-hnt] [-c config_dir] [fname ... [-l#] [-o#]]\n"
 #else
 		"usage: %s [-ht] [-c config_dir] [fname ... [-l#] [-o#]]\n"
 #endif
 		"where:\t-h  displays this message.\n"
-#if XWINDOWS
+#ifdef XWINDOWS
 		"\t-n  do not spawn window.\n"
 #endif
 		"\t-t  default to text mode.\n"
@@ -485,7 +485,7 @@ void Zcwd()
 			Error("Not enough memory");
 		else if (chdir(p) == 0) {
 			Cwd = p;
-#if XWINDOWS
+#ifdef XWINDOWS
 			if (VAR(VSHOWCWD))
 				Newtitle(Cwd);
 #endif

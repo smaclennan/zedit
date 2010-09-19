@@ -220,7 +220,7 @@ void Bind(void)
 	Keys[TC_F12]	= ZEDITFILE;
 #endif
 
-#if XWINDOWS
+#ifdef XWINDOWS
 	Keys[ZXK_Home]		= ZBEGLINE;
 	Keys[ZXK_CHome]		= ZTOSTART;
 	Keys[ZXK_SHome]		= ZBEGWIND;

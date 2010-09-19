@@ -557,7 +557,7 @@ void Zsetmrk()
 /* This does the real work of quiting. */
 void Quit()
 {
-#if PIPESH || XWINDOWS
+#if PIPESH
 	struct buff *tbuff;
 
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
@@ -571,7 +571,7 @@ void Quit()
 	Exitflag = TRUE;
 	Tfini();
 
-#if XWINDOWS
+#ifdef XWINDOWS
 	closeSockets();
 #endif
 
@@ -601,7 +601,7 @@ void Zquit()
  */
 void Zexit()
 {
-#if PIPESH || XWINDOWS
+#if PIPESH
 	struct buff *make = Cfindbuff(MAKEBUFF);
 
 	if (make && make->child != EOF)
@@ -834,6 +834,6 @@ void Ztab()
 		Binsert('\t');
 }
 
-#if !XWINDOWS
+#ifndef XWINDOWS
 void Zzoom()	{ Tbell(); }
 #endif

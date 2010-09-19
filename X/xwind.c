@@ -1,6 +1,6 @@
 #include "../z.h"
 
-#if XWINDOWS
+#ifdef XWINDOWS
 #include <signal.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

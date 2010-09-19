@@ -57,7 +57,7 @@ void Zsetavar()
 		Setavar(Vars[rc].vname, TRUE);
 }
 
-#if XWINDOWS
+#ifdef XWINDOWS
 int XSetAVar(char *str)
 {
 	char pstr[STRMAX], *p;
@@ -206,7 +206,7 @@ static void do_var_match(int i, char *vin)
 		if (*ptr)
 			setit(i, ptr);
 	}
-#if XWINDOWS
+#ifdef XWINDOWS
 	if (i == VFONT) {
 		if (display == 0)
 			return;

@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#if XWINDOWS
+#ifdef XWINDOWS
 #include "xkeys.h"
 #else
 

@@ -192,7 +192,7 @@ int *pixel;
 }
 
 
-#if XWINDOWS
+#ifdef XWINDOWS
 /* Load a font and setup the global variables needed by Zedit.
  * Take care not to destroy old values if fontname is invalid.
  */

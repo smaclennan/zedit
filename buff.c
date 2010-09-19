@@ -128,7 +128,7 @@ struct buff *Bcreate(void)
 		new->bmode = (VAR(VNORMAL) ? NORMAL : TEXT) |
 			(VAR(VEXACT) ? EXACT     : 0) |
 			(VAR(VOVWRT) ? OVERWRITE : 0);
-#if PIPESH || XWINDOWS
+#if PIPESH
 		new->child = EOF;
 #endif
 	}
@@ -209,7 +209,7 @@ Boolean Bdelbuff(struct buff *tbuff)
 		}
 	}
 
-#if PIPESH || XWINDOWS
+#if PIPESH
 	if (tbuff->child != EOF)
 		Unvoke(tbuff, TRUE);
 #endif
@@ -1030,7 +1030,7 @@ static Boolean XBput(int fd, Byte *addr, unsigned len)
 void Zstat()
 {
 	sprintf(PawStr, "Buffers: %d   Pages: %d", Numbuffs, NumPages);
-#if XWINDOWS
+#ifdef XWINDOWS
 	AddWindowSizes(PawStr + strlen(PawStr));
 #endif
 	Echo(PawStr);

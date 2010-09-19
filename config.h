@@ -17,22 +17,30 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/* OPERATING SYSTEM - define only one */
-#define LINUX		1		/* Linux */
-#define SYSV2		0		/* Unix System V Release 2/3 */
-#define SYSV4		0		/* Unix System V Release 4   */
-#define BSD		0		/* Berkely */
-#define SUNBSD		0		/* Sun BSD */
-#define ULTRIX		0		/* almost a BSD... */
+/* OPERATING SYSTEM - We attempt to autodetect. */
+#ifdef __linux__
+# define LINUX
+#elif defined(__BSD__)
+# define BSD
+/* # define SUNBSD */
+/* # define ULTRIX */
+#elif defined(__unix__)
+# define SYSV4
+/* # define SYSV2 */
+#else
+# error OS not detected.
+#endif
 
-/* SCREEN DRIVER */
+/* SCREEN DRIVER - define only one. */
+/* Unless you are running on an ancient dumb terminal, you probably want ANSI.
+ * Especially Linux wants ANSI, trust me on this ;)
+ */
 #ifdef XWINDOWS
 #define TERMINFO	0		/* don't change this one */
 #define ANSI		0		/* don't change this one */
 #else
-#define XWINDOWS	0
 #define TERMINFO	0		/* set terminfo here */
-#define ANSI		1
+#define ANSI		1		/* set ANSI here */
 #endif
 
 /* USER CONFIGURABLE - don't define any, see if I care */
@@ -40,14 +48,17 @@
 #define SLOW_DISK	0		/* File writes try to buffer up
 					 * the data to a block size.
 					 */
-#define HAS_RESIZE	0		/* define this if have the
+#define HAS_RESIZE	1		/* define this if have the
 					 * resize command
 					 */
-#define UNDO            1		/* EXPERIMENTAL undo code */
 #define COMMENTBOLD	1		/* bold C comments */
 #define FLOATCALC	1		/* Allow floats in calc */
+#define UNDO            1		/* EXPERIMENTAL undo code */
 
-#ifndef MINCONFIG
+#ifdef MINCONFIG
+#undef DBG
+#define DBG		0
+#else
 /* Warning: These are ifdefs, you must comment them out to disable them! */
 #define CALC				/* Calculator */
 #define HELP				/* Help */
@@ -57,19 +68,13 @@
 #endif
 
 /* DON'T TOUCH THESE */
-#if SUNBSD || ULTRIX
-#undef  BSD
-#define BSD		1
+#ifdef LINUX
+#define SYSV4
 #endif
-#if LINUX
-#undef  SYSV4
-#define SYSV4		1
+#ifdef SYSV4
+#define SYSV2
 #endif
-#if SYSV4
-#undef  SYSV2
-#define SYSV2		1
-#endif
-#if defined(HELP) || defined(SHELL) || defined(SPELL) || defined(TAGS)
+#if defined(HELP) || defined(SHELL) || defined(SPELL) || defined(TAGS) || defined(XWINDOWS)
 #define PIPESH		1
 #else
 #define PIPESH		0

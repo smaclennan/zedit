@@ -42,21 +42,21 @@ extern int Verbose;
 
 extern struct passwd *Me;
 
-#if SYSV2
+#ifdef SYSV2
 #ifdef MAXNAMLEN
 /* KLUDGE for SYSV machines that have "BSD" compatibility */
 #define BSDDIR	1
 #endif
 #endif
 
-#if SYSV4
+#ifdef SYSV4
 #include <string.h>
 #include <sys/uio.h>
 #include <unistd.h>
 #include <time.h>
 #endif
 
-#if XWINDOWS
+#ifdef XWINDOWS
 #include "xwind.h"
 #endif
 
@@ -263,7 +263,7 @@ extern int Dbgint;
 
 #include "proto.h"
 
-#if SUNBSD
+#ifdef SUNBSD
 #include "sun.h"
 #endif
 

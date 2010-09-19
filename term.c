@@ -26,15 +26,15 @@
 #include <signal.h>
 #include <sys/wait.h>	/* need for WNOWAIT */
 
-#if LINUX
+#if defined(LINUX)
 #include <termios.h>
 struct termios Savetty;
 struct termios settty;
-#elif SYSV2
+#elif defined(SYSV2)
 #include <termio.h>
 struct termio Savetty;
 struct termio settty;
-#elif BSD
+#elif defined(BSD)
 #include <sgtty.h>
 struct sgttyb Savetty;
 struct sgttyb settty;
@@ -51,7 +51,7 @@ int Srow, Scol;				/* Saved row and column */
 size_t Colmax, Rowmax;			/* Row and column maximums */
 int Tstart;					/* Start column and row */
 
-#if !XWINDOWS
+#ifndef XWINDOWS
 #ifdef SIGWINCH
 /* This is called if the window has changed size.
  * If Exitflag is set, we are not ready to update display yet.
@@ -81,7 +81,7 @@ void Tinit()
 
 	Termsize();
 
-#if LINUX
+#ifdef LINUX
 	tcgetattr(fileno(stdin), &Savetty);
 	tcgetattr(fileno(stdin), &settty);
 	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
@@ -90,7 +90,7 @@ void Tinit()
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(fileno(stdin), TCSANOW, &settty);
-#elif SYSV2
+#elif defined(SYSV2)
 	ioctl(fileno(stdin), TCGETA, &Savetty);
 	ioctl(fileno(stdin), TCGETA, &settty);
 	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
@@ -99,7 +99,7 @@ void Tinit()
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	ioctl(fileno(stdin), TCSETAW, &settty);
-#elif BSD
+#elif defined(BSD)
 	gtty(fileno(stdin), &Savetty);
 	gtty(fileno(stdin), &settty);
 
@@ -119,12 +119,12 @@ void Tinit()
 	signal(SIGHUP,  Hangup);
 	signal(SIGTERM, Hangup);
 #if PIPESH
-#if !SYSV4 || !defined(WNOWAIT)
+#if !defined(SYSV4) || !defined(WNOWAIT)
 	signal(SIGCLD,  Sigchild);
 #endif
 	signal(SIGPIPE, Sigchild);
 #endif
-#if BSD
+#ifdef BSD
 	signal(SIGTSTP, SIG_DFL);		/* set signals so that we can */
 	signal(SIGCONT, Tinit);		/* suspend & restart Zedit */
 #endif
@@ -147,11 +147,11 @@ void Tinit()
 
 void Tfini()
 {
-#if LINUX
+#if defined(LINUX)
 	tcsetattr(fileno(stdin), TCSAFLUSH, &Savetty);
-#elif SYSV2
+#elif defined(SYSV2)
 	ioctl(fileno(stdin), TCSETAF, &Savetty);
-#elif BSD
+#elif defined(BSD)
 	stty(fileno(stdin), &Savetty);
 	ioctl(fileno(stdin), TIOCSETC, &Savechars);
 	ioctl(fileno(stdin), TIOCSLTC, &Savelchars);
@@ -212,13 +212,13 @@ void SetMark(Boolean prntchar)
 void Termsize()
 {
 	int rows, cols;
-#if !HAS_RESIZE	&& !XWINDOWS
+#if !HAS_RESIZE
 	char *n;
 #endif
 
 	Tsize(&rows, &cols);
 
-#if !HAS_RESIZE	&& !XWINDOWS
+#if !HAS_RESIZE
 	n = getenv("LINES");
 	if (n)
 		Rowmax = atoi(n);
@@ -228,7 +228,7 @@ void Termsize()
 	if (Rowmax > ROWMAX)
 		Rowmax = ROWMAX;
 
-#if !HAS_RESIZE && !XWINDOWS
+#if !HAS_RESIZE
 	n = getenv("COLUMNS");
 	if (n)
 		Colmax = atoi(n);
@@ -238,8 +238,7 @@ void Termsize()
 	if (Colmax > COLMAX)
 		Colmax = COLMAX;
 }
-#endif
-/* !XWINDOWS */
+#endif /* !XWINDOWS */
 
 void ExtendedLineMarker()
 {
@@ -366,7 +365,7 @@ int Prefline()
 	return line < w ? line : w >> 1;
 }
 
-#if !XWINDOWS
+#ifndef XWINDOWS
 void Tforce()
 {
 	if (Scol != Pcol || Srow != Prow) {
@@ -406,7 +405,7 @@ void Tclrwind()
 }
 
 /* for tputs this must be a function */
-#if LINUX
+#ifdef LINUX
 int _putchar(int ch)
 #else
 int _putchar(char ch)
@@ -415,26 +414,6 @@ int _putchar(char ch)
 	putchar(ch);
 	return 0;	/*shutup*/
 }
-
-#if LINUX
-#if 0
-void DumpTermios(struct termios *tty)
-{
-	int i;
-
-	Dbg("Termios:\n");
-	Dbg("\tc_iflag	%x\n", tty->c_iflag);
-	Dbg("\tc_oflag	%x\n", tty->c_oflag);
-	Dbg("\tc_cflag	%x\n", tty->c_cflag);
-	Dbg("\tc_lflag	%x\n", tty->c_lflag);
-	Dbg("\tc_line	%x\n", tty->c_line);
-	Dbg("\tc_ispeed	%x\n", tty->c_ispeed);
-	Dbg("\tc_ospeed	%x\n", tty->c_ospeed);
-	for (i = 0; i < NCCS; ++i)
-		Dbg("\tc_cc[%2d]  %x\n", i, tty->c_cc[i]);
-}
-#endif
-#endif
 
 void Newtitle(char *str) {}
 #endif /* !XWINDOWS */

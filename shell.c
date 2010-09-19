@@ -20,14 +20,14 @@
 #include "z.h"
 
 #ifdef SHELL
-#if BSD
+#ifdef BSD
 #include <signal.h>
 #endif
 
 /* Do one shell command to the screen */
-#if XWINDOWS
+#ifdef XWINDOWS
 void Zcmd() { Tbell(); }	/* no screen */
-#elif !BSD
+#elif !defined(BSD)
 void Zcmd()
 {
 	char tb[STRMAX * 2];
@@ -51,7 +51,7 @@ void Zcmd()
 /* Do one shell command to the .shell buffer */
 void Zcmdtobuff()
 {
-#if XWINDOWS || PIPESH
+#if PIPESH
 	struct wdo *save;
 	int rc;
 
@@ -110,7 +110,7 @@ void Zman()
 	}
 }
 
-#if BSD
+#ifdef BSD
 #if PIPESH
 void Zcmd()
 #else
@@ -147,7 +147,7 @@ Boolean Doshell()
 	argv[2] = NULL;
 	return Invoke(Curbuff, argv);
 }
-#elif SYSV2
+#elif defined(SYSV2)
 void Zshell()	/*for tags*/
 {
 	int err = EOF;
@@ -207,7 +207,7 @@ void Zprint()
 	PrintExit(BuffToPipe(Curbuff, cmd));
 }
 
-#if PIPESH || XWINDOWS
+#if PIPESH
 struct buff *Cmdtobuff(char *bname, char *cmd)
 {
 	struct buff *tbuff = NULL;
@@ -245,7 +245,7 @@ struct buff *Cmdtobuff(char *bname, char *cmd)
 }
 #endif
 
-#if !XWINDOWS && !PIPESH
+#ifndef PIPESH
 int Dopipe(char *fname, char *cmd)
 {
 	char command[STRMAX + 1];

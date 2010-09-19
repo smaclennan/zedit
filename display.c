@@ -120,7 +120,7 @@ void Refresh()
 		col = 0;
 	Tgoto(pntrow, col + Tstart);
 
-#if !XWINDOWS
+#ifndef XWINDOWS
 	/*
 	 * If we display the cursor on the mark, they both disappear.
 	 * This code checks for this case: if true it removes the mark
@@ -348,7 +348,7 @@ void Toendline()
 static void Pawdisplay(struct mark *pmark, struct mark *was)
 {
 	int bcol = 0, i, nested = 0;
-#if !XWINDOWS
+#ifndef XWINDOWS
 	Boolean mrkmoved = !Mrkatmrk(was, Curbuff->mark);
 #endif
 	Prow = Rowmax - 1;
@@ -359,7 +359,7 @@ pawshift:
 	     Bmove1(), ++i) {
 		if (Bisatmrk(pmark))
 			bcol = Pcol;
-#if XWINDOWS
+#ifdef XWINDOWS
 		if (Bisatmrk(Curbuff->mark)) {
 			SetMark(TRUE);
 			tline[i] = Buff();
@@ -423,7 +423,7 @@ pawshift:
 	Bpnttomrk(pmark);
 	Mrktomrk(was, Curbuff->mark);
 
-#if !XWINDOWS
+#ifndef XWINDOWS
 	/*
 	 * If we display the cursor on the mark, they both disappear.
 	 * This code checks for this case: if true it removes the mark

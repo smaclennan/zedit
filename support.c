@@ -64,7 +64,7 @@ void Blockmove(struct mark *from, struct mark *to)
 	}
 }
 
-#if !XWINDOWS
+#ifndef XWINDOWS
 /* more efficient to not make it a macro */
 void Clrecho() { PutPaw("", 2); }
 #endif
@@ -93,7 +93,7 @@ Boolean Delayprompt(char *msg)
 	return rc;
 }
 
-#if !XWINDOWS
+#ifndef XWINDOWS
 #include <sys/time.h>
 #include <sys/poll.h>
 
@@ -137,7 +137,7 @@ Boolean DelcmdAll()
 
 char PawStr[COLMAX + 10];
 
-#if !XWINDOWS
+#ifndef XWINDOWS
 /*
 Put a string into the PAW.
 type is:	0 for echo			Echo()		macro
@@ -376,7 +376,7 @@ Boolean Cp(char *from, char *to)
 }
 
 
-#if XWINDOWS
+#ifdef XWINDOWS
 /* Move the buffer point to an absolute row, col */
 void Pntmove(int row, int col)
 {

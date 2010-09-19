@@ -31,7 +31,7 @@ unsigned Cmdpushed, Cmdstack[10];	/* stack and vars for T[un]getcmd */
 unsigned Key_mask;
 char *Term;
 
-#if !XWINDOWS
+#ifndef XWINDOWS
 int Tgetcmd()
 {
 	int i, j, mask;
@@ -66,10 +66,8 @@ int Tgetcmd()
 
 	return cmd;
 }
-#endif
 
 
-#if !XWINDOWS
 /* stack and vars for T[un]getkb / Tkbrdy */
 #define CSTACK		20
 static Byte cstack[CSTACK];
@@ -108,7 +106,7 @@ void Tungetkb()
 
 int Tkbrdy()
 {
-#if LINUX
+#ifdef LINUX
 	static struct pollfd stdin_fd = {
 		.fd = 1,
 		.events = POLLIN

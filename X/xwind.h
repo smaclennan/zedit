@@ -1,6 +1,6 @@
 #include "../z.h"
 
-#if XWINDOWS
+#ifdef XWINDOWS
 #ifndef XWIND_H
 #define XWIND_H
 

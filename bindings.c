@@ -178,12 +178,10 @@ void Zdispbinds(void)
 
 static char *BindFname(char *fname)
 {
-#if TERMINFO || ANSI
-	sprintf(fname, ".zb.%s", Term);
-#elif XWINDOWS
+#ifdef XWINDOWS
 	strcpy(fname, ".zb.X");
 #else
-	strcpy(fname, ZBFILE);
+	sprintf(fname, ".zb.%s", Term);
 #endif
 	return fname;
 }
@@ -303,7 +301,7 @@ char *Dispkey(unsigned key, char *s)
 	if (key > 127)
 		strcpy(s, key < 256 ? "M-" : "C-X ");
 #endif
-#if XWINDOWS
+#ifdef XWINDOWS
 	if (key >= ZXK_START && key < NUMKEYS)
 		return strcpy(s, KeyNames[key - ZXK_START]);
 #endif

@@ -176,7 +176,7 @@ void Wswitchto(struct wdo *wdo)
 		Mrktomrk(Curbuff->mark, wdo->wmrk);
 		Mrktomrk(Sstart, wdo->wstart);
 		Sendp = FALSE;
-#if XWINDOWS
+#ifdef XWINDOWS
 		XSwitchto(wdo->wbuff->bname);
 #endif
 	}
@@ -204,7 +204,7 @@ void Cswitchto(struct buff *buff)
 		Settabsize(buff->bmode);
 	}
 
-#if XWINDOWS
+#ifdef XWINDOWS
 		XSwitchto(buff->bname);
 #endif
 }

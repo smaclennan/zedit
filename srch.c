@@ -107,7 +107,7 @@ void Doincsrch(char *prompt, Boolean forward)
 
 void Zsearch()
 {
-#if XWINDOWS && defined(POPTARTS)
+#if defined(XWINDOWS) && defined(POPTARTS)
 	if (Argp) {
 		PopupSearch();
 		return;
@@ -266,7 +266,7 @@ static Boolean Replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
 		found = TRUE;
 		if (*query) {
 replace:
-#if XWINDOWS && defined(POPTARTS)
+#if defined(XWINDOWS) && defined(POPTARTS)
 input:
 			switch (tchar = GetQueryCmd(tchar))
 #else
@@ -378,7 +378,7 @@ input:
 			*exit = TRUE;
 	}
 	Unmark(prevmatch);
-#if XWINDOWS && defined(POPTARTS)
+#if defined(XWINDOWS) && defined(POPTARTS)
 	QueryDone();
 #endif
 	return found;

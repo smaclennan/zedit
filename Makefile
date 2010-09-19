@@ -71,7 +71,6 @@ $D/%.o : %.c
 	$(do_cc)
 
 $D/%.o : X/%.c
-	$(do_dep)
 	$(do_cc)
 
 # WARNING: Full dependencies only work for one target and do not catch
@@ -86,8 +85,8 @@ zedit:
 xzedit:
 	@mkdir -p zox$(SUFFIX)
 	@$(MAKE) $(MFLAGS) \
-		"CDEFS=-DXWINDOWS=1 -DSCROLLBARS -I./X" \
-		"D=zxos" \
+		"CDEFS=-DXWINDOWS -DSCROLLBARS -I./X" \
+		"D=zox$(SUFFIX)" \
 		"LIBS=-L/usr/X11R6/lib -lX11" \
 		x$(ZEXE)
 

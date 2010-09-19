@@ -1,7 +1,7 @@
 #include "z.h"
 
 #include <signal.h>
-#if SYSV4
+#ifdef SYSV4
 #include <sys/wait.h>
 #endif
 
@@ -107,9 +107,9 @@ int Checkpipes(int type)
 			}
 	}
 
-#if SYSV2
+#ifdef SYSV2
 	/* See note in Sigchild() */
-#if !SYSV4 || !defined(WNOWAIT)
+#if !defined(SYSV4) || !defined(WNOWAIT)
 	signal(SIGCLD, Sigchild);
 #endif
 	signal(SIGPIPE, Sigchild);
@@ -313,7 +313,7 @@ void Sigchild(int signo)
 }
 #endif
 
-#if BSD
+#ifdef BSD
 #include <sys/stat.h>
 
 int access(char *path, int mode)

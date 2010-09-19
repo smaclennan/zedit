@@ -18,7 +18,7 @@
  */
 
 #include "z.h"
-#if SYSV4
+#ifdef SYSV4
 #include <dirent.h>
 #else
 #include <sys/dir.h>
@@ -189,7 +189,7 @@ struct llist *Fill_list(char *dir)
 {
 	static char savedir[PATHMAX + 1];
 	DIR *dp;
-#if SYSV4
+#ifdef SYSV4
 	struct dirent *dirp;
 #else
 	struct direct *dirp;
@@ -205,7 +205,7 @@ struct llist *Fill_list(char *dir)
 		return Flist;
 
 	while ((dirp = readdir(dp))) {
-#if ULTRIX
+#ifdef ULTRIX
 		char *fname = dirp->gd_name;
 #else
 		char *fname = dirp->d_name;

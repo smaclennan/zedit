@@ -49,7 +49,7 @@ void Zeditfile()
 	offset = Blocation(0);
 	Breadfile(Curbuff->fname);
 	Boffset(offset);
-#if XWINDOWS
+#ifdef XWINDOWS
 	Zredisplay();
 #endif
 }

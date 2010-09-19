@@ -100,7 +100,7 @@ void Zfindtag()
 	Curwdo->modeflags = INVALID;
 }
 
-#if XWINDOWS
+#ifdef XWINDOWS
 void Xfindtag()
 {
 	char tag[STRMAX + 1], word[PATHMAX + 1];

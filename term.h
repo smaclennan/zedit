@@ -41,7 +41,7 @@
 #define T_CPP				11	/* COMMENTBOLD only */
 #define T_CPPIF				12	/* COMMENTBOLD only */
 
-#if LINUX
+#ifdef LINUX
 int _putchar(int);
 #else
 int _putchar(char);
@@ -63,7 +63,7 @@ extern int Tabsize;
 #define Bwidth(ch, col)		Width(ch, col, TRUE)
 #define Sindent(arg)		while (arg-- > 0) Binsert(' ')
 
-#if XWINDOWS
+#ifdef XWINDOWS
 #define Tforce()
 #else
 #define ShowCursor(x)

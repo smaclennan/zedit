@@ -69,8 +69,7 @@ extern struct avar Vars[];
 #define VTEXTS		(VSEXTS + 1)
 #define VUSEOTHER	(VTEXTS + 1)
 #define VVISBELL	(VUSEOTHER + 1)
-#define VXORCURSOR	(VVISBELL + 1)
-#define VARNUM		(VXORCURSOR + 1)
+#define VARNUM		(VVISBELL + 1)
 
 
 /* the variable types */
@@ -130,7 +129,6 @@ struct avar Vars[] = {
 	{ "TExtends",		STRING,		DEFAULT(0) },
 	{ "UseOtherWdo",	FLAG,		DEFAULT(0) },
 	{ "VisibleBell",	FLAG,		DEFAULT(1) },
-	{ "XorCursor",		FLAG,		DEFAULT(XORCURSOR) },
 };
 #define VARSIZE		sizeof(struct avar)
 #define NUMVARS		(sizeof(Vars) / VARSIZE)

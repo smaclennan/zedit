@@ -120,7 +120,6 @@ void Setup(int argc, char **argv)
 	char *progname;
 	int col = 0, arg, files = 0, textMode = 0;
 	struct buff *tbuff, *other = NULL;
-	Boolean xor = FALSE;
 #if XWINDOWS
 	Boolean Spawn = TRUE;
 
@@ -182,7 +181,7 @@ void Setup(int argc, char **argv)
 
 	/* Note: for X we cannot use -m */
 	opterr = 0;
-	while ((arg = getopt(argc, argv, "c:hl:o:tvx")) != EOF)
+	while ((arg = getopt(argc, argv, "c:hl:o:tv")) != EOF)
 		switch (arg) {
 		case 'c':
 			ConfigDir = optarg;
@@ -206,9 +205,6 @@ void Setup(int argc, char **argv)
 		case 'v':
 			++Verbose;
 			break;
-		case 'x':
-			xor  = TRUE;
-			break;
 		}
 
 	ReadVfile();		/* Do this BEFORE Tinit */
@@ -216,10 +212,6 @@ void Setup(int argc, char **argv)
 	/* User wants Text mode as default */
 	if (textMode)
 		VAR(VNORMAL) = 0;
-
-	/* Command line overrides config.z */
-	if (xor)
-		VAR(VXORCURSOR) = 1;
 
 	initScrnmarks(); /* init the screen marks and mark list */
 
@@ -465,22 +457,19 @@ char *prog;
 #if XWINDOWS
 		"usage: %s [-hnt] [-c config_dir] [fname ... [-l#] [-o#]]\n"
 #else
-		"usage: %s [-hntx] [-c config_dir] [fname ... [-l#] [-o#]]\n"
+		"usage: %s [-ht] [-c config_dir] [fname ... [-l#] [-o#]]\n"
 #endif
 		"where:\t-h  displays this message.\n"
 #if XWINDOWS
 		"\t-n  do not spawn window.\n"
 #endif
-	       "\t-t  default to text mode.\n"
-#if !XWINDOWS
-	       "\t-x  cursor cancels mark.\n"
-#endif
-	       "\t-c  specifies a config dir.\n"
-	       "\t-l  goto specified line number.\n"
-	       "\t    this only applies to the first file.\n"
-	       "\t-o  goto specified offset in line.\n"
-	       "\t    this only applies to the first file.\n",
-	       prog);
+		"\t-t  default to text mode.\n"
+		"\t-c  specifies a config dir.\n"
+		"\t-l  goto specified line number.\n"
+		"\t    this only applies to the first file.\n"
+		"\t-o  goto specified offset in line.\n"
+		"\t    this only applies to the first file.\n",
+		prog);
 
 	exit(1);
 }

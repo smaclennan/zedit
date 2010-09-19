@@ -43,13 +43,6 @@
 #define HAS_RESIZE	0		/* define this if have the
 					 * resize command
 					 */
-#define XORCURSOR	1		/* Some machined (e.g. sun3 &&
-					 * sun4) xor the attribute for
-					 * the cursor. This means that
-					 * when the cursor is on the
-					 * mark, they both disappear.
-					 * This fixes the problem.
-					 */
 #define UNDO            1		/* EXPERIMENTAL undo code */
 #define COMMENTBOLD	1		/* bold C comments */
 #define FLOATCALC	1		/* Allow floats in calc */

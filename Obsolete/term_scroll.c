@@ -181,7 +181,7 @@ int n;
 	 * and invalidates its position so it will be updated when the
 	 * cursor moves on...
 	 */
-	if(Vars[VXORCURSOR].val && Bisatmrk(Curbuff->mark))
+	if(Bisatmrk(Curbuff->mark))
 	{
 		Tstyle(T_NORMAL);
 		Tprntchar((Bisend() || ISNL(Buff())) ? ' ' : Buff());

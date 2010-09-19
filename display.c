@@ -127,7 +127,7 @@ void Refresh()
 	 * and invalidates its position so it will be updated when the
 	 * cursor moves on...
 	 */
-	if (VAR(VXORCURSOR) && Bisatmrk(Curbuff->mark)) {
+	if (Bisatmrk(Curbuff->mark)) {
 		Tstyle(T_NORMAL);
 		Tprntchar((Bisend() || ISNL(Buff())) ? ' ' : Buff());
 		Tgoto(pntrow, col + Tstart);
@@ -430,7 +430,7 @@ pawshift:
 	 * and invalidates its position so it will be updated when the
 	 * cursor moves on...
 	 */
-	if (VAR(VXORCURSOR) && Bisatmrk(Curbuff->mark)) {
+	if (Bisatmrk(Curbuff->mark)) {
 		i = Pcol;
 		Tprntchar(Bisend() ? ' ' : Buff());
 		Pcol = i;

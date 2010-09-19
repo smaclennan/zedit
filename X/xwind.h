@@ -25,6 +25,8 @@ extern int border_width, highlight;
 extern int win_width, win_height;
 extern Cursor textcursor, vscrollcursor, hscrollcursor;
 
+extern int Hshift;
+
 extern char *KeyNames[];
 
 extern char *PromptString;

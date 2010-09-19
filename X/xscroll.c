@@ -13,6 +13,9 @@ extern int win_width;
 
 #define THUMB_WIDTH		(SCROLLBAR_WIDTH - 2)
 
+#ifdef HSCROLL
+static void HscrollEvent(XEvent *event, struct wdo *wdo);
+#endif
 static void VscrollEvent(XEvent *event, struct wdo *wdo);
 
 /* Called by Wcreate to create scrollbars from line first to last */
@@ -212,9 +215,7 @@ static void HThumbTo(struct wdo *wdo, int x)
 }
 
 /* We received a ButtonPress event in a hscroll window */
-void HscrollEvent(event, wdo)
-XEvent *event;
-struct wdo *wdo;
+static void HscrollEvent(XEvent *event, struct wdo *wdo)
 {
 	HThumbTo(wdo, event->xbutton.x);
 

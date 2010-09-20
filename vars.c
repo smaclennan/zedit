@@ -132,6 +132,8 @@ void ReadVfile()
 	}
 	if (!VARSTR(VASCHAR))
 		VARSTR(VASCHAR) = strdup(";");
+	if (!VARSTR(VDATESTR))
+		VARSTR(VDATESTR) = strdup("%c");
 
 
 	/* If ConfigDir is really a file, read the file and set to 0. */

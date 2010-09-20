@@ -358,7 +358,7 @@ void Zdate()
 	long t;
 
 	time(&t);
-	strftime(date, MAXDATE, (char *)VAR(VDATESTR), localtime(&t));
+	strftime(date, MAXDATE, VARSTR(VDATESTR), localtime(&t));
 	if ((Argp || (Curbuff->bmode & VIEW)) && !InPaw)
 		Echo(date);
 	else

@@ -315,8 +315,7 @@ void Zbeauty()
 	unlink(fileName2);
 }
 
-void Syerr(err)
-int err;
+void Syerr(int err)
 {
 	switch (err) {
 	case E2BIG:

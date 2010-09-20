@@ -229,12 +229,6 @@ A Universal Argument prompts for an output file to put the list in.
 Deletes the entire contents of the current buffer. A Universal Arguments
 is ignored.
 .sp 0
-:End Macro
-
-End a keyboard macro. This command is stored in the macro buffer. The
-macro can now be executed with the Do Macro command. A Universal
-Argument is ignored.
-.sp 0
 :End of Buffer
 
 Moves the Point to the end of the buffer. A Universal Argument is
@@ -346,11 +340,6 @@ the match. If Again is executed, it starts at the current Point and
 searches forwards through the buffers. At the last buffer it stops and
 puts the Point back where it started. A Universal Argument is ignored.
 .sp 0
-:Go Macro
-
-Execute the macro in the macro buffer. A Universal Argument causes the
-macro to be executed 'Arg' times.
-.sp 0
 :Goto Line
 
 Moves the point to the start of a given line. If there is a Universal
@@ -458,12 +447,6 @@ Buffer_name   *  Buffer_length   Path_name
 The '*' is displayed if the buffer has been modified.
 .)b
 .sp 0
-:Load Macros
-
-Used to load a macro file created with the Save Macros command. The
-macros are loaded over top of any current macros. A Universal Argument
-causes the command to repeat.
-.sp 0
 :Lowercase Region
 
 Converts the Region to lowercase. Not allowed in program mode buffers. A
@@ -510,14 +493,6 @@ Command prefix.
 Change the mode of the current buffer. Prompts (with command completion)
 for the mode to change to.  A Universal Argument causes multiple
 toggles.
-.sp 0
-:Name Macro
-
-Allows the macro in the macro buffer to be saved with a name. The macro
-can then be executed using the Extended Command or bound to a key. To
-save the macro permanently, use the Save Macro command. There is a
-maximum of 16 named macros. A Universal Argument causes the
-command to repeat.
 .sp 0
 :Newline
 
@@ -784,12 +759,6 @@ Saves the current buffer to its file. If the current buffer has no path
 name, a path name is prompted for (with file name completion). A
 Universal Argument is ignored.
 .sp 0
-:Save Macros
-
-This command is used to permanently save some named macros in a file.
-Supports file name completion. This file can then be loaded with the
-Load Macros command or at startup if the Macrofile variable is set.
-.sp 0
 :Scroll Down
 
 Scrolls the screen down one line. A Universal Argument causes the
@@ -858,14 +827,6 @@ Argument limits the spell check to the Region. The default is to check
 the entire buffer.
 
 The "ispell" program is bundled with the Zedit. Unix only.
-.sp 0
-:Start Macro
-
-Start a keyboard macro. All keystrokes up to and including the End Macro
-command will be stored in the macro buffer. The current macro in the
-buffer is overwritten, therefore a Start Macro command cannot be part of
-a macro. To save the current macro, use the Name Macro command. Macros
-must be less than 64 characters. A Universal Argument is ignored.
 .sp 0
 :Stats
 

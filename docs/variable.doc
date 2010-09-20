@@ -39,8 +39,8 @@ spaces. See also Tabs.
 :DateFormat
 
 The Date command uses strftime to format the output string. This varable
-is passed to strftime as the format string. It has a default of NULL.
-See strftime.
+is passed to strftime as the format string. It has a default of "%c" which
+is the preferred date for the current locale. See strftime for details.
 .sp 0
 :DoSave
 
@@ -101,11 +101,6 @@ The Lines feature can cause a lot of cursor movement and is irritating
 on some slow terminals. It can also be slow in Fastread buffers. The
 default is on.
 .sp 0
-:Macrofile
-
-This is a string variable which can contain the path name of a macro
-file to load on startup. The default is NONE.
-.sp 0
 :MailCmd
 
 Specifies the command to use with the Mail command. It is usually mail,
@@ -149,22 +144,6 @@ default is on.
 
 If overwrite is set, newly created buffers default to overwrite mode
 instead of insert mode. Default is off.
-.sp 0
-:PopupMake
-
-If this variable is set, Zedit will try to use the show command to popup
-an X window with the make output in it. If it is off, Zedit will place the
-man page in a buffer. The default is off.
-
-Note: The show command is not a standard Unix command.
-.sp 0
-:PopupMan
-
-If this variable is set, Zedit will try to use the show command to popup
-an X window with the man page in it. If it is off, Zedit will place the
-man page in a buffer. The default is off.
-
-Note: The show command is not a standard Unix command.
 .sp 0
 :Print
 
@@ -226,22 +205,9 @@ no extension (i.e. no "." in file name). Note that the CExtends then
 AExtends take precedence over TExtends. There is a maximum of eight
 extensions. See also CExtends, TCLExtends.
 .sp 0
-:UseOtherWdo
-
-If this variable is set, Findfile will read the file into the next
-window on the screen. If there is only one window, a second window will
-be created. The default is off.
-.sp 0
 :VisibleBell
 
 If this variable is set, the bell will flash the screen rather than
 producing an audible tone. The default is on if flashing the screen
 is supported.
-.sp 0
-:XorCursor
-
-Some terminals exclusive or the cursor with the current character. On
-these terminals, if the cursor is on the mark, they negate each other
-and the cursor disappears. Setting XorCursor fixes this problem. The
-default is set on a per site basis.
 .sp 0

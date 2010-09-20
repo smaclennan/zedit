@@ -597,12 +597,6 @@ is shorter than the specified column, it is padded with tabs and spaces
 to the specified column. The command takes either a Universal Argument or
 prompts for the column to go to.
 .sp 0
-:Overwrite File
-
-Rereads the current file. If the file has changed, asks to overwrite
-changes. A Universal Argument causes multiple rereads. Mimics the vi "e"
-command.
-.sp 0
 :Position
 
 Displays the current Point position as a line, column, and byte offset
@@ -735,6 +729,12 @@ string is saved and subsequent search and replace commands will default
 to the last search string. If the mode Exact is set, the search will be
 case sensitive. A Universal Argument causes the search to look for
 exactly Arg matches of the String Argument.
+.sp 0
+:Revert File
+
+Rereads the current file. If the file has changed, asks to overwrite
+changes. A Universal Argument causes multiple rereads. Mimics the vi "e"
+command.
 .sp 0
 :Save All Files
 

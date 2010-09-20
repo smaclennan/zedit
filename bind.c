@@ -106,7 +106,7 @@ void Bind(void)
 	Keys[128 + 'L'] = Keys[128 + 'l'] = ZLOWWORD;
 	Keys[128 + 'M'] = Keys[128 + 'm'] = ZFILLPARA;
 	Keys[128 + 'N'] = Keys[128 + 'n'] = ZFPARA;
-	Keys[128 + 'O'] = Keys[128 + 'o'] = ZEDITFILE;
+	Keys[128 + 'O'] = Keys[128 + 'o'] = ZREVERTFILE;
 	Keys[128 + 'P'] = Keys[128 + 'p'] = ZBPARA;
 	Keys[128 + 'Q'] = Keys[128 + 'q'] = ZQUOTE;
 	Keys[128 + 'R'] = Keys[128 + 'r'] = ZQUERY;
@@ -217,7 +217,7 @@ void Bind(void)
 	Keys[TC_F9]	= ZSETBOOKMRK;
 	Keys[TC_F10]	= ZNXTBOOKMRK;
 	/* Keys[TC_F11] = ; */
-	Keys[TC_F12]	= ZEDITFILE;
+	Keys[TC_F12]	= ZREVERTFILE;
 #endif
 
 #ifdef XWINDOWS

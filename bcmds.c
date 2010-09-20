@@ -33,7 +33,6 @@ void Zswitchto(void)
 	if (rc == -1)
 		return;
 	strcpy(Lbufname, was);
-	Loadwdo(Bnames[rc]);
 	Cswitchto(Cfindbuff(Bnames[rc]));
 }
 

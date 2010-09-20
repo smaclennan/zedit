@@ -280,7 +280,6 @@ char *Lastpart(char *);
 char *Limit(char *, int);
 void Loadbind(void);
 void Loadsaved(void);
-void Loadwdo(char *);
 void Makecur(struct page *);
 void Makeoffset(int);
 void Makepaw(char *, Boolean);

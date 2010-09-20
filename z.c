@@ -260,14 +260,9 @@ void Setup(int argc, char **argv)
 			;
 		Bswitchto(tbuff->prev ? tbuff->prev : tbuff);
 
-		/* if VUSEOTHER try to load two buffers */
-		if (VAR(VUSEOTHER) && Curbuff->prev) {
-			other = Curbuff->prev;
-			strcpy(Lbufname,
-			       other->prev ? other->prev->bname : MAINBUFF);
-		} else
-			strcpy(Lbufname,
-			       Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
+		strcpy(Lbufname,
+		       Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
+
 		Clrecho();
 	} else
 		Loadsaved();

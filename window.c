@@ -539,40 +539,10 @@ void Bgoto(struct buff *buff)
 {
 	struct wdo *wdo = Findwdo(buff);
 
-	if (wdo) {
+	if (wdo)
 		Wswitchto(wdo);
-		return;
-	}
-
-	if (VAR(VUSEOTHER)) {
-		if (Curwdo->next)
-			Wswitchto(Curwdo->next);
-		else if (Curwdo->prev)
-			Wswitchto(Curwdo->prev);
-	}
-
-	Cswitchto(buff);
-}
-
-/* Load into correct window based on UseOtherWdo.
- * Always munch Main
- * Never  munch .make
- */
-void Loadwdo(char *bname)
-{
-	if (VAR(VUSEOTHER)) {
-		if (strcmp(Curwdo->wbuff->bname, bname) == 0)
-			return;
-		if (strcmp(Curwdo->wbuff->bname, MAINBUFF) == 0)
-			return;
-		if (Whead->next) {
-			Znextwind();
-			/* SAM never munch on .make buffer */
-			if (strcmp(Curwdo->wbuff->bname, MAKEBUFF) == 0)
-				Znextwind();
-		} else
-			Z2wind();
-	}
+	else
+		Cswitchto(buff);
 }
 
 /* These routines are ONLY callable at startup. */

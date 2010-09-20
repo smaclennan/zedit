@@ -67,8 +67,7 @@ extern struct avar Vars[];
 #define VTAG		(VTABS + 1)
 #define VSEXTS		(VTAG + 1)
 #define VTEXTS		(VSEXTS + 1)
-#define VUSEOTHER	(VTEXTS + 1)
-#define VVISBELL	(VUSEOTHER + 1)
+#define VVISBELL	(VTEXTS + 1)
 #define VARNUM		(VVISBELL + 1)
 
 
@@ -127,7 +126,6 @@ struct avar Vars[] = {
 	{ "Tagfile",		STRING,		DEFAULT(0) },
 	{ "TCLExtends",		STRING,		DEFAULT(0) },
 	{ "TExtends",		STRING,		DEFAULT(0) },
-	{ "UseOtherWdo",	FLAG,		DEFAULT(0) },
 	{ "VisibleBell",	FLAG,		DEFAULT(1) },
 };
 #define VARSIZE		sizeof(struct avar)

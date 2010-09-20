@@ -177,9 +177,8 @@ void Tbell()
 #elif defined(TERMINFO)
 		TPUTS(flash_screen);
 #endif
-	} else
-		if (VAR(VSILENT) == 0)
-			putchar('\7');
+	} else if (VAR(VSILENT) == 0)
+		putchar('\7');
 }
 
 /* Actually display the mark */

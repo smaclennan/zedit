@@ -95,9 +95,6 @@ Boolean Findfile(char *path, int startup)
 			while (Cfindbuff(tbname));
 		}
 
-		if (!startup)
-			Loadwdo(tbname);
-
 		rc = Readone(tbname, path);
 	}
 

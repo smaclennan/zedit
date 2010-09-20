@@ -208,14 +208,14 @@ void Bind(void)
 
 	Keys[TC_F1]	= ZFINDFILE;
 	Keys[TC_F2]	= ZSEARCH;
-	Keys[TC_F3]	= ZSWITCHTO;
-	Keys[TC_F4]	= ZAGAIN;
-	Keys[TC_F5]	= ZNEXTERR;
-	Keys[TC_F6]	= ZSETBOOKMRK;
-	Keys[TC_F7]	= ZNXTBOOKMRK;
-	Keys[TC_F8]	= ZMAKE;
-	Keys[TC_F9]	= ZGREP;
-	Keys[TC_F10]	= ZEXIT;
+	Keys[TC_F3]	= ZAGAIN;
+	Keys[TC_F4]	= ZNEXTERR;
+	Keys[TC_F5]	= ZREREPLACE;
+	/* Keys[TC_F6]	= ; */
+	Keys[TC_F7]	= ZMAKE;
+	Keys[TC_F8]	= ZGREP;
+	Keys[TC_F9]	= ZSETBOOKMRK;
+	Keys[TC_F10]	= ZNXTBOOKMRK;
 	/* Keys[TC_F11] = ; */
 	Keys[TC_F12]	= ZEDITFILE;
 #endif

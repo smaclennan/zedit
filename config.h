@@ -51,12 +51,10 @@
 					 * the data to a block size.
 					 */
 #define COMMENTBOLD	1		/* bold C comments */
-#define FLOATCALC	1		/* Allow floats in calc */
 #define UNDO            1		/* EXPERIMENTAL undo code */
 
 #ifndef MINCONFIG
 /* Warning: These are ifdefs, you must comment them out to disable them! */
-#define CALC				/* Calculator */
 #define HELP				/* Help */
 #define SHELL				/* shell interface */
 #define SPELL				/* ispell interface */

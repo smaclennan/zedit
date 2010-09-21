@@ -1,4 +1,4 @@
-/* calc.c - trivial calculator
+/* calc.c - simple calculator
  * Copyright (C) 1988-2010 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -19,129 +19,288 @@
 
 #include "z.h"
 
-#ifdef CALC
-/*
- * EXTREMELY simple calculator.
+/*  Simple calculator.
  *
- * Handles signed decimal/octal/hexadecimal +, -, *, /.
- * Returns the value in decimal and hex.
- * Entering one number gives the conversion.
- * After an optional leading sign, a leading 0 indicates octal, 0x or 0X
- * indicates hex, else decimal.
+ * The calculator is based on the operator-precedence parsing algorithm
+ * from "Compilers Principles, Techniques, and Tools"
+ * by Alfred V. Aho, Ravi Sethi, and Jeffery D. Ullman.
  *
- * OR
+ * Supports the following integer operations:
+ * 	( )	grouping
+ * 	* / %	multiplication, division, modulo
+ * 	+  -	addition and subtraction
+ * 	<< >>	arithmetic shift left and right
+ * 	&	bitwise and
+ * 	^	bitwise exclusive or
+ * 	|	bitwise or
  *
- * Floating point calculations + - * /.
- *
- * NOTE: does not follow order of operations.
+ * Supports the following floating point operations:
+ * 	( )	grouping
+ * 	* /	multiplication, division
+ * 	+  -	addition and subtraction
  */
 
-#if FLOATCALC
-static void CalcFloat(char *str);
-#endif
+struct values {
+	char op;
+	int val;
+};
+
+/* Values for the precedence function `f'. */
+static struct values fvals[] = {
+	{ '*', 12 }, { '/', 12 }, { '%',  12 },
+	{ '+', 10 }, { '-', 10 },
+	{ '<', 8 }, { '>', 8 },
+	{ '&', 6 }, { '^', 4 }, { '|', 2 },
+	{ '(', 0 }, { ')', 14 },
+	{ 'N', 14 }, /* number */
+	{ '=', 0 },  /* terminator */
+	{ '\0', 0 }
+};
+
+/* Values for the precedence function `g'. */
+static struct values gvals[] = {
+	{ '*', 11 }, { '/', 11 }, { '%',  11 },
+	{ '+', 9 }, { '-', 9 },
+	{ '<', 7 }, { '>', 7 },
+	{ '&', 5 }, { '^', 3 }, { '|', 1 },
+	{ '(', 13 }, { ')', 0 },
+	{ 'N', 13 }, /* number */
+	{ '=', 0 },   /* terminator */
+	{ '\0', 0 }
+};
+
+#define MAX_OPS 10
+static char ops[MAX_OPS];
+static int cur_op;
+
+#define MAX_NUMS 10
+static union number {
+	long i;
+	double f;
+} nums[MAX_OPS];
+static int cur_num;
+static int is_float;
+
+static int max_num, max_op; /* SAM DBG */
+
+static jmp_buf failed;
+
+#define STACK_OVERFLOW 1
+#define SYNTAX_ERROR   2
+
+static void push_op(char op)
+{
+	if (cur_op >= MAX_OPS)
+		longjmp(failed, STACK_OVERFLOW);
+	ops[cur_op++] = op;
+	if (cur_op > max_op)
+		max_op = cur_op;
+}
+
+static char pop_op(void)
+{
+	if (cur_op < 0)
+		longjmp(failed, SYNTAX_ERROR);
+	return ops[--cur_op];
+}
+
+static char top_op(void)
+{
+	if (cur_op == 0)
+		return '=';
+	return ops[cur_op - 1];
+}
+
+static void push_num(long num)
+{
+	if (cur_num >= MAX_NUMS)
+		longjmp(failed, STACK_OVERFLOW);
+	nums[cur_num++].i = num;
+	if (cur_num > max_num)
+		max_num = cur_num;
+}
+
+static void push_float(double num)
+{
+	if (cur_num >= MAX_NUMS)
+		longjmp(failed, STACK_OVERFLOW);
+	nums[cur_num++].f = num;
+}
+
+static union number pop_num(void)
+{
+	if (cur_num == 0)
+		longjmp(failed, SYNTAX_ERROR);
+
+	return nums[--cur_num];
+}
+
+static int lookup(struct values *vals, char op)
+{
+	struct values *v;
+
+	for (v = vals; v->op != op; ++v)
+		if (!v->op)
+			longjmp(failed, SYNTAX_ERROR);
+	return v->val;
+}
+
+static int is_op(char op)
+{
+	return strchr("*/%+-<>&^|", op) != NULL;
+}
+
+/* Precedence function `f'. */
+static int calc_f(char op)
+{
+	return lookup(fvals, op);
+}
+
+/* Precedence function `g'.
+ * Only the `g' function is ever looking at a number.
+ * It reads the number, pushes it on the nums stack,
+ * and replaces the number with the token `N' in the buffer.
+ */
+static int calc_g_num(char **p)
+{
+	if (isdigit(**p) || **p == '.') {
+		char *e;
+
+		if (is_float)
+			push_float(strtod(*p, &e));
+		else
+			push_num(strtol(*p, &e, 0));
+		*p = e - 1;
+		**p = 'N';
+	}
+
+	return lookup(gvals, **p);
+}
+
+static int calc_g(char op)
+{
+	return lookup(gvals, op);
+}
+
+#define OP(op) do {					 \
+		if (is_float)				 \
+			push_float(one.f op two.f);	 \
+		else					 \
+			push_num(one.i op two.i);	 \
+	} while (0)
+
+
+#define INT_OP(op) do {				       \
+		if (is_float) 			       \
+			longjmp(failed, SYNTAX_ERROR); \
+		else				       \
+			push_num(one.i op two.i);      \
+	} while (0)
 
 void Zcalc(void)
 {
-	char *ptr, op;
-	long n1, n2;
+	int f_val, g_val, n;
+	char op, str[STRMAX], *p = str;
 
 	Arg = 0;
-	if (Getarg("Calc: ", Calc_str, STRMAX))
+	if (Getarg("Calc: ", Calc_str, STRMAX - 1))
 		return;
-#if FLOATCALC
-	if (Argp || strchr(Calc_str, '.')) {
-		CalcFloat(Calc_str);
+
+	/* We modify the string, leave Calc_str alone */
+	strcpy(str, Calc_str);
+	strcat(str, "=");
+
+	is_float = strchr(Calc_str, '.') != NULL;
+
+	cur_op = cur_num = 0;
+
+	/* A longjmp is called on error. */
+	n = setjmp(failed);
+	if (n == 1) {
+		Error("Stack overflow.");
+		return;
+	} else if (n == 2) {
+		Error("Syntax error.");
 		return;
 	}
-#endif
-	ptr = Calc_str;
-	n1 = strtol(ptr, &ptr, 0);
-	while (*ptr) {
-		while (isspace(*ptr))
-			++ptr;
-		op = *ptr;
-		if (*ptr != '\0')
-			++ptr;  /* save and skip op */
-		n2 = strtol(ptr, &ptr, 0);
-		switch (op) {
-		case '+':
-			n1 += n2;
-			break;
-		case '-':
-			n1 -= n2;
-			break;
-		case '*':
-			n1 *= n2;
-			break;
-		case '>':
-			n1 >>= n2;
-			break;
-		case '<':
-			n1 <<= n2;
-			break;
-		case '%':
-			n1 %= n2;
-			break;
-		case '/':
-			if (n2 == 0) {
-				Echo("Divide by Zero");
-				return;
-			}
-			n1 /= n2;
-			break;
-		default:
-			Echo("Huh?");
+
+	/* Continue until all input parsed and command stack empty. */
+	while (*p != '=' || top_op() != '=') {
+		while (isspace(*p))
+			++p;
+
+		/* special case for shifts */
+		if (*p == '<' && *(p + 1) == '<')
+			++p;
+		else if (*p == '>' && *(p + 1) == '>')
+			++p;
+
+		f_val = calc_f(top_op());
+		g_val = calc_g_num(&p);
+		if (g_val < 0)
 			return;
+
+		if (f_val <= g_val) {
+			/* shift */
+			push_op(*p);
+			if (*p != '=')
+				++p;
+		} else {
+			/* reduce */
+			do {
+				op = pop_op();
+				if (is_op(op)) {
+					union number two = pop_num();
+					union number  one = pop_num();
+
+					switch (op) {
+					case '*':
+						OP(*);
+						break;
+					case '/':
+						OP(/);
+						break;
+					case '%':
+						INT_OP(%);
+						break;
+					case '+':
+						OP(+);
+						break;
+					case '-':
+						OP(-);
+						break;
+					case '>':
+						INT_OP(>>);
+						break;
+					case '<':
+						INT_OP(<<);
+						break;
+					case '&':
+						INT_OP(&);
+						break;
+					case '^':
+						INT_OP(^);
+						break;
+					case '|':
+						INT_OP(|);
+						break;
+					}
+				}
+
+				f_val = calc_f(top_op());
+				g_val = calc_g(op);
+			} while (f_val >= g_val);
 		}
 	}
 
-	sprintf(PawStr, "= %ld (%lx)", n1, n1);
-	Echo(PawStr);
-}
-
-
-#if FLOATCALC
-static void CalcFloat(char *str)
-{
-	char op;
-	double n1, n2;
-
-	n1 = strtod(str, &str);
-	while (*str) {
-		while (isspace(*str))
-			++str;
-		op = *str;
-		if (*str != '\0')
-			++str;  /* save and skip op */
-		n2 = strtod(str, &str);
-		switch (op) {
-		case '+':
-			n1 += n2;
-			break;
-		case '-':
-			n1 -= n2;
-			break;
-		case '*':
-			n1 *= n2;
-			break;
-		case '/':
-			if (n2 == 0.0) {
-				Echo("Divide by Zero");
-				return;
-			}
-			n1 /= n2;
-			break;
-		default:
-			Echo("Huh?");
-			return;
-		}
+	if (is_float)
+		sprintf(PawStr, "= %g", pop_num().f);
+	else {
+		long n = pop_num().i;
+		sprintf(PawStr, "= %ld (%lx)", n, n);
 	}
 
-	sprintf(PawStr, "= %g", n1);
 	Echo(PawStr);
-}
-#endif
 
-#else
-void Zcalc(void) { Tbell(); }
-#endif /* CALC */
+	Dbg("Max op %d num %d (%s)\n", max_op, max_num, Calc_str);
+}

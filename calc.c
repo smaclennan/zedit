@@ -26,18 +26,18 @@
  * by Alfred V. Aho, Ravi Sethi, and Jeffery D. Ullman.
  *
  * Supports the following integer operations:
- * 	( )	grouping
- * 	* / %	multiplication, division, modulo
- * 	+  -	addition and subtraction
- * 	<< >>	arithmetic shift left and right
- * 	&	bitwise and
- * 	^	bitwise exclusive or
- * 	|	bitwise or
+ *	( )	grouping
+ *	* / %	multiplication, division, modulo
+ *	+  -	addition and subtraction
+ *	<< >>	arithmetic shift left and right
+ *	&	bitwise and
+ *	^	bitwise exclusive or
+ *	|	bitwise or
  *
  * Supports the following floating point operations:
- * 	( )	grouping
- * 	* /	multiplication, division
- * 	+  -	addition and subtraction
+ *	( )	grouping
+ *	* /	multiplication, division
+ *	+  -	addition and subtraction
  */
 
 struct values {
@@ -191,7 +191,7 @@ static int calc_g(char op)
 
 
 #define INT_OP(op) do {				       \
-		if (is_float) 			       \
+		if (is_float)			       \
 			longjmp(failed, SYNTAX_ERROR); \
 		else				       \
 			push_num(one.i op two.i);      \

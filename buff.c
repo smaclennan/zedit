@@ -34,7 +34,8 @@ struct page *Curpage;		/* the current page */
 
 static int NumPages;
 
-static struct page *Newpage(struct buff *tbuff, struct page *ppage, struct page *npage);
+static struct page *Newpage(struct buff *tbuff,
+			    struct page *ppage, struct page *npage);
 static void Freepage(struct buff *tbuff, struct page *page);
 static Boolean Pagesplit();
 static Boolean XBput(int fd, Byte *addr, unsigned len);
@@ -891,7 +892,8 @@ void Unmark(struct mark *mptr)
 /* Low level memory buffer routines */
 
 /* Create a new memory page and link into chain */
-static struct page *Newpage(struct buff *tbuff, struct page *ppage, struct page *npage)
+static struct page *Newpage(struct buff *tbuff,
+			    struct page *ppage, struct page *npage)
 {
 	struct page *new = malloc(sizeof(struct page));
 

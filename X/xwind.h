@@ -1,3 +1,22 @@
+/* xwind.h - Zedit main X include file
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "../z.h"
 
 #ifdef XWINDOWS
@@ -5,10 +24,6 @@
 #define XWIND_H
 
 #include <X11/Xlib.h>
-
-#ifdef sun4
-typedef unsigned long ulong;
-#endif
 
 /* defined in xinit.c */
 extern Display *display;
@@ -25,6 +40,9 @@ extern int border_width, highlight;
 extern int win_width, win_height;
 extern Cursor textcursor, vscrollcursor, hscrollcursor;
 
+extern GC normgc, revgc, boldgc, commentgc, cppgc, cppifgc;
+extern GC cursorgc, markgc, modegc;
+
 extern int Hshift;
 
 extern char *KeyNames[];
@@ -40,14 +58,6 @@ void ScrollEvent(XEvent *event);
 #define SCROLLBAR_WIDTH		11
 #else
 #define SCROLLBAR_WIDTH		0
-#endif
-
-#if 0
-/* some handy height macros */
-#define H_MENUBAR		(fontheight + border_width * 2)
-#define H_MODELINE		H_MENUBAR
-#define H_PAW			(fontheight + border_width * 2)
-#define Y_PAW(h)		((h) - border_width * 2 - fontheight)
 #endif
 
 void AddWindowSizes(char *str);

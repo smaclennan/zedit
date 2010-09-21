@@ -1,3 +1,22 @@
+/* comment.c - Zedit commentbold functions
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "z.h"
 
 #if COMMENTBOLD
@@ -5,7 +24,8 @@
 static struct comment *CPPhead, *CPPtail;	/* list of CPP statements */
 static struct comment *COMhead, *COMtail;	/* list of Comments */
 
-static struct comment *new_comment(struct mark *start, struct mark *end, int type)
+static struct comment *new_comment(struct mark *start, struct mark *end,
+				   int type)
 {
 	struct comment *new = calloc(sizeof(struct comment), 1);
 	if (!new)

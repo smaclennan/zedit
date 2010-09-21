@@ -1,15 +1,31 @@
+/* xscroll.c - Zedit X scrollbar routines
+ * Copyright (C) 1988-2010 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #ifdef SCROLLBARS
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include "../z.h"
-#include "xwind.h"
 
 #define THUMB_SIZE	26
 
 static int thumbSize = THUMB_SIZE;
-
-extern int win_width;
 
 #define THUMB_WIDTH		(SCROLLBAR_WIDTH - 2)
 
@@ -23,11 +39,12 @@ void CreateScrollBars(struct wdo *wdo)
 {
 	static int set = 0, thumbColor, troughColor;
 
-	if(!set)
-	{
-		if(!ColorResource(".thumbColor",".thumbColor", &thumbColor))
+	if (!set) {
+		if (!ColorResource(".thumbColor", ".thumbColor",
+				   &thumbColor))
 			thumbColor = foreground;
-		if(!ColorResource(".troughColor", ".troughColor", &troughColor))
+		if (!ColorResource(".troughColor", ".troughColor",
+				   &troughColor))
 			troughColor = background;
 		set = 1;
 	}
@@ -68,9 +85,8 @@ void CreateScrollBars(struct wdo *wdo)
 	XClearWindow(display, wdo->hthumb);		/* force update */
 #endif
 
-	XFlush(display);						/* necessary */
+	XFlush(display); /* necessary */
 }
-
 
 /* Called by Wfree */
 void DeleteScrollBars(struct wdo *wdo)
@@ -80,7 +96,6 @@ void DeleteScrollBars(struct wdo *wdo)
 	XDestroyWindow(display, wdo->hscroll);	/* this will destroy thumb */
 #endif
 }
-
 
 void ResizeScrollBars(struct wdo *wdo)
 {
@@ -97,21 +112,23 @@ void ResizeScrollBars(struct wdo *wdo)
 	UpdateScrollbars();
 }
 
-
 /* Move thumb to pixel value */
 static void ThumbTo(struct wdo *wdo, int y)
 {
-	if(y < thumbSize) y = 0;
-	else if(y > wdo->vheight - thumbSize) y = wdo->vheight - thumbSize;
-	else y -= thumbSize / 2;
+	if (y < thumbSize)
+		y = 0;
+	else if (y > wdo->vheight - thumbSize)
+		y = wdo->vheight - thumbSize;
+	else
+		y -= thumbSize / 2;
 	XMoveWindow(display, wdo->vthumb, 0, y);
 }
 
 static void ThumbSize(struct wdo *wdo, int height)
 {
-	if(thumbSize != height)
-	{
-		if(height < 5) height = 5;	/* minimum size */
+	if (thumbSize != height) {
+		if (height < 5)
+			height = 5;	/* minimum size */
 		XResizeWindow(display, wdo->vthumb, THUMB_WIDTH, height);
 		thumbSize = height;
 	}
@@ -129,25 +146,22 @@ static void GotoLine(struct wdo *wdo, int line)
 	ShowCursor(TRUE);
 }
 
-
-void ScrollEvent(event)
-XEvent *event;
+void ScrollEvent(XEvent *event)
 {
 	struct wdo *wdo;
 	Window window = event->xany.window;
 
-	if(event->type != ButtonPress) return;
+	if (event->type != ButtonPress)
+		return;
 
 	/* find the wdo associated with this window */
-	for(wdo = Whead; wdo; wdo = wdo->next)
-		if(window == wdo->vscroll)
-		{
+	for (wdo = Whead; wdo; wdo = wdo->next)
+		if (window == wdo->vscroll) {
 			VscrollEvent(event, wdo);
 			return;
 		}
 #ifdef HSCROLL
-		else if(window == wdo->hscroll)
-		{
+		else if (window == wdo->hscroll) {
 			HscrollEvent(event, wdo);
 			return;
 		}
@@ -163,17 +177,16 @@ static void VscrollEvent(XEvent *event, struct wdo *wdo)
 	lines = Blines(wdo->wbuff);
 	GotoLine(wdo, lines * event->xbutton.y / wdo->vheight);
 
-	do
-	{
+	do {
 		XNextEvent(display, event);
-		if(event->type == MotionNotify)
-		{
-			while(XCheckMaskEvent(display, PointerMotionMask, event)) ;
+		if (event->type == MotionNotify) {
+			while (XCheckMaskEvent(display, PointerMotionMask,
+					       event))
+				;
 			ThumbTo(wdo, event->xmotion.y);
 			GotoLine(wdo, lines * event->xmotion.y / wdo->vheight);
 		}
-	}
-	while(event->type != ButtonRelease);
+	} while (event->type != ButtonRelease);
 }
 
 /* Called by Refresh() */
@@ -183,13 +196,11 @@ void UpdateScrollbars()
 	unsigned line;
 	int lines = Blines(Curwdo->wbuff);
 
-	if(lines < Curwdo->last)
-	{	/* thumb fills entire window */
+	if (lines < Curwdo->last) {
+		/* thumb fills entire window */
 		ThumbTo(Curwdo, 0);
 		ThumbSize(Curwdo, Curwdo->vheight);
-	}
-	else
-	{
+	} else {
 		Blocation(&line);
 		ThumbTo(Curwdo, line * Curwdo->vheight / lines);
 		ThumbSize(Curwdo, Curwdo->last * Curwdo->vheight / lines);
@@ -197,18 +208,14 @@ void UpdateScrollbars()
 }
 
 #ifdef HSCROLL
-/********************************************************************\
- *																	*
- *					Handle the horizontal scrollbars				*
- *																	*
-\********************************************************************/
 
-int Hshift = 0;
+int Hshift;
 
 /* Move thumb to pixel value */
 static void HThumbTo(struct wdo *wdo, int x)
 {
-	if(x < 0 || x >= Xcol[Colmax] - 3) return;
+	if (x < 0 || x >= Xcol[Colmax] - 3)
+		return;
 
 	/* SAM HACK for now */
 	XMoveWindow(display, wdo->hthumb, x, 0);
@@ -219,16 +226,16 @@ static void HscrollEvent(XEvent *event, struct wdo *wdo)
 {
 	HThumbTo(wdo, event->xbutton.x);
 
-	do
-	{
+	do {
 		XNextEvent(display, event);
-		if(event->type == MotionNotify)
-		{
-			while(XCheckMaskEvent(display, PointerMotionMask, event)) ;
+		if (event->type == MotionNotify) {
+			while (XCheckMaskEvent(display, PointerMotionMask,
+					       event))
+				;
 			HThumbTo(wdo, event->xmotion.x);
 		}
-	}
-	while(event->type != ButtonRelease);
+	} while (event->type != ButtonRelease);
 }
+
 #endif
 #endif

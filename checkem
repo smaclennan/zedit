@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for f in *.[ch]; do
+for f in *.[ch] X/*.[ch]; do
     [ $f = typedefs.h ] && continue
     checkpatch --file $f | fgrep -q "no obvious style problems" || echo "$f"
 done

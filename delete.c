@@ -27,23 +27,23 @@ void Zmakedel(void) {}
 
 void Zdelchar(void)
 {
-	Bdelete(Arg);
+	bdelete(Arg);
 	Arg = 0;
 }
 
 void Zrdelchar(void)
 {
-	Bmove(-Arg);
-	Bdelete(Arg);
+	bmove(-Arg);
+	bdelete(Arg);
 	Arg = 0;
 }
 
 void Zdeleol(void)
 {
-	struct mark *tmark = Bcremrk();
+	struct mark *tmark = bcremrk();
 
 	if (!Bisend() && Buff() == NL)
-		Bmove1();
+		bmove1();
 	else if (VAR(VKILLLINE)) {
 		Boolean atstart;
 
@@ -51,11 +51,11 @@ void Zdeleol(void)
 		atstart = Bisatmrk(tmark);
 		Toendline();
 		if (atstart)
-			Bmove1(); /* delete the NL */
+			bmove1(); /* delete the NL */
 	} else
 		Toendline();
 	Killtomrk(tmark);
-	Unmark(tmark);
+	unmark(tmark);
 }
 
 void Zdelline(void)
@@ -63,10 +63,10 @@ void Zdelline(void)
 	struct mark *tmark;
 
 	Tobegline();
-	tmark = Bcremrk();
-	Bcsearch(NL);
+	tmark = bcremrk();
+	bcsearch(NL);
 	Killtomrk(tmark);
-	Unmark(tmark);
+	unmark(tmark);
 }
 
 /* Delete from the point to the mark */
@@ -91,22 +91,22 @@ void Zyank(void)
 	struct mark *tmark, save;	/* save must NOT be a pointer */
 
 	if (InPaw && First) {
-		Bdelete(Curplen);
+		bdelete(Curplen);
 		First = FALSE;
 	}
 
 	Mrktomrk(&save, Send);
 	tbuff = Curbuff;
-	Bmrktopnt(Curbuff->mark);
-	Bswitchto(Killbuff);
-	Btoend();
-	tmark = Bcremrk();
-	Btostart();
-	yanked = Bcopyrgn(tmark, tbuff);
-	Unmark(tmark);
-	Bswitchto(tbuff);
+	bmrktopnt(Curbuff->mark);
+	bswitchto(Killbuff);
+	btoend();
+	tmark = bcremrk();
+	btostart();
+	yanked = bcopyrgn(tmark, tbuff);
+	unmark(tmark);
+	bswitchto(tbuff);
 	undo_add(yanked);
-	if (Bisaftermrk(&save))
+	if (bisaftermrk(&save))
 		Reframe();
 }
 
@@ -114,21 +114,21 @@ void Zdelword(void)
 {
 	struct mark *tmark;
 
-	tmark = Bcremrk();
+	tmark = bcremrk();
 	Moveto(Isword, FORWARD);
 	Movepast(Isword, FORWARD);
 	Killtomrk(tmark);
-	Unmark(tmark);
+	unmark(tmark);
 }
 
 void Zrdelword(void)
 {
 	struct mark *tmark;
 
-	tmark = Bcremrk();
+	tmark = bcremrk();
 	Zbword();
 	Killtomrk(tmark);
-	Unmark(tmark);
+	unmark(tmark);
 }
 
 void Zgetbword(void)
@@ -137,23 +137,23 @@ void Zgetbword(void)
 	struct mark *tmark, *start;
 
 	if (InPaw) {
-		Bswitchto(Buff_save);
+		bswitchto(Buff_save);
 		Getbword(word, STRMAX, Istoken);
-		Bswitchto(Paw);
+		bswitchto(Paw);
 		for (ptr = word; *ptr; ++ptr) {
 			Cmd = *ptr;
 			Pinsert();
 		}
 	} else {
-		tmark = Bcremrk();	/* save current Point */
+		tmark = bcremrk();	/* save current Point */
 		Moveto(Istoken, FORWARD); /* find start of word */
 		Movepast(Istoken, BACKWARD);
-		start = Bcremrk();
+		start = bcremrk();
 		Movepast(Istoken, FORWARD); /* move Point to end of word */
 		Copytomrk(start); /* copy to Kill buffer */
-		Bpnttomrk(tmark); /* move Point back */
-		Unmark(tmark);
-		Unmark(start);
+		bpnttomrk(tmark); /* move Point back */
+		unmark(tmark);
+		unmark(start);
 	}
 	Arg = 0;
 }
@@ -162,43 +162,43 @@ void Zdelblanks(void)
 {
 	struct mark *tmark, *pmark;
 
-	pmark = Bcremrk();
-	if (Bcrsearch(NL)) {
-		Bmove1();
-		tmark = Bcremrk();
+	pmark = bcremrk();
+	if (bcrsearch(NL)) {
+		bmove1();
+		tmark = bcremrk();
 		Movepast(Isspace, BACKWARD);
 		if (!Bisstart())
-			Bcsearch(NL);
-		if (Bisbeforemrk(tmark))
-			Bdeltomrk(tmark);
-		Unmark(tmark);
+			bcsearch(NL);
+		if (bisbeforemrk(tmark))
+			bdeltomrk(tmark);
+		unmark(tmark);
 	}
-	if (Bcsearch(NL)) {
-		tmark = Bcremrk();
+	if (bcsearch(NL)) {
+		tmark = bcremrk();
 		Movepast(Isspace, FORWARD);
-		if (Bcrsearch(NL))
-			Bmove1();
-		if (Bisaftermrk(tmark))
-			Bdeltomrk(tmark);
-		Unmark(tmark);
+		if (bcrsearch(NL))
+			bmove1();
+		if (bisaftermrk(tmark))
+			bdeltomrk(tmark);
+		unmark(tmark);
 	}
-	Bpnttomrk(pmark);
-	Unmark(pmark);
+	bpnttomrk(pmark);
+	unmark(pmark);
 }
 
 void Zjoin(void)
 {
 	Toendline();
-	Bdelete(1);
+	bdelete(1);
 	Zdelwhite();
-	Binsert(' ');
+	binsert(' ');
 }
 
 void Zempty(void)
 {
 	if (Ask("Empty buffer? ") != YES)
 		return;
-	Bempty();
+	bempty();
 	Curbuff->bmodf = MODIFIED;
 }
 
@@ -206,11 +206,11 @@ void Zempty(void)
 void Copytomrk(struct mark *tmark)
 {
 	struct buff *save = Curbuff;
-	Bswitchto(Killbuff);
+	bswitchto(Killbuff);
 	if (Delcmd())
-		Btoend();
+		btoend();
 	else
-		Bempty();
-	Bswitchto(save);
-	Bcopyrgn(tmark, Killbuff);
+		bempty();
+	bswitchto(save);
+	bcopyrgn(tmark, Killbuff);
 }

@@ -43,23 +43,23 @@ void Zspell(void)
 
 	/* save current Buff, Point, and Mark */
 	was = Curbuff;
-	point = Bcremrk();
-	mark = Bcremrk();
+	point = bcremrk();
+	mark = bcremrk();
 	Mrktomrk(mark, Curbuff->mark);
 
 	/* set Point and emark */
 	if (Argp) {
 		/* use Region */
-		emark = Bcremrk();
+		emark = bcremrk();
 		Mrktomrk(emark, Curbuff->mark);
-		if (Bisaftermrk(emark))
-			Bswappnt(emark);
+		if (bisaftermrk(emark))
+			bswappnt(emark);
 	} else {
 		/* use entire buffer */
-		Btoend();
-		Bmove(-1);
-		emark = Bcremrk();
-		Btostart();
+		btoend();
+		bmove(-1);
+		emark = bcremrk();
+		btostart();
 	}
 
 	sbuff = Cmakebuff(SPELLBUFF, NULL);
@@ -70,18 +70,18 @@ void Zspell(void)
 	out = sbuff->out_pipe;
 
 	/* make the paw 3 lines */
-	Bswitchto(was);
+	bswitchto(was);
 	Resize(-2);
 	Refresh();
 	Mclear();
 	Echo("Checking...");
-	while (Bisbeforemrk(emark)) {
+	while (bisbeforemrk(emark)) {
 		/* get the next word */
 		Moveto(Isalpha, FORWARD);
 		if (Bisend())
 			break;	/* incase no alphas left */
-		Bmrktopnt(Curbuff->mark);
-		for (p = send + 1; Isalpha() && !Bisend(); ++p, Bmove1())
+		bmrktopnt(Curbuff->mark);
+		for (p = send + 1; Isalpha() && !Bisend(); ++p, bmove1())
 			*p = Buff();
 		*p++ = '\n'; *p = '\0';
 
@@ -139,7 +139,7 @@ void Zspell(void)
 					*word[0] = '\0';
 					rc = Getarg(PROMPT, word[0], STRMAX);
 					if (rc == ABORT) {
-						Bswappnt(Curbuff->mark);
+						bswappnt(Curbuff->mark);
 						continue;
 					}
 					sreplace(word[0]);
@@ -168,12 +168,12 @@ void Zspell(void)
 abort:
 	fclose(in);		/* from fdopen */
 	Delbuff(sbuff);
-	Bswitchto(was);
-	Bpnttomrk(point);
+	bswitchto(was);
+	bpnttomrk(point);
 	Mrktomrk(Curbuff->mark, mark);
-	Unmark(point);
-	Unmark(mark);
-	Unmark(emark);
+	unmark(point);
+	unmark(mark);
+	unmark(emark);
 	Resize(2);
 }
 
@@ -198,8 +198,8 @@ static int ispell(FILE *in, FILE *out, char *send, char *receive)
 /* replace with new, assumes Region contains old word */
 void sreplace(char *new)
 {
-	Bdeltomrk(Curbuff->mark);
-	Binstr(new);
+	bdeltomrk(Curbuff->mark);
+	binstr(new);
 }
 
 int Isalpha(void)

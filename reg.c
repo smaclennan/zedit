@@ -57,24 +57,24 @@ Boolean Step(Byte *ep)
 		/* if not at the start of the current line - go to the
 		 * next line */
 		if (!Bisstart()) {
-			Bmove(-1);		/* check previous char */
+			bmove(-1);		/* check previous char */
 			if (ISNL(Buff()))	/* we where at start */
-				Bmove1();		/* undo move */
+				bmove1();		/* undo move */
 			else
-				Bcsearch(NL);	/* goto next line */
+				bcsearch(NL);	/* goto next line */
 		}
 	}
 
 	/* regular algorithm */
 	while (!Bisend()) {
-		Bmrktopnt(REstart);
+		bmrktopnt(REstart);
 		if (advance(ep))
 			return TRUE;
 		if (circf)
-			Bcsearch(NL);	/* goto next line */
+			bcsearch(NL);	/* goto next line */
 		else {
-			Bpnttomrk(REstart);
-			Bmove1();
+			bpnttomrk(REstart);
+			bmove1();
 		}
 	}
 	return FALSE;
@@ -114,27 +114,27 @@ static Boolean advance(Byte *ep)
 			return FALSE;
 
 		case CBRA:
-			Bmrktopnt(&braslist[*ep++]);
+			bmrktopnt(&braslist[*ep++]);
 			continue;
 
 		case CKET:
-			Bmrktopnt(&braelist[*ep++]);
+			bmrktopnt(&braelist[*ep++]);
 			continue;
 
 		case CCHR | RNGE:
 			c = STRIP(Buff());
-			Bmove1();
+			bmove1();
 			getrnge(ep);
 			while (low--)
 				if (STRIP(Buff()) != c)
 					return FALSE;
 				else
-					Bmove1();
-			Bmrktopnt(&curlp);
+					bmove1();
+			bmrktopnt(&curlp);
 			while (size-- && STRIP(Buff()) == c)
-				Bmove1();
+				bmove1();
 			if (size < 0 || STRIP(Buff()) != c)
-				Bmove1();
+				bmove1();
 			ep += 2;
 			goto star;
 
@@ -144,12 +144,12 @@ static Boolean advance(Byte *ep)
 				if (ISNL(Buff()))
 					return FALSE;
 				else
-					Bmove1();
-			Bmrktopnt(&curlp);
+					bmove1();
+			bmrktopnt(&curlp);
 			while (size-- && !ISNL(Buff()))
-				Bmove1();
+				bmove1();
 			if (size < 0 || ISNL(Buff()))
-				Bmove1();
+				bmove1();
 			ep += 2;
 			goto star;
 
@@ -157,19 +157,19 @@ static Boolean advance(Byte *ep)
 			getrnge(ep + 16);
 			while (low--) {
 				c = Buff() & 0177;
-				Bmove1();
+				bmove1();
 				if (!ISTHERE(c))
 					return FALSE;
 			}
-			Bmrktopnt(&curlp);
+			bmrktopnt(&curlp);
 			while (size--) {
 				c = Buff() & 0177;
-				Bmove1();
+				bmove1();
 				if (!ISTHERE(c))
 					break;
 			}
 			if (size < 0)
-				Bmove1();
+				bmove1();
 			ep += 18;		/* 16 + 2 */
 			goto star;
 
@@ -183,46 +183,46 @@ static Boolean advance(Byte *ep)
 		case CBACK | STAR:
 			bbeg = &braslist[*ep];
 			ct = &braelist[*ep++] - bbeg;
-			Bmrktopnt(&curlp);
+			bmrktopnt(&curlp);
 			while (ecmp(bbeg, ct))
 				;
-			while (Bisaftermrk(&curlp) || Bisatmrk(&curlp)) {
+			while (bisaftermrk(&curlp) || Bisatmrk(&curlp)) {
 				if (advance(ep))
 					return TRUE;
-				Bmove(-ct);
+				bmove(-ct);
 			}
 			return FALSE;
 
 		case CDOT | STAR:
-			Bmrktopnt(&curlp); /* save the current position */
+			bmrktopnt(&curlp); /* save the current position */
 			Toendline();
 			goto star;
 
 		case CCHR | STAR:
-			Bmrktopnt(&curlp); /* save the current position */
+			bmrktopnt(&curlp); /* save the current position */
 			while (STRIP(Buff()) == *ep)  /* skip over matches */
-				Bmove1();
+				bmove1();
 			ep++;                       /* go on */
 			goto star;
 
 		case CCL | STAR:
-			Bmrktopnt(&curlp);
+			bmrktopnt(&curlp);
 			while (!Bisend() && ISTHERE(((Byte)STRIP(Buff()))))
-				Bmove1();
+				bmove1();
 			ep += 16;
 
 star:
 			do {
-				Bmrktopnt(&tmark);
+				bmrktopnt(&tmark);
 				if (advance(ep)) /* try to match */
 					return TRUE;
-				Bpnttomrk(&tmark);
-				Bmove(-1); /* go back and try again */
-			} while (Bisaftermrk(&curlp)); /* till back to start */
-			Bpnttomrk(&curlp); /* Don't slip backwards */
+				bpnttomrk(&tmark);
+				bmove(-1); /* go back and try again */
+			} while (bisaftermrk(&curlp)); /* till back to start */
+			bpnttomrk(&curlp); /* Don't slip backwards */
 			return FALSE;
 		}
-		Bmove1();
+		bmove1();
 	}
 	return *ep == CCEOF;
 }
@@ -244,13 +244,13 @@ static Boolean ecmp(struct mark *start, int cnt)
 	Byte c;
 
 	while (cnt-- > 0 && !Bisend()) {
-		Bswappnt(start);
+		bswappnt(start);
 		c = STRIP(Buff());
-		Bmove1();
-		Bswappnt(start);
+		bmove1();
+		bswappnt(start);
 		if (STRIP(Buff()) != c)
 			return FALSE;
-		Bmove1();
+		bmove1();
 	}
 	return TRUE;
 }

@@ -382,14 +382,14 @@ void Varval(int code)
 {
 	switch (Vars[code].vtype) {
 	case STRING:
-		Binstr(VARSTR(code) ? VARSTR(code) : "NONE");
+		binstr(VARSTR(code) ? VARSTR(code) : "NONE");
 		break;
 	case FLAG:
-		Binstr(VAR(code) ? "On" : "Off");
+		binstr(VAR(code) ? "On" : "Off");
 		break;
 	case DECIMAL:
 		sprintf(PawStr, "%d", VAR(code));
-		Binstr(PawStr);
+		binstr(PawStr);
 	}
 }
 

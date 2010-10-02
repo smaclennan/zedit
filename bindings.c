@@ -115,14 +115,14 @@ static void Out(char *line, FILE *fp)
 	if (fp)
 		fputs(line, fp);
 	else
-		Binstr(line);
+		binstr(line);
 }
 
 static void Outto(FILE *fp, int col)
 {
 	int i;
 
-	for (i = Bgetcol(FALSE, 0); i < col; ++i)
+	for (i = bgetcol(FALSE, 0); i < col; ++i)
 		Out(" ", fp);
 }
 
@@ -169,7 +169,7 @@ void Zdispbinds(void)
 			if (!found)
 				Out("Unbound\n", fp);
 		}
-	Btostart();
+	btostart();
 	if (!fp)
 		Curbuff->bmodf = FALSE;
 	Clrecho();

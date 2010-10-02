@@ -66,8 +66,8 @@ void Zrevertfile(void)
 	/* Lose the undo history */
 	undo_clear(Curbuff);
 
-	offset = Blocation(NULL);
-	Breadfile(Curbuff->fname);
+	offset = blocation(NULL);
+	breadfile(Curbuff->fname);
 	Boffset(offset);
 #ifdef XWINDOWS
 	Zredisplay();
@@ -95,7 +95,7 @@ Boolean Findfile(char *path, int startup)
 		if (tbuff->fname && strcmp(path, tbuff->fname) == 0) {
 			if (startup)
 				return TRUE;
-			Bswitchto(tbuff);
+			bswitchto(tbuff);
 			strcpy(Lbufname, was);
 			break;
 		}
@@ -161,7 +161,7 @@ Boolean Filesave(void)
 	}
 	sprintf(PawStr, "Writing %s", Lastpart(Curbuff->fname));
 	Echo(PawStr);
-	return Bwritefile(Curbuff->fname);
+	return bwritefile(Curbuff->fname);
 }
 
 
@@ -202,13 +202,13 @@ int Write_rgn(char *path)
 	save = Curbuff;
 	tbuff = Cmakebuff("___tmp___", (char *)NULL);
 	if (tbuff) {
-		Bswitchto(save);
-		Bcopyrgn(Curbuff->mark, tbuff);
-		Bswitchto(tbuff);
+		bswitchto(save);
+		bcopyrgn(Curbuff->mark, tbuff);
+		bswitchto(tbuff);
 		Curbuff->bmode = save->bmode;
-		rc = Bwritefile(path);
-		Bswitchto(save);
-		Bdelbuff(tbuff);
+		rc = bwritefile(path);
+		bswitchto(save);
+		bdelbuff(tbuff);
 	}
 	return rc;
 }
@@ -231,20 +231,20 @@ int Fileread(char *fname)
 	int rc = 1;
 
 	save = Curbuff;
-	tbuff = Bcreate();
+	tbuff = bcreate();
 	if (tbuff) {
-		Bswitchto(tbuff);
+		bswitchto(tbuff);
 		Curbuff->bmode = save->bmode;
-		rc = Breadfile(fname);
+		rc = breadfile(fname);
 		if (rc == 0) {
-			Btoend();
-			tmark = Bcremrk();
-			Btostart();
-			Bcopyrgn(tmark, save);
-			Unmark(tmark);
+			btoend();
+			tmark = bcremrk();
+			btostart();
+			bcopyrgn(tmark, save);
+			unmark(tmark);
 		}
-		Bswitchto(save);
-		Bdelbuff(tbuff);
+		bswitchto(save);
+		bdelbuff(tbuff);
 	}
 	return rc;
 }

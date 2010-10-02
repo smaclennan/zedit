@@ -55,12 +55,12 @@ void Blockmove(struct mark *from, struct mark *to)
 {
 	char tmp;
 
-	while (Bisbeforemrk(from)) {
+	while (bisbeforemrk(from)) {
 		tmp = Buff();
-		Bswappnt(to);
-		Binsert(tmp);
-		Bswappnt(to);
-		Bdelete(1);
+		bswappnt(to);
+		binsert(tmp);
+		bswappnt(to);
+		bdelete(1);
 	}
 }
 
@@ -224,15 +224,15 @@ Boolean Getbword(char word[], int max, int (*valid)())
 	int i;
 	struct mark tmark;
 
-	Bmrktopnt(&tmark);
+	bmrktopnt(&tmark);
 	Moveto(Istoken, FORWARD);
 	if (Bisend())
 		Moveto(Istoken, BACKWARD);
 	Movepast(Istoken, BACKWARD);
-	for (i = 0; !Bisend() && valid() && i < max; ++i, Bmove1())
+	for (i = 0; !Bisend() && valid() && i < max; ++i, bmove1())
 		word[i] = Buff();
 	word[i] = '\0';
-	Bpnttomrk(&tmark);
+	bpnttomrk(&tmark);
 	return i;
 }
 
@@ -245,40 +245,40 @@ char *Getbtxt(char txt[], int max)
 	int i;
 	struct mark tmark;
 
-	Bmrktopnt(&tmark);
-	for (Btostart(), i = 0; !Bisend() && i < max; Bmove1(), ++i)
+	bmrktopnt(&tmark);
+	for (btostart(), i = 0; !Bisend() && i < max; bmove1(), ++i)
 		txt[i] = Buff();
 	txt[i] = '\0';
-	Bpnttomrk(&tmark);
+	bpnttomrk(&tmark);
 	return txt;
 }
 
 void Killtomrk(struct mark *tmark)
 {
 	Copytomrk(tmark);
-	Bdeltomrk(tmark);
+	bdeltomrk(tmark);
 }
 
 /* Go forward or back past a thingy */
 void Movepast(int (*pred)(), Boolean forward)
 {
 	if (!forward)
-		Bmove(-1);
+		bmove(-1);
 	while (!(forward ? Bisend() : Bisstart()) && (*pred)())
-		Bmove(forward ? 1 : -1);
+		bmove(forward ? 1 : -1);
 	if (!forward && !(*pred)())
-		Bmove1();
+		bmove1();
 }
 
 /* Go forward or back to a thingy */
 void Moveto(int (*pred)(), Boolean forward)
 {
 	if (!forward)
-		Bmove(-1);
+		bmove(-1);
 	while (!(forward ? Bisend() : Bisstart()) && !(*pred)())
-		Bmove(forward ? 1 : -1);
+		bmove(forward ? 1 : -1);
 	if (!forward && !Bisstart())
-		Bmove1();
+		bmove1();
 }
 
 char *Strup(char *str)
@@ -295,7 +295,7 @@ void Tindent(int arg)
 {
 	if (VAR(VSPACETAB) == 0)
 		for (; arg >= Tabsize; arg -= Tabsize)
-			Binsert('\t');
+			binsert('\t');
 	Sindent(arg);
 }
 
@@ -388,7 +388,7 @@ void Pntmove(int row, int col)
 		if (row != Rowmax - 1 || col < Pawcol)
 			Tbell();
 		else {
-			col = Bmakecol(col - Pawcol, FALSE);
+			col = bmakecol(col - Pawcol, FALSE);
 			Tsetpoint(Rowmax - 1, col);
 		}
 		return;
@@ -400,7 +400,7 @@ void Pntmove(int row, int col)
 			/* find offset in window */
 			for (i = wdo->first; i < row; ++i) {
 				Wswitchto(wdo);
-				Bpnttomrk(&Scrnmarks[i]);
+				bpnttomrk(&Scrnmarks[i]);
 				if (Bisend()) {
 					/* at end of buffer - stop */
 					if (i > wdo->first)
@@ -409,8 +409,8 @@ void Pntmove(int row, int col)
 					break;
 				}
 			}
-			Bpnttomrk(&Scrnmarks[i]);
-			col = Bmakecol(col, FALSE);
+			bpnttomrk(&Scrnmarks[i]);
+			col = bmakecol(col, FALSE);
 			Tsetpoint(i, col);
 			return;
 		}

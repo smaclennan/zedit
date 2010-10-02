@@ -52,7 +52,7 @@ void Zfindtag(void)
 	Arg = 0;
 	Getbword(tag, STRMAX, Istoken);
 	Bsave = Curbuff;
-	Bmrktopnt(&smark);
+	bmrktopnt(&smark);
 
 	if (!GetTagsFile())
 		return;
@@ -62,7 +62,7 @@ void Zfindtag(void)
 		best = found = FALSE;
 		if (Getarg("Tag: ", tag, STRMAX) == 0) {
 			Echo("Looking...");
-			for (Btostart(); !Bisend(); Bcsearch(NL)) {
+			for (btostart(); !Bisend(); bcsearch(NL)) {
 				Getbword(word, STRMAX, Istoken);
 				if (Stricmp(tag, word) == 0) {
 					if (strcmp(tag, word) == 0) {
@@ -71,17 +71,17 @@ void Zfindtag(void)
 					} else if (!best) {
 						best  = TRUE;
 						found = TRUE;
-						Bmrktopnt(&tmark);
+						bmrktopnt(&tmark);
 					} else if (!found &&
 						   Strstr(word, tag)) {
 						found = TRUE;
-						Bmrktopnt(&tmark);
+						bmrktopnt(&tmark);
 					}
 				}
 			}
 
 			if (best) {
-				Bpnttomrk(&tmark);
+				bpnttomrk(&tmark);
 				GotoMatch(&smark);
 				return;
 			}
@@ -89,14 +89,14 @@ void Zfindtag(void)
 			if (found) {
 				strcpy(Savetag, tag);
 				Nextpart = ZFINDTAG;
-				Bpnttomrk(&tmark);
+				bpnttomrk(&tmark);
 				Getbword(tag, STRMAX, Istoken);
 			} else
 				Echo("Not Found");
 		}
 	} while (found);
 	Nextpart = ZNOTIMPL;
-	Bswitchto(Bsave);			/* go back to original buffer */
+	bswitchto(Bsave);			/* go back to original buffer */
 	Curwdo->modeflags = INVALID;
 }
 
@@ -110,13 +110,13 @@ void Xfindtag(void)
 	Arg = 0;
 	Getbword(tag, STRMAX, Istoken);
 	Bsave = Curbuff;
-	Bmrktopnt(&smark);
+	bmrktopnt(&smark);
 
 	if (!GetTagsFile())
 		return;
 
 	Echo("Looking...");
-	for (Btostart(); !Bisend(); Bcsearch(NL)) {
+	for (btostart(); !Bisend(); bcsearch(NL)) {
 		Getbword(word, STRMAX, Istoken);
 		if (strcmp(tag, word) == 0) {
 			/* found a match in the tag file */
@@ -127,7 +127,7 @@ void Xfindtag(void)
 	}
 	Echo("Not found");
 	Tbell();
-	Bswitchto(Bsave);			/* go back to original buffer */
+	bswitchto(Bsave);			/* go back to original buffer */
 	Curwdo->modeflags = INVALID;
 }
 #endif
@@ -139,10 +139,10 @@ static void GotoMatch(struct mark *smark)
 	if (Tagfparse(Bsave))
 		if (strcmp(Bsave->bname, Curbuff->bname))
 			strcpy(Lbufname, Bsave->bname);
-	Bmrktopnt(&tmark);
-	Bpnttomrk(smark);
+	bmrktopnt(&tmark);
+	bpnttomrk(smark);
 	Zsetbookmrk();
-	Bpnttomrk(&tmark);
+	bpnttomrk(&tmark);
 	Nextpart = ZNOTIMPL;
 }
 
@@ -162,37 +162,37 @@ static Boolean Tagfparse(struct buff *bsave)
 	*str = '\0';
 
 	while (!Iswhite() && !Bisend())
-		Bmove1(); /* skip partial match */
+		bmove1(); /* skip partial match */
 	while (Iswhite())
-		Bmove1();
+		bmove1();
 	if (isdigit(Buff())) {
 		byte = Buff() == '0';
 		num = Batoi();
 	}
 
 	while (Iswhite())
-		Bmove1();
-	for (i = 0; i < PATHMAX && !isspace(Buff()) && !Bisend(); Bmove1())
+		bmove1();
+	for (i = 0; i < PATHMAX && !isspace(Buff()) && !Bisend(); bmove1())
 		fname[i++] = Buff();
 	fname[i] = '\0';
 
 	while (Iswhite())
-		Bmove1();
+		bmove1();
 	if (num == -1) {
 		if (isdigit(Buff())) {
 			byte = Buff() == '0';
 			num = Batoi();
 		} else {
 			mch = Buff();
-			Bmove1();
+			bmove1();
 			smatch = Buff();
 			if (smatch == '^')
-				Bmove1();
+				bmove1();
 			for (ptr = str;
 				 Buff() != mch && Buff() != NL && !Bisend();
-				 *ptr = Buff(), Bmove1(), ++ptr)
+				 *ptr = Buff(), bmove1(), ++ptr)
 				if (Buff() == '\\')
-					Bmove1();	/* escapes */
+					bmove1();	/* escapes */
 			ematch = *(ptr - 1);
 			if (ematch == '$')
 				--ptr;
@@ -201,37 +201,37 @@ static Boolean Tagfparse(struct buff *bsave)
 	}
 
 	if (i && (num != -1 || *str)) {
-		Bswitchto(bsave);		/* restore correct buffer */
+		bswitchto(bsave);		/* restore correct buffer */
 		Pathfixup(path, fname);
 		Findfile(path, FALSE);
-		Btostart();
+		btostart();
 
 		if (num != -1)
 			if (byte)
 				Boffset(num);
 			else
-				while (--num > 0 && Bcsearch(NL))
+				while (--num > 0 && bcsearch(NL))
 					;
 		else
 			for (found = FALSE; Bsearch(str, FORWARD);) {
 				found = TRUE;
-				Bmrktopnt(&tmark);
+				bmrktopnt(&tmark);
 				if (smatch) {
-					Bmove(-1);
+					bmove(-1);
 					found = (Bisstart() || Buff() == NL);
-					Bpnttomrk(&tmark);
+					bpnttomrk(&tmark);
 				}
 				if (found && ematch) {
-					Bmove(strlen(str));
+					bmove(strlen(str));
 					found = (Bisend() || Buff() == NL);
-					Bpnttomrk(&tmark);
+					bpnttomrk(&tmark);
 				}
 				if (found)
 					return TRUE;
 				if (smatch)
-					Bcsearch(NL);
+					bcsearch(NL);
 				else
-					Bmove1();
+					bmove1();
 			}
 		return TRUE;
 	}
@@ -251,14 +251,14 @@ static Boolean GetTagsFile(void)
 	if (tbuff) {
 		struct stat sb;
 
-		Bswitchto(tbuff);
+		bswitchto(tbuff);
 		if (Argp) {
 			/* Ask user for file to use. */
 			strcpy(fname, tbuff->fname);
 			if (Getfname("Tag File: ", fname))
 				return FALSE;
 
-			Breadfile(fname);
+			breadfile(fname);
 			if (Curbuff->fname)
 				free(Curbuff->fname);
 			Curbuff->fname = strdup(fname);
@@ -266,7 +266,7 @@ static Boolean GetTagsFile(void)
 			   sb.st_mtime != tbuff->mtime) {
 			/* tags file has been updated */
 			Echo("Reloading tags file.");
-			Breadfile(tbuff->fname);
+			breadfile(tbuff->fname);
 		}
 		return  TRUE;
 	}
@@ -307,7 +307,7 @@ static Boolean GetTagsFile(void)
 		return FALSE;
 	}
 
-	Breadfile(fname);
+	breadfile(fname);
 	return TRUE;
 }
 
@@ -317,8 +317,8 @@ int Batoi(void)
 	int num;
 
 	while (Iswhite())
-		Bmove1();
-	for (num = 0; isdigit(Buff()); Bmove1())
+		bmove1();
+	for (num = 0; isdigit(Buff()); bmove1())
 		num = num * 10 + Buff() - '0';
 	return num;
 }

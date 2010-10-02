@@ -23,14 +23,14 @@ static void Scroll(Boolean);
 
 void Zbegline(void)
 {
-	Bmove(-1);
+	bmove(-1);
 	Tobegline();
 }
 
 
 void Zendline(void)
 {
-	Bmove1();
+	bmove1();
 	Toendline();
 }
 
@@ -40,7 +40,7 @@ int Forcecol(void)
 {
 	static int fcol;
 
-	return zCursor() ? fcol : (fcol = Bgetcol(TRUE, 0));
+	return zCursor() ? fcol : (fcol = bgetcol(TRUE, 0));
 }
 
 
@@ -49,14 +49,14 @@ static void ScrollLine(Boolean forward)
 	struct mark save;
 
 	if (VAR(VSINGLE)) {
-		Bmrktopnt(&save);
-		Bpnttomrk(Sstart);
-		forward ? Bcsearch(NL) : Bcrsearch(NL);
+		bmrktopnt(&save);
+		bpnttomrk(Sstart);
+		forward ? bcsearch(NL) : bcrsearch(NL);
 		Tobegline();
-		Bmrktopnt(Sstart);
-		Bmove(-1);
-		Bmrktopnt(Psstart);
-		Bpnttomrk(&save);
+		bmrktopnt(Sstart);
+		bmove(-1);
+		bmrktopnt(Psstart);
+		bpnttomrk(&save);
 		Sendp = FALSE;
 	}
 }
@@ -66,12 +66,12 @@ void Zprevline(void)
 	int col = Forcecol();
 
 	while (Arg-- > 0)
-		Bcrsearch(NL);
+		bcrsearch(NL);
 
-	if (Bisbeforemrk(Sstart))
+	if (bisbeforemrk(Sstart))
 		ScrollLine(FALSE);
 
-	Bmakecol(col, FALSE);
+	bmakecol(col, FALSE);
 }
 
 void Znextline(void)
@@ -79,23 +79,23 @@ void Znextline(void)
 	int col = Forcecol();
 
 	while (Arg-- > 0)
-		Bcsearch(NL);
+		bcsearch(NL);
 
-	if (Sendp && !Bisbeforemrk(Send))
+	if (Sendp && !bisbeforemrk(Send))
 		ScrollLine(TRUE);
 
-	Bmakecol(col, FALSE);
+	bmakecol(col, FALSE);
 }
 
 void Zprevchar(void)
 {
-	Bmove(-Arg);
+	bmove(-Arg);
 	Arg = 0;
 }
 
 void Znextchar(void)
 {
-	Bmove(Arg);
+	bmove(Arg);
 	Arg = 0;
 }
 
@@ -103,10 +103,10 @@ void Zprevpage(void)
 {
 	int i, n, col = Forcecol();
 
-	Bpnttomrk(Sstart);
-	for (n = i = Wheight() - Prefline() - 2; i > 0 && Bcrsearch(NL); --i)
-		i -= Bgetcol(TRUE, 0) / Tmaxcol();
-	Bmakecol(col, FALSE);
+	bpnttomrk(Sstart);
+	for (n = i = Wheight() - Prefline() - 2; i > 0 && bcrsearch(NL); --i)
+		i -= bgetcol(TRUE, 0) / Tmaxcol();
+	bmakecol(col, FALSE);
 	Reframe();
 }
 
@@ -114,13 +114,13 @@ void Znextpage(void)
 {
 	int i, col = Forcecol();
 
-	Bpnttomrk(Sstart);
-	for (i = Wheight() + Prefline() - 2; i > 0 && Bcsearch(NL); --i) {
-		Bmove(-1);
-		i -= Bgetcol(TRUE, 0) / Tmaxcol();
-		Bmove1();
+	bpnttomrk(Sstart);
+	for (i = Wheight() + Prefline() - 2; i > 0 && bcsearch(NL); --i) {
+		bmove(-1);
+		i -= bgetcol(TRUE, 0) / Tmaxcol();
+		bmove1();
 	}
-	Bmakecol(col, FALSE);
+	bmakecol(col, FALSE);
 	Reframe();
 }
 
@@ -140,12 +140,12 @@ void Zfword(void)
 
 void Ztostart(void)
 {
-	Btostart();
+	btostart();
 }
 
 void Ztoend(void)
 {
-	Btoend();
+	btoend();
 }
 
 void Zswapmrk(void)
@@ -155,13 +155,13 @@ void Zswapmrk(void)
 	Arg = 0;
 	Mrktomrk(&tmark, Curbuff->mark);
 	Zsetmrk();
-	Bpnttomrk(&tmark);
+	bpnttomrk(&tmark);
 }
 
 void Zopenline(void)
 {
-	Binsert(NL);
-	Bmove(-1);
+	binsert(NL);
+	bmove(-1);
 }
 
 void Zlgoto(void)
@@ -180,8 +180,8 @@ void Zlgoto(void)
 	/* find the correct page */
 	for (tpage = Curbuff->firstp; tpage->nextp; tpage = tpage->nextp) {
 		if (tpage->lines == EOF) {
-			Makecur(tpage);
-			tpage->lines = Cntlines(Curplen);
+			makecur(tpage);
+			tpage->lines = cntlines(Curplen);
 		}
 		cnt += tpage->lines;
 		if (cnt >= line) {
@@ -189,12 +189,12 @@ void Zlgoto(void)
 			break;
 		}
 	}
-	Makecur(tpage);
-	Makeoffset(0);
+	makecur(tpage);
+	makeoffset(0);
 
 	/* go to the correct offset */
 	for (cnt = line - cnt - 1; cnt > 0; --cnt)
-		Bcsearch(NL);
+		bcsearch(NL);
 }
 
 void Zcgoto(void)
@@ -202,7 +202,7 @@ void Zcgoto(void)
 	int col = (int)Getnum("Column: ");
 	if (col == -1)
 		return;
-	Bmakecol(--col, TRUE);
+	bmakecol(--col, TRUE);
 }
 
 long Getnum(char *prompt)
@@ -244,9 +244,9 @@ void Zsetbookmrk(void)
 
 	if (Bookmark > Lastbook) {
 		Lastbook = Bookmark;
-		Bookmrks[Bookmark] = Bcremrk();
+		Bookmrks[Bookmark] = bcremrk();
 	} else
-		Bmrktopnt(Bookmrks[Bookmark]);
+		bmrktopnt(Bookmrks[Bookmark]);
 
 	if (Argp)
 		sprintf(PawStr, "Book Mark %s(%d) Set",
@@ -278,7 +278,7 @@ void Znxtbookmrk(void)
 		strcpy(Lbufname, Curbuff->bname);
 		Bgoto(Bookmrks[Bookmark]->mbuff);
 	}
-	Bpnttomrk(Bookmrks[Bookmark]);
+	bpnttomrk(Bookmrks[Bookmark]);
 	Curwdo->modeflags = INVALID;
 	sprintf(PawStr, "Book Mark %d", Bookmark + 1);
 	Echo(PawStr);
@@ -290,13 +290,13 @@ void Zviewline(void)
 {
 	struct mark pmark;
 
-	Bmrktopnt(&pmark);
+	bmrktopnt(&pmark);
 	Tobegline();
-	Bmrktopnt(Sstart);
-	Bmove(-1);
-	Bmrktopnt(Psstart);
+	bmrktopnt(Sstart);
+	bmove(-1);
+	bmrktopnt(Psstart);
 	Sendp = FALSE;
-	Bpnttomrk(&pmark);
+	bpnttomrk(&pmark);
 }
 
 void Zredisplay(void)
@@ -314,15 +314,15 @@ void Zredisplay(void)
 
 void Zbegwind(void)
 {
-	Bpnttomrk(Sstart);
+	bpnttomrk(Sstart);
 }
 
 void Zendwind(void)
 {
 	int i;
 
-	Bpnttomrk(Sstart);
-	for (i = Wheight() - 1; i && Bcsearch(NL); --i)
+	bpnttomrk(Sstart);
+	for (i = Wheight() - 1; i && bcsearch(NL); --i)
 		;
 }
 
@@ -338,25 +338,25 @@ void Zscrolldown(void)
 
 static void Scroll(Boolean forward)
 {
-	struct mark *pmark = Bcremrk();
+	struct mark *pmark = bcremrk();
 
-	Bpnttomrk(Sstart);
+	bpnttomrk(Sstart);
 	if (forward)
-		while (Arg-- > 0 && Bcsearch(NL))
+		while (Arg-- > 0 && bcsearch(NL))
 			;
 	else
-		while (Arg-- > 0 && Bcrsearch(NL))
+		while (Arg-- > 0 && bcrsearch(NL))
 			;
 	Tobegline();
-	Bmrktopnt(Sstart);
-	Bmove(-1);
-	Bmrktopnt(Psstart);
+	bmrktopnt(Sstart);
+	bmove(-1);
+	bmrktopnt(Psstart);
 	Sendp = FALSE;
 
-	if (Mrkaftermrk(Sstart, pmark))
-		Bmove1();
+	if (mrkaftermrk(Sstart, pmark))
+		bmove1();
 	else
-		Bpnttomrk(pmark);
+		bpnttomrk(pmark);
 
-	Unmark(pmark);
+	unmark(pmark);
 }

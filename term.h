@@ -62,7 +62,7 @@ int _putchar(char);
 extern int Tabsize;
 #define Twidth(ch)		Width(ch, Pcol - Tstart, FALSE)
 #define Bwidth(ch, col)		Width(ch, col, TRUE)
-#define Sindent(arg)		while (arg-- > 0) Binsert(' ')
+#define Sindent(arg)		while (arg-- > 0) binsert(' ')
 
 #ifdef XWINDOWS
 #define Tforce()

@@ -63,7 +63,7 @@ void Zkillbuff(void)
 			if (Getarg("Buffer: ", bname, BUFNAMMAX))
 				return;
 		while ((tbuff = Cfindbuff(bname)) == NULL);
-		Bswitchto(tbuff);
+		bswitchto(tbuff);
 	}
 	if (Curbuff->bmodf)
 		switch (Ask("Save Changes? ")) {
@@ -86,7 +86,7 @@ void Delbuff(struct buff *buff)
 	strcpy(bname, buff->bname);	/* save it for Delbname */
 	if (strcmp(Lbufname, bname) == 0)
 		*Lbufname = '\0';
-	if (Bdelbuff(buff)) {
+	if (bdelbuff(buff)) {
 #ifdef XWINDOWS
 		XDeleteBuffer(bname);
 #endif
@@ -94,7 +94,7 @@ void Delbuff(struct buff *buff)
 		if (wascur && *Lbufname) {
 			struct buff *tbuff = Cfindbuff(Lbufname);
 			if (tbuff)
-				Bswitchto(tbuff);
+				bswitchto(tbuff);
 		}
 		Cswitchto(Curbuff);
 
@@ -102,9 +102,9 @@ void Delbuff(struct buff *buff)
 		for (wdo = Whead; wdo; wdo = wdo->next)
 			if (wdo->wbuff == buff) {
 				wdo->wbuff = Curbuff;
-				Bmrktopnt(wdo->wpnt);
+				bmrktopnt(wdo->wpnt);
 				Mrktomrk(wdo->wmrk, Curbuff->mark);
-				Bmrktopnt(wdo->wstart);
+				bmrktopnt(wdo->wstart);
 				wdo->modeflags = INVALID;
 			}
 	}
@@ -117,10 +117,10 @@ static void lstbuff(struct buff *tbuff)
 	sprintf(PawStr, "%-*s %c%c %8lu %s ", BUFNAMMAX, tbuff->bname,
 		(tbuff->bmode & SYSBUFF) ? 'S' : ' ',
 		tbuff->bmodf ? '*' : ' ',
-		Blength(tbuff),
+		blength(tbuff),
 		tbuff->fname ? Limit(tbuff->fname, WASTED) : UNTITLED);
-	Binstr(PawStr);
-	Binsert('\n');
+	binstr(PawStr);
+	binsert('\n');
 }
 
 void Zlstbuff(void)
@@ -136,7 +136,7 @@ void Zlstbuff(void)
 			else {
 				sprintf(PawStr, "%-*s Problem\n",
 					BUFNAMMAX, Bnames[i]);
-				Binstr(PawStr);
+				binstr(PawStr);
 			}
 		}
 		Curbuff->bmodf = FALSE;

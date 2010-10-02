@@ -58,13 +58,13 @@ void Doincsrch(char *prompt, Boolean forward)
 		PutPaw(str, 2);
 		cmd = Tgetcmd();
 		if (isprint(cmd) && i < STRMAX) {
-			Bmrktopnt(&marks[i]);
+			bmrktopnt(&marks[i]);
 			p[i++] = cmd;
-			Bmove(-i);
+			bmove(-i);
 			if (Bsearch(p, forward)) {
-				Bmove(i);
+				bmove(i);
 			} else {
-				Bpnttomrk(&marks[--i]);
+				bpnttomrk(&marks[--i]);
 				p[i] = '\0';
 				Tbell();
 			}
@@ -76,18 +76,18 @@ void Doincsrch(char *prompt, Boolean forward)
 				int n = strlen(old);
 				strcat(p, old);
 				for (i = 0; i < n; ++i)
-					Bmrktopnt(&marks[i]);
+					bmrktopnt(&marks[i]);
 			}
 
-			Bmrktopnt(&tmark); /* save in case search fails */
+			bmrktopnt(&tmark); /* save in case search fails */
 			if (Bsearch(p, forward))
-				Bmove(i);
+				bmove(i);
 			else {
-				Bpnttomrk(&tmark);
+				bpnttomrk(&tmark);
 				Tbell();
 			}
 		} else if (Keys[cmd] == ZRDELCHAR && i > 0) {
-			Bpnttomrk(&marks[--i]);
+			bpnttomrk(&marks[--i]);
 			p[i] = '\0';
 		} else if (Keys[cmd] != ZNOTIMPL) {
 			if (cmd != CR)
@@ -98,7 +98,7 @@ void Doincsrch(char *prompt, Boolean forward)
 	}
 	Clrecho();
 	if (Keys[cmd] == ZABORT)
-		Bpnttomrk(&marks[0]);
+		bpnttomrk(&marks[0]);
 	else
 		strcpy(old, p);
 	searchdir[0] = forward;
@@ -126,7 +126,7 @@ void Zgsearch(void)
 	if (Getarg(Nocase("Global Search: "), old, STRMAX))
 		return;
 	Cswitchto(Bufflist);
-	Btostart();
+	btostart();
 	searchdir[0] = FORWARD;
 	searchdir[1] = SGLOBAL;
 	Zagain();
@@ -142,7 +142,7 @@ void Zgresrch(void)
 	if (Getarg(Nocase("Global RE Search: "), old, STRMAX))
 		return;
 	Cswitchto(Bufflist);
-	Btostart();
+	btostart();
 	searchdir[0] = REGEXP;
 	searchdir[1] = SGLOBAL;
 	Zagain();
@@ -152,16 +152,16 @@ void Zagain(void)
 {
 	if (searchdir[1] == SGLOBAL) {
 		if (!Gmark)
-			Gmark = Bcremrk(); /* set here in case exit/reload */
+			Gmark = bcremrk(); /* set here in case exit/reload */
 		while (!Promptsearch("", AGAIN)) {
 			Curbuff = Curbuff->next;
 			if (Curbuff) {
 				Cswitchto(Curbuff);
-				Btostart();
+				btostart();
 				Arg = 1;
 			} else {
-				Bpnttomrk(Gmark);
-				Unmark(Gmark);
+				bpnttomrk(Gmark);
+				unmark(Gmark);
 				Gmark = NULL;
 				Curwdo->modeflags = INVALID;
 				searchdir[1] = 0;
@@ -224,7 +224,7 @@ void Doreplace(int type)
 	query = type == FORWARD ? FALSE : TRUE;
 
 	crgone = *old && *(old + strlen(old) - 1) == '\n';
-	pmark = Bcremrk();
+	pmark = bcremrk();
 
 	if (type == REGEXP)
 		rc = Compile((Byte *)old, ebuf, &ebuf[ESIZE]);
@@ -233,12 +233,12 @@ void Doreplace(int type)
 	else if (Argp) {
 		for (tbuff = Bufflist; tbuff && !exit; tbuff = tbuff->next) {
 			Cswitchto(tbuff);
-			Bmrktopnt(&tmark);
-			Btostart();
+			bmrktopnt(&tmark);
+			btostart();
 			while (Replaceone(type, &query, &exit, ebuf, crgone) &&
 			       !exit)
 				;
-			Bpnttomrk(&tmark);
+			bpnttomrk(&tmark);
 		}
 		Clrecho();
 		Cswitchto(pmark->mbuff);
@@ -247,8 +247,8 @@ void Doreplace(int type)
 	else
 		Clrecho();
 
-	Bpnttomrk(pmark);
-	Unmark(pmark);
+	bpnttomrk(pmark);
+	unmark(pmark);
 }
 
 static Boolean Replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
@@ -259,7 +259,7 @@ static Boolean Replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
 	int dist, changeprev = 0;
 	struct mark *prevmatch;
 
-	prevmatch = Bcremrk();
+	prevmatch = bcremrk();
 	Echo("Searching...");
 	while (!*exit &&
 	       (type == REGEXP ? Step(ebuf) : Bsearch(old, FORWARD))) {
@@ -295,11 +295,11 @@ input:
 					if (type == REGEXP)
 						Tbell();
 					else {
-						Bpnttomrk(prevmatch);
+						bpnttomrk(prevmatch);
 						if (changeprev) {
-							Bdelete(strlen(new));
-							Binstr(old);
-							Bpnttomrk(prevmatch);
+							bdelete(strlen(new));
+							binstr(old);
+							bpnttomrk(prevmatch);
 						}
 					}
 					goto replace;
@@ -310,7 +310,7 @@ input:
 
 				case 'S': /* skip file */
 				case 's':
-					Unmark(prevmatch);
+					unmark(prevmatch);
 					return FALSE;
 
 				case 'q': /* abort */
@@ -322,15 +322,15 @@ input:
 					if (Keys[(int)tchar] == ZABORT)
 						*exit = TRUE;
 					else {
-						Bmrktopnt(prevmatch);
+						bmrktopnt(prevmatch);
 						changeprev = 0;
 						/* skip and continue */
-						Bmove1();
+						bmove1();
 					}
 					continue;
 			}
 		}
-		Bmrktopnt(prevmatch);
+		bmrktopnt(prevmatch);
 		changeprev = 1;
 
 		/* change it! */
@@ -341,15 +341,15 @@ input:
 			for (ptr = new; *ptr; ++ptr)
 				switch (*ptr) {
 				case '\\':
-					Binsert(*(++ptr) ? *ptr : '\\'); break;
+					binsert(*(++ptr) ? *ptr : '\\'); break;
 				case '&':
 					Zyank(); break;
 				default:
-					Binsert(*ptr);
+					binsert(*ptr);
 				}
 		} else {
-			Bdelete(strlen(old));
-			Binstr(new);
+			bdelete(strlen(old));
+			binstr(new);
 		}
 		if (*query && tchar == ',') {
 			Refresh();
@@ -358,26 +358,26 @@ input:
 				if (type == REGEXP) {
 					for (dist = 0;
 					     !Bisatmrk(REstart);
-					     ++dist, Bmove(-1))
+					     ++dist, bmove(-1))
 						;
-					Bdelete(dist);
+					bdelete(dist);
 					Zyank();
 				} else {
-					Bmove(-strlen(new));
-					Bdelete(strlen(new));
-					Binstr(old);
+					bmove(-strlen(new));
+					bdelete(strlen(new));
+					binstr(old);
 				}
 			}
 		}
 		/* special case for "^" && "$" search strings */
 		if (type == REGEXP && (ISNL(Buff()) || circf) && !crgone)
-			Bmove1();
+			bmove1();
 		if (*query)
 			Echo("Searching...");
 		else if (Tkbrdy())
 			*exit = TRUE;
 	}
-	Unmark(prevmatch);
+	unmark(prevmatch);
 #if defined(XWINDOWS) && defined(POPTARTS)
 	QueryDone();
 #endif
@@ -404,8 +404,8 @@ static Boolean Dosearch(void)
 	int fcnt = 0, rc;
 	struct mark *tmark;
 
-	tmark = Bcremrk();
-	Bmove(searchdir[0] == BACKWARD ? -1 : 1);
+	tmark = bcremrk();
+	bmove(searchdir[0] == BACKWARD ? -1 : 1);
 	Echo("Searching...");
 	if (searchdir[0] == REGEXP) {
 		rc = Compile((Byte *)old, ebuf, &ebuf[ESIZE]);
@@ -418,18 +418,18 @@ static Boolean Dosearch(void)
 		} else
 			Regerr(rc);
 		if (found)
-			Bpnttomrk(REstart);
+			bpnttomrk(REstart);
 	} else {
 		while (Arg-- > 0 && found) {
 			found = Bsearch(old, searchdir[0]);
 			if (found)
 				++fcnt;
-			Bmove1();
+			bmove1();
 		}
-		Bmove(-1);
+		bmove(-1);
 	}
 	if (!found) {
-		Bpnttomrk(tmark);
+		bpnttomrk(tmark);
 		if (fcnt) {
 			Echo("Found ");
 			Titot(fcnt);
@@ -437,7 +437,7 @@ static Boolean Dosearch(void)
 			Echo("Not Found");
 	} else
 		Clrecho();
-	Unmark(tmark);
+	unmark(tmark);
 	Arg = 0;
 	return found;
 }
@@ -477,16 +477,16 @@ Boolean Bsearch(char *str, Boolean forward)
 			}
 
 		/* search forward*/
-		Bmove(len);
+		bmove(len);
 		while (!Bisend()) {
 			/* fast loop - delta will be 0 if matched */
 			while (!Bisend() && delta[Buff()])
-				Bmove(delta[Buff()]);
+				bmove(delta[Buff()]);
 			/* slow loop */
 			for (i = len;
 				 (char)STRIP(Buff()) == str[i] ||
 				 (!exact && Tolower(STRIP(Buff())) == str[i]);
-				 Bmove(-1), --i)
+				 bmove(-1), --i)
 					if (i == 0)
 						return TRUE;
 			/* compute shift. shift must be forward! */
@@ -494,7 +494,7 @@ Boolean Bsearch(char *str, Boolean forward)
 				shift = delta[Buff()];
 			else
 				shift = len - i + 1;
-			Bmove(shift);
+			bmove(shift);
 		}
 	} else {
 		/* Init the delta table to str length.
@@ -511,26 +511,26 @@ Boolean Bsearch(char *str, Boolean forward)
 				str[i] = Tolower(str[i]);
 			}
 		/* reverse search */
-		Bmove(-len);
+		bmove(-len);
 		while (!Bisstart()) {
 			/* fast loop - delta will be 0 if matched */
 			while (delta[Buff()] && !Bisstart())
-				Bmove(delta[Buff()]);
+				bmove(delta[Buff()]);
 			/* slow loop */
 			for (i = 0;
 			     i <= len &&
 				     ((char)STRIP(Buff()) == str[i] ||
 				      (!exact &&
 				       Tolower(STRIP(Buff())) == str[i]));
-			     ++i, Bmove1())
+			     ++i, bmove1())
 				;
 			if (i > len) {
 				/* we matched! */
-				Bmove(-len - 1);
+				bmove(-len - 1);
 				return TRUE;
 			}
 			/* compute shift. shift must be backward! */
-			Bmove(delta[Buff()] + i < 0 ? delta[Buff()] : -i - 1);
+			bmove(delta[Buff()] + i < 0 ? delta[Buff()] : -i - 1);
 		}
 	}
 	return FALSE;

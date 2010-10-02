@@ -73,8 +73,8 @@ Boolean Getarg(char *prompt, char *arg, int max)
 		Execute();
 	if (InPaw != ABORT) {
 		/* get the argument */
-		Btostart();
-		for (ptr = arg; !Bisend() && Buff() != '\0'; Bmove1())
+		btostart();
+		for (ptr = arg; !Bisend() && Buff() != '\0'; bmove1())
 			*ptr++ = Buff();
 		*ptr = '\0';
 		rc = ptr == arg;	/* set to 1 if string empty */
@@ -84,7 +84,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
 	Insearch = FALSE; /* used by Zcase when in search command */
 	Argp = argp_save;
 	Arg = arg_save;
-	Bswitchto(Buff_save);					/* go back */
+	bswitchto(Buff_save);					/* go back */
 	Curbuff->bmode = Paw->bmode; /* mainly for EXACT mode */
 #if 0
 	/* SAM ??? */
@@ -218,33 +218,33 @@ void Pinsert(void)
 	}
 
 	if (First) {
-		Bdelete(Curplen);
+		bdelete(Curplen);
 		First = FALSE;
 		Tlrow = -1;
 	}
 
 	width = Twidth(Cmd);
-	if (Bgetcol(FALSE, 0) + width <= Pawlen) {
+	if (bgetcol(FALSE, 0) + width <= Pawlen) {
 		savech = Buff();	/* in case overwrite mode */
 		Zinsert();
 
-		Bmrktopnt(&tmark);
-		Btoend();
-		if (Bgetcol(FALSE, 0) > Pawlen) {
+		bmrktopnt(&tmark);
+		btoend();
+		if (bgetcol(FALSE, 0) > Pawlen) {
 			/* Insert in middle pushed text past end */
-			Bmove(-width);
-			Bdelete(width);
+			bmove(-width);
+			bdelete(width);
 		}
-		Bpnttomrk(&tmark);
+		bpnttomrk(&tmark);
 
 		if (Cnum)
 			switch (Pcmdplete(FALSE)) {
 			case 0:		/* no match - remove char */
-				Bmove(-1);
-				Bdelete(1);
+				bmove(-1);
+				bdelete(1);
 				if (Paw->bmode & OVERWRITE) {
-					Binsert(savech);
-					Bmove(-1);
+					binsert(savech);
+					bmove(-1);
 				}
 				break;
 			case 1:		/* partial match */
@@ -284,15 +284,15 @@ void Zpart(void)
 
 #ifdef TAGS
 	if (Nextpart == ZFINDTAG) {
-		Bswitchto(Cfindbuff(TAGBUFNAME));
-		for (Bcsearch(NL); !Bisend(); Bcsearch(NL)) {
+		bswitchto(Cfindbuff(TAGBUFNAME));
+		for (bcsearch(NL); !Bisend(); bcsearch(NL)) {
 			Getbword(word, STRMAX, Istoken);
 			if (Strstr(word, Savetag)) {
 				Makepaw(word, TRUE);
 				return;
 			}
 		}
-		Bswitchto(Paw);
+		bswitchto(Paw);
 		Tbell();
 		return;
 	}
@@ -313,12 +313,12 @@ void Zpart(void)
 
 void Makepaw(char *word, Boolean start)
 {
-	Bswitchto(Paw);
-	Btostart();
-	Bdelete(Curplen);
-	Binstr(word);
+	bswitchto(Paw);
+	btostart();
+	bdelete(Curplen);
+	binstr(word);
 	Tcleol();
 	memset(tline, '\376', COLMAX);	/* invalidate it */
 	if (start)
-		Btostart();
+		btostart();
 }

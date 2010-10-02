@@ -47,10 +47,10 @@ void Save(struct buff *bsave)
 		if (tbuff->fname && !(tbuff->bmode & SYSBUFF)) {
 			unsigned mode;
 
-			Bswitchto(tbuff);
-			ploc = Blocation(&junk);
-			Bpnttomrk(tbuff->mark);
-			mloc = Blocation(&junk);
+			bswitchto(tbuff);
+			ploc = blocation(&junk);
+			bpnttomrk(tbuff->mark);
+			mloc = blocation(&junk);
 #if COMMENTBOLD
 			/* put the comchar in the upper 8 bits of mode */
 			mode = tbuff->bmode | (tbuff->comchar << 24);
@@ -66,9 +66,9 @@ void Save(struct buff *bsave)
 
 	/* save the windows */
 	for (wdo = Whead; wdo; wdo = wdo->next) {
-		Bswitchto(wdo->wbuff);
-		Bpnttomrk(wdo->wstart);
-		mloc = Blocation(&junk);
+		bswitchto(wdo->wbuff);
+		bpnttomrk(wdo->wstart);
+		mloc = blocation(&junk);
 		fprintf(fp, "W %s %u %u %lu %u\n",
 			wdo->wbuff->bname, wdo->first, wdo->last, mloc,
 			wdo == Curwdo);
@@ -116,7 +116,7 @@ void Loadsaved(void)
 
 		Readone(bname, fname);
 		Boffset(mloc);
-		Bmrktopnt(Curbuff->mark);
+		bmrktopnt(Curbuff->mark);
 		Boffset(ploc);
 #if COMMENTBOLD
 		/* strip the comchar off the mode */
@@ -140,7 +140,7 @@ void Loadsaved(void)
 }
 
 
-/* Bmove can only move the Point +/-32767 bytes. This routine overcomes
+/* bmove can only move the Point +/-32767 bytes. This routine overcomes
  * this limitation.
  * NOTE: Can only move forward.
  */
@@ -148,10 +148,10 @@ void Loadsaved(void)
 
 void Boffset(unsigned long off)
 {
-	Btostart();
+	btostart();
 	for (; off > MAXMOVE; off -= MAXMOVE)
-		Bmove(MAXMOVE);
-	Bmove(off);
+		bmove(MAXMOVE);
+	bmove(off);
 }
 
 void Zcount(void)
@@ -163,18 +163,18 @@ void Zcount(void)
 
 	Arg = 0;
 	if (Argp) {
-		tmark = Bcremrk();
-		Btostart();
+		tmark = bcremrk();
+		btostart();
 	} else {
-		swapped = Bisaftermrk(Curbuff->mark);
+		swapped = bisaftermrk(Curbuff->mark);
 		if (swapped)
-			Bswappnt(Curbuff->mark);
-		tmark = Bcremrk();
+			bswappnt(Curbuff->mark);
+		tmark = bcremrk();
 	}
 	l = w = c = 0;
 	Echo("Counting...");
 	word = FALSE;
-	for (; Argp ? !Bisend() : Bisbeforemrk(Curbuff->mark); Bmove1(), ++c) {
+	for (; Argp ? !Bisend() : bisbeforemrk(Curbuff->mark); bmove1(), ++c) {
 		if (ISNL(Buff()))
 			++l;
 		if (!Istoken())
@@ -189,14 +189,14 @@ void Zcount(void)
 	if (swapped)
 		Mrktomrk(Curbuff->mark, tmark);
 	else
-		Bpnttomrk(tmark);
-	Unmark(tmark);
+		bpnttomrk(tmark);
+	unmark(tmark);
 }
 
 void Zispace(void)
 {
-	Binsert(' ');
-	Bmove(-1);
+	binsert(' ');
+	bmove(-1);
 }
 
 /* this struct must be sorted */
@@ -341,9 +341,9 @@ void Toggle_mode(int mode)
 
 void Zmrkpara(void)
 {
-	Bmove1();	/* make sure we are not at the start of a paragraph */
+	bmove1();	/* make sure we are not at the start of a paragraph */
 	Zbpara();
-	Bmrktopnt(Curbuff->mark);
+	bmrktopnt(Curbuff->mark);
 	while (Arg-- > 0)
 		Zfpara();
 	Arg = 0;
@@ -361,7 +361,7 @@ void Zdate(void)
 	if ((Argp || (Curbuff->bmode & VIEW)) && !InPaw)
 		Echo(date);
 	else
-		Binstr(date);
+		binstr(date);
 	Arg = 0;
 }
 
@@ -376,18 +376,18 @@ static void Setregion(int (*convert)(int))
 		return;
 	}
 
-	swapped = Bisaftermrk(Curbuff->mark);
+	swapped = bisaftermrk(Curbuff->mark);
 	if (swapped)
-		Bswappnt(Curbuff->mark);
-	Bmrktopnt(&tmark);
+		bswappnt(Curbuff->mark);
+	bmrktopnt(&tmark);
 
-	for (; Bisbeforemrk(Curbuff->mark); Bmove1())
+	for (; bisbeforemrk(Curbuff->mark); bmove1())
 		Buff() = (*convert)(Buff());
 
 	if (swapped)
 		Mrktomrk(Curbuff->mark, &tmark);
 	else
-		Bpnttomrk(&tmark);
+		bpnttomrk(&tmark);
 	Curbuff->bmodf = MODIFIED;
 	Zredisplay();
 }
@@ -407,28 +407,28 @@ static void Indent(Boolean flag)
 	struct mark *psave, *msave = NULL;
 	int i;
 
-	psave = Bcremrk();
-	if (Bisaftermrk(Curbuff->mark)) {
-		Bswappnt(Curbuff->mark);
-		msave = Bcremrk();
+	psave = bcremrk();
+	if (bisaftermrk(Curbuff->mark)) {
+		bswappnt(Curbuff->mark);
+		msave = bcremrk();
 	}
-	Bcrsearch(NL);
-	while (Bisbeforemrk(Curbuff->mark)) {
+	bcrsearch(NL);
+	while (bisbeforemrk(Curbuff->mark)) {
 		if (flag) {
 			/* skip comment lines */
 			if (Buff() != '#')
 				for (i = 0; i < Arg; ++i)
-					Binsert('\t');
+					binsert('\t');
 		} else
 			for (i = 0; i < Arg && Buff() == '\t'; ++i)
-				Bdelete(1);
-		Bcsearch(NL);
+				bdelete(1);
+		bcsearch(NL);
 	}
-	Bpnttomrk(psave);
-	Unmark(psave);
+	bpnttomrk(psave);
+	unmark(psave);
 	if (msave) {
 		Mrktomrk(Curbuff->mark, msave);
-		Unmark(msave);
+		unmark(msave);
 	}
 }
 
@@ -461,9 +461,9 @@ void Mshow(unsigned ch)
 		default:
 			return;
 		}
-		Bmrktopnt(&save);
+		bmrktopnt(&save);
 		do {
-			Bmove(-1);
+			bmove(-1);
 			if (Buff() == match)
 				--cnt;
 			else if (Buff() == ch)
@@ -477,7 +477,7 @@ void Mshow(unsigned ch)
 			Delay();
 			ShowCursor(FALSE);
 		}
-		Bpnttomrk(&save);
+		bpnttomrk(&save);
 	} else if (VAR(VMATCH) & 2) {
 		switch (ch) {
 		case '(':
@@ -489,8 +489,8 @@ void Mshow(unsigned ch)
 		default:
 			return;
 		}
-		Binsert(match);
-		Bmove(-1);
+		binsert(match);
+		bmove(-1);
 	}
 }
 

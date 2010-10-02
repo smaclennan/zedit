@@ -92,12 +92,12 @@ void Zhelp(void)
 			if (!fp)
 				break;
 		}
-		Bempty();
+		bempty();
 		while (fgets(str, STRMAX, fp) && *str != ':')
-			Binstr(str);
+			binstr(str);
 		fclose(fp);
-		Btostart();
-		Bcsearch('n');
+		btostart();
+		bcsearch('n');
 		Curbuff->bmodf = FALSE;
 		level = 2;
 		break;
@@ -114,7 +114,7 @@ void Zhelp(void)
 
 	case 3:
 		/* accept input from secondary level and display help */
-		Bmakecol(Bgetcol(FALSE, 0) < 40 ? 5 : 45, FALSE);
+		bmakecol(bgetcol(FALSE, 0) < 40 ? 5 : 45, FALSE);
 		Getbword(str, 30, Issentence);
 		if (strncmp(str, "Top", 3) == 0) {
 			level = 1;
@@ -151,14 +151,14 @@ void Helpit(int type)
 	int col = 5, i;
 
 	Echo("Please wait...");
-	Bempty();
+	bempty();
 	if (type == -1)
 		type = was;
 	else
 		was = type;
 	sprintf(buff, "- %s Help -\n\n", Htype[type]);
 	Tindent((Colmax - strlen(buff)) >> 1);
-	Binstr(buff);
+	binstr(buff);
 	if (type == H_VAR)
 		for (i = 0; i < VARNUM; ++i)
 			Dispit(Vars[i].vname, &col);
@@ -167,9 +167,9 @@ void Helpit(int type)
 			if (Cnames[i].htype == type)
 				Dispit(Cnames[i].name, &col);
 	if (col == 45)
-		Binsert('\n');
-	Binstr("\n     Top Level Help Menu");
-	Btostart();
+		binsert('\n');
+	binstr("\n     Top Level Help Menu");
+	btostart();
 	Curbuff->bmodf = FALSE;
 	Clrecho();
 }
@@ -177,10 +177,10 @@ void Helpit(int type)
 
 void Dispit(char *name, int *col)
 {
-	Bmakecol(*col, TRUE);
-	Binstr(name);
+	bmakecol(*col, TRUE);
+	binstr(name);
 	if (*col == 45)
-		Binsert('\n');
+		binsert('\n');
 	*col ^= 40;
 }
 
@@ -188,20 +188,20 @@ static void dump_bindings(char *buff, int fnum)
 {
 	int k, found = 0;
 
-	Binstr("\nBinding(s): ");
+	binstr("\nBinding(s): ");
 
 	for (k = 0; k < NUMKEYS; ++k)
 		if (Keys[k] == fnum)
 			if (notdup_key(k)) {
 				if (found)
-					Binstr(",  ");
+					binstr(",  ");
 				else
 					found = TRUE;
-				Binstr(Dispkey(k, buff));
+				binstr(Dispkey(k, buff));
 			}
 
 	if (!found)
-		Binstr("Unbound");
+		binstr("Unbound");
 }
 
 void Help(int code, Boolean func)
@@ -214,10 +214,10 @@ void Help(int code, Boolean func)
 		return;
 	fp = Findhelp(code, func, buff);
 	if (fp) {
-		Bempty();
+		bempty();
 		p = buff + 1;
 		do
-			Binstr(p);
+			binstr(p);
 		while (fgets(p = buff, BUFSIZ, fp) && *buff != ':');
 		fclose(fp);
 
@@ -227,10 +227,10 @@ void Help(int code, Boolean func)
 			    Cnames[code].fnum != ZINSERT)
 				dump_bindings(buff, Cnames[code].fnum);
 		} else {
-			Binstr("\nCurrent value: ");
+			binstr("\nCurrent value: ");
 			Varval(code);
 		}
-		Btostart();
+		btostart();
 	}
 }
 

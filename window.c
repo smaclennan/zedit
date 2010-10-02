@@ -35,9 +35,9 @@ static struct wdo *Wcreate(int first, int last)
 
 	if (new) {
 		new->wbuff	= Curbuff;
-		new->wpnt	= Bcremrk();
-		new->wmrk	= Bcremrk();
-		new->wstart	= Bcremrk();
+		new->wpnt	= bcremrk();
+		new->wmrk	= bcremrk();
+		new->wstart	= bcremrk();
 		new->modeflags	= INVALID;
 		new->first	= first;
 		new->last	= last;
@@ -52,9 +52,9 @@ static struct wdo *Wcreate(int first, int last)
 /* free wdo - may invalidate Curwdo and Whead */
 static void Wfree(struct wdo *wdo)
 {
-	Unmark(wdo->wpnt);
-	Unmark(wdo->wmrk);
-	Unmark(wdo->wstart);
+	unmark(wdo->wpnt);
+	unmark(wdo->wmrk);
+	unmark(wdo->wstart);
 #ifdef SCROLLBARS
 	DeleteScrollBars(wdo);
 #endif
@@ -164,15 +164,15 @@ void Wswitchto(struct wdo *wdo)
 {
 	if (wdo != Curwdo) {
 		if (Curwdo) {
-			Bmrktopnt(Curwdo->wpnt);
+			bmrktopnt(Curwdo->wpnt);
 			Mrktomrk(Curwdo->wmrk, Curbuff->mark);
 			/* don't update wstart unless Sstart for this window */
 			if (Sstart->mbuff == Curwdo->wbuff)
 				Mrktomrk(Curwdo->wstart, Sstart);
 		}
 		Curwdo = wdo;
-		Bswitchto(wdo->wbuff);
-		Bpnttomrk(wdo->wpnt);
+		bswitchto(wdo->wbuff);
+		bpnttomrk(wdo->wpnt);
 		Mrktomrk(Curbuff->mark, wdo->wmrk);
 		Mrktomrk(Sstart, wdo->wstart);
 		Sendp = FALSE;
@@ -186,10 +186,10 @@ void Wswitchto(struct wdo *wdo)
 /* Switch to a new buffer in the current window. */
 void Cswitchto(struct buff *buff)
 {
-	Bswitchto(buff);
+	bswitchto(buff);
 	if (Curwdo->wbuff != Curbuff) {
 		Curwdo->wbuff = Curbuff;
-		Bmrktopnt(Curwdo->wpnt);
+		bmrktopnt(Curwdo->wpnt);
 		Mrktomrk(Curwdo->wmrk, Curbuff->mark);
 		if (Sstart->mbuff == Curbuff)
 			Mrktomrk(Curwdo->wstart, Sstart);
@@ -374,7 +374,7 @@ Boolean WuseOther(char *bname)
 	if (buff == NULL)
 		return FALSE;
 	Cswitchto(buff);
-	Bempty();
+	bempty();
 	return TRUE;
 }
 
@@ -581,14 +581,14 @@ void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 	buff = Cfindbuff(bname);
 	if (buff == NULL)
 		buff = Cfindbuff(MAINBUFF);
-	Bswitchto(buff);
+	bswitchto(buff);
 	new = Wcreate(first, last);
 	if (new == NULL)
 		NoMem();
 	Mrktomrk(buff->mark, new->wmrk);
 	Boffset(sloc);
-	Bmrktopnt(new->wstart);
-	Bpnttomrk(new->wpnt);	/* return it */
+	bmrktopnt(new->wstart);
+	bpnttomrk(new->wpnt);	/* return it */
 	new->first = first;
 	new->last  = last;
 	if (Whead) {

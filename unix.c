@@ -33,8 +33,8 @@ void Hangup(int signal)
 	bsave = Curbuff;
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next) {
 		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF)) {
-			Bswitchto(tbuff);
-			Bwritefile(strcmp(Bfname(),
+			bswitchto(tbuff);
+			bwritefile(strcmp(Bfname(),
 					  MAINBUFF) ? Bfname() : "MAIN.HUP");
 		}
 #ifdef PIPESH
@@ -148,16 +148,16 @@ static int Readapipe(struct buff *tbuff)
 		struct mark tmark;
 		struct buff *save = Curbuff;
 
-		Bswitchto(tbuff);
-		Bmrktopnt(&tmark);
-		Btoend();
+		bswitchto(tbuff);
+		bmrktopnt(&tmark);
+		btoend();
 		while (i-- > 0)
-			Binsert(*ptr++);
+			binsert(*ptr++);
 		if (tbuff->out_pipe)
-			Bmrktopnt(Curbuff->mark);
+			bmrktopnt(Curbuff->mark);
 		else
-			Bpnttomrk(&tmark);
-		Bswitchto(save);
+			bpnttomrk(&tmark);
+		bswitchto(save);
 	} else
 		/* pipe died */
 		Checkpipes(1);
@@ -175,16 +175,16 @@ void Sendtopipe(void)
 	struct mark tmark;
 
 	Mrktomrk(&tmark, Curbuff->mark);
-	if (Bisaftermrk(&tmark))
-		Bswappnt(&tmark);
-	for (i = 0; i < 256 && !Bisatmrk(&tmark); Bmove1(), ++i)
+	if (bisaftermrk(&tmark))
+		bswappnt(&tmark);
+	for (i = 0; i < 256 && !Bisatmrk(&tmark); bmove1(), ++i)
 		line[i] = Buff();
 	line[i] = '\0';
 	fputs(line, Curbuff->out_pipe);
 	fflush(Curbuff->out_pipe);
 	if (!Bisend()) {
-		Btoend();
-		Binstr(line);
+		btoend();
+		binstr(line);
 	}
 }
 

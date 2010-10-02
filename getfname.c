@@ -102,16 +102,16 @@ void Zfname(void)
 		}
 	if (match) {
 		if (n > len) {
-			Btoend();
+			btoend();
 			while (len < n && Curplen < Pawlen) {
-				Binsert(match[len++]);
+				binsert(match[len++]);
 				++did_something;
 			}
 			if (len < n)
 				Tbell();
 		}
 		if (f == 0 && Isdir(Getbtxt(txt, PATHMAX)) && Curplen < Pawlen)
-			Binsert(PSEP);
+			binsert(PSEP);
 	} else if (!update)
 		Tbell();
 
@@ -158,7 +158,7 @@ struct llist *GetFill(char *dir, char **fname, int *len, Boolean *update)
 	char txt[PATHMAX + 1];
 
 	if (First) {
-		Bdelete(Curplen);
+		bdelete(Curplen);
 		First = FALSE;
 	}
 	Getbtxt(txt, PATHMAX);

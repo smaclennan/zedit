@@ -30,8 +30,8 @@ static struct comment *new_comment(struct mark *start, struct mark *end,
 	struct comment *new = calloc(sizeof(struct comment), 1);
 	if (!new)
 		return NULL;
-	new->start = Bcremrk();
-	new->end   = Bcremrk();
+	new->start = bcremrk();
+	new->end   = bcremrk();
 
 	new->type  = type;
 	if (start)
@@ -86,7 +86,7 @@ static void MergeComments(void)
 	}
 
 	while (COMhead && CPPhead)
-		if (Mrkaftermrk(CPPhead->start, COMhead->start)) {
+		if (mrkaftermrk(CPPhead->start, COMhead->start)) {
 			if (!buff->comments)
 				buff->comments = COMhead;
 			else
@@ -122,19 +122,19 @@ static void CPPstatement(void)
 	struct mark start;
 	int type;
 
-	Bmrktopnt(&start);
+	bmrktopnt(&start);
 
 	/* Check for: if/elif/else/endif */
 	/* WARNING: Getbword is too deadly to use here */
 	do {
-		Bmove1();			/* skip '#' and whitespace */
+		bmove1();			/* skip '#' and whitespace */
 		if (Bisend())
 			return;
 	} while (Iswhite());
 
-	if (Buff() == 'i' && Bmove1() && Buff() == 'f')
+	if (Buff() == 'i' && bmove1() && Buff() == 'f')
 		type = T_CPPIF;
-	else if (Buff() == 'e' && Bmove1() && (Buff() == 'l' || Buff() == 'n'))
+	else if (Buff() == 'e' && bmove1() && (Buff() == 'l' || Buff() == 'n'))
 		type = T_CPPIF;
 	else
 		type = T_CPP;
@@ -142,17 +142,17 @@ static void CPPstatement(void)
 again:
 	while (Buff() != '\n' && !Bisend()) {
 		if (Buff() == '/') {
-			Bmove1();
+			bmove1();
 			if (Buff() == '*') {
 				/* found comment start */
-				Bmove(-2);
+				bmove(-2);
 				NewCPP(&start, NULL, type);
 
 				/* find comment end */
 				if (Bsearch("*/", FORWARD)) {
-					Bmrktopnt(&start);
-					if (Bcsearch('\n')) {
-						Bmove(-2);
+					bmrktopnt(&start);
+					if (bcsearch('\n')) {
+						bmove(-2);
 						if (Buff() == '\\')
 							goto again;
 					}
@@ -160,26 +160,26 @@ again:
 				return;
 			} else if (Buff() == '/') {
 				/* found c++ comment start */
-				Bmove(-2);
+				bmove(-2);
 				NewCPP(&start, NULL, type);
 
 				/* find comment end */
-				Bcsearch('\n');
+				bcsearch('\n');
 				return;
 			}
 		} else
-			Bmove1();
+			bmove1();
 	}
 
 	if (ISNL(Buff())) {
 		/* check for continuation line */
-		Bmove(-1);
+		bmove(-1);
 		if (Buff() == '\\') {
 			/* continuation line */
-			Bmove(2);
+			bmove(2);
 			goto again;
 		}
-		Bmove1();
+		bmove1();
 
 	}
 	NewCPP(&start, NULL, type);
@@ -193,8 +193,8 @@ static void UnComment(struct buff *buff)
 	int i;
 
 	for (com = buff->comments; com; com = next) {
-		Unmark(com->start);
-		Unmark(com->end);
+		unmark(com->start);
+		unmark(com->end);
 		next = com->next;
 		free(com);
 	}
@@ -218,43 +218,43 @@ static void ScanBuffer(void)
 	while (Curbuff->comments) {
 		struct comment *com = Curbuff->comments;
 		Curbuff->comments = Curbuff->comments->next;
-		Unmark(com->start);
-		Unmark(com->end);
+		unmark(com->start);
+		unmark(com->end);
 		free(com);
 	}
 
-	Bmrktopnt(&tmark);
+	bmrktopnt(&tmark);
 
-	Btostart();
+	btostart();
 	if (comchar)
-		while (Bcsearch(comchar) && !Bisend()) {
+		while (bcsearch(comchar) && !Bisend()) {
 			/* mark to end of line as comment */
-			Bmove(-1);
-			Bmrktopnt(&start);
-			Bcsearch('\n');
-			Bmove(-1);
+			bmove(-1);
+			bmrktopnt(&start);
+			bcsearch('\n');
+			bmove(-1);
 			NewComment(&start, NULL);
 		}
 	else
 		/* Look for both C and C++ comments. */
-		while (Bcsearch('/') && !Bisend()) {
+		while (bcsearch('/') && !Bisend()) {
 			if (Buff() == '*') {
-				Bmove(-1);
-				Bmrktopnt(&start);
+				bmove(-1);
+				bmrktopnt(&start);
 				if (Bsearch("*/", FORWARD)) {
-					Bmove1();
+					bmove1();
 					NewComment(&start, NULL);
 				}
 			} else if (Buff() == '/') {
-				Bmove(-1);
-				Bmrktopnt(&start);
+				bmove(-1);
+				bmrktopnt(&start);
 				Toendline();
 				NewComment(&start, NULL);
 			}
 		}
 
 	/* find CPP statements */
-	Btostart();
+	btostart();
 	do {
 		if (Buff() == '#')
 			CPPstatement();
@@ -264,10 +264,10 @@ static void ScanBuffer(void)
 			if (Buff() == '.')
 				CPPstatement();
 		}
-	} while (Bcsearch('\n') && !Bisend());
+	} while (bcsearch('\n') && !Bisend());
 
 	MergeComments();
-	Bpnttomrk(&tmark);
+	bpnttomrk(&tmark);
 }
 
 /* The following are called by the Innerdsp routine. */
@@ -298,9 +298,9 @@ void CheckComment(void)
 		start = Curbuff->comments;
 	}
 	for ( ; start; start = start->next)
-		if (Bisbeforemrk(start->start))
+		if (bisbeforemrk(start->start))
 			break;
-		else if (Bisbeforemrk(start->end) || Bisatmrk(start->end)) {
+		else if (bisbeforemrk(start->end) || Bisatmrk(start->end)) {
 			Tstyle(start->type);
 			return;
 		}

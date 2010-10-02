@@ -100,17 +100,17 @@ void Znexterr(void)
 		return;
 	}
 	save = Curbuff;
-	Bswitchto(mbuff);
+	bswitchto(mbuff);
 	if (!NextErrorCalled) {
 		NextErrorCalled = 1;
-		Btostart();
+		btostart();
 	}
 	line = Parse(fname);
 	if (line) {
 		Vsetmrk(Curbuff->mark);
-		Bmrktopnt(Curbuff->mark);
+		bmrktopnt(Curbuff->mark);
 		Tobegline();
-		Bswappnt(Curbuff->mark);
+		bswappnt(Curbuff->mark);
 		Vsetmrk(Curbuff->mark);
 		wdo = Findwdo(mbuff);
 		if (wdo)
@@ -122,9 +122,9 @@ void Znexterr(void)
 		Zlgoto();
 		Tobegline();
 	} else {
-		Btoend();
-		Bmrktopnt(Curbuff->mark);
-		Bswitchto(save);
+		btoend();
+		bmrktopnt(Curbuff->mark);
+		bswitchto(save);
 		Echo("No more errors");
 	}
 	Argp = FALSE;
@@ -191,37 +191,37 @@ int Parse(char *fname)
 
 		/* check for: as: cc: */
 		if (strcmp(word, "as:") == 0 || strcmp(word, "cc:") == 0)
-			Bmove(4);
+			bmove(4);
 		/* check for cfe:/as0:/as1: (MIPS) */
 		else if (strcmp(word, "cfe:") == 0 ||
 			 strcmp(word, "as0:") == 0 ||
 			 strcmp(word, "as1:") == 0) {
-			Bmove(5);
+			bmove(5);
 			IsWarning = Buff() == 'W';
-			Bmove(IsWarning ? 9 : 7);
+			bmove(IsWarning ? 9 : 7);
 		}
 		/* check High C for "E " or "w " */
 		else if (n == 1 && (*word == 'E' || *word == 'w'))
-			Bmove(2);
+			bmove(2);
 		else if (strcmp(word, "conflicts:") == 0) {
-			Bcsearch(NL);	/* skip line */
+			bcsearch(NL);	/* skip line */
 			continue;
 		}
 		/* try to get the fname */
 		if (Buff() == '"')
-			Bmove1();
-		for (p = fname; !strchr("\",:(\n", Buff()); Bmove1())
+			bmove1();
+		for (p = fname; !strchr("\",:(\n", Buff()); bmove1())
 			*p++ = Buff();
 		*p = '\0';
 		if (Buff() == '"')
-			Bmove1();
+			bmove1();
 
 		/* try to get the line */
 		if (Buff() == ':' || Buff() == '(')
-			Bmove1();
+			bmove1();
 		else if (Buff() == ',') {
 			while (!isdigit(Buff()) && Buff() != '\n' && !Bisend())
-				Bmove1();
+				bmove1();
 		}
 
 		/* look for line number */
@@ -230,7 +230,7 @@ int Parse(char *fname)
 			return line;
 
 		/* skip to next line */
-		Bcsearch(NL);
+		bcsearch(NL);
 	}
 	return 0;
 }

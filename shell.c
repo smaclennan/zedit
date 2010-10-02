@@ -63,7 +63,7 @@ void Zcmdtobuff(void)
 			rc = PipeToBuff(Curbuff, Command);
 			if (rc == 0) {
 				Message(Curbuff, Command);
-				Btostart();
+				btostart();
 			}
 			Curbuff->bmodf = FALSE;
 			PrintExit(rc);
@@ -97,10 +97,10 @@ void Zman(void)
 		if (rc == 0) {
 			/* remove the underlines */
 			Message(Curbuff, p);
-			Btoend();
-			while (Bcrsearch('\010')) {
-				Bmove(-1);
-				Bdelete(2);
+			btoend();
+			while (bcrsearch('\010')) {
+				bmove(-1);
+				bdelete(2);
 			}
 		}
 		Curbuff->bmodf = FALSE;
@@ -236,7 +236,7 @@ struct buff *Cmdtobuff(char *bname, char *cmd)
 		Syerr(err);
 	else {
 		WuseOther(bname);
-		Breadfile(fname);
+		breadfile(fname);
 		unlink(fname);
 		Curbuff->bmodf = FALSE;
 		Clrecho();
@@ -281,7 +281,7 @@ void Zbeauty(void)
 		Echo("mkstemp failed");
 		return;
 	}
-	status = Bwritefd(fd1);
+	status = bwritefd(fd1);
 	close(fd1);
 	if (!status) {
 		Echo("Write failed");
@@ -306,7 +306,7 @@ void Zbeauty(void)
 		sprintf(PawStr, "Unable to execute %s.", INDENT);
 		Error(PawStr);
 	} else {
-		Breadfile(fileName2);
+		breadfile(fileName2);
 		Curbuff->bmodf = MODIFIED;
 		Clrecho();
 	}
@@ -346,27 +346,27 @@ int BuffToPipe(struct buff *buff, char *cmd)
 	if (pfp == NULL)
 		return -1;
 
-	Bswitchto(buff);
-	Bmrktopnt(&spnt);	/* save current Point */
+	bswitchto(buff);
+	bmrktopnt(&spnt);	/* save current Point */
 	if (Argp) {
 		/* Use the region - make sure mark is after Point */
 		Mrktomrk(&end, Curbuff->mark);
-		if (Bisaftermrk(&end))
-			Bswappnt(&end);
+		if (bisaftermrk(&end))
+			bswappnt(&end);
 	} else {
 		/* use entire buffer */
-		Btoend();
-		Bmrktopnt(&end);
-		Btostart();
+		btoend();
+		bmrktopnt(&end);
+		btostart();
 	}
 	Argp = FALSE;
 	Arg = 0;
 
-	for (; Bisbeforemrk(&end); Bmove1())
+	for (; bisbeforemrk(&end); bmove1())
 		putc(Buff(), pfp);
 
-	Bpnttomrk(&spnt);
-	Bswitchto(was);
+	bpnttomrk(&spnt);
+	bswitchto(was);
 
 	return pclose(pfp) >> 8;
 }
@@ -386,7 +386,7 @@ int PipeToBuff(struct buff *buff, char *instr)
 	if (pfp == NULL)
 		return -1;
 	while ((c = getc(pfp)) != EOF)
-		Binsert((char)c);
+		binsert((char)c);
 	free(cmd);
 	return pclose(pfp) >> 8;
 }

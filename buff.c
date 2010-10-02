@@ -34,15 +34,15 @@ struct page *Curpage;		/* the current page */
 
 static int NumPages;
 
-static struct page *Newpage(struct buff *tbuff,
+static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage);
-static void Freepage(struct buff *tbuff, struct page *page);
-static Boolean Pagesplit();
-static Boolean XBput(int fd, Byte *addr, unsigned len);
+static void freepage(struct buff *tbuff, struct page *page);
+static Boolean pagesplit();
+static Boolean xbput(int fd, Byte *addr, unsigned len);
 
 /* Copy from Point to tmark to tbuff. Returns number of bytes
  * copied. Caller must handle undo. */
-int Bcopyrgn(struct mark *tmark, struct buff *tbuff)
+int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 {
 	struct buff *sbuff;
 	struct mark *ltmrk, *btmrk;
@@ -54,13 +54,13 @@ int Bcopyrgn(struct mark *tmark, struct buff *tbuff)
 	if (tbuff == Curbuff)
 		return 0;
 
-	flip = Bisaftermrk(tmark);
+	flip = bisaftermrk(tmark);
 	if (flip)
-		Bswappnt(tmark);
+		bswappnt(tmark);
 
-	ltmrk = Bcremrk();
+	ltmrk = bcremrk();
 	sbuff = Curbuff;
-	while (Bisbeforemrk(tmark)) {
+	while (bisbeforemrk(tmark)) {
 		if (Curpage == tmark->mpage)
 			srclen = tmark->moffset - Curchar;
 		else
@@ -68,13 +68,13 @@ int Bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		Curmodf = TRUE;
 		spnt = Curcptr;
 
-		Bswitchto(tbuff);
+		bswitchto(tbuff);
 		dstlen = PSIZE - Curplen;
 		if (dstlen == 0) {
-			if (Pagesplit())
+			if (pagesplit())
 				dstlen = PSIZE - Curplen;
 			else {
-				Bswitchto(sbuff);
+				bswitchto(sbuff);
 				break;
 			}
 		}
@@ -89,41 +89,41 @@ int Bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		for (btmrk = Mrklist; btmrk; btmrk = btmrk->prev)
 			if (btmrk->mpage == Curpage && btmrk->moffset > Curchar)
 					btmrk->moffset += dstlen;
-		Makeoffset(Curchar + dstlen);
+		makeoffset(Curchar + dstlen);
 		Vsetmod(FALSE);
 		Curmodf = TRUE;
 		Curbuff->bmodf = MODIFIED;
-		Bswitchto(sbuff);
-		Bmove(dstlen);
+		bswitchto(sbuff);
+		bmove(dstlen);
 	}
 
-	Bpnttomrk(ltmrk);
-	Unmark(ltmrk);
+	bpnttomrk(ltmrk);
+	unmark(ltmrk);
 
 	if (flip)
-		Bswappnt(tmark);
+		bswappnt(tmark);
 
 	return copied;
 }
 
 
 /* Create a buffer.   Returns a pointer to the buffer descriptor. */
-struct buff *Bcreate(void)
+struct buff *bcreate(void)
 {
 	struct buff *new;
 	struct page *fpage;
 
 	new = (struct buff *)malloc(sizeof(struct buff));
 	if (new) {
-		/* initialize before Newpage call! */
+		/* initialize before newpage call! */
 		memset(new, 0, sizeof(struct buff));
-		fpage = Newpage(new, NULL, NULL);
+		fpage = newpage(new, NULL, NULL);
 		if (!fpage) {
 			/* bad news, de-allocate */
 			free((char *)new);
 			return NULL;
 		}
-		new->mark = Bcremrk();
+		new->mark = bcremrk();
 		new->mark->mbuff = new;
 		new->pnt_page = new->mark->mpage = fpage;
 		new->bmode = (VAR(VNORMAL) ? NORMAL : TEXT) |
@@ -140,13 +140,13 @@ struct buff *Bcreate(void)
 /* Create a mark at the current point and add it to the list.
  * If we are unable to alloc, longjmp.
  */
-struct mark *Bcremrk(void)
+struct mark *bcremrk(void)
 {
 	struct mark *new = malloc(sizeof(struct mark));
 
 	if (!new)
 		longjmp(zenv, -1);	/* ABORT */
-	Bmrktopnt(new);
+	bmrktopnt(new);
 	new->prev = Mrklist;		/* add to end of list */
 	new->next = NULL;
 	if (Mrklist)
@@ -155,24 +155,24 @@ struct mark *Bcremrk(void)
 	return new;
 }
 
-Boolean Bcrsearch(Byte what)
+Boolean bcrsearch(Byte what)
 {
 	while (1) {
 		if (Curchar <= 0)
 			if (Curpage == Curbuff->firstp)
 				return FALSE;
 			else {
-				Makecur(Curpage->prevp);
-				Makeoffset(Curplen - 1);
+				makecur(Curpage->prevp);
+				makeoffset(Curplen - 1);
 			}
 		else
-			Makeoffset(Curchar - 1);
+			makeoffset(Curchar - 1);
 		if (Buff() == what)
 			return TRUE;
 	}
 }
 
-Boolean Bcsearch(Byte what)
+Boolean bcsearch(Byte what)
 {
 	Byte *n;
 
@@ -181,29 +181,29 @@ Boolean Bcsearch(Byte what)
 
 	while ((n = (Byte *)memchr(Curcptr, what, Curplen - Curchar)) == NULL)
 		if (Curpage == Curbuff->lastp) {
-			Makeoffset(Curplen);
+			makeoffset(Curplen);
 			return FALSE;
 		} else {
-			Makecur(Curpage->nextp);
-			Makeoffset(0);
+			makecur(Curpage->nextp);
+			makeoffset(0);
 		}
 
-	Makeoffset(n - Cpstart);
-	Bmove1();
+	makeoffset(n - Cpstart);
+	bmove1();
 	return TRUE;
 }
 
 /* Delete the buffer and its pages. */
-Boolean Bdelbuff(struct buff *tbuff)
+Boolean bdelbuff(struct buff *tbuff)
 {
 	if (!tbuff)
 		return TRUE;
 
 	if (tbuff == Curbuff) { /* switch to a safe buffer */
 		if (tbuff->next)
-			Bswitchto(tbuff->next);
+			bswitchto(tbuff->next);
 		else if (tbuff->prev)
-			Bswitchto(tbuff->prev);
+			bswitchto(tbuff->prev);
 		else {
 			Error("Last Buffer.");
 			return FALSE;
@@ -216,8 +216,8 @@ Boolean Bdelbuff(struct buff *tbuff)
 #endif
 
 	while (tbuff->firstp)	/* delete the pages */
-		Freepage(tbuff, tbuff->firstp);
-	Unmark(tbuff->mark);	/* free the user mark */
+		freepage(tbuff, tbuff->firstp);
+	unmark(tbuff->mark);	/* free the user mark */
 	if (tbuff == Bufflist)	/* unlink from the list */
 		Bufflist = tbuff->next;
 	if (tbuff->prev)
@@ -232,7 +232,7 @@ Boolean Bdelbuff(struct buff *tbuff)
 }
 
 /* Delete quantity characters. */
-void Bdelete(unsigned quantity)
+void bdelete(unsigned quantity)
 {
 	int quan, noffset;
 	struct page *tpage;
@@ -270,7 +270,7 @@ void Bdelete(unsigned quantity)
 					tmark->mpage = tpage;
 					tmark->moffset = noffset;
 				}
-			Freepage(Curbuff, Curpage);
+			freepage(Curbuff, Curpage);
 			Curpage = NULL;
 		} else {
 			tpage = Curpage;
@@ -290,48 +290,48 @@ void Bdelete(unsigned quantity)
 					}
 				}
 		}
-		Makecur(tpage);
-		Makeoffset(noffset);
+		makecur(tpage);
+		makeoffset(noffset);
 	}
 	Vsetmod(TRUE);
 }
 
 
 /* Delete from the point to the Mark. */
-void Bdeltomrk(struct mark *tmark)
+void bdeltomrk(struct mark *tmark)
 {
-	if (Bisaftermrk(tmark))
-		Bswappnt(tmark);
-	while (Bisbeforemrk(tmark))
+	if (bisaftermrk(tmark))
+		bswappnt(tmark);
+	while (bisbeforemrk(tmark))
 		if (Curpage == tmark->mpage)
-			Bdelete(tmark->moffset - Curchar);
+			bdelete(tmark->moffset - Curchar);
 		else
-			Bdelete(Curplen - Curchar);
+			bdelete(Curplen - Curchar);
 }
 
 
 /* Return current screen col of point. */
-int Bgetcol(Boolean flag, int col)
+int bgetcol(Boolean flag, int col)
 {
 	struct mark pmark;
 
-	Bmrktopnt(&pmark);
-	if (Bcrsearch(NL))
-		Bmove1();
+	bmrktopnt(&pmark);
+	if (bcrsearch(NL))
+		bmove1();
 	while (!Bisatmrk(&pmark) && !Bisend()) {
 		col += Width(Buff(), col, flag);
-		Bmove1();
+		bmove1();
 	}
 	return col;
 }
 
 
 /* Insert a character in the current buffer. */
-void Binsert(Byte new)
+void binsert(Byte new)
 {
 	register struct mark *btmark;
 
-	if (Curplen == PSIZE && !Pagesplit())
+	if (Curplen == PSIZE && !pagesplit())
 		return;
 	memmove(Curcptr + 1, Curcptr, Curplen - Curchar);
 	*Curcptr++ = new;
@@ -351,15 +351,15 @@ void Binsert(Byte new)
 
 
 /* Insert a string into the current buffer. */
-void Binstr(char *str)
+void binstr(char *str)
 {
 	while (*str)
-		Binsert(*str++);
+		binsert(*str++);
 }
 
 
 /* Returns TRUE if point is after the mark. */
-Boolean Bisaftermrk(struct mark *tmark)
+Boolean bisaftermrk(struct mark *tmark)
 {
 	struct page *tp;
 
@@ -374,7 +374,7 @@ Boolean Bisaftermrk(struct mark *tmark)
 
 
 /* True if the point precedes the mark. */
-Boolean Bisbeforemrk(struct mark *tmark)
+Boolean bisbeforemrk(struct mark *tmark)
 {
 	register struct page *tp;
 
@@ -389,7 +389,7 @@ Boolean Bisbeforemrk(struct mark *tmark)
 
 
 /* Returns the length of the buffer. */
-long Blength(struct buff *tbuff)
+long blength(struct buff *tbuff)
 {
 	register struct page *tpage;
 	struct page *spage;
@@ -399,16 +399,16 @@ long Blength(struct buff *tbuff)
 	spage = Curpage;
 	for (len = 0, tpage = tbuff->firstp; tpage; tpage = tpage->nextp) {
 		if (tpage->lines == EOF)
-			Makecur(tpage);
+			makecur(tpage);
 		len += tpage->plen;
 	}
-	Makecur(spage);
+	makecur(spage);
 	return len;
 }
 
 
 /* Return the current position of the point. */
-unsigned long Blocation(unsigned *lines)
+unsigned long blocation(unsigned *lines)
 {
 	unsigned long len;
 	struct page *tpage, *spage;
@@ -419,22 +419,22 @@ unsigned long Blocation(unsigned *lines)
 		*lines = 1;
 	for (tpage = Curbuff->firstp; tpage != spage; tpage = tpage->nextp) {
 		if (tpage->lines == EOF) {
-			Makecur(tpage);
-			tpage->lines = Cntlines(Curplen);
+			makecur(tpage);
+			tpage->lines = cntlines(Curplen);
 		}
 		if (lines)
 			*lines += tpage->lines;
 		len += tpage->plen;
 	}
-	Makecur(spage);
+	makecur(spage);
 	if (lines)
-		*lines += Cntlines(Curchar);
+		*lines += cntlines(Curchar);
 	return len + Curchar;
 }
 
 
 /* Number of lines in buffer */
-long Blines(struct buff *buff)
+long blines(struct buff *buff)
 {
 	unsigned long lines;
 	struct page *tpage, *spage;
@@ -446,13 +446,13 @@ long Blines(struct buff *buff)
 
 	for (tpage = buff->firstp; tpage; tpage = tpage->nextp) {
 		if (tpage->lines == EOF) {
-			Makecur(tpage);
-			tpage->lines = Cntlines(Curplen);
+			makecur(tpage);
+			tpage->lines = cntlines(Curplen);
 		}
 		lines += tpage->lines;
 	}
 
-	Makecur(spage);
+	makecur(spage);
 	return lines;
 }
 
@@ -460,15 +460,15 @@ long Blines(struct buff *buff)
 /* Try to put Point in a specific column.
  * Returns actual Point column.
  */
-int Bmakecol(int col, Boolean must)
+int bmakecol(int col, Boolean must)
 {
 	int tcol = 0;
 
-	if (Bcrsearch(NL))
-		Bmove1();
+	if (bcrsearch(NL))
+		bmove1();
 	while (tcol < col && !ISNL(Buff()) && !Bisend()) {
 		tcol += Width(Buff(), tcol, !must);
-		Bmove1();
+		bmove1();
 	}
 	if (must && tcol < col) {
 		int wid = Bwidth('\t', tcol);
@@ -483,12 +483,12 @@ int Bmakecol(int col, Boolean must)
 /* Move the point relative to its current position.
  *
  * This routine is the most time-consuming routine in the editor.
- * Because of this, it is highly optimized. Makeoffset() calls have
+ * Because of this, it is highly optimized. makeoffset() calls have
  * been inlined here.
  *
- * Since Bmove(1) is used the most, a special call has been made.
+ * Since bmove(1) is used the most, a special call has been made.
  */
-Boolean Bmove1(void)
+Boolean bmove1(void)
 {
 	if (++Curchar < Curplen) {
 		/* within current page */
@@ -498,23 +498,23 @@ Boolean Bmove1(void)
 
 	if (Curpage->nextp) {
 		/* goto start of next page */
-		Makecur(Curpage->nextp);
+		makecur(Curpage->nextp);
 		Curchar = 0;
 		Curcptr = Cpstart;
 		return TRUE;
 	}
 
 	/* At EOB */
-	Makeoffset(Curplen);
+	makeoffset(Curplen);
 	return FALSE;
 }
 
-Boolean Bmove(int dist)
+Boolean bmove(int dist)
 {
 	while (dist) {
 		dist += Curchar;
 		if (dist >= 0 && dist < Curplen) {
-			/* within current page Makeoffset dist */
+			/* within current page makeoffset dist */
 			Curchar = dist;
 			Curcptr = Cpstart + dist;
 			return TRUE;
@@ -522,21 +522,21 @@ Boolean Bmove(int dist)
 		if (dist < 0) { /* goto previous page */
 			if (Curpage == Curbuff->firstp) {
 				/* past start of buffer */
-				Makeoffset(0);
+				makeoffset(0);
 				return FALSE;
 			}
-			Makecur(Curpage->prevp);
-			Curchar = Curplen; /* Makeoffset Curplen */
+			makecur(Curpage->prevp);
+			Curchar = Curplen; /* makeoffset Curplen */
 			Curcptr = Cpstart + Curplen;
 		} else {	/* goto next page */
 			if (Curpage == Curbuff->lastp) {
 				/* past end of buffer */
-				Makeoffset(Curplen);
+				makeoffset(Curplen);
 				return FALSE;
 			}
 			dist -= Curplen; /* must use this Curplen */
-			Makecur(Curpage->nextp);
-			Curchar = 0; /* Makeoffset 0 */
+			makecur(Curpage->nextp);
+			Curchar = 0; /* makeoffset 0 */
 			Curcptr = Cpstart;
 		}
 	}
@@ -545,7 +545,7 @@ Boolean Bmove(int dist)
 
 
 /* Put the mark where the point is. */
-void Bmrktopnt(struct mark *tmark)
+void bmrktopnt(struct mark *tmark)
 {
 	tmark->mbuff   = Curbuff;
 	tmark->mpage   = Curpage;
@@ -554,23 +554,23 @@ void Bmrktopnt(struct mark *tmark)
 
 
 /* Put the current buffer point at the mark */
-void Bpnttomrk(struct mark *tmark)
+void bpnttomrk(struct mark *tmark)
 {
 	if (tmark->mpage) {
 		if (tmark->mbuff != Curbuff)
-			Bswitchto(tmark->mbuff);
-		Makecur(tmark->mpage);
-		Makeoffset(tmark->moffset);
+			bswitchto(tmark->mbuff);
+		makecur(tmark->mpage);
+		makeoffset(tmark->moffset);
 	}
 }
 
-void Bempty(void)
+void bempty(void)
 {
 	register struct mark *btmark;
 
-	Makecur(Curbuff->firstp);
+	makecur(Curbuff->firstp);
 	while (Curpage->nextp)
-		Freepage(Curbuff, Curpage->nextp);
+		freepage(Curbuff, Curpage->nextp);
 	for (btmark = Mrklist; btmark; btmark = btmark->prev)
 		if (btmark->mpage && btmark->mbuff == Curbuff) {
 			btmark->mpage = Curpage;
@@ -585,57 +585,57 @@ void Bempty(void)
 }
 
 /* Point to off the end of the buffer */
-void Bshoveit(void)
+void bshoveit(void)
 {
-	Makecur(Curbuff->lastp);
-	Makeoffset(Curplen + 1);
+	makecur(Curbuff->lastp);
+	makeoffset(Curplen + 1);
 }
 
 
 /* Swap the point and the mark. */
-void Bswappnt(struct mark *tmark)
+void bswappnt(struct mark *tmark)
 {
 	struct mark tmp;
 
 	tmp.mbuff	= Curbuff; /* Point not moved out of its buffer */
 	tmp.mpage	= tmark->mpage;
 	tmp.moffset	= tmark->moffset;
-	Bmrktopnt(tmark);
-	Bpnttomrk(&tmp);
+	bmrktopnt(tmark);
+	bpnttomrk(&tmp);
 }
 
 
-void Bswitchto(struct buff *new)
+void bswitchto(struct buff *new)
 {
 	if (new && new != Curbuff) {
 		if (Curbuff) {
 			Curbuff->pnt_page   = Curpage;
 			Curbuff->pnt_offset = Curchar;
 		}
-		Makecur(new->pnt_page);
-		Makeoffset(new->pnt_offset);
+		makecur(new->pnt_page);
+		makeoffset(new->pnt_offset);
 		Curbuff = new;
 	}
 }
 
 
 /* Set the point to the end of the buffer */
-void Btoend(void)
+void btoend(void)
 {
-	Makecur(Curbuff->lastp);
-	Makeoffset(Curplen);
+	makecur(Curbuff->lastp);
+	makeoffset(Curplen);
 }
 
 
 /* Set the point to the start of the buffer. */
-void Btostart(void)
+void btostart(void)
 {
-	Makecur(Curbuff->firstp);
-	Makeoffset(0);
+	makecur(Curbuff->firstp);
+	makeoffset(0);
 }
 
 
-#define XBread(fd, blk, addr) read(fd, addr, PSIZE)
+#define xbread(fd, blk, addr) read(fd, addr, PSIZE)
 
 /*
 Load the file 'fname' into the current buffer.
@@ -644,7 +644,7 @@ Returns  0	successfully opened file
 		-1	EACCESS		file share violation
 		-2	EMFILE		out of fds
 */
-int Breadfile(char *fname)
+int breadfile(char *fname)
 {
 	char msg[PATHMAX + 20];
 	struct stat sbuf;
@@ -672,21 +672,21 @@ int Breadfile(char *fname)
 	sprintf(msg, "Reading %s", Lastpart(fname));
 	Echo(msg);
 
-	Bempty();
+	bempty();
 
-	for (blk = 0; (len = XBread(fd, blk, Cpstart)) > 0; ++blk) {
+	for (blk = 0; (len = xbread(fd, blk, Cpstart)) > 0; ++blk) {
 		Curplen = len;
-		Makeoffset(0);
+		makeoffset(0);
 		Curmodf = TRUE;
-		if (!Newpage(Curbuff, Curpage, NULL))
+		if (!newpage(Curbuff, Curpage, NULL))
 			break;
-		Makecur(Curpage->nextp);
+		makecur(Curpage->nextp);
 	}
 	if (blk > 0 && Curplen == 0)
-		Freepage(Curbuff, Curpage); /* whoops - alloced 1 too many */
+		freepage(Curbuff, Curpage); /* whoops - alloced 1 too many */
 	(void)close(fd);
 
-	Btostart();
+	btostart();
 	Curbuff->bmodf = FALSE;
 	Clrecho();
 
@@ -698,20 +698,20 @@ int Breadfile(char *fname)
  *	Returns:	TRUE	if write successfull
  *			FALSE	if write failed
  */
-int Bwritefd(int fd)
+int bwritefd(int fd)
 {
 	struct mark pmark;				/* no mallocs! */
 	struct page *tpage;
 	struct stat sbuf;
 	int status = TRUE;
 
-	Bmrktopnt(&pmark);
+	bmrktopnt(&pmark);
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp) {
-		Makecur(tpage);
-		status = XBput(fd, Cpstart, Curplen);
+		makecur(tpage);
+		status = xbput(fd, Cpstart, Curplen);
 	}
 	/* flush the buffers */
-	status &= XBput(fd, NULL, EOF);
+	status &= xbput(fd, NULL, EOF);
 	if (status) {
 		/* get the time here - on some machines (SUN) 'time'
 		 * incorrect */
@@ -720,7 +720,7 @@ int Bwritefd(int fd)
 	} else
 		Error("Unable to write file.");
 	(void)close(fd);
-	Bpnttomrk(&pmark);
+	bpnttomrk(&pmark);
 
 	if (status)
 		Curbuff->bmodf = FALSE;
@@ -734,7 +734,7 @@ int Bwritefd(int fd)
  *				FALSE	if write failed
  *				ABORT	if user didn't want to overwrite
  */
-int Bwritefile(char *fname)
+int bwritefile(char *fname)
 {
 	char bakname[PATHMAX + 1];
 	int fd, mode, status = TRUE, bak = FALSE;
@@ -785,7 +785,7 @@ int Bwritefile(char *fname)
 	/* Write the output file */
 	fd = open(fname, WRITE_MODE, mode);
 	if (fd != EOF)
-		status = Bwritefd(fd);
+		status = bwritefd(fd);
 	else {
 		if (errno == EACCES)
 			Error("File is read only.");
@@ -809,7 +809,7 @@ int Bwritefile(char *fname)
 }
 
 /* count the lines (NLs) in the current page up to offset 'stop' */
-int Cntlines(int stop)
+int cntlines(int stop)
 {
 	Byte *p, *n;
 	int lines = 0, end;
@@ -824,14 +824,14 @@ int Cntlines(int stop)
 }
 
 /* Make the point be dist chars into the page. */
-void Makeoffset(int dist)
+void makeoffset(int dist)
 {
 	Curchar = dist;
 	Curcptr = Cpstart + dist;
 }
 
 /* True if mark1 follows mark2 */
-Boolean Mrkaftermrk(struct mark *mark1, struct mark *mark2)
+Boolean mrkaftermrk(struct mark *mark1, struct mark *mark2)
 {
 	struct page *tpage;
 
@@ -848,7 +848,7 @@ Boolean Mrkaftermrk(struct mark *mark1, struct mark *mark2)
 }
 
 /* True if mark1 is at mark2 */
-Boolean Mrkatmrk(struct mark *mark1, struct mark *mark2)
+Boolean mrkatmrk(struct mark *mark1, struct mark *mark2)
 {
 	return  mark1->mbuff == mark2->mbuff &&
 		mark1->mpage == mark2->mpage &&
@@ -856,7 +856,7 @@ Boolean Mrkatmrk(struct mark *mark1, struct mark *mark2)
 }
 
 /* True if mark1 precedes mark2 */
-Boolean Mrkbeforemrk(struct mark *mark1, struct mark *mark2)
+Boolean mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 {
 	struct page *tpage;
 
@@ -875,7 +875,7 @@ Boolean Mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 /* Free up the given mark and remove it from the list.
  * Cannot free a scrnmark!
  */
-void Unmark(struct mark *mptr)
+void unmark(struct mark *mptr)
 {
 	if (mptr) {
 		if (mptr->prev)
@@ -892,7 +892,7 @@ void Unmark(struct mark *mptr)
 /* Low level memory buffer routines */
 
 /* Create a new memory page and link into chain */
-static struct page *Newpage(struct buff *tbuff,
+static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage)
 {
 	struct page *new = malloc(sizeof(struct page));
@@ -911,7 +911,7 @@ static struct page *Newpage(struct buff *tbuff,
 }
 
 /* Free a memory page */
-static void Freepage(struct buff *tbuff, struct page *page)
+static void freepage(struct buff *tbuff, struct page *page)
 {
 	if (page->nextp)
 		page->nextp->prevp = page->prevp;
@@ -926,14 +926,14 @@ static void Freepage(struct buff *tbuff, struct page *page)
 }
 
 /* Make page current*/
-void Makecur(struct page *page)
+void makecur(struct page *page)
 {
 	if (Curpage == page)
 		return;
 	if (Curpage) {
 		Curpage->plen = Curplen;
 		if (Curmodf || Curpage->lines == EOF)
-			Curpage->lines = Cntlines(Curplen);
+			Curpage->lines = cntlines(Curplen);
 	}
 	Curpage = page;
 	Cpstart = page->pdata;
@@ -942,12 +942,12 @@ void Makecur(struct page *page)
 }
 
 /* Split the current (full) page. */
-static Boolean Pagesplit(void)
+static Boolean pagesplit(void)
 {
 	struct page *new;
 	struct mark *btmark;
 
-	new = Newpage(Curbuff, Curpage, Curpage->nextp);
+	new = newpage(Curbuff, Curpage, Curpage->nextp);
 	if (new == NULL)
 		return FALSE;
 
@@ -962,8 +962,8 @@ static Boolean Pagesplit(void)
 		}
 	if (Curchar >= HALFP) {
 		/* new page has Point in it */
-		Makecur(new);
-		Makeoffset(Curchar - HALFP);
+		makecur(new);
+		makeoffset(Curchar - HALFP);
 	}
 	return TRUE;
 }
@@ -971,11 +971,11 @@ static Boolean Pagesplit(void)
 /* High level write for non-block writes.
  * SLOW_DISK version buffers up the input until a PSIZE block is
  * reached, then sends it to XBwrite.  Can only be used on ONE file at
- * a time!  A 'XBput(fd, NULL, EOF)' call should be made before
+ * a time!  A 'xbput(fd, NULL, EOF)' call should be made before
  * closing the file to handle AddNL.
  */
 #if SLOW_DISK
-static Boolean XBput(int fd, Byte *addr, unsigned len)
+static Boolean xbput(int fd, Byte *addr, unsigned len)
 {
 	static Byte buf[PSIZE];
 	static int buflen, lastch;
@@ -989,7 +989,7 @@ static Boolean XBput(int fd, Byte *addr, unsigned len)
 			if (buflen > 0)
 				lastch = buf[buflen - 1];
 			if (lastch != '\n')
-				XBput(fd, (Byte *)"\n", 1);
+				xbput(fd, (Byte *)"\n", 1);
 		}
 		rc = write(fd, buf, buflen) == buflen;
 		buflen = lastch = 0;
@@ -1001,13 +1001,13 @@ static Boolean XBput(int fd, Byte *addr, unsigned len)
 			rc = write(fd, buf, PSIZE) == PSIZE;
 			lastch = buf[PSIZE - 1];
 			buflen = 0;
-			rc &= XBput(fd, &addr[wrlen], len - wrlen);
+			rc &= xbput(fd, &addr[wrlen], len - wrlen);
 		}
 	}
 	return rc;
 }
 #else
-static Boolean XBput(int fd, Byte *addr, unsigned len)
+static Boolean xbput(int fd, Byte *addr, unsigned len)
 {
 	static int lastch;
 

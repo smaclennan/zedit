@@ -132,9 +132,9 @@ void Modeflags(struct wdo *wdo)
 
 	if (VAR(VLINES)) {
 		struct buff *was = Curbuff;
-		Bswitchto(wdo->wbuff);
-		Blocation(&line);
-		col = Bgetcol(FALSE, 0) + 1;
+		bswitchto(wdo->wbuff);
+		blocation(&line);
+		col = bgetcol(FALSE, 0) + 1;
 		if (col > 999)
 			sprintf(PawStr, "%5u:???", line);
 		else
@@ -142,7 +142,7 @@ void Modeflags(struct wdo *wdo)
 		PawStr[9] = '\0';
 		Tsetpoint(wdo->last, Tmaxcol() - 9);
 		Tprntstr(PawStr);
-		Bswitchto(was);
+		bswitchto(was);
 	}
 
 	mask = Delcmd() | (wdo->wbuff->bmodf ? 2 : 0);

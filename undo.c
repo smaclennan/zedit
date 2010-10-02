@@ -51,7 +51,7 @@ static struct undo *new_undo(struct buff *buff)
 	/* reset everything */
 	memset(undo, 0, sizeof(struct undo));
 
-	undo->end = Bcremrk();
+	undo->end = bcremrk();
 	undo->prev = buff->undo_tail;
 	buff->undo_tail = undo;
 
@@ -90,7 +90,7 @@ void undo_add(int size)
 
 	if (undo && undo->action == ACT_INSERT && Bisatmrk(undo->end)) {
 		undo->size += size;
-		Bmrktopnt(undo->end);
+		bmrktopnt(undo->end);
 		return;
 	}
 
@@ -151,15 +151,15 @@ void Zundo(void)
 
 	switch (undo->action) {
 	case ACT_INSERT:
-		Bpnttomrk(undo->end);
-		Bmove(-undo->size - 1);
-		Bdelete(undo->size);
+		bpnttomrk(undo->end);
+		bmove(-undo->size - 1);
+		bdelete(undo->size);
 		break;
 	case ACT_DELETE:
-		Bpnttomrk(undo->end);
-		Bmove(1);
+		bpnttomrk(undo->end);
+		bmove(1);
 		for (i = 0; i < undo->size; ++i)
-			Binsert(undo->data[i]);
+			binsert(undo->data[i]);
 	}
 
 	recycle_undo(Curbuff);

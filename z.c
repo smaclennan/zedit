@@ -37,7 +37,7 @@ char *Shell;
 
 int main(int argc, char **argv)
 {
-	/* A longjmp is called if Bcremrk or Getmemp run out of memory */
+	/* A longjmp is called if bcremrk or Getmemp run out of memory */
 	if (setjmp(zenv) != 0) {
 		Error("FATAL ERROR: Out of memory");
 		Argp = FALSE;	/* so Zexit will not default to save */
@@ -214,8 +214,8 @@ void Setup(int argc, char **argv)
 	initScrnmarks(); /* init the screen marks and mark list */
 
 	/* create the needed buffers */
-	Killbuff = Bcreate();
-	Paw = Bcreate();
+	Killbuff = bcreate();
+	Paw = bcreate();
 	if (!Cmakebuff(MAINBUFF, NULL)) {
 		puts("Not enough memory.");
 		exit(1);
@@ -230,10 +230,10 @@ void Setup(int argc, char **argv)
 	Tinit();
 #endif
 
-	REstart	= Bcremrk();
-	Sstart	= Bcremrk();
-	Psstart	= Bcremrk();
-	Send	= Bcremrk();
+	REstart	= bcremrk();
+	Sstart	= bcremrk();
+	Psstart	= bcremrk();
+	Send	= bcremrk();
 	Sendp	= FALSE;
 
 	for ( ; optind < argc; ++optind)
@@ -256,7 +256,7 @@ void Setup(int argc, char **argv)
 		/* find the first buffer read or Main */
 		for (tbuff = Bufflist; tbuff->next; tbuff = tbuff->next)
 			;
-		Bswitchto(tbuff->prev ? tbuff->prev : tbuff);
+		bswitchto(tbuff->prev ? tbuff->prev : tbuff);
 
 		strcpy(Lbufname,
 		       Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
@@ -287,7 +287,7 @@ void Setup(int argc, char **argv)
 	if (Argp)
 		Zlgoto();
 	if (col > 1)
-		Bmakecol(col - 1, FALSE);
+		bmakecol(col - 1, FALSE);
 
 #ifdef XWINDOWS
 	if (Spawn) {
@@ -316,7 +316,7 @@ Boolean Readone(char *bname, char *path)
 		return TRUE;
 
 	if (Cmakebuff(bname, path)) {
-		int rc = Breadfile(path);
+		int rc = breadfile(path);
 		if (rc >= 0) {
 			Toggle_mode(0);
 			if (rc > 0)
@@ -329,8 +329,8 @@ Boolean Readone(char *bname, char *path)
 #endif
 		} else { /* error */
 			Delbname(Curbuff->bname);
-			Bdelbuff(Curbuff);
-			Bswitchto(was);
+			bdelbuff(Curbuff);
+			bswitchto(was);
 		}
 		return TRUE;
 	}
@@ -344,11 +344,11 @@ struct buff *Cmakebuff(char *bname, char *fname)
 
 	bptr = Cfindbuff(bname);
 	if (bptr) {
-		Bswitchto(bptr);
+		bswitchto(bptr);
 		return bptr;
 	}
 
-	bptr = Bcreate();
+	bptr = bcreate();
 	if (!bptr) {
 		Error("Unable to create buffer");
 		return NULL;
@@ -357,15 +357,15 @@ struct buff *Cmakebuff(char *bname, char *fname)
 	bptr->bname = Addbname(bname);
 	if (!bptr->bname) {
 		Error("Out of buffers");
-		Bdelbuff(bptr);
-		Bswitchto(save);
+		bdelbuff(bptr);
+		bswitchto(save);
 		return NULL;
 	}
 
 	if (*bname == '*')
 		bptr->bmode |= SYSBUFF;
 
-	Bswitchto(bptr);
+	bswitchto(bptr);
 	if (fname)
 		bptr->fname = strdup(fname);
 	/* add the buffer to the head of the list */

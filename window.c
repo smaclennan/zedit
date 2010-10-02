@@ -108,7 +108,7 @@ static Boolean Wdelete(struct wdo *wdo)
  * Split the current window in 2, putting the same buffer in both windows.
  * Leaves the user in the new window.
  */
-static Boolean Wsplit()
+static Boolean Wsplit(void)
 {
 	struct wdo *new;
 	int first, last;
@@ -240,7 +240,7 @@ static Boolean Sizewindow(int size)
 	return TRUE;
 }
 
-int noResize;
+static int noResize;
 
 static inline void do_wsize(int orow)
 {
@@ -284,7 +284,7 @@ static inline void do_wsize(int orow)
 }
 
 /* See if window size has changed */
-void Wsize()
+void Wsize(void)
 {
 	int orow;
 
@@ -395,14 +395,14 @@ void Winvalid(struct wdo *wdo)
 }
 
 /* Split the current window and enter new (bottom) window */
-void Z2wind()
+void Z2wind(void)
 {
 	if (!Wsplit())
 		Tbell();
 }
 
 /* Tear down all but one (current) window */
-void Z1wind()
+void Z1wind(void)
 {
 	struct wdo *wdo;
 	int i;
@@ -431,14 +431,14 @@ void Z1wind()
 }
 
 /* Delete current window if more than one */
-void Zdelwind()
+void Zdelwind(void)
 {
 	if (!Wdelete(Curwdo))
 		Tbell();
 }
 
 /* Make previous window current */
-void Zprevwind()
+void Zprevwind(void)
 {
 	struct wdo *wdo;
 
@@ -455,7 +455,7 @@ void Zprevwind()
 }
 
 /* Make next window current */
-void Znextwind()
+void Znextwind(void)
 {
 	if (Curwdo->next)
 		Wswitchto(Curwdo->next);
@@ -466,21 +466,21 @@ void Znextwind()
 }
 
 /* Make current window bigger */
-void Zgrowwind()
+void Zgrowwind(void)
 {
 	Sizewindow(Arg);
 	Arg = 0;
 }
 
 /* Make current window smaller */
-void Zshrinkwind()
+void Zshrinkwind(void)
 {
 	Sizewindow(-Arg);
 	Arg = 0;
 }
 
 /* Make current window an absolute size */
-void Zsizewind()
+void Zsizewind(void)
 {
 	if (!Sizewindow(Arg - Wheight() + 1))
 		Tbell();
@@ -496,7 +496,7 @@ void Zsizewind()
  * Makes new window current.
  * Never fails.
  */
-static struct wdo *Otherwind()
+static struct wdo *Otherwind(void)
 {
 	struct wdo *wdo;
 
@@ -515,7 +515,7 @@ static struct wdo *Otherwind()
 	return wdo;
 }
 
-void Znxtothrwind()
+void Znxtothrwind(void)
 {
 	struct wdo *save = Curwdo;
 	Otherwind();
@@ -523,7 +523,7 @@ void Znxtothrwind()
 	Wswitchto(save);
 }
 
-void Zprevothrwind()
+void Zprevothrwind(void)
 {
 	struct wdo *save = Curwdo;
 	Otherwind();
@@ -549,7 +549,7 @@ void Bgoto(struct buff *buff)
 
 static struct wdo *Wstart;	/* Set in Wload */
 
-void Winit()
+void Winit(void)
 {
 	if (Wstart == NULL) {
 		/* Create first window over entire screen. */

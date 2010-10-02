@@ -20,7 +20,7 @@
 #include "z.h"
 
 Boolean Exitflag = TRUE;	/* set to true during initialization */
-int ExitStatus;
+static int ExitStatus;
 char *Thispath, *Cwd;
 char *ConfigDir;
 int Cmask;
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 }
 
 
-void Edit()
+void Edit(void)
 {
 	Exitflag = FALSE;
 	while (!Exitflag)
@@ -69,7 +69,7 @@ void Edit()
 }
 
 
-void Execute()
+void Execute(void)
 {
 #if defined(PIPESH) && !defined(XWINDOWS)
 	fd_set fds = SelectFDs;
@@ -81,7 +81,7 @@ void Execute()
 	else {
 		/* select returns -1 if a child dies (SIGPIPE) -
 		 * Sigchild handles it */
-		while (select(NumFDs, &fds, 0, 0, 0) == -1) {
+		while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
 #ifdef SYSV2
 			Checkpipes(1);
 			Refresh();
@@ -100,7 +100,7 @@ void Execute()
 
 
 /* NOTE: Dotty blocks */
-void Dotty()
+void Dotty(void)
 {
 	Cmd = Tgetcmd();
 	Arg = 1;
@@ -150,7 +150,7 @@ void Setup(int argc, char **argv)
 	umask(Cmask);			/* set it back */
 	Cmask = ~Cmask & 0666;	/* make it usable */
 
-	srand(time(0));
+	srand(time(NULL));
 
 	/* see if ZPATH set */
 	Thispath = getenv("ZPATH");
@@ -445,8 +445,7 @@ char *Lastpart(char *fname)
 	return ++sp;
 }
 
-void Usage(prog)
-char *prog;
+void Usage(char *prog)
 {
 	printf(
 #ifdef XWINDOWS
@@ -469,7 +468,7 @@ char *prog;
 	exit(1);
 }
 
-void Zcwd()
+void Zcwd(void)
 {
 	char path[PATHMAX], *p;
 

@@ -17,8 +17,50 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#define INCLUDE_VARS_STRUCT
 #include "z.h"
+
+#define DEFAULT(n)	{n}
+
+/* NOTE: Spaces not allowed in variable names!!! */
+struct avar Vars[] = {
+	{ "AddNL",		FLAG,		DEFAULT(1) },
+	{ "AsmChar",		STRING,		DEFAULT(0) },
+	{ "AsmExtends",		STRING,		DEFAULT(0) },
+	{ "Backup",		FLAG,		DEFAULT(1) },
+	{ "CExtends",		STRING,		DEFAULT(0) },
+	{ "ClearExit",		FLAG,		DEFAULT(0) },
+	{ "CTabs",		DECIMAL,	DEFAULT(4) },
+	{ "DateFormat",		STRING,		DEFAULT(0) },
+	{ "DoSave",		FLAG,		DEFAULT(0) },
+	{ "Exact",		FLAG,		DEFAULT(1) },
+	{ "ExecOnMatch",	FLAG,		DEFAULT(0) },
+	{ "ExpandPaths",	FLAG,		DEFAULT(1) },
+	{ "FillWidth",		DECIMAL,	DEFAULT(72) },
+	{ "FlowControl",	FLAG,		DEFAULT(0) },
+	{ "Font",		STRING,		DEFAULT(0) },
+	{ "Grep",		STRING,		DEFAULT(0) },
+	{ "KillLine",		FLAG,		DEFAULT(1) },
+	{ "Lines",		FLAG,		DEFAULT(1) },
+	{ "MailCmd",		STRING,		DEFAULT(0) },
+	{ "MakeCmd",		STRING,		DEFAULT(0) },
+	{ "Margin",		DECIMAL,	DEFAULT(0) },
+	{ "Match",		DECIMAL,	DEFAULT(1) },
+	{ "Normal",		FLAG,		DEFAULT(1) },
+	{ "Overwrite",		FLAG,		DEFAULT(0) },
+	{ "Print",		STRING,		DEFAULT(0) },
+	{ "SaveOnExit",		FLAG,		DEFAULT(0) },
+	{ "ShowCWD",		FLAG,		DEFAULT(1) },
+	{ "Silent",		FLAG,		DEFAULT(0) },
+	{ "SingleScroll",	FLAG,		DEFAULT(1) },
+	{ "SpaceTabs",		FLAG,		DEFAULT(0) },
+	{ "Tabs",		DECIMAL,	DEFAULT(8) },
+	{ "Tagfile",		STRING,		DEFAULT(0) },
+	{ "TCLExtends",		STRING,		DEFAULT(0) },
+	{ "TExtends",		STRING,		DEFAULT(0) },
+	{ "VisibleBell",	FLAG,		DEFAULT(1) },
+};
+#define VARSIZE		sizeof(struct avar)
+#define NUMVARS		(sizeof(Vars) / VARSIZE)
 
 static char *Readstr(char *str, FILE *fp)
 {
@@ -139,7 +181,7 @@ void ReadVfile(void)
 	/* If ConfigDir is really a file, read the file and set to 0. */
 	if (!Isdir(ConfigDir)) {
 		ReadConfigFile(ConfigDir);
-		ConfigDir = 0;
+		ConfigDir = NULL;
 	}
 	for (i = FINDPATHS; i && (i = Findpath(fname, ZCFILE, i, TRUE)); --i)
 		ReadConfigFile(fname);

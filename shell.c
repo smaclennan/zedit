@@ -24,6 +24,10 @@
 #include <signal.h>
 #endif
 
+static void printexit(int code);
+static int bufftopipe(struct buff *buff, char *cmd);
+static int pipetobuff(struct buff *buff, char *instr);
+
 /* Do one shell command to the screen */
 #ifdef XWINDOWS
 void Zcmd() { tbell(); }	/* no screen */
@@ -60,20 +64,20 @@ void Zcmdtobuff(void)
 		save = Curwdo;
 		if (WuseOther(SHELLBUFF)) {
 			Echo("Please wait...");
-			rc = PipeToBuff(Curbuff, Command);
+			rc = pipetobuff(Curbuff, Command);
 			if (rc == 0) {
 				message(Curbuff, Command);
 				btostart();
 			}
 			Curbuff->bmodf = FALSE;
-			PrintExit(rc);
+			printexit(rc);
 			Wswitchto(save);
 		}
 	}
 #else
 	Arg = 0;
 	if (getarg("@ ", Command, STRMAX) == 0)
-		Cmdtobuff(SHELLBUFF, Command);
+		cmdtobuff(SHELLBUFF, Command);
 #endif
 }
 
@@ -93,7 +97,7 @@ void Zman(void)
 	save = Curwdo;
 	if (WuseOther(MANBUFF)) {
 		Echo("Please wait...");
-		rc = PipeToBuff(Curbuff, entry);
+		rc = pipetobuff(Curbuff, entry);
 		if (rc == 0) {
 			/* remove the underlines */
 			message(Curbuff, p);
@@ -105,7 +109,7 @@ void Zman(void)
 		}
 		Curbuff->bmodf = FALSE;
 		Curbuff->bmode |= VIEW;
-		PrintExit(rc);
+		printexit(rc);
 		Wswitchto(save);
 	}
 }
@@ -134,11 +138,11 @@ void Zshell(void)
 			sprintf(bname, "%s%d", SHELLBUFF, ++i);
 		while (Cfindbuff(bname));
 
-	if (!WuseOther(bname) || !Doshell())
+	if (!WuseOther(bname) || !doshell())
 		tbell();
 }
 
-Boolean Doshell(void)
+Boolean doshell(void)
 {
 	char *argv[3];
 
@@ -148,6 +152,23 @@ Boolean Doshell(void)
 	return Invoke(Curbuff, argv);
 }
 #elif defined(SYSV2)
+static void syerr(int err)
+{
+	switch (err) {
+	case E2BIG:
+	case ENOMEM:
+		Error("Not enough memory");
+		break;
+
+	case ENOENT:
+		Error("Command not found");
+		break;
+
+	default:
+		Error("Unable to execute");
+	}
+}
+
 void Zshell(void)	/*for tags*/
 {
 	int err = EOF;
@@ -158,7 +179,7 @@ void Zshell(void)	/*for tags*/
 		err = errno;
 	tinit();
 	if (err != EOF)
-		Syerr(err);
+		syerr(err);
 }
 #endif
 
@@ -192,7 +213,7 @@ void Zmail(void)
 			VARSTR(VMAIL), subject, to);
 	else
 		sprintf(cmd, "%s %s", VARSTR(VMAIL), to);
-	BuffToPipe(Curbuff, cmd);
+	bufftopipe(Curbuff, cmd);
 	Echo("Mail sent.");
 }
 
@@ -204,25 +225,25 @@ void Zprint(void)
 	Echo("Printing...");
 	/* note that BuffToPipe updates cmd */
 	strcpy(cmd, VARSTR(VPRINT));
-	PrintExit(BuffToPipe(Curbuff, cmd));
+	printexit(bufftopipe(Curbuff, cmd));
 }
 
 #ifdef PIPESH
-struct buff *Cmdtobuff(char *bname, char *cmd)
+struct buff *cmdtobuff(char *bname, char *cmd)
 {
 	struct buff *tbuff = NULL;
 	struct wdo *save;
 
 	save = Curwdo;
 	if (WuseOther(bname)) {
-		if (Dopipe(Curbuff, cmd))
+		if (dopipe(Curbuff, cmd))
 			tbuff = Curbuff;
 		Wswitchto(save);
 	}
 	return tbuff;
 }
 #else
-struct buff *Cmdtobuff(char *bname, char *cmd)
+struct buff *cmdtobuff(char *bname, char *cmd)
 {
 	char fname[20];
 	int err, one;
@@ -231,9 +252,9 @@ struct buff *Cmdtobuff(char *bname, char *cmd)
 	Arg = Argp = 0;
 	Echo("Working...");
 	mktemp(strcpy(fname, ZSHFILE));
-	err = Dopipe(fname, cmd);
+	err = dopipe(fname, cmd);
 	if (err)
-		Syerr(err);
+		syerr(err);
 	else {
 		WuseOther(bname);
 		breadfile(fname);
@@ -246,7 +267,7 @@ struct buff *Cmdtobuff(char *bname, char *cmd)
 #endif
 
 #ifndef PIPESH
-int Dopipe(char *fname, char *cmd)
+int dopipe(char *fname, char *cmd)
 {
 	char command[STRMAX + 1];
 
@@ -290,7 +311,7 @@ void Zbeauty(void)
 
 #ifdef PIPESH
 	sprintf(cmdStr, "%s %s %s", INDENT, fileName1, fileName2);
-	if (!Dopipe(Curbuff, cmdStr))
+	if (!dopipe(Curbuff, cmdStr))
 		return;
 
 	while (Curbuff->child != EOF)
@@ -315,27 +336,10 @@ void Zbeauty(void)
 	unlink(fileName2);
 }
 
-void Syerr(int err)
-{
-	switch (err) {
-	case E2BIG:
-	case ENOMEM:
-		Error("Not enough memory");
-		break;
-
-	case ENOENT:
-		Error("Command not found");
-		break;
-
-	default:
-		Error("Unable to execute");
-	}
-}
-
 /* Returns -1 if popen failed, else exit code.
  * Leaves Point and Mark where they where.
  */
-int BuffToPipe(struct buff *buff, char *cmd)
+static int bufftopipe(struct buff *buff, char *cmd)
 {
 	FILE *pfp;
 	struct mark spnt, end;
@@ -374,7 +378,7 @@ int BuffToPipe(struct buff *buff, char *cmd)
 /* Returns -1 if popen failed, else exit code.
  * Leaves Point at end of new text.
  */
-int PipeToBuff(struct buff *buff, char *instr)
+static int pipetobuff(struct buff *buff, char *instr)
 {
 	FILE *pfp;
 	int c;
@@ -391,7 +395,7 @@ int PipeToBuff(struct buff *buff, char *instr)
 	return pclose(pfp) >> 8;
 }
 
-void PrintExit(int code)
+static void printexit(int code)
 {
 	if (code == 0)
 		Echo("Done.");

@@ -21,7 +21,7 @@
 
 
 /* local routine to set PawStr to the correct mode */
-char *Setmodes(struct buff *buff)
+char *setmodes(struct buff *buff)
 {
 	if (!InPaw)	/* we should never be in the Paw but .... */
 		Curcmds = (buff->bmode & VIEW) ? 1 : 0;
@@ -79,7 +79,7 @@ char *Setmodes(struct buff *buff)
 
 #ifndef XWINDOWS
 /* This is called before the windows are created */
-void Initline(void)
+void initline(void)
 {
 	int i;
 
@@ -95,14 +95,14 @@ void Initline(void)
 }
 
 /* Redraw the modeline except for flags. */
-static void Modeline(struct wdo *wdo)
+static void modeline(struct wdo *wdo)
 {
-	char str[COLMAX + 1]; /* can't use PawStr because of Setmodes */
+	char str[COLMAX + 1]; /* can't use PawStr because of setmodes */
 	int len;
 
 	tsetpoint(wdo->last, 0);
 	tstyle(T_STANDOUT);
-	sprintf(str, ZFMT, ZSTR, VERSION, Setmodes(wdo->wbuff),
+	sprintf(str, ZFMT, ZSTR, VERSION, setmodes(wdo->wbuff),
 		wdo->wbuff->bname);
 	tprntstr(str);
 	if (wdo->wbuff->fname) {
@@ -117,8 +117,8 @@ static void Modeline(struct wdo *wdo)
 	tstyle(T_NORMAL);
 }
 
-/* This routine will call Modeline if wdo->modeflags == INVALID */
-void Modeflags(struct wdo *wdo)
+/* This routine will call modeline if wdo->modeflags == INVALID */
+void modeflags(struct wdo *wdo)
 {
 	unsigned trow, tcol, line, col, mask;
 
@@ -126,7 +126,7 @@ void Modeflags(struct wdo *wdo)
 	tcol = tgetcol();
 
 	if (wdo->modeflags == INVALID)
-		Modeline(wdo);
+		modeline(wdo);
 
 	tstyle(T_STANDOUT);
 

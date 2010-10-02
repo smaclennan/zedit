@@ -25,9 +25,9 @@
 char savetag[STRMAX + 1];
 static struct buff *Bsave;
 
-static void GotoMatch(struct mark *smark);
-static Boolean Tagfparse(struct buff *);
-static Boolean GetTagsFile(void);
+static void gotomatch(struct mark *smark);
+static Boolean tagfparse(struct buff *);
+static Boolean gettagsfile(void);
 
 /* Routines to handle tag files. Zfindtag looks through the tagfile and if
  * the tag is found, goes to the appropriate file and position.
@@ -54,7 +54,7 @@ void Zfindtag(void)
 	Bsave = Curbuff;
 	bmrktopnt(&smark);
 
-	if (!GetTagsFile())
+	if (!gettagsfile())
 		return;
 	Argp = 0;
 
@@ -66,7 +66,7 @@ void Zfindtag(void)
 				getbword(word, STRMAX, bistoken);
 				if (strcasecmp(tag, word) == 0) {
 					if (strcmp(tag, word) == 0) {
-						GotoMatch(&smark);
+						gotomatch(&smark);
 						return;
 					} else if (!best) {
 						best  = TRUE;
@@ -82,7 +82,7 @@ void Zfindtag(void)
 
 			if (best) {
 				bpnttomrk(&tmark);
-				GotoMatch(&smark);
+				gotomatch(&smark);
 				return;
 			}
 
@@ -101,7 +101,7 @@ void Zfindtag(void)
 }
 
 #ifdef XWINDOWS
-void Xfindtag(void)
+void xfindtag(void)
 {
 	char tag[STRMAX + 1], word[PATHMAX + 1];
 	struct mark smark;
@@ -112,7 +112,7 @@ void Xfindtag(void)
 	Bsave = Curbuff;
 	bmrktopnt(&smark);
 
-	if (!GetTagsFile())
+	if (!gettagsfile())
 		return;
 
 	Echo("Looking...");
@@ -120,7 +120,7 @@ void Xfindtag(void)
 		getbword(word, STRMAX, bistoken);
 		if (strcmp(tag, word) == 0) {
 			/* found a match in the tag file */
-			GotoMatch(&smark);
+			gotomatch(&smark);
 			refresh();
 			return;
 		}
@@ -132,11 +132,11 @@ void Xfindtag(void)
 }
 #endif
 
-static void GotoMatch(struct mark *smark)
+static void gotomatch(struct mark *smark)
 {
 	struct mark tmark;
 
-	if (Tagfparse(Bsave))
+	if (tagfparse(Bsave))
 		if (strcmp(Bsave->bname, Curbuff->bname))
 			strcpy(Lbufname, Bsave->bname);
 	bmrktopnt(&tmark);
@@ -147,7 +147,7 @@ static void GotoMatch(struct mark *smark)
 }
 
 /* Parse the line in the tag file and find the correct file and position. */
-static Boolean Tagfparse(struct buff *bsave)
+static Boolean tagfparse(struct buff *bsave)
 {
 #if ETAGS
 #else
@@ -167,7 +167,7 @@ static Boolean Tagfparse(struct buff *bsave)
 		bmove1();
 	if (isdigit(Buff())) {
 		byte = Buff() == '0';
-		num = Batoi();
+		num = batoi();
 	}
 
 	while (biswhite())
@@ -181,7 +181,7 @@ static Boolean Tagfparse(struct buff *bsave)
 	if (num == -1) {
 		if (isdigit(Buff())) {
 			byte = Buff() == '0';
-			num = Batoi();
+			num = batoi();
 		} else {
 			mch = Buff();
 			bmove1();
@@ -213,7 +213,7 @@ static Boolean Tagfparse(struct buff *bsave)
 				while (--num > 0 && bcsearch(NL))
 					;
 		else
-			for (found = FALSE; Bsearch(str, FORWARD);) {
+			for (found = FALSE; bstrsearch(str, FORWARD);) {
 				found = TRUE;
 				bmrktopnt(&tmark);
 				if (smatch) {
@@ -242,7 +242,7 @@ static Boolean Tagfparse(struct buff *bsave)
 
 
 /* Load the tags file into a buffer. */
-static Boolean GetTagsFile(void)
+static Boolean gettagsfile(void)
 {
 	struct buff *tbuff;
 	char fname[PATHMAX + 1], *tagfname;
@@ -312,7 +312,7 @@ static Boolean GetTagsFile(void)
 }
 
 /* Convert the next portion of buffer to integer. Skip leading ws. */
-int Batoi(void)
+int batoi(void)
 {
 	int num;
 
@@ -335,7 +335,7 @@ void Zref(void)
 	if (getarg("Ref tag: ", p, STRMAX))
 		return;
 
-	mbuff = Cmdtobuff(REFBUFF, tag);
+	mbuff = cmdtobuff(REFBUFF, tag);
 	if (mbuff == NULL)
 		Error("Unable to execute ref.");
 	else

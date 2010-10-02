@@ -62,7 +62,7 @@ void refresh(void)
 	if (++NESTED > 10)
 		Hangup(0);
 
-	Setmodes(Curbuff);	/* SAM make sure OK */
+	setmodes(Curbuff);	/* SAM make sure OK */
 
 	if (!mrkatmrk(was, Curbuff->mark)) {
 		/* the user mark has moved! */
@@ -103,7 +103,7 @@ void refresh(void)
 			point = bcremrk();
 			bpnttomrk(wdo->wstart);
 			innerdsp(wdo->first, wdo->last, NULL);
-			Modeflags(wdo);
+			modeflags(wdo);
 			bpnttomrk(point);
 			unmark(point);
 			bswitchto(Curwdo->wbuff);
@@ -137,8 +137,8 @@ void refresh(void)
 	}
 #endif
 
-	Modeflags(Curwdo);
-	Setmodes(Curbuff);	/* displaying other windows can blow modes */
+	modeflags(Curwdo);
+	setmodes(Curbuff);	/* displaying other windows can blow modes */
 	tflush();
 	tstyle(T_NORMAL);
 

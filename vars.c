@@ -357,7 +357,7 @@ The -4 takes into account borders and a fudge factors.
 NOTE: During setup, screen width is undefined.
 
 This routine is called when VTABS or VCTABS is changed or
-Setmodes is called.
+setmodes is called.
 */
 int Tabsize = 8;
 

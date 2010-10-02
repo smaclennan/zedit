@@ -20,30 +20,20 @@
 #include "z.h"
 
 
-static Boolean Promptsearch(char *prompt, int type);
-static void Promptreplace(int type);
-static Boolean Dosearch(void);
-static Boolean Replaceone(int, Boolean *, Boolean *, Byte *, Boolean);
+static Boolean promptsearch(char *prompt, int type);
+static void promptreplace(int type);
+static Boolean dosearch(void);
+static Boolean replaceone(int, Boolean *, Boolean *, Byte *, Boolean);
 
 
-Boolean Insearch;	/* set by Nocase, reset by getarg */
+Boolean Insearch;	/* set by nocase, reset by getarg */
 
 static struct mark *Gmark;	/* used by global search routines */
 
 #define QHELP	\
 "Options: ' ' 'y'=change; 'n'=don't; '.'=change & quit; 'u'=undo; '^G'=quit"
 
-void Zincsrch(void)
-{
-	Doincsrch("I-search: ", FORWARD);
-}
-
-void Zrincsrch(void)
-{
-	Doincsrch("Reverse I-search: ", BACKWARD);
-}
-
-void Doincsrch(char *prompt, Boolean forward)
+static void doincsrch(char *prompt, Boolean forward)
 {
 	Boolean go = TRUE;
 	char str[STRMAX + 1], *p;
@@ -51,7 +41,7 @@ void Doincsrch(char *prompt, Boolean forward)
 	struct mark marks[STRMAX];
 
 	memset(str, '\0', STRMAX);
-	strcpy(str, Nocase(prompt));
+	strcpy(str, nocase(prompt));
 	p = str + strlen(str);
 	while (go) {
 		refresh();
@@ -61,7 +51,7 @@ void Doincsrch(char *prompt, Boolean forward)
 			bmrktopnt(&marks[i]);
 			p[i++] = cmd;
 			bmove(-i);
-			if (Bsearch(p, forward)) {
+			if (bstrsearch(p, forward)) {
 				bmove(i);
 			} else {
 				bpnttomrk(&marks[--i]);
@@ -80,7 +70,7 @@ void Doincsrch(char *prompt, Boolean forward)
 			}
 
 			bmrktopnt(&tmark); /* save in case search fails */
-			if (Bsearch(p, forward))
+			if (bstrsearch(p, forward))
 				bmove(i);
 			else {
 				bpnttomrk(&tmark);
@@ -105,25 +95,35 @@ void Doincsrch(char *prompt, Boolean forward)
 	searchdir[1] = 0;
 }
 
+void Zincsrch(void)
+{
+	doincsrch("I-search: ", FORWARD);
+}
+
+void Zrincsrch(void)
+{
+	doincsrch("Reverse I-search: ", BACKWARD);
+}
+
 void Zsearch(void)
 {
 #if defined(XWINDOWS) && defined(POPTARTS)
 	if (Argp) {
-		PopupSearch();
+		popupsearch();
 		return;
 	}
 #endif
-	Promptsearch("Search: ", FORWARD);
+	promptsearch("Search: ", FORWARD);
 }
 
 void Zrsearch(void)
 {
-	Promptsearch("Reverse Search: ", BACKWARD);
+	promptsearch("Reverse Search: ", BACKWARD);
 }
 
 void Zgsearch(void)
 {
-	if (getarg(Nocase("Global Search: "), old, STRMAX))
+	if (getarg(nocase("Global Search: "), old, STRMAX))
 		return;
 	cswitchto(Bufflist);
 	btostart();
@@ -134,12 +134,12 @@ void Zgsearch(void)
 
 void Zresrch(void)
 {
-	Promptsearch("RE Search: ", REGEXP);
+	promptsearch("RE Search: ", REGEXP);
 }
 
 void Zgresrch(void)
 {
-	if (getarg(Nocase("Global RE Search: "), old, STRMAX))
+	if (getarg(nocase("Global RE Search: "), old, STRMAX))
 		return;
 	cswitchto(Bufflist);
 	btostart();
@@ -153,7 +153,7 @@ void Zagain(void)
 	if (searchdir[1] == SGLOBAL) {
 		if (!Gmark)
 			Gmark = bcremrk(); /* set here in case exit/reload */
-		while (!Promptsearch("", AGAIN)) {
+		while (!promptsearch("", AGAIN)) {
 			Curbuff = Curbuff->next;
 			if (Curbuff) {
 				cswitchto(Curbuff);
@@ -169,49 +169,25 @@ void Zagain(void)
 			}
 		}
 	} else
-		Promptsearch("Search: ", AGAIN);
+		promptsearch("Search: ", AGAIN);
 }
 
 void Zreplace(void)
 {
-	Promptreplace(FORWARD);
+	promptreplace(FORWARD);
 }
 
 void Zquery(void)
 {
-	Promptreplace(QUERY);
+	promptreplace(QUERY);
 }
 
 void Zrereplace(void)
 {
-	Promptreplace(REGEXP);
+	promptreplace(REGEXP);
 }
 
-static void Promptreplace(int type)
-{
-	char *prompt = NULL;
-	int rc;
-
-	switch (type) {
-	case FORWARD:
-		prompt = "Replace: ";		break;
-	case QUERY:
-		prompt = "QReplace: ";		break;
-	case REGEXP:
-		prompt = "RE Replace: ";	break;
-	}
-	if (getarg(Nocase(prompt), old, STRMAX))
-		return;
-	rc = getarg(Nocase("with: "), new, STRMAX);
-	if (rc == ABORT)
-		return;
-	if (rc)
-		*new = '\0';
-
-	Doreplace(type);
-}
-
-void Doreplace(int type)
+static void doreplace(int type)
 {
 	Boolean exit = FALSE, crgone, query;
 	Byte ebuf[ESIZE];
@@ -227,22 +203,22 @@ void Doreplace(int type)
 	pmark = bcremrk();
 
 	if (type == REGEXP)
-		rc = Compile((Byte *)old, ebuf, &ebuf[ESIZE]);
+		rc = compile((Byte *)old, ebuf, &ebuf[ESIZE]);
 	if (rc)
-		Regerr(rc);
+		regerr(rc);
 	else if (Argp) {
 		for (tbuff = Bufflist; tbuff && !exit; tbuff = tbuff->next) {
 			cswitchto(tbuff);
 			bmrktopnt(&tmark);
 			btostart();
-			while (Replaceone(type, &query, &exit, ebuf, crgone) &&
+			while (replaceone(type, &query, &exit, ebuf, crgone) &&
 			       !exit)
 				;
 			bpnttomrk(&tmark);
 		}
 		clrecho();
 		cswitchto(pmark->mbuff);
-	} else if (!Replaceone(type, &query, &exit, ebuf, crgone) && !exit)
+	} else if (!replaceone(type, &query, &exit, ebuf, crgone) && !exit)
 		Echo("Not Found");
 	else
 		clrecho();
@@ -251,7 +227,31 @@ void Doreplace(int type)
 	unmark(pmark);
 }
 
-static Boolean Replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
+static void promptreplace(int type)
+{
+	char *prompt = NULL;
+	int rc;
+
+	switch (type) {
+	case FORWARD:
+		prompt = "Replace: ";		break;
+	case QUERY:
+		prompt = "QReplace: ";		break;
+	case REGEXP:
+		prompt = "RE Replace: ";	break;
+	}
+	if (getarg(nocase(prompt), old, STRMAX))
+		return;
+	rc = getarg(nocase("with: "), new, STRMAX);
+	if (rc == ABORT)
+		return;
+	if (rc)
+		*new = '\0';
+
+	doreplace(type);
+}
+
+static Boolean replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
 			  Boolean crgone)
 {
 	Boolean found = FALSE;
@@ -262,7 +262,7 @@ static Boolean Replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
 	prevmatch = bcremrk();
 	Echo("Searching...");
 	while (!*exit &&
-	       (type == REGEXP ? Step(ebuf) : Bsearch(old, FORWARD))) {
+	       (type == REGEXP ? step(ebuf) : bstrsearch(old, FORWARD))) {
 		found = TRUE;
 		if (*query) {
 replace:
@@ -384,20 +384,20 @@ input:
 	return found;
 }
 
-static Boolean Promptsearch(char *prompt, int type)
+static Boolean promptsearch(char *prompt, int type)
 {
 	if (*old == '\0' || type != AGAIN) {
-		if (getarg(Nocase(prompt), old, STRMAX)) {
+		if (getarg(nocase(prompt), old, STRMAX)) {
 			Arg = 0;
 			return ABORT;
 		}
 		searchdir[0] = type == AGAIN ? FORWARD : type;
 		searchdir[1] = 0;
 	}
-	return Dosearch();
+	return dosearch();
 }
 
-static Boolean Dosearch(void)
+static Boolean dosearch(void)
 {
 	Boolean found = TRUE;
 	Byte ebuf[ESIZE];
@@ -408,20 +408,20 @@ static Boolean Dosearch(void)
 	bmove(searchdir[0] == BACKWARD ? -1 : 1);
 	Echo("Searching...");
 	if (searchdir[0] == REGEXP) {
-		rc = Compile((Byte *)old, ebuf, &ebuf[ESIZE]);
+		rc = compile((Byte *)old, ebuf, &ebuf[ESIZE]);
 		if (rc == 0) {
 			while (Arg-- > 0 && found) {
-				found = Step(ebuf);
+				found = step(ebuf);
 				if (found)
 					++fcnt;
 			}
 		} else
-			Regerr(rc);
+			regerr(rc);
 		if (found)
 			bpnttomrk(REstart);
 	} else {
 		while (Arg-- > 0 && found) {
-			found = Bsearch(old, searchdir[0]);
+			found = bstrsearch(old, searchdir[0]);
 			if (found)
 				++fcnt;
 			bmove1();
@@ -449,7 +449,7 @@ static Boolean Dosearch(void)
  * forward is TRUE, it searches forward, else it searches backwards.
  * The search will be case insensitive if the buffers current mode is so set.
  */
-Boolean Bsearch(char *str, Boolean forward)
+Boolean bstrsearch(char *str, Boolean forward)
 {
 	Boolean exact;
 	int delta[NUMASCII], len, i, shift;
@@ -536,7 +536,7 @@ Boolean Bsearch(char *str, Boolean forward)
 	return FALSE;
 }
 
-char *Nocase(char *prompt)
+char *nocase(char *prompt)
 {
 	static char is[20], upper[20];
 

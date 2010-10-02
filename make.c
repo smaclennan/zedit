@@ -26,6 +26,8 @@
  */
 static int NextErrorCalled;
 
+static int parse(char *fname);
+
 /* Do a "make" command - basically a shell command in the ".make" buffer */
 void Zmake(void)
 {
@@ -47,7 +49,7 @@ void Zmake(void)
 		clrecho();
 	}
 #endif
-	mbuff = Cmdtobuff(MAKEBUFF, mkcmd);
+	mbuff = cmdtobuff(MAKEBUFF, mkcmd);
 	if (mbuff)
 		message(mbuff, mkcmd);
 	else
@@ -79,7 +81,7 @@ void Zgrep(void)
 		return;
 	}
 #endif
-	mbuff = Cmdtobuff(MAKEBUFF, cmd);
+	mbuff = cmdtobuff(MAKEBUFF, cmd);
 	if (mbuff)
 		message(mbuff, cmd);
 	else
@@ -105,7 +107,7 @@ void Znexterr(void)
 		NextErrorCalled = 1;
 		btostart();
 	}
-	line = Parse(fname);
+	line = parse(fname);
 	if (line) {
 		vsetmrk(Curbuff->mark);
 		bmrktopnt(Curbuff->mark);
@@ -151,7 +153,7 @@ static int isnotws(void)
 	return Buff() != '\n' && Buff() != '\t' && Buff() != ' ';
 }
 
-static Boolean Warning(void)
+static Boolean warning(void)
 {
 	if (Argp) {
 		if (IsWarning)
@@ -183,7 +185,7 @@ static Boolean Warning(void)
  *
  *	ignores		conflicts: <line>
  */
-int Parse(char *fname)
+static int parse(char *fname)
 {
 	char word[41], *p;
 	int line, n;
@@ -230,8 +232,8 @@ int Parse(char *fname)
 		}
 
 		/* look for line number */
-		line = Batoi();
-		if (line != 0 && !Warning())
+		line = batoi();
+		if (line != 0 && !warning())
 			return line;
 
 		/* skip to next line */

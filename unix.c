@@ -243,7 +243,7 @@ Boolean Invoke(struct buff *tbuff, char *argv[])
 /* Invoke 'cmd' on a pipe.
  * Returns true if the invocation succeeded.
 */
-Boolean Dopipe(struct buff *tbuff, char *icmd)
+Boolean dopipe(struct buff *tbuff, char *icmd)
 {
 	char cmd[STRMAX + 1], *p, *argv[11];
 	int from[2], arg;

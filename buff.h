@@ -95,8 +95,8 @@ struct wdo {
 	struct mark *wmrk;		/* saved Mark */
 	struct mark *wstart;		/* screen start */
 	int	first, last;		/* screen line boundries */
-	int	modecol;		/* column for Modeflags */
-	int	modeflags;		/* flags for Modeflags */
+	int	modecol;		/* column for modeflags */
+	int	modeflags;		/* flags for modeflags */
 #ifdef XWINDOWS
 	ulong	vscroll, vthumb;	/* windows for vert scrollbar */
 	int		vheight;	/* height of vert scrollbar */

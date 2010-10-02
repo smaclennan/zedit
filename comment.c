@@ -149,7 +149,7 @@ again:
 				newcpp(&start, NULL, type);
 
 				/* find comment end */
-				if (Bsearch("*/", FORWARD)) {
+				if (bstrsearch("*/", FORWARD)) {
 					bmrktopnt(&start);
 					if (bcsearch('\n')) {
 						bmove(-2);
@@ -241,7 +241,7 @@ static void scanbuffer(void)
 			if (Buff() == '*') {
 				bmove(-1);
 				bmrktopnt(&start);
-				if (Bsearch("*/", FORWARD)) {
+				if (bstrsearch("*/", FORWARD)) {
 					bmove1();
 					newcomment(&start, NULL);
 				}

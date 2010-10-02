@@ -141,7 +141,7 @@ void tinit(void)
 
 	Srow = Scol = -1;	/* undefined */
 	if (Exitflag)
-		Initline();		/* Curwdo not defined yet */
+		initline();		/* Curwdo not defined yet */
 	else
 		Zredisplay();
 }

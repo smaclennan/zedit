@@ -25,8 +25,13 @@
 #define SPELLSTRING "<space>(skip)  A(ccept)  I(nsert)  R(eplace)  #"
 #define PROMPT		"Replace with: "
 
-static void Mclear(void);
+static void mclear(void);
 static int ispell(FILE *, FILE *, char *, char *);
+
+static int bisalpha(void)
+{
+	return isalpha(Buff());
+}
 
 void Zspell(void)
 {
@@ -73,19 +78,19 @@ void Zspell(void)
 	bswitchto(was);
 	Resize(-2);
 	refresh();
-	Mclear();
+	mclear();
 	Echo("Checking...");
 	while (bisbeforemrk(emark)) {
 		/* get the next word */
-		moveto(Isalpha, FORWARD);
+		moveto(bisalpha, FORWARD);
 		if (bisend())
 			break;	/* incase no alphas left */
 		bmrktopnt(Curbuff->mark);
-		for (p = send + 1; Isalpha() && !bisend(); ++p, bmove1())
+		for (p = send + 1; bisalpha() && !bisend(); ++p, bmove1())
 			*p = Buff();
 		*p++ = '\n'; *p = '\0';
 
-		Mclear();
+		mclear();
 
 		/* process the word */
 		n = ispell(in, out, send + 1, buff);
@@ -178,7 +183,7 @@ abort:
 }
 
 
-static void Mclear(void)
+static void mclear(void)
 {
 	/* clear the matches area */
 	Clrcol[Rowmax] = Clrcol[Rowmax + 1] = COLMAX + 1;
@@ -200,11 +205,6 @@ void sreplace(char *new)
 {
 	bdeltomrk(Curbuff->mark);
 	binstr(new);
-}
-
-int Isalpha(void)
-{
-	return isalpha(Buff());
 }
 #else
 void Zspell(void) { tbell(); }

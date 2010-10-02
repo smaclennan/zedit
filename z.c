@@ -274,7 +274,7 @@ void Setup(int argc, char **argv)
 	}
 
 	reframe();
-	Setmodes(Curbuff);		/* start it off right! */
+	setmodes(Curbuff);		/* start it off right! */
 
 	if (!Curbuff->mtime && Curbuff->fname)
 		Echo("New File");

@@ -308,7 +308,7 @@ static void Zfillcomment(void)
 	bmrktopnt(&tmark);
 
 	/* find start of comment */
-	if (!Bsearch("/*", FALSE)) {
+	if (!bstrsearch("/*", FALSE)) {
 		bpnttomrk(&tmark);
 		Error("Unable to find start of comment.");
 		return;
@@ -318,7 +318,7 @@ static void Zfillcomment(void)
 	start = bcremrk();
 
 	/* find end of comment */
-	if (!Bsearch("*/", TRUE)) {
+	if (!bstrsearch("*/", TRUE)) {
 		unmark(start);
 		bpnttomrk(&tmark);
 		Error("Unable to find end of comment.");
@@ -533,7 +533,7 @@ Boolean Ispara(char pc, char ch)
 
 void Zformtab(void)
 {
-	if (Bsearch(FORMSTRING, TRUE))
+	if (bstrsearch(FORMSTRING, TRUE))
 		bdelete(strlen(FORMSTRING));
 	else
 		tbell();
@@ -770,7 +770,7 @@ void Zcase(void)
 	Curbuff->bmode ^= EXACT;
 	if (InPaw && Insearch) {
 		tsetpoint(tmaxrow() - 1, 0);
-		tprntstr(Nocase(NULL));
+		tprntstr(nocase(NULL));
 	} else
 		Echo(Curbuff->bmode & EXACT ? "Exact Set" : "Exact Reset");
 	Arg = 0;

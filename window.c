@@ -582,7 +582,7 @@ void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 		buff = Cmakebuff(SHELLBUFF, NULL);
 		if (buff == NULL)
 			NoMem();
-		Doshell();
+		doshell();
 	}
 #endif
 	buff = Cfindbuff(bname);

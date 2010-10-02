@@ -50,7 +50,7 @@ static Byte bittab[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
  * The point is left at the end of the matched string or the buffer end and
  * REstart points to the start of the match.
  */
-Boolean Step(Byte *ep)
+Boolean step(Byte *ep)
 {
 	/* ^ must match from start */
 	if (circf) {
@@ -260,7 +260,7 @@ static Boolean ecmp(struct mark *start, int cnt)
  */
 #define EOFCH	'\0'
 
-int Compile(Byte *instring, Byte *ep, Byte *endbuf)
+int compile(Byte *instring, Byte *ep, Byte *endbuf)
 {
 	Byte *sp = instring;
 	int c;
@@ -456,7 +456,7 @@ defchar:
 	}
 }
 
-void Regerr(int errnum)
+void regerr(int errnum)
 {
 	static char *errs[] = {
 		/*40*/	"Illegal or missing delimiter.",

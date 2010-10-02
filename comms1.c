@@ -272,13 +272,12 @@ void parsem(char *in, int mode)
 	if (str) {
 		str = strtok(str, ":");
 		if (str) {
-			do
+			do {
 				if (strcmp(str, ".") == 0)
 					NoExt = mode;
 				else
 					o[i++] = strdup(str);
-			while (i < 8 && !(str = strtok(NULL, ":")))
-				;
+			} while (i < 8 && (str = strtok(NULL, ":")));
 			o[i] = NULL;
 		}
 		free(start);

@@ -23,7 +23,7 @@
 #include <signal.h>
 
 
-char *dbgfname;
+static char *dbgfname;
 Byte Dbgstr[256];
 int Dbgint;
 

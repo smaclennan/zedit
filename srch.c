@@ -28,17 +28,17 @@ static Boolean Replaceone(int, Boolean *, Boolean *, Byte *, Boolean);
 
 Boolean Insearch;	/* set by Nocase, reset by Getarg */
 
-struct mark *Gmark;		/* used by global search routines */
+static struct mark *Gmark;	/* used by global search routines */
 
 #define QHELP	\
 "Options: ' ' 'y'=change; 'n'=don't; '.'=change & quit; 'u'=undo; '^G'=quit"
 
-void Zincsrch()
+void Zincsrch(void)
 {
 	Doincsrch("I-search: ", FORWARD);
 }
 
-void Zrincsrch()
+void Zrincsrch(void)
 {
 	Doincsrch("Reverse I-search: ", BACKWARD);
 }
@@ -105,7 +105,7 @@ void Doincsrch(char *prompt, Boolean forward)
 	searchdir[1] = 0;
 }
 
-void Zsearch()
+void Zsearch(void)
 {
 #if defined(XWINDOWS) && defined(POPTARTS)
 	if (Argp) {
@@ -116,12 +116,12 @@ void Zsearch()
 	Promptsearch("Search: ", FORWARD);
 }
 
-void Zrsearch()
+void Zrsearch(void)
 {
 	Promptsearch("Reverse Search: ", BACKWARD);
 }
 
-void Zgsearch()
+void Zgsearch(void)
 {
 	if (Getarg(Nocase("Global Search: "), old, STRMAX))
 		return;
@@ -132,12 +132,12 @@ void Zgsearch()
 	Zagain();
 }
 
-void Zresrch()
+void Zresrch(void)
 {
 	Promptsearch("RE Search: ", REGEXP);
 }
 
-void Zgresrch()
+void Zgresrch(void)
 {
 	if (Getarg(Nocase("Global RE Search: "), old, STRMAX))
 		return;
@@ -148,7 +148,7 @@ void Zgresrch()
 	Zagain();
 }
 
-void Zagain()
+void Zagain(void)
 {
 	if (searchdir[1] == SGLOBAL) {
 		if (!Gmark)
@@ -172,17 +172,17 @@ void Zagain()
 		Promptsearch("Search: ", AGAIN);
 }
 
-void Zreplace()
+void Zreplace(void)
 {
 	Promptreplace(FORWARD);
 }
 
-void Zquery()
+void Zquery(void)
 {
 	Promptreplace(QUERY);
 }
 
-void Zrereplace()
+void Zrereplace(void)
 {
 	Promptreplace(REGEXP);
 }
@@ -397,7 +397,7 @@ static Boolean Promptsearch(char *prompt, int type)
 	return Dosearch();
 }
 
-static Boolean Dosearch()
+static Boolean Dosearch(void)
 {
 	Boolean found = TRUE;
 	Byte ebuf[ESIZE];

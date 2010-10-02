@@ -21,7 +21,7 @@
 #include "keys.h"
 
 #ifdef HELP
-char *Htype[] = {
+static char *Htype[] = {
 	"Special",
 	"Other",
 	"Variables",
@@ -40,7 +40,7 @@ char *Htype[] = {
 
 
 /* a "sentence" ends in a tab, NL, or two consecutive spaces */
-int Issentence()
+static int Issentence(void)
 {
 	static Byte prev = '\0';
 	int rc;
@@ -50,7 +50,7 @@ int Issentence()
 	return rc;
 }
 
-void Zhelp()
+void Zhelp(void)
 {
 	static Byte level = 0, z;
 	struct buff *tbuff, *was;
@@ -265,7 +265,7 @@ void Zhelp(void) { Tbell(); }
 void KillHelp(void) {}
 #endif /* HELP */
 
-int Isnotws()
+int Isnotws(void)
 {
 	return Buff() != '\n' && Buff() != '\t' && Buff() != ' ';
 }

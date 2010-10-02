@@ -53,7 +53,7 @@ void Hangup(int signal)
 #ifdef PIPESH
 static int Readapipe(struct buff *);
 
-int Waiting;
+static int Waiting;
 fd_set SelectFDs;
 int NumFDs;
 
@@ -168,7 +168,7 @@ static int Readapipe(struct buff *tbuff)
 Send the buffer line to a pipe.
 This command is invoked by the Newline command.
 */
-void Sendtopipe()
+void Sendtopipe(void)
 {
 	char line[256 + 1];
 	int i;

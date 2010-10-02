@@ -23,22 +23,22 @@
 struct buff *Killbuff;
 
 
-void Zmakedel() {}
+void Zmakedel(void) {}
 
-void Zdelchar()
+void Zdelchar(void)
 {
 	Bdelete(Arg);
 	Arg = 0;
 }
 
-void Zrdelchar()
+void Zrdelchar(void)
 {
 	Bmove(-Arg);
 	Bdelete(Arg);
 	Arg = 0;
 }
 
-void Zdeleol()
+void Zdeleol(void)
 {
 	struct mark *tmark = Bcremrk();
 
@@ -58,7 +58,7 @@ void Zdeleol()
 	Unmark(tmark);
 }
 
-void Zdelline()
+void Zdelline(void)
 {
 	struct mark *tmark;
 
@@ -70,21 +70,21 @@ void Zdelline()
 }
 
 /* Delete from the point to the mark */
-void Zdelrgn()
+void Zdelrgn(void)
 {
 	Killtomrk(Curbuff->mark);
 }
 
 
 /* Copy from point to the mark into delbuff */
-void Zcopyrgn()
+void Zcopyrgn(void)
 {
 	Copytomrk(Curbuff->mark);
 }
 
 
 /* Insert the delete buffer at the point */
-void Zyank()
+void Zyank(void)
 {
 	struct buff *tbuff;
 	int yanked;
@@ -110,7 +110,7 @@ void Zyank()
 		Reframe();
 }
 
-void Zdelword()
+void Zdelword(void)
 {
 	struct mark *tmark;
 
@@ -121,7 +121,7 @@ void Zdelword()
 	Unmark(tmark);
 }
 
-void Zrdelword()
+void Zrdelword(void)
 {
 	struct mark *tmark;
 
@@ -131,7 +131,7 @@ void Zrdelword()
 	Unmark(tmark);
 }
 
-void Zgetbword()
+void Zgetbword(void)
 {
 	char word[STRMAX], *ptr;
 	struct mark *tmark, *start;
@@ -158,7 +158,7 @@ void Zgetbword()
 	Arg = 0;
 }
 
-void Zdelblanks()
+void Zdelblanks(void)
 {
 	struct mark *tmark, *pmark;
 
@@ -186,7 +186,7 @@ void Zdelblanks()
 	Unmark(pmark);
 }
 
-void Zjoin()
+void Zjoin(void)
 {
 	Toendline();
 	Bdelete(1);
@@ -194,7 +194,7 @@ void Zjoin()
 	Binsert(' ');
 }
 
-void Zempty()
+void Zempty(void)
 {
 	if (Ask("Empty buffer? ") != YES)
 		return;

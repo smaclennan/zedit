@@ -66,7 +66,7 @@ void Blockmove(struct mark *from, struct mark *to)
 
 #ifndef XWINDOWS
 /* more efficient to not make it a macro */
-void Clrecho() { PutPaw("", 2); }
+void Clrecho(void) { PutPaw("", 2); }
 #endif
 
 Boolean Isext(char *fname, char *ext)
@@ -77,7 +77,7 @@ Boolean Isext(char *fname, char *ext)
 }
 
 /* Was the last command a "cursor" command? */
-Boolean zCursor()
+Boolean zCursor(void)
 {
 	return  Lfunc == ZPREVLINE || Lfunc == ZNEXTLINE ||
 		Lfunc == ZPREVPAGE || Lfunc == ZNEXTPAGE;
@@ -97,7 +97,7 @@ Boolean Delayprompt(char *msg)
 #include <sys/time.h>
 #include <sys/poll.h>
 
-Boolean Delay()
+Boolean Delay(void)
 {
 	static struct pollfd ufd = { .fd = 1, .events = POLLIN };
 
@@ -106,7 +106,7 @@ Boolean Delay()
 
 #else
 
-Boolean Delay()
+Boolean Delay(void)
 {
 	long t;
 
@@ -122,7 +122,7 @@ Boolean Delay()
 #endif
 
 /* Was the last command a delete to kill buffer command? */
-Boolean Delcmd()
+Boolean Delcmd(void)
 {
 	return	Lfunc == ZDELEOL  || Lfunc == ZDELLINE  || Lfunc == ZDELRGN   ||
 		Lfunc == ZCOPYRGN || Lfunc == ZDELWORD  || Lfunc == ZRDELWORD ||
@@ -130,7 +130,7 @@ Boolean Delcmd()
 }
 
 /* Was the last command a delete of any type? */
-Boolean DelcmdAll()
+Boolean DelcmdAll(void)
 {
 	return Delcmd() || Lfunc == ZDELCHAR || Lfunc == ZRDELCHAR;
 }
@@ -309,25 +309,25 @@ int Tolower(int c)
 	return TOLOWER(c);
 }
 
-int Isspace()
+int Isspace(void)
 {
 	return isspace(Buff());
 }
 
-int Isword()
+int Isword(void)
 {
 	return  isalnum(Buff()) || Buff() == '_' || Buff() == '.' ||
 		Buff() == '$';
 }
 
 /* Must be a real function. $ for PL/M */
-int Istoken()
+int Istoken(void)
 {
 	return isalnum(Buff()) || Buff() == '_' || Buff() == '.' ||
 		Buff() == '$' || Buff() == '/';
 }
 
-int Iswhite()
+int Iswhite(void)
 {
 	return STRIP(Buff()) == ' ' || STRIP(Buff()) == '\t';
 }
@@ -428,7 +428,7 @@ char *Limit(char *fname, int num)
 }
 
 /* called at startup when out of memory */
-void NoMem()
+void NoMem(void)
 {
 	Error("Out of memory.");
 	exit(1);

@@ -34,9 +34,9 @@ static void getrnge(Byte *);
 #define ERROR(c)    return(c)
 
 struct mark *REstart;		/* assigned in Setup */
-struct mark braslist[NBRA];
-struct mark braelist[NBRA];
-int ebra, nbra;
+static struct mark braslist[NBRA];
+static struct mark braelist[NBRA];
+static int ebra, nbra;
 
 int	circf;
 static int low;
@@ -272,11 +272,11 @@ int Compile(Byte *instring, Byte *ep, Byte *endbuf)
 	int lc;
 	int i, cflg;
 
-	lastep = 0;
+	lastep = NULL;
 	c = GETC();
 #ifdef ALLOW_NL
 	if (c == EOFCH) {
-		if (*ep == 0)
+		if (*ep == NULL)
 			ERROR(41);
 		RETURN(ep);
 	}
@@ -318,7 +318,7 @@ int Compile(Byte *instring, Byte *ep, Byte *endbuf)
 			RETURN(ep);
 #endif
 		case '*':
-			if (lastep == 0 || *lastep == CBRA || *lastep == CKET)
+			if (!lastep || *lastep == CBRA || *lastep == CKET)
 				goto defchar;
 			*lastep |= STAR;
 			continue;
@@ -393,7 +393,7 @@ int Compile(Byte *instring, Byte *ep, Byte *endbuf)
 				continue;
 
 			case '{':
-				if (lastep == 0)
+				if (lastep == NULL)
 					goto defchar;
 				*lastep |= RNGE;
 				cflg = 0;

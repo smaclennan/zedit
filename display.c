@@ -28,11 +28,11 @@ Boolean Sendp;			/* Screen end set */
 struct mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
 int Tlrow;			/* Last row displayed */
 
-int NESTED;			/* Refresh can go recursive... */
+static int NESTED;		/* Refresh can go recursive... */
 Byte tline[COLMAX + 1];
 
 /* Mark screen invalid */
-void Redisplay()
+void Redisplay(void)
 {
 	int i;
 
@@ -43,7 +43,7 @@ void Redisplay()
 }
 
 /* Do the actual display update from the buffer */
-void Refresh()
+void Refresh(void)
 {
 	int pntrow, col, bcol;
 	struct mark *pmark;
@@ -100,7 +100,7 @@ void Refresh()
 			Settabsize(Curbuff->bmode);
 			point = Bcremrk();
 			Bpnttomrk(wdo->wstart);
-			Innerdsp(wdo->first, wdo->last, 0);
+			Innerdsp(wdo->first, wdo->last, NULL);
 			Modeflags(wdo);
 			Bpnttomrk(point);
 			Unmark(point);
@@ -253,7 +253,7 @@ int Innerdsp(int from, int to, struct mark *pmark)
 }
 
 /* Work for centering redisplay */
-void Reframe()
+void Reframe(void)
 {
 	int cnt;
 	struct mark *pmark;
@@ -331,13 +331,13 @@ void Vsetmrk(struct mark *mrk)
 		}
 }
 
-void Tobegline()
+void Tobegline(void)
 {
 	if (Bcrsearch(NL))
 		Bmove1();
 }
 
-void Toendline()
+void Toendline(void)
 {
 	if (Bcsearch(NL))
 		Bmove(-1);
@@ -444,7 +444,7 @@ pawshift:
 	Tflush();
 }
 
-void initScrnmarks()
+void initScrnmarks(void)
 {
 	int cnt;
 

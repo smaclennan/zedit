@@ -21,13 +21,13 @@
 #include <sys/stat.h>
 #include <assert.h>
 
-void Zfindfile()
+void Zfindfile(void)
 {
 	if (Getfname("Find File: ", Fname) == 0)
 		Findfile(Fname, FALSE);
 }
 
-void Zviewfile()
+void Zviewfile(void)
 {
 	if (Getfname("View File: ", Fname))
 		return;
@@ -36,7 +36,7 @@ void Zviewfile()
 	Curwdo->modeflags = INVALID;
 }
 
-void Zeditfile()
+void Zeditfile(void)
 {
 	unsigned long offset;
 
@@ -46,7 +46,7 @@ void Zeditfile()
 	}
 	if (Curbuff->bmodf && Ask("File modifed. Ok to loose changes?") != YES)
 		return;
-	offset = Blocation(0);
+	offset = Blocation(NULL);
 	Breadfile(Curbuff->fname);
 	Boffset(offset);
 #ifdef XWINDOWS
@@ -106,7 +106,7 @@ Boolean Findfile(char *path, int startup)
 	return rc;
 }
 
-void Zsaveall()
+void Zsaveall(void)
 {
 	if (Argp) {
 		struct buff *tbuff;
@@ -118,7 +118,7 @@ void Zsaveall()
 	Saveall(TRUE);
 }
 
-void Zfilesave()
+void Zfilesave(void)
 {
 	if (Argp)
 		Saveall(FALSE);
@@ -126,7 +126,7 @@ void Zfilesave()
 		Filesave();
 }
 
-Boolean Filesave()
+Boolean Filesave(void)
 {
 	char path[PATHMAX + 1];
 
@@ -145,7 +145,7 @@ Boolean Filesave()
 }
 
 
-void Zfilewrite()
+void Zfilewrite(void)
 {
 	char path[PATHMAX + 1], *prompt;
 
@@ -193,7 +193,7 @@ int Write_rgn(char *path)
 	return rc;
 }
 
-void Zfileread()
+void Zfileread(void)
 {
 	if (Getfname("Read File: ", Fname))
 		return;

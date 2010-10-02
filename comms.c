@@ -29,7 +29,7 @@ Boolean Argp;
  * start of a word if we are in the middle. In program mode, if we are
  * in a word, we do not move.
  */
-static Boolean Findstart()
+static Boolean Findstart(void)
 {
 	if ((Curbuff->bmode & PROGMODE))
 		Moveto(Istoken, FORWARD);
@@ -42,7 +42,7 @@ static Boolean Findstart()
 	return !Bisend();
 }
 
-void Zcapword()
+void Zcapword(void)
 {
 	if (Findstart()) {
 		Buff() = Toupper(Buff());
@@ -54,7 +54,7 @@ void Zcapword()
 }
 
 
-void Zlowword()
+void Zlowword(void)
 {
 	if (Findstart()) {
 		for ( ; !Bisend() && Istoken(); Bmove1()) {
@@ -66,7 +66,7 @@ void Zlowword()
 }
 
 
-void Zupword()
+void Zupword(void)
 {
 	if (Findstart()) {
 		for ( ; !Bisend() && Istoken(); Bmove1()) {
@@ -78,7 +78,7 @@ void Zupword()
 }
 
 
-void Zswapword()
+void Zswapword(void)
 {
 	struct mark *tmark, *tmp;
 
@@ -99,7 +99,7 @@ void Zswapword()
 }
 
 
-void Zcenter()
+void Zcenter(void)
 {
 	int tmp;
 
@@ -150,7 +150,7 @@ static void handle_close_bracket(struct mark *tmark, int crfound)
 
 
 /* This code must handle any char so that expansion will work */
-void Zcinsert()
+void Zcinsert(void)
 {
 	int cnt, crfound = FALSE;
 	struct mark tmark;
@@ -232,7 +232,7 @@ void Zcinsert()
 
 
 /* 'C' indent. Called for NL. */
-void Zcindent()
+void Zcindent(void)
 {
 	int width;
 	struct mark tmark;
@@ -278,7 +278,7 @@ void Zcindent()
  *			...
  *		[<ws>] [*] <end_comment> [<text>]
  */
-void Zfillcomment()
+static void Zfillcomment(void)
 {
 	struct mark *start, *end, *tmp, tmark;
 	int col;
@@ -372,7 +372,7 @@ void Zfillcomment()
 
 /* FILL MODE COMMANDS */
 
-void Zfillchk()
+void Zfillchk(void)
 {
 	Boolean tmp;
 	struct mark *tmark;
@@ -399,7 +399,7 @@ void Zfillchk()
 	}
 }
 
-void Zdelwhite()
+void Zdelwhite(void)
 {
 	while (!Bisend() && Iswhite())
 		Bdelete(1);
@@ -415,7 +415,7 @@ void Zdelwhite()
 }
 
 /* Not reentrant - must iterate for arg */
-void Zfillpara()
+void Zfillpara(void)
 {
 	Boolean all;
 	struct mark *tmark, *tmp;
@@ -477,7 +477,7 @@ void Zfillpara()
 	Unmark(tmark);
 }
 
-void Zfpara()
+void Zfpara(void)
 {
 	char pc = '\0';
 
@@ -491,7 +491,7 @@ void Zfpara()
 	Movepast(Isspace, FORWARD);
 }
 
-void Zbpara()
+void Zbpara(void)
 {
 	char pc = '\0';
 
@@ -515,7 +515,7 @@ Boolean Ispara(char pc, char ch)
 
 /* FORM MODE COMMANDS */
 
-void Zformtab()
+void Zformtab(void)
 {
 	if (Bsearch(FORMSTRING, TRUE))
 		Bdelete(strlen(FORMSTRING));
@@ -525,7 +525,7 @@ void Zformtab()
 
 /* MISC COMMANDS */
 
-void Zprintpos()
+void Zprintpos(void)
 {
 	char str[STRMAX];
 	unsigned long mark, point;
@@ -542,20 +542,20 @@ void Zprintpos()
 
 
 /* Key has no binding */
-void Znotimpl()
+void Znotimpl(void)
 {
 	Tbell();
 }
 
 
-void Zsetmrk()
+void Zsetmrk(void)
 {
 	Bmrktopnt(Curbuff->mark);
 	Echo("Mark Set.");
 }
 
 /* This does the real work of quiting. */
-void Quit()
+void Quit(void)
 {
 #ifdef PIPESH
 	struct buff *tbuff;
@@ -578,7 +578,7 @@ void Quit()
 	exit(0);
 }
 
-void Zquit()
+void Zquit(void)
 {
 	struct buff *tbuff;
 	Boolean modf = FALSE;
@@ -599,7 +599,7 @@ void Zquit()
  * If a buffer is modified, ask to write it out.
  * Dosen't save the system buffers.
  */
-void Zexit()
+void Zexit(void)
 {
 #ifdef PIPESH
 	struct buff *make = Cfindbuff(MAKEBUFF);
@@ -660,7 +660,7 @@ Boolean Saveall(Boolean must)
 }
 
 /* Self inserting commands */
-void Zinsert()
+void Zinsert(void)
 {
 	if (Curbuff->bmode & OVERWRITE) {
 		if (!Bisend() && Buff() != NL)
@@ -677,7 +677,7 @@ void Zinsert()
  * In insert mode, its just inserted.
  * This also causes the current line of text to be sent to the down the pipe.
  */
-void Znewline()
+void Znewline(void)
 {
 	if (Curbuff->bmode & OVERWRITE)
 		Bcsearch(NL);
@@ -689,7 +689,7 @@ void Znewline()
 #endif
 }
 
-void Zoverin()
+void Zoverin(void)
 {
 	Curbuff->bmode ^= OVERWRITE;
 	if (!InPaw)
@@ -697,7 +697,7 @@ void Zoverin()
 	Arg = 0;
 }
 
-void Zcase()
+void Zcase(void)
 {
 	Curbuff->bmode ^= EXACT;
 	if (InPaw && Insearch) {
@@ -708,7 +708,7 @@ void Zcase()
 	Arg = 0;
 }
 
-void Zarg()
+void Zarg(void)
 {
 	char str[STRMAX], *p;
 
@@ -729,7 +729,7 @@ void Zarg()
 
 
 /* voidess Meta (ESC) commands. */
-void Zmeta()
+void Zmeta(void)
 {
 	Boolean tmp;
 
@@ -741,7 +741,7 @@ void Zmeta()
 }
 
 /* voidess ^X commands. */
-void Zctrlx()
+void Zctrlx(void)
 {
 	Boolean tmp;
 
@@ -753,7 +753,7 @@ void Zctrlx()
 }
 
 /* voidess the M-X command */
-void Zmetax()
+void Zmetax(void)
 {
 	int rc = Getplete("M-X: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
 	if (rc != -1) {
@@ -764,7 +764,7 @@ void Zmetax()
 	}
 }
 
-void Zabort()
+void Zabort(void)
 {
 	Tbell();
 	Arg = 0;
@@ -772,7 +772,7 @@ void Zabort()
 		InPaw = ABORT;
 }
 
-void Zquote()
+void Zquote(void)
 {
 	Boolean tmp;
 	char n[3];
@@ -795,7 +795,7 @@ void Zquote()
 	Arg = 0;
 }
 
-void Zhexout()
+void Zhexout(void)
 {
 	char str[STRMAX], *p;
 
@@ -809,7 +809,7 @@ void Zhexout()
 	Echo(str);
 }
 
-void Zswapchar()
+void Zswapchar(void)
 {
 	int tmp;
 
@@ -823,7 +823,7 @@ void Zswapchar()
 	Binsert(tmp);
 }
 
-void Ztab()
+void Ztab(void)
 {
 	int tcol;
 
@@ -835,5 +835,5 @@ void Ztab()
 }
 
 #ifndef XWINDOWS
-void Zzoom()	{ Tbell(); }
+void Zzoom(void)	{ Tbell(); }
 #endif

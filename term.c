@@ -28,20 +28,20 @@
 
 #if defined(LINUX)
 #include <termios.h>
-struct termios Savetty;
-struct termios settty;
+static struct termios Savetty;
+static struct termios settty;
 #elif defined(SYSV2)
 #include <termio.h>
-struct termio Savetty;
-struct termio settty;
+static struct termio Savetty;
+static struct termio settty;
 #elif defined(BSD)
 #include <sgtty.h>
-struct sgttyb Savetty;
-struct sgttyb settty;
-struct tchars Savechars;
-struct tchars setchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-struct ltchars Savelchars;
-struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+static struct sgttyb Savetty;
+static struct sgttyb settty;
+static struct tchars Savechars;
+static struct tchars setchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+static struct ltchars Savelchars;
+static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 #endif
 
 size_t Clrcol[ROWMAX + 1];	/* Clear if past this */
@@ -56,7 +56,7 @@ int Tstart;					/* Start column and row */
 /* This is called if the window has changed size.
  * If Exitflag is set, we are not ready to update display yet.
  */
-void sigwinch(int sig)
+static void sigwinch(int sig)
 {
 	if (Exitflag)
 		Termsize();
@@ -72,7 +72,7 @@ void sigwinch(int sig)
 #endif
 
 /* Initalize the terminal. */
-void Tinit()
+void Tinit(void)
 {
 	/* Initialize the low level interface.
 	 * Do this first - it may exit */
@@ -144,7 +144,7 @@ void Tinit()
 		Zredisplay();
 }
 
-void Tfini()
+void Tfini(void)
 {
 #if defined(LINUX)
 	tcsetattr(fileno(stdin), TCSAFLUSH, &Savetty);
@@ -166,7 +166,7 @@ void Tfini()
 	TIfini();
 }
 
-void Tbell()
+void Tbell(void)
 {
 	if (VAR(VVISBELL)) {
 #ifdef __linux__
@@ -179,14 +179,6 @@ void Tbell()
 #endif
 	} else if (VAR(VSILENT) == 0)
 		putchar('\7');
-}
-
-/* Actually display the mark */
-void Tsetmark(Byte ch, int row, int col)
-{
-	Tstyle(T_REVERSE);
-	Tprntchar(ch);
-	Tstyle(T_NORMAL);
 }
 
 void SetMark(Boolean prntchar)
@@ -203,7 +195,7 @@ void SetMark(Boolean prntchar)
  *		3. Default to 24x80
  *		4. Limit to ROWMAXxCOLMAX.
  */
-void Termsize()
+void Termsize(void)
 {
 	int rows, cols;
 	FILE *fp;
@@ -244,7 +236,7 @@ void Termsize()
 }
 #endif /* !XWINDOWS */
 
-void ExtendedLineMarker()
+void ExtendedLineMarker(void)
 {
 	int col;
 
@@ -345,8 +337,7 @@ void Tprntstr(char *str)
 		Tprntchar(*str++);
 }
 
-void Tgoto(row, col)
-int row, col;
+void Tgoto(int row, int col)
 {
 	Tsetpoint(row, col);
 	Tforce();
@@ -360,7 +351,7 @@ void Titot(unsigned cntr)
 	Tprntchar(cntr % 10 + '0');
 }
 
-int Prefline()
+int Prefline(void)
 {
 	int line, w;
 
@@ -370,7 +361,7 @@ int Prefline()
 }
 
 #ifndef XWINDOWS
-void Tforce()
+void Tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
 #ifdef TERMINFO
@@ -383,7 +374,7 @@ void Tforce()
 	}
 }
 
-void Tcleol()
+void Tcleol(void)
 {
 	if (Pcol < Clrcol[Prow]) {
 		Tforce();
@@ -396,7 +387,7 @@ void Tcleol()
 	}
 }
 
-void Tclrwind()
+void Tclrwind(void)
 {
 #ifdef TERMINFO
 	TPUTS(clear_screen);

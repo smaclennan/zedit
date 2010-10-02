@@ -31,7 +31,7 @@ static char *Readstr(char *str, FILE *fp)
 	return NULL;
 }
 
-void Zsetavar()
+void Zsetavar(void)
 {
 	char pstr[STRMAX], arg[STRMAX];
 	int rc;
@@ -94,7 +94,7 @@ int XSetAVar(char *str)
 /* CExtends, AExtends, TExtends defaults set in comms1.c */
 static void ReadConfigFile(char *fname);
 
-void ReadVfile()
+void ReadVfile(void)
 {
 	char fname[PATHMAX + 1];
 	int i;
@@ -364,7 +364,7 @@ void Dline(int trow)
 }
 
 /* Save the current variables in the config.z file */
-void Zsaveconfig()
+void Zsaveconfig(void)
 {
 	FILE *fp;
 	char fname[PATHMAX];

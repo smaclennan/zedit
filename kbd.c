@@ -32,7 +32,7 @@ unsigned Key_mask;
 char *Term;
 
 #ifndef XWINDOWS
-int Tgetcmd()
+int Tgetcmd(void)
 {
 	int i, j, mask;
 	int cmd;
@@ -76,7 +76,7 @@ int cpushed;	/* needed in z.c */
 static int Pending = FALSE;
 
 
-Byte Tgetkb()
+Byte Tgetkb(void)
 {
 	cptr = (cptr + 1) % CSTACK;
 	if (cpushed)
@@ -96,7 +96,7 @@ Byte Tgetkb()
 }
 
 
-void Tungetkb()
+void Tungetkb(void)
 {
 	if (--cptr < 0)
 		cptr = CSTACK - 1;
@@ -104,7 +104,7 @@ void Tungetkb()
 }
 
 
-int Tkbrdy()
+int Tkbrdy(void)
 {
 #ifdef LINUX
 	static struct pollfd stdin_fd = {

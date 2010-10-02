@@ -24,8 +24,8 @@
 #include <sys/dir.h>
 #endif
 
-struct llist *Flist;
-Boolean Didmatch;
+static struct llist *Flist;
+static Boolean Didmatch;
 
 
 static int getname(char*, char*, Boolean);
@@ -73,7 +73,7 @@ static int getname(char *prompt, char *path, Boolean isdir)
 	return rc;
 }
 
-void Zfname()
+void Zfname(void)
 {
 	Boolean update;
 	struct llist *head, *list;

@@ -27,7 +27,7 @@
 static int NextErrorCalled;
 
 /* Do a "make" command - basically a shell command in the ".make" buffer */
-void Zmake()
+void Zmake(void)
 {
 	struct buff *mbuff;
 
@@ -55,7 +55,7 @@ void Zmake()
 }
 
 /* Do a "make" command - basically a shell command in the ".make" buffer */
-void Zgrep()
+void Zgrep(void)
 {
 	struct buff *mbuff;
 	char cmd[STRMAX * 2];
@@ -87,7 +87,7 @@ void Zgrep()
 		Error("Unable to execute grep.");
 }
 
-void Znexterr()
+void Znexterr(void)
 {
 	struct wdo *wdo;
 	struct buff *save, *mbuff;
@@ -134,12 +134,12 @@ void Znexterr()
 
 #ifdef PIPESH
 /* kill the make */
-void Zkill()
+void Zkill(void)
 {
 	Unvoke(Cfindbuff(MAKEBUFF), FALSE);
 }
 #else
-void Zkill() { Tbell(); }
+void Zkill(void) { Tbell(); }
 #endif
 
 /* Check if it is a warning or an error.
@@ -147,7 +147,7 @@ void Zkill() { Tbell(); }
  */
 static Boolean IsWarning;
 
-static Boolean Warning()
+static Boolean Warning(void)
 {
 	if (Argp) {
 		if (IsWarning)

@@ -186,7 +186,7 @@ static char *BindFname(char *fname)
 	return fname;
 }
 
-void Loadbind()
+void Loadbind(void)
 {
 	char fname[30], path[PATHMAX + 1];
 	int i;
@@ -205,7 +205,7 @@ void Loadbind()
  * save the bindings file. If no bindings file exists, save in the
  * $HOME dir.
  */
-void Zsavebind()
+void Zsavebind(void)
 {
 	char fname[30], path[PATHMAX + 1];
 	int i, n;

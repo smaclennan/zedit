@@ -28,7 +28,7 @@
 static void Mclear(void);
 static int ispell(FILE *, FILE *, char *, char *);
 
-void Zspell()
+void Zspell(void)
 {
 	static char *argv[] = { "ispell", "-a", NULL };
 	struct buff *was;
@@ -178,7 +178,7 @@ abort:
 }
 
 
-static void Mclear()
+static void Mclear(void)
 {
 	/* clear the matches area */
 	Clrcol[Rowmax] = Clrcol[Rowmax + 1] = COLMAX + 1;
@@ -202,10 +202,10 @@ void sreplace(char *new)
 	Binstr(new);
 }
 
-int Isalpha()
+int Isalpha(void)
 {
 	return isalpha(Buff());
 }
 #else
-void Zspell() { Tbell(); }
+void Zspell(void) { Tbell(); }
 #endif

@@ -26,8 +26,8 @@ int Pawcol, Pawlen, Pshift;
 struct buff *Paw, *Buff_save;
 
 /* globals for Getplete */
-char **Carray;
-int Csize, Cnum = 0, Cret;
+static char **Carray;
+static int Csize, Cnum = 0, Cret;
 unsigned Nextpart = ZNOTIMPL;
 
 /* General purpose string argument input routine which recursively calls the
@@ -162,7 +162,7 @@ int Pcmdplete(Boolean show)
 static int p_row, p_col;
 static int p_ncols = PNUMCOLS;
 
-void Pclear()
+static void Pclear(void)
 {
 	int i;
 	struct wdo *wdo = Whead;
@@ -203,7 +203,7 @@ void Pout(char *str, Boolean check)
 }
 
 /* Use instead of Zinsert when in PAW */
-void Pinsert()
+void Pinsert(void)
 {
 	char savech;
 	struct mark tmark;
@@ -259,7 +259,7 @@ void Pinsert()
 }
 
 /* Use instead of Znewline when in PAW */
-void Pnewline()
+void Pnewline(void)
 {
 	char cmdstr[STRMAX + 1], **ptr;
 
@@ -277,7 +277,7 @@ void Pnewline()
 	InPaw = FALSE;
 }
 
-void Zpart()
+void Zpart(void)
 {
 	char word[STRMAX + 1];
 	struct buff *tbuff;

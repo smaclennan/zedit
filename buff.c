@@ -942,7 +942,7 @@ void Makecur(struct page *page)
 }
 
 /* Split the current (full) page. */
-static Boolean Pagesplit()
+static Boolean Pagesplit(void)
 {
 	struct page *new;
 	struct mark *btmark;
@@ -1029,7 +1029,7 @@ static Boolean XBput(int fd, Byte *addr, unsigned len)
 }
 #endif
 
-void Zstat()
+void Zstat(void)
 {
 	sprintf(PawStr, "Buffers: %d   Pages: %d", Numbuffs, NumPages);
 #ifdef XWINDOWS

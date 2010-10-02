@@ -199,7 +199,7 @@ static void UnComment(struct buff *buff)
 		free(com);
 	}
 	buff->comstate = 0;
-	buff->comments = 0;
+	buff->comments = NULL;
 
 	for (i = 0; i < Tmaxrow() - 2; ++i)
 		Scrnmarks[i].modf = 1;
@@ -212,7 +212,7 @@ static void ScanBuffer(void)
 	struct mark start;
 	char comchar = (Curbuff->bmode & ASMMODE) ? Curbuff->comchar : 0;
 
-	COMhead = COMtail = CPPhead = CPPtail = 0;
+	COMhead = COMtail = CPPhead = CPPtail = NULL;
 
 	/* free existings comments */
 	while (Curbuff->comments) {

@@ -79,7 +79,7 @@ char *Setmodes(struct buff *buff)
 
 #ifndef XWINDOWS
 /* This is called before the windows are created */
-void Initline()
+void Initline(void)
 {
 	int i;
 

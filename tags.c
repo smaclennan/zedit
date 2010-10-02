@@ -23,7 +23,7 @@
 #include <sys/stat.h>
 
 char Savetag[STRMAX + 1];
-struct buff *Bsave;
+static struct buff *Bsave;
 
 static void GotoMatch(struct mark *smark);
 static Boolean Tagfparse(struct buff *);
@@ -42,7 +42,7 @@ static Boolean GetTagsFile(void);
  * line offset. In the ctags format, the ^ and $ are optional and are stripped
  * out if at the begining and end of line respectively.
  */
-void Zfindtag()
+void Zfindtag(void)
 {
 	char tag[STRMAX + 1], word[PATHMAX + 1];
 	Boolean best, found;
@@ -101,7 +101,7 @@ void Zfindtag()
 }
 
 #ifdef XWINDOWS
-void Xfindtag()
+void Xfindtag(void)
 {
 	char tag[STRMAX + 1], word[PATHMAX + 1];
 	struct mark smark;
@@ -242,7 +242,7 @@ static Boolean Tagfparse(struct buff *bsave)
 
 
 /* Load the tags file into a buffer. */
-static Boolean GetTagsFile()
+static Boolean GetTagsFile(void)
 {
 	struct buff *tbuff;
 	char fname[PATHMAX + 1], *tagfname;
@@ -312,7 +312,7 @@ static Boolean GetTagsFile()
 }
 
 /* Convert the next portion of buffer to integer. Skip leading ws. */
-int Batoi()
+int Batoi(void)
 {
 	int num;
 
@@ -324,7 +324,7 @@ int Batoi()
 }
 
 
-void Zref()
+void Zref(void)
 {
 	struct buff *mbuff;
 	char tag[STRMAX + 40], *p;
@@ -336,7 +336,7 @@ void Zref()
 		return;
 
 	mbuff = Cmdtobuff(REFBUFF, tag);
-	if (mbuff == 0)
+	if (mbuff == NULL)
 		Error("Unable to execute ref.");
 	else
 		Message(mbuff, tag);

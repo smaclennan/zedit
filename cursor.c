@@ -21,14 +21,14 @@
 
 static void Scroll(Boolean);
 
-void Zbegline()
+void Zbegline(void)
 {
 	Bmove(-1);
 	Tobegline();
 }
 
 
-void Zendline()
+void Zendline(void)
 {
 	Bmove1();
 	Toendline();
@@ -36,7 +36,7 @@ void Zendline()
 
 
 /* Support routine to calc column to force to for line up and down */
-int Forcecol()
+int Forcecol(void)
 {
 	static int fcol;
 
@@ -61,7 +61,7 @@ static void ScrollLine(Boolean forward)
 	}
 }
 
-void Zprevline()
+void Zprevline(void)
 {
 	int col = Forcecol();
 
@@ -74,7 +74,7 @@ void Zprevline()
 	Bmakecol(col, FALSE);
 }
 
-void Znextline()
+void Znextline(void)
 {
 	int col = Forcecol();
 
@@ -87,19 +87,19 @@ void Znextline()
 	Bmakecol(col, FALSE);
 }
 
-void Zprevchar()
+void Zprevchar(void)
 {
 	Bmove(-Arg);
 	Arg = 0;
 }
 
-void Znextchar()
+void Znextchar(void)
 {
 	Bmove(Arg);
 	Arg = 0;
 }
 
-void Zprevpage()
+void Zprevpage(void)
 {
 	int i, n, col = Forcecol();
 
@@ -110,7 +110,7 @@ void Zprevpage()
 	Reframe();
 }
 
-void Znextpage()
+void Znextpage(void)
 {
 	int i, col = Forcecol();
 
@@ -126,29 +126,29 @@ void Znextpage()
 
 #define ISWORD	Istoken
 
-void Zbword()
+void Zbword(void)
 {
 	Moveto(ISWORD, BACKWARD);
 	Movepast(ISWORD, BACKWARD);
 }
 
-void Zfword()
+void Zfword(void)
 {
 	Movepast(ISWORD, FORWARD);
 	Moveto(ISWORD, FORWARD);
 }
 
-void Ztostart()
+void Ztostart(void)
 {
 	Btostart();
 }
 
-void Ztoend()
+void Ztoend(void)
 {
 	Btoend();
 }
 
-void Zswapmrk()
+void Zswapmrk(void)
 {
 	struct mark tmark;
 
@@ -158,13 +158,13 @@ void Zswapmrk()
 	Bpnttomrk(&tmark);
 }
 
-void Zopenline()
+void Zopenline(void)
 {
 	Binsert(NL);
 	Bmove(-1);
 }
 
-void Zlgoto()
+void Zlgoto(void)
 {
 	long line, cnt = 0;
 	struct page *tpage;
@@ -197,7 +197,7 @@ void Zlgoto()
 		Bcsearch(NL);
 }
 
-void Zcgoto()
+void Zcgoto(void)
 {
 	int col = (int)Getnum("Column: ");
 	if (col == -1)
@@ -221,13 +221,13 @@ long Getnum(char *prompt)
 }
 
 
-struct mark *Bookmrks[BOOKMARKS];	/* stack of book marks */
-char *Bookname[BOOKMARKS];		/* stack of book names */
-int  Bookmark = -1;			/* current book mark */
-int  Lastbook = -1;			/* last bookmark */
+static struct mark *Bookmrks[BOOKMARKS];	/* stack of book marks */
+static char *Bookname[BOOKMARKS];		/* stack of book names */
+static int  Bookmark = -1;			/* current book mark */
+static int  Lastbook = -1;			/* last bookmark */
 
 
-void Zsetbookmrk()
+void Zsetbookmrk(void)
 {
 	if (Argp) {
 		Arg = 0;
@@ -257,7 +257,7 @@ void Zsetbookmrk()
 }
 
 
-void Znxtbookmrk()
+void Znxtbookmrk(void)
 {
 	if (Bookmark < 0) {
 		Echo("No bookmarks set.");
@@ -286,7 +286,7 @@ void Znxtbookmrk()
 		Bookmark = Lastbook;
 }
 
-void Zviewline()
+void Zviewline(void)
 {
 	struct mark pmark;
 
@@ -299,7 +299,7 @@ void Zviewline()
 	Bpnttomrk(&pmark);
 }
 
-void Zredisplay()
+void Zredisplay(void)
 {
 	struct wdo *wdo;
 
@@ -312,12 +312,12 @@ void Zredisplay()
 #endif
 }
 
-void Zbegwind()
+void Zbegwind(void)
 {
 	Bpnttomrk(Sstart);
 }
 
-void Zendwind()
+void Zendwind(void)
 {
 	int i;
 
@@ -326,12 +326,12 @@ void Zendwind()
 		;
 }
 
-void Zscrollup()
+void Zscrollup(void)
 {
 	Scroll(FALSE);
 }
 
-void Zscrolldown()
+void Zscrolldown(void)
 {
 	Scroll(TRUE);
 }

@@ -28,7 +28,7 @@
 #ifdef XWINDOWS
 void Zcmd() { Tbell(); }	/* no screen */
 #elif !defined(BSD)
-void Zcmd()
+void Zcmd(void)
 {
 	char tb[STRMAX * 2];
 
@@ -49,7 +49,7 @@ void Zcmd()
 #endif
 
 /* Do one shell command to the .shell buffer */
-void Zcmdtobuff()
+void Zcmdtobuff(void)
 {
 #ifdef PIPESH
 	struct wdo *save;
@@ -78,7 +78,7 @@ void Zcmdtobuff()
 }
 
 /* Perform man command on pipe, wait for completion, and format */
-void Zman()
+void Zman(void)
 {
 	char entry[STRMAX + 5], *p;
 	int rc;
@@ -112,7 +112,7 @@ void Zman()
 
 #ifdef BSD
 #ifdef PIPESH
-void Zcmd()
+void Zcmd(void)
 #else
 void Zshell()	/*for tags*/
 #endif
@@ -123,7 +123,7 @@ void Zshell()	/*for tags*/
 #endif
 
 #ifdef PIPESH
-void Zshell()
+void Zshell(void)
 {
 	char bname[BUFNAMMAX + 1];
 	int i = 0;
@@ -138,7 +138,7 @@ void Zshell()
 		Tbell();
 }
 
-Boolean Doshell()
+Boolean Doshell(void)
 {
 	char *argv[3];
 
@@ -148,7 +148,7 @@ Boolean Doshell()
 	return Invoke(Curbuff, argv);
 }
 #elif defined(SYSV2)
-void Zshell()	/*for tags*/
+void Zshell(void)	/*for tags*/
 {
 	int err = EOF;
 
@@ -163,7 +163,7 @@ void Zshell()	/*for tags*/
 #endif
 
 /* send the current buffer as a mail buffer */
-void Zmail()
+void Zmail(void)
 {
 	char to[STRMAX + 1], subject[STRMAX + 1], cmd[STRMAX * 2 + 20];
 
@@ -197,7 +197,7 @@ void Zmail()
 }
 
 /* send the current buffer to the printer */
-void Zprint()
+void Zprint(void)
 {
 	char cmd[STRMAX + 20];
 
@@ -260,7 +260,7 @@ int Dopipe(char *fname, char *cmd)
 /* beautify the current buffer */
 #define INDENT		"indent"
 
-void Zbeauty()
+void Zbeauty(void)
 {
 	char cmdStr[128];
 	char fileName1[25], fileName2[25];

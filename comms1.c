@@ -77,7 +77,7 @@ void Save(struct buff *bsave)
 	fclose(fp);
 }
 
-void Loadsaved()
+void Loadsaved(void)
 {
 	FILE *fp;
 	char bname[BUFNAMMAX + 1], fname[PATHMAX + 1], save[PATHMAX + 1];
@@ -154,7 +154,7 @@ void Boffset(unsigned long off)
 	Bmove(off);
 }
 
-void Zcount()
+void Zcount(void)
 {
 	Boolean word, swapped = FALSE;
 	char str[STRMAX];
@@ -193,7 +193,7 @@ void Zcount()
 	Unmark(tmark);
 }
 
-void Zispace()
+void Zispace(void)
 {
 	Binsert(' ');
 	Bmove(-1);
@@ -217,7 +217,7 @@ static struct _amode
 #define AMODESIZE	sizeof(struct _amode)
 #define NUMMODES	(sizeof(modes) / AMODESIZE)
 
-void Zmode()
+void Zmode(void)
 {
 	int i, rc;
 
@@ -239,10 +239,10 @@ void Zmode()
 
 /* we allow 8 extensions per type */
 static int NoExt;
-static char *cexts[9] = { 0 };
-static char *texts[9] = { 0 };
-static char *sexts[9] = { 0 };	/* s for shell */
-static char *asexts[9] = { 0 };
+static char *cexts[9];
+static char *texts[9];
+static char *sexts[9];	/* s for shell */
+static char *asexts[9];
 
 static int get_mode(int mode, char ***exts)
 {
@@ -277,7 +277,7 @@ void parsem(char *in, int mode)
 					NoExt = mode;
 				else
 					o[i++] = strdup(str);
-			while (i < 8 && (str = strtok(NULL, ":")) != 0)
+			while (i < 8 && !(str = strtok(NULL, ":")))
 				;
 			o[i] = NULL;
 		}
@@ -340,7 +340,7 @@ void Toggle_mode(int mode)
 	}
 }
 
-void Zmrkpara()
+void Zmrkpara(void)
 {
 	Bmove1();	/* make sure we are not at the start of a paragraph */
 	Zbpara();
@@ -352,7 +352,7 @@ void Zmrkpara()
 
 #define MAXDATE	80
 
-void Zdate()
+void Zdate(void)
 {
 	char date[MAXDATE + 1];
 	long t;
@@ -366,7 +366,7 @@ void Zdate()
 	Arg = 0;
 }
 
-static void Setregion(int (*convert)())
+static void Setregion(int (*convert)(int))
 {
 	Boolean swapped;
 	struct mark tmark;
@@ -393,12 +393,12 @@ static void Setregion(int (*convert)())
 	Zredisplay();
 }
 
-void Zupregion()
+void Zupregion(void)
 {
 	Setregion(Toupper);
 }
 
-void Zlowregion()
+void Zlowregion(void)
 {
 	Setregion(Tolower);
 }
@@ -433,18 +433,17 @@ static void Indent(Boolean flag)
 	}
 }
 
-void Zindent()
+void Zindent(void)
 {
 	Indent(TRUE);
 }
 
-void Zundent()
+void Zundent(void)
 {
 	Indent(FALSE);
 }
 
-void Mshow(ch)
-unsigned ch;
+void Mshow(unsigned ch)
 {
 	Byte match;
 	int cnt = 0;
@@ -496,7 +495,7 @@ unsigned ch;
 	}
 }
 
-void Zsetenv()
+void Zsetenv(void)
 {
 	char env[STRMAX + 2], set[STRMAX + 1], *p;
 

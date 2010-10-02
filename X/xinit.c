@@ -33,8 +33,6 @@ Display *display;
 int screen;
 static XrmDatabase xDB;
 
-char *GetResource();
-
 /* Set in load_font */
 int fontwidth, fontheight, fontbase, fontid, boldid;
 int Xrow[ROWMAX + 1], Xcol[COLMAX + 1];
@@ -259,7 +257,7 @@ XFontStruct *LoadFontByName(char *fontname)
 	return font_info = info;
 }
 
-XFontStruct *LoadFonts()
+XFontStruct *LoadFonts(void)
 {
 	XFontStruct *font_info;
 	char *fontname;
@@ -286,7 +284,7 @@ XFontStruct *LoadFonts()
 	return font_info;
 }
 
-void xusage()
+void xusage(void)
 {
 	puts("X11 options:");
 	puts("\t-display	set display name");

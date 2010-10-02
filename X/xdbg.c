@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include <X11/X.h>
+#include "xwind.h"
 
 char *XEventName(int type)
 {

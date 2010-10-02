@@ -1,2 +1,2 @@
 all:
-	+make -C .. xzedit
+	+make -C.. xzedit

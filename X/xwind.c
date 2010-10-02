@@ -27,7 +27,6 @@
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
 #include <X11/cursorfont.h>
-#include "xcursors.h"
 
 #include "xwind.h"
 #include "../keys.h"
@@ -80,6 +79,90 @@ static char zedit_bits[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+static struct {
+	char *name;
+	int cursor;
+} Xcursors[] = {
+	{ "X_cursor",			XC_X_cursor },
+	{ "arrow",			XC_arrow },
+	{ "based_arrow_down",		XC_based_arrow_down },
+	{ "based_arrow_up",		XC_based_arrow_up },
+	{ "boat",			XC_boat },
+	{ "bogosity",			XC_bogosity },
+	{ "bottom_left_corner",		XC_bottom_left_corner },
+	{ "bottom_right_corner",	XC_bottom_right_corner },
+	{ "bottom_side",		XC_bottom_side },
+	{ "bottom_tee",			XC_bottom_tee },
+	{ "box_spiral",			XC_box_spiral },
+	{ "center_ptr",			XC_center_ptr },
+	{ "circle",			XC_circle },
+	{ "clock",			XC_clock },
+	{ "coffee_mug",			XC_coffee_mug },
+	{ "cross",			XC_cross },
+	{ "cross_reverse",		XC_cross_reverse },
+	{ "crosshair",			XC_crosshair },
+	{ "diamond_cross",		XC_diamond_cross },
+	{ "dot",			XC_dot },
+	{ "dotbox",			XC_dotbox },
+	{ "double_arrow",		XC_double_arrow },
+	{ "draft_large",		XC_draft_large },
+	{ "draft_small",		XC_draft_small },
+	{ "draped_box",			XC_draped_box },
+	{ "exchange",			XC_exchange },
+	{ "fleur",			XC_fleur },
+	{ "gobbler",			XC_gobbler },
+	{ "gumby",			XC_gumby },
+	{ "hand1",			XC_hand1 },
+	{ "hand2",			XC_hand2 },
+	{ "heart",			XC_heart },
+	{ "icon",			XC_icon },
+	{ "iron_cross",			XC_iron_cross },
+	{ "left_ptr",			XC_left_ptr },
+	{ "left_side",			XC_left_side },
+	{ "left_tee",			XC_left_tee },
+	{ "leftbutton",			XC_leftbutton },
+	{ "ll_angle",			XC_ll_angle },
+	{ "lr_angle",			XC_lr_angle },
+	{ "man",			XC_man },
+	{ "middlebutton",		XC_middlebutton },
+	{ "mouse",			XC_mouse },
+	{ "pencil",			XC_pencil },
+	{ "pirate",			XC_pirate },
+	{ "plus",			XC_plus },
+	{ "question_arrow",		XC_question_arrow },
+	{ "right_ptr",			XC_right_ptr },
+	{ "right_side",			XC_right_side },
+	{ "right_tee",			XC_right_tee },
+	{ "rightbutton",		XC_rightbutton },
+	{ "rtl_logo",			XC_rtl_logo },
+	{ "sailboat",			XC_sailboat },
+	{ "sb_down_arrow",		XC_sb_down_arrow },
+	{ "sb_h_double_arrow",		XC_sb_h_double_arrow },
+	{ "sb_left_arrow",		XC_sb_left_arrow },
+	{ "sb_right_arrow",		XC_sb_right_arrow },
+	{ "sb_up_arrow",		XC_sb_up_arrow },
+	{ "sb_v_double_arrow",		XC_sb_v_double_arrow },
+	{ "shuttle",			XC_shuttle },
+	{ "sizing",			XC_sizing },
+	{ "spider",			XC_spider },
+	{ "spraycan",			XC_spraycan },
+	{ "star",			XC_star },
+	{ "target",			XC_target },
+	{ "tcross",			XC_tcross },
+	{ "top_left_arrow",		XC_top_left_arrow },
+	{ "top_left_corner",		XC_top_left_corner },
+	{ "top_right_corner",		XC_top_right_corner },
+	{ "top_side",			XC_top_side },
+	{ "top_tee",			XC_top_tee },
+	{ "trek",			XC_trek },
+	{ "ul_angle",			XC_ul_angle },
+	{ "umbrella",			XC_umbrella },
+	{ "ur_angle",			XC_ur_angle },
+	{ "watch",			XC_watch },
+	{ "xterm",			XC_xterm },
+};
+#define XCURSORS	(sizeof(Xcursors) / (sizeof(char *) + sizeof(int)))
+
 char *KeyNames[] = {
 	"Home", "Left", "Up", "Right", "Down", "Prior",
 	"Next", "End", "Begin", "Select", "Print", "Execute",
@@ -97,7 +180,7 @@ char *KeyNames[] = {
 
 static Window CreateRootWindow(int argc, char **argv, int *, int *);
 static void GetGeometry(XSizeHints *sh, int bw);
-static void ExposeWindow(), SetupSpecial();
+static void ExposeWindow(void), SetupSpecial(void);
 static void SetTimer(XEvent *event, unsigned timeout);
 
 static void Paste(Atom paste);
@@ -118,10 +201,9 @@ int border_width = 2, highlight = 2;
 Boolean HasColor = FALSE;
 int foreground, background;
 
-Atom WM_PROTOCOLS;	/* message sent by window manager (twm) */
-Atom WM_DELETE_WINDOW;	/* subtype of WM_PROTOCOLS */
+static Atom WM_PROTOCOLS;	/* message sent by window manager (twm) */
+static Atom WM_DELETE_WINDOW;	/* subtype of WM_PROTOCOLS */
 
-char *Term;
 char *PromptString;
 
 void Tinit(int argc, char **argv)
@@ -131,10 +213,6 @@ void Tinit(int argc, char **argv)
 	int ccolor;
 	int width, height;
 	XEvent event;
-
-	Term = getenv("TERM");
-	if (!Term)
-		Term = "xterm";
 
 	screen = DefaultScreen(display);
 
@@ -439,24 +517,24 @@ void Newtitle(char *title)
 	XStoreName(display, Zroot, PawStr);
 }
 
-void Tbell()
+void Tbell(void)
 {
 #define BELLTIME	100
 	if (VAR(VSILENT) == 0)
 		XBell(display, BELLTIME);
 }
 
-void Tfini()
+void Tfini(void)
 {
 	CleanupSocket(-1);
 }
 
-void Tclrwind()
+void Tclrwind(void)
 {
 	XClearWindow(display, zwindow);
 }
 
-void Tcleol()
+void Tcleol(void)
 {
 	if (Pcol < Clrcol[Prow]) {
 		XClearArea(display, zwindow, Xcol[Pcol], Xrow[Prow],
@@ -476,7 +554,7 @@ void Tputchar(char c)
 	++s_col;
 }
 
-void Tflush()
+void Tflush(void)
 {
 	if (s_len) {
 		XDrawImageString(display, zwindow, curgc,
@@ -527,7 +605,7 @@ void Tstyle(int style)
 #define HSCROLL_EXTRA 0
 #endif
 
-void Termsize()
+void Termsize(void)
 {
 	XEvent event;
 
@@ -541,7 +619,7 @@ void Termsize()
 	}
 }
 
-Byte Tgetkb()
+Byte Tgetkb(void)
 {
 	return (Byte)Tgetcmd();
 }
@@ -549,7 +627,7 @@ Byte Tgetkb()
 static char *SelectionData;
 static int SelectionSize;
 
-static void SetSelection()
+static void SetSelection(void)
 {
 	struct buff *save = Curbuff;
 	char *p;
@@ -576,12 +654,10 @@ static void SetSelection()
 }
 
 
-Boolean Focus = TRUE;
+static Boolean Focus = TRUE;
 
 /* If in modeline, scroll buffer. */
-static Boolean PointerScroll(row, down)
-int row;
-Boolean down;
+static Boolean PointerScroll(int row, Boolean down)
 {
 	struct wdo *wdo;
 
@@ -598,8 +674,7 @@ Boolean down;
 	return FALSE;
 }
 
-static void MarkToPointer(row, col)
-int row, col;
+static void MarkToPointer(int row, int col)
 {
 	ShowCursor(FALSE);
 	if (!PointerScroll(row, FALSE)) {
@@ -610,8 +685,7 @@ int row, col;
 	ShowCursor(TRUE);
 }
 
-static void PointToPointer(row, col)
-int row, col;
+static void PointToPointer(int row, int col)
 {
 	ShowCursor(FALSE);
 	if (!PointerScroll(row, TRUE))
@@ -628,7 +702,7 @@ static int Special;
 #define NumLock	8
 
 /* Setup the Specials. We only care about the mask variable. */
-static void SetupSpecial()
+static void SetupSpecial(void)
 {
 #ifdef sun
 	Window root, child;
@@ -659,7 +733,7 @@ static int HomeCnt, EndCnt;
 #define PAGE_TIMEOUT	150000
 #define KEY_TIMEOUT	999999 /* 1 second - 1 usecond */
 
-int Tgetcmd()
+int Tgetcmd(void)
 {
 	XEvent event;
 	char c;
@@ -821,7 +895,7 @@ int Tgetcmd()
 			break;
 
 		case KeyPress:
-			XLookupString((XKeyEvent *)&event, &c, 1, &key, 0);
+			XLookupString((XKeyEvent *)&event, &c, 1, &key, NULL);
 
 			if ((key >= XK_space && key <= XK_asciitilde) ||
 			    (key >= XK_BackSpace && key <= XK_Return) ||
@@ -839,7 +913,7 @@ int Tgetcmd()
 						++HomeCnt;
 					else
 						HomeCnt = 0;
-					SetTimer(0, KEY_TIMEOUT);
+					SetTimer(NULL, KEY_TIMEOUT);
 					switch (HomeCnt) {
 					case 0:
 						Cmd = ZXK_Home;		break;
@@ -853,7 +927,7 @@ int Tgetcmd()
 						++EndCnt;
 					else
 						EndCnt = 0;
-					SetTimer(0, KEY_TIMEOUT);
+					SetTimer(NULL, KEY_TIMEOUT);
 					switch (EndCnt) {
 					case 0:
 						Cmd = ZXK_End;	break;
@@ -890,7 +964,7 @@ int Tgetcmd()
 
 		case KeyRelease:
 			/* We only care about Specials here. */
-			XLookupString((XKeyEvent *)&event, &c, 1, &key, 0);
+			XLookupString((XKeyEvent *)&event, &c, 1, &key, NULL);
 			switch (key) {
 			case XK_Shift_L:
 			case XK_Shift_R:
@@ -984,7 +1058,7 @@ int Tgetcmd()
 	return Cmd;
 }
 
-int Tkbrdy()
+int Tkbrdy(void)
 {
 	XEvent event;
 
@@ -1049,13 +1123,6 @@ void SetMark(Boolean prntchar)
 	}
 }
 
-
-void BoldWord(int row, int col, char *s, int len)
-{
-	Tflush();
-	XDrawString(display, zwindow, curgc, Xcol[col] + 1,
-				Xrow[row] + fontbase, s, len);
-}
 
 /* must be called after load_font */
 static void GetGeometry(XSizeHints *sh, int bw)
@@ -1140,7 +1207,7 @@ static void Paste(Atom paste)
 }
 
 /* This is called before the windows are created */
-void Initline()
+void Initline(void)
 {
 	if (VAR(VSHOWCWD))
 		Newtitle(Cwd);
@@ -1232,7 +1299,7 @@ void Modeflags(struct wdo *wdo)
 	}
 }
 
-void Clrecho()
+void Clrecho(void)
 {
 	XClearArea(display, Zroot, 0, Xrow[Rowmax - 1], 0, fontheight, 0);
 }
@@ -1259,7 +1326,7 @@ void PutPaw(char *str, int type)
 /* We cannot call Refresh here since it makes too many assumptions
  * about Curbuff, Prow, Pcol, Inpaw, etc.
  */
-static void ExposeWindow()
+static void ExposeWindow(void)
 {
 	int i;
 	struct mark *psave = Bcremrk();
@@ -1310,20 +1377,14 @@ static void ExposeWindow()
 	ShowCursor(TRUE);
 }
 
-/* Change the foreground of the zwindow. Called from the game of life. */
-void Foreground(unsigned long foreground)
-{
-	XSetForeground(display, curgc, foreground);
-}
-
-void Xflush()
+void Xflush(void)
 {
 	XFlush(display);
 }
 
 static XEvent motion;
 
-void scrollit()
+static void scrollit(int signum)
 {	/* mimic a MotionEvent that will cause a scroll */
 	if (Dragging == DRAGSCROLL) {
 		XSendEvent(display, Zroot, True, PointerMotionMask, &motion);
@@ -1337,7 +1398,7 @@ void scrollit()
 #endif
 }
 
-void setit()
+static void setit(int signum)
 {
 	AlarmFlag = 0;
 }
@@ -1359,7 +1420,7 @@ static void SetTimer(XEvent *event, unsigned timeout)
 	value.it_value.tv_sec		= 0;
 	value.it_interval.tv_usec	= 0;
 	value.it_interval.tv_sec	= 0;
-	setitimer(ITIMER_REAL, &value, 0);
+	setitimer(ITIMER_REAL, &value, NULL);
 }
 
 void AddWindowSizes(char *str)

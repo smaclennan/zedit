@@ -32,7 +32,7 @@ static int GetWindowPosition(Window window,
  */
 #define WM_WASTE	((absy - rely) + (absx - relx))
 
-void Zzoom()
+void Zzoom(void)
 {
 	int absx, absy, relx, rely;
 	/* keep track of the last unzoomed position */

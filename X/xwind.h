@@ -67,6 +67,9 @@ void ResizeScrollBars(struct wdo *wdo);
 void Xflush();
 XFontStruct *LoadFontByName(char *fontname);
 
+char *XEventName(int type);
+char *XWindowName(Window window);
+
 /* Keep these around in case we bring back the tcl code */
 #define initSockets(x)
 #define closeSockets()

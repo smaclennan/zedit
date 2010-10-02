@@ -51,7 +51,7 @@ int main(int  argc, char *argv[])
 
 	wm_hints.flags = InputHint;
 	wm_hints.input = True;		/* Allow keyboard input. */
-	XSetWMProperties(display, root, 0, 0, argv, argc, 0, &wm_hints, 0);
+	XSetWMProperties(display, root, NULL, NULL, argv, argc, NULL, &wm_hints, NULL);
 
 	XMapWindow(display, root);
 
@@ -63,7 +63,7 @@ int main(int  argc, char *argv[])
 			continue;
 		}
 
-		XLookupString((XKeyEvent *)&event, &c, 1, &key, 0);
+		XLookupString((XKeyEvent *)&event, &c, 1, &key, NULL);
 
 		if ((key >= XK_space && key <= XK_asciitilde)) {
 			printf("ASCII %c\n", c);

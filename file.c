@@ -21,15 +21,30 @@
 #include <sys/stat.h>
 #include <assert.h>
 
+static int get_findfile(char *prompt)
+{
+	struct stat sbuf;
+
+	/* If Fname is a file, convert to directory */
+	if (stat(Fname, &sbuf) == 0)
+		if (S_ISREG(sbuf.st_mode)) {
+			char *p = strrchr(Fname, '/');
+			if (p)
+				*(p + 1) = '\0';
+		}
+
+	return Getfname(prompt, Fname);
+}
+
 void Zfindfile(void)
 {
-	if (Getfname("Find File: ", Fname) == 0)
+	if (get_findfile("Find File: ") == 0)
 		Findfile(Fname, FALSE);
 }
 
 void Zviewfile(void)
 {
-	if (Getfname("View File: ", Fname))
+	if (get_findfile("View File: "))
 		return;
 	Findfile(Fname, FALSE);
 	Curbuff->bmode |= VIEW;
@@ -195,7 +210,7 @@ int Write_rgn(char *path)
 
 void Zfileread(void)
 {
-	if (Getfname("Read File: ", Fname))
+	if (get_findfile("Read File: "))
 		return;
 	if (Fileread(Fname) > 0) {
 		sprintf(PawStr, "Unable to read %s", Fname);
@@ -248,6 +263,12 @@ int Pathfixup(char *to, char *from)
 	char *start, save, dir[PATHMAX], *p;
 	int rc;
 	struct stat sbuf;
+
+	do {
+		p = strstr(from, "//");
+		if (p)
+			from = p + 1;
+	} while (p);
 
 	start = to;
 	*to = '\0';

@@ -19,9 +19,9 @@
 
 #include "z.h"
 
+#if DBG
 #include <stdarg.h>
 
-#if DBG
 static char *dbgfname;
 
 void Dbg(char *fmt, ...)

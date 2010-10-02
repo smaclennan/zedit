@@ -142,9 +142,7 @@ void Setup(int argc, char **argv)
 	if (strcmp(Lastpart(Shell), "tcsh") == 0)
 		Shell = "/bin/csh";
 
-#if DBG
 	Dbgname(AddHome(path, ZDBGFILE));
-#endif
 
 	Cmask = umask(0);		/* get the current umask */
 	umask(Cmask);			/* set it back */

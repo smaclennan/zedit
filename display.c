@@ -402,19 +402,15 @@ pawshift:
 				Pshift = 0;
 			if (++nested == 1)
 				goto pawshift;
-#if DBG
 			else
 				Dbg("Shift right nested too deep!\n");
-#endif
 		} else if (Pcol >= Colmax - 2) {
 			/* shift left */
 			Pshift += SHIFT;
 			if (++nested == 1)
 				goto pawshift;
-#if DBG
 			else
 				Dbg("Shift left nested too deep!\n");
-#endif
 		}
 	}
 

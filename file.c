@@ -352,10 +352,8 @@ int Pathfixup(char *to, char *from)
 		rc = -1;
 	else
 		rc = 0;
-#if DBG
 	if (strlen(start) >= PATHMAX)
 		Dbg("TOO LONG %d '%s'\n", strlen(start), start);
-#endif
 	return rc;
 }
 

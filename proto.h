@@ -170,7 +170,6 @@ void Zzoom(void);
 
 /* General routines */
 
-void Dbg(char *fmt, ...);
 #ifdef BSD
 int access(char *, int);
 #endif
@@ -410,13 +409,9 @@ void Unvoke(struct buff *, Boolean);
 void Zmail(void);
 
 
-#if DBG
-Boolean Dbgname(char *);
-void Dbgsig(int);
+void Dbg(char *fmt, ...);
+void Dbgname(char *);
 void Fcheck(void);
-
-char *XEventName(int type);
-#endif
 
 
 /* for getfname */

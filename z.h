@@ -255,12 +255,6 @@ extern int circf;
 #define Echo(s)				PutPaw(s, FALSE)
 #define Error(s)			PutPaw(s, TRUE)
 
-
-#if DBG
-extern Byte Dbgstr[];
-extern int Dbgint;
-#endif
-
 #define ASSERT(n)	if (!(n)) Hangup(n)
 
 #include "proto.h"

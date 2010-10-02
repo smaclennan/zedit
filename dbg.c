@@ -20,33 +20,27 @@
 #include "z.h"
 
 #include <stdarg.h>
-#include <signal.h>
 
-
+#if DBG
 static char *dbgfname;
-Byte Dbgstr[256];
-int Dbgint;
-
 
 void Dbg(char *fmt, ...)
 {
 	FILE *fp;
 	va_list arg_ptr;
 
-	fp = dbgfname ? fopen(dbgfname, "a") : NULL;
-	va_start(arg_ptr, fmt);
-
-	if (fp)
-		vfprintf(fp, fmt, arg_ptr);
-	else
-		vprintf(fmt, arg_ptr);
-	va_end(arg_ptr);
-	if (fp)
-		fclose(fp);
+	if (dbgfname) {
+		fp = fopen(dbgfname, "a");
+		if (fp) {
+			va_start(arg_ptr, fmt);
+			vfprintf(fp, fmt, arg_ptr);
+			va_end(arg_ptr);
+			fclose(fp);
+		}
+	}
 }
 
-
-Boolean Dbgname(char *name)
+void Dbgname(char *name)
 {
 	if (dbgfname)
 		free(dbgfname);
@@ -55,11 +49,8 @@ Boolean Dbgname(char *name)
 		strcpy(dbgfname, name);
 		unlink(dbgfname);
 	}
-	return dbgfname != NULL;
 }
-
-void Dbgsig(int signum)
-{
-	Dbg("Dbgsig: got a %d\n", signum);
-	signal(signum, Dbgsig);
-}
+#else
+void Dbg(char *fmt, ...) {}
+void Dbgname(char *name) {}
+#endif

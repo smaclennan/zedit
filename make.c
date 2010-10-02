@@ -79,7 +79,6 @@ void Zgrep(void)
 		return;
 	}
 #endif
-	Dbg("grep (%s)\n", cmd);
 	mbuff = Cmdtobuff(MAKEBUFF, cmd);
 	if (mbuff)
 		Message(mbuff, cmd);

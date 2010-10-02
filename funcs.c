@@ -345,4 +345,6 @@ void Fcheck(void)
 	if (error)
 		Error("INTERNAL ERRORS: check z.out file");
 }
+#else
+void Fcheck(void) {}
 #endif

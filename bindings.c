@@ -194,9 +194,7 @@ void Loadbind(void)
 	BindFname(fname);
 	for (i = FINDPATHS; i && (i = Findpath(path, fname, i, TRUE)); --i)
 		Bindfile(path, READ_BINARY);
-#if DBG
 	Fcheck();
-#endif
 }
 
 

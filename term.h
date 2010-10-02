@@ -17,6 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <stdlib.h>
 
 /* The memory usage for screen stuff is approx:  (ROWMAX + 1) x 25 + COLMAX */
 /*                               Xwindows adds:	 ROWMAX * 4 + COLMAX * 4    */

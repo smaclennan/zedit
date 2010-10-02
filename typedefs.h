@@ -17,6 +17,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#ifndef ZEDIT_TYPEDEFS_H
+#define ZEDIT_TYPEDEFS_H
+
 /* Ok, I admit it.... this is a hack to get around the checkpatch
  * typedef errors. Easier to put them in one file and ignore them :(
  */
@@ -26,3 +29,5 @@ typedef int Boolean;
 #endif
 
 typedef unsigned char Byte;
+
+#endif

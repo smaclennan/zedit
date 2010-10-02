@@ -17,6 +17,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <stdio.h>
+#include "typedefs.h"
+
 /* The Zedit commands */
 void Z1wind(void);
 void Z2wind(void);

@@ -22,6 +22,8 @@
 #include <setjmp.h>
 extern jmp_buf zenv;
 
+#include "typedefs.h"
+
 
 /* THE BUFFER STRUCTURES */
 

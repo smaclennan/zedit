@@ -20,7 +20,11 @@
 /* The variable structure. */
 struct avar {
 	char *vname;
-	int   vtype;
+	enum {
+		STRING,
+		DECIMAL,
+		FLAG
+	} vtype;
 	union {
 		unsigned val;
 		char *str;
@@ -69,10 +73,3 @@ extern struct avar Vars[];
 #define VTEXTS		(VSEXTS + 1)
 #define VVISBELL	(VTEXTS + 1)
 #define VARNUM		(VVISBELL + 1)
-
-
-/* the variable types */
-#define STRING		0
-#define DECIMAL		1
-#define FLAG		2
-#define NUMERRSTR	2

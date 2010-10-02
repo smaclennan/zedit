@@ -28,7 +28,7 @@ unsigned Cmd;
 jmp_buf	zenv;
 int Verbose;
 
-char **Bnames;				/* array of ptrs to buffer names */
+char **Bnames;			/* array of ptrs to buffer names */
 int Numbuffs;			/* number of buffers */
 
 #include <sys/stat.h>

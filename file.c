@@ -51,7 +51,7 @@ void Zviewfile(void)
 	Curwdo->modeflags = INVALID;
 }
 
-void Zeditfile(void)
+void Zrevertfile(void)
 {
 	unsigned long offset;
 
@@ -59,8 +59,13 @@ void Zeditfile(void)
 		Tbell();
 		return;
 	}
+
 	if (Curbuff->bmodf && Ask("File modifed. Ok to loose changes?") != YES)
 		return;
+
+	/* Lose the undo history */
+	undo_clear(Curbuff);
+
 	offset = Blocation(NULL);
 	Breadfile(Curbuff->fname);
 	Boffset(offset);

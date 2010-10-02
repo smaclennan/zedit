@@ -51,7 +51,8 @@ int main(int  argc, char *argv[])
 
 	wm_hints.flags = InputHint;
 	wm_hints.input = True;		/* Allow keyboard input. */
-	XSetWMProperties(display, root, NULL, NULL, argv, argc, NULL, &wm_hints, NULL);
+	XSetWMProperties(display, root, NULL, NULL, argv, argc,
+			 NULL, &wm_hints, NULL);
 
 	XMapWindow(display, root);
 

@@ -59,7 +59,7 @@ void Zdelwhite(void);
 void Zdelwind(void);
 void Zdelword(void);
 void Zdispbinds(void);
-void Zeditfile(void);
+void Zrevertfile(void);
 void Zempty(void);
 void Zendline(void);
 void Zendwind(void);

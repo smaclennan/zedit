@@ -288,7 +288,7 @@ void (*Cmds[NUMFUNCS + 1][3])() = {
 	{ Zshrinkwind,		Zshrinkwind,		Znotimpl },
 	{ Zsizewind,		Zsizewind,		Znotimpl },
 	{ Zspell,		Znotimpl,		Znotimpl },
-	{ Zeditfile,		Zeditfile,		Znotimpl },
+	{ Zrevertfile,		Zrevertfile,		Znotimpl },
 	{ Zscrolldown,		Zscrolldown,		Znotimpl },
 	{ Zscrollup,		Zscrollup,		Znotimpl },
 	{ Zformtab,		Znotimpl,		Znotimpl },

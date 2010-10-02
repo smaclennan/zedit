@@ -319,7 +319,7 @@ int bgetcol(Boolean flag, int col)
 	if (bcrsearch(NL))
 		bmove1();
 	while (!Bisatmrk(&pmark) && !Bisend()) {
-		col += Width(Buff(), col, flag);
+		col += chwidth(Buff(), col, flag);
 		bmove1();
 	}
 	return col;
@@ -467,7 +467,7 @@ int bmakecol(int col, Boolean must)
 	if (bcrsearch(NL))
 		bmove1();
 	while (tcol < col && !ISNL(Buff()) && !Bisend()) {
-		tcol += Width(Buff(), tcol, !must);
+		tcol += chwidth(Buff(), tcol, !must);
 		bmove1();
 	}
 	if (must && tcol < col) {

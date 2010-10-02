@@ -292,7 +292,7 @@ void Wsize(void)
 		return;
 
 	orow = Rowmax;
-	Termsize();
+	termsize();
 
 	/* if Rowmax changed we must update window sizes */
 	if (Rowmax != orow) {
@@ -398,7 +398,7 @@ void Winvalid(struct wdo *wdo)
 void Z2wind(void)
 {
 	if (!Wsplit())
-		Tbell();
+		tbell();
 }
 
 /* Tear down all but one (current) window */
@@ -423,7 +423,7 @@ void Z1wind(void)
 	for (i = 0; i < Curwdo->last; ++i)
 		Scrnmarks[i].modf = TRUE;
 
-	Tclrwind();
+	tclrwind();
 
 #ifdef SCROLLBARS
 	ResizeScrollBars(Curwdo);
@@ -434,7 +434,7 @@ void Z1wind(void)
 void Zdelwind(void)
 {
 	if (!Wdelete(Curwdo))
-		Tbell();
+		tbell();
 }
 
 /* Make previous window current */
@@ -450,7 +450,7 @@ void Zprevwind(void)
 		if (wdo != Curwdo)
 			Wswitchto(wdo);
 		else
-			Tbell();
+			tbell();
 	}
 }
 
@@ -462,7 +462,7 @@ void Znextwind(void)
 	else if (Curwdo != Whead)
 		Wswitchto(Whead);
 	else
-		Tbell();
+		tbell();
 }
 
 /* Make current window bigger */
@@ -483,7 +483,7 @@ void Zshrinkwind(void)
 void Zsizewind(void)
 {
 	if (!Sizewindow(Arg - Wheight() + 1))
-		Tbell();
+		tbell();
 	Arg = 0;
 }
 

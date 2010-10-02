@@ -36,7 +36,7 @@ void Redisplay(void)
 {
 	int i;
 
-	Tclrwind();
+	tclrwind();
 	for (i = 0; i < Tmaxrow() - 2; ++i)
 		Scrnmarks[i].modf = TRUE;
 	Tlrow = -1;
@@ -116,9 +116,9 @@ void Refresh(void)
 	/* special case for NL or Bisend at column 80 */
 	if (col == 0 && bcol && (ISNL(Buff()) || Bisend()))
 		col = Tmaxcol() - 1 - Tstart;
-	else if (!Bisend() && (col + Width(Buff(), col, FALSE) >= Tmaxcol()))
+	else if (!Bisend() && (col + chwidth(Buff(), col, FALSE) >= Tmaxcol()))
 		col = 0;
-	Tgoto(pntrow, col + Tstart);
+	tgoto(pntrow, col + Tstart);
 
 #ifndef XWINDOWS
 	/*
@@ -128,9 +128,9 @@ void Refresh(void)
 	 * cursor moves on...
 	 */
 	if (Bisatmrk(Curbuff->mark)) {
-		Tstyle(T_NORMAL);
-		Tprntchar((Bisend() || ISNL(Buff())) ? ' ' : Buff());
-		Tgoto(pntrow, col + Tstart);
+		tstyle(T_NORMAL);
+		tprntchar((Bisend() || ISNL(Buff())) ? ' ' : Buff());
+		tgoto(pntrow, col + Tstart);
 		was->moffset = PSIZE + 1; /* Invalidate it */
 	}
 #endif
@@ -138,7 +138,7 @@ void Refresh(void)
 	Modeflags(Curwdo);
 	Setmodes(Curbuff);	/* displaying other windows can blow modes */
 	Tflush();
-	Tstyle(T_NORMAL);
+	tstyle(T_NORMAL);
 
 #ifdef SCROLLBARS
 	UpdateScrollbars();
@@ -193,12 +193,12 @@ int Innerdsp(int from, int to, struct mark *pmark)
 					Tgetcol() = col;
 				else {
 					if (Bisatmrk(Curbuff->mark))
-						SetMark(TRUE);
+						setmark(TRUE);
 					else {
 #if COMMENTBOLD
 						CheckComment();
 #endif
-						Tprntchar(Buff());
+						tprntchar(Buff());
 					}
 					if (trow == Tlrow &&
 					    (!ISPRINT(*lptr) ||
@@ -211,13 +211,13 @@ int Innerdsp(int from, int to, struct mark *pmark)
 			Tcleol();
 			if (Bisatmrk(Curbuff->mark) &&
 				(ISNL(Buff()) || Bisstart() || Bisend()))
-					SetMark(FALSE);
+					setmark(FALSE);
 #ifdef HSCROLL
 			if (!ISNL(Buff()))
 				bcsearch(NL);
 #else
 			if (col >= Tmaxcol())
-				ExtendedLineMarker();
+				extendedlinemarker();
 #endif
 			memset(lptr, '\376', Colmax - (lptr - tline));
 			Tlrow = trow;
@@ -246,7 +246,7 @@ int Innerdsp(int from, int to, struct mark *pmark)
 	}
 
 #if COMMENTBOLD
-	Tstyle(T_NORMAL);
+	tstyle(T_NORMAL);
 #endif
 
 	return pntrow;
@@ -259,7 +259,7 @@ void Reframe(void)
 	struct mark *pmark;
 
 	pmark = bcremrk();
-	for (cnt = Prefline(); cnt > 0 && bcrsearch(NL); --cnt)
+	for (cnt = prefline(); cnt > 0 && bcrsearch(NL); --cnt)
 			cnt -= bgetcol(TRUE, 0) / Tmaxcol();
 	if (cnt < 0)
 		bmakecol((-cnt) * Tmaxcol(), FALSE);
@@ -361,26 +361,26 @@ pawshift:
 			bcol = Pcol;
 #ifdef XWINDOWS
 		if (Bisatmrk(Curbuff->mark)) {
-			SetMark(TRUE);
+			setmark(TRUE);
 			tline[i] = Buff();
 		} else if (Bisatmrk(was)) {
-			Tprntchar(Buff());
+			tprntchar(Buff());
 			tline[i] = Buff();
 		}
 #else
 		if (mrkmoved && (Bisatmrk(Curbuff->mark) || Bisatmrk(was))) {
 			if (Bisatmrk(Curbuff->mark))
-				Tstyle(T_REVERSE);
-			Tprntchar(Buff());
-			Tstyle(T_NORMAL);
+				tstyle(T_REVERSE);
+			tprntchar(Buff());
+			tstyle(T_NORMAL);
 			tline[i] = Buff();
 		}
 #endif
 		else if (tline[i] == Buff())
-			Pcol += Width(Buff(), 0, 0);
+			Pcol += chwidth(Buff(), 0, 0);
 		else {
 			tline[i] = Buff();
-			Tprntchar(Buff());
+			tprntchar(Buff());
 		}
 	}
 	memset(&tline[i], '\376', &tline[COLMAX] - &tline[i]);
@@ -388,7 +388,7 @@ pawshift:
 
 	if (Bisend()) {
 		if (Bisatmrk(Curbuff->mark)) {
-			SetMark(FALSE);
+			setmark(FALSE);
 			--Pcol;		/* space always 1 character! */
 		} else if (Bisatmrk(pmark))
 			bcol = Pcol;
@@ -428,7 +428,7 @@ pawshift:
 	 */
 	if (Bisatmrk(Curbuff->mark)) {
 		i = Pcol;
-		Tprntchar(Bisend() ? ' ' : Buff());
+		tprntchar(Bisend() ? ' ' : Buff());
 		Pcol = i;
 		was->moffset = PSIZE + 1;		/* Invalidate it */
 	}
@@ -436,7 +436,7 @@ pawshift:
 
 	unmark(pmark);
 	--NESTED;
-	Tforce();
+	tforce();
 	Tflush();
 }
 

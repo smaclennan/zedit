@@ -57,7 +57,7 @@ struct key_array Tkeys[] = {
 #define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
 
-void TIinit(void)
+void tlinit(void)
 {
 	int i;
 
@@ -76,20 +76,20 @@ void TIinit(void)
 			Key_mask |= 1 << i;
 }
 
-void Tsize(int *rows, int *cols)
-{	/* Let Termsize default it */
+void tsize(int *rows, int *cols)
+{	/* Let termsize default it */
 	*rows = *cols = 0;
 }
 
-void TIfini(void)
+void tlfini(void)
 {
 #if COMMENTBOLD
-	Tstyle(T_NORMAL);
+	tstyle(T_NORMAL);
 #endif
 }
 
 
-void Tstyle(int style)
+void tstyle(int style)
 {
 	static int cur_style = -1;
 

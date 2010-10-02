@@ -246,7 +246,7 @@ void Dline(int);
 void Dwait(int);
 void Edit(void);
 void Execute(void);
-void ExtendedLineMarker(void);
+void extendedlinemarker(void);
 int Fileread(char *);
 Boolean Filesave(void);
 Boolean Findfile(char *, int);
@@ -295,7 +295,7 @@ void Mshow(unsigned);
 Boolean Mv(char *, char *);
 Boolean Cp(char *, char *);
 int main(int, char **);
-void Newtitle(char *);
+void newtitle(char *);
 char *Nocase(char *);
 void NoMem(void);
 int Parse(char *);
@@ -309,7 +309,7 @@ void Pnewline(void);
 void Pntmove(int, int);
 void Pout(char *, Boolean);
 void Pset(int, int, int);
-int Prefline(void);
+int prefline(void);
 void PutPaw(char *, int);
 void ReadVfile(void);
 Boolean Readone(char *, char *);
@@ -325,28 +325,28 @@ char *Setmodes(struct buff *);
 int Settabsize(unsigned);
 void Setup(int, char **);
 Boolean Step(Byte *);
-void SetMark(Boolean);
+void setmark(Boolean);
 char *Strstr(char *, char *);
 char *Strup(char *);
 void Syerr(int);
-void Tbell(void);
+void tbell(void);
 void Tcleol(void);
-void Tclrwind(void);
-void Termsize(void);
-void Tfini(void);
+void tclrwind(void);
+void termsize(void);
+void tfini(void);
 #ifdef XWINDOWS
 void Tflush(void);
 #else
-void Tforce(void);
+void tforce(void);
 #endif
 int Tgetcmd(void);
 Byte Tgetkb(void);
-void Tgoto(int, int);
+void tgoto(int, int);
 void Tindent(int);
 #ifdef XWINDOWS
-void Tinit(int, char **);
+void tinit(int, char **);
 #else
-void Tinit(void);
+void tinit(void);
 #endif
 void Titot(unsigned);
 int Tkbrdy(void);
@@ -355,10 +355,10 @@ void Toendline(void);
 int Tolower(int);
 int Toupper(int);
 void Toggle_mode(int);
-void Tprntchar(Byte);
-void Tprntstr(char *);
-void Tsize(int *, int *);
-void Tstyle(int);
+void tprntchar(Byte);
+void tprntstr(char *);
+void tsize(int *, int *);
+void tstyle(int);
 void Tungetkb(void);
 void unmark(struct mark *);
 void Usage(char *);
@@ -366,7 +366,7 @@ void Varval(int var);
 void Vsetmod(Boolean);
 void Vsetmrk(struct mark *);
 void Walign(struct buff *);
-int Width(Byte, int, Boolean);
+int chwidth(Byte, int, Boolean);
 void Wload(char *, int, int, unsigned long, int);
 int Write_rgn(char *);
 void free_pwent(struct passwd *pw);
@@ -378,8 +378,8 @@ void Quit(void);
 
 
 #ifndef XWINDOWS
-void TIinit(void);
-void TIfini(void);
+void tlinit(void);
+void tlfini(void);
 #endif
 
 

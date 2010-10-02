@@ -35,7 +35,7 @@ struct avar Vars[] = {
 	{ "Exact",		FLAG,		DEFAULT(1) },
 	{ "ExecOnMatch",	FLAG,		DEFAULT(0) },
 	{ "ExpandPaths",	FLAG,		DEFAULT(1) },
-	{ "FillWidth",		DECIMAL,	DEFAULT(72) },
+	{ "Fillchwidth",		DECIMAL,	DEFAULT(72) },
 	{ "FlowControl",	FLAG,		DEFAULT(0) },
 	{ "Font",		STRING,		DEFAULT(0) },
 	{ "Grep",		STRING,		DEFAULT(0) },
@@ -320,7 +320,7 @@ void Setavar(char *vin, Boolean display)
 					Settabsize(Curbuff->bmode);
 					Zredisplay();
 				} else if (i == VSHOWCWD)
-					Newtitle(VAR(i) ? Cwd : NULL);
+					newtitle(VAR(i) ? Cwd : NULL);
 				if (Vars[i].vtype == STRING) {
 					if (VARSTR(i))
 						sprintf(msg, "%s = %s",
@@ -401,7 +401,7 @@ void Dline(int trow)
 		Tsetpoint(trow, 0);
 		Scrnmarks[trow].modf = TRUE;
 		for (i = 0; i < Tmaxcol(); ++i)
-			Tprntchar('-');
+			tprntchar('-');
 	}
 }
 

@@ -39,7 +39,7 @@ int Ask(char *msg)
 			rc = NO;
 			break;
 		default:
-			Tbell();
+			tbell();
 			rc = (Keys[cmd] == ZABORT) ? ABORT : BADCHAR;
 			break;
 		}
@@ -149,15 +149,15 @@ void PutPaw(char *str, int type)
 	int trow, tcol;
 
 	if (type == 1)
-		Tbell();
+		tbell();
 	if (!InPaw) {
 		trow = Prow; tcol = Pcol;
 		Tsetpoint(Tmaxrow() - 1, 0);
-		Tprntstr(str);
+		tprntstr(str);
 		Tcleol();
 		if (type != 1)
 			Tsetpoint(trow, tcol);
-		Tforce();
+		tforce();
 		Tflush();
 		if (type == 1)
 			Tgetcmd();
@@ -386,7 +386,7 @@ void Pntmove(int row, int col)
 	if (InPaw) {
 		/* Can't move out of paw */
 		if (row != Rowmax - 1 || col < Pawcol)
-			Tbell();
+			tbell();
 		else {
 			col = bmakecol(col - Pawcol, FALSE);
 			Tsetpoint(Rowmax - 1, col);
@@ -414,7 +414,7 @@ void Pntmove(int row, int col)
 			Tsetpoint(i, col);
 			return;
 		}
-	Tbell();
+	tbell();
 }
 #endif
 

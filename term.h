@@ -60,12 +60,12 @@ int _putchar(char);
 #define Tmaxrow()		Rowmax
 #define Tmaxcol()		Colmax
 extern int Tabsize;
-#define Twidth(ch)		Width(ch, Pcol - Tstart, FALSE)
-#define Bwidth(ch, col)		Width(ch, col, TRUE)
+#define Twidth(ch)		chwidth(ch, Pcol - Tstart, FALSE)
+#define Bwidth(ch, col)		chwidth(ch, col, TRUE)
 #define Sindent(arg)		while (arg-- > 0) binsert(' ')
 
 #ifdef XWINDOWS
-#define Tforce()
+#define tforce()
 #else
 #define ShowCursor(x)
 #define ShowMark(x)

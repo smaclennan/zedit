@@ -61,7 +61,7 @@ int Tstart;					/* Start column and row */
 static void sigwinch(int sig)
 {
 	if (Exitflag)
-		Termsize();
+		termsize();
 	else {
 		Zredisplay();		/* update the windows */
 		Refresh();			/* force a screen update */
@@ -74,13 +74,13 @@ static void sigwinch(int sig)
 #endif
 
 /* Initalize the terminal. */
-void Tinit(void)
+void tinit(void)
 {
 	/* Initialize the low level interface.
 	 * Do this first - it may exit */
-	TIinit();
+	tlinit();
 
-	Termsize();
+	termsize();
 
 #ifdef LINUX
 	tcgetattr(fileno(stdin), &Savetty);
@@ -127,7 +127,7 @@ void Tinit(void)
 #endif
 #ifdef BSD
 	signal(SIGTSTP, SIG_DFL);		/* set signals so that we can */
-	signal(SIGCONT, Tinit);		/* suspend & restart Zedit */
+	signal(SIGCONT, tinit);		/* suspend & restart Zedit */
 #endif
 #ifdef SIGWINCH
 	signal(SIGWINCH, sigwinch); /* window has changed size - update */
@@ -135,7 +135,7 @@ void Tinit(void)
 
 	if (Rowmax < 3) {
 		/* screen too small */
-		Tfini();
+		tfini();
 		exit(1);
 	}
 
@@ -146,7 +146,7 @@ void Tinit(void)
 		Zredisplay();
 }
 
-void Tfini(void)
+void tfini(void)
 {
 #if defined(LINUX)
 	tcsetattr(fileno(stdin), TCSAFLUSH, &Savetty);
@@ -159,16 +159,16 @@ void Tfini(void)
 #endif
 
 	if (VAR(VCLEAR))
-		Tclrwind();
+		tclrwind();
 	else {
 		Clrecho();
-		Tgoto(Rowmax - 1, 0);
+		tgoto(Rowmax - 1, 0);
 	}
 	Tflush();
-	TIfini();
+	tlfini();
 }
 
-void Tbell(void)
+void tbell(void)
 {
 	if (VAR(VVISBELL)) {
 #ifdef __linux__
@@ -183,11 +183,11 @@ void Tbell(void)
 		putchar('\7');
 }
 
-void SetMark(Boolean prntchar)
+void setmark(Boolean prntchar)
 {
-	Tstyle(T_REVERSE);
-	Tprntchar(prntchar ? Buff() : ' ');
-	Tstyle(T_NORMAL);
+	tstyle(T_REVERSE);
+	tprntchar(prntchar ? Buff() : ' ');
+	tstyle(T_NORMAL);
 }
 
 /*
@@ -197,13 +197,13 @@ void SetMark(Boolean prntchar)
  *		3. Default to 24x80
  *		4. Limit to ROWMAXxCOLMAX.
  */
-void Termsize(void)
+void termsize(void)
 {
 	int rows, cols;
 	FILE *fp;
 
 	/* Get the defaults from the low level interface */
-	Tsize(&rows, &cols);
+	tsize(&rows, &cols);
 
 	/* If we have resize, trust it */
 	fp = popen("resize -u", "r");
@@ -238,24 +238,24 @@ void Termsize(void)
 }
 #endif /* !XWINDOWS */
 
-void ExtendedLineMarker(void)
+void extendedlinemarker(void)
 {
 	int col;
 
 	for (col = Tgetcol(); col < Tmaxcol() - 1; ++col)
-		Tprntchar(' ');
-	Tstyle(T_BOLD);
-	Tprntchar('>');
-	Tstyle(T_NORMAL);
+		tprntchar(' ');
+	tstyle(T_BOLD);
+	tprntchar('>');
+	tstyle(T_NORMAL);
 }
 
 /* Print a char. */
-void Tprntchar(Byte ichar)
+void tprntchar(Byte ichar)
 {
 	int tcol;
 
 	if (ISPRINT(ichar)) {
-		Tforce();
+		tforce();
 		Tputchar(ichar);
 		++Scol;
 		++Pcol;
@@ -265,7 +265,7 @@ void Tprntchar(Byte ichar)
 		switch (ichar) {
 		case '\t':
 			if (InPaw)
-				Tprntstr("^I");
+				tprntstr("^I");
 			else {
 				/* optimize for most used tab sizes */
 				if (Tabsize == 4 || Tabsize == 8)
@@ -273,26 +273,26 @@ void Tprntchar(Byte ichar)
 				else
 					tcol = Tabsize - (Pcol % Tabsize);
 				for (; tcol > 0; --tcol)
-					Tprntchar(' ');
+					tprntchar(' ');
 			}
 			break;
 
 		case 0x89:
-			Tstyle(T_BOLD);
-			Tprntstr("~^I");
-			Tstyle(T_NORMAL);
+			tstyle(T_BOLD);
+			tprntstr("~^I");
+			tstyle(T_NORMAL);
 			break;
 
 		default:
-			Tstyle(T_BOLD);
+			tstyle(T_BOLD);
 			if (ichar & 0x80) {
-				Tprntchar('~');
-				Tprntchar(ichar & 0x7f);
+				tprntchar('~');
+				tprntchar(ichar & 0x7f);
 			} else {
-				Tprntchar('^');
-				Tprntchar(ichar ^ '@');
+				tprntchar('^');
+				tprntchar(ichar ^ '@');
 			}
-			Tstyle(T_NORMAL);
+			tstyle(T_NORMAL);
 			break;
 	}
 }
@@ -300,7 +300,7 @@ void Tprntchar(Byte ichar)
 /* Calculate the width of a character.
  * The 'adjust' parameter adjusts for the end of line.
 */
-int Width(Byte ch, int col, Boolean adjust)
+int chwidth(Byte ch, int col, Boolean adjust)
 {
 	int wid;
 
@@ -333,16 +333,16 @@ int Width(Byte ch, int col, Boolean adjust)
 	return wid;
 }
 
-void Tprntstr(char *str)
+void tprntstr(char *str)
 {
 	while (*str)
-		Tprntchar(*str++);
+		tprntchar(*str++);
 }
 
-void Tgoto(int row, int col)
+void tgoto(int row, int col)
 {
 	Tsetpoint(row, col);
-	Tforce();
+	tforce();
 }
 
 /* Print a decimal number. */
@@ -350,10 +350,10 @@ void Titot(unsigned cntr)
 {
 	if (cntr > 9)
 		Titot(cntr / 10);
-	Tprntchar(cntr % 10 + '0');
+	tprntchar(cntr % 10 + '0');
 }
 
-int Prefline(void)
+int prefline(void)
 {
 	int line, w;
 
@@ -363,7 +363,7 @@ int Prefline(void)
 }
 
 #ifndef XWINDOWS
-void Tforce(void)
+void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
 #ifdef TERMINFO
@@ -379,7 +379,7 @@ void Tforce(void)
 void Tcleol(void)
 {
 	if (Pcol < Clrcol[Prow]) {
-		Tforce();
+		tforce();
 #ifdef TERMINFO
 		TPUTS(clr_eol);
 #else
@@ -389,7 +389,7 @@ void Tcleol(void)
 	}
 }
 
-void Tclrwind(void)
+void tclrwind(void)
 {
 #ifdef TERMINFO
 	TPUTS(clear_screen);
@@ -412,5 +412,5 @@ int _putchar(char ch)
 	return 0;	/*shutup*/
 }
 
-void Newtitle(char *str) {}
+void newtitle(char *str) {}
 #endif /* !XWINDOWS */

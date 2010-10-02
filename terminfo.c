@@ -66,7 +66,7 @@ struct key_array Tkeys[] = { {
 #define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
 
-void TIinit()
+void tlinit()
 {
 	char *n;
 	int rc, i;
@@ -143,22 +143,22 @@ void TIinit()
 			Key_mask |= 1 << i;
 }
 
-void Tsize(int *rows, *cols)
+void tsize(int *rows, *cols)
 {	/* default to values in terminfo file */
 	*rows = lines;
 	*cols = columns;
 }
 
-void TIfini()
+void tlfini()
 {
 #if COMMENTBOLD
-	Tstyle(T_NORMAL);
+	tstyle(T_NORMAL);
 #endif
 	TPUTS(reset_1string);
 	resetterm();
 }
 
-void Tstyle(int style)
+void tstyle(int style)
 {
 	static int cur_style = -1;
 

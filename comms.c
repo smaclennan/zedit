@@ -131,7 +131,7 @@ static void handle_close_bracket(struct mark *tmark, int crfound)
 		for (i = col = 0;
 		     !Bisend() && !ISNL(Buff()) && col < Colmax;
 		     ++i, bmove1()) {
-			col += Width(Buff(), col, FALSE);
+			col += chwidth(Buff(), col, FALSE);
 			PawStr[i] = Buff();
 		}
 		PawStr[i] = '\0';
@@ -172,7 +172,7 @@ void Zcinsert(void)
 			else if (ISNL(Buff()))
 				crfound = TRUE;
 		bpnttomrk(&tmark);	/* no match - go back */
-		Tbell();				/* and warn user */
+		tbell();				/* and warn user */
 	} else if (STRIP(Cmd) == '#') {
 		struct mark *tmark = bcremrk();
 
@@ -426,7 +426,7 @@ void Zfillpara(void)
 	}
 	if (Curbuff->bmode & PROGMODE) {
 		Echo("Not in program mode");
-		Tbell();
+		tbell();
 		return;
 	}
 	tmark = bcremrk();		/* save the current point */
@@ -520,7 +520,7 @@ void Zformtab(void)
 	if (Bsearch(FORMSTRING, TRUE))
 		bdelete(strlen(FORMSTRING));
 	else
-		Tbell();
+		tbell();
 }
 
 /* MISC COMMANDS */
@@ -544,7 +544,7 @@ void Zprintpos(void)
 /* Key has no binding */
 void Znotimpl(void)
 {
-	Tbell();
+	tbell();
 }
 
 
@@ -569,7 +569,7 @@ void Quit(void)
 	if (VAR(VDOSAVE))
 		Save(Curbuff);
 	Exitflag = TRUE;
-	Tfini();
+	tfini();
 
 #ifdef XWINDOWS
 	closeSockets();
@@ -702,7 +702,7 @@ void Zcase(void)
 	Curbuff->bmode ^= EXACT;
 	if (InPaw && Insearch) {
 		Tsetpoint(Tmaxrow() - 1, 0);
-		Tprntstr(Nocase(NULL));
+		tprntstr(Nocase(NULL));
 	} else
 		Echo(Curbuff->bmode & EXACT ? "Exact Set" : "Exact Reset");
 	Arg = 0;
@@ -766,7 +766,7 @@ void Zmetax(void)
 
 void Zabort(void)
 {
-	Tbell();
+	tbell();
 	Arg = 0;
 	if (InPaw)
 		InPaw = ABORT;
@@ -835,5 +835,5 @@ void Ztab(void)
 }
 
 #ifndef XWINDOWS
-void Zzoom(void)	{ Tbell(); }
+void Zzoom(void)	{ tbell(); }
 #endif

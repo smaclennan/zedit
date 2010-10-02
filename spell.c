@@ -151,7 +151,7 @@ void Zspell(void)
 						if (n < m)
 							sreplace(word[n] + 2);
 					} else {
-						Tbell();
+						tbell();
 						if (Keys[cmd] == ZABORT)
 							goto abort;
 					}
@@ -207,5 +207,5 @@ int Isalpha(void)
 	return isalpha(Buff());
 }
 #else
-void Zspell(void) { Tbell(); }
+void Zspell(void) { tbell(); }
 #endif

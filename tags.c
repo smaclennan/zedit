@@ -126,7 +126,7 @@ void Xfindtag(void)
 		}
 	}
 	Echo("Not found");
-	Tbell();
+	tbell();
 	bswitchto(Bsave);			/* go back to original buffer */
 	Curwdo->modeflags = INVALID;
 }
@@ -343,6 +343,6 @@ void Zref(void)
 }
 
 #else
-void Zfindtag(void) { Tbell(); }
-void Zref(void) { Tbell(); }
+void Zfindtag(void) { tbell(); }
+void Zref(void) { tbell(); }
 #endif /* TAGS */

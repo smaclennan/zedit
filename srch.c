@@ -66,7 +66,7 @@ void Doincsrch(char *prompt, Boolean forward)
 			} else {
 				bpnttomrk(&marks[--i]);
 				p[i] = '\0';
-				Tbell();
+				tbell();
 			}
 		} else if (cmd == 19) { /* CTRL-S */
 			struct mark tmark;
@@ -84,7 +84,7 @@ void Doincsrch(char *prompt, Boolean forward)
 				bmove(i);
 			else {
 				bpnttomrk(&tmark);
-				Tbell();
+				tbell();
 			}
 		} else if (Keys[cmd] == ZRDELCHAR && i > 0) {
 			bpnttomrk(&marks[--i]);
@@ -293,7 +293,7 @@ input:
 				case 'U': /* goto prev match */
 				case 'u':
 					if (type == REGEXP)
-						Tbell();
+						tbell();
 					else {
 						bpnttomrk(prevmatch);
 						if (changeprev) {

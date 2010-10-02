@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 		Error("FATAL ERROR: Out of memory");
 		Argp = FALSE;	/* so Zexit will not default to save */
 		Zexit();
-		Tfini();
+		tfini();
 		exit(1);
 	}
 
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
 	Setup(argc, argv);
 	Edit();
-	Tfini();
+	tfini();
 
 #ifdef MEMLOG
 	logfini();
@@ -205,7 +205,7 @@ void Setup(int argc, char **argv)
 			break;
 		}
 
-	ReadVfile();		/* Do this BEFORE Tinit */
+	ReadVfile();		/* Do this BEFORE tinit */
 
 	/* User wants Text mode as default */
 	if (textMode)
@@ -225,9 +225,9 @@ void Setup(int argc, char **argv)
 
 #ifdef XWINDOWS
 	XAddBuffer(MAINBUFF);
-	Tinit(argc, argv);
+	tinit(argc, argv);
 #else
-	Tinit();
+	tinit();
 #endif
 
 	REstart	= bcremrk();
@@ -280,7 +280,7 @@ void Setup(int argc, char **argv)
 		Echo("New File");
 
 	Bind();
-	Loadbind();		/* Do this after Tinit */
+	Loadbind();		/* Do this after tinit */
 
 	Curwdo->modeflags = INVALID;
 
@@ -479,7 +479,7 @@ void Zcwd(void)
 			Cwd = p;
 #ifdef XWINDOWS
 			if (VAR(VSHOWCWD))
-				Newtitle(Cwd);
+				newtitle(Cwd);
 #endif
 		} else
 			Error("chdir failed.");

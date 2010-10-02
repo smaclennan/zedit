@@ -26,7 +26,7 @@
 
 /* Do one shell command to the screen */
 #ifdef XWINDOWS
-void Zcmd() { Tbell(); }	/* no screen */
+void Zcmd() { tbell(); }	/* no screen */
 #elif !defined(BSD)
 void Zcmd(void)
 {
@@ -34,7 +34,7 @@ void Zcmd(void)
 
 	Arg = 0;
 	if (Getarg("! ", Command, STRMAX) == 0) {
-		Tfini();
+		tfini();
 		sprintf(tb, "%s -c \"%s\"", Shell, Command);
 		if (system(tb) == EOF)
 			Echo("command failed");
@@ -43,7 +43,7 @@ void Zcmd(void)
 			Tgetcmd();
 			putchar('\n');
 		}
-		Tinit();
+		tinit();
 	}
 }
 #endif
@@ -117,7 +117,7 @@ void Zcmd(void)
 void Zshell()	/*for tags*/
 #endif
 {
-	Tfini();
+	tfini();
 	kill(getpid(), SIGTSTP);
 }
 #endif
@@ -135,7 +135,7 @@ void Zshell(void)
 		while (Cfindbuff(bname));
 
 	if (!WuseOther(bname) || !Doshell())
-		Tbell();
+		tbell();
 }
 
 Boolean Doshell(void)
@@ -153,10 +153,10 @@ void Zshell(void)	/*for tags*/
 	int err = EOF;
 
 	Arg = 0;
-	Tfini();
+	tfini();
 	if (system(Shell) == EOF)
 		err = errno;
-	Tinit();
+	tinit();
 	if (err != EOF)
 		Syerr(err);
 }
@@ -403,11 +403,11 @@ void PrintExit(int code)
 	}
 }
 #else
-void Zshell(void) { Tbell(); }
-void Zprint(void) { Tbell(); }
-void Zcmd(void) { Tbell(); }
-void Zcmdtobuff(void) { Tbell(); }
-void Zmail(void) { Tbell(); }
-void Zman(void) { Tbell(); }
-void Zbeauty(void) { Tbell(); }
+void Zshell(void) { tbell(); }
+void Zprint(void) { tbell(); }
+void Zcmd(void) { tbell(); }
+void Zcmdtobuff(void) { tbell(); }
+void Zmail(void) { tbell(); }
+void Zman(void) { tbell(); }
+void Zbeauty(void) { tbell(); }
 #endif /* SHELL */

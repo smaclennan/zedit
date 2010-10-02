@@ -261,7 +261,7 @@ FILE *Findhelp(int code, Boolean func, char *buff)
 }
 
 #else
-void Zhelp(void) { Tbell(); }
+void Zhelp(void) { tbell(); }
 void KillHelp(void) {}
 #endif /* HELP */
 

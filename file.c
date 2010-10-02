@@ -56,7 +56,7 @@ void Zrevertfile(void)
 	unsigned long offset;
 
 	if (!Curbuff->fname) {
-		Tbell();
+		tbell();
 		return;
 	}
 

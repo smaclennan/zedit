@@ -85,7 +85,7 @@ void Zfname(void)
 
 	head = list = GetFill(dir, &fname, &len, &update);
 	if (!list) {
-		Tbell();
+		tbell();
 		return;
 	}
 
@@ -108,12 +108,12 @@ void Zfname(void)
 				++did_something;
 			}
 			if (len < n)
-				Tbell();
+				tbell();
 		}
 		if (f == 0 && Isdir(Getbtxt(txt, PATHMAX)) && Curplen < Pawlen)
 			binsert(PSEP);
 	} else if (!update)
-		Tbell();
+		tbell();
 
 	if (update || did_something)
 		return;
@@ -123,17 +123,17 @@ void Zfname(void)
 	p = dir + strlen(dir);
 	*p++ = PSEP;
 	Didmatch = TRUE;
-	Tgoto(Tstart, 0);
-	Tprntstr("Choose one of:");
+	tgoto(Tstart, 0);
+	tprntstr("Choose one of:");
 	Tcleol();
 	row = Tstart + 1; col = 0;
 	for (; list; list = list->next)
 		if (len == 0 || strncmp(fname, list->fname, len) == 0) {
-			Tgoto(row, col);
+			tgoto(row, col);
 			strcpy(p, list->fname);
 			if (strlen(list->fname) > 23)
 				list->fname[23] = '\0';
-			Tprntstr(list->fname);
+			tprntstr(list->fname);
 			if (Isdir(dir))
 				Tputchar(PSEP);
 			Tcleol();
@@ -148,7 +148,7 @@ void Zfname(void)
 	if (col)
 		row++;
 	while (row < Rowmax - 2) {
-		Tgoto(row++, 0);
+		tgoto(row++, 0);
 		Tcleol();
 	}
 }

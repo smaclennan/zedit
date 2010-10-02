@@ -49,7 +49,7 @@ void Znextbuff(void)
 		Cswitchto(next);
 		Reframe();
 	} else
-		Tbell();
+		tbell();
 }
 
 void Zkillbuff(void)
@@ -142,7 +142,7 @@ void Zlstbuff(void)
 		Curbuff->bmodf = FALSE;
 		Wswitchto(was);
 	} else
-		Tbell();
+		tbell();
 	Arg = 0;
 }
 

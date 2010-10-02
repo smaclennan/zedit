@@ -96,7 +96,7 @@ void Znexterr(void)
 
 	mbuff = Cfindbuff(MAKEBUFF);
 	if (!mbuff) {
-		Tbell();
+		tbell();
 		return;
 	}
 	save = Curbuff;
@@ -138,7 +138,7 @@ void Zkill(void)
 	Unvoke(Cfindbuff(MAKEBUFF), FALSE);
 }
 #else
-void Zkill(void) { Tbell(); }
+void Zkill(void) { tbell(); }
 #endif
 
 /* Check if it is a warning or an error.
@@ -235,8 +235,8 @@ int Parse(char *fname)
 	return 0;
 }
 #else
-void Zmake(void) { Tbell(); }
-void Znexterr(void) { Tbell(); }
-void Zkill(void) { Tbell(); }
-void Zgrep(void) { Tbell(); }
+void Zmake(void) { tbell(); }
+void Znexterr(void) { tbell(); }
+void Zkill(void) { tbell(); }
+void Zgrep(void) { tbell(); }
 #endif /* MAKE */

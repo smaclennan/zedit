@@ -46,7 +46,7 @@ void Hangup(int signal)
 	Checkpipes(0);
 #endif
 	Save(bsave);
-	Tfini();
+	tfini();
 	exit(1);
 }
 
@@ -120,7 +120,7 @@ int Checkpipes(int type)
 							Message(tbuff, PawStr);
 						}
 					}
-					Tbell();
+					tbell();
 				}
 				break;
 			}
@@ -317,7 +317,7 @@ void Unvoke(struct buff *child, Boolean check)
 			while (child->child != EOF && Checkpipes(1) != -1)
 				;
 	} else
-		Tbell();
+		tbell();
 }
 
 /* Come here when a child dies or exits.

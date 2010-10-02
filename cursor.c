@@ -104,7 +104,7 @@ void Zprevpage(void)
 	int i, n, col = Forcecol();
 
 	bpnttomrk(Sstart);
-	for (n = i = Wheight() - Prefline() - 2; i > 0 && bcrsearch(NL); --i)
+	for (n = i = Wheight() - prefline() - 2; i > 0 && bcrsearch(NL); --i)
 		i -= bgetcol(TRUE, 0) / Tmaxcol();
 	bmakecol(col, FALSE);
 	Reframe();
@@ -115,7 +115,7 @@ void Znextpage(void)
 	int i, col = Forcecol();
 
 	bpnttomrk(Sstart);
-	for (i = Wheight() + Prefline() - 2; i > 0 && bcsearch(NL); --i) {
+	for (i = Wheight() + prefline() - 2; i > 0 && bcsearch(NL); --i) {
 		bmove(-1);
 		i -= bgetcol(TRUE, 0) / Tmaxcol();
 		bmove1();

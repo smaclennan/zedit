@@ -52,10 +52,10 @@ Boolean Getarg(char *prompt, char *arg, int max)
 #ifdef XWINDOWS
 	/* We need this global so we can redisplay on an exposure event */
 	PromptString = prompt;
-	Tstyle(T_NORMAL);		/* always display paw in normal */
+	tstyle(T_NORMAL);		/* always display paw in normal */
 #endif
-	Tgoto(Tmaxrow() - 1 , 0);			/* display the prompt */
-	Tprntstr(prompt);
+	tgoto(Tmaxrow() - 1 , 0);			/* display the prompt */
+	tprntstr(prompt);
 	Pawcol = Pcol = strlen(prompt); /* prompts are always simple ascii */
 
 	argp_save = Argp;
@@ -90,7 +90,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
 	/* SAM ??? */
 	Clrcol[Tgetrow()] = Tmaxcol();		/* force clear */
 #endif
-	Tgoto(trow, tcol);
+	tgoto(trow, tcol);
 	Curwdo->modeflags = INVALID;
 	Curcmds = (Curbuff->bmode & VIEW) ? 1 : 0;	/* SAM */
 	Clrecho();
@@ -193,7 +193,7 @@ void Pout(char *str, Boolean check)
 	Tsetpoint(p_row, p_col * PCOLSIZE);
 	Scrnmarks[p_row].modf = TRUE;
 	if (!check || p_row < Tmaxrow() - 2) {
-		Tprntstr(str);
+		tprntstr(str);
 		Tcleol();
 	}
 	if (++p_col >= p_ncols) {
@@ -255,7 +255,7 @@ void Pinsert(void)
 				break;
 			}
 	} else
-		Tbell();
+		tbell();
 }
 
 /* Use instead of Znewline when in PAW */
@@ -270,7 +270,7 @@ void Pnewline(void)
 		     ++Cret, ptr += Csize)
 			;
 		if (Cret == Cnum) {
-			Tbell();
+			tbell();
 			return;
 		}
 	}
@@ -293,7 +293,7 @@ void Zpart(void)
 			}
 		}
 		bswitchto(Paw);
-		Tbell();
+		tbell();
 		return;
 	}
 #endif
@@ -308,7 +308,7 @@ void Zpart(void)
 			tbuff = Bufflist;
 		Makepaw(tbuff->bname, TRUE);
 	} else
-		Tbell();
+		tbell();
 }
 
 void Makepaw(char *word, Boolean start)

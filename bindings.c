@@ -43,7 +43,7 @@ void Zbind(void)
 			if (key == CR)
 				CRdefault = Keys[key];
 		} else
-			Tbell();
+			tbell();
 	}
 	Clrecho();
 }

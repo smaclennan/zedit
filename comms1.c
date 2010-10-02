@@ -372,7 +372,7 @@ static void Setregion(int (*convert)(int))
 
 	if (Curbuff->bmode & PROGMODE) {
 		Echo("Not in program mode");
-		Tbell();
+		tbell();
 		return;
 	}
 
@@ -470,7 +470,7 @@ void Mshow(unsigned ch)
 				++cnt;
 		} while (cnt && !Bisstart());
 		if (cnt)
-			Tbell();
+			tbell();
 		else {
 			Refresh();
 			ShowCursor(TRUE);	/* show the match! */

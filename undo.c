@@ -145,7 +145,7 @@ void Zundo(void)
 	int i;
 
 	if (!undo) {
-		Tbell();
+		tbell();
 		return;
 	}
 
@@ -169,7 +169,7 @@ void Zundo(void)
 		Curbuff->bmodf = FALSE;
 }
 #else
-void Zundo(void) { Tbell(); }
+void Zundo(void) { tbell(); }
 void undo_add(int size) {}
 void undo_del(int size) {}
 void undo_clear(struct buff *buff) {}

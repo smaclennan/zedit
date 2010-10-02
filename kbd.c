@@ -60,7 +60,7 @@ int Tgetcmd(void)
 		cmd = Tgetkb() & 0x7f;
 		if (cmd > NUMKEYS) { /* Ignore the key */
 			cmd = K_NODEF;
-			Tbell();
+			tbell();
 		}
 	} while (cmd == K_NODEF);
 

@@ -301,11 +301,11 @@ void CheckComment(void)
 		if (bisbeforemrk(start->start))
 			break;
 		else if (bisbeforemrk(start->end) || Bisatmrk(start->end)) {
-			Tstyle(start->type);
+			tstyle(start->type);
 			return;
 		}
 
-	Tstyle(T_NORMAL);
+	tstyle(T_NORMAL);
 }
 
 /* Called from Zcinsert when end comment entered */

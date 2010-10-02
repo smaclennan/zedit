@@ -33,7 +33,7 @@ void Zswitchto(void)
 	if (rc == -1)
 		return;
 	strcpy(Lbufname, was);
-	Cswitchto(Cfindbuff(Bnames[rc]));
+	cswitchto(Cfindbuff(Bnames[rc]));
 }
 
 void Znextbuff(void)
@@ -46,8 +46,8 @@ void Znextbuff(void)
 			;
 	if (next) {
 		strcpy(Lbufname, Curbuff->bname);
-		Cswitchto(next);
-		Reframe();
+		cswitchto(next);
+		reframe();
 	} else
 		tbell();
 }
@@ -66,17 +66,17 @@ void Zkillbuff(void)
 		bswitchto(tbuff);
 	}
 	if (Curbuff->bmodf)
-		switch (Ask("Save Changes? ")) {
+		switch (Ask("save Changes? ")) {
 		case ABORT:
 			return;
 		case YES:
 			Zfilesave();
 		}
-	Delbuff(Curbuff);
+	delbuff(Curbuff);
 }
 
 
-void Delbuff(struct buff *buff)
+void delbuff(struct buff *buff)
 {
 	char bname[BUFNAMMAX + 1];
 	int wascur;
@@ -96,7 +96,7 @@ void Delbuff(struct buff *buff)
 			if (tbuff)
 				bswitchto(tbuff);
 		}
-		Cswitchto(Curbuff);
+		cswitchto(Curbuff);
 
 		/* make sure all windows pointed to deleted buff are updated */
 		for (wdo = Whead; wdo; wdo = wdo->next)

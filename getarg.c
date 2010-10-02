@@ -93,7 +93,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
 	tgoto(trow, tcol);
 	Curwdo->modeflags = INVALID;
 	Curcmds = (Curbuff->bmode & VIEW) ? 1 : 0;	/* SAM */
-	Clrecho();
+	clrecho();
 #ifdef XWINDOWS
 	Tflush();
 	ShowCursor(TRUE);
@@ -287,7 +287,7 @@ void Zpart(void)
 		bswitchto(Cfindbuff(TAGBUFNAME));
 		for (bcsearch(NL); !Bisend(); bcsearch(NL)) {
 			Getbword(word, STRMAX, Istoken);
-			if (Strstr(word, Savetag)) {
+			if (Strstr(word, savetag)) {
 				Makepaw(word, TRUE);
 				return;
 			}

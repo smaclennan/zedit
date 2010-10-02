@@ -72,7 +72,7 @@ void Zspell(void)
 	/* make the paw 3 lines */
 	bswitchto(was);
 	Resize(-2);
-	Refresh();
+	refresh();
 	Mclear();
 	Echo("Checking...");
 	while (bisbeforemrk(emark)) {
@@ -116,7 +116,7 @@ void Zspell(void)
 
 			case '#':		/* no match */
 				Echo(SPELLSTRING);
-				Refresh();		/* update mark */
+				refresh();		/* update mark */
 				cmd = Tgetcmd();
 				switch (cmd) {
 				case ' ':		/* skip it */
@@ -167,7 +167,7 @@ void Zspell(void)
 	}
 abort:
 	fclose(in);		/* from fdopen */
-	Delbuff(sbuff);
+	delbuff(sbuff);
 	bswitchto(was);
 	bpnttomrk(point);
 	Mrktomrk(Curbuff->mark, mark);

@@ -19,30 +19,25 @@
 
 #include "z.h"
 
-static void Scroll(Boolean);
-
 void Zbegline(void)
 {
 	bmove(-1);
-	Tobegline();
+	tobegline();
 }
-
 
 void Zendline(void)
 {
 	bmove1();
-	Toendline();
+	toendline();
 }
 
-
 /* Support routine to calc column to force to for line up and down */
-int Forcecol(void)
+int forcecol(void)
 {
 	static int fcol;
 
 	return zCursor() ? fcol : (fcol = bgetcol(TRUE, 0));
 }
-
 
 static void ScrollLine(Boolean forward)
 {
@@ -52,7 +47,7 @@ static void ScrollLine(Boolean forward)
 		bmrktopnt(&save);
 		bpnttomrk(Sstart);
 		forward ? bcsearch(NL) : bcrsearch(NL);
-		Tobegline();
+		tobegline();
 		bmrktopnt(Sstart);
 		bmove(-1);
 		bmrktopnt(Psstart);
@@ -63,7 +58,7 @@ static void ScrollLine(Boolean forward)
 
 void Zprevline(void)
 {
-	int col = Forcecol();
+	int col = forcecol();
 
 	while (Arg-- > 0)
 		bcrsearch(NL);
@@ -76,7 +71,7 @@ void Zprevline(void)
 
 void Znextline(void)
 {
-	int col = Forcecol();
+	int col = forcecol();
 
 	while (Arg-- > 0)
 		bcsearch(NL);
@@ -101,18 +96,18 @@ void Znextchar(void)
 
 void Zprevpage(void)
 {
-	int i, n, col = Forcecol();
+	int i, n, col = forcecol();
 
 	bpnttomrk(Sstart);
 	for (n = i = Wheight() - prefline() - 2; i > 0 && bcrsearch(NL); --i)
 		i -= bgetcol(TRUE, 0) / Tmaxcol();
 	bmakecol(col, FALSE);
-	Reframe();
+	reframe();
 }
 
 void Znextpage(void)
 {
-	int i, col = Forcecol();
+	int i, col = forcecol();
 
 	bpnttomrk(Sstart);
 	for (i = Wheight() + prefline() - 2; i > 0 && bcsearch(NL); --i) {
@@ -121,7 +116,7 @@ void Znextpage(void)
 		bmove1();
 	}
 	bmakecol(col, FALSE);
-	Reframe();
+	reframe();
 }
 
 #define ISWORD	Istoken
@@ -164,6 +159,21 @@ void Zopenline(void)
 	bmove(-1);
 }
 
+static long getnum(char *prompt)
+{
+	char str[10];
+	long num = -1;
+
+	/* get the line number */
+	*str = '\0';
+	if (Argp) {
+		num = Arg;
+		Arg = 0;
+	} else if (Getarg(prompt, str, 9) == 0)
+		num = strtol(str, NULL, 0);
+	return num;
+}
+
 void Zlgoto(void)
 {
 	long line, cnt = 0;
@@ -172,7 +182,7 @@ void Zlgoto(void)
 	if (Argp)
 		line = Arg;
 	else {
-		line = Getnum("Line: ");
+		line = getnum("Line: ");
 		if (line == -1)
 			return;
 	}
@@ -199,27 +209,11 @@ void Zlgoto(void)
 
 void Zcgoto(void)
 {
-	int col = (int)Getnum("Column: ");
+	int col = (int)getnum("Column: ");
 	if (col == -1)
 		return;
 	bmakecol(--col, TRUE);
 }
-
-long Getnum(char *prompt)
-{
-	char str[10];
-	long num = -1;
-
-	/* get the line number */
-	*str = '\0';
-	if (Argp) {
-		num = Arg;
-		Arg = 0;
-	} else if (Getarg(prompt, str, 9) == 0)
-		num = strtol(str, NULL, 0);
-	return num;
-}
-
 
 static struct mark *Bookmrks[BOOKMARKS];	/* stack of book marks */
 static char *Bookname[BOOKMARKS];		/* stack of book names */
@@ -291,7 +285,7 @@ void Zviewline(void)
 	struct mark pmark;
 
 	bmrktopnt(&pmark);
-	Tobegline();
+	tobegline();
 	bmrktopnt(Sstart);
 	bmove(-1);
 	bmrktopnt(Psstart);
@@ -306,10 +300,8 @@ void Zredisplay(void)
 	Wsize();
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		wdo->modeflags = INVALID;
-	Redisplay();
-#if COMMENTBOLD
-	Recomment();
-#endif
+	redisplay();
+	recomment();
 }
 
 void Zbegwind(void)
@@ -326,17 +318,7 @@ void Zendwind(void)
 		;
 }
 
-void Zscrollup(void)
-{
-	Scroll(FALSE);
-}
-
-void Zscrolldown(void)
-{
-	Scroll(TRUE);
-}
-
-static void Scroll(Boolean forward)
+static void scroll(Boolean forward)
 {
 	struct mark *pmark = bcremrk();
 
@@ -347,7 +329,7 @@ static void Scroll(Boolean forward)
 	else
 		while (Arg-- > 0 && bcrsearch(NL))
 			;
-	Tobegline();
+	tobegline();
 	bmrktopnt(Sstart);
 	bmove(-1);
 	bmrktopnt(Psstart);
@@ -359,4 +341,14 @@ static void Scroll(Boolean forward)
 		bpnttomrk(pmark);
 
 	unmark(pmark);
+}
+
+void Zscrollup(void)
+{
+	scroll(FALSE);
+}
+
+void Zscrolldown(void)
+{
+	scroll(TRUE);
 }

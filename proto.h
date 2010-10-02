@@ -175,7 +175,7 @@ int access(char *, int);
 #endif
 struct passwd *dup_pwent(struct passwd *);
 char *AddHome(char*, char*);
-void initScrnmarks(void);
+void initscrnmarks(void);
 struct llist *Add(struct llist**, char*);
 char *Addbname(char *);
 void Addtocnames(int, char *);
@@ -209,7 +209,7 @@ int bmakecol(int, Boolean);
 Boolean bmove(int);
 Boolean bmove1(void);
 void bmrktopnt(struct mark *);
-void Boffset(unsigned long);
+void boffset(unsigned long);
 void bpnttomrk(struct mark *);
 int breadfile(char *);
 Boolean Bsearch(char *, Boolean);
@@ -222,22 +222,21 @@ int bwritefd(int);
 int bwritefile(char *);
 int Checkpipes(int type);
 struct buff *Cfindbuff(char *);
-void Clrecho(void);
+void clrecho(void);
 struct buff *Cmakebuff(char *, char *);
 struct buff *Cmdtobuff(char *, char *);
 int cntlines(int);
 int Compile(Byte*, Byte*, Byte*);
-void Copytomrk(struct mark *);
 Boolean CreateRing(void);
-void Cswitchto(struct buff *);
+void cswitchto(struct buff *);
 Boolean zCursor(void);
 Boolean Delay(void);
 Boolean Delayprompt(char *);
 Boolean Delbname(char *);
-void Delbuff(struct buff *);
+void delbuff(struct buff *);
 Boolean Delcmd(void);
 Boolean DelcmdAll(void);
-char *Dispkey(unsigned, char *);
+char *dispkey(unsigned, char *);
 void Dispit(char *, int *);
 void Doincsrch(char *, Boolean);
 void Doreplace(int);
@@ -247,9 +246,8 @@ void Dwait(int);
 void Edit(void);
 void Execute(void);
 void extendedlinemarker(void);
-int Fileread(char *);
-Boolean Filesave(void);
-Boolean Findfile(char *, int);
+Boolean filesave(void);
+Boolean findfile(char *, int);
 char *Findfirst(char *);
 char *Findnext(void);
 FILE *Findhelp(int, int, char *);
@@ -261,27 +259,25 @@ Boolean Getarg(char *, char *, int);
 char *Getbtxt(char *, int);
 Boolean Getbword(char *, int, int (*)());
 int Getdname(char *prompt, char *path);
-long Getnum(char *);
 int Getplete(char *, char *, char **, int, int);
 void Help(int, Boolean);
 void Helpit(int);
 void Initline(void);
-int Innerdsp(int, int, struct mark *);
 void Intomem(struct page *);
-Boolean Isdir(char *);
+Boolean isdir(char *);
 Boolean Isext(char *, char *);
-Boolean Isfile(char *, char *, char *, Boolean);
+Boolean isfile(char *, char *, char *, Boolean);
 Boolean Ispara(char, char);
 int Isspace(void);
 int Isnotws(void);
 int Istoken(void);
 int Iswhite(void);
 int Isword(void);
-void Killtomrk(struct mark *);
+void killtomrk(struct mark *);
 char *Lastpart(char *);
 char *Limit(char *, int);
-void Loadbind(void);
-void Loadsaved(void);
+void loadbind(void);
+void loadsaved(void);
 void makecur(struct page *);
 void makeoffset(int);
 void Makepaw(char *, Boolean);
@@ -291,7 +287,6 @@ void Moveto(int (*pred)(), Boolean forward);
 Boolean mrkaftermrk(struct mark *, struct mark *);
 Boolean mrkatmrk(struct mark *, struct mark *);
 Boolean mrkbeforemrk(struct mark *, struct mark *);
-void Mshow(unsigned);
 Boolean Mv(char *, char *);
 Boolean Cp(char *, char *);
 int main(int, char **);
@@ -300,7 +295,7 @@ char *Nocase(char *);
 void NoMem(void);
 int Parse(char *);
 void parsem(char *, Boolean);
-int Pathfixup(char *, char *);
+int pathfixup(char *, char *);
 Boolean Pcmdplete(Boolean);
 void Pinsert(void);
 int PipeToBuff(struct buff *buff, char *instr);
@@ -313,13 +308,13 @@ int prefline(void);
 void PutPaw(char *, int);
 void ReadVfile(void);
 Boolean Readone(char *, char *);
-void Redisplay(void);
-void Reframe(void);
-void Refresh(void);
+void redisplay(void);
+void reframe(void);
+void refresh(void);
 void Regerr(int);
 Boolean Resize(int);
-void Save(struct buff *);
-Boolean Saveall(Boolean);
+void save(struct buff *);
+Boolean saveall(Boolean);
 void Setavar(char *, Boolean);
 char *Setmodes(struct buff *);
 int Settabsize(unsigned);
@@ -350,11 +345,11 @@ void tinit(void);
 #endif
 void Titot(unsigned);
 int Tkbrdy(void);
-void Tobegline(void);
-void Toendline(void);
+void tobegline(void);
+void toendline(void);
 int Tolower(int);
 int Toupper(int);
-void Toggle_mode(int);
+void toggle_mode(int);
 void tprntchar(Byte);
 void tprntstr(char *);
 void tsize(int *, int *);
@@ -363,16 +358,15 @@ void Tungetkb(void);
 void unmark(struct mark *);
 void Usage(char *);
 void Varval(int var);
-void Vsetmod(Boolean);
-void Vsetmrk(struct mark *);
+void vsetmod(Boolean);
+void vsetmrk(struct mark *);
 void Walign(struct buff *);
 int chwidth(Byte, int, Boolean);
 void Wload(char *, int, int, unsigned long, int);
-int Write_rgn(char *);
 void free_pwent(struct passwd *pw);
 void Hangup(int);
 Boolean notdup_key(int k);
-void Quit(void);
+void quit(void);
 
 /* Terminal driver specific routines */
 
@@ -411,7 +405,7 @@ void Zmail(void);
 
 void Dbg(char *fmt, ...);
 void Dbgname(char *);
-void Fcheck(void);
+void fcheck(void);
 
 
 /* for getfname */
@@ -472,11 +466,17 @@ void Xfindtag(void);
 #endif
 
 #if COMMENTBOLD
-void AddComment(void);
-void ResetComments(void);
-void CheckComment(void);
-void Recomment(void);
-void AddCPP(void);
+void addcomment(void);
+void resetcomments(void);
+void checkcomment(void);
+void recomment(void);
+void addcpp(void);
+#else
+static inline void addcomment(void) {}
+static inline void resetcomments(void) {}
+static inline void checkcomment(void) {}
+static inline void recomment(void) {}
+static inline void addcpp(void) {}
 #endif
 
 #ifdef SCROLLBARS

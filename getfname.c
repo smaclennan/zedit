@@ -60,7 +60,7 @@ static int getname(char *prompt, char *path, Boolean isdir)
 	Keys['\t'] = ZFNAME;
 	rc = Getarg(prompt, strcpy(tmp, path), PATHMAX);
 	if (rc == 0) {
-		rc = Pathfixup(path, tmp);
+		rc = pathfixup(path, tmp);
 		if (rc == -1)
 			rc = isdir ? 0 : 1;
 	}
@@ -110,7 +110,7 @@ void Zfname(void)
 			if (len < n)
 				tbell();
 		}
-		if (f == 0 && Isdir(Getbtxt(txt, PATHMAX)) && Curplen < Pawlen)
+		if (f == 0 && isdir(Getbtxt(txt, PATHMAX)) && Curplen < Pawlen)
 			binsert(PSEP);
 	} else if (!update)
 		tbell();
@@ -134,7 +134,7 @@ void Zfname(void)
 			if (strlen(list->fname) > 23)
 				list->fname[23] = '\0';
 			tprntstr(list->fname);
-			if (Isdir(dir))
+			if (isdir(dir))
 				Tputchar(PSEP);
 			Tcleol();
 			col += 25;
@@ -162,7 +162,7 @@ struct llist *GetFill(char *dir, char **fname, int *len, Boolean *update)
 		First = FALSE;
 	}
 	Getbtxt(txt, PATHMAX);
-	if (Pathfixup(dir, txt) > 0)
+	if (pathfixup(dir, txt) > 0)
 		return NULL;
 	*update = strcmp(dir, txt);
 	if (*update)

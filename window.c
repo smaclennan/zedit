@@ -95,7 +95,7 @@ static Boolean Wdelete(struct wdo *wdo)
 
 	if (wdo == Curwdo) {
 		Wswitchto(new);
-		Reframe();	/*SAM*/
+		reframe();	/*SAM*/
 	}
 	Wfree(wdo);
 #ifdef SCROLLBARS
@@ -139,11 +139,11 @@ static Boolean Wsplit(void)
 	Curwdo->next = new;
 
 	/* Point may be off new screen, reframe just in case... */
-	Reframe();
+	reframe();
 
 	/* Go to new window. */
 	Wswitchto(new);
-	Reframe();
+	reframe();
 	Mrktomrk(Curwdo->wstart, Sstart);
 	return TRUE;
 }
@@ -184,7 +184,7 @@ void Wswitchto(struct wdo *wdo)
 }
 
 /* Switch to a new buffer in the current window. */
-void Cswitchto(struct buff *buff)
+void cswitchto(struct buff *buff)
 {
 	bswitchto(buff);
 	if (Curwdo->wbuff != Curbuff) {
@@ -330,7 +330,7 @@ Boolean Resize(int diff)
 	last->last += diff;
 	Rowmax += diff;
 	last->modeflags = INVALID;
-	Clrecho();
+	clrecho();
 	return TRUE;
 }
 
@@ -373,13 +373,13 @@ Boolean WuseOther(char *bname)
 	buff = Cmakebuff(bname, NULL);
 	if (buff == NULL)
 		return FALSE;
-	Cswitchto(buff);
+	cswitchto(buff);
 	bempty();
 	return TRUE;
 }
 
 /*
- * Invalidate an entire window. i.e. next Refresh will do a complete update.
+ * Invalidate an entire window. i.e. next refresh will do a complete update.
  * Note that the line BEFORE the window must be invalidated to make sure that
  * the window is updated correctly.
  */
@@ -542,7 +542,7 @@ void Bgoto(struct buff *buff)
 	if (wdo)
 		Wswitchto(wdo);
 	else
-		Cswitchto(buff);
+		cswitchto(buff);
 }
 
 /* These routines are ONLY callable at startup. */
@@ -586,7 +586,7 @@ void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 	if (new == NULL)
 		NoMem();
 	Mrktomrk(buff->mark, new->wmrk);
-	Boffset(sloc);
+	boffset(sloc);
 	bmrktopnt(new->wstart);
 	bpnttomrk(new->wpnt);	/* return it */
 	new->first = first;

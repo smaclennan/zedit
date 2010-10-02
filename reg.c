@@ -195,7 +195,7 @@ static Boolean advance(Byte *ep)
 
 		case CDOT | STAR:
 			bmrktopnt(&curlp); /* save the current position */
-			Toendline();
+			toendline();
 			goto star;
 
 		case CCHR | STAR:

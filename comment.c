@@ -45,7 +45,7 @@ static struct comment *new_comment(struct mark *start, struct mark *end,
 /* Mark a new comment from start to end.
  * If start or end are NULL, use Point.
  */
-static void NewComment(struct mark *start, struct mark *end)
+static void newcomment(struct mark *start, struct mark *end)
 {
 	struct comment *new = new_comment(start, end, T_COMMENT);
 	if (!new)
@@ -58,7 +58,7 @@ static void NewComment(struct mark *start, struct mark *end)
 	COMtail = new;
 }
 
-static void NewCPP(struct mark *start, struct mark *end, int type)
+static void newcpp(struct mark *start, struct mark *end, int type)
 {
 	struct comment *new = new_comment(start, end, type);
 	if (!new)
@@ -72,7 +72,7 @@ static void NewCPP(struct mark *start, struct mark *end, int type)
 }
 
 /* Merge the COMlist and the CPPlist into the buffer->comments */
-static void MergeComments(void)
+static void mergecomments(void)
 {
 	struct buff *buff = Curbuff;
 
@@ -117,7 +117,7 @@ static void MergeComments(void)
 
 #if 1
 /* Highlight a CPP. */
-static void CPPstatement(void)
+static void cppstatement(void)
 {
 	struct mark start;
 	int type;
@@ -146,7 +146,7 @@ again:
 			if (Buff() == '*') {
 				/* found comment start */
 				bmove(-2);
-				NewCPP(&start, NULL, type);
+				newcpp(&start, NULL, type);
 
 				/* find comment end */
 				if (Bsearch("*/", FORWARD)) {
@@ -161,7 +161,7 @@ again:
 			} else if (Buff() == '/') {
 				/* found c++ comment start */
 				bmove(-2);
-				NewCPP(&start, NULL, type);
+				newcpp(&start, NULL, type);
 
 				/* find comment end */
 				bcsearch('\n');
@@ -182,12 +182,12 @@ again:
 		bmove1();
 
 	}
-	NewCPP(&start, NULL, type);
+	newcpp(&start, NULL, type);
 }
 #endif
 
 /* Remove all comments from buffer and mark unscanned */
-static void UnComment(struct buff *buff)
+static void uncomment(struct buff *buff)
 {
 	struct comment *com, *next;
 	int i;
@@ -206,7 +206,7 @@ static void UnComment(struct buff *buff)
 }
 
 /* Scan an entire buffer for comments. */
-static void ScanBuffer(void)
+static void scanbuffer(void)
 {
 	struct mark tmark;
 	struct mark start;
@@ -233,7 +233,7 @@ static void ScanBuffer(void)
 			bmrktopnt(&start);
 			bcsearch('\n');
 			bmove(-1);
-			NewComment(&start, NULL);
+			newcomment(&start, NULL);
 		}
 	else
 		/* Look for both C and C++ comments. */
@@ -243,13 +243,13 @@ static void ScanBuffer(void)
 				bmrktopnt(&start);
 				if (Bsearch("*/", FORWARD)) {
 					bmove1();
-					NewComment(&start, NULL);
+					newcomment(&start, NULL);
 				}
 			} else if (Buff() == '/') {
 				bmove(-1);
 				bmrktopnt(&start);
-				Toendline();
-				NewComment(&start, NULL);
+				toendline();
+				newcomment(&start, NULL);
 			}
 		}
 
@@ -257,43 +257,43 @@ static void ScanBuffer(void)
 	btostart();
 	do {
 		if (Buff() == '#')
-			CPPstatement();
+			cppstatement();
 		else if (comchar) {
 			/* for assembler */
 			Movepast(Iswhite, 1);
 			if (Buff() == '.')
-				CPPstatement();
+				cppstatement();
 		}
 	} while (bcsearch('\n') && !Bisend());
 
-	MergeComments();
+	mergecomments();
 	bpnttomrk(&tmark);
 }
 
-/* The following are called by the Innerdsp routine. */
+/* The following are called by the innerdsp routine. */
 static struct comment *start;
 
-/* Called from Innerdsp before display loop */
-void ResetComments(void)
+/* Called from innerdsp before display loop */
+void resetcomments(void)
 {
 	if (DelcmdAll()) {
 		for (start = Curbuff->comments; start; start = start->next)
 			if (Markch(start->end) != '/') {
-				UnComment(Curbuff);
+				uncomment(Curbuff);
 				break;
 			}
 	} else if (Lfunc == ZYANK)
-		UnComment(Curbuff);
+		uncomment(Curbuff);
 	start = Curbuff->comments;
 }
 
-/* Called from Innerdsp before each char displayed. */
-void CheckComment(void)
+/* Called from innerdsp before each char displayed. */
+void checkcomment(void)
 {
 	if (!Curbuff->comstate) {
 		if (!(Curbuff->bmode & (CMODE | ASMMODE)))
 			return;
-		ScanBuffer();
+		scanbuffer();
 		Curbuff->comstate = 1;
 		start = Curbuff->comments;
 	}
@@ -309,23 +309,23 @@ void CheckComment(void)
 }
 
 /* Called from Zcinsert when end comment entered */
-void AddComment(void)
+void addcomment(void)
 {
-	ScanBuffer();
+	scanbuffer();
 }
 
 /* Called from Zcinsert when '#' entered at start of line */
-void AddCPP(void)
+void addcpp(void)
 {
-	ScanBuffer();
+	scanbuffer();
 }
 
 /* Called from Zredisplay */
-void Recomment(void)
+void recomment(void)
 {
 	struct buff *buff;
 
 	for (buff = Bufflist; buff; buff = buff->next)
-		UnComment(buff);
+		uncomment(buff);
 }
 #endif

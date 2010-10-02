@@ -74,7 +74,7 @@ void Execute(void)
 #if defined(PIPESH) && !defined(XWINDOWS)
 	fd_set fds = SelectFDs;
 
-	Refresh();
+	refresh();
 
 	if (cpushed)
 		Dotty();
@@ -84,7 +84,7 @@ void Execute(void)
 		while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
 #ifdef SYSV2
 			Checkpipes(1);
-			Refresh();
+			refresh();
 #endif
 			fds = SelectFDs;
 		}
@@ -93,7 +93,7 @@ void Execute(void)
 			Dotty();
 	}
 #else
-	Refresh();
+	refresh();
 	Dotty();
 #endif
 }
@@ -211,7 +211,7 @@ void Setup(int argc, char **argv)
 	if (textMode)
 		VAR(VNORMAL) = 0;
 
-	initScrnmarks(); /* init the screen marks and mark list */
+	initscrnmarks(); /* init the screen marks and mark list */
 
 	/* create the needed buffers */
 	Killbuff = bcreate();
@@ -247,8 +247,8 @@ void Setup(int argc, char **argv)
 				++files;
 		} else {
 			++files;
-			if (Pathfixup(path, argv[optind]) == 0)
-				if (!Findfile(path, TRUE))
+			if (pathfixup(path, argv[optind]) == 0)
+				if (!findfile(path, TRUE))
 					break;
 		}
 
@@ -261,26 +261,26 @@ void Setup(int argc, char **argv)
 		strcpy(Lbufname,
 		       Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
 
-		Clrecho();
+		clrecho();
 	} else
-		Loadsaved();
+		loadsaved();
 
 	Winit();
 	if (other) {
 		Z2wind();
-		Cswitchto(other);
-		Reframe();
+		cswitchto(other);
+		reframe();
 		Znextwind();
 	}
 
-	Reframe();
+	reframe();
 	Setmodes(Curbuff);		/* start it off right! */
 
 	if (!Curbuff->mtime && Curbuff->fname)
 		Echo("New File");
 
 	Bind();
-	Loadbind();		/* Do this after tinit */
+	loadbind();		/* Do this after tinit */
 
 	Curwdo->modeflags = INVALID;
 
@@ -318,7 +318,7 @@ Boolean Readone(char *bname, char *path)
 	if (Cmakebuff(bname, path)) {
 		int rc = breadfile(path);
 		if (rc >= 0) {
-			Toggle_mode(0);
+			toggle_mode(0);
 			if (rc > 0)
 				Echo("New File");
 			else if (access(path, R_OK|W_OK) == EOF)

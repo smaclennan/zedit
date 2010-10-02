@@ -22,7 +22,7 @@
 #ifdef TAGS
 #include <sys/stat.h>
 
-char Savetag[STRMAX + 1];
+char savetag[STRMAX + 1];
 static struct buff *Bsave;
 
 static void GotoMatch(struct mark *smark);
@@ -87,7 +87,7 @@ void Zfindtag(void)
 			}
 
 			if (found) {
-				strcpy(Savetag, tag);
+				strcpy(savetag, tag);
 				Nextpart = ZFINDTAG;
 				bpnttomrk(&tmark);
 				Getbword(tag, STRMAX, Istoken);
@@ -121,7 +121,7 @@ void Xfindtag(void)
 		if (strcmp(tag, word) == 0) {
 			/* found a match in the tag file */
 			GotoMatch(&smark);
-			Refresh();
+			refresh();
 			return;
 		}
 	}
@@ -202,13 +202,13 @@ static Boolean Tagfparse(struct buff *bsave)
 
 	if (i && (num != -1 || *str)) {
 		bswitchto(bsave);		/* restore correct buffer */
-		Pathfixup(path, fname);
-		Findfile(path, FALSE);
+		pathfixup(path, fname);
+		findfile(path, FALSE);
 		btostart();
 
 		if (num != -1)
 			if (byte)
-				Boffset(num);
+				boffset(num);
 			else
 				while (--num > 0 && bcsearch(NL))
 					;
@@ -297,7 +297,7 @@ static Boolean GetTagsFile(void)
 				return FALSE;
 			}
 		}
-		if (Pathfixup(fname, tagfname))
+		if (pathfixup(fname, tagfname))
 			return FALSE;
 	}
 

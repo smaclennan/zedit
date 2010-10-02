@@ -171,7 +171,7 @@ void Helpit(int type)
 	binstr("\n     Top Level Help Menu");
 	btostart();
 	Curbuff->bmodf = FALSE;
-	Clrecho();
+	clrecho();
 }
 
 
@@ -197,7 +197,7 @@ static void dump_bindings(char *buff, int fnum)
 					binstr(",  ");
 				else
 					found = TRUE;
-				binstr(Dispkey(k, buff));
+				binstr(dispkey(k, buff));
 			}
 
 	if (!found)
@@ -252,7 +252,7 @@ FILE *Findhelp(int code, Boolean func, char *buff)
 	Echo("Looking in help file...");
 	while (fgets(buff, STRMAX, fp))
 		if (*buff == ':' && strncmp(ptr, &buff[1], len) == 0) {
-			Clrecho();
+			clrecho();
 			return fp;
 		}
 	fclose(fp);

@@ -31,7 +31,7 @@ struct avar Vars[] = {
 	{ "ClearExit",		FLAG,		DEFAULT(0) },
 	{ "CTabs",		DECIMAL,	DEFAULT(4) },
 	{ "DateFormat",		STRING,		DEFAULT(0) },
-	{ "DoSave",		FLAG,		DEFAULT(0) },
+	{ "Dosave",		FLAG,		DEFAULT(0) },
 	{ "Exact",		FLAG,		DEFAULT(1) },
 	{ "ExecOnMatch",	FLAG,		DEFAULT(0) },
 	{ "ExpandPaths",	FLAG,		DEFAULT(1) },
@@ -48,7 +48,7 @@ struct avar Vars[] = {
 	{ "Normal",		FLAG,		DEFAULT(1) },
 	{ "Overwrite",		FLAG,		DEFAULT(0) },
 	{ "Print",		STRING,		DEFAULT(0) },
-	{ "SaveOnExit",		FLAG,		DEFAULT(0) },
+	{ "saveOnExit",		FLAG,		DEFAULT(0) },
 	{ "ShowCWD",		FLAG,		DEFAULT(1) },
 	{ "Silent",		FLAG,		DEFAULT(0) },
 	{ "SingleScroll",	FLAG,		DEFAULT(1) },
@@ -179,7 +179,7 @@ void ReadVfile(void)
 
 
 	/* If ConfigDir is really a file, read the file and set to 0. */
-	if (!Isdir(ConfigDir)) {
+	if (!isdir(ConfigDir)) {
 		ReadConfigFile(ConfigDir);
 		ConfigDir = NULL;
 	}
@@ -405,7 +405,7 @@ void Dline(int trow)
 	}
 }
 
-/* Save the current variables in the config.z file */
+/* save the current variables in the config.z file */
 void Zsaveconfig(void)
 {
 	FILE *fp;
@@ -452,5 +452,5 @@ void Zsaveconfig(void)
 				VAR(i) ? "True" : "False");
 
 	fclose(fp);
-	Echo("Saved.");
+	Echo("saved.");
 }

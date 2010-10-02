@@ -115,7 +115,7 @@ struct cnames Cnames[] = {
 	{"Previous Word",		ZBWORD,		H_CURSOR},
 	{"Print",			ZPRINT,		H_SHELL},
 	{"Query Replace",		ZQUERY,		H_SEARCH},
-	{"Quit",			ZQUIT,		H_MISC},
+	{"quit",			ZQUIT,		H_MISC},
 	{"Quote",			ZQUOTE,		H_MISC},
 	{"Read File",			ZFILEREAD,	H_FILE},
 	{"Redisplay",			ZREDISPLAY,	H_DISP},
@@ -124,10 +124,10 @@ struct cnames Cnames[] = {
 	{"Reverse Inc. Search",		ZRINCSRCH,	H_SEARCH},
 	{"Reverse Search",		ZRSEARCH,	H_SEARCH},
 	{"Revert File",			ZREVERTFILE,	H_FILE},
-	{"Save All Files",		ZSAVEALL,	H_FILE},
-	{"Save Bindings",		ZSAVEBIND,	H_BIND},
-	{"Save Config",			ZSAVECONFIG,	H_HELP},
-	{"Save File",			ZFILESAVE,	H_FILE},
+	{"save All Files",		ZSAVEALL,	H_FILE},
+	{"save Bindings",		ZSAVEBIND,	H_BIND},
+	{"save Config",			ZSAVECONFIG,	H_HELP},
+	{"save File",			ZFILESAVE,	H_FILE},
 	{"Scroll Down",			ZSCROLLDOWN,	H_DISP},
 	{"Scroll Up",			ZSCROLLUP,	H_DISP},
 	{"Search",			ZSEARCH,	H_SEARCH},
@@ -308,7 +308,7 @@ int Curcmds;
 
 
 #if DBG
-void Fcheck(void)
+void fcheck(void)
 {
 	int s1, s2;
 	int error = 0;
@@ -346,5 +346,5 @@ void Fcheck(void)
 		Error("INTERNAL ERRORS: check z.out file");
 }
 #else
-void Fcheck(void) {}
+void fcheck(void) {}
 #endif

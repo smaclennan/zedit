@@ -22,6 +22,23 @@
 
 struct buff *Killbuff;
 
+static void copytomrk(struct mark *tmark)
+{
+	struct buff *save = Curbuff;
+	bswitchto(Killbuff);
+	if (Delcmd())
+		btoend();
+	else
+		bempty();
+	bswitchto(save);
+	bcopyrgn(tmark, Killbuff);
+}
+
+void killtomrk(struct mark *tmark)
+{
+	copytomrk(tmark);
+	bdeltomrk(tmark);
+}
 
 void Zmakedel(void) {}
 
@@ -47,14 +64,14 @@ void Zdeleol(void)
 	else if (VAR(VKILLLINE)) {
 		Boolean atstart;
 
-		Tobegline();
+		tobegline();
 		atstart = Bisatmrk(tmark);
-		Toendline();
+		toendline();
 		if (atstart)
 			bmove1(); /* delete the NL */
 	} else
-		Toendline();
-	Killtomrk(tmark);
+		toendline();
+	killtomrk(tmark);
 	unmark(tmark);
 }
 
@@ -62,24 +79,24 @@ void Zdelline(void)
 {
 	struct mark *tmark;
 
-	Tobegline();
+	tobegline();
 	tmark = bcremrk();
 	bcsearch(NL);
-	Killtomrk(tmark);
+	killtomrk(tmark);
 	unmark(tmark);
 }
 
 /* Delete from the point to the mark */
 void Zdelrgn(void)
 {
-	Killtomrk(Curbuff->mark);
+	killtomrk(Curbuff->mark);
 }
 
 
 /* Copy from point to the mark into delbuff */
 void Zcopyrgn(void)
 {
-	Copytomrk(Curbuff->mark);
+	copytomrk(Curbuff->mark);
 }
 
 
@@ -107,7 +124,7 @@ void Zyank(void)
 	bswitchto(tbuff);
 	undo_add(yanked);
 	if (bisaftermrk(&save))
-		Reframe();
+		reframe();
 }
 
 void Zdelword(void)
@@ -117,7 +134,7 @@ void Zdelword(void)
 	tmark = bcremrk();
 	Moveto(Isword, FORWARD);
 	Movepast(Isword, FORWARD);
-	Killtomrk(tmark);
+	killtomrk(tmark);
 	unmark(tmark);
 }
 
@@ -127,7 +144,7 @@ void Zrdelword(void)
 
 	tmark = bcremrk();
 	Zbword();
-	Killtomrk(tmark);
+	killtomrk(tmark);
 	unmark(tmark);
 }
 
@@ -150,7 +167,7 @@ void Zgetbword(void)
 		Movepast(Istoken, BACKWARD);
 		start = bcremrk();
 		Movepast(Istoken, FORWARD); /* move Point to end of word */
-		Copytomrk(start); /* copy to Kill buffer */
+		copytomrk(start); /* copy to Kill buffer */
 		bpnttomrk(tmark); /* move Point back */
 		unmark(tmark);
 		unmark(start);
@@ -188,7 +205,7 @@ void Zdelblanks(void)
 
 void Zjoin(void)
 {
-	Toendline();
+	toendline();
 	bdelete(1);
 	Zdelwhite();
 	binsert(' ');
@@ -200,17 +217,4 @@ void Zempty(void)
 		return;
 	bempty();
 	Curbuff->bmodf = MODIFIED;
-}
-
-
-void Copytomrk(struct mark *tmark)
-{
-	struct buff *save = Curbuff;
-	bswitchto(Killbuff);
-	if (Delcmd())
-		btoend();
-	else
-		bempty();
-	bswitchto(save);
-	bcopyrgn(tmark, Killbuff);
 }

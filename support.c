@@ -44,7 +44,7 @@ int Ask(char *msg)
 			break;
 		}
 	while (rc == BADCHAR);
-	Clrecho();
+	clrecho();
 	return rc;
 }
 
@@ -66,7 +66,7 @@ void Blockmove(struct mark *from, struct mark *to)
 
 #ifndef XWINDOWS
 /* more efficient to not make it a macro */
-void Clrecho(void) { PutPaw("", 2); }
+void clrecho(void) { PutPaw("", 2); }
 #endif
 
 Boolean Isext(char *fname, char *ext)
@@ -198,16 +198,16 @@ int Findpath(char *p, char *f, int s, Boolean m)
 {
 	switch (s) {
 	case 4:
-		if (Isfile(p, Thispath, f, m))
+		if (isfile(p, Thispath, f, m))
 			return 4;
 	case 3:
-		if (Isfile(p, Me->pw_dir, f, m))
+		if (isfile(p, Me->pw_dir, f, m))
 			return 3;
 	case 2:
-		if (Isfile(p, ".", f, m))
+		if (isfile(p, ".", f, m))
 			return 2;
 	case 1:
-		if (Isfile(p, ConfigDir, f, m))
+		if (isfile(p, ConfigDir, f, m))
 			return 1;
 	default:
 		strcpy(p, f);
@@ -251,12 +251,6 @@ char *Getbtxt(char txt[], int max)
 	txt[i] = '\0';
 	bpnttomrk(&tmark);
 	return txt;
-}
-
-void Killtomrk(struct mark *tmark)
-{
-	Copytomrk(tmark);
-	bdeltomrk(tmark);
 }
 
 /* Go forward or back past a thingy */

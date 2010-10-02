@@ -23,8 +23,8 @@
 
 Byte CRdefault = ZNEWLINE;
 
-static Boolean Bindfile(char *fname, int mode);
-static Boolean Bindone(char *prompt, int first, int *key);
+static Boolean bindfile(char *fname, int mode);
+static Boolean bindone(char *prompt, int first, int *key);
 
 void Zbind(void)
 {
@@ -38,14 +38,14 @@ void Zbind(void)
 	f = Getplete("Bind: ", (char *)NULL, (char **)Cnames,
 		     CNAMESIZE, NUMFUNCS);
 	if (f != -1) {
-		if (Bindone("Key: ", TRUE, &key)) {
+		if (bindone("Key: ", TRUE, &key)) {
 			Keys[key] = Cnames[f].fnum;
 			if (key == CR)
 				CRdefault = Keys[key];
 		} else
 			tbell();
 	}
-	Clrecho();
+	clrecho();
 }
 
 
@@ -98,7 +98,7 @@ void Zcmdbind(void)
 				if (notdup_key(k)) {
 					if (found)
 						strcat(PawStr, " or ");
-					strcat(PawStr, Dispkey(k, line));
+					strcat(PawStr, dispkey(k, line));
 					if (strlen(PawStr) > Colmax)
 						break;
 					found = TRUE;
@@ -110,7 +110,7 @@ void Zcmdbind(void)
 	}
 }
 
-static void Out(char *line, FILE *fp)
+static void out(char *line, FILE *fp)
 {
 	if (fp)
 		fputs(line, fp);
@@ -118,12 +118,12 @@ static void Out(char *line, FILE *fp)
 		binstr(line);
 }
 
-static void Outto(FILE *fp, int col)
+static void outto(FILE *fp, int col)
 {
 	int i;
 
 	for (i = bgetcol(FALSE, 0); i < col; ++i)
-		Out(" ", fp);
+		out(" ", fp);
 }
 
 void Zdispbinds(void)
@@ -148,35 +148,35 @@ void Zdispbinds(void)
 		WuseOther(LISTBUFF);
 	}
 	Echo("Please Wait...");
-	Out("COMMAND                            PERMS     BINDING\n", fp);
+	out("COMMAND                            PERMS     BINDING\n", fp);
 	for (f = 0; f < NUMFUNCS; ++f)
 		if (Cnames[f].fnum != ZNOTIMPL && Cnames[f].fnum != ZINSERT) {
 			sprintf(line, "%-35s%cw%c       ", Cnames[f].name,
 				Cmds[Cnames[f].fnum][1] == Znotimpl ? '-' : 'r',
 				Cmds[Cnames[f].fnum][2] == Znotimpl ? '-' : 'p'
 				);
-			Out(line, fp);
+			out(line, fp);
 			found = FALSE;
 			for (k = 0; k < NUMKEYS; ++k)
 				if (Keys[k] == Cnames[f].fnum)
 					if (notdup_key(k)) {
 						if (found)
-							Outto(fp, 45);
-						Out(Dispkey(k, line), fp);
-						Out("\n", fp);
+							outto(fp, 45);
+						out(dispkey(k, line), fp);
+						out("\n", fp);
 						found = TRUE;
 					}
 			if (!found)
-				Out("Unbound\n", fp);
+				out("Unbound\n", fp);
 		}
 	btostart();
 	if (!fp)
 		Curbuff->bmodf = FALSE;
-	Clrecho();
+	clrecho();
 	Arg = 0;
 }
 
-static char *BindFname(char *fname)
+static char *bindfname(char *fname)
 {
 #ifdef XWINDOWS
 	strcpy(fname, ".zb.X");
@@ -186,19 +186,19 @@ static char *BindFname(char *fname)
 	return fname;
 }
 
-void Loadbind(void)
+void loadbind(void)
 {
 	char fname[30], path[PATHMAX + 1];
 	int i;
 
-	BindFname(fname);
+	bindfname(fname);
 	for (i = FINDPATHS; i && (i = Findpath(path, fname, i, TRUE)); --i)
-		Bindfile(path, READ_BINARY);
-	Fcheck();
+		bindfile(path, READ_BINARY);
+	fcheck();
 }
 
 
-/* Save a bindings file.
+/* save a bindings file.
  * Use Findpath starting at the $HOME directory to find where to
  * save the bindings file. If no bindings file exists, save in the
  * $HOME dir.
@@ -208,7 +208,7 @@ void Zsavebind(void)
 	char fname[30], path[PATHMAX + 1];
 	int i, n;
 
-	BindFname(fname);
+	bindfname(fname);
 	for (n = 0, i = 3; i && (i = Findpath(path, fname, i, TRUE)); --i)
 		n = i;
 	if (n)
@@ -217,13 +217,13 @@ void Zsavebind(void)
 		sprintf(path, "%s/%s", Me->pw_dir, fname);
 	if (Argp && Getfname("Bind File: ", path))
 		return;
-	if (Bindfile(path, WRITE_MODE)) {
+	if (bindfile(path, WRITE_MODE)) {
 		sprintf(PawStr, "%s written.", path);
 		Echo(PawStr);
 	}
 }
 
-static Boolean Bindfile(char *fname, int mode)
+static Boolean bindfile(char *fname, int mode)
 {
 	char version[3];
 	int fd, modesave, rc = FALSE;
@@ -263,7 +263,7 @@ static Boolean Bindfile(char *fname, int mode)
 	return rc;
 }
 
-static Boolean Bindone(char *prompt, int first, int *key)
+static Boolean bindone(char *prompt, int first, int *key)
 {
 	Echo(prompt);
 	*key = Tgetcmd();
@@ -274,12 +274,12 @@ static Boolean Bindone(char *prompt, int first, int *key)
 		Zquote();
 		*key = Cmd;
 	} else if (first && Keys[*key] == ZMETA)
-		if (Bindone("Key: M-", FALSE, key))
+		if (bindone("Key: M-", FALSE, key))
 			*key += 128;
 		else
 			return FALSE;
 	else if (first && Keys[*key] == ZCTRLX) {
-		if (Bindone("Key: C-X ", FALSE, key))
+		if (bindone("Key: C-X ", FALSE, key))
 			*key += 256;
 		else
 			return FALSE;
@@ -287,7 +287,7 @@ static Boolean Bindone(char *prompt, int first, int *key)
 	return TRUE;
 }
 
-char *Dispkey(unsigned key, char *s)
+char *dispkey(unsigned key, char *s)
 {
 	char *p;
 	int j;

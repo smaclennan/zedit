@@ -236,7 +236,7 @@ extern Byte CRdefault;
 
 extern char G_start[], G_end[];
 extern char Calc_str[];
-extern char Savetag[];
+extern char savetag[];
 extern char Command[];
 extern char mkcmd[];
 extern char grepcmd[];

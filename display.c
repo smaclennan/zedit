@@ -20,7 +20,8 @@
 #include "z.h"
 #include "assert.h"
 
-static void Pawdisplay(struct mark *, struct mark *);
+static int innerdsp(int, int, struct mark *);
+static void pawdisplay(struct mark *, struct mark *);
 
 struct mark *Sstart, *Psstart;	/* Screen start and 'prestart' */
 struct mark *Send;		/* Screen end */
@@ -28,11 +29,11 @@ Boolean Sendp;			/* Screen end set */
 struct mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
 int Tlrow;			/* Last row displayed */
 
-static int NESTED;		/* Refresh can go recursive... */
+static int NESTED;		/* refresh can go recursive... */
 Byte tline[COLMAX + 1];
 
 /* Mark screen invalid */
-void Redisplay(void)
+void redisplay(void)
 {
 	int i;
 
@@ -43,7 +44,7 @@ void Redisplay(void)
 }
 
 /* Do the actual display update from the buffer */
-void Refresh(void)
+void refresh(void)
 {
 	int pntrow, col, bcol;
 	struct mark *pmark;
@@ -55,7 +56,7 @@ void Refresh(void)
 		was = bcremrk();
 	pmark = bcremrk();
 	if (InPaw) {
-		Pawdisplay(pmark, was);
+		pawdisplay(pmark, was);
 		return;
 	}
 	ASSERT(++NESTED < 10);
@@ -64,8 +65,8 @@ void Refresh(void)
 
 	if (!mrkatmrk(was, Curbuff->mark)) {
 		/* the user mark has moved! */
-		Vsetmrk(was);
-		Vsetmrk(Curbuff->mark);
+		vsetmrk(was);
+		vsetmrk(Curbuff->mark);
 		Tlrow = -1;
 		Mrktomrk(was, Curbuff->mark);
 	}
@@ -73,20 +74,20 @@ void Refresh(void)
 	if (bisbeforemrk(Sstart) || (Sendp && !bisbeforemrk(Send)) ||
 	   Sstart->mbuff != Curbuff)
 		/* The cursor has moved before/after the screen marks */
-		Reframe();
+		reframe();
 	bpnttomrk(Sstart);
 	if (Bisatmrk(Psstart) && !Bisstart()) {
 		/* Deleted first char in window that is not at buffer start */
 		bpnttomrk(pmark);
-		Reframe();
+		reframe();
 		bpnttomrk(Sstart);
 	}
-	pntrow = Innerdsp(Curwdo->first, Curwdo->last, pmark);
+	pntrow = innerdsp(Curwdo->first, Curwdo->last, pmark);
 	if (bisbeforemrk(pmark) && !Tkbrdy()) {
 		bpnttomrk(pmark);
 		unmark(pmark);
-		Reframe();
-		Refresh();
+		reframe();
+		refresh();
 		--NESTED;
 		return;
 	}
@@ -100,7 +101,7 @@ void Refresh(void)
 			Settabsize(Curbuff->bmode);
 			point = bcremrk();
 			bpnttomrk(wdo->wstart);
-			Innerdsp(wdo->first, wdo->last, NULL);
+			innerdsp(wdo->first, wdo->last, NULL);
 			Modeflags(wdo);
 			bpnttomrk(point);
 			unmark(point);
@@ -148,7 +149,7 @@ void Refresh(void)
 }
 
 /* Test and clear modified flag on screen mark. */
-static inline Boolean Btstmrk(struct mark *tmark)
+static inline Boolean btstmrk(struct mark *tmark)
 {
 	Boolean temp = tmark->modf;
 	tmark->modf  = FALSE;
@@ -164,7 +165,7 @@ static inline int buff_col(void)
  * Do the acutal screen update.
  * Curwdo is not valid.
  */
-int Innerdsp(int from, int to, struct mark *pmark)
+static int innerdsp(int from, int to, struct mark *pmark)
 {
 	int trow;
 	 Byte *lptr;
@@ -173,14 +174,12 @@ int Innerdsp(int from, int to, struct mark *pmark)
 	static int pntrow;
 	int needpnt = TRUE, col;
 
-#if COMMENTBOLD
-	ResetComments();
-#endif
+	resetcomments();
 	for (trow = from; trow < to; ++trow) {
 #ifdef HSCROLL
 		bmove(Hshift);
 #endif
-		if (Btstmrk(&Scrnmarks[trow]) || !Bisatmrk(&Scrnmarks[trow])) {
+		if (btstmrk(&Scrnmarks[trow]) || !Bisatmrk(&Scrnmarks[trow])) {
 			bmrktopnt(&Scrnmarks[trow]); /* Do this before Tkbrdy */
 			lptr = tline;
 			col = Tstart;
@@ -195,9 +194,7 @@ int Innerdsp(int from, int to, struct mark *pmark)
 					if (Bisatmrk(Curbuff->mark))
 						setmark(TRUE);
 					else {
-#if COMMENTBOLD
-						CheckComment();
-#endif
+						checkcomment();
 						tprntchar(Buff());
 					}
 					if (trow == Tlrow &&
@@ -240,8 +237,8 @@ int Innerdsp(int from, int to, struct mark *pmark)
 		Sendp = TRUE;
 		if (needpnt) {
 			/* the user has typed past the end of the screen */
-			Reframe();
-			Refresh();
+			reframe();
+			refresh();
 		}
 	}
 
@@ -253,7 +250,7 @@ int Innerdsp(int from, int to, struct mark *pmark)
 }
 
 /* Work for centering redisplay */
-void Reframe(void)
+void reframe(void)
 {
 	int cnt;
 	struct mark *pmark;
@@ -264,7 +261,7 @@ void Reframe(void)
 	if (cnt < 0)
 		bmakecol((-cnt) * Tmaxcol(), FALSE);
 	else
-		Tobegline();
+		tobegline();
 	bmrktopnt(Sstart);
 	bmove(-1);
 	bmrktopnt(Psstart);
@@ -274,7 +271,7 @@ void Reframe(void)
 }
 
 /* Set one windows modified flags. */
-static void Subset(int from, int to, int flag)
+static void subset(int from, int to, int flag)
 {
 	struct mark *btmark, *ltmark;
 
@@ -310,16 +307,16 @@ static void Subset(int from, int to, int flag)
 }
 
 /* Insert the correct modified flags. */
-void Vsetmod(int flag)
+void vsetmod(int flag)
 {
 	struct wdo *wdo;
 
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (wdo->wbuff == Curbuff)
-			Subset(wdo->first, wdo->last, flag);
+			subset(wdo->first, wdo->last, flag);
 }
 
-void Vsetmrk(struct mark *mrk)
+void vsetmrk(struct mark *mrk)
 {
 	int row;
 
@@ -331,21 +328,9 @@ void Vsetmrk(struct mark *mrk)
 		}
 }
 
-void Tobegline(void)
-{
-	if (bcrsearch(NL))
-		bmove1();
-}
-
-void Toendline(void)
-{
-	if (bcsearch(NL))
-		bmove(-1);
-}
-
 #define SHIFT	(Colmax / 4 + 1)
 
-static void Pawdisplay(struct mark *pmark, struct mark *was)
+static void pawdisplay(struct mark *pmark, struct mark *was)
 {
 	int bcol = 0, i, nested = 0;
 #ifndef XWINDOWS
@@ -440,7 +425,7 @@ pawshift:
 	Tflush();
 }
 
-void initScrnmarks(void)
+void initscrnmarks(void)
 {
 	int cnt;
 

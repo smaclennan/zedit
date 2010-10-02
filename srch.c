@@ -54,7 +54,7 @@ void Doincsrch(char *prompt, Boolean forward)
 	strcpy(str, Nocase(prompt));
 	p = str + strlen(str);
 	while (go) {
-		Refresh();
+		refresh();
 		PutPaw(str, 2);
 		cmd = Tgetcmd();
 		if (isprint(cmd) && i < STRMAX) {
@@ -96,7 +96,7 @@ void Doincsrch(char *prompt, Boolean forward)
 		}
 		first = 0;
 	}
-	Clrecho();
+	clrecho();
 	if (Keys[cmd] == ZABORT)
 		bpnttomrk(&marks[0]);
 	else
@@ -125,7 +125,7 @@ void Zgsearch(void)
 {
 	if (Getarg(Nocase("Global Search: "), old, STRMAX))
 		return;
-	Cswitchto(Bufflist);
+	cswitchto(Bufflist);
 	btostart();
 	searchdir[0] = FORWARD;
 	searchdir[1] = SGLOBAL;
@@ -141,7 +141,7 @@ void Zgresrch(void)
 {
 	if (Getarg(Nocase("Global RE Search: "), old, STRMAX))
 		return;
-	Cswitchto(Bufflist);
+	cswitchto(Bufflist);
 	btostart();
 	searchdir[0] = REGEXP;
 	searchdir[1] = SGLOBAL;
@@ -156,7 +156,7 @@ void Zagain(void)
 		while (!Promptsearch("", AGAIN)) {
 			Curbuff = Curbuff->next;
 			if (Curbuff) {
-				Cswitchto(Curbuff);
+				cswitchto(Curbuff);
 				btostart();
 				Arg = 1;
 			} else {
@@ -232,7 +232,7 @@ void Doreplace(int type)
 		Regerr(rc);
 	else if (Argp) {
 		for (tbuff = Bufflist; tbuff && !exit; tbuff = tbuff->next) {
-			Cswitchto(tbuff);
+			cswitchto(tbuff);
 			bmrktopnt(&tmark);
 			btostart();
 			while (Replaceone(type, &query, &exit, ebuf, crgone) &&
@@ -240,12 +240,12 @@ void Doreplace(int type)
 				;
 			bpnttomrk(&tmark);
 		}
-		Clrecho();
-		Cswitchto(pmark->mbuff);
+		clrecho();
+		cswitchto(pmark->mbuff);
 	} else if (!Replaceone(type, &query, &exit, ebuf, crgone) && !exit)
 		Echo("Not Found");
 	else
-		Clrecho();
+		clrecho();
 
 	bpnttomrk(pmark);
 	unmark(pmark);
@@ -271,7 +271,7 @@ input:
 			switch (tchar = GetQueryCmd(tchar))
 #else
 			Echo("Replace? ");
-			Refresh();
+			refresh();
 input:
 			switch (tchar = Tgetcmd()) {
 #endif
@@ -335,9 +335,9 @@ input:
 
 		/* change it! */
 		if (type == REGEXP) {
-			/* force Killtomrk to delete previous kill */
+			/* force killtomrk to delete previous kill */
 			Lfunc = ZNOTIMPL;
-			Killtomrk(REstart);
+			killtomrk(REstart);
 			for (ptr = new; *ptr; ++ptr)
 				switch (*ptr) {
 				case '\\':
@@ -352,7 +352,7 @@ input:
 			binstr(new);
 		}
 		if (*query && tchar == ',') {
-			Refresh();
+			refresh();
 			if (Ask("Confirm? ") != YES) {
 				/* change it back */
 				if (type == REGEXP) {
@@ -436,7 +436,7 @@ static Boolean Dosearch(void)
 		} else
 			Echo("Not Found");
 	} else
-		Clrecho();
+		clrecho();
 	unmark(tmark);
 	Arg = 0;
 	return found;

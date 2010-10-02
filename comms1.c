@@ -19,20 +19,20 @@
 
 #include "z.h"
 
-static char *SaveFileName(char *fname)
+static char *savefilename(char *fname)
 {
 	sprintf(fname, "%s.%d", ZSFILE, (int)Me->pw_uid);
 	return fname;
 }
 
-void Save(struct buff *bsave)
+void save(struct buff *bsave)
 {
 	struct wdo *wdo;
 	struct buff *tbuff;
 	char fname[30];
 	unsigned junk;
 	unsigned long ploc, mloc;
-	FILE *fp = fopen(SaveFileName(fname), "w");
+	FILE *fp = fopen(savefilename(fname), "w");
 	if (fp == NULL)
 		return;
 
@@ -77,7 +77,7 @@ void Save(struct buff *bsave)
 	fclose(fp);
 }
 
-void Loadsaved(void)
+void loadsaved(void)
 {
 	FILE *fp;
 	char bname[BUFNAMMAX + 1], fname[PATHMAX + 1], save[PATHMAX + 1];
@@ -88,7 +88,7 @@ void Loadsaved(void)
 	if (!VAR(VDOSAVE))
 		return;
 
-	fp = fopen(SaveFileName(fname), "r");
+	fp = fopen(savefilename(fname), "r");
 	if (fp == NULL)
 		return;
 
@@ -115,9 +115,9 @@ void Loadsaved(void)
 #endif
 
 		Readone(bname, fname);
-		Boffset(mloc);
+		boffset(mloc);
 		bmrktopnt(Curbuff->mark);
-		Boffset(ploc);
+		boffset(ploc);
 #if COMMENTBOLD
 		/* strip the comchar off the mode */
 		comchar = mode >> 24;
@@ -137,21 +137,6 @@ void Loadsaved(void)
 
 	fclose(fp);
 	strcpy(Lbufname, save);
-}
-
-
-/* bmove can only move the Point +/-32767 bytes. This routine overcomes
- * this limitation.
- * NOTE: Can only move forward.
- */
-#define MAXMOVE		(0x7fff - 1024)
-
-void Boffset(unsigned long off)
-{
-	btostart();
-	for (; off > MAXMOVE; off -= MAXMOVE)
-		bmove(MAXMOVE);
-	bmove(off);
 }
 
 void Zcount(void)
@@ -234,7 +219,7 @@ void Zmode(void)
 		Curbuff->bmode ^= VIEW;
 		Curwdo->modeflags = INVALID;
 	} else if (rc != -1)
-		Toggle_mode(modes[rc].mode);
+		toggle_mode(modes[rc].mode);
 }
 
 /* we allow 8 extensions per type */
@@ -305,7 +290,7 @@ static Boolean extmatch(char *str, Boolean mode)
 
 
 /* Toggle from/to 'mode'. Passed 0 to set for Readone */
-void Toggle_mode(int mode)
+void toggle_mode(int mode)
 {
 	int new, tsave;
 
@@ -365,7 +350,7 @@ void Zdate(void)
 	Arg = 0;
 }
 
-static void Setregion(int (*convert)(int))
+static void setregion(int (*convert)(int))
 {
 	Boolean swapped;
 	struct mark tmark;
@@ -394,15 +379,15 @@ static void Setregion(int (*convert)(int))
 
 void Zupregion(void)
 {
-	Setregion(Toupper);
+	setregion(Toupper);
 }
 
 void Zlowregion(void)
 {
-	Setregion(Tolower);
+	setregion(Tolower);
 }
 
-static void Indent(Boolean flag)
+static void indent(Boolean flag)
 {
 	struct mark *psave, *msave = NULL;
 	int i;
@@ -434,64 +419,12 @@ static void Indent(Boolean flag)
 
 void Zindent(void)
 {
-	Indent(TRUE);
+	indent(TRUE);
 }
 
 void Zundent(void)
 {
-	Indent(FALSE);
-}
-
-void Mshow(unsigned ch)
-{
-	Byte match;
-	int cnt = 0;
-	struct mark save;
-
-	if (!(Curbuff->bmode & PROGMODE) || InPaw || Tkbrdy())
-		return;
-	if (VAR(VMATCH) & 1) {
-		switch (ch) {
-		case ')':
-			match = '('; break;
-		case ']':
-			match = '['; break;
-		case '}':
-			match = '{'; break;
-		default:
-			return;
-		}
-		bmrktopnt(&save);
-		do {
-			bmove(-1);
-			if (Buff() == match)
-				--cnt;
-			else if (Buff() == ch)
-				++cnt;
-		} while (cnt && !Bisstart());
-		if (cnt)
-			tbell();
-		else {
-			Refresh();
-			ShowCursor(TRUE);	/* show the match! */
-			Delay();
-			ShowCursor(FALSE);
-		}
-		bpnttomrk(&save);
-	} else if (VAR(VMATCH) & 2) {
-		switch (ch) {
-		case '(':
-			match = ')'; break;
-		case '[':
-			match = ']'; break;
-		case '{':
-			match = '}'; break;
-		default:
-			return;
-		}
-		binsert(match);
-		bmove(-1);
-	}
+	indent(FALSE);
 }
 
 void Zsetenv(void)

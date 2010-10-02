@@ -38,13 +38,13 @@ void Zmake(void)
 		if (Getarg("Make: ", mkcmd, STRMAX))
 			return;
 	}
-	Saveall(TRUE);
+	saveall(TRUE);
 #ifdef PIPESH
 	mbuff = Cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
 		Echo("Killing current make.");
 		Unvoke(mbuff, TRUE);
-		Clrecho();
+		clrecho();
 	}
 #endif
 	mbuff = Cmdtobuff(MAKEBUFF, mkcmd);
@@ -71,7 +71,7 @@ void Zgrep(void)
 	if (Getarg("grep: ", cmd + strlen(cmd), STRMAX))
 		return;
 	strcat(cmd, "'");
-	Saveall(TRUE);
+	saveall(TRUE);
 #ifdef PIPESH
 	mbuff = Cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
@@ -107,20 +107,20 @@ void Znexterr(void)
 	}
 	line = Parse(fname);
 	if (line) {
-		Vsetmrk(Curbuff->mark);
+		vsetmrk(Curbuff->mark);
 		bmrktopnt(Curbuff->mark);
-		Tobegline();
+		tobegline();
 		bswappnt(Curbuff->mark);
-		Vsetmrk(Curbuff->mark);
+		vsetmrk(Curbuff->mark);
 		wdo = Findwdo(mbuff);
 		if (wdo)
 			Mrktomrk(wdo->wstart, Curbuff->mark);
-		Pathfixup(path, fname);
-		Findfile(path, FALSE);
+		pathfixup(path, fname);
+		findfile(path, FALSE);
 		Argp = TRUE;
 		Arg = line;
 		Zlgoto();
-		Tobegline();
+		tobegline();
 	} else {
 		btoend();
 		bmrktopnt(Curbuff->mark);

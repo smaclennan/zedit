@@ -29,19 +29,19 @@
 #ifndef XWINDOWS
 #if defined(LINUX)
 #include <termios.h>
-static struct termios Savetty;
+static struct termios savetty;
 static struct termios settty;
 #elif defined(SYSV2)
 #include <termio.h>
-static struct termio Savetty;
+static struct termio savetty;
 static struct termio settty;
 #elif defined(BSD)
 #include <sgtty.h>
-static struct sgttyb Savetty;
+static struct sgttyb savetty;
 static struct sgttyb settty;
-static struct tchars Savechars;
+static struct tchars savechars;
 static struct tchars setchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-static struct ltchars Savelchars;
+static struct ltchars savelchars;
 static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 #endif
 #endif
@@ -49,7 +49,7 @@ static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 size_t Clrcol[ROWMAX + 1];	/* Clear if past this */
 
 int Prow, Pcol;				/* Point row and column */
-int Srow, Scol;				/* Saved row and column */
+int Srow, Scol;				/* saved row and column */
 size_t Colmax, Rowmax;			/* Row and column maximums */
 int Tstart;					/* Start column and row */
 
@@ -64,7 +64,7 @@ static void sigwinch(int sig)
 		termsize();
 	else {
 		Zredisplay();		/* update the windows */
-		Refresh();			/* force a screen update */
+		refresh();			/* force a screen update */
 	}
 
 #ifdef SYSV2
@@ -83,7 +83,7 @@ void tinit(void)
 	termsize();
 
 #ifdef LINUX
-	tcgetattr(fileno(stdin), &Savetty);
+	tcgetattr(fileno(stdin), &savetty);
 	tcgetattr(fileno(stdin), &settty);
 	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
 	settty.c_oflag = TAB3;
@@ -92,7 +92,7 @@ void tinit(void)
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(fileno(stdin), TCSANOW, &settty);
 #elif defined(SYSV2)
-	ioctl(fileno(stdin), TCGETA, &Savetty);
+	ioctl(fileno(stdin), TCGETA, &savetty);
 	ioctl(fileno(stdin), TCGETA, &settty);
 	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
 	settty.c_oflag = TAB3;
@@ -101,7 +101,7 @@ void tinit(void)
 	settty.c_cc[VTIME] = (char) 1;
 	ioctl(fileno(stdin), TCSETAW, &settty);
 #elif defined(BSD)
-	gtty(fileno(stdin), &Savetty);
+	gtty(fileno(stdin), &savetty);
 	gtty(fileno(stdin), &settty);
 
 	/* set CBREAK (raw) mode no ECHO, leave C-Ms alone so we can
@@ -110,10 +110,10 @@ void tinit(void)
 	settty.sg_flags &= ~(ECHO | CRMOD);
 	stty(fileno(stdin), &settty);
 
-	ioctl(fileno(stdin), TIOCGETC, &Savechars);
+	ioctl(fileno(stdin), TIOCGETC, &savechars);
 	ioctl(fileno(stdin), TIOCSETC, &setchars);
 
-	ioctl(fileno(stdin), TIOCGLTC, &Savelchars);
+	ioctl(fileno(stdin), TIOCGLTC, &savelchars);
 	ioctl(fileno(stdin), TIOCSLTC, &setlchars);
 #endif
 
@@ -149,19 +149,19 @@ void tinit(void)
 void tfini(void)
 {
 #if defined(LINUX)
-	tcsetattr(fileno(stdin), TCSAFLUSH, &Savetty);
+	tcsetattr(fileno(stdin), TCSAFLUSH, &savetty);
 #elif defined(SYSV2)
-	ioctl(fileno(stdin), TCSETAF, &Savetty);
+	ioctl(fileno(stdin), TCSETAF, &savetty);
 #elif defined(BSD)
-	stty(fileno(stdin), &Savetty);
-	ioctl(fileno(stdin), TIOCSETC, &Savechars);
-	ioctl(fileno(stdin), TIOCSLTC, &Savelchars);
+	stty(fileno(stdin), &savetty);
+	ioctl(fileno(stdin), TIOCSETC, &savechars);
+	ioctl(fileno(stdin), TIOCSLTC, &savelchars);
 #endif
 
 	if (VAR(VCLEAR))
 		tclrwind();
 	else {
-		Clrecho();
+		clrecho();
 		tgoto(Rowmax - 1, 0);
 	}
 	Tflush();

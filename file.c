@@ -21,6 +21,8 @@
 #include <sys/stat.h>
 #include <assert.h>
 
+static struct passwd *zgetpwnam(char *name);
+
 static int get_findfile(char *prompt)
 {
 	struct stat sbuf;
@@ -39,14 +41,14 @@ static int get_findfile(char *prompt)
 void Zfindfile(void)
 {
 	if (get_findfile("Find File: ") == 0)
-		Findfile(Fname, FALSE);
+		findfile(Fname, FALSE);
 }
 
 void Zviewfile(void)
 {
 	if (get_findfile("View File: "))
 		return;
-	Findfile(Fname, FALSE);
+	findfile(Fname, FALSE);
 	Curbuff->bmode |= VIEW;
 	Curwdo->modeflags = INVALID;
 }
@@ -68,13 +70,13 @@ void Zrevertfile(void)
 
 	offset = blocation(NULL);
 	breadfile(Curbuff->fname);
-	Boffset(offset);
+	boffset(offset);
 #ifdef XWINDOWS
 	Zredisplay();
 #endif
 }
 
-Boolean Findfile(char *path, int startup)
+Boolean findfile(char *path, int startup)
 {
 	char tbname[BUFNAMMAX + 1];
 	char *was;
@@ -119,8 +121,8 @@ Boolean Findfile(char *path, int startup)
 	}
 
 	if (!startup) {
-		Cswitchto(Curbuff);
-		Reframe();
+		cswitchto(Curbuff);
+		reframe();
 	}
 
 	return rc;
@@ -135,18 +137,18 @@ void Zsaveall(void)
 			if (!(tbuff->bmode & SYSBUFF) && tbuff->fname)
 				tbuff->bmodf = MODIFIED;
 	}
-	Saveall(TRUE);
+	saveall(TRUE);
 }
 
 void Zfilesave(void)
 {
 	if (Argp)
-		Saveall(FALSE);
+		saveall(FALSE);
 	else
-		Filesave();
+		filesave();
 }
 
-Boolean Filesave(void)
+Boolean filesave(void)
 {
 	char path[PATHMAX + 1];
 
@@ -164,37 +166,11 @@ Boolean Filesave(void)
 	return bwritefile(Curbuff->fname);
 }
 
-
-void Zfilewrite(void)
-{
-	char path[PATHMAX + 1], *prompt;
-
-	Arg = 0;
-	prompt = Argp ? "Write Region: " : "Write File: ";
-	*path = '\0';
-	if (Getfname(prompt, path) == 0) {
-		if (Argp) {
-			sprintf(PawStr, "Writing %s", path);
-			Echo(PawStr);
-			Write_rgn(path);
-			Clrecho();
-		} else {
-			if (Curbuff->fname)
-				free(Curbuff->fname);
-			Curbuff->fname = strdup(path);
-			Curbuff->mtime = 0;	/* this is no longer valid */
-			Zfilesave();
-			Curwdo->modeflags = INVALID;
-		}
-	}
-}
-
-
 /*
  * Write the region to 'path'. Assumes 'path' correct.
  * Returns: TRUE, FALSE, ABORT
  */
-int Write_rgn(char *path)
+static int write_rgn(char *path)
 {
 	struct buff *tbuff, *save;
 	int rc = FALSE;
@@ -213,18 +189,32 @@ int Write_rgn(char *path)
 	return rc;
 }
 
-void Zfileread(void)
+void Zfilewrite(void)
 {
-	if (get_findfile("Read File: "))
-		return;
-	if (Fileread(Fname) > 0) {
-		sprintf(PawStr, "Unable to read %s", Fname);
-		Error(PawStr);
+	char path[PATHMAX + 1], *prompt;
+
+	Arg = 0;
+	prompt = Argp ? "Write Region: " : "Write File: ";
+	*path = '\0';
+	if (Getfname(prompt, path) == 0) {
+		if (Argp) {
+			sprintf(PawStr, "Writing %s", path);
+			Echo(PawStr);
+			write_rgn(path);
+			clrecho();
+		} else {
+			if (Curbuff->fname)
+				free(Curbuff->fname);
+			Curbuff->fname = strdup(path);
+			Curbuff->mtime = 0;	/* this is no longer valid */
+			Zfilesave();
+			Curwdo->modeflags = INVALID;
+		}
 	}
 }
 
 /* read 'fname' into buffer at Point */
-int Fileread(char *fname)
+static int fileread(char *fname)
 {
 	struct buff *tbuff, *save;
 	struct mark *tmark;
@@ -249,6 +239,16 @@ int Fileread(char *fname)
 	return rc;
 }
 
+void Zfileread(void)
+{
+	if (get_findfile("Read File: "))
+		return;
+	if (fileread(Fname) > 0) {
+		sprintf(PawStr, "Unable to read %s", Fname);
+		Error(PawStr);
+	}
+}
+
 /*
 Fixup the pathname. 'to' and 'from' cannot overlap.
 - if the path starts with a ~, lookup the user in the /etc/passwd file
@@ -261,9 +261,7 @@ Returns -1 if the 'from' is a directory
 NOTE: assumes a valid path (in particular /.. would not work)
 */
 
-static struct passwd *Getpwnam(char *name);
-
-int Pathfixup(char *to, char *from)
+int pathfixup(char *to, char *from)
 {
 	char *start, save, dir[PATHMAX], *p;
 	int rc;
@@ -282,7 +280,7 @@ int Pathfixup(char *to, char *from)
 			*p = *from;
 		*p = '\0';
 		if (*dir) {
-			struct passwd *pwd = Getpwnam(dir);
+			struct passwd *pwd = zgetpwnam(dir);
 			if (!pwd)
 				return 2;
 			strcpy(to, pwd->pw_dir);
@@ -349,7 +347,7 @@ int Pathfixup(char *to, char *from)
 		if (to) {
 			save = *to;
 			*to = '\0';
-			rc = !Isdir(start);
+			rc = !isdir(start);
 			*to = save;
 		} else
 			rc = 0;
@@ -362,14 +360,13 @@ int Pathfixup(char *to, char *from)
 	return rc;
 }
 
-
-Boolean Isdir(char *path)
+Boolean isdir(char *path)
 {
 	struct stat sbuf;
 	return stat(path, &sbuf) == 0 && (sbuf.st_mode & S_IFDIR);
 }
 
-Boolean Isfile(char *path, char *dir, char *fname, Boolean must)
+Boolean isfile(char *path, char *dir, char *fname, Boolean must)
 {
 	if (!dir || !fname)
 		return FALSE;
@@ -381,7 +378,7 @@ Boolean Isfile(char *path, char *dir, char *fname, Boolean must)
 }
 
 /* Same as getpwnam but handles partial matches. */
-static struct passwd *Getpwnam(char *name)
+static struct passwd *zgetpwnam(char *name)
 {
 	struct passwd *pwd, *match = NULL;
 	int len = strlen(name);

@@ -45,7 +45,7 @@ void Hangup(int signal)
 #ifdef PIPESH
 	Checkpipes(0);
 #endif
-	Save(bsave);
+	save(bsave);
 	tfini();
 	exit(1);
 }

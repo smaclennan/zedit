@@ -90,7 +90,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 			if (btmrk->mpage == Curpage && btmrk->moffset > Curchar)
 					btmrk->moffset += dstlen;
 		makeoffset(Curchar + dstlen);
-		Vsetmod(FALSE);
+		vsetmod(FALSE);
 		Curmodf = TRUE;
 		Curbuff->bmodf = MODIFIED;
 		bswitchto(sbuff);
@@ -293,7 +293,7 @@ void bdelete(unsigned quantity)
 		makecur(tpage);
 		makeoffset(noffset);
 	}
-	Vsetmod(TRUE);
+	vsetmod(TRUE);
 }
 
 
@@ -345,7 +345,7 @@ void binsert(Byte new)
 	for (btmark = Mrklist; btmark; btmark = btmark->prev)
 		if (btmark->mpage == Curpage && btmark->moffset >= Curchar)
 			++(btmark->moffset);
-	Vsetmod(FALSE);
+	vsetmod(FALSE);
 
 }
 
@@ -543,6 +543,19 @@ Boolean bmove(int dist)
 	return TRUE;
 }
 
+/* bmove can only move the Point +/-32767 bytes. This routine overcomes
+ * this limitation.
+ * NOTE: Can only move forward.
+ */
+#define MAXMOVE		(0x7fff - 1024)
+
+void boffset(unsigned long off)
+{
+	btostart();
+	for (; off > MAXMOVE; off -= MAXMOVE)
+		bmove(MAXMOVE);
+	bmove(off);
+}
 
 /* Put the mark where the point is. */
 void bmrktopnt(struct mark *tmark)
@@ -688,7 +701,7 @@ int breadfile(char *fname)
 
 	btostart();
 	Curbuff->bmodf = FALSE;
-	Clrecho();
+	clrecho();
 
 	return 0;
 }
@@ -796,7 +809,7 @@ int bwritefile(char *fname)
 
 	/* cleanup */
 	if (status)
-		Clrecho();
+		clrecho();
 	else if (bak) {
 		if (sbuf.st_nlink) {
 			Cp(bakname, fname);

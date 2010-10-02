@@ -239,7 +239,7 @@ struct buff *Cmdtobuff(char *bname, char *cmd)
 		breadfile(fname);
 		unlink(fname);
 		Curbuff->bmodf = FALSE;
-		Clrecho();
+		clrecho();
 	}
 	return err ? NULL : tbuff;
 }
@@ -308,7 +308,7 @@ void Zbeauty(void)
 	} else {
 		breadfile(fileName2);
 		Curbuff->bmodf = MODIFIED;
-		Clrecho();
+		clrecho();
 	}
 
 	unlink(fileName1);

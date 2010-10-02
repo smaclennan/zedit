@@ -49,7 +49,7 @@ void Zcapword(void)
 		Curbuff->bmodf = Curmodf = MODIFIED;
 		for (bmove1(); !Bisend() && Istoken(); bmove1())
 			Buff() = Tolower(Buff());
-		Vsetmod(FALSE);
+		vsetmod(FALSE);
 	}
 }
 
@@ -61,7 +61,7 @@ void Zlowword(void)
 			Curbuff->bmodf = Curmodf = MODIFIED;
 			Buff() = Tolower(Buff());
 		}
-		Vsetmod(FALSE);
+		vsetmod(FALSE);
 	}
 }
 
@@ -73,7 +73,7 @@ void Zupword(void)
 			Curbuff->bmodf = Curmodf = MODIFIED;
 			Buff() = Toupper(Buff());
 		}
-		Vsetmod(FALSE);
+		vsetmod(FALSE);
 	}
 }
 
@@ -103,14 +103,14 @@ void Zcenter(void)
 {
 	int tmp;
 
-	Tobegline();
+	tobegline();
 	Zdelwhite();
-	Toendline();
+	toendline();
 	tmp = bgetcol(TRUE, 0);
 	if (tmp <= VAR(VFILLWIDTH)) {
-		Tobegline();
+		tobegline();
 		Tindent((VAR(VFILLWIDTH) - tmp) / 2);
-		Toendline();
+		toendline();
 	}
 }
 
@@ -121,7 +121,7 @@ static void handle_close_bracket(struct mark *tmark, int crfound)
 {
 	int cnt;
 
-	Tobegline();
+	tobegline();
 	if (VAR(VMATCH) & 0x100) {
 		/* show the rest of the line in the PAW */
 		struct mark t;
@@ -195,7 +195,7 @@ void Zcinsert(void)
 		   strcmp(word, "private")   == 0 ||
 		   strcmp(word, "protected") == 0) {
 			struct mark *tmark = bcremrk();
-			Tobegline();
+			tobegline();
 			while (Isspace())
 				bdelete(1);
 			bpnttomrk(tmark);
@@ -214,17 +214,17 @@ void Zcinsert(void)
 		comment = Buff() == '*';
 		bmove(2);
 		if (comment)
-			AddComment();
+			addcomment();
 	} else if (STRIP(Cmd) == '#') {
 		if (bmove(-2) == 0) {
 			/* # is first character in buffer */
 			bmove1();
-			AddCPP();
+			addcpp();
 		} else {
 			Boolean cpp = ISNL(Buff());
 			bmove(2);
 			if (cpp)
-				AddCPP();
+				addcpp();
 		}
 	}
 #endif
@@ -246,7 +246,7 @@ void Zcindent(void)
 		do {
 			if (STRIP(Buff()) == '#')
 				bmove(-1);
-			Tobegline();
+			tobegline();
 		} while (STRIP(Buff()) == '#' && !Bisstart());
 		Movepast(Iswhite, FORWARD);
 		if (bisaftermrk(&tmark))
@@ -467,7 +467,7 @@ void Zfillpara(void)
 		Movepast(Isspace, FORWARD); /* setup for next iteration */
 	} while ((all || --Arg > 0) && !Bisend() && !Tkbrdy());
 
-	Clrecho();
+	clrecho();
 	if (Arg > 0 || (all && !Bisend())) {
 		Echo("Aborted");
 		Tgetcmd();
@@ -555,7 +555,7 @@ void Zsetmrk(void)
 }
 
 /* This does the real work of quiting. */
-void Quit(void)
+void quit(void)
 {
 #ifdef PIPESH
 	struct buff *tbuff;
@@ -567,7 +567,7 @@ void Quit(void)
 #endif
 
 	if (VAR(VDOSAVE))
-		Save(Curbuff);
+		save(Curbuff);
 	Exitflag = TRUE;
 	tfini();
 
@@ -587,10 +587,10 @@ void Zquit(void)
 		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 			if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF))
 				modf = TRUE;
-		if (modf && Ask("Modified buffers. Quit anyway? ") != YES)
+		if (modf && Ask("Modified buffers. quit anyway? ") != YES)
 			return;
 	}
-	Quit();
+	quit();
 }
 
 
@@ -609,22 +609,22 @@ void Zexit(void)
 			return;
 #endif
 
-	if (Saveall(Argp))
-		Quit();
+	if (saveall(Argp))
+		quit();
 }
 
 /* Prompt to save buffer if the buffer has been modified.
- * Always saves if 'must' is TRUE or SaveOnExit is set.
+ * Always saves if 'must' is TRUE or saveOnExit is set.
  * Returns FALSE if the user ABORTS the prompt.
  */
-static Boolean Promptsave(struct buff *tbuff, Boolean must)
+static Boolean promptsave(struct buff *tbuff, Boolean must)
 {
 	char str[BUFNAMMAX + 20];
 	int ok = YES;
 
 	if (tbuff->bmodf) {
 		if (!must && !VAR(VSAVE)) {
-			sprintf(str, "Save buffer %s? ", tbuff->bname);
+			sprintf(str, "save buffer %s? ", tbuff->bname);
 			ok = Ask(str);
 			if (ok == ABORT)
 				return FALSE;
@@ -632,7 +632,7 @@ static Boolean Promptsave(struct buff *tbuff, Boolean must)
 
 		if (ok == YES || VAR(VSAVE)) {
 			bswitchto(tbuff);
-			if (Filesave() != TRUE)
+			if (filesave() != TRUE)
 				return FALSE;
 		}
 	}
@@ -645,18 +645,70 @@ static Boolean Promptsave(struct buff *tbuff, Boolean must)
  * and the routine returns false.
  * Else the user returns to the buffer he started in.
 */
-Boolean Saveall(Boolean must)
+Boolean saveall(Boolean must)
 {
 	struct buff *tbuff, *bsave;
 
 	bsave = Curbuff;
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-		if (!(tbuff->bmode & SYSBUFF) && !Promptsave(tbuff, must)) {
+		if (!(tbuff->bmode & SYSBUFF) && !promptsave(tbuff, must)) {
 			Curwdo->modeflags = INVALID;
 			return FALSE;
 		}
 	bswitchto(bsave);
 	return TRUE;
+}
+
+static void mshow(unsigned ch)
+{
+	Byte match;
+	int cnt = 0;
+	struct mark save;
+
+	if (!(Curbuff->bmode & PROGMODE) || InPaw || Tkbrdy())
+		return;
+	if (VAR(VMATCH) & 1) {
+		switch (ch) {
+		case ')':
+			match = '('; break;
+		case ']':
+			match = '['; break;
+		case '}':
+			match = '{'; break;
+		default:
+			return;
+		}
+		bmrktopnt(&save);
+		do {
+			bmove(-1);
+			if (Buff() == match)
+				--cnt;
+			else if (Buff() == ch)
+				++cnt;
+		} while (cnt && !Bisstart());
+		if (cnt)
+			tbell();
+		else {
+			refresh();
+			ShowCursor(TRUE);	/* show the match! */
+			Delay();
+			ShowCursor(FALSE);
+		}
+		bpnttomrk(&save);
+	} else if (VAR(VMATCH) & 2) {
+		switch (ch) {
+		case '(':
+			match = ')'; break;
+		case '[':
+			match = ']'; break;
+		case '{':
+			match = '}'; break;
+		default:
+			return;
+		}
+		binsert(match);
+		bmove(-1);
+	}
 }
 
 /* Self inserting commands */
@@ -668,7 +720,7 @@ void Zinsert(void)
 	}
 
 	binsert(Cmd);
-	Mshow(Cmd);
+	mshow(Cmd);
 }
 
 /*
@@ -723,7 +775,7 @@ void Zarg(void)
 		*p = '\0';
 		PutPaw(str, 2);
 	}
-	Clrecho();
+	clrecho();
 	CMD(Keys[Cmd]);
 }
 
@@ -736,7 +788,7 @@ void Zmeta(void)
 	tmp = Delayprompt("Meta: ");
 	Cmd = Tgetkb() | 128;
 	if (tmp)
-		Clrecho();
+		clrecho();
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
@@ -748,7 +800,7 @@ void Zctrlx(void)
 	tmp = Delayprompt("C-X: ");
 	Cmd = Tgetcmd() | 256;
 	if (tmp)
-		Clrecho();
+		clrecho();
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
@@ -791,7 +843,7 @@ void Zquote(void)
 		else
 			binsert(Cmd);
 	if (tmp)
-		Clrecho();
+		clrecho();
 	Arg = 0;
 }
 
@@ -832,6 +884,18 @@ void Ztab(void)
 		Sindent(tcol);
 	} else
 		binsert('\t');
+}
+
+void tobegline(void)
+{
+	if (bcrsearch(NL))
+		bmove1();
+}
+
+void toendline(void)
+{
+	if (bcsearch(NL))
+		bmove(-1);
 }
 
 #ifndef XWINDOWS

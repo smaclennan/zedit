@@ -26,6 +26,7 @@
 #include <signal.h>
 #include <sys/wait.h>	/* need for WNOWAIT */
 
+#ifndef XWINDOWS
 #if defined(LINUX)
 #include <termios.h>
 static struct termios Savetty;
@@ -42,6 +43,7 @@ static struct tchars Savechars;
 static struct tchars setchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 static struct ltchars Savelchars;
 static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+#endif
 #endif
 
 size_t Clrcol[ROWMAX + 1];	/* Clear if past this */

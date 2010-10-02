@@ -163,6 +163,10 @@ void Zundo(void)
 	}
 
 	recycle_undo(Curbuff);
+
+	if (!Curbuff->undo_tail)
+		/* Last undo */
+		Curbuff->bmodf = FALSE;
 }
 #else
 void Zundo(void) { Tbell(); }

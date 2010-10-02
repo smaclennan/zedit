@@ -148,5 +148,5 @@ void Zlstbuff(void)
 
 void Zunmodf(void)
 {
-	Curbuff->bmodf = FALSE;
+	Curbuff->bmodf = Argp;
 }

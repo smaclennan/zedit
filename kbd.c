@@ -24,15 +24,17 @@
 #include "keys.h"
 
 /* This file contains the keyboard input routines.  The only routines
- * accessed outside of this routine are Tgetcmd and the macro Pushcmd.
+ * accessed outside of this routine are tgetcmd and the macro Pushcmd.
  */
 
 unsigned Cmdpushed, Cmdstack[10];	/* stack and vars for T[un]getcmd */
 unsigned Key_mask;
 char *Term;
 
+static void tungetkb(void);
+
 #ifndef XWINDOWS
-int Tgetcmd(void)
+int tgetcmd(void)
 {
 	int i, j, mask;
 	int cmd;
@@ -42,7 +44,7 @@ int Tgetcmd(void)
 	do { /* try to match one of the termcap key entries */
 		mask = Key_mask;
 		for (j = 0; mask; ++j) {
-			cmd = Tgetkb() & 0x7f;
+			cmd = tgetkb() & 0x7f;
 			for (i = 0; i < NUMKEYS - SPECIAL_START; ++i)
 				if ((mask & (1 << i)) &&
 				    cmd == Tkeys[i].key[j]) {
@@ -55,9 +57,9 @@ int Tgetcmd(void)
 		/* No match - push back the chars and try to handle
 		 * the first one. */
 		while (j-- > 0)
-			Tungetkb();
+			tungetkb();
 
-		cmd = Tgetkb() & 0x7f;
+		cmd = tgetkb() & 0x7f;
 		if (cmd > NUMKEYS) { /* Ignore the key */
 			cmd = K_NODEF;
 			tbell();
@@ -68,7 +70,7 @@ int Tgetcmd(void)
 }
 
 
-/* stack and vars for T[un]getkb / Tkbrdy */
+/* stack and vars for t[un]getkb / tkbrdy */
 #define CSTACK		20
 static Byte cstack[CSTACK];
 static int cptr = -1;
@@ -76,7 +78,7 @@ int cpushed;	/* needed in z.c */
 static int Pending = FALSE;
 
 
-Byte Tgetkb(void)
+Byte tgetkb(void)
 {
 	cptr = (cptr + 1) % CSTACK;
 	if (cpushed)
@@ -96,7 +98,7 @@ Byte Tgetkb(void)
 }
 
 
-void Tungetkb(void)
+static void tungetkb(void)
 {
 	if (--cptr < 0)
 		cptr = CSTACK - 1;
@@ -104,7 +106,7 @@ void Tungetkb(void)
 }
 
 
-int Tkbrdy(void)
+int tkbrdy(void)
 {
 #ifdef LINUX
 	static struct pollfd stdin_fd = {

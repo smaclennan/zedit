@@ -237,7 +237,6 @@ void delbuff(struct buff *);
 Boolean Delcmd(void);
 Boolean DelcmdAll(void);
 char *dispkey(unsigned, char *);
-void Dispit(char *, int *);
 void Doincsrch(char *, Boolean);
 void Doreplace(int);
 void Dotty(void);
@@ -250,18 +249,16 @@ Boolean filesave(void);
 Boolean findfile(char *, int);
 char *Findfirst(char *);
 char *Findnext(void);
-FILE *Findhelp(int, int, char *);
 int Findpath(char *, char *, int, Boolean);
 struct wdo *Findwdo(struct buff *);
 int Forcecol(void);
 void Freelist(struct llist **);
-Boolean Getarg(char *, char *, int);
+Boolean getarg(char *, char *, int);
 char *Getbtxt(char *, int);
 Boolean Getbword(char *, int, int (*)());
-int Getdname(char *prompt, char *path);
-int Getplete(char *, char *, char **, int, int);
+int getdname(char *prompt, char *path);
+int getplete(char *, char *, char **, int, int);
 void Help(int, Boolean);
-void Helpit(int);
 void Initline(void);
 void Intomem(struct page *);
 Boolean isdir(char *);
@@ -269,7 +266,6 @@ Boolean Isext(char *, char *);
 Boolean isfile(char *, char *, char *, Boolean);
 Boolean Ispara(char, char);
 int Isspace(void);
-int Isnotws(void);
 int Istoken(void);
 int Iswhite(void);
 int Isword(void);
@@ -280,7 +276,7 @@ void loadbind(void);
 void loadsaved(void);
 void makecur(struct page *);
 void makeoffset(int);
-void Makepaw(char *, Boolean);
+void makepaw(char *, Boolean);
 void Modeflags(struct wdo *);
 void Movepast(int (*pred)(), Boolean forward);
 void Moveto(int (*pred)(), Boolean forward);
@@ -296,14 +292,13 @@ void NoMem(void);
 int Parse(char *);
 void parsem(char *, Boolean);
 int pathfixup(char *, char *);
-Boolean Pcmdplete(Boolean);
-void Pinsert(void);
+void pinsert(void);
 int PipeToBuff(struct buff *buff, char *instr);
 int BuffToPipe(struct buff *buff, char *instr);
-void Pnewline(void);
+void pnewline(void);
 void Pntmove(int, int);
-void Pout(char *, Boolean);
-void Pset(int, int, int);
+void pout(char *, Boolean);
+void pset(int, int, int);
 int prefline(void);
 void PutPaw(char *, int);
 void ReadVfile(void);
@@ -325,7 +320,7 @@ char *Strstr(char *, char *);
 char *Strup(char *);
 void Syerr(int);
 void tbell(void);
-void Tcleol(void);
+void tcleol(void);
 void tclrwind(void);
 void termsize(void);
 void tfini(void);
@@ -334,8 +329,8 @@ void Tflush(void);
 #else
 void tforce(void);
 #endif
-int Tgetcmd(void);
-Byte Tgetkb(void);
+int tgetcmd(void);
+Byte tgetkb(void);
 void tgoto(int, int);
 void Tindent(int);
 #ifdef XWINDOWS
@@ -343,18 +338,15 @@ void tinit(int, char **);
 #else
 void tinit(void);
 #endif
-void Titot(unsigned);
-int Tkbrdy(void);
+void titot(unsigned);
+int tkbrdy(void);
 void tobegline(void);
 void toendline(void);
-int Tolower(int);
-int Toupper(int);
 void toggle_mode(int);
 void tprntchar(Byte);
 void tprntstr(char *);
 void tsize(int *, int *);
 void tstyle(int);
-void Tungetkb(void);
 void unmark(struct mark *);
 void Usage(char *);
 void Varval(int var);
@@ -410,10 +402,8 @@ void fcheck(void);
 
 /* for getfname */
 
-int Getfname(char *, char *);
+int getfname(char *, char *);
 void Zfname(void);
-struct llist *GetFill(char *, char **, int *, Boolean*);
-struct llist *Fill_list(char *);
 int nmatch(char *, char *);
 
 
@@ -437,8 +427,6 @@ void logfree(char *, char *, unsigned);
 #define strdup(m)		logdup((m), __FILE__, __LINE__)
 #define free(m)			logfree((m), __FILE__, __LINE__)
 #endif
-
-void KillHelp(void);
 
 #ifdef XWINDOWS
 char *KeyToName(int, char *);

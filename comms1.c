@@ -213,7 +213,7 @@ void Zmode(void)
 		i = VIEWMODE;
 	else if (i == NUMMODES)
 		i = TEXTMODE;
-	rc = Getplete("Mode: ", modes[i].str, (char **)modes,
+	rc = getplete("Mode: ", modes[i].str, (char **)modes,
 		      AMODESIZE, NUMMODES);
 	if (rc == VIEWMODE) {
 		Curbuff->bmode ^= VIEW;
@@ -379,12 +379,12 @@ static void setregion(int (*convert)(int))
 
 void Zupregion(void)
 {
-	setregion(Toupper);
+	setregion(toupper);
 }
 
 void Zlowregion(void)
 {
-	setregion(Tolower);
+	setregion(tolower);
 }
 
 static void indent(Boolean flag)
@@ -432,7 +432,7 @@ void Zsetenv(void)
 	char env[STRMAX + 2], set[STRMAX + 1], *p;
 
 	*env = '\0';
-	if (Getarg("Env: ", env, STRMAX))
+	if (getarg("Env: ", env, STRMAX))
 		return;
 	p = getenv(env);
 	if (p) {
@@ -445,7 +445,7 @@ void Zsetenv(void)
 		*set = '\0';
 
 	strcat(env, "=");	/* turn it into prompt */
-	if (Getarg(env, set, STRMAX))
+	if (getarg(env, set, STRMAX))
 		return;
 
 	/* putenv cannot be passed an automatic: malloc the space */

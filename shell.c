@@ -33,14 +33,14 @@ void Zcmd(void)
 	char tb[STRMAX * 2];
 
 	Arg = 0;
-	if (Getarg("! ", Command, STRMAX) == 0) {
+	if (getarg("! ", Command, STRMAX) == 0) {
 		tfini();
 		sprintf(tb, "%s -c \"%s\"", Shell, Command);
 		if (system(tb) == EOF)
 			Echo("command failed");
 		else {
 			fputs("\n[Hit Return to continue]", stdout);
-			Tgetcmd();
+			tgetcmd();
 			putchar('\n');
 		}
 		tinit();
@@ -56,7 +56,7 @@ void Zcmdtobuff(void)
 	int rc;
 
 	Arg = 0;
-	if (Getarg("@ ", Command, STRMAX) == 0) {
+	if (getarg("@ ", Command, STRMAX) == 0) {
 		save = Curwdo;
 		if (WuseOther(SHELLBUFF)) {
 			Echo("Please wait...");
@@ -72,7 +72,7 @@ void Zcmdtobuff(void)
 	}
 #else
 	Arg = 0;
-	if (Getarg("@ ", Command, STRMAX) == 0)
+	if (getarg("@ ", Command, STRMAX) == 0)
 		Cmdtobuff(SHELLBUFF, Command);
 #endif
 }
@@ -87,7 +87,7 @@ void Zman(void)
 	strcpy(entry, "man ");
 	p = entry + strlen(entry);
 	Getbword(p, STRMAX, Istoken);	/* get word */
-	if (Getarg("Man: ", p, STRMAX))
+	if (getarg("Man: ", p, STRMAX))
 		return;
 
 	save = Curwdo;
@@ -168,10 +168,10 @@ void Zmail(void)
 	char to[STRMAX + 1], subject[STRMAX + 1], cmd[STRMAX * 2 + 20];
 
 	*to = '\0';
-	if (Getarg("Mail To: ", to, STRMAX))
+	if (getarg("Mail To: ", to, STRMAX))
 		return;
 	*subject = '\0';
-	switch (Getarg("Subject: ", subject, STRMAX)) {
+	switch (getarg("Subject: ", subject, STRMAX)) {
 	case 0:
 		break;
 	case 1:

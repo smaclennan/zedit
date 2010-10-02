@@ -35,7 +35,7 @@ void Zbind(void)
 		Arg = 0;
 		return;
 	}
-	f = Getplete("Bind: ", (char *)NULL, (char **)Cnames,
+	f = getplete("Bind: ", (char *)NULL, (char **)Cnames,
 		     CNAMESIZE, NUMFUNCS);
 	if (f != -1) {
 		if (bindone("Key: ", TRUE, &key)) {
@@ -57,13 +57,13 @@ void Zkeybind(void)
 
 	Arg = 0;
 	Echo("Key: ");
-	key = Keys[Tgetcmd()];
+	key = Keys[tgetcmd()];
 	if (key == ZCTRLX) {
 		Echo("Key: C-X ");
-		key = Keys[Tgetcmd() + 256];
+		key = Keys[tgetcmd() + 256];
 	} else if (key == ZMETA) {
 		Echo("Key: M-");
-		key = Keys[Tgetcmd() + 128];
+		key = Keys[tgetcmd() + 128];
 	}
 
 	if (key == ZNOTIMPL)
@@ -91,7 +91,7 @@ void Zcmdbind(void)
 
 	Arg = 0;
 	*PawStr = '\0';
-	f = Getplete("Command: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
+	f = getplete("Command: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
 	if (f != -1) {
 		for (k = 0; k < NUMKEYS; ++k)
 			if (Keys[k] == Cnames[f].fnum)
@@ -136,7 +136,7 @@ void Zdispbinds(void)
 
 	if (Argp) {
 		*line = '\0';
-		if (Getarg("Output file: ", line, STRMAX))
+		if (getarg("Output file: ", line, STRMAX))
 			return;
 		fp = fopen(line, "w");
 		if (fp == NULL) {
@@ -215,7 +215,7 @@ void Zsavebind(void)
 		Findpath(path, fname, n, TRUE);
 	else
 		sprintf(path, "%s/%s", Me->pw_dir, fname);
-	if (Argp && Getfname("Bind File: ", path))
+	if (Argp && getfname("Bind File: ", path))
 		return;
 	if (bindfile(path, WRITE_MODE)) {
 		sprintf(PawStr, "%s written.", path);
@@ -266,7 +266,7 @@ static Boolean bindfile(char *fname, int mode)
 static Boolean bindone(char *prompt, int first, int *key)
 {
 	Echo(prompt);
-	*key = Tgetcmd();
+	*key = tgetcmd();
 	if (Keys[*key] == ZABORT)
 		return FALSE;
 	else if (Keys[*key] == ZQUOTE) {

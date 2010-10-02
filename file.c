@@ -35,7 +35,7 @@ static int get_findfile(char *prompt)
 				*(p + 1) = '\0';
 		}
 
-	return Getfname(prompt, Fname);
+	return getfname(prompt, Fname);
 }
 
 void Zfindfile(void)
@@ -155,7 +155,7 @@ Boolean filesave(void)
 	Arg = 0;
 	if (Curbuff->fname == NULL) {
 		*path = '\0';
-		if (Getfname("File Name: ", path) == 0)
+		if (getfname("File Name: ", path) == 0)
 			Curbuff->fname = strdup(path);
 		else
 			return FALSE;
@@ -196,7 +196,7 @@ void Zfilewrite(void)
 	Arg = 0;
 	prompt = Argp ? "Write Region: " : "Write File: ";
 	*path = '\0';
-	if (Getfname(prompt, path) == 0) {
+	if (getfname(prompt, path) == 0) {
 		if (Argp) {
 			sprintf(PawStr, "Writing %s", path);
 			Echo(PawStr);

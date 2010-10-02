@@ -346,10 +346,10 @@ void tgoto(int row, int col)
 }
 
 /* Print a decimal number. */
-void Titot(unsigned cntr)
+void titot(unsigned cntr)
 {
 	if (cntr > 9)
-		Titot(cntr / 10);
+		titot(cntr / 10);
 	tprntchar(cntr % 10 + '0');
 }
 
@@ -376,7 +376,7 @@ void tforce(void)
 	}
 }
 
-void Tcleol(void)
+void tcleol(void)
 {
 	if (Pcol < Clrcol[Prow]) {
 		tforce();

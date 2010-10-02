@@ -51,7 +51,7 @@
 #define ZGETBWORD	31
 #define ZGROWWINDOW	32
 #define ZHEXOUT		33
-#define ZINSERT		34	/* Also used for Pinsert */
+#define ZINSERT		34	/* Also used for pinsert */
 #define ZKILLBUFF	35
 #define ZLGOTO		36
 #define ZLOWWORD	37
@@ -158,5 +158,5 @@
 #define ZUNDO		138
 #define NUMFUNCS	139
 
-/* this is used by the Getfname command in the PAW for command completion */
+/* this is used by the getfname command in the PAW for command completion */
 #define ZFNAME		NUMFUNCS

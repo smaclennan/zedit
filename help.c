@@ -38,9 +38,8 @@ static char *Htype[] = {
 };
 #define HTYPES	(sizeof(Htype) / sizeof(char *))
 
-
 /* a "sentence" ends in a tab, NL, or two consecutive spaces */
-static int Issentence(void)
+static int issentence(void)
 {
 	static Byte prev = '\0';
 	int rc;
@@ -50,101 +49,17 @@ static int Issentence(void)
 	return rc;
 }
 
-void Zhelp(void)
+static void dispit(char *name, int *col)
 {
-	static Byte level = 0, z;
-	struct buff *tbuff, *was;
-	FILE *fp = NULL;
-	char str[STRMAX + 1];
-	int i;
-
-	if (level) {
-		tbuff = Cfindbuff(HELPBUFF);
-		if (tbuff != Curbuff) {
-			/* just switch to the .help buffer */
-			strcpy(Lbufname, Curbuff->bname);
-			Bgoto(tbuff);
-			return;
-		}
-	}
-	switch (level) {
-	case 0:
-		/* create the window */
-		for (z = 0; z < NUMFUNCS && Cnames[z].fnum != ZHELP; ++z)
-			;
-		fp = Findhelp(z, TRUE, str);
-		if (fp == NULL)
-			return;
-		was = Curbuff;
-		if (WuseOther(HELPBUFF)) {
-			strcpy(Lbufname, was->bname);
-			Curbuff->bmode |= VIEW;
-		} else {
-			fclose(fp);
-			break;
-		}
-		/* fall thru to level 1 */
-
-	case 1:
-		/* read in the top level */
-		if (!fp) {
-			fp = Findhelp(z, TRUE, str);
-			if (!fp)
-				break;
-		}
-		bempty();
-		while (fgets(str, STRMAX, fp) && *str != ':')
-			binstr(str);
-		fclose(fp);
-		btostart();
-		bcsearch('n');
-		Curbuff->bmodf = FALSE;
-		level = 2;
-		break;
-
-	case 2:
-		/* accept input from top level and create secondary level */
-		Getbword(str, STRMAX, Issentence);
-		for (i = 0; i < HTYPES; ++i)
-			if (strcmp(str, Htype[i]) == 0) {
-				Helpit(i);
-				level = 3;
-			}
-		break;
-
-	case 3:
-		/* accept input from secondary level and display help */
-		bmakecol(bgetcol(FALSE, 0) < 40 ? 5 : 45, FALSE);
-		Getbword(str, 30, Issentence);
-		if (strncmp(str, "Top", 3) == 0) {
-			level = 1;
-			Zhelp();
-		} else {
-			for (i = 0; i < NUMFUNCS; ++i)
-				if (strcmp(str, Cnames[i].name) == 0) {
-					level = 4;
-					Help(i, TRUE);
-					return;
-				}
-			for (i = 0; i < VARNUM; ++i)
-				if (strcmp(str, Vars[i].vname) == 0) {
-					level = 4;
-					Help(i, FALSE);
-					return;
-				}
-		}
-		break;
-
-	case 4:
-		/* go back to secondary level */
-		Helpit(-1);
-		level = 3;
-		break;
-	}
+	bmakecol(*col, TRUE);
+	binstr(name);
+	if (*col == 45)
+		binsert('\n');
+	*col ^= 40;
 }
 
 /* If type == -1, use saved value */
-void Helpit(int type)
+static void helpit(int type)
 {
 	static int was;
 	char buff[STRMAX];
@@ -161,27 +76,17 @@ void Helpit(int type)
 	binstr(buff);
 	if (type == H_VAR)
 		for (i = 0; i < VARNUM; ++i)
-			Dispit(Vars[i].vname, &col);
+			dispit(Vars[i].vname, &col);
 	else
 		for (i = 0; i < NUMFUNCS; ++i)
 			if (Cnames[i].htype == type)
-				Dispit(Cnames[i].name, &col);
+				dispit(Cnames[i].name, &col);
 	if (col == 45)
 		binsert('\n');
 	binstr("\n     Top Level Help Menu");
 	btostart();
 	Curbuff->bmodf = FALSE;
 	clrecho();
-}
-
-
-void Dispit(char *name, int *col)
-{
-	bmakecol(*col, TRUE);
-	binstr(name);
-	if (*col == 45)
-		binsert('\n');
-	*col ^= 40;
 }
 
 static void dump_bindings(char *buff, int fnum)
@@ -204,37 +109,7 @@ static void dump_bindings(char *buff, int fnum)
 		binstr("Unbound");
 }
 
-void Help(int code, Boolean func)
-{
-	FILE *fp;
-	char buff[BUFSIZ], *p;
-
-	Arg = 0;
-	if (code < 0)
-		return;
-	fp = Findhelp(code, func, buff);
-	if (fp) {
-		bempty();
-		p = buff + 1;
-		do
-			binstr(p);
-		while (fgets(p = buff, BUFSIZ, fp) && *buff != ':');
-		fclose(fp);
-
-		/* setup to display either Bindings or Current value */
-		if (func) {
-			if (Cnames[code].fnum != ZNOTIMPL &&
-			    Cnames[code].fnum != ZINSERT)
-				dump_bindings(buff, Cnames[code].fnum);
-		} else {
-			binstr("\nCurrent value: ");
-			Varval(code);
-		}
-		btostart();
-	}
-}
-
-FILE *Findhelp(int code, Boolean func, char *buff)
+static FILE *findhelp(int code, Boolean func, char *buff)
 {
 	FILE *fp;
 	char *ptr;
@@ -260,13 +135,130 @@ FILE *Findhelp(int code, Boolean func, char *buff)
 	return NULL;
 }
 
+static void help(int code, Boolean func)
+{
+	FILE *fp;
+	char buff[BUFSIZ], *p;
+
+	Arg = 0;
+	if (code < 0)
+		return;
+	fp = findhelp(code, func, buff);
+	if (fp) {
+		bempty();
+		p = buff + 1;
+		do
+			binstr(p);
+		while (fgets(p = buff, BUFSIZ, fp) && *buff != ':');
+		fclose(fp);
+
+		/* setup to display either Bindings or Current value */
+		if (func) {
+			if (Cnames[code].fnum != ZNOTIMPL &&
+			    Cnames[code].fnum != ZINSERT)
+				dump_bindings(buff, Cnames[code].fnum);
+		} else {
+			binstr("\nCurrent value: ");
+			Varval(code);
+		}
+		btostart();
+	}
+}
+
+void Zhelp(void)
+{
+	static Byte level = 0, z;
+	struct buff *tbuff, *was;
+	FILE *fp = NULL;
+	char str[STRMAX + 1];
+	int i;
+
+	if (level) {
+		tbuff = Cfindbuff(HELPBUFF);
+		if (tbuff != Curbuff) {
+			/* just switch to the .help buffer */
+			strcpy(Lbufname, Curbuff->bname);
+			Bgoto(tbuff);
+			return;
+		}
+	}
+	switch (level) {
+	case 0:
+		/* create the window */
+		for (z = 0; z < NUMFUNCS && Cnames[z].fnum != ZHELP; ++z)
+			;
+		fp = findhelp(z, TRUE, str);
+		if (fp == NULL)
+			return;
+		was = Curbuff;
+		if (WuseOther(HELPBUFF)) {
+			strcpy(Lbufname, was->bname);
+			Curbuff->bmode |= VIEW;
+		} else {
+			fclose(fp);
+			break;
+		}
+		/* fall thru to level 1 */
+
+	case 1:
+		/* read in the top level */
+		if (!fp) {
+			fp = findhelp(z, TRUE, str);
+			if (!fp)
+				break;
+		}
+		bempty();
+		while (fgets(str, STRMAX, fp) && *str != ':')
+			binstr(str);
+		fclose(fp);
+		btostart();
+		bcsearch('n');
+		Curbuff->bmodf = FALSE;
+		level = 2;
+		break;
+
+	case 2:
+		/* accept input from top level and create secondary level */
+		Getbword(str, STRMAX, issentence);
+		for (i = 0; i < HTYPES; ++i)
+			if (strcmp(str, Htype[i]) == 0) {
+				helpit(i);
+				level = 3;
+			}
+		break;
+
+	case 3:
+		/* accept input from secondary level and display help */
+		bmakecol(bgetcol(FALSE, 0) < 40 ? 5 : 45, FALSE);
+		Getbword(str, 30, issentence);
+		if (strncmp(str, "Top", 3) == 0) {
+			level = 1;
+			Zhelp();
+		} else {
+			for (i = 0; i < NUMFUNCS; ++i)
+				if (strcmp(str, Cnames[i].name) == 0) {
+					level = 4;
+					help(i, TRUE);
+					return;
+				}
+			for (i = 0; i < VARNUM; ++i)
+				if (strcmp(str, Vars[i].vname) == 0) {
+					level = 4;
+					help(i, FALSE);
+					return;
+				}
+		}
+		break;
+
+	case 4:
+		/* go back to secondary level */
+		helpit(-1);
+		level = 3;
+		break;
+	}
+}
+
 #else
 void Zhelp(void) { tbell(); }
-void KillHelp(void) {}
 #endif /* HELP */
-
-int Isnotws(void)
-{
-	return Buff() != '\n' && Buff() != '\t' && Buff() != ' ';
-}
 

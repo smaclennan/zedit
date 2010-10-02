@@ -35,7 +35,7 @@ void Zmake(void)
 	Arg = 0;
 	if (Argp) {
 		Argp = FALSE;
-		if (Getarg("Make: ", mkcmd, STRMAX))
+		if (getarg("Make: ", mkcmd, STRMAX))
 			return;
 	}
 	saveall(TRUE);
@@ -64,11 +64,11 @@ void Zgrep(void)
 	Arg = 0;
 	if (Argp) {
 		Argp = FALSE;
-		if (Getarg("grep command: ", grepcmd, STRMAX))
+		if (getarg("grep command: ", grepcmd, STRMAX))
 			return;
 	}
 	sprintf(cmd, "sh -c '%s ", grepcmd);
-	if (Getarg("grep: ", cmd + strlen(cmd), STRMAX))
+	if (getarg("grep: ", cmd + strlen(cmd), STRMAX))
 		return;
 	strcat(cmd, "'");
 	saveall(TRUE);
@@ -146,6 +146,11 @@ void Zkill(void) { tbell(); }
  */
 static Boolean IsWarning;
 
+static int isnotws(void)
+{
+	return Buff() != '\n' && Buff() != '\t' && Buff() != ' ';
+}
+
 static Boolean Warning(void)
 {
 	if (Argp) {
@@ -154,7 +159,7 @@ static Boolean Warning(void)
 
 		if (Buff() == ':') {
 			char word[10], *p;
-			Getbword(p = word, 10, Isnotws);
+			Getbword(p = word, 10, isnotws);
 			if (*p == ':')
 				++p;
 			return strcmp(p, "warning:") == 0;
@@ -187,7 +192,7 @@ int Parse(char *fname)
 		IsWarning = 0;
 
 		/* get first word in line */
-		n = Getbword(word, 40, Isnotws);
+		n = Getbword(word, 40, isnotws);
 
 		/* check for: as: cc: */
 		if (strcmp(word, "as:") == 0 || strcmp(word, "cc:") == 0)

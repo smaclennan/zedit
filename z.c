@@ -102,7 +102,7 @@ void Execute(void)
 /* NOTE: Dotty blocks */
 void Dotty(void)
 {
-	Cmd = Tgetcmd();
+	Cmd = tgetcmd();
 	Arg = 1;
 	Argp = FALSE;
 	while (Arg > 0) {
@@ -110,7 +110,7 @@ void Dotty(void)
 		--Arg;
 	}
 	Lfunc = Keys[Cmd];
-	First = FALSE;				/* used by Pinsert when InPaw */
+	First = FALSE;				/* used by pinsert when InPaw */
 }
 
 
@@ -380,7 +380,7 @@ struct buff *Cmakebuff(char *bname, char *fname)
 
 /* Add the new bname to the Bname array.
  * If we hit maxbuffs, try to enlarge the Bnames array.
- * Note that the compare MUST be insensitive for the Getplete!
+ * Note that the compare MUST be insensitive for the getplete!
  */
 char *Addbname(char *bname)
 {
@@ -471,7 +471,7 @@ void Zcwd(void)
 	char path[PATHMAX], *p;
 
 	strcpy(path, Cwd);
-	if (Getdname("CWD: ", path) == 0) {
+	if (getdname("CWD: ", path) == 0) {
 		p = strdup(path);
 		if (!p)
 			Error("Not enough memory");

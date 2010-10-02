@@ -29,7 +29,7 @@ int Ask(char *msg)
 
 	Echo(msg);
 	do
-		switch (cmd = Tgetcmd()) {
+		switch (cmd = tgetcmd()) {
 		case 'y':
 		case 'Y':
 			rc = YES;
@@ -101,7 +101,7 @@ Boolean Delay(void)
 {
 	static struct pollfd ufd = { .fd = 1, .events = POLLIN };
 
-	return InPaw || Tkbrdy() || poll(&ufd, 1, 1000) == 1 ? 1 : 0;
+	return InPaw || tkbrdy() || poll(&ufd, 1, 1000) == 1 ? 1 : 0;
 }
 
 #else
@@ -114,7 +114,7 @@ Boolean Delay(void)
 		return FALSE;
 	t = time((long *)0) + 2;	/* at least 1 second */
 	do
-		if (Tkbrdy())
+		if (tkbrdy())
 			return FALSE;
 	while (time(NULL) < t);
 	return TRUE;
@@ -154,13 +154,13 @@ void PutPaw(char *str, int type)
 		trow = Prow; tcol = Pcol;
 		Tsetpoint(Tmaxrow() - 1, 0);
 		tprntstr(str);
-		Tcleol();
+		tcleol();
 		if (type != 1)
 			Tsetpoint(trow, tcol);
 		tforce();
 		Tflush();
 		if (type == 1)
-			Tgetcmd();
+			tgetcmd();
 	}
 }
 #endif
@@ -279,7 +279,7 @@ char *Strup(char *str)
 {
 	char *ptr;
 	for (ptr = str; *ptr; ++ptr)
-		*ptr = Toupper(*ptr);
+		*ptr = toupper(*ptr);
 	return str;
 }
 
@@ -291,16 +291,6 @@ void Tindent(int arg)
 		for (; arg >= Tabsize; arg -= Tabsize)
 			binsert('\t');
 	Sindent(arg);
-}
-
-int Toupper(int c)
-{
-	return TOUPPER(c);
-}
-
-int Tolower(int c)
-{
-	return TOLOWER(c);
 }
 
 int Isspace(void)

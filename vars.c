@@ -78,7 +78,7 @@ void Zsetavar(void)
 	char pstr[STRMAX], arg[STRMAX];
 	int rc;
 
-	rc = Getplete("Variable: ", NULL, (char **)Vars, VARSIZE, NUMVARS);
+	rc = getplete("Variable: ", NULL, (char **)Vars, VARSIZE, NUMVARS);
 	if (rc == -1)
 		return;
 
@@ -91,7 +91,7 @@ void Zsetavar(void)
 				*arg = '\0';
 		else
 			sprintf(arg, "%d", VAR(rc));
-		if (Getarg(pstr, arg, STRMAX))
+		if (getarg(pstr, arg, STRMAX))
 			return;
 		sprintf(pstr, "%s %s", Vars[rc].vname, arg);
 		Setavar(pstr, TRUE);

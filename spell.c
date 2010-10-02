@@ -97,7 +97,7 @@ void Zspell(void)
 				break;
 
 			case '&':		/* close matches */
-				Pset(Tmaxrow(), 0, PNUMCOLS);
+				pset(Tmaxrow(), 0, PNUMCOLS);
 				for (m = 0, p = buff + 2; m < 6; ++m) {
 					e = strchr(p, ' ');
 					if (!e)
@@ -108,7 +108,7 @@ void Zspell(void)
 					word[m][0] = m + '0';
 					word[m][1] = ' ';
 					strcpy(&word[m][2], p);
-					Pout(word[m], FALSE);
+					pout(word[m], FALSE);
 					p = e;
 				}
 				/* 'm' is now the number of matches -
@@ -117,7 +117,7 @@ void Zspell(void)
 			case '#':		/* no match */
 				Echo(SPELLSTRING);
 				refresh();		/* update mark */
-				cmd = Tgetcmd();
+				cmd = tgetcmd();
 				switch (cmd) {
 				case ' ':		/* skip it */
 					break;
@@ -137,7 +137,7 @@ void Zspell(void)
 				case 'R':		/* replace */
 				case 'r':
 					*word[0] = '\0';
-					rc = Getarg(PROMPT, word[0], STRMAX);
+					rc = getarg(PROMPT, word[0], STRMAX);
 					if (rc == ABORT) {
 						bswappnt(Curbuff->mark);
 						continue;
@@ -183,9 +183,9 @@ static void Mclear(void)
 	/* clear the matches area */
 	Clrcol[Rowmax] = Clrcol[Rowmax + 1] = COLMAX + 1;
 	Tsetpoint(Rowmax, 0);
-	Tcleol();
+	tcleol();
 	Tsetpoint(Rowmax + 1, 0);
-	Tcleol();
+	tcleol();
 }
 
 static int ispell(FILE *in, FILE *out, char *send, char *receive)

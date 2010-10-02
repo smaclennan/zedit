@@ -83,7 +83,7 @@ void refresh(void)
 		bpnttomrk(Sstart);
 	}
 	pntrow = innerdsp(Curwdo->first, Curwdo->last, pmark);
-	if (bisbeforemrk(pmark) && !Tkbrdy()) {
+	if (bisbeforemrk(pmark) && !tkbrdy()) {
 		bpnttomrk(pmark);
 		unmark(pmark);
 		reframe();
@@ -180,7 +180,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 		bmove(Hshift);
 #endif
 		if (btstmrk(&Scrnmarks[trow]) || !Bisatmrk(&Scrnmarks[trow])) {
-			bmrktopnt(&Scrnmarks[trow]); /* Do this before Tkbrdy */
+			bmrktopnt(&Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
 			col = Tstart;
 			Tsetpoint(trow, col);
@@ -205,7 +205,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 				*lptr++ = Buff();
 				bmove1();
 			}
-			Tcleol();
+			tcleol();
 			if (Bisatmrk(Curbuff->mark) &&
 				(ISNL(Buff()) || Bisstart() || Bisend()))
 					setmark(FALSE);
@@ -369,7 +369,7 @@ pawshift:
 		}
 	}
 	memset(&tline[i], '\376', &tline[COLMAX] - &tline[i]);
-	Tcleol();
+	tcleol();
 
 	if (Bisend()) {
 		if (Bisatmrk(Curbuff->mark)) {

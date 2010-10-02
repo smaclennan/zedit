@@ -26,7 +26,7 @@ static Boolean Dosearch(void);
 static Boolean Replaceone(int, Boolean *, Boolean *, Byte *, Boolean);
 
 
-Boolean Insearch;	/* set by Nocase, reset by Getarg */
+Boolean Insearch;	/* set by Nocase, reset by getarg */
 
 static struct mark *Gmark;	/* used by global search routines */
 
@@ -56,7 +56,7 @@ void Doincsrch(char *prompt, Boolean forward)
 	while (go) {
 		refresh();
 		PutPaw(str, 2);
-		cmd = Tgetcmd();
+		cmd = tgetcmd();
 		if (isprint(cmd) && i < STRMAX) {
 			bmrktopnt(&marks[i]);
 			p[i++] = cmd;
@@ -123,7 +123,7 @@ void Zrsearch(void)
 
 void Zgsearch(void)
 {
-	if (Getarg(Nocase("Global Search: "), old, STRMAX))
+	if (getarg(Nocase("Global Search: "), old, STRMAX))
 		return;
 	cswitchto(Bufflist);
 	btostart();
@@ -139,7 +139,7 @@ void Zresrch(void)
 
 void Zgresrch(void)
 {
-	if (Getarg(Nocase("Global RE Search: "), old, STRMAX))
+	if (getarg(Nocase("Global RE Search: "), old, STRMAX))
 		return;
 	cswitchto(Bufflist);
 	btostart();
@@ -200,9 +200,9 @@ static void Promptreplace(int type)
 	case REGEXP:
 		prompt = "RE Replace: ";	break;
 	}
-	if (Getarg(Nocase(prompt), old, STRMAX))
+	if (getarg(Nocase(prompt), old, STRMAX))
 		return;
-	rc = Getarg(Nocase("with: "), new, STRMAX);
+	rc = getarg(Nocase("with: "), new, STRMAX);
 	if (rc == ABORT)
 		return;
 	if (rc)
@@ -273,7 +273,7 @@ input:
 			Echo("Replace? ");
 			refresh();
 input:
-			switch (tchar = Tgetcmd()) {
+			switch (tchar = tgetcmd()) {
 #endif
 				case ' ':
 				case ',':	/* handled later */
@@ -374,7 +374,7 @@ input:
 			bmove1();
 		if (*query)
 			Echo("Searching...");
-		else if (Tkbrdy())
+		else if (tkbrdy())
 			*exit = TRUE;
 	}
 	unmark(prevmatch);
@@ -387,7 +387,7 @@ input:
 static Boolean Promptsearch(char *prompt, int type)
 {
 	if (*old == '\0' || type != AGAIN) {
-		if (Getarg(Nocase(prompt), old, STRMAX)) {
+		if (getarg(Nocase(prompt), old, STRMAX)) {
 			Arg = 0;
 			return ABORT;
 		}
@@ -432,7 +432,7 @@ static Boolean Dosearch(void)
 		bpnttomrk(tmark);
 		if (fcnt) {
 			Echo("Found ");
-			Titot(fcnt);
+			titot(fcnt);
 		} else
 			Echo("Not Found");
 	} else
@@ -472,8 +472,8 @@ Boolean Bsearch(char *str, Boolean forward)
 			delta[(int)str[i]] = len - i;
 		if (!exact)
 			for (i = 0; i <= len;  ++i) {
-				delta[Toupper(str[i])] = len - i;
-				str[i] = Tolower(str[i]);
+				delta[toupper(str[i])] = len - i;
+				str[i] = tolower(str[i]);
 			}
 
 		/* search forward*/
@@ -485,7 +485,7 @@ Boolean Bsearch(char *str, Boolean forward)
 			/* slow loop */
 			for (i = len;
 				 (char)STRIP(Buff()) == str[i] ||
-				 (!exact && Tolower(STRIP(Buff())) == str[i]);
+				 (!exact && tolower(STRIP(Buff())) == str[i]);
 				 bmove(-1), --i)
 					if (i == 0)
 						return TRUE;
@@ -507,8 +507,8 @@ Boolean Bsearch(char *str, Boolean forward)
 			delta[(int)str[i]] = -i;
 		if (!exact)
 			for (i = len; i >= 0; --i) {
-				delta[Toupper(str[i])] = -i;
-				str[i] = Tolower(str[i]);
+				delta[toupper(str[i])] = -i;
+				str[i] = tolower(str[i]);
 			}
 		/* reverse search */
 		bmove(-len);
@@ -521,7 +521,7 @@ Boolean Bsearch(char *str, Boolean forward)
 			     i <= len &&
 				     ((char)STRIP(Buff()) == str[i] ||
 				      (!exact &&
-				       Tolower(STRIP(Buff())) == str[i]));
+				       tolower(STRIP(Buff())) == str[i]));
 			     ++i, bmove1())
 				;
 			if (i > len) {

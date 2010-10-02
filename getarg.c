@@ -20,12 +20,12 @@
 #include "z.h"
 #include "keys.h"
 
-/* globals for Getarg */
+/* globals for getarg */
 Boolean InPaw, First;
 int Pawcol, Pawlen, Pshift;
 struct buff *Paw, *Buff_save;
 
-/* globals for Getplete */
+/* globals for getplete */
 static char **Carray;
 static int Csize, Cnum = 0, Cret;
 unsigned Nextpart = ZNOTIMPL;
@@ -42,7 +42,7 @@ char *PromptString;
 #endif
 
 
-Boolean Getarg(char *prompt, char *arg, int max)
+Boolean getarg(char *prompt, char *arg, int max)
 {
 	char *ptr;
 	int argp_save, arg_save, rc;
@@ -67,7 +67,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
 	Keys[CR] = ZNEWLINE; /* in case we are in a VIEW buff */
 	Pshift = 0;
 	Pawlen = max;
-	Makepaw(arg, FALSE);
+	makepaw(arg, FALSE);
 	First = TRUE;
 	while (InPaw == TRUE)
 		Execute();
@@ -106,7 +106,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
  * or char * array.
  * Returns offset of entry in array if found, else -1.
  */
-int Getplete(char *prompt, char *def, char **array, int size, int num)
+int getplete(char *prompt, char *def, char **array, int size, int num)
 {
 	char cmdstr[STRMAX + 1];
 
@@ -117,13 +117,13 @@ int Getplete(char *prompt, char *def, char **array, int size, int num)
 		strcpy(cmdstr, def);
 	else
 		*cmdstr = '\0';
-	if (Getarg(prompt, cmdstr, STRMAX))
+	if (getarg(prompt, cmdstr, STRMAX))
 		Cret = -1;
 	Cnum = 0;
 	return Cret;
 }
 
-int Pcmdplete(Boolean show)
+static int pcmdplete(Boolean show)
 {
 	char cmd[STRMAX + 1], **cca, *mstr = NULL;
 	int i = 0, len, len1 = 0, rc;
@@ -134,13 +134,13 @@ int Pcmdplete(Boolean show)
 	cca = Carray;
 	if (show && !len)
 		for (; i < Cnum; ++i, cca += Csize)
-			Pout(*cca, TRUE);
+			pout(*cca, TRUE);
 	else
 		for (; i < Cnum && (rc = Strnicmp(*cca, cmd, len)) <= 0;
 				++i, cca += Csize)
 			if (rc == 0) {
 				if (show)
-					Pout(*cca, TRUE);
+					pout(*cca, TRUE);
 				else if (mstr) {
 					Cret = -1;
 					len1 = nmatch(mstr, *cca);
@@ -152,7 +152,7 @@ int Pcmdplete(Boolean show)
 	if (mstr && !show) {
 		strncpy(cmd, mstr, len1);
 		cmd[len1] = '\0';
-		Makepaw(cmd, FALSE);
+		makepaw(cmd, FALSE);
 		return Cret != -1 ? 2 : 1;
 	}
 	return 0;
@@ -162,14 +162,14 @@ int Pcmdplete(Boolean show)
 static int p_row, p_col;
 static int p_ncols = PNUMCOLS;
 
-static void Pclear(void)
+static void pclear(void)
 {
 	int i;
 	struct wdo *wdo = Whead;
 
 	for (i = 0; i < Rowmax - 2; ++i) {
 		Tsetpoint(i, 0);
-		Tcleol();
+		tcleol();
 		Scrnmarks[i].modf = TRUE;
 		if (wdo->last == i) {
 			wdo->modeflags = INVALID;
@@ -177,24 +177,23 @@ static void Pclear(void)
 				wdo = wdo->next;
 		}
 	}
-	Pset(0, 0, PNUMCOLS);
+	pset(0, 0, PNUMCOLS);
 }
 
-
-void Pset(int row, int col, int ncols)
+void pset(int row, int col, int ncols)
 {
 	p_row = row;
 	p_col = col;
 	p_ncols = ncols;
 }
 
-void Pout(char *str, Boolean check)
+void pout(char *str, Boolean check)
 {
 	Tsetpoint(p_row, p_col * PCOLSIZE);
 	Scrnmarks[p_row].modf = TRUE;
 	if (!check || p_row < Tmaxrow() - 2) {
 		tprntstr(str);
-		Tcleol();
+		tcleol();
 	}
 	if (++p_col >= p_ncols) {
 		++p_row;
@@ -203,7 +202,7 @@ void Pout(char *str, Boolean check)
 }
 
 /* Use instead of Zinsert when in PAW */
-void Pinsert(void)
+void pinsert(void)
 {
 	char savech;
 	struct mark tmark;
@@ -211,8 +210,8 @@ void Pinsert(void)
 
 	if (Cmd == '?' && Cnum) {
 		/* Help!!!!*/
-		Pclear();
-		Pcmdplete(TRUE);
+		pclear();
+		pcmdplete(TRUE);
 		Dline(p_col ? ++p_row : p_row);
 		return;
 	}
@@ -238,7 +237,7 @@ void Pinsert(void)
 		bpnttomrk(&tmark);
 
 		if (Cnum)
-			switch (Pcmdplete(FALSE)) {
+			switch (pcmdplete(FALSE)) {
 			case 0:		/* no match - remove char */
 				bmove(-1);
 				bdelete(1);
@@ -259,7 +258,7 @@ void Pinsert(void)
 }
 
 /* Use instead of Znewline when in PAW */
-void Pnewline(void)
+void pnewline(void)
 {
 	char cmdstr[STRMAX + 1], **ptr;
 
@@ -288,7 +287,7 @@ void Zpart(void)
 		for (bcsearch(NL); !Bisend(); bcsearch(NL)) {
 			Getbword(word, STRMAX, Istoken);
 			if (Strstr(word, savetag)) {
-				Makepaw(word, TRUE);
+				makepaw(word, TRUE);
 				return;
 			}
 		}
@@ -306,18 +305,18 @@ void Zpart(void)
 			tbuff = tbuff->next;
 		else
 			tbuff = Bufflist;
-		Makepaw(tbuff->bname, TRUE);
+		makepaw(tbuff->bname, TRUE);
 	} else
 		tbell();
 }
 
-void Makepaw(char *word, Boolean start)
+void makepaw(char *word, Boolean start)
 {
 	bswitchto(Paw);
 	btostart();
 	bdelete(Curplen);
 	binstr(word);
-	Tcleol();
+	tcleol();
 	memset(tline, '\376', COLMAX);	/* invalidate it */
 	if (start)
 		btostart();

@@ -28,7 +28,7 @@ void Zswitchto(void)
 	Arg = 0;
 	was = Curbuff->bname;
 	Nextpart = ZSWITCHTO;
-	rc = Getplete("Buffer: ", Lbufname, Bnames, sizeof(char *), Numbuffs);
+	rc = getplete("Buffer: ", Lbufname, Bnames, sizeof(char *), Numbuffs);
 	Nextpart = ZNOTIMPL;
 	if (rc == -1)
 		return;
@@ -60,7 +60,7 @@ void Zkillbuff(void)
 	if (Argp) {
 		strcpy(bname, Lbufname);
 		do
-			if (Getarg("Buffer: ", bname, BUFNAMMAX))
+			if (getarg("Buffer: ", bname, BUFNAMMAX))
 				return;
 		while ((tbuff = Cfindbuff(bname)) == NULL);
 		bswitchto(tbuff);

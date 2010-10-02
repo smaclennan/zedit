@@ -45,10 +45,10 @@ static Boolean Findstart(void)
 void Zcapword(void)
 {
 	if (Findstart()) {
-		Buff() = Toupper(Buff());
+		Buff() = toupper(Buff());
 		Curbuff->bmodf = Curmodf = MODIFIED;
 		for (bmove1(); !Bisend() && Istoken(); bmove1())
-			Buff() = Tolower(Buff());
+			Buff() = tolower(Buff());
 		vsetmod(FALSE);
 	}
 }
@@ -59,7 +59,7 @@ void Zlowword(void)
 	if (Findstart()) {
 		for ( ; !Bisend() && Istoken(); bmove1()) {
 			Curbuff->bmodf = Curmodf = MODIFIED;
-			Buff() = Tolower(Buff());
+			Buff() = tolower(Buff());
 		}
 		vsetmod(FALSE);
 	}
@@ -71,7 +71,7 @@ void Zupword(void)
 	if (Findstart()) {
 		for ( ; !Bisend() && Istoken(); bmove1()) {
 			Curbuff->bmodf = Curmodf = MODIFIED;
-			Buff() = Toupper(Buff());
+			Buff() = toupper(Buff());
 		}
 		vsetmod(FALSE);
 	}
@@ -465,12 +465,12 @@ void Zfillpara(void)
 
 		unmark(tmp);
 		Movepast(Isspace, FORWARD); /* setup for next iteration */
-	} while ((all || --Arg > 0) && !Bisend() && !Tkbrdy());
+	} while ((all || --Arg > 0) && !Bisend() && !tkbrdy());
 
 	clrecho();
 	if (Arg > 0 || (all && !Bisend())) {
 		Echo("Aborted");
-		Tgetcmd();
+		tgetcmd();
 	}
 
 	bpnttomrk(tmark); /* restore point */
@@ -665,7 +665,7 @@ static void mshow(unsigned ch)
 	int cnt = 0;
 	struct mark save;
 
-	if (!(Curbuff->bmode & PROGMODE) || InPaw || Tkbrdy())
+	if (!(Curbuff->bmode & PROGMODE) || InPaw || tkbrdy())
 		return;
 	if (VAR(VMATCH) & 1) {
 		switch (ch) {
@@ -769,7 +769,7 @@ void Zarg(void)
 	strcpy(str, "Arg: 0");
 	p = str + 5;	/* point to first digit */
 	PutPaw(str, 2);
-	while ((Cmd = Tgetcmd()) >= '0' && Cmd <= '9') {
+	while ((Cmd = tgetcmd()) >= '0' && Cmd <= '9') {
 		Arg = Arg * 10 + Cmd - '0';
 		*p++ = Cmd;
 		*p = '\0';
@@ -786,7 +786,7 @@ void Zmeta(void)
 	Boolean tmp;
 
 	tmp = Delayprompt("Meta: ");
-	Cmd = Tgetkb() | 128;
+	Cmd = tgetkb() | 128;
 	if (tmp)
 		clrecho();
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
@@ -798,7 +798,7 @@ void Zctrlx(void)
 	Boolean tmp;
 
 	tmp = Delayprompt("C-X: ");
-	Cmd = Tgetcmd() | 256;
+	Cmd = tgetcmd() | 256;
 	if (tmp)
 		clrecho();
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
@@ -807,7 +807,7 @@ void Zctrlx(void)
 /* voidess the M-X command */
 void Zmetax(void)
 {
-	int rc = Getplete("M-X: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
+	int rc = getplete("M-X: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
 	if (rc != -1) {
 		Cmd = Cnames[rc].fnum;
 		Lfunc = ZMETAX;
@@ -830,16 +830,16 @@ void Zquote(void)
 	char n[3];
 
 	tmp = Delayprompt("Quote: ");
-	Cmd = Tgetkb();
+	Cmd = tgetkb();
 	if (isxdigit(Cmd)) {
 		n[0] = Cmd;
-		n[1] = Tgetkb();
+		n[1] = tgetkb();
 		n[2] = '\0';
 		Cmd = (int) strtol(n, NULL, 16);
 	}
 	while (Arg-- > 0)
 		if (InPaw)
-			Pinsert();
+			pinsert();
 		else
 			binsert(Cmd);
 	if (tmp)

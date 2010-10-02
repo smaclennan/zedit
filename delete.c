@@ -159,7 +159,7 @@ void Zgetbword(void)
 		bswitchto(Paw);
 		for (ptr = word; *ptr; ++ptr) {
 			Cmd = *ptr;
-			Pinsert();
+			pinsert();
 		}
 	} else {
 		tmark = bcremrk();	/* save current Point */

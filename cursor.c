@@ -169,7 +169,7 @@ static long getnum(char *prompt)
 	if (Argp) {
 		num = Arg;
 		Arg = 0;
-	} else if (Getarg(prompt, str, 9) == 0)
+	} else if (getarg(prompt, str, 9) == 0)
 		num = strtol(str, NULL, 0);
 	return num;
 }
@@ -226,7 +226,7 @@ void Zsetbookmrk(void)
 	if (Argp) {
 		Arg = 0;
 		*PawStr = '\0';
-		if (Getarg("Bookmark name: ", PawStr, STRMAX))
+		if (getarg("Bookmark name: ", PawStr, STRMAX))
 			return;
 	} else
 		strcpy(PawStr, "Unamed");
@@ -262,7 +262,7 @@ void Znxtbookmrk(void)
 		int b;
 
 		Arg = 0;
-		b = Getplete("Bookmark name: ", NULL, Bookname, sizeof(char *),
+		b = getplete("Bookmark name: ", NULL, Bookname, sizeof(char *),
 			     Lastbook + 1);
 		if (b == -1)
 			return;

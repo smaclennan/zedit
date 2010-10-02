@@ -60,7 +60,7 @@ void Zfindtag(void)
 
 	do {
 		best = found = FALSE;
-		if (Getarg("Tag: ", tag, STRMAX) == 0) {
+		if (getarg("Tag: ", tag, STRMAX) == 0) {
 			Echo("Looking...");
 			for (btostart(); !Bisend(); bcsearch(NL)) {
 				Getbword(word, STRMAX, Istoken);
@@ -255,7 +255,7 @@ static Boolean GetTagsFile(void)
 		if (Argp) {
 			/* Ask user for file to use. */
 			strcpy(fname, tbuff->fname);
-			if (Getfname("Tag File: ", fname))
+			if (getfname("Tag File: ", fname))
 				return FALSE;
 
 			breadfile(fname);
@@ -278,7 +278,7 @@ static Boolean GetTagsFile(void)
 	if (Argp) {
 		/* Ask user for file to use. */
 		strcpy(fname, "TAGS");
-		if (Getfname("Tag File: ", fname))
+		if (getfname("Tag File: ", fname))
 			return FALSE;
 		if (access(fname, 0)) {
 			sprintf(PawStr, "%s not found.", fname);
@@ -332,7 +332,7 @@ void Zref(void)
 	strcpy(tag, "ref ");
 	p = tag + strlen(tag);
 	Getbword(p, STRMAX, Istoken);
-	if (Getarg("Ref tag: ", p, STRMAX))
+	if (getarg("Ref tag: ", p, STRMAX))
 		return;
 
 	mbuff = Cmdtobuff(REFBUFF, tag);

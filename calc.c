@@ -197,7 +197,7 @@ void Zcalc(void)
 	char op, str[STRMAX], *p = str;
 
 	Arg = 0;
-	if (Getarg("Calc: ", Calc_str, STRMAX - 1))
+	if (getarg("Calc: ", Calc_str, STRMAX - 1))
 		return;
 
 	/* We modify the string, leave Calc_str alone */

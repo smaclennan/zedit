@@ -81,8 +81,6 @@ static union number {
 static int cur_num;
 static int is_float;
 
-static int max_num, max_op; /* SAM DBG */
-
 static jmp_buf failed;
 
 #define STACK_OVERFLOW 1
@@ -93,8 +91,6 @@ static void push_op(char op)
 	if (cur_op >= MAX_OPS)
 		longjmp(failed, STACK_OVERFLOW);
 	ops[cur_op++] = op;
-	if (cur_op > max_op)
-		max_op = cur_op;
 }
 
 static char pop_op(void)
@@ -116,8 +112,6 @@ static void push_num(long num)
 	if (cur_num >= MAX_NUMS)
 		longjmp(failed, STACK_OVERFLOW);
 	nums[cur_num++].i = num;
-	if (cur_num > max_num)
-		max_num = cur_num;
 }
 
 static void push_float(double num)
@@ -301,6 +295,4 @@ void Zcalc(void)
 	}
 
 	Echo(PawStr);
-
-	Dbg("Max op %d num %d (%s)\n", max_op, max_num, Calc_str);
 }

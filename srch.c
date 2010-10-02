@@ -55,7 +55,7 @@ void Doincsrch(char *prompt, Boolean forward)
 	p = str + strlen(str);
 	while (go) {
 		refresh();
-		PutPaw(str, 2);
+		putpaw(str, 2);
 		cmd = tgetcmd();
 		if (isprint(cmd) && i < STRMAX) {
 			bmrktopnt(&marks[i]);
@@ -91,7 +91,7 @@ void Doincsrch(char *prompt, Boolean forward)
 			p[i] = '\0';
 		} else if (Keys[cmd] != ZNOTIMPL) {
 			if (cmd != CR)
-				Pushcmd(cmd);
+				PUSHCMD(cmd);
 			go = FALSE;
 		}
 		first = 0;
@@ -353,7 +353,7 @@ input:
 		}
 		if (*query && tchar == ',') {
 			refresh();
-			if (Ask("Confirm? ") != YES) {
+			if (ask("Confirm? ") != YES) {
 				/* change it back */
 				if (type == REGEXP) {
 					for (dist = 0;
@@ -478,9 +478,9 @@ Boolean Bsearch(char *str, Boolean forward)
 
 		/* search forward*/
 		bmove(len);
-		while (!Bisend()) {
+		while (!bisend()) {
 			/* fast loop - delta will be 0 if matched */
-			while (!Bisend() && delta[Buff()])
+			while (!bisend() && delta[Buff()])
 				bmove(delta[Buff()]);
 			/* slow loop */
 			for (i = len;
@@ -512,9 +512,9 @@ Boolean Bsearch(char *str, Boolean forward)
 			}
 		/* reverse search */
 		bmove(-len);
-		while (!Bisstart()) {
+		while (!bisstart()) {
 			/* fast loop - delta will be 0 if matched */
-			while (delta[Buff()] && !Bisstart())
+			while (delta[Buff()] && !bisstart())
 				bmove(delta[Buff()]);
 			/* slow loop */
 			for (i = 0;
@@ -543,7 +543,7 @@ char *Nocase(char *prompt)
 	if (prompt) {
 		strcpy(is, prompt);
 		strcpy(upper, prompt);
-		Strup(upper);
+		strup(upper);
 		Insearch = TRUE;
 	}
 	return (Curbuff->bmode & EXACT) ? is : upper;

@@ -62,7 +62,7 @@ void Zcmdtobuff(void)
 			Echo("Please wait...");
 			rc = PipeToBuff(Curbuff, Command);
 			if (rc == 0) {
-				Message(Curbuff, Command);
+				message(Curbuff, Command);
 				btostart();
 			}
 			Curbuff->bmodf = FALSE;
@@ -86,7 +86,7 @@ void Zman(void)
 
 	strcpy(entry, "man ");
 	p = entry + strlen(entry);
-	Getbword(p, STRMAX, Istoken);	/* get word */
+	getbword(p, STRMAX, bistoken);	/* get word */
 	if (getarg("Man: ", p, STRMAX))
 		return;
 
@@ -96,7 +96,7 @@ void Zman(void)
 		rc = PipeToBuff(Curbuff, entry);
 		if (rc == 0) {
 			/* remove the underlines */
-			Message(Curbuff, p);
+			message(Curbuff, p);
 			btoend();
 			while (bcrsearch('\010')) {
 				bmove(-1);
@@ -175,7 +175,7 @@ void Zmail(void)
 	case 0:
 		break;
 	case 1:
-		if (Ask("Send with empty subject? ") != YES)
+		if (ask("Send with empty subject? ") != YES)
 			return;
 		break;
 	case ABORT:

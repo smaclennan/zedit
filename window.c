@@ -27,6 +27,13 @@ static void Wfree(struct wdo *);
 static Boolean Wdelete(struct wdo *);
 static Boolean Wsplit(void);
 
+/* called at startup when out of memory */
+static void NoMem(void)
+{
+	Error("Out of memory.");
+	exit(1);
+}
+
 
 /* Create a new window pointer - screen info invalid */
 static struct wdo *Wcreate(int first, int last)
@@ -113,11 +120,11 @@ static Boolean Wsplit(void)
 	struct wdo *new;
 	int first, last;
 
-	if (Wheight() < MINWDO)
+	if (wheight() < MINWDO)
 		return FALSE;
 
 	/* Create the new window. */
-	first = Curwdo->first + (Wheight() / 2) + 1;
+	first = Curwdo->first + (wheight() / 2) + 1;
 	last = Curwdo->last;
 	new = Wcreate(first, last);
 	if (!new)
@@ -214,7 +221,7 @@ static Boolean Sizewindow(int size)
 {
 	struct wdo *other;
 
-	if (Wheight() + size < MINWDO)
+	if (wheight() + size < MINWDO)
 		return FALSE;
 	other = Curwdo->next;
 	if (other && other->last - other->first - size > MINWDO) {
@@ -359,7 +366,7 @@ Boolean WuseOther(char *bname)
 		Wsplit();
 		if ((strcmp(bname, MAKEBUFF) == 0 ||
 		     strcmp(bname, REFBUFF) == 0)
-			&& Wheight() > 8) {
+			&& wheight() > 8) {
 			/* .make/.ref buffers are smaller */
 			Curwdo->first = Curwdo->last - 8;
 			Curwdo->prev->last = Curwdo->first - 1;
@@ -415,7 +422,7 @@ void Z1wind(void)
 	}
 
 	Curwdo->first = Tstart;
-	Curwdo->last = Tmaxrow() - 2;
+	Curwdo->last = tmaxrow() - 2;
 	Curwdo->modeflags = INVALID;
 	Curwdo->prev = Curwdo->next = NULL;
 	Whead = Curwdo;
@@ -482,7 +489,7 @@ void Zshrinkwind(void)
 /* Make current window an absolute size */
 void Zsizewind(void)
 {
-	if (!Sizewindow(Arg - Wheight() + 1))
+	if (!Sizewindow(Arg - wheight() + 1))
 		tbell();
 	Arg = 0;
 }

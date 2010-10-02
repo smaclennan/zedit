@@ -26,7 +26,7 @@ static void copytomrk(struct mark *tmark)
 {
 	struct buff *save = Curbuff;
 	bswitchto(Killbuff);
-	if (Delcmd())
+	if (delcmd())
 		btoend();
 	else
 		bempty();
@@ -59,7 +59,7 @@ void Zdeleol(void)
 {
 	struct mark *tmark = bcremrk();
 
-	if (!Bisend() && Buff() == NL)
+	if (!bisend() && Buff() == NL)
 		bmove1();
 	else if (VAR(VKILLLINE)) {
 		Boolean atstart;
@@ -132,8 +132,8 @@ void Zdelword(void)
 	struct mark *tmark;
 
 	tmark = bcremrk();
-	Moveto(Isword, FORWARD);
-	Movepast(Isword, FORWARD);
+	moveto(bisword, FORWARD);
+	movepast(bisword, FORWARD);
 	killtomrk(tmark);
 	unmark(tmark);
 }
@@ -155,7 +155,7 @@ void Zgetbword(void)
 
 	if (InPaw) {
 		bswitchto(Buff_save);
-		Getbword(word, STRMAX, Istoken);
+		getbword(word, STRMAX, bistoken);
 		bswitchto(Paw);
 		for (ptr = word; *ptr; ++ptr) {
 			Cmd = *ptr;
@@ -163,10 +163,10 @@ void Zgetbword(void)
 		}
 	} else {
 		tmark = bcremrk();	/* save current Point */
-		Moveto(Istoken, FORWARD); /* find start of word */
-		Movepast(Istoken, BACKWARD);
+		moveto(bistoken, FORWARD); /* find start of word */
+		movepast(bistoken, BACKWARD);
 		start = bcremrk();
-		Movepast(Istoken, FORWARD); /* move Point to end of word */
+		movepast(bistoken, FORWARD); /* move Point to end of word */
 		copytomrk(start); /* copy to Kill buffer */
 		bpnttomrk(tmark); /* move Point back */
 		unmark(tmark);
@@ -183,8 +183,8 @@ void Zdelblanks(void)
 	if (bcrsearch(NL)) {
 		bmove1();
 		tmark = bcremrk();
-		Movepast(Isspace, BACKWARD);
-		if (!Bisstart())
+		movepast(bisspace, BACKWARD);
+		if (!bisstart())
 			bcsearch(NL);
 		if (bisbeforemrk(tmark))
 			bdeltomrk(tmark);
@@ -192,7 +192,7 @@ void Zdelblanks(void)
 	}
 	if (bcsearch(NL)) {
 		tmark = bcremrk();
-		Movepast(Isspace, FORWARD);
+		movepast(bisspace, FORWARD);
 		if (bcrsearch(NL))
 			bmove1();
 		if (bisaftermrk(tmark))
@@ -213,7 +213,7 @@ void Zjoin(void)
 
 void Zempty(void)
 {
-	if (Ask("Empty buffer? ") != YES)
+	if (ask("Empty buffer? ") != YES)
 		return;
 	bempty();
 	Curbuff->bmodf = MODIFIED;

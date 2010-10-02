@@ -72,7 +72,7 @@ static void helpit(int type)
 	else
 		was = type;
 	sprintf(buff, "- %s Help -\n\n", Htype[type]);
-	Tindent((Colmax - strlen(buff)) >> 1);
+	tindent((Colmax - strlen(buff)) >> 1);
 	binstr(buff);
 	if (type == H_VAR)
 		for (i = 0; i < VARNUM; ++i)
@@ -115,7 +115,7 @@ static FILE *findhelp(int code, Boolean func, char *buff)
 	char *ptr;
 	int len;
 
-	Findpath(buff, ZHFILE, FINDPATHS, TRUE);
+	findpath(buff, ZHFILE, FINDPATHS, TRUE);
 	fp = fopen(buff, "r");
 	if (!fp) {
 		Echo("Unable to Open Help File");
@@ -219,7 +219,7 @@ void Zhelp(void)
 
 	case 2:
 		/* accept input from top level and create secondary level */
-		Getbword(str, STRMAX, issentence);
+		getbword(str, STRMAX, issentence);
 		for (i = 0; i < HTYPES; ++i)
 			if (strcmp(str, Htype[i]) == 0) {
 				helpit(i);
@@ -230,7 +230,7 @@ void Zhelp(void)
 	case 3:
 		/* accept input from secondary level and display help */
 		bmakecol(bgetcol(FALSE, 0) < 40 ? 5 : 45, FALSE);
-		Getbword(str, 30, issentence);
+		getbword(str, 30, issentence);
 		if (strncmp(str, "Top", 3) == 0) {
 			level = 1;
 			Zhelp();

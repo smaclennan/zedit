@@ -50,7 +50,7 @@ void Zfindtag(void)
 
 	/* do BEFORE switching buffer! */
 	Arg = 0;
-	Getbword(tag, STRMAX, Istoken);
+	getbword(tag, STRMAX, bistoken);
 	Bsave = Curbuff;
 	bmrktopnt(&smark);
 
@@ -62,9 +62,9 @@ void Zfindtag(void)
 		best = found = FALSE;
 		if (getarg("Tag: ", tag, STRMAX) == 0) {
 			Echo("Looking...");
-			for (btostart(); !Bisend(); bcsearch(NL)) {
-				Getbword(word, STRMAX, Istoken);
-				if (Stricmp(tag, word) == 0) {
+			for (btostart(); !bisend(); bcsearch(NL)) {
+				getbword(word, STRMAX, bistoken);
+				if (strcasecmp(tag, word) == 0) {
 					if (strcmp(tag, word) == 0) {
 						GotoMatch(&smark);
 						return;
@@ -73,7 +73,7 @@ void Zfindtag(void)
 						found = TRUE;
 						bmrktopnt(&tmark);
 					} else if (!found &&
-						   Strstr(word, tag)) {
+						   stristr(word, tag)) {
 						found = TRUE;
 						bmrktopnt(&tmark);
 					}
@@ -90,7 +90,7 @@ void Zfindtag(void)
 				strcpy(savetag, tag);
 				Nextpart = ZFINDTAG;
 				bpnttomrk(&tmark);
-				Getbword(tag, STRMAX, Istoken);
+				getbword(tag, STRMAX, bistoken);
 			} else
 				Echo("Not Found");
 		}
@@ -108,7 +108,7 @@ void Xfindtag(void)
 
 	/* do BEFORE switching buffer! */
 	Arg = 0;
-	Getbword(tag, STRMAX, Istoken);
+	getbword(tag, STRMAX, bistoken);
 	Bsave = Curbuff;
 	bmrktopnt(&smark);
 
@@ -116,8 +116,8 @@ void Xfindtag(void)
 		return;
 
 	Echo("Looking...");
-	for (btostart(); !Bisend(); bcsearch(NL)) {
-		Getbword(word, STRMAX, Istoken);
+	for (btostart(); !bisend(); bcsearch(NL)) {
+		getbword(word, STRMAX, bistoken);
 		if (strcmp(tag, word) == 0) {
 			/* found a match in the tag file */
 			GotoMatch(&smark);
@@ -161,22 +161,22 @@ static Boolean Tagfparse(struct buff *bsave)
 	num = -1;
 	*str = '\0';
 
-	while (!Iswhite() && !Bisend())
+	while (!biswhite() && !bisend())
 		bmove1(); /* skip partial match */
-	while (Iswhite())
+	while (biswhite())
 		bmove1();
 	if (isdigit(Buff())) {
 		byte = Buff() == '0';
 		num = Batoi();
 	}
 
-	while (Iswhite())
+	while (biswhite())
 		bmove1();
-	for (i = 0; i < PATHMAX && !isspace(Buff()) && !Bisend(); bmove1())
+	for (i = 0; i < PATHMAX && !isspace(Buff()) && !bisend(); bmove1())
 		fname[i++] = Buff();
 	fname[i] = '\0';
 
-	while (Iswhite())
+	while (biswhite())
 		bmove1();
 	if (num == -1) {
 		if (isdigit(Buff())) {
@@ -189,7 +189,7 @@ static Boolean Tagfparse(struct buff *bsave)
 			if (smatch == '^')
 				bmove1();
 			for (ptr = str;
-				 Buff() != mch && Buff() != NL && !Bisend();
+				 Buff() != mch && Buff() != NL && !bisend();
 				 *ptr = Buff(), bmove1(), ++ptr)
 				if (Buff() == '\\')
 					bmove1();	/* escapes */
@@ -218,12 +218,12 @@ static Boolean Tagfparse(struct buff *bsave)
 				bmrktopnt(&tmark);
 				if (smatch) {
 					bmove(-1);
-					found = (Bisstart() || Buff() == NL);
+					found = (bisstart() || Buff() == NL);
 					bpnttomrk(&tmark);
 				}
 				if (found && ematch) {
 					bmove(strlen(str));
-					found = (Bisend() || Buff() == NL);
+					found = (bisend() || Buff() == NL);
 					bpnttomrk(&tmark);
 				}
 				if (found)
@@ -253,7 +253,7 @@ static Boolean GetTagsFile(void)
 
 		bswitchto(tbuff);
 		if (Argp) {
-			/* Ask user for file to use. */
+			/* ask user for file to use. */
 			strcpy(fname, tbuff->fname);
 			if (getfname("Tag File: ", fname))
 				return FALSE;
@@ -276,7 +276,7 @@ static Boolean GetTagsFile(void)
 	 *	dosen't exist, try the the variable TAGFILE.
 	 */
 	if (Argp) {
-		/* Ask user for file to use. */
+		/* ask user for file to use. */
 		strcpy(fname, "TAGS");
 		if (getfname("Tag File: ", fname))
 			return FALSE;
@@ -316,7 +316,7 @@ int Batoi(void)
 {
 	int num;
 
-	while (Iswhite())
+	while (biswhite())
 		bmove1();
 	for (num = 0; isdigit(Buff()); bmove1())
 		num = num * 10 + Buff() - '0';
@@ -331,7 +331,7 @@ void Zref(void)
 
 	strcpy(tag, "ref ");
 	p = tag + strlen(tag);
-	Getbword(p, STRMAX, Istoken);
+	getbword(p, STRMAX, bistoken);
 	if (getarg("Ref tag: ", p, STRMAX))
 		return;
 
@@ -339,7 +339,7 @@ void Zref(void)
 	if (mbuff == NULL)
 		Error("Unable to execute ref.");
 	else
-		Message(mbuff, tag);
+		message(mbuff, tag);
 }
 
 #else

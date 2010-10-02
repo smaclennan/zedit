@@ -62,7 +62,7 @@ void Zrevertfile(void)
 		return;
 	}
 
-	if (Curbuff->bmodf && Ask("File modifed. Ok to loose changes?") != YES)
+	if (Curbuff->bmodf && ask("File modifed. Ok to loose changes?") != YES)
 		return;
 
 	/* Lose the undo history */

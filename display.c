@@ -38,7 +38,7 @@ void redisplay(void)
 	int i;
 
 	tclrwind();
-	for (i = 0; i < Tmaxrow() - 2; ++i)
+	for (i = 0; i < tmaxrow() - 2; ++i)
 		Scrnmarks[i].modf = TRUE;
 	Tlrow = -1;
 }
@@ -59,7 +59,8 @@ void refresh(void)
 		pawdisplay(pmark, was);
 		return;
 	}
-	ASSERT(++NESTED < 10);
+	if (++NESTED > 10)
+		Hangup(0);
 
 	Setmodes(Curbuff);	/* SAM make sure OK */
 
@@ -76,7 +77,7 @@ void refresh(void)
 		/* The cursor has moved before/after the screen marks */
 		reframe();
 	bpnttomrk(Sstart);
-	if (Bisatmrk(Psstart) && !Bisstart()) {
+	if (Bisatmrk(Psstart) && !bisstart()) {
 		/* Deleted first char in window that is not at buffer start */
 		bpnttomrk(pmark);
 		reframe();
@@ -113,11 +114,11 @@ void refresh(void)
 	unmark(pmark);
 	bcol = bgetcol(TRUE, 0);
 	/* position the cursor */
-	col = bcol % (Tmaxcol() - 1 - Tstart);
-	/* special case for NL or Bisend at column 80 */
-	if (col == 0 && bcol && (ISNL(Buff()) || Bisend()))
-		col = Tmaxcol() - 1 - Tstart;
-	else if (!Bisend() && (col + chwidth(Buff(), col, FALSE) >= Tmaxcol()))
+	col = bcol % (tmaxcol() - 1 - Tstart);
+	/* special case for NL or bisend at column 80 */
+	if (col == 0 && bcol && (ISNL(Buff()) || bisend()))
+		col = tmaxcol() - 1 - Tstart;
+	else if (!bisend() && (col + chwidth(Buff(), col, FALSE) >= tmaxcol()))
 		col = 0;
 	tgoto(pntrow, col + Tstart);
 
@@ -130,7 +131,7 @@ void refresh(void)
 	 */
 	if (Bisatmrk(Curbuff->mark)) {
 		tstyle(T_NORMAL);
-		tprntchar((Bisend() || ISNL(Buff())) ? ' ' : Buff());
+		tprntchar((bisend() || ISNL(Buff())) ? ' ' : Buff());
 		tgoto(pntrow, col + Tstart);
 		was->moffset = PSIZE + 1; /* Invalidate it */
 	}
@@ -138,7 +139,7 @@ void refresh(void)
 
 	Modeflags(Curwdo);
 	Setmodes(Curbuff);	/* displaying other windows can blow modes */
-	Tflush();
+	tflush();
 	tstyle(T_NORMAL);
 
 #ifdef SCROLLBARS
@@ -158,7 +159,7 @@ static inline Boolean btstmrk(struct mark *tmark)
 
 static inline int buff_col(void)
 {	/* Current column after current buffer char */
-	return Tgetcol() + Twidth(Buff());
+	return tgetcol() + twidth(Buff());
 }
 
 /*
@@ -183,13 +184,13 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			bmrktopnt(&Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
 			col = Tstart;
-			Tsetpoint(trow, col);
-			while (!Bisend() && !ISNL(Buff()) &&
-			       (col = buff_col()) < Tmaxcol()) {
+			tsetpoint(trow, col);
+			while (!bisend() && !ISNL(Buff()) &&
+			       (col = buff_col()) < tmaxcol()) {
 				if (trow == Tlrow &&
 				    Buff() == *lptr &&
 				    Buff() != (Byte)'\376')
-					Tgetcol() = col;
+					tgetcol() = col;
 				else {
 					if (Bisatmrk(Curbuff->mark))
 						setmark(TRUE);
@@ -207,19 +208,19 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			}
 			tcleol();
 			if (Bisatmrk(Curbuff->mark) &&
-				(ISNL(Buff()) || Bisstart() || Bisend()))
+				(ISNL(Buff()) || bisstart() || bisend()))
 					setmark(FALSE);
 #ifdef HSCROLL
 			if (!ISNL(Buff()))
 				bcsearch(NL);
 #else
-			if (col >= Tmaxcol())
+			if (col >= tmaxcol())
 				extendedlinemarker();
 #endif
 			memset(lptr, '\376', Colmax - (lptr - tline));
 			Tlrow = trow;
-			if (Tgetcol() < Tmaxcol()) {
-				if (Bisend())
+			if (tgetcol() < tmaxcol()) {
+				if (bisend())
 					bshoveit();
 				else if (ISNL(Buff()))
 					bmove1();
@@ -257,9 +258,9 @@ void reframe(void)
 
 	pmark = bcremrk();
 	for (cnt = prefline(); cnt > 0 && bcrsearch(NL); --cnt)
-			cnt -= bgetcol(TRUE, 0) / Tmaxcol();
+			cnt -= bgetcol(TRUE, 0) / tmaxcol();
 	if (cnt < 0)
-		bmakecol((-cnt) * Tmaxcol(), FALSE);
+		bmakecol((-cnt) * tmaxcol(), FALSE);
 	else
 		tobegline();
 	bmrktopnt(Sstart);
@@ -320,7 +321,7 @@ void vsetmrk(struct mark *mrk)
 {
 	int row;
 
-	for (row = 0; row < Tmaxrow() - 1; ++row)
+	for (row = 0; row < tmaxrow() - 1; ++row)
 		if (mrkaftermrk(&Scrnmarks[row], mrk)) {
 			if (row > 0)
 				Scrnmarks[row - 1].modf = TRUE;
@@ -340,7 +341,7 @@ static void pawdisplay(struct mark *pmark, struct mark *was)
 pawshift:
 	btostart(); bmove(Pshift);
 	for (i = 0, Pcol = Pawcol;
-	     Pcol < Colmax - 2 && !Bisend();
+	     Pcol < Colmax - 2 && !bisend();
 	     bmove1(), ++i) {
 		if (Bisatmrk(pmark))
 			bcol = Pcol;
@@ -371,7 +372,7 @@ pawshift:
 	memset(&tline[i], '\376', &tline[COLMAX] - &tline[i]);
 	tcleol();
 
-	if (Bisend()) {
+	if (bisend()) {
 		if (Bisatmrk(Curbuff->mark)) {
 			setmark(FALSE);
 			--Pcol;		/* space always 1 character! */
@@ -413,7 +414,7 @@ pawshift:
 	 */
 	if (Bisatmrk(Curbuff->mark)) {
 		i = Pcol;
-		tprntchar(Bisend() ? ' ' : Buff());
+		tprntchar(bisend() ? ' ' : Buff());
 		Pcol = i;
 		was->moffset = PSIZE + 1;		/* Invalidate it */
 	}
@@ -422,7 +423,7 @@ pawshift:
 	unmark(pmark);
 	--NESTED;
 	tforce();
-	Tflush();
+	tflush();
 }
 
 void initscrnmarks(void)

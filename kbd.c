@@ -24,7 +24,7 @@
 #include "keys.h"
 
 /* This file contains the keyboard input routines.  The only routines
- * accessed outside of this routine are tgetcmd and the macro Pushcmd.
+ * accessed outside of this routine are tgetcmd and the macro PUSHCMD.
  */
 
 unsigned Cmdpushed, Cmdstack[10];	/* stack and vars for T[un]getcmd */
@@ -40,7 +40,7 @@ int tgetcmd(void)
 	int cmd;
 
 	if (Cmdpushed)
-		return Popcmd();
+		return POPCMD();
 	do { /* try to match one of the termcap key entries */
 		mask = Key_mask;
 		for (j = 0; mask; ++j) {

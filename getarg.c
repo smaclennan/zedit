@@ -54,7 +54,7 @@ Boolean getarg(char *prompt, char *arg, int max)
 	PromptString = prompt;
 	tstyle(T_NORMAL);		/* always display paw in normal */
 #endif
-	tgoto(Tmaxrow() - 1 , 0);			/* display the prompt */
+	tgoto(tmaxrow() - 1 , 0);			/* display the prompt */
 	tprntstr(prompt);
 	Pawcol = Pcol = strlen(prompt); /* prompts are always simple ascii */
 
@@ -74,7 +74,7 @@ Boolean getarg(char *prompt, char *arg, int max)
 	if (InPaw != ABORT) {
 		/* get the argument */
 		btostart();
-		for (ptr = arg; !Bisend() && Buff() != '\0'; bmove1())
+		for (ptr = arg; !bisend() && Buff() != '\0'; bmove1())
 			*ptr++ = Buff();
 		*ptr = '\0';
 		rc = ptr == arg;	/* set to 1 if string empty */
@@ -88,16 +88,16 @@ Boolean getarg(char *prompt, char *arg, int max)
 	Curbuff->bmode = Paw->bmode; /* mainly for EXACT mode */
 #if 0
 	/* SAM ??? */
-	Clrcol[Tgetrow()] = Tmaxcol();		/* force clear */
+	Clrcol[tgetrow()] = tmaxcol();		/* force clear */
 #endif
 	tgoto(trow, tcol);
 	Curwdo->modeflags = INVALID;
 	Curcmds = (Curbuff->bmode & VIEW) ? 1 : 0;	/* SAM */
 	clrecho();
 #ifdef XWINDOWS
-	Tflush();
-	ShowCursor(TRUE);
-	ShowCursor(FALSE);
+	tflush();
+	showcursor(TRUE);
+	showcursor(FALSE);
 #endif
 	return rc;
 }
@@ -129,14 +129,14 @@ static int pcmdplete(Boolean show)
 	int i = 0, len, len1 = 0, rc;
 
 	Cret = -1;
-	Getbtxt(cmd, STRMAX);
+	getbtxt(cmd, STRMAX);
 	len = strlen(cmd);
 	cca = Carray;
 	if (show && !len)
 		for (; i < Cnum; ++i, cca += Csize)
 			pout(*cca, TRUE);
 	else
-		for (; i < Cnum && (rc = Strnicmp(*cca, cmd, len)) <= 0;
+		for (; i < Cnum && (rc = strncasecmp(*cca, cmd, len)) <= 0;
 				++i, cca += Csize)
 			if (rc == 0) {
 				if (show)
@@ -168,7 +168,7 @@ static void pclear(void)
 	struct wdo *wdo = Whead;
 
 	for (i = 0; i < Rowmax - 2; ++i) {
-		Tsetpoint(i, 0);
+		tsetpoint(i, 0);
 		tcleol();
 		Scrnmarks[i].modf = TRUE;
 		if (wdo->last == i) {
@@ -189,9 +189,9 @@ void pset(int row, int col, int ncols)
 
 void pout(char *str, Boolean check)
 {
-	Tsetpoint(p_row, p_col * PCOLSIZE);
+	tsetpoint(p_row, p_col * PCOLSIZE);
 	Scrnmarks[p_row].modf = TRUE;
-	if (!check || p_row < Tmaxrow() - 2) {
+	if (!check || p_row < tmaxrow() - 2) {
 		tprntstr(str);
 		tcleol();
 	}
@@ -222,7 +222,7 @@ void pinsert(void)
 		Tlrow = -1;
 	}
 
-	width = Twidth(Cmd);
+	width = twidth(Cmd);
 	if (bgetcol(FALSE, 0) + width <= Pawlen) {
 		savech = Buff();	/* in case overwrite mode */
 		Zinsert();
@@ -263,9 +263,9 @@ void pnewline(void)
 	char cmdstr[STRMAX + 1], **ptr;
 
 	if (Cnum) {
-		Getbtxt(cmdstr, STRMAX);
+		getbtxt(cmdstr, STRMAX);
 		for (Cret = 0, ptr = Carray;
-		     Cret < Cnum && Stricmp(cmdstr, *ptr);
+		     Cret < Cnum && strcasecmp(cmdstr, *ptr);
 		     ++Cret, ptr += Csize)
 			;
 		if (Cret == Cnum) {
@@ -284,9 +284,9 @@ void Zpart(void)
 #ifdef TAGS
 	if (Nextpart == ZFINDTAG) {
 		bswitchto(Cfindbuff(TAGBUFNAME));
-		for (bcsearch(NL); !Bisend(); bcsearch(NL)) {
-			Getbword(word, STRMAX, Istoken);
-			if (Strstr(word, savetag)) {
+		for (bcsearch(NL); !bisend(); bcsearch(NL)) {
+			getbword(word, STRMAX, bistoken);
+			if (stristr(word, savetag)) {
 				makepaw(word, TRUE);
 				return;
 			}
@@ -297,7 +297,7 @@ void Zpart(void)
 	}
 #endif
 	if (Nextpart == ZSWITCHTO) {
-			Getbtxt(word, STRMAX);
+			getbtxt(word, STRMAX);
 		tbuff = Cfindbuff(word);
 		if (!tbuff)
 			tbuff = Curbuff;

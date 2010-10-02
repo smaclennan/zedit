@@ -56,7 +56,7 @@ Boolean Step(Byte *ep)
 	if (circf) {
 		/* if not at the start of the current line - go to the
 		 * next line */
-		if (!Bisstart()) {
+		if (!bisstart()) {
 			bmove(-1);		/* check previous char */
 			if (ISNL(Buff()))	/* we where at start */
 				bmove1();		/* undo move */
@@ -66,7 +66,7 @@ Boolean Step(Byte *ep)
 	}
 
 	/* regular algorithm */
-	while (!Bisend()) {
+	while (!bisend()) {
 		bmrktopnt(REstart);
 		if (advance(ep))
 			return TRUE;
@@ -86,7 +86,7 @@ static Boolean advance(Byte *ep)
 	int c, ct;
 	struct mark *bbeg, curlp, tmark;
 
-	while (!Bisend()) {
+	while (!bisend()) {
 		switch (*ep++) {
 		case CCHR:
 			if (*ep++ == STRIP(Buff()))
@@ -207,7 +207,7 @@ static Boolean advance(Byte *ep)
 
 		case CCL | STAR:
 			bmrktopnt(&curlp);
-			while (!Bisend() && ISTHERE(((Byte)STRIP(Buff()))))
+			while (!bisend() && ISTHERE(((Byte)STRIP(Buff()))))
 				bmove1();
 			ep += 16;
 
@@ -243,7 +243,7 @@ static Boolean ecmp(struct mark *start, int cnt)
 {
 	Byte c;
 
-	while (cnt-- > 0 && !Bisend()) {
+	while (cnt-- > 0 && !bisend()) {
 		bswappnt(start);
 		c = STRIP(Buff());
 		bmove1();

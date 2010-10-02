@@ -91,7 +91,7 @@ void Initline(void)
 	for (i = strlen(PawStr) + 1; i < Colmax; ++i)
 		tprntchar(' ');
 	tstyle(T_NORMAL);
-	Tflush();
+	tflush();
 }
 
 /* Redraw the modeline except for flags. */
@@ -100,19 +100,19 @@ static void Modeline(struct wdo *wdo)
 	char str[COLMAX + 1]; /* can't use PawStr because of Setmodes */
 	int len;
 
-	Tsetpoint(wdo->last, 0);
+	tsetpoint(wdo->last, 0);
 	tstyle(T_STANDOUT);
 	sprintf(str, ZFMT, ZSTR, VERSION, Setmodes(wdo->wbuff),
 		wdo->wbuff->bname);
 	tprntstr(str);
 	if (wdo->wbuff->fname) {
 		len = (VAR(VLINES) ? 13 : 3) + strlen(str);
-		tprntstr(Limit(wdo->wbuff->fname, len));
+		tprntstr(limit(wdo->wbuff->fname, len));
 	}
-	wdo->modecol = Tgetcol();
+	wdo->modecol = tgetcol();
 
 	/* space pad the line */
-	for (len = Tmaxcol() - Tgetcol(); len > 0; --len)
+	for (len = tmaxcol() - tgetcol(); len > 0; --len)
 		tprntchar(' ');
 	tstyle(T_NORMAL);
 }
@@ -122,8 +122,8 @@ void Modeflags(struct wdo *wdo)
 {
 	unsigned trow, tcol, line, col, mask;
 
-	trow = Tgetrow();
-	tcol = Tgetcol();
+	trow = tgetrow();
+	tcol = tgetcol();
 
 	if (wdo->modeflags == INVALID)
 		Modeline(wdo);
@@ -140,14 +140,14 @@ void Modeflags(struct wdo *wdo)
 		else
 			sprintf(PawStr, "%5u:%-3u", line, col);
 		PawStr[9] = '\0';
-		Tsetpoint(wdo->last, Tmaxcol() - 9);
+		tsetpoint(wdo->last, tmaxcol() - 9);
 		tprntstr(PawStr);
 		bswitchto(was);
 	}
 
-	mask = Delcmd() | (wdo->wbuff->bmodf ? 2 : 0);
+	mask = delcmd() | (wdo->wbuff->bmodf ? 2 : 0);
 	if (!InPaw && wdo->modeflags != mask) {
-		Tsetpoint(wdo->last, wdo->modecol);
+		tsetpoint(wdo->last, wdo->modecol);
 		tprntchar(mask & 2 ? '*' : ' ');
 		tprntchar(mask & 1 ? '+' : ' ');
 		wdo->modeflags = mask;

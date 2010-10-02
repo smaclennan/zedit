@@ -125,12 +125,12 @@ static void cppstatement(void)
 	bmrktopnt(&start);
 
 	/* Check for: if/elif/else/endif */
-	/* WARNING: Getbword is too deadly to use here */
+	/* WARNING: getbword is too deadly to use here */
 	do {
 		bmove1();			/* skip '#' and whitespace */
-		if (Bisend())
+		if (bisend())
 			return;
-	} while (Iswhite());
+	} while (biswhite());
 
 	if (Buff() == 'i' && bmove1() && Buff() == 'f')
 		type = T_CPPIF;
@@ -140,7 +140,7 @@ static void cppstatement(void)
 		type = T_CPP;
 
 again:
-	while (Buff() != '\n' && !Bisend()) {
+	while (Buff() != '\n' && !bisend()) {
 		if (Buff() == '/') {
 			bmove1();
 			if (Buff() == '*') {
@@ -201,7 +201,7 @@ static void uncomment(struct buff *buff)
 	buff->comstate = 0;
 	buff->comments = NULL;
 
-	for (i = 0; i < Tmaxrow() - 2; ++i)
+	for (i = 0; i < tmaxrow() - 2; ++i)
 		Scrnmarks[i].modf = 1;
 }
 
@@ -227,7 +227,7 @@ static void scanbuffer(void)
 
 	btostart();
 	if (comchar)
-		while (bcsearch(comchar) && !Bisend()) {
+		while (bcsearch(comchar) && !bisend()) {
 			/* mark to end of line as comment */
 			bmove(-1);
 			bmrktopnt(&start);
@@ -237,7 +237,7 @@ static void scanbuffer(void)
 		}
 	else
 		/* Look for both C and C++ comments. */
-		while (bcsearch('/') && !Bisend()) {
+		while (bcsearch('/') && !bisend()) {
 			if (Buff() == '*') {
 				bmove(-1);
 				bmrktopnt(&start);
@@ -260,11 +260,11 @@ static void scanbuffer(void)
 			cppstatement();
 		else if (comchar) {
 			/* for assembler */
-			Movepast(Iswhite, 1);
+			movepast(biswhite, 1);
 			if (Buff() == '.')
 				cppstatement();
 		}
-	} while (bcsearch('\n') && !Bisend());
+	} while (bcsearch('\n') && !bisend());
 
 	mergecomments();
 	bpnttomrk(&tmark);
@@ -276,7 +276,7 @@ static struct comment *start;
 /* Called from innerdsp before display loop */
 void resetcomments(void)
 {
-	if (DelcmdAll()) {
+	if (delcmdall()) {
 		for (start = Curbuff->comments; start; start = start->next)
 			if (Markch(start->end) != '/') {
 				uncomment(Curbuff);

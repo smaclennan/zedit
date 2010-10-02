@@ -397,7 +397,7 @@ char *Addbname(char *bname)
 		maxbuffs += 10;
 	}
 
-	for (i = Numbuffs; i > 0 && Stricmp(bname, Bnames[i - 1]) < 0; --i)
+	for (i = Numbuffs; i > 0 && strcasecmp(bname, Bnames[i - 1]) < 0; --i)
 		Bnames[i] = Bnames[i - 1];
 	Bnames[i] = strdup(bname);
 	if (strlen(Bnames[i]) > BUFNAMMAX)
@@ -428,7 +428,7 @@ struct buff *Cfindbuff(char *bname)
 	struct buff *tbuff;
 
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-		if (Strnicmp(tbuff->bname, bname, BUFNAMMAX) == 0)
+		if (strncasecmp(tbuff->bname, bname, BUFNAMMAX) == 0)
 			return tbuff;
 	return NULL;
 }

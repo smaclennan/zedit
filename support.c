@@ -19,10 +19,10 @@
 
 #include "z.h"
 
-/* Ask Yes/No question.
+/* ask Yes/No question.
  * Returns YES, NO, or ABORT
  */
-int Ask(char *msg)
+int ask(char *msg)
 {
 	int rc;
 	unsigned cmd;
@@ -48,48 +48,13 @@ int Ask(char *msg)
 	return rc;
 }
 
-/* Move a block of chars around point and "from" to "to".
- * Assumes point is before "from".
-*/
-void Blockmove(struct mark *from, struct mark *to)
-{
-	char tmp;
-
-	while (bisbeforemrk(from)) {
-		tmp = Buff();
-		bswappnt(to);
-		binsert(tmp);
-		bswappnt(to);
-		bdelete(1);
-	}
-}
-
-#ifndef XWINDOWS
-/* more efficient to not make it a macro */
-void clrecho(void) { PutPaw("", 2); }
-#endif
-
-Boolean Isext(char *fname, char *ext)
-{
-	char *ptr;
-
-	return fname && (ptr = strrchr(fname, '.')) && strcmp(ptr, ext) == 0;
-}
-
-/* Was the last command a "cursor" command? */
-Boolean zCursor(void)
-{
-	return  Lfunc == ZPREVLINE || Lfunc == ZNEXTLINE ||
-		Lfunc == ZPREVPAGE || Lfunc == ZNEXTPAGE;
-}
-
-Boolean Delayprompt(char *msg)
+Boolean delayprompt(char *msg)
 {
 	int rc;
 
-	rc = Delay();
+	rc = delay();
 	if (rc)
-		PutPaw(msg, 2);
+		putpaw(msg, 2);
 	return rc;
 }
 
@@ -97,7 +62,7 @@ Boolean Delayprompt(char *msg)
 #include <sys/time.h>
 #include <sys/poll.h>
 
-Boolean Delay(void)
+Boolean delay(void)
 {
 	static struct pollfd ufd = { .fd = 1, .events = POLLIN };
 
@@ -106,7 +71,7 @@ Boolean Delay(void)
 
 #else
 
-Boolean Delay(void)
+Boolean delay(void)
 {
 	long t;
 
@@ -122,7 +87,7 @@ Boolean Delay(void)
 #endif
 
 /* Was the last command a delete to kill buffer command? */
-Boolean Delcmd(void)
+Boolean delcmd(void)
 {
 	return	Lfunc == ZDELEOL  || Lfunc == ZDELLINE  || Lfunc == ZDELRGN   ||
 		Lfunc == ZCOPYRGN || Lfunc == ZDELWORD  || Lfunc == ZRDELWORD ||
@@ -130,9 +95,9 @@ Boolean Delcmd(void)
 }
 
 /* Was the last command a delete of any type? */
-Boolean DelcmdAll(void)
+Boolean delcmdall(void)
 {
-	return Delcmd() || Lfunc == ZDELCHAR || Lfunc == ZRDELCHAR;
+	return delcmd() || Lfunc == ZDELCHAR || Lfunc == ZRDELCHAR;
 }
 
 char PawStr[COLMAX + 10];
@@ -144,7 +109,7 @@ type is:	0 for echo			Echo()		macro
 		1 for error			Error()		macro
 		2 for save pos
 */
-void PutPaw(char *str, int type)
+void putpaw(char *str, int type)
 {
 	int trow, tcol;
 
@@ -152,13 +117,13 @@ void PutPaw(char *str, int type)
 		tbell();
 	if (!InPaw) {
 		trow = Prow; tcol = Pcol;
-		Tsetpoint(Tmaxrow() - 1, 0);
+		tsetpoint(tmaxrow() - 1, 0);
 		tprntstr(str);
 		tcleol();
 		if (type != 1)
-			Tsetpoint(trow, tcol);
+			tsetpoint(trow, tcol);
 		tforce();
-		Tflush();
+		tflush();
 		if (type == 1)
 			tgetcmd();
 	}
@@ -167,7 +132,7 @@ void PutPaw(char *str, int type)
 
 
 /* Echo 'str' to the paw and as the filename for 'buff' */
-void Message(struct buff *buff, char *str)
+void message(struct buff *buff, char *str)
 {
 	struct wdo *wdo;
 
@@ -194,7 +159,7 @@ void Message(struct buff *buff, char *str)
  *		1 for ConfigDir
  *		0 for not found, 'path' set to 'fname'
  */
-int Findpath(char *p, char *f, int s, Boolean m)
+int findpath(char *p, char *f, int s, Boolean m)
 {
 	switch (s) {
 	case 4:
@@ -219,17 +184,17 @@ int Findpath(char *p, char *f, int s, Boolean m)
  *  Get at the most 'max' characters.
  * Leaves the point alone.
  */
-Boolean Getbword(char word[], int max, int (*valid)())
+Boolean getbword(char word[], int max, int (*valid)())
 {
 	int i;
 	struct mark tmark;
 
 	bmrktopnt(&tmark);
-	Moveto(Istoken, FORWARD);
-	if (Bisend())
-		Moveto(Istoken, BACKWARD);
-	Movepast(Istoken, BACKWARD);
-	for (i = 0; !Bisend() && valid() && i < max; ++i, bmove1())
+	moveto(bistoken, FORWARD);
+	if (bisend())
+		moveto(bistoken, BACKWARD);
+	movepast(bistoken, BACKWARD);
+	for (i = 0; !bisend() && valid() && i < max; ++i, bmove1())
 		word[i] = Buff();
 	word[i] = '\0';
 	bpnttomrk(&tmark);
@@ -240,13 +205,13 @@ Boolean Getbword(char word[], int max, int (*valid)())
  * Get at the most 'max' characters.
  * Leaves the point alone.
  */
-char *Getbtxt(char txt[], int max)
+char *getbtxt(char txt[], int max)
 {
 	int i;
 	struct mark tmark;
 
 	bmrktopnt(&tmark);
-	for (btostart(), i = 0; !Bisend() && i < max; bmove1(), ++i)
+	for (btostart(), i = 0; !bisend() && i < max; bmove1(), ++i)
 		txt[i] = Buff();
 	txt[i] = '\0';
 	bpnttomrk(&tmark);
@@ -254,28 +219,28 @@ char *Getbtxt(char txt[], int max)
 }
 
 /* Go forward or back past a thingy */
-void Movepast(int (*pred)(), Boolean forward)
+void movepast(int (*pred)(), Boolean forward)
 {
 	if (!forward)
 		bmove(-1);
-	while (!(forward ? Bisend() : Bisstart()) && (*pred)())
+	while (!(forward ? bisend() : bisstart()) && (*pred)())
 		bmove(forward ? 1 : -1);
 	if (!forward && !(*pred)())
 		bmove1();
 }
 
 /* Go forward or back to a thingy */
-void Moveto(int (*pred)(), Boolean forward)
+void moveto(int (*pred)(), Boolean forward)
 {
 	if (!forward)
 		bmove(-1);
-	while (!(forward ? Bisend() : Bisstart()) && !(*pred)())
+	while (!(forward ? bisend() : bisstart()) && !(*pred)())
 		bmove(forward ? 1 : -1);
-	if (!forward && !Bisstart())
+	if (!forward && !bisstart())
 		bmove1();
 }
 
-char *Strup(char *str)
+char *strup(char *str)
 {
 	char *ptr;
 	for (ptr = str; *ptr; ++ptr)
@@ -285,7 +250,7 @@ char *Strup(char *str)
 
 
 /* Put in the right number of tabs and spaces */
-void Tindent(int arg)
+void tindent(int arg)
 {
 	if (VAR(VSPACETAB) == 0)
 		for (; arg >= Tabsize; arg -= Tabsize)
@@ -293,40 +258,34 @@ void Tindent(int arg)
 	Sindent(arg);
 }
 
-int Isspace(void)
+int bisspace(void)
 {
 	return isspace(Buff());
 }
 
-int Isword(void)
+int bisword(void)
 {
 	return  isalnum(Buff()) || Buff() == '_' || Buff() == '.' ||
 		Buff() == '$';
 }
 
 /* Must be a real function. $ for PL/M */
-int Istoken(void)
+int bistoken(void)
 {
 	return isalnum(Buff()) || Buff() == '_' || Buff() == '.' ||
 		Buff() == '$' || Buff() == '/';
 }
 
-int Iswhite(void)
+int biswhite(void)
 {
 	return STRIP(Buff()) == ' ' || STRIP(Buff()) == '\t';
 }
 
-char *Bakname(char *bakname, char *fname)
+#if 0
+/* Simple rename */
+int rename(char *from, char *to)
 {
-	strcpy(bakname, fname);
-	strcat(bakname, "~");
-	return bakname;
-}
-
-
-Boolean Mv(char *from, char *to)
-{
-	Boolean rc;
+	int rc;
 
 	unlink(to);
 	rc = link(from, to);
@@ -334,35 +293,11 @@ Boolean Mv(char *from, char *to)
 		unlink(from);
 	return rc;
 }
-
-
-Boolean Cp(char *from, char *to)
-{
-	FILE *in, *out;
-	char buf[1024];
-	int n, rc = TRUE;
-
-	in = fopen(from, "r");
-	out = fopen(to, "w");
-	if (!in || !out) {
-		if (!in)
-			fclose(in);
-		return FALSE;
-	}
-	while ((n = fread(buf, 1, 1024, in)) > 0)
-		if (fwrite(buf, 1, n, out) != n) {
-			rc = FALSE;
-			break;
-		}
-	fclose(in);
-	fclose(out);
-	return rc;
-}
-
+#endif
 
 #ifdef XWINDOWS
 /* Move the buffer point to an absolute row, col */
-void Pntmove(int row, int col)
+void pntmove(int row, int col)
 {
 	struct wdo *wdo;
 	int i;
@@ -373,7 +308,7 @@ void Pntmove(int row, int col)
 			tbell();
 		else {
 			col = bmakecol(col - Pawcol, FALSE);
-			Tsetpoint(Rowmax - 1, col);
+			tsetpoint(Rowmax - 1, col);
 		}
 		return;
 	}
@@ -385,7 +320,7 @@ void Pntmove(int row, int col)
 			for (i = wdo->first; i < row; ++i) {
 				Wswitchto(wdo);
 				bpnttomrk(&Scrnmarks[i]);
-				if (Bisend()) {
+				if (bisend()) {
 					/* at end of buffer - stop */
 					if (i > wdo->first)
 						--i;
@@ -395,40 +330,33 @@ void Pntmove(int row, int col)
 			}
 			bpnttomrk(&Scrnmarks[i]);
 			col = bmakecol(col, FALSE);
-			Tsetpoint(i, col);
+			tsetpoint(i, col);
 			return;
 		}
 	tbell();
 }
 #endif
 
-/* Limit a filename to at most Tmaxcol() - 'num' cols */
-char *Limit(char *fname, int num)
+/* Limit a filename to at most tmaxcol() - 'num' cols */
+char *limit(char *fname, int num)
 {
 	int off;
 
-	off = strlen(fname) - (Tmaxcol() - num);
+	off = strlen(fname) - (tmaxcol() - num);
 	return off > 0 ? fname + off : fname;
-}
-
-/* called at startup when out of memory */
-void NoMem(void)
-{
-	Error("Out of memory.");
-	exit(1);
 }
 
 /* Find first occurance in str1 of str2. NULL if not found.
  * Case insensitive!
  */
-char *Strstr(char *str1, char *str2)
+char *stristr(char *str1, char *str2)
 {
 	int i, len, max;
 
 	len = strlen(str2);
 	max = strlen(str1) - len;
 	for (i = 0; i <= max; ++i)
-		if (Strnicmp(&str1[i], str2, len) == 0)
+		if (strncasecmp(&str1[i], str2, len) == 0)
 			return &str1[i];
 	return NULL;
 }

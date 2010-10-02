@@ -183,7 +183,7 @@ void ReadVfile(void)
 		ReadConfigFile(ConfigDir);
 		ConfigDir = NULL;
 	}
-	for (i = FINDPATHS; i && (i = Findpath(fname, ZCFILE, i, TRUE)); --i)
+	for (i = FINDPATHS; i && (i = findpath(fname, ZCFILE, i, TRUE)); --i)
 		ReadConfigFile(fname);
 }
 
@@ -224,9 +224,9 @@ static void setit(int i, char *ptr)
 			free(VARSTR(i));
 		VARSTR(i) = strdup(ptr);
 	} else if (Vars[i].vtype == FLAG) {
-		if (Strnicmp(ptr, "true", 4) == 0)
+		if (strncasecmp(ptr, "true", 4) == 0)
 			VAR(i) = 1;
-		else if (Strnicmp(ptr, "false", 5) == 0)
+		else if (strncasecmp(ptr, "false", 5) == 0)
 			VAR(i) = 0;
 		else
 			VAR(i) = strtol(ptr, NULL, 0);
@@ -313,7 +313,7 @@ void Setavar(char *vin, Boolean display)
 		Dbg("SetAVar '%s' (%s) ", msg, vin);
 
 	for (i = 0; i < NUMVARS; ++i)
-		if (Stricmp(msg, Vars[i].vname) == 0) {
+		if (strcasecmp(msg, Vars[i].vname) == 0) {
 			do_var_match(i, vin);
 			if (display) {
 				if (i == VTABS || i == VCTABS) {
@@ -370,9 +370,9 @@ int Settabsize(unsigned mode)
 		i = VCTABS;
 	else
 		i = VTABS;
-	if (Tmaxcol() != EOF)
-		if (VAR(i) > Tmaxcol() - 4)
-			VAR(i) = Tmaxcol() - 4;
+	if (tmaxcol() != EOF)
+		if (VAR(i) > tmaxcol() - 4)
+			VAR(i) = tmaxcol() - 4;
 	if (VAR(i) == 0)
 		VAR(i) = 1;
 	return Tabsize = VAR(i);
@@ -397,10 +397,10 @@ void Dline(int trow)
 {
 	int i;
 
-	if (trow < Tmaxrow() - 2) {
-		Tsetpoint(trow, 0);
+	if (trow < tmaxrow() - 2) {
+		tsetpoint(trow, 0);
 		Scrnmarks[trow].modf = TRUE;
-		for (i = 0; i < Tmaxcol(); ++i)
+		for (i = 0; i < tmaxcol(); ++i)
 			tprntchar('-');
 	}
 }
@@ -419,7 +419,7 @@ void Zsaveconfig(void)
 		/* use home directory */
 		sprintf(fname, "%s/%s", Me->pw_dir, ZCFILE);
 
-	if (access(fname, R_OK) == 0 && Ask("Overwrite existing file? ") != YES)
+	if (access(fname, R_OK) == 0 && ask("Overwrite existing file? ") != YES)
 		return;
 
 	fp = fopen(fname, "w");

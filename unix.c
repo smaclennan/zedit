@@ -108,16 +108,16 @@ int Checkpipes(int type)
 				tbuff->child = EOF;
 				if (type == 1) {
 					if (status & 0xff)
-						Message(tbuff, "Died.");
+						message(tbuff, "Died.");
 					else {
 						status = status >> 8 & 0xff;
 						if (status == 0)
-							Message(tbuff, "Done.");
+							message(tbuff, "Done.");
 						else {
 							sprintf(PawStr,
 								"Exit %d.",
 								status);
-							Message(tbuff, PawStr);
+							message(tbuff, PawStr);
 						}
 					}
 					tbell();
@@ -182,7 +182,7 @@ void Sendtopipe(void)
 	line[i] = '\0';
 	fputs(line, Curbuff->out_pipe);
 	fflush(Curbuff->out_pipe);
-	if (!Bisend()) {
+	if (!bisend()) {
 		btoend();
 		binstr(line);
 	}

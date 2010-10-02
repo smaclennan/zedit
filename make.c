@@ -49,7 +49,7 @@ void Zmake(void)
 #endif
 	mbuff = Cmdtobuff(MAKEBUFF, mkcmd);
 	if (mbuff)
-		Message(mbuff, mkcmd);
+		message(mbuff, mkcmd);
 	else
 		Error("Unable to execute make.");
 }
@@ -81,7 +81,7 @@ void Zgrep(void)
 #endif
 	mbuff = Cmdtobuff(MAKEBUFF, cmd);
 	if (mbuff)
-		Message(mbuff, cmd);
+		message(mbuff, cmd);
 	else
 		Error("Unable to execute grep.");
 }
@@ -159,7 +159,7 @@ static Boolean Warning(void)
 
 		if (Buff() == ':') {
 			char word[10], *p;
-			Getbword(p = word, 10, isnotws);
+			getbword(p = word, 10, isnotws);
 			if (*p == ':')
 				++p;
 			return strcmp(p, "warning:") == 0;
@@ -188,11 +188,11 @@ int Parse(char *fname)
 	char word[41], *p;
 	int line, n;
 
-	while (!Bisend()) {
+	while (!bisend()) {
 		IsWarning = 0;
 
 		/* get first word in line */
-		n = Getbword(word, 40, isnotws);
+		n = getbword(word, 40, isnotws);
 
 		/* check for: as: cc: */
 		if (strcmp(word, "as:") == 0 || strcmp(word, "cc:") == 0)
@@ -225,7 +225,7 @@ int Parse(char *fname)
 		if (Buff() == ':' || Buff() == '(')
 			bmove1();
 		else if (Buff() == ',') {
-			while (!isdigit(Buff()) && Buff() != '\n' && !Bisend())
+			while (!isdigit(Buff()) && Buff() != '\n' && !bisend())
 				bmove1();
 		}
 

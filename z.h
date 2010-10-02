@@ -151,7 +151,7 @@ extern struct passwd *Me;
 #define LISTBUFF	"*list*"
 #define REFBUFF		"*ref*"
 
-/* Ask return values */
+/* ask return values */
 #define YES		1
 #define NO		0
 #define ABORT		-1
@@ -245,17 +245,15 @@ extern Boolean searchdir[];
 
 extern int circf;
 
-#define Stricmp				strcasecmp
-#define Strnicmp			strncasecmp
-
-#define MIN(a, b)			(a < b ? a : b)
-#define MAX(a, b)			(a > b ? a : b)
+#define MIN(a, b)	(a < b ? a : b)
+#define MAX(a, b)	(a > b ? a : b)
 
 
-#define Echo(s)				PutPaw(s, FALSE)
-#define Error(s)			PutPaw(s, TRUE)
-
-#define ASSERT(n)	if (!(n)) Hangup(n)
+#define Echo(s)		putpaw(s, FALSE)
+#define Error(s)	putpaw(s, TRUE)
+#ifndef XWINDOWS
+#define clrecho(void)	putpaw("", 2)
+#endif
 
 #include "proto.h"
 

@@ -159,10 +159,10 @@ void Zcount(void)
 	l = w = c = 0;
 	Echo("Counting...");
 	word = FALSE;
-	for (; Argp ? !Bisend() : bisbeforemrk(Curbuff->mark); bmove1(), ++c) {
+	for (; Argp ? !bisend() : bisbeforemrk(Curbuff->mark); bmove1(), ++c) {
 		if (ISNL(Buff()))
 			++l;
-		if (!Istoken())
+		if (!bistoken())
 			word = FALSE;
 		else if (!word) {
 			++w;

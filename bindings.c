@@ -192,14 +192,14 @@ void loadbind(void)
 	int i;
 
 	bindfname(fname);
-	for (i = FINDPATHS; i && (i = Findpath(path, fname, i, TRUE)); --i)
+	for (i = FINDPATHS; i && (i = findpath(path, fname, i, TRUE)); --i)
 		bindfile(path, READ_BINARY);
 	fcheck();
 }
 
 
 /* save a bindings file.
- * Use Findpath starting at the $HOME directory to find where to
+ * Use findpath starting at the $HOME directory to find where to
  * save the bindings file. If no bindings file exists, save in the
  * $HOME dir.
  */
@@ -209,10 +209,10 @@ void Zsavebind(void)
 	int i, n;
 
 	bindfname(fname);
-	for (n = 0, i = 3; i && (i = Findpath(path, fname, i, TRUE)); --i)
+	for (n = 0, i = 3; i && (i = findpath(path, fname, i, TRUE)); --i)
 		n = i;
 	if (n)
-		Findpath(path, fname, n, TRUE);
+		findpath(path, fname, n, TRUE);
 	else
 		sprintf(path, "%s/%s", Me->pw_dir, fname);
 	if (Argp && getfname("Bind File: ", path))

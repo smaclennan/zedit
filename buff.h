@@ -116,8 +116,8 @@ extern int Curmodf;
 #define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
 
 #define Buff()		(*Curcptr)
-#define Bisstart()	((Curpage == Curbuff->firstp) && (Curchar == 0))
-#define Bisend()	((Curpage == Curbuff->lastp) && (Curchar >= Curplen))
+#define bisstart()	((Curpage == Curbuff->firstp) && (Curchar == 0))
+#define bisend()	((Curpage == Curbuff->lastp) && (Curchar >= Curplen))
 #define Bisatmrk(m)	((Curpage == (m)->mpage) && (Curchar == (m)->moffset))
 #define Mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)
 #define Bfname()	(Curbuff->fname)

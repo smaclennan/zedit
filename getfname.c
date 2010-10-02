@@ -74,6 +74,13 @@ int getdname(char *prompt, char *path)
 	return rc;
 }
 
+static Boolean isext(char *fname, char *ext)
+{
+	char *ptr;
+
+	return fname && (ptr = strrchr(fname, '.')) && strcmp(ptr, ext) == 0;
+}
+
 static struct llist *fill_list(char *dir)
 {
 	static char savedir[PATHMAX + 1];
@@ -99,7 +106,7 @@ static struct llist *fill_list(char *dir)
 #else
 		char *fname = dirp->d_name;
 #endif
-		if (!Isext(fname, OBJEXT))
+		if (!isext(fname, OBJEXT))
 			add(&Flist, fname);
 	}
 
@@ -116,7 +123,7 @@ static struct llist *getfill(char *dir, char **fname, int *len, Boolean *update)
 		bdelete(Curplen);
 		First = FALSE;
 	}
-	Getbtxt(txt, PATHMAX);
+	getbtxt(txt, PATHMAX);
 	if (pathfixup(dir, txt) > 0)
 		return NULL;
 	*update = strcmp(dir, txt);
@@ -225,7 +232,7 @@ void Zfname(void)
 			if (len < n)
 				tbell();
 		}
-		if (f == 0 && isdir(Getbtxt(txt, PATHMAX)) && Curplen < Pawlen)
+		if (f == 0 && isdir(getbtxt(txt, PATHMAX)) && Curplen < Pawlen)
 			binsert(PSEP);
 	} else if (!update)
 		tbell();
@@ -250,7 +257,7 @@ void Zfname(void)
 				list->fname[23] = '\0';
 			tprntstr(list->fname);
 			if (isdir(dir))
-				Tputchar(PSEP);
+				tputchar(PSEP);
 			tcleol();
 			col += 25;
 			if (col > 72) {

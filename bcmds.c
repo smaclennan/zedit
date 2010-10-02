@@ -66,7 +66,7 @@ void Zkillbuff(void)
 		bswitchto(tbuff);
 	}
 	if (Curbuff->bmodf)
-		switch (Ask("save Changes? ")) {
+		switch (ask("save Changes? ")) {
 		case ABORT:
 			return;
 		case YES:
@@ -118,7 +118,7 @@ static void lstbuff(struct buff *tbuff)
 		(tbuff->bmode & SYSBUFF) ? 'S' : ' ',
 		tbuff->bmodf ? '*' : ' ',
 		blength(tbuff),
-		tbuff->fname ? Limit(tbuff->fname, WASTED) : UNTITLED);
+		tbuff->fname ? limit(tbuff->fname, WASTED) : UNTITLED);
 	binstr(PawStr);
 	binsert('\n');
 }

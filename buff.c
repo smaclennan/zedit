@@ -176,7 +176,7 @@ Boolean bcsearch(Byte what)
 {
 	Byte *n;
 
-	if (Bisend())
+	if (bisend())
 		return FALSE;
 
 	while ((n = (Byte *)memchr(Curcptr, what, Curplen - Curchar)) == NULL)
@@ -318,7 +318,7 @@ int bgetcol(Boolean flag, int col)
 	bmrktopnt(&pmark);
 	if (bcrsearch(NL))
 		bmove1();
-	while (!Bisatmrk(&pmark) && !Bisend()) {
+	while (!Bisatmrk(&pmark) && !bisend()) {
 		col += chwidth(Buff(), col, flag);
 		bmove1();
 	}
@@ -466,15 +466,15 @@ int bmakecol(int col, Boolean must)
 
 	if (bcrsearch(NL))
 		bmove1();
-	while (tcol < col && !ISNL(Buff()) && !Bisend()) {
+	while (tcol < col && !ISNL(Buff()) && !bisend()) {
 		tcol += chwidth(Buff(), tcol, !must);
 		bmove1();
 	}
 	if (must && tcol < col) {
-		int wid = Bwidth('\t', tcol);
+		int wid = bwidth('\t', tcol);
 		if (tcol + wid < col)
 			tcol -= Tabsize - wid;
-		Tindent(col - tcol);
+		tindent(col - tcol);
 	}
 	return tcol;
 }
@@ -741,6 +741,36 @@ int bwritefd(int fd)
 	return status;
 }
 
+static char *make_bakname(char *bakname, char *fname)
+{
+	strcpy(bakname, fname);
+	strcat(bakname, "~");
+	return bakname;
+}
+
+static Boolean cp(char *from, char *to)
+{
+	FILE *in, *out;
+	char buf[1024];
+	int n, rc = TRUE;
+
+	in = fopen(from, "r");
+	out = fopen(to, "w");
+	if (!in || !out) {
+		if (!in)
+			fclose(in);
+		return FALSE;
+	}
+	while ((n = fread(buf, 1, 1024, in)) > 0)
+		if (fwrite(buf, 1, n, out) != n) {
+			rc = FALSE;
+			break;
+		}
+	fclose(in);
+	fclose(out);
+	return rc;
+}
+
 /*	Write the current buffer to the file 'fname'.
  *	Handles the backup scheme according to VAR(VBACKUP).
  *	Returns:	TRUE	if write successfull
@@ -763,7 +793,7 @@ int bwritefile(char *fname)
 			sprintf(PawStr,
 				"WARNING: %s has been modified. Overwrite? ",
 				Lastpart(fname));
-			if (Ask(PawStr) != YES)
+			if (ask(PawStr) != YES)
 				return ABORT;
 		}
 		mode  = sbuf.st_mode;
@@ -774,18 +804,18 @@ int bwritefile(char *fname)
 	}
 
 	/* check for links and handle backup file */
-	Bakname(bakname, fname);
+	make_bakname(bakname, fname);
 	if (nlink > 1) {
 		sprintf(PawStr, "WARNING: %s is linked. Preserve? ",
 			Lastpart(fname));
-		switch (Ask(PawStr)) {
+		switch (ask(PawStr)) {
 		case YES:
 			if (VAR(VBACKUP))
-				bak = Cp(fname, bakname);
+				bak = cp(fname, bakname);
 			break;
 		case NO:
 			if (VAR(VBACKUP))
-				bak = Mv(fname, bakname);
+				bak = rename(fname, bakname);
 			else
 				unlink(fname);	/* break link */
 			break;
@@ -793,7 +823,7 @@ int bwritefile(char *fname)
 			return ABORT;
 		}
 	} else if (VAR(VBACKUP))
-		bak = Mv(fname, bakname);
+		bak = rename(fname, bakname);
 
 	/* Write the output file */
 	fd = open(fname, WRITE_MODE, mode);
@@ -812,10 +842,10 @@ int bwritefile(char *fname)
 		clrecho();
 	else if (bak) {
 		if (sbuf.st_nlink) {
-			Cp(bakname, fname);
+			cp(bakname, fname);
 			unlink(bakname);
 		} else
-			Mv(bakname, fname);
+			rename(bakname, fname);
 	}
 
 	return status;

@@ -54,30 +54,30 @@ int _putchar(char);
 #define TPUTS(s)		fputs(s, stdout)
 #endif
 
-#define Tsetpoint(r, c)		(Prow = r, Pcol = c)
-#define Tgetrow()		Prow
-#define Tgetcol()		Pcol
-#define Tmaxrow()		Rowmax
-#define Tmaxcol()		Colmax
+#define tsetpoint(r, c)		(Prow = r, Pcol = c)
+#define tgetrow()		Prow
+#define tgetcol()		Pcol
+#define tmaxrow()		Rowmax
+#define tmaxcol()		Colmax
 extern int Tabsize;
-#define Twidth(ch)		chwidth(ch, Pcol - Tstart, FALSE)
-#define Bwidth(ch, col)		chwidth(ch, col, TRUE)
+#define twidth(ch)		chwidth(ch, Pcol - Tstart, FALSE)
+#define bwidth(ch, col)		chwidth(ch, col, TRUE)
 #define Sindent(arg)		while (arg-- > 0) binsert(' ')
 
 #ifdef XWINDOWS
 #define tforce()
 #else
-#define ShowCursor(x)
-#define ShowMark(x)
-#define Tputchar(c)		putchar(c)
-#define Tflush()		fflush(stdout)
+#define showcursor(x)
+#define showmark(x)
+#define tputchar(c)		putchar(c)
+#define tflush()		fflush(stdout)
 #endif
 
 extern unsigned Cmdpushed, Cmdstack[];
-#define Popcmd()		Cmdstack[--Cmdpushed]
-#define Pushcmd(cmd)		Cmdstack[Cmdpushed++] = cmd
+#define POPCMD()		Cmdstack[--Cmdpushed]
+#define PUSHCMD(cmd)		Cmdstack[Cmdpushed++] = cmd
 
-#define Wheight()		(Curwdo->last - Curwdo->first)
+#define wheight()		(Curwdo->last - Curwdo->first)
 
 /* this is MUCH faster than an isascii isprint pair */
 #define ISPRINT(c)		(c >= ' ' && c <= '~')

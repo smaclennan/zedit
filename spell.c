@@ -77,11 +77,11 @@ void Zspell(void)
 	Echo("Checking...");
 	while (bisbeforemrk(emark)) {
 		/* get the next word */
-		Moveto(Isalpha, FORWARD);
-		if (Bisend())
+		moveto(Isalpha, FORWARD);
+		if (bisend())
 			break;	/* incase no alphas left */
 		bmrktopnt(Curbuff->mark);
-		for (p = send + 1; Isalpha() && !Bisend(); ++p, bmove1())
+		for (p = send + 1; Isalpha() && !bisend(); ++p, bmove1())
 			*p = Buff();
 		*p++ = '\n'; *p = '\0';
 
@@ -97,7 +97,7 @@ void Zspell(void)
 				break;
 
 			case '&':		/* close matches */
-				pset(Tmaxrow(), 0, PNUMCOLS);
+				pset(tmaxrow(), 0, PNUMCOLS);
 				for (m = 0, p = buff + 2; m < 6; ++m) {
 					e = strchr(p, ' ');
 					if (!e)
@@ -182,9 +182,9 @@ static void Mclear(void)
 {
 	/* clear the matches area */
 	Clrcol[Rowmax] = Clrcol[Rowmax + 1] = COLMAX + 1;
-	Tsetpoint(Rowmax, 0);
+	tsetpoint(Rowmax, 0);
 	tcleol();
-	Tsetpoint(Rowmax + 1, 0);
+	tsetpoint(Rowmax + 1, 0);
 	tcleol();
 }
 

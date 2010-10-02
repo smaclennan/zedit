@@ -164,7 +164,7 @@ void tfini(void)
 		clrecho();
 		tgoto(Rowmax - 1, 0);
 	}
-	Tflush();
+	tflush();
 	tlfini();
 }
 
@@ -242,7 +242,7 @@ void extendedlinemarker(void)
 {
 	int col;
 
-	for (col = Tgetcol(); col < Tmaxcol() - 1; ++col)
+	for (col = tgetcol(); col < tmaxcol() - 1; ++col)
 		tprntchar(' ');
 	tstyle(T_BOLD);
 	tprntchar('>');
@@ -256,7 +256,7 @@ void tprntchar(Byte ichar)
 
 	if (ISPRINT(ichar)) {
 		tforce();
-		Tputchar(ichar);
+		tputchar(ichar);
 		++Scol;
 		++Pcol;
 		if (Clrcol[Prow] < Pcol)
@@ -316,8 +316,8 @@ int chwidth(Byte ch, int col, Boolean adjust)
 			wid = Tabsize - (col & (Tabsize - 1));
 		else
 			wid = Tabsize - (col % Tabsize);
-		if (col + wid >= Tmaxcol())
-			wid = Tmaxcol() - col + Tabsize - 1 - Tstart;
+		if (col + wid >= tmaxcol())
+			wid = tmaxcol() - col + Tabsize - 1 - Tstart;
 		if (!adjust)
 			wid = MIN(wid, Tabsize);
 	} else {
@@ -325,7 +325,7 @@ int chwidth(Byte ch, int col, Boolean adjust)
 
 		wid = ((ch & 0x80) && !isprint(ch & 0x7f)) ? 3 : 2;
 		if (adjust) {
-			delta = col + wid - Tmaxcol() - Tstart;
+			delta = col + wid - tmaxcol() - Tstart;
 			if (delta >= 0)
 				wid += delta + 1 - Tstart;
 		}
@@ -341,7 +341,7 @@ void tprntstr(char *str)
 
 void tgoto(int row, int col)
 {
-	Tsetpoint(row, col);
+	tsetpoint(row, col);
 	tforce();
 }
 
@@ -357,7 +357,7 @@ int prefline(void)
 {
 	int line, w;
 
-	w = Wheight();
+	w = wheight();
 	line = PREFLINE * w / (Rowmax - 2);
 	return line < w ? line : w >> 1;
 }
@@ -398,7 +398,7 @@ void tclrwind(void)
 #endif
 	memset(Clrcol, 0, ROWMAX);
 	Prow = Pcol = 0;
-	Tflush();
+	tflush();
 }
 
 /* for tputs this must be a function */

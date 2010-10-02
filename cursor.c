@@ -36,7 +36,11 @@ int forcecol(void)
 {
 	static int fcol;
 
-	return zCursor() ? fcol : (fcol = bgetcol(TRUE, 0));
+	if (Lfunc != ZPREVLINE && Lfunc != ZNEXTLINE &&
+	    Lfunc != ZPREVPAGE && Lfunc != ZNEXTPAGE)
+		fcol = bgetcol(TRUE, 0);
+
+	return fcol;
 }
 
 static void ScrollLine(Boolean forward)
@@ -99,8 +103,8 @@ void Zprevpage(void)
 	int i, n, col = forcecol();
 
 	bpnttomrk(Sstart);
-	for (n = i = Wheight() - prefline() - 2; i > 0 && bcrsearch(NL); --i)
-		i -= bgetcol(TRUE, 0) / Tmaxcol();
+	for (n = i = wheight() - prefline() - 2; i > 0 && bcrsearch(NL); --i)
+		i -= bgetcol(TRUE, 0) / tmaxcol();
 	bmakecol(col, FALSE);
 	reframe();
 }
@@ -110,27 +114,27 @@ void Znextpage(void)
 	int i, col = forcecol();
 
 	bpnttomrk(Sstart);
-	for (i = Wheight() + prefline() - 2; i > 0 && bcsearch(NL); --i) {
+	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(NL); --i) {
 		bmove(-1);
-		i -= bgetcol(TRUE, 0) / Tmaxcol();
+		i -= bgetcol(TRUE, 0) / tmaxcol();
 		bmove1();
 	}
 	bmakecol(col, FALSE);
 	reframe();
 }
 
-#define ISWORD	Istoken
+#define ISWORD	bistoken
 
 void Zbword(void)
 {
-	Moveto(ISWORD, BACKWARD);
-	Movepast(ISWORD, BACKWARD);
+	moveto(ISWORD, BACKWARD);
+	movepast(ISWORD, BACKWARD);
 }
 
 void Zfword(void)
 {
-	Movepast(ISWORD, FORWARD);
-	Moveto(ISWORD, FORWARD);
+	movepast(ISWORD, FORWARD);
+	moveto(ISWORD, FORWARD);
 }
 
 void Ztostart(void)
@@ -314,7 +318,7 @@ void Zendwind(void)
 	int i;
 
 	bpnttomrk(Sstart);
-	for (i = Wheight() - 1; i && bcsearch(NL); --i)
+	for (i = wheight() - 1; i && bcsearch(NL); --i)
 		;
 }
 

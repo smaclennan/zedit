@@ -152,8 +152,8 @@ void Zdispbinds(void)
 	for (f = 0; f < NUMFUNCS; ++f)
 		if (Cnames[f].fnum != ZNOTIMPL && Cnames[f].fnum != ZINSERT) {
 			sprintf(line, "%-35s%cw%c       ", Cnames[f].name,
-				Vcmds[Cnames[f].fnum]   == Znotimpl ? '-' : 'r',
-				Pawcmds[Cnames[f].fnum] == Znotimpl ? '-' : 'p'
+				Cmds[Cnames[f].fnum][1] == Znotimpl ? '-' : 'r',
+				Cmds[Cnames[f].fnum][2] == Znotimpl ? '-' : 'p'
 				);
 			Out(line, fp);
 			found = FALSE;

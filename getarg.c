@@ -63,7 +63,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
 	Buff_save = Curbuff;
 	Paw->bmode = Curbuff->bmode;
 	InPaw = TRUE;
-	Funcs = Pawcmds;
+	Curcmds = 2;
 	Keys[CR] = ZNEWLINE; /* in case we are in a VIEW buff */
 	Pshift = 0;
 	Pawlen = max;
@@ -92,7 +92,7 @@ Boolean Getarg(char *prompt, char *arg, int max)
 #endif
 	Tgoto(trow, tcol);
 	Curwdo->modeflags = INVALID;
-	Funcs = (Curbuff->bmode & VIEW) ? Vcmds : Cmds;	/* SAM */
+	Curcmds = (Curbuff->bmode & VIEW) ? 1 : 0;	/* SAM */
 	Clrecho();
 #ifdef XWINDOWS
 	Tflush();

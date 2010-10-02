@@ -380,7 +380,7 @@ void Zfillchk(void)
 	if (Cmd == CR)
 		Cmd = NL;
 	if (Bgetcol(TRUE, 0) < VAR(VFILLWIDTH) || InPaw)
-		(*Funcs[Cmd == NL ? ZNEWLINE : ZINSERT])();
+		CMD(Cmd == NL ? ZNEWLINE : ZINSERT);
 	else {
 		tmark = Bcremrk();
 		while (Bgetcol(TRUE, 0) > VAR(VFILLWIDTH)) {
@@ -724,7 +724,7 @@ void Zarg(void)
 		PutPaw(str, 2);
 	}
 	Clrecho();
-	(*Funcs[Keys[Cmd]])();
+	CMD(Keys[Cmd]);
 }
 
 
@@ -737,7 +737,7 @@ void Zmeta(void)
 	Cmd = Tgetkb() | 128;
 	if (tmp)
 		Clrecho();
-	(*Funcs[Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL])();
+	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
 /* voidess ^X commands. */
@@ -749,7 +749,7 @@ void Zctrlx(void)
 	Cmd = Tgetcmd() | 256;
 	if (tmp)
 		Clrecho();
-	(*Funcs[Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL])();
+	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
 /* voidess the M-X command */
@@ -760,7 +760,7 @@ void Zmetax(void)
 		Cmd = Cnames[rc].fnum;
 		Lfunc = ZMETAX;
 		for (Arg = Arg == 0 ? 1 : Arg; Arg > 0; --Arg)
-			(*Funcs[Cnames[rc].fnum])();
+			CMD(Cnames[rc].fnum);
 	}
 }
 

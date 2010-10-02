@@ -106,7 +106,7 @@ void Dotty(void)
 	Arg = 1;
 	Argp = FALSE;
 	while (Arg > 0) {
-		(*Funcs[Keys[Cmd]])();
+		CMD(Keys[Cmd]);
 		--Arg;
 	}
 	Lfunc = Keys[Cmd];

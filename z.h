@@ -204,10 +204,12 @@ extern char *Thispath;
 extern char *ConfigDir;
 
 extern struct cnames Cnames[];
-extern void (*Cmds[])(), (*Vcmds[])(), (*Pawcmds[])();
-extern void (**Funcs)();
+extern void (*Cmds[NUMFUNCS + 1][3])();
+extern int Curcmds;
 extern Byte Keys[], Lfunc;
 extern Boolean First;
+
+#define CMD(n) (*Cmds[n][Curcmds])()
 
 extern int cpushed;
 extern fd_set SelectFDs;

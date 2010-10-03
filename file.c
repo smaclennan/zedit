@@ -87,7 +87,7 @@ Boolean findfile(char *path, int startup)
 	was = Curbuff->bname;
 
 	/* limit name to BUFNAMMAX */
-	strncpy(tbname, Lastpart(path), BUFNAMMAX);
+	strncpy(tbname, lastpart(path), BUFNAMMAX);
 	tbname[BUFNAMMAX] = '\0';
 
 	/* If is this file already in a buffer - use it.
@@ -103,7 +103,7 @@ Boolean findfile(char *path, int startup)
 		}
 
 	if (!tbuff) {
-		if (Cfindbuff(tbname)) {
+		if (cfindbuff(tbname)) {
 			/* Resolve buffer name collisions by creating
 			 * a unique name */
 			char *p;
@@ -114,10 +114,10 @@ Boolean findfile(char *path, int startup)
 			i = 0;
 			do
 				sprintf(p, ".%d", ++i);
-			while (Cfindbuff(tbname));
+			while (cfindbuff(tbname));
 		}
 
-		rc = Readone(tbname, path);
+		rc = readone(tbname, path);
 	}
 
 	if (!startup) {
@@ -161,7 +161,7 @@ Boolean filesave(void)
 			return FALSE;
 		Curwdo->modeflags = INVALID;
 	}
-	sprintf(PawStr, "Writing %s", Lastpart(Curbuff->fname));
+	sprintf(PawStr, "Writing %s", lastpart(Curbuff->fname));
 	Echo(PawStr);
 	return bwritefile(Curbuff->fname);
 }
@@ -176,7 +176,7 @@ static int write_rgn(char *path)
 	int rc = FALSE;
 
 	save = Curbuff;
-	tbuff = Cmakebuff("___tmp___", (char *)NULL);
+	tbuff = cmakebuff("___tmp___", (char *)NULL);
 	if (tbuff) {
 		bswitchto(save);
 		bcopyrgn(Curbuff->mark, tbuff);

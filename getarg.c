@@ -70,7 +70,7 @@ Boolean getarg(char *prompt, char *arg, int max)
 	makepaw(arg, FALSE);
 	First = TRUE;
 	while (InPaw == TRUE)
-		Execute();
+		execute();
 	if (InPaw != ABORT) {
 		/* get the argument */
 		btostart();
@@ -201,6 +201,18 @@ void pout(char *str, Boolean check)
 	}
 }
 
+static void dline(int trow)
+{
+	int i;
+
+	if (trow < tmaxrow() - 2) {
+		tsetpoint(trow, 0);
+		Scrnmarks[trow].modf = TRUE;
+		for (i = 0; i < tmaxcol(); ++i)
+			tprntchar('-');
+	}
+}
+
 /* Use instead of Zinsert when in PAW */
 void pinsert(void)
 {
@@ -212,7 +224,7 @@ void pinsert(void)
 		/* Help!!!!*/
 		pclear();
 		pcmdplete(TRUE);
-		Dline(p_col ? ++p_row : p_row);
+		dline(p_col ? ++p_row : p_row);
 		return;
 	}
 
@@ -283,7 +295,7 @@ void Zpart(void)
 
 #ifdef TAGS
 	if (Nextpart == ZFINDTAG) {
-		bswitchto(Cfindbuff(TAGBUFNAME));
+		bswitchto(cfindbuff(TAGBUFNAME));
 		for (bcsearch(NL); !bisend(); bcsearch(NL)) {
 			getbword(word, STRMAX, bistoken);
 			if (stristr(word, savetag)) {
@@ -298,7 +310,7 @@ void Zpart(void)
 #endif
 	if (Nextpart == ZSWITCHTO) {
 			getbtxt(word, STRMAX);
-		tbuff = Cfindbuff(word);
+		tbuff = cfindbuff(word);
 		if (!tbuff)
 			tbuff = Curbuff;
 		if (tbuff->next)

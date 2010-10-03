@@ -578,8 +578,8 @@ void quit(void)
 
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (tbuff->child != EOF)
-			Unvoke(tbuff, FALSE);
-	Checkpipes(0);		/* make sure waited for ALL children */
+			unvoke(tbuff, FALSE);
+	checkpipes(0);		/* make sure waited for ALL children */
 #endif
 
 	if (VAR(VDOSAVE))
@@ -618,7 +618,7 @@ void Zquit(void)
 void Zexit(void)
 {
 #ifdef PIPESH
-	struct buff *make = Cfindbuff(MAKEBUFF);
+	struct buff *make = cfindbuff(MAKEBUFF);
 
 	if (make && make->child != EOF)
 		if (ask("You have a make running. Kill it?") != YES)
@@ -753,7 +753,7 @@ void Znewline(void)
 		binsert(NL);
 #ifdef PIPESH
 	if (Curbuff->out_pipe)
-		Sendtopipe();
+		sendtopipe();
 #endif
 }
 

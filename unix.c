@@ -25,7 +25,7 @@
 #endif
 
 /* Come here on SIGHUP or SIGTERM */
-void Hangup(int signal)
+void hangup(int signal)
 {
 	struct buff *bsave, *tbuff;
 
@@ -39,11 +39,11 @@ void Hangup(int signal)
 		}
 #ifdef PIPESH
 		if (tbuff->child != EOF)
-			Unvoke(tbuff, FALSE);
+			unvoke(tbuff, FALSE);
 #endif
 	}
 #ifdef PIPESH
-	Checkpipes(0);
+	checkpipes(0);
 #endif
 	save(bsave);
 	tfini();
@@ -51,7 +51,7 @@ void Hangup(int signal)
 }
 
 #ifdef PIPESH
-static int Readapipe(struct buff *);
+static int readapipe(struct buff *);
 
 static int Waiting;
 fd_set SelectFDs;
@@ -59,14 +59,14 @@ int NumFDs;
 
 
 /* Read all the active pipe buffers. */
-int Readpipes(fd_set *fds)
+int readpipes(fd_set *fds)
 {
 	struct buff *tbuff;
 	int did_something = 0;
 
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (tbuff->child != EOF && FD_ISSET(tbuff->in_pipe, fds)) {
-			Readapipe(tbuff);
+			readapipe(tbuff);
 			++did_something;
 		}
 
@@ -78,7 +78,7 @@ int Readpipes(fd_set *fds)
  *		type == 1 on normal
  *		type == 2 on blocking
  */
-int Checkpipes(int type)
+int checkpipes(int type)
 {
 	struct buff *tbuff;
 	int pid = 0, status;
@@ -96,7 +96,7 @@ int Checkpipes(int type)
 				 *	read
 				 */
 				if (type)
-					while (Readapipe(tbuff) > 0)
+					while (readapipe(tbuff) > 0)
 						;
 				FD_CLR(tbuff->in_pipe, &SelectFDs);
 				/* SAM Should reduce NumFDs */
@@ -127,17 +127,17 @@ int Checkpipes(int type)
 	}
 
 #ifdef SYSV2
-	/* See note in Sigchild() */
+	/* See note in sigchild() */
 #if !defined(SYSV4) || !defined(WNOWAIT)
-	signal(SIGCLD, Sigchild);
+	signal(SIGCLD, sigchild);
 #endif
-	signal(SIGPIPE, Sigchild);
+	signal(SIGPIPE, sigchild);
 #endif
 	return pid;
 }
 
 /* pipe has something for us */
-static int Readapipe(struct buff *tbuff)
+static int readapipe(struct buff *tbuff)
 {
 	char buff[BUFSIZ], *ptr;
 	int cnt, i;
@@ -160,7 +160,7 @@ static int Readapipe(struct buff *tbuff)
 		bswitchto(save);
 	} else
 		/* pipe died */
-		Checkpipes(1);
+		checkpipes(1);
 	return cnt;
 }
 
@@ -168,7 +168,7 @@ static int Readapipe(struct buff *tbuff)
 Send the buffer line to a pipe.
 This command is invoked by the Newline command.
 */
-void Sendtopipe(void)
+void sendtopipe(void)
 {
 	char line[256 + 1];
 	int i;
@@ -192,7 +192,7 @@ void Sendtopipe(void)
 Invoke a shell on the other end of a two way pipe.
 Returns true if the invocation succeeded.
 */
-Boolean Invoke(struct buff *tbuff, char *argv[])
+Boolean invoke(struct buff *tbuff, char *argv[])
 {
 	int from[2], to[2];
 
@@ -240,6 +240,30 @@ Boolean Invoke(struct buff *tbuff, char *argv[])
 	return FALSE;
 }
 
+/* Split a string up into words.
+ * A single quoted string (e.g. 'a b c') is
+ * considered one word.
+ */
+static char *wordit(char **str)
+{
+	char *start;
+
+	while (isspace(**str))
+		++*str;
+	if (**str == '\'') {
+		start = ++*str;
+		while (**str && **str != '\'')
+			++*str;
+	} else {
+		start = *str;
+		while (**str && !isspace(**str))
+			++*str;
+	}
+	if (**str)
+		*(*str)++ = '\0';
+	return *start ? start : NULL;
+}
+
 /* Invoke 'cmd' on a pipe.
  * Returns true if the invocation succeeded.
 */
@@ -252,7 +276,7 @@ Boolean dopipe(struct buff *tbuff, char *icmd)
 		return FALSE;
 
 	strcpy(p = cmd, icmd);
-	for (arg = 0; arg < 10 && (argv[arg] = Wordit(&p)); ++arg)
+	for (arg = 0; arg < 10 && (argv[arg] = wordit(&p)); ++arg)
 		;
 
 	if (pipe(from) == 0) {
@@ -284,37 +308,13 @@ Boolean dopipe(struct buff *tbuff, char *icmd)
 	return FALSE;
 }
 
-/* Split a string up into words.
- * A single quoted string (e.g. 'a b c') is
- * considered one word.
- */
-char *Wordit(char **str)
-{
-	char *start;
-
-	while (isspace(**str))
-		++*str;
-	if (**str == '\'') {
-		start = ++*str;
-		while (**str && **str != '\'')
-			++*str;
-	} else {
-		start = *str;
-		while (**str && !isspace(**str))
-			++*str;
-	}
-	if (**str)
-		*(*str)++ = '\0';
-	return *start ? start : NULL;
-}
-
 /* Try to kill a child process */
-void Unvoke(struct buff *child, Boolean check)
+void unvoke(struct buff *child, Boolean check)
 {
 	if (child && child->child != EOF) {
 		kill(child->child, SIGKILL);
 		if (check)
-			while (child->child != EOF && Checkpipes(1) != -1)
+			while (child->child != EOF && checkpipes(1) != -1)
 				;
 	} else
 		tbell();
@@ -323,10 +323,10 @@ void Unvoke(struct buff *child, Boolean check)
 /* Come here when a child dies or exits.
  *
  * NOTE:For system 3 and system 5: After coming here we do not rebind the
- *		signals to Sigchild. We wait until the Checkpipes routine. If we
+ *		signals to sigchild. We wait until the checkpipes routine. If we
  *		do it here, the system seems to send us infinite SIGCLDs.
  */
-void Sigchild(int signo)
+void sigchild(int signo)
 {
 	++Waiting;
 }

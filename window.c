@@ -23,12 +23,8 @@ struct wdo *Whead, *Curwdo;
 
 #define MINWDO		5		/* minimum window size */
 
-static void Wfree(struct wdo *);
-static Boolean Wdelete(struct wdo *);
-static Boolean Wsplit(void);
-
 /* called at startup when out of memory */
-static void NoMem(void)
+static void nomem(void)
 {
 	Error("Out of memory.");
 	exit(1);
@@ -36,7 +32,7 @@ static void NoMem(void)
 
 
 /* Create a new window pointer - screen info invalid */
-static struct wdo *Wcreate(int first, int last)
+static struct wdo *wcreate(int first, int last)
 {
 	struct wdo *new = calloc(sizeof(struct wdo), 1);
 
@@ -50,25 +46,41 @@ static struct wdo *Wcreate(int first, int last)
 		new->last	= last;
 		Mrktomrk(new->wmrk, Curbuff->mark);
 #ifdef SCROLLBARS
-		CreateScrollBars(new);
+		createscrollbars(new);
 #endif
 	}
 	return new;
 }
 
 /* free wdo - may invalidate Curwdo and Whead */
-static void Wfree(struct wdo *wdo)
+static void wfree(struct wdo *wdo)
 {
 	unmark(wdo->wpnt);
 	unmark(wdo->wmrk);
 	unmark(wdo->wstart);
 #ifdef SCROLLBARS
-	DeleteScrollBars(wdo);
+	deletescrollbars(wdo);
 #endif
 	free((char *)wdo);
 }
 
-static Boolean Wdelete(struct wdo *wdo)
+/*
+ * Invalidate an entire window. i.e. next refresh will do a complete update.
+ * Note that the line BEFORE the window must be invalidated to make sure that
+ * the window is updated correctly.
+ */
+static void winvalidate(struct wdo *wdo)
+{
+	int i;
+
+	if (wdo->first > Tstart)
+		Scrnmarks[wdo->first - 1].modf = TRUE;
+	for (i = wdo->first; i <= wdo->last; ++i)
+		Scrnmarks[i].modf = TRUE;
+	wdo->modeflags = INVALID;
+}
+
+static Boolean wdelete(struct wdo *wdo)
 {
 	struct wdo *new;
 
@@ -98,15 +110,15 @@ static Boolean Wdelete(struct wdo *wdo)
 	} else
 		return FALSE;
 
-	Winvalid(wdo);
+	winvalidate(wdo);
 
 	if (wdo == Curwdo) {
-		Wswitchto(new);
+		wswitchto(new);
 		reframe();	/*SAM*/
 	}
-	Wfree(wdo);
+	wfree(wdo);
 #ifdef SCROLLBARS
-	ResizeScrollBars(new);
+	paw_resizeScrollBars(new);
 #endif
 	return TRUE;
 }
@@ -115,7 +127,7 @@ static Boolean Wdelete(struct wdo *wdo)
  * Split the current window in 2, putting the same buffer in both windows.
  * Leaves the user in the new window.
  */
-static Boolean Wsplit(void)
+static Boolean wsplit(void)
 {
 	struct wdo *new;
 	int first, last;
@@ -126,7 +138,7 @@ static Boolean Wsplit(void)
 	/* Create the new window. */
 	first = Curwdo->first + (wheight() / 2) + 1;
 	last = Curwdo->last;
-	new = Wcreate(first, last);
+	new = wcreate(first, last);
 	if (!new)
 		return FALSE;
 
@@ -135,7 +147,7 @@ static Boolean Wsplit(void)
 	new->first = Curwdo->last + 1;
 	Curwdo->modeflags = INVALID;
 #ifdef SCROLLBARS
-	ResizeScrollBars(Curwdo);
+	paw_resizeScrollBars(Curwdo);
 #endif
 
 	/* link it into chain */
@@ -149,14 +161,14 @@ static Boolean Wsplit(void)
 	reframe();
 
 	/* Go to new window. */
-	Wswitchto(new);
+	wswitchto(new);
 	reframe();
 	Mrktomrk(Curwdo->wstart, Sstart);
 	return TRUE;
 }
 
 /* Find the window associated with buffer */
-struct wdo *Findwdo(struct buff *buff)
+struct wdo *findwdo(struct buff *buff)
 {
 	struct wdo *wdo;
 
@@ -167,7 +179,7 @@ struct wdo *Findwdo(struct buff *buff)
 }
 
 /* Switch to another window. */
-void Wswitchto(struct wdo *wdo)
+void wswitchto(struct wdo *wdo)
 {
 	if (wdo != Curwdo) {
 		if (Curwdo) {
@@ -208,7 +220,7 @@ void cswitchto(struct buff *buff)
 		}
 		Curwdo->modeflags = INVALID;
 
-		Settabsize(buff->bmode);
+		settabsize(buff->bmode);
 	}
 
 #ifdef XWINDOWS
@@ -217,7 +229,7 @@ void cswitchto(struct buff *buff)
 }
 
 /* Local routine to change the current window by 'size' lines */
-static Boolean Sizewindow(int size)
+static Boolean sizewindow(int size)
 {
 	struct wdo *other;
 
@@ -237,17 +249,17 @@ static Boolean Sizewindow(int size)
 	}
 
 	/* invalidate the windows */
-	Winvalid(Curwdo);
-	Winvalid(other);
+	winvalidate(Curwdo);
+	winvalidate(other);
 
 #ifdef SCROLLBARS
-	ResizeScrollBars(Curwdo);
-	ResizeScrollBars(other);
+	paw_resizeScrollBars(Curwdo);
+	paw_resizeScrollBars(other);
 #endif
 	return TRUE;
 }
 
-static int noResize;
+static int nopaw_resize;
 
 static inline void do_wsize(int orow)
 {
@@ -291,11 +303,11 @@ static inline void do_wsize(int orow)
 }
 
 /* See if window size has changed */
-void Wsize(void)
+void wsize(void)
 {
 	int orow;
 
-	if (noResize)
+	if (nopaw_resize)
 		return;
 
 	orow = Rowmax;
@@ -314,13 +326,13 @@ void Wsize(void)
 	{
 		struct wdo *wdo;
 		for (wdo = Whead; wdo; wdo = wdo->next)
-			ResizeScrollBars(wdo);
+			paw_resizeScrollBars(wdo);
 	}
 #endif
 }
 
-/* Resize PAW by moving bottom window by 'diff' lines, if possible. */
-Boolean Resize(int diff)
+/* paw_resize PAW by moving bottom window by 'diff' lines, if possible. */
+Boolean paw_resize(int diff)
 {
 	struct wdo *last;
 	int i;
@@ -350,7 +362,7 @@ Boolean Resize(int diff)
  * Makes new window and buffer current.
  * NOTE: Blows away previous buffer.
  */
-Boolean WuseOther(char *bname)
+Boolean wuseother(char *bname)
 {
 	struct wdo *wdo, *last;
 	struct buff *buff;
@@ -359,11 +371,11 @@ Boolean WuseOther(char *bname)
 		if (strcmp(wdo->wbuff->bname, bname) == 0)
 			break;
 	if (wdo)
-		Wswitchto(wdo);
+		wswitchto(wdo);
 	else if (last != Whead)
-		Wswitchto(last);
+		wswitchto(last);
 	else {
-		Wsplit();
+		wsplit();
 		if ((strcmp(bname, MAKEBUFF) == 0 ||
 		     strcmp(bname, REFBUFF) == 0)
 			&& wheight() > 8) {
@@ -371,13 +383,13 @@ Boolean WuseOther(char *bname)
 			Curwdo->first = Curwdo->last - 8;
 			Curwdo->prev->last = Curwdo->first - 1;
 #ifdef SCROLLBARS
-			ResizeScrollBars(Curwdo->prev);
-			ResizeScrollBars(Curwdo);
+			paw_resizeScrollBars(Curwdo->prev);
+			paw_resizeScrollBars(Curwdo);
 #endif
 		}
 	}
-	Winvalid(Curwdo);
-	buff = Cmakebuff(bname, NULL);
+	winvalidate(Curwdo);
+	buff = cmakebuff(bname, NULL);
 	if (buff == NULL)
 		return FALSE;
 	cswitchto(buff);
@@ -385,26 +397,10 @@ Boolean WuseOther(char *bname)
 	return TRUE;
 }
 
-/*
- * Invalidate an entire window. i.e. next refresh will do a complete update.
- * Note that the line BEFORE the window must be invalidated to make sure that
- * the window is updated correctly.
- */
-void Winvalid(struct wdo *wdo)
-{
-	int i;
-
-	if (wdo->first > Tstart)
-		Scrnmarks[wdo->first - 1].modf = TRUE;
-	for (i = wdo->first; i <= wdo->last; ++i)
-		Scrnmarks[i].modf = TRUE;
-	wdo->modeflags = INVALID;
-}
-
 /* Split the current window and enter new (bottom) window */
 void Z2wind(void)
 {
-	if (!Wsplit())
+	if (!wsplit())
 		tbell();
 }
 
@@ -418,7 +414,7 @@ void Z1wind(void)
 		wdo = Whead;
 		Whead = Whead->next;
 		if (wdo != Curwdo)
-			Wfree(wdo);
+			wfree(wdo);
 	}
 
 	Curwdo->first = Tstart;
@@ -433,14 +429,14 @@ void Z1wind(void)
 	tclrwind();
 
 #ifdef SCROLLBARS
-	ResizeScrollBars(Curwdo);
+	paw_resizeScrollBars(Curwdo);
 #endif
 }
 
 /* Delete current window if more than one */
 void Zdelwind(void)
 {
-	if (!Wdelete(Curwdo))
+	if (!wdelete(Curwdo))
 		tbell();
 }
 
@@ -450,12 +446,12 @@ void Zprevwind(void)
 	struct wdo *wdo;
 
 	if (Curwdo->prev)
-		Wswitchto(Curwdo->prev);
+		wswitchto(Curwdo->prev);
 	else {
 		for (wdo = Whead; wdo->next; wdo = wdo->next)
 			;
 		if (wdo != Curwdo)
-			Wswitchto(wdo);
+			wswitchto(wdo);
 		else
 			tbell();
 	}
@@ -465,9 +461,9 @@ void Zprevwind(void)
 void Znextwind(void)
 {
 	if (Curwdo->next)
-		Wswitchto(Curwdo->next);
+		wswitchto(Curwdo->next);
 	else if (Curwdo != Whead)
-		Wswitchto(Whead);
+		wswitchto(Whead);
 	else
 		tbell();
 }
@@ -475,21 +471,21 @@ void Znextwind(void)
 /* Make current window bigger */
 void Zgrowwind(void)
 {
-	Sizewindow(Arg);
+	sizewindow(Arg);
 	Arg = 0;
 }
 
 /* Make current window smaller */
 void Zshrinkwind(void)
 {
-	Sizewindow(-Arg);
+	sizewindow(-Arg);
 	Arg = 0;
 }
 
 /* Make current window an absolute size */
 void Zsizewind(void)
 {
-	if (!Sizewindow(Arg - wheight() + 1))
+	if (!sizewindow(Arg - wheight() + 1))
 		tbell();
 	Arg = 0;
 }
@@ -503,7 +499,7 @@ void Zsizewind(void)
  * Makes new window current.
  * Never fails.
  */
-static struct wdo *Otherwind(void)
+static struct wdo *otherwind(void)
 {
 	struct wdo *wdo;
 
@@ -518,60 +514,60 @@ static struct wdo *Otherwind(void)
 		if (wdo == Curwdo)
 			wdo = Whead;
 	}
-	Wswitchto(wdo);
+	wswitchto(wdo);
 	return wdo;
 }
 
 void Znxtothrwind(void)
 {
 	struct wdo *save = Curwdo;
-	Otherwind();
+	otherwind();
 	Znextpage();
-	Wswitchto(save);
+	wswitchto(save);
 }
 
 void Zprevothrwind(void)
 {
 	struct wdo *save = Curwdo;
-	Otherwind();
+	otherwind();
 	Zprevpage();
-	Wswitchto(save);
+	wswitchto(save);
 }
 
 /*
  * If buffer is in a current window, switchto that window, else put the buffer
  * in the current or other window.
  */
-void Bgoto(struct buff *buff)
+void bgoto(struct buff *buff)
 {
-	struct wdo *wdo = Findwdo(buff);
+	struct wdo *wdo = findwdo(buff);
 
 	if (wdo)
-		Wswitchto(wdo);
+		wswitchto(wdo);
 	else
 		cswitchto(buff);
 }
 
 /* These routines are ONLY callable at startup. */
 
-static struct wdo *Wstart;	/* Set in Wload */
+static struct wdo *Wstart;	/* Set in wload */
 
-void Winit(void)
+void winit(void)
 {
 	if (Wstart == NULL) {
 		/* Create first window over entire screen. */
-		Whead = Wcreate(Tstart, Rowmax - 2);
-		Wswitchto(Whead);
+		Whead = wcreate(Tstart, Rowmax - 2);
+		wswitchto(Whead);
 	} else {
-		/* We created the window[s] with Wload[s]. */
+		/* We created the window[s] with wload[s]. */
 		while (Whead->prev)
 			Whead = Whead->prev;
-		Wswitchto(Wstart);
-		Wsize();
+		wswitchto(Wstart);
+		wsize();
 	}
 }
 
-void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
+void wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 {
 	struct wdo *new;
 	struct buff *buff;
@@ -579,19 +575,19 @@ void Wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 #ifdef SHELL
 	if (strcmp(bname, SHELLBUFF) == 0) {
 		/* invoke the shell */
-		buff = Cmakebuff(SHELLBUFF, NULL);
+		buff = cmakebuff(SHELLBUFF, NULL);
 		if (buff == NULL)
-			NoMem();
+			nomem();
 		doshell();
 	}
 #endif
-	buff = Cfindbuff(bname);
+	buff = cfindbuff(bname);
 	if (buff == NULL)
-		buff = Cfindbuff(MAINBUFF);
+		buff = cfindbuff(MAINBUFF);
 	bswitchto(buff);
-	new = Wcreate(first, last);
+	new = wcreate(first, last);
 	if (new == NULL)
-		NoMem();
+		nomem();
 	Mrktomrk(buff->mark, new->wmrk);
 	boffset(sloc);
 	bmrktopnt(new->wstart);

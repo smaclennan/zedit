@@ -33,7 +33,7 @@ void Zswitchto(void)
 	if (rc == -1)
 		return;
 	strcpy(Lbufname, was);
-	cswitchto(Cfindbuff(Bnames[rc]));
+	cswitchto(cfindbuff(Bnames[rc]));
 }
 
 void Znextbuff(void)
@@ -62,7 +62,7 @@ void Zkillbuff(void)
 		do
 			if (getarg("Buffer: ", bname, BUFNAMMAX))
 				return;
-		while ((tbuff = Cfindbuff(bname)) == NULL);
+		while ((tbuff = cfindbuff(bname)) == NULL);
 		bswitchto(tbuff);
 	}
 	if (Curbuff->bmodf)
@@ -83,16 +83,16 @@ void delbuff(struct buff *buff)
 	struct wdo *wdo;
 
 	wascur = buff == Curbuff;
-	strcpy(bname, buff->bname);	/* save it for Delbname */
+	strcpy(bname, buff->bname);	/* save it for delbname */
 	if (strcmp(Lbufname, bname) == 0)
 		*Lbufname = '\0';
 	if (bdelbuff(buff)) {
 #ifdef XWINDOWS
 		XDeleteBuffer(bname);
 #endif
-		Delbname(bname);
+		delbname(bname);
 		if (wascur && *Lbufname) {
-			struct buff *tbuff = Cfindbuff(Lbufname);
+			struct buff *tbuff = cfindbuff(Lbufname);
 			if (tbuff)
 				bswitchto(tbuff);
 		}
@@ -128,9 +128,9 @@ void Zlstbuff(void)
 	struct wdo *was = Curwdo;
 	int i;
 
-	if (WuseOther(LISTBUFF)) {
+	if (wuseother(LISTBUFF)) {
 		for (i = 0; i < Numbuffs; ++i) {
-			struct buff *tbuff = Cfindbuff(Bnames[i]);
+			struct buff *tbuff = cfindbuff(Bnames[i]);
 			if (tbuff)
 				lstbuff(tbuff);
 			else {
@@ -140,7 +140,7 @@ void Zlstbuff(void)
 			}
 		}
 		Curbuff->bmodf = FALSE;
-		Wswitchto(was);
+		wswitchto(was);
 	} else
 		tbell();
 	Arg = 0;

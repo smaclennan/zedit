@@ -35,6 +35,11 @@ int Numbuffs;			/* number of buffers */
 struct passwd *Me;
 char *Shell;
 
+static void edit(void);
+static void dotty(void);
+static void setup(int, char **);
+static void usage(char *prog);
+
 int main(int argc, char **argv)
 {
 	/* A longjmp is called if bcremrk or Getmemp run out of memory */
@@ -50,8 +55,8 @@ int main(int argc, char **argv)
 	loginit("/tmp/malloc");
 #endif
 
-	Setup(argc, argv);
-	Edit();
+	setup(argc, argv);
+	edit();
 	tfini();
 
 #ifdef MEMLOG
@@ -61,15 +66,15 @@ int main(int argc, char **argv)
 }
 
 
-void Edit(void)
+static void edit(void)
 {
 	Exitflag = FALSE;
 	while (!Exitflag)
-		Execute();
+		execute();
 }
 
 
-void Execute(void)
+void execute(void)
 {
 #if defined(PIPESH) && !defined(XWINDOWS)
 	fd_set fds = SelectFDs;
@@ -77,30 +82,30 @@ void Execute(void)
 	refresh();
 
 	if (cpushed)
-		Dotty();
+		dotty();
 	else {
 		/* select returns -1 if a child dies (SIGPIPE) -
-		 * Sigchild handles it */
+		 * sigchild handles it */
 		while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
 #ifdef SYSV2
-			Checkpipes(1);
+			checkpipes(1);
 			refresh();
 #endif
 			fds = SelectFDs;
 		}
-		Readpipes(&fds);
+		readpipes(&fds);
 		if (FD_ISSET(1, &fds))
-			Dotty();
+			dotty();
 	}
 #else
 	refresh();
-	Dotty();
+	dotty();
 #endif
 }
 
 
 /* NOTE: Dotty blocks */
-void Dotty(void)
+static void dotty(void)
 {
 	Cmd = tgetcmd();
 	Arg = 1;
@@ -114,7 +119,7 @@ void Dotty(void)
 }
 
 
-void Setup(int argc, char **argv)
+static void setup(int argc, char **argv)
 {
 	char path[PATHMAX + 1];
 	char *progname;
@@ -139,10 +144,11 @@ void Setup(int argc, char **argv)
 	if (!Shell)
 		Shell = "/bin/sh";
 	/* SAM - can't get tcsh to work...use csh */
-	if (strcmp(Lastpart(Shell), "tcsh") == 0)
+	if (strcmp(lastpart(Shell), "tcsh") == 0)
 		Shell = "/bin/csh";
 
-	Dbgname(AddHome(path, ZDBGFILE));
+	sprintf(path, "%s/%s", Me->pw_dir, ZDBGFILE);
+	Dbgname(path);
 
 	Cmask = umask(0);		/* get the current umask */
 	umask(Cmask);			/* set it back */
@@ -153,11 +159,11 @@ void Setup(int argc, char **argv)
 	/* see if ZPATH set */
 	Thispath = getenv("ZPATH");
 	if (Thispath)
-		progname = Lastpart(argv[0]);
+		progname = lastpart(argv[0]);
 	/* convert argv[0] to directory name */
 	else {
 		Thispath = argv[0];
-		progname = Lastpart(Thispath);
+		progname = lastpart(Thispath);
 		if (progname != Thispath)
 			*(progname - 1) = '\0';
 		/* use current dir */
@@ -185,7 +191,7 @@ void Setup(int argc, char **argv)
 			ConfigDir = optarg;
 			break;
 		case 'h':
-			Usage(progname);
+			usage(progname);
 		case 'l':
 			Argp = Arg = atoi(optarg);
 			break;
@@ -205,7 +211,7 @@ void Setup(int argc, char **argv)
 			break;
 		}
 
-	ReadVfile();		/* Do this BEFORE tinit */
+	readvfile();		/* Do this BEFORE tinit */
 
 	/* User wants Text mode as default */
 	if (textMode)
@@ -216,7 +222,7 @@ void Setup(int argc, char **argv)
 	/* create the needed buffers */
 	Killbuff = bcreate();
 	Paw = bcreate();
-	if (!Cmakebuff(MAINBUFF, NULL)) {
+	if (!cmakebuff(MAINBUFF, NULL)) {
 		puts("Not enough memory.");
 		exit(1);
 	}
@@ -224,7 +230,7 @@ void Setup(int argc, char **argv)
 	InPaw = FALSE;
 
 #ifdef XWINDOWS
-	XAddBuffer(MAINBUFF);
+	xaddbuffer(MAINBUFF);
 	tinit(argc, argv);
 #else
 	tinit();
@@ -265,7 +271,7 @@ void Setup(int argc, char **argv)
 	} else
 		loadsaved();
 
-	Winit();
+	winit();
 	if (other) {
 		Z2wind();
 		cswitchto(other);
@@ -279,7 +285,7 @@ void Setup(int argc, char **argv)
 	if (!Curbuff->mtime && Curbuff->fname)
 		Echo("New File");
 
-	Bind();
+	bind();
 	loadbind();		/* Do this after tinit */
 
 	Curwdo->modeflags = INVALID;
@@ -308,14 +314,14 @@ void Setup(int argc, char **argv)
  * Returns FALSE if unable to create buffer only.
  * FALSE means that there is no use continuing.
  */
-Boolean Readone(char *bname, char *path)
+Boolean readone(char *bname, char *path)
 {
 	struct buff *was = Curbuff;
 
-	if (Cfindbuff(bname))
+	if (cfindbuff(bname))
 		return TRUE;
 
-	if (Cmakebuff(bname, path)) {
+	if (cmakebuff(bname, path)) {
 		int rc = breadfile(path);
 		if (rc >= 0) {
 			toggle_mode(0);
@@ -325,10 +331,10 @@ Boolean Readone(char *bname, char *path)
 				Curbuff->bmode |= VIEW;
 			strcpy(Lbufname, was->bname);
 #ifdef XWINDOWS
-			XAddBuffer(bname);
+			xaddbuffer(bname);
 #endif
 		} else { /* error */
-			Delbname(Curbuff->bname);
+			delbname(Curbuff->bname);
 			bdelbuff(Curbuff);
 			bswitchto(was);
 		}
@@ -337,52 +343,12 @@ Boolean Readone(char *bname, char *path)
 	return FALSE;
 }
 
-/* Create a buffer. */
-struct buff *Cmakebuff(char *bname, char *fname)
-{
-	struct buff *bptr, *save = Curbuff;
-
-	bptr = Cfindbuff(bname);
-	if (bptr) {
-		bswitchto(bptr);
-		return bptr;
-	}
-
-	bptr = bcreate();
-	if (!bptr) {
-		Error("Unable to create buffer");
-		return NULL;
-	}
-
-	bptr->bname = Addbname(bname);
-	if (!bptr->bname) {
-		Error("Out of buffers");
-		bdelbuff(bptr);
-		bswitchto(save);
-		return NULL;
-	}
-
-	if (*bname == '*')
-		bptr->bmode |= SYSBUFF;
-
-	bswitchto(bptr);
-	if (fname)
-		bptr->fname = strdup(fname);
-	/* add the buffer to the head of the list */
-	if (Bufflist)
-		Bufflist->prev = bptr;
-	bptr->next = Bufflist;
-	Bufflist = bptr;
-
-	return bptr;
-}
-
 
 /* Add the new bname to the Bname array.
  * If we hit maxbuffs, try to enlarge the Bnames array.
  * Note that the compare MUST be insensitive for the getplete!
  */
-char *Addbname(char *bname)
+static char *addbname(char *bname)
 {
 	static int maxbuffs; /* max buffers Bnames can hold */
 	int i;
@@ -407,7 +373,47 @@ char *Addbname(char *bname)
 	return Bnames[i];
 }
 
-Boolean Delbname(char *bname)
+/* Create a buffer. */
+struct buff *cmakebuff(char *bname, char *fname)
+{
+	struct buff *bptr, *save = Curbuff;
+
+	bptr = cfindbuff(bname);
+	if (bptr) {
+		bswitchto(bptr);
+		return bptr;
+	}
+
+	bptr = bcreate();
+	if (!bptr) {
+		Error("Unable to create buffer");
+		return NULL;
+	}
+
+	bptr->bname = addbname(bname);
+	if (!bptr->bname) {
+		Error("Out of buffers");
+		bdelbuff(bptr);
+		bswitchto(save);
+		return NULL;
+	}
+
+	if (*bname == '*')
+		bptr->bmode |= SYSBUFF;
+
+	bswitchto(bptr);
+	if (fname)
+		bptr->fname = strdup(fname);
+	/* add the buffer to the head of the list */
+	if (Bufflist)
+		Bufflist->prev = bptr;
+	bptr->next = Bufflist;
+	Bufflist = bptr;
+
+	return bptr;
+}
+
+Boolean delbname(char *bname)
 {
 	int i, rc;
 
@@ -423,7 +429,7 @@ Boolean Delbname(char *bname)
 }
 
 /* Locate a given buffer */
-struct buff *Cfindbuff(char *bname)
+struct buff *cfindbuff(char *bname)
 {
 	struct buff *tbuff;
 
@@ -434,7 +440,7 @@ struct buff *Cfindbuff(char *bname)
 }
 
 /* Return a pointer to the start of the last part of fname */
-char *Lastpart(char *fname)
+char *lastpart(char *fname)
 {
 	char *sp;
 
@@ -443,7 +449,7 @@ char *Lastpart(char *fname)
 	return ++sp;
 }
 
-void Usage(char *prog)
+static void usage(char *prog)
 {
 	printf(
 #ifdef XWINDOWS
@@ -484,15 +490,6 @@ void Zcwd(void)
 		} else
 			Error("chdir failed.");
 	}
-}
-
-/* Create a file relative to home.
- * On non-unix we just make it current.
- */
-char *AddHome(char *path, char *fname)
-{
-	sprintf(path, "%s/%s", Me->pw_dir, fname);
-	return path;
 }
 
 /* Dup a passwd entry. Only saves: pw_name, pw_dir, pw_uid, pw_gid */

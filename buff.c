@@ -212,7 +212,7 @@ Boolean bdelbuff(struct buff *tbuff)
 
 #ifdef PIPESH
 	if (tbuff->child != EOF)
-		Unvoke(tbuff, TRUE);
+		unvoke(tbuff, TRUE);
 #endif
 
 	while (tbuff->firstp)	/* delete the pages */
@@ -682,7 +682,7 @@ int breadfile(char *fname)
 	}
 
 	Curbuff->mtime = sbuf.st_mtime;		/* save the modified time */
-	sprintf(msg, "Reading %s", Lastpart(fname));
+	sprintf(msg, "Reading %s", lastpart(fname));
 	Echo(msg);
 
 	bempty();
@@ -792,7 +792,7 @@ int bwritefile(char *fname)
 		if (sbuf.st_mtime > Curbuff->mtime) {
 			sprintf(PawStr,
 				"WARNING: %s has been modified. Overwrite? ",
-				Lastpart(fname));
+				lastpart(fname));
 			if (ask(PawStr) != YES)
 				return ABORT;
 		}
@@ -807,7 +807,7 @@ int bwritefile(char *fname)
 	make_bakname(bakname, fname);
 	if (nlink > 1) {
 		sprintf(PawStr, "WARNING: %s is linked. Preserve? ",
-			Lastpart(fname));
+			lastpart(fname));
 		switch (ask(PawStr)) {
 		case YES:
 			if (VAR(VBACKUP))
@@ -1076,7 +1076,7 @@ void Zstat(void)
 {
 	sprintf(PawStr, "Buffers: %d   Pages: %d", Numbuffs, NumPages);
 #ifdef XWINDOWS
-	AddWindowSizes(PawStr + strlen(PawStr));
+	addwindowsizes(PawStr + strlen(PawStr));
 #endif
 	Echo(PawStr);
 }

@@ -62,7 +62,7 @@ void Zcmdtobuff(void)
 	Arg = 0;
 	if (getarg("@ ", Command, STRMAX) == 0) {
 		save = Curwdo;
-		if (WuseOther(SHELLBUFF)) {
+		if (wuseother(SHELLBUFF)) {
 			Echo("Please wait...");
 			rc = pipetobuff(Curbuff, Command);
 			if (rc == 0) {
@@ -71,7 +71,7 @@ void Zcmdtobuff(void)
 			}
 			Curbuff->bmodf = FALSE;
 			printexit(rc);
-			Wswitchto(save);
+			wswitchto(save);
 		}
 	}
 #else
@@ -95,7 +95,7 @@ void Zman(void)
 		return;
 
 	save = Curwdo;
-	if (WuseOther(MANBUFF)) {
+	if (wuseother(MANBUFF)) {
 		Echo("Please wait...");
 		rc = pipetobuff(Curbuff, entry);
 		if (rc == 0) {
@@ -110,7 +110,7 @@ void Zman(void)
 		Curbuff->bmodf = FALSE;
 		Curbuff->bmode |= VIEW;
 		printexit(rc);
-		Wswitchto(save);
+		wswitchto(save);
 	}
 }
 
@@ -133,12 +133,12 @@ void Zshell(void)
 	int i = 0;
 
 	/* create a unique buffer name */
-	if (Cfindbuff(strcpy(bname, SHELLBUFF)))
+	if (cfindbuff(strcpy(bname, SHELLBUFF)))
 		do
 			sprintf(bname, "%s%d", SHELLBUFF, ++i);
-		while (Cfindbuff(bname));
+		while (cfindbuff(bname));
 
-	if (!WuseOther(bname) || !doshell())
+	if (!wuseother(bname) || !doshell())
 		tbell();
 }
 
@@ -149,7 +149,7 @@ Boolean doshell(void)
 	argv[0] = Shell;
 	argv[1] = "-i";
 	argv[2] = NULL;
-	return Invoke(Curbuff, argv);
+	return invoke(Curbuff, argv);
 }
 #elif defined(SYSV2)
 static void syerr(int err)
@@ -235,10 +235,10 @@ struct buff *cmdtobuff(char *bname, char *cmd)
 	struct wdo *save;
 
 	save = Curwdo;
-	if (WuseOther(bname)) {
+	if (wuseother(bname)) {
 		if (dopipe(Curbuff, cmd))
 			tbuff = Curbuff;
-		Wswitchto(save);
+		wswitchto(save);
 	}
 	return tbuff;
 }
@@ -256,7 +256,7 @@ struct buff *cmdtobuff(char *bname, char *cmd)
 	if (err)
 		syerr(err);
 	else {
-		WuseOther(bname);
+		wuseother(bname);
 		breadfile(fname);
 		unlink(fname);
 		Curbuff->bmodf = FALSE;
@@ -315,7 +315,7 @@ void Zbeauty(void)
 		return;
 
 	while (Curbuff->child != EOF)
-		Checkpipes(2);
+		checkpipes(2);
 #else
 	sprintf(cmdStr, "%s %s %s >/dev/null 2>&1", INDENT, fileName1,
 		fileName2);

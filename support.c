@@ -318,7 +318,7 @@ void pntmove(int row, int col)
 		if (row >= wdo->first && row < wdo->last) {
 			/* find offset in window */
 			for (i = wdo->first; i < row; ++i) {
-				Wswitchto(wdo);
+				wswitchto(wdo);
 				bpnttomrk(&Scrnmarks[i]);
 				if (bisend()) {
 					/* at end of buffer - stop */

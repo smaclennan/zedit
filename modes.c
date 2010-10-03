@@ -73,7 +73,7 @@ char *setmodes(struct buff *buff)
 
 	if (buff->bmode & OVERWRITE)
 		strcat(PawStr, " OVWRT");
-	Settabsize(buff->bmode);
+	settabsize(buff->bmode);
 	return PawStr;
 }
 

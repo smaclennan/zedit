@@ -67,8 +67,8 @@ void Zspell(void)
 		btostart();
 	}
 
-	sbuff = Cmakebuff(SPELLBUFF, NULL);
-	if (!sbuff || !Invoke(sbuff, argv))
+	sbuff = cmakebuff(SPELLBUFF, NULL);
+	if (!sbuff || !invoke(sbuff, argv))
 		return;
 
 	in = fdopen(sbuff->in_pipe, "r");
@@ -76,7 +76,7 @@ void Zspell(void)
 
 	/* make the paw 3 lines */
 	bswitchto(was);
-	Resize(-2);
+	paw_resize(-2);
 	refresh();
 	mclear();
 	Echo("Checking...");
@@ -179,7 +179,7 @@ abort:
 	unmark(point);
 	unmark(mark);
 	unmark(emark);
-	Resize(2);
+	paw_resize(2);
 }
 
 

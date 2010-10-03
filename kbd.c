@@ -89,7 +89,7 @@ Byte tgetkb(void)
 
 		cpushed = read(0, (char *)buff, CSTACK >> 1) - 1;
 		if (cpushed < 0)
-			Hangup(1);	/* we lost connection */
+			hangup(1);	/* we lost connection */
 		for (i = 0, p = cptr; i <= cpushed; ++i, p = (p + 1) % CSTACK)
 			cstack[p] = buff[i];
 	}

@@ -94,6 +94,7 @@ void Zlgoto(void);
 void Zlowregion(void);
 void Zlowword(void);
 void Zlstbuff(void);
+void Zmail(void);
 void Zmake(void);
 void Zmakedel(void);
 void Zman(void);
@@ -159,6 +160,7 @@ void Ztab(void);
 void Ztoend(void);
 void Ztostart(void);
 void Zundent(void);
+void Zundo(void);
 void Zunmodf(void);
 void Zupregion(void);
 void Zupword(void);
@@ -174,11 +176,7 @@ void Zzoom(void);
 int access(char *, int);
 #endif
 struct passwd *dup_pwent(struct passwd *);
-char *AddHome(char*, char*);
 void initscrnmarks(void);
-struct llist *Add(struct llist**, char*);
-char *Addbname(char *);
-void Addtocnames(int, char *);
 int ask(char *);
 int batoi(void);
 int bcopyrgn(struct mark *, struct buff*);
@@ -190,15 +188,13 @@ Boolean bdelbuff(struct buff *);
 void bdelete(unsigned);
 void bdeltomrk(struct mark *);
 void bempty(void);
-void Bflush(void);
 int bgetcol(Boolean, int);
-void Bgoto(struct buff *);
-void Bind(void);
+void bgoto(struct buff *);
+void bind(void);
 void binsert(Byte);
 void binstr(char *);
 Boolean bisaftermrk(struct mark *);
 Boolean bisbeforemrk(struct mark *);
-int Bitcnt(int);
 long blength(struct buff *);
 long blines(struct buff *);
 unsigned long blocation(unsigned *);
@@ -217,44 +213,32 @@ void btoend(void);
 void btostart(void);
 int bwritefd(int);
 int bwritefile(char *);
-int Checkpipes(int type);
-struct buff *Cfindbuff(char *);
-struct buff *Cmakebuff(char *, char *);
+int checkpipes(int type);
+struct buff *cfindbuff(char *);
+struct buff *cmakebuff(char *, char *);
 struct buff *cmdtobuff(char *, char *);
 int cntlines(int);
 int compile(Byte*, Byte*, Byte*);
-Boolean CreateRing(void);
 void cswitchto(struct buff *);
 Boolean delay(void);
 Boolean delayprompt(char *);
-Boolean Delbname(char *);
+Boolean delbname(char *);
 void delbuff(struct buff *);
 Boolean delcmd(void);
 Boolean delcmdall(void);
 char *dispkey(unsigned, char *);
-void Doreplace(int);
-void Dotty(void);
-void Dline(int);
-void Dwait(int);
-void Edit(void);
-void Execute(void);
+void execute(void);
 void extendedlinemarker(void);
 Boolean filesave(void);
 Boolean findfile(char *, int);
-char *Findfirst(char *);
-char *Findnext(void);
 int findpath(char *, char *, int, Boolean);
-struct wdo *Findwdo(struct buff *);
-int Forcecol(void);
-void Freelist(struct llist **);
+struct wdo *findwdo(struct buff *);
 Boolean getarg(char *, char *, int);
 char *getbtxt(char *, int);
 Boolean getbword(char *, int, int (*)());
 int getdname(char *prompt, char *path);
 int getplete(char *, char *, char **, int, int);
-void Help(int, Boolean);
 void initline(void);
-void Intomem(struct page *);
 Boolean isdir(char *);
 Boolean isfile(char *, char *, char *, Boolean);
 Boolean Ispara(char, char);
@@ -263,7 +247,7 @@ int bistoken(void);
 int biswhite(void);
 int bisword(void);
 void killtomrk(struct mark *);
-char *Lastpart(char *);
+char *lastpart(char *);
 char *limit(char *, int);
 void loadbind(void);
 void loadsaved(void);
@@ -276,8 +260,6 @@ void moveto(int (*pred)(), Boolean forward);
 Boolean mrkaftermrk(struct mark *, struct mark *);
 Boolean mrkatmrk(struct mark *, struct mark *);
 Boolean mrkbeforemrk(struct mark *, struct mark *);
-Boolean Cp(char *, char *);
-int main(int, char **);
 void newtitle(char *);
 char *nocase(char *);
 void parsem(char *, Boolean);
@@ -289,19 +271,17 @@ void pout(char *, Boolean);
 void pset(int, int, int);
 int prefline(void);
 void putpaw(char *, int);
-void ReadVfile(void);
-Boolean Readone(char *, char *);
+void readvfile(void);
+Boolean readone(char *, char *);
 void redisplay(void);
 void reframe(void);
 void refresh(void);
 void regerr(int);
-Boolean Resize(int);
+Boolean paw_resize(int);
 void save(struct buff *);
 Boolean saveall(Boolean);
-void Setavar(char *, Boolean);
 char *setmodes(struct buff *);
-int Settabsize(unsigned);
-void Setup(int, char **);
+int settabsize(unsigned);
 Boolean step(Byte *);
 void setmark(Boolean);
 char *strup(char *);
@@ -335,48 +315,39 @@ void tprntstr(char *);
 void tsize(int *, int *);
 void tstyle(int);
 void unmark(struct mark *);
-void Usage(char *);
-void Varval(int var);
+void varval(int var);
 void vsetmod(Boolean);
 void vsetmrk(struct mark *);
-void Walign(struct buff *);
 int chwidth(Byte, int, Boolean);
-void Wload(char *, int, int, unsigned long, int);
+void wload(char *, int, int, unsigned long, int);
 void free_pwent(struct passwd *pw);
-void Hangup(int);
+void hangup(int);
 Boolean notdup_key(int k);
 void quit(void);
 
 /* Terminal driver specific routines */
-
-
 #ifndef XWINDOWS
 void tlinit(void);
 void tlfini(void);
 #endif
 
-
 /* compile switched routines */
-
-
 void message(struct buff *, char *);
 
 int dopipe(struct buff *, char *);
-void Winit(void);
+void winit(void);
 
 #ifdef PIPESH
-int Checkpipes(int);
+int checkpipes(int);
 Boolean doshell(void);
-Boolean Invoke(struct buff *, char **);
-int Readpipes(fd_set *);
-void Sendtopipe(void);
-void Sigchild(int);
-char *Wordit(char **);
+Boolean invoke(struct buff *, char **);
+int readpipes(fd_set *);
+void sendtopipe(void);
+void sigchild(int);
 #endif
 
-void Unvoke(struct buff *, Boolean);
+void unvoke(struct buff *, Boolean);
 
-void Zmail(void);
 
 
 void Dbg(char *fmt, ...);
@@ -395,10 +366,9 @@ int nmatch(char *, char *);
 void sreplace(char *);
 #endif
 
-void Wswitchto(struct wdo *wdo);
-void Winvalid(struct wdo *wdo);
-void Wsize(void);
-Boolean WuseOther(char *);
+void wswitchto(struct wdo *wdo);
+void wsize(void);
+Boolean wuseother(char *);
 
 #ifdef MEMLOG
 void loginit(char *);
@@ -452,10 +422,9 @@ static inline void addcpp(void) {}
 #endif
 
 #ifdef SCROLLBARS
-void UpdateScrollbars();
+void updatescrollbars();
 #endif
 
 void undo_add(int size);
 void undo_del(int size);
 void undo_clear(struct buff *buff);
-void Zundo(void);

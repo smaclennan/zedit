@@ -274,7 +274,7 @@ void Znxtbookmrk(void)
 
 	if (Bookmrks[Bookmark]->mbuff != Curbuff) {
 		strcpy(Lbufname, Curbuff->bname);
-		Bgoto(Bookmrks[Bookmark]->mbuff);
+		bgoto(Bookmrks[Bookmark]->mbuff);
 	}
 	bpnttomrk(Bookmrks[Bookmark]);
 	Curwdo->modeflags = INVALID;
@@ -301,7 +301,7 @@ void Zredisplay(void)
 {
 	struct wdo *wdo;
 
-	Wsize();
+	wsize();
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		wdo->modeflags = INVALID;
 	redisplay();

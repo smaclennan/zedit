@@ -247,7 +247,7 @@ static Boolean gettagsfile(void)
 	struct buff *tbuff;
 	char fname[PATHMAX + 1], *tagfname;
 
-	tbuff = Cfindbuff(TAGBUFNAME);
+	tbuff = cfindbuff(TAGBUFNAME);
 	if (tbuff) {
 		struct stat sb;
 
@@ -301,7 +301,7 @@ static Boolean gettagsfile(void)
 			return FALSE;
 	}
 
-	tbuff = Cmakebuff(TAGBUFNAME, fname);
+	tbuff = cmakebuff(TAGBUFNAME, fname);
 	if (!tbuff) {
 		Error("Can't create tag buffer.");
 		return FALSE;

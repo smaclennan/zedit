@@ -60,7 +60,7 @@ void refresh(void)
 		return;
 	}
 	if (++NESTED > 10)
-		Hangup(0);
+		hangup(0);
 
 	setmodes(Curbuff);	/* SAM make sure OK */
 
@@ -99,7 +99,7 @@ void refresh(void)
 		if (wdo != Curwdo) {
 			struct mark *point;
 			bswitchto(wdo->wbuff);
-			Settabsize(Curbuff->bmode);
+			settabsize(Curbuff->bmode);
 			point = bcremrk();
 			bpnttomrk(wdo->wstart);
 			innerdsp(wdo->first, wdo->last, NULL);

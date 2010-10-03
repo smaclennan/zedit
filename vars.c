@@ -62,7 +62,9 @@ struct avar Vars[] = {
 #define VARSIZE		sizeof(struct avar)
 #define NUMVARS		(sizeof(Vars) / VARSIZE)
 
-static char *Readstr(char *str, FILE *fp)
+static void setavar(char *vin, Boolean display);
+
+static char *readstr(char *str, FILE *fp)
 {
 	if (fgets(str, STRMAX, fp)) {
 		char *ptr = strchr(str, '\n');
@@ -94,13 +96,13 @@ void Zsetavar(void)
 		if (getarg(pstr, arg, STRMAX))
 			return;
 		sprintf(pstr, "%s %s", Vars[rc].vname, arg);
-		Setavar(pstr, TRUE);
+		setavar(pstr, TRUE);
 	} else
-		Setavar(Vars[rc].vname, TRUE);
+		setavar(Vars[rc].vname, TRUE);
 }
 
 #ifdef XWINDOWS
-int XSetAVar(char *str)
+int xsetavar(char *str)
 {
 	char pstr[STRMAX], *p;
 	int var;
@@ -116,12 +118,12 @@ int XSetAVar(char *str)
 			case DECIMAL:
 				if (p)
 					*p = ' ';
-				Setavar(str, TRUE);
+				setavar(str, TRUE);
 				Xflush();
 				break;
 			case FLAG:
 				sprintf(pstr, "%s %d", str, !VAR(var));
-				Setavar(pstr, TRUE);
+				setavar(pstr, TRUE);
 				Xflush();
 				break;
 			}
@@ -134,9 +136,9 @@ int XSetAVar(char *str)
 
 /* If there is a config.z file, read it! */
 /* CExtends, AExtends, TExtends defaults set in comms1.c */
-static void ReadConfigFile(char *fname);
+static void readconfigfile(char *fname);
 
-void ReadVfile(void)
+void readvfile(void)
 {
 	char fname[PATHMAX + 1];
 	int i;
@@ -180,14 +182,14 @@ void ReadVfile(void)
 
 	/* If ConfigDir is really a file, read the file and set to 0. */
 	if (!isdir(ConfigDir)) {
-		ReadConfigFile(ConfigDir);
+		readconfigfile(ConfigDir);
 		ConfigDir = NULL;
 	}
 	for (i = FINDPATHS; i && (i = findpath(fname, ZCFILE, i, TRUE)); --i)
-		ReadConfigFile(fname);
+		readconfigfile(fname);
 }
 
-static void ReadConfigFile(char *fname)
+static void readconfigfile(char *fname)
 {
 	FILE *fp;
 	char buff[STRMAX + 1];
@@ -196,7 +198,7 @@ static void ReadConfigFile(char *fname)
 	if (fp) {
 		if (Verbose)
 			Dbg("Config file %s\n", fname);
-		if (Readstr(buff, fp) && strcmp(buff, "#!m4") == 0) {
+		if (readstr(buff, fp) && strcmp(buff, "#!m4") == 0) {
 			fclose(fp);
 			sprintf(PawStr, "m4 %s", fname);
 			fp = popen(PawStr, "r");
@@ -205,13 +207,13 @@ static void ReadConfigFile(char *fname)
 					Dbg("%s failed.\n", PawStr);
 				return;
 			}
-			while (Readstr(buff, fp))
-				Setavar(buff, FALSE);
+			while (readstr(buff, fp))
+				setavar(buff, FALSE);
 			pclose(fp);
 		} else {
 			do
-				Setavar(buff, FALSE);
-			while (Readstr(buff, fp));
+				setavar(buff, FALSE);
+			while (readstr(buff, fp));
 			fclose(fp);
 		}
 	}
@@ -297,7 +299,7 @@ static void do_var_match(int i, char *vin)
 			parsem(VARSTR(i), TEXT);
 }
 
-void Setavar(char *vin, Boolean display)
+static void setavar(char *vin, Boolean display)
 {
 	char *ptr, msg[STRMAX + 1];
 	int i = 0;
@@ -317,7 +319,7 @@ void Setavar(char *vin, Boolean display)
 			do_var_match(i, vin);
 			if (display) {
 				if (i == VTABS || i == VCTABS) {
-					Settabsize(Curbuff->bmode);
+					settabsize(Curbuff->bmode);
 					Zredisplay();
 				} else if (i == VSHOWCWD)
 					newtitle(VAR(i) ? Cwd : NULL);
@@ -361,7 +363,7 @@ setmodes is called.
 */
 int Tabsize = 8;
 
-int Settabsize(unsigned mode)
+int settabsize(unsigned mode)
 {
 	int i;
 
@@ -378,7 +380,7 @@ int Settabsize(unsigned mode)
 	return Tabsize = VAR(i);
 }
 
-void Varval(int code)
+void varval(int code)
 {
 	switch (Vars[code].vtype) {
 	case STRING:
@@ -390,18 +392,6 @@ void Varval(int code)
 	case DECIMAL:
 		sprintf(PawStr, "%d", VAR(code));
 		binstr(PawStr);
-	}
-}
-
-void Dline(int trow)
-{
-	int i;
-
-	if (trow < tmaxrow() - 2) {
-		tsetpoint(trow, 0);
-		Scrnmarks[trow].modf = TRUE;
-		for (i = 0; i < tmaxcol(); ++i)
-			tprntchar('-');
 	}
 }
 

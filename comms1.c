@@ -114,7 +114,7 @@ void loadsaved(void)
 		char comchar;
 #endif
 
-		Readone(bname, fname);
+		readone(bname, fname);
 		boffset(mloc);
 		bmrktopnt(Curbuff->mark);
 		boffset(ploc);
@@ -133,7 +133,7 @@ void loadsaved(void)
 	/* load the windows */
 	while (fscanf(fp, "W %s %lu %lu %lu %u\n",
 		bname, &ploc, &mloc, &sloc, &mode) == 5)
-			Wload(bname, ploc, mloc, sloc, mode);
+			wload(bname, ploc, mloc, sloc, mode);
 
 	fclose(fp);
 	strcpy(Lbufname, save);
@@ -289,7 +289,7 @@ static Boolean extmatch(char *str, Boolean mode)
 }
 
 
-/* Toggle from/to 'mode'. Passed 0 to set for Readone */
+/* Toggle from/to 'mode'. Passed 0 to set for readone */
 void toggle_mode(int mode)
 {
 	int new, tsave;
@@ -319,7 +319,7 @@ void toggle_mode(int mode)
 	if (mode) {
 		Curwdo->modeflags = INVALID;
 		tsave = Tabsize;
-		if (Settabsize(new) != tsave)
+		if (settabsize(new) != tsave)
 			Zredisplay();
 	}
 }

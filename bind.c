@@ -23,7 +23,7 @@
 Byte Keys[NUMKEYS], Lfunc;
 
 /* setup the default bindings for the Keys array */
-void Bind(void)
+void bind(void)
 {
 	memset(Keys, ZNOTIMPL, NUMKEYS);
 	memset(Keys, ZINSERT,  128);

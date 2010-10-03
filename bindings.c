@@ -31,7 +31,7 @@ void Zbind(void)
 	int f, key;
 
 	if (Argp) {
-		Bind();
+		bind();
 		Arg = 0;
 		return;
 	}
@@ -145,7 +145,7 @@ void Zdispbinds(void)
 		}
 	} else {
 		fp = NULL;
-		WuseOther(LISTBUFF);
+		wuseother(LISTBUFF);
 	}
 	Echo("Please Wait...");
 	out("COMMAND                            PERMS     BINDING\n", fp);

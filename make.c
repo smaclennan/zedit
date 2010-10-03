@@ -42,10 +42,10 @@ void Zmake(void)
 	}
 	saveall(TRUE);
 #ifdef PIPESH
-	mbuff = Cfindbuff(MAKEBUFF);
+	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
 		Echo("Killing current make.");
-		Unvoke(mbuff, TRUE);
+		unvoke(mbuff, TRUE);
 		clrecho();
 	}
 #endif
@@ -75,7 +75,7 @@ void Zgrep(void)
 	strcat(cmd, "'");
 	saveall(TRUE);
 #ifdef PIPESH
-	mbuff = Cfindbuff(MAKEBUFF);
+	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
 		Error("Make buffer in use...");
 		return;
@@ -96,7 +96,7 @@ void Znexterr(void)
 	char path[PATHMAX + 1];
 	int line;
 
-	mbuff = Cfindbuff(MAKEBUFF);
+	mbuff = cfindbuff(MAKEBUFF);
 	if (!mbuff) {
 		tbell();
 		return;
@@ -114,7 +114,7 @@ void Znexterr(void)
 		tobegline();
 		bswappnt(Curbuff->mark);
 		vsetmrk(Curbuff->mark);
-		wdo = Findwdo(mbuff);
+		wdo = findwdo(mbuff);
 		if (wdo)
 			Mrktomrk(wdo->wstart, Curbuff->mark);
 		pathfixup(path, fname);
@@ -137,7 +137,7 @@ void Znexterr(void)
 /* kill the make */
 void Zkill(void)
 {
-	Unvoke(Cfindbuff(MAKEBUFF), FALSE);
+	unvoke(cfindbuff(MAKEBUFF), FALSE);
 }
 #else
 void Zkill(void) { tbell(); }

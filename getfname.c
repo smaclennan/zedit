@@ -129,7 +129,7 @@ static struct llist *getfill(char *dir, char **fname, int *len, Boolean *update)
 	*update = strcmp(dir, txt);
 	if (*update)
 		makepaw(dir, FALSE);
-	*fname = Lastpart(dir);
+	*fname = lastpart(dir);
 	*len = strlen(*fname);
 
 	/* If ExpandPaths not set, may be no directory specified! */

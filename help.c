@@ -159,7 +159,7 @@ static void help(int code, Boolean func)
 				dump_bindings(buff, Cnames[code].fnum);
 		} else {
 			binstr("\nCurrent value: ");
-			Varval(code);
+			varval(code);
 		}
 		btostart();
 	}
@@ -174,11 +174,11 @@ void Zhelp(void)
 	int i;
 
 	if (level) {
-		tbuff = Cfindbuff(HELPBUFF);
+		tbuff = cfindbuff(HELPBUFF);
 		if (tbuff != Curbuff) {
 			/* just switch to the .help buffer */
 			strcpy(Lbufname, Curbuff->bname);
-			Bgoto(tbuff);
+			bgoto(tbuff);
 			return;
 		}
 	}
@@ -191,7 +191,7 @@ void Zhelp(void)
 		if (fp == NULL)
 			return;
 		was = Curbuff;
-		if (WuseOther(HELPBUFF)) {
+		if (wuseother(HELPBUFF)) {
 			strcpy(Lbufname, was->bname);
 			Curbuff->bmode |= VIEW;
 		} else {

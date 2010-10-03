@@ -117,13 +117,13 @@ void tinit(void)
 	ioctl(fileno(stdin), TIOCSLTC, &setlchars);
 #endif
 
-	signal(SIGHUP,  Hangup);
-	signal(SIGTERM, Hangup);
+	signal(SIGHUP,  hangup);
+	signal(SIGTERM, hangup);
 #ifdef PIPESH
 #if !defined(SYSV4) || !defined(WNOWAIT)
-	signal(SIGCLD,  Sigchild);
+	signal(SIGCLD,  sigchild);
 #endif
-	signal(SIGPIPE, Sigchild);
+	signal(SIGPIPE, sigchild);
 #endif
 #ifdef BSD
 	signal(SIGTSTP, SIG_DFL);		/* set signals so that we can */

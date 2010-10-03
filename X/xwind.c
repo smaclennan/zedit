@@ -399,9 +399,12 @@ static Window createrootwindow(int argc, char **argv, int *width, int *height)
 #  endif
 #endif
 	Zroot = XCreateWindow(display,  RootWindow(display, screen),
-		size_hints.x, size_hints.y, size_hints.width, size_hints.height,
-		border_width, CopyFromParent, InputOutput, CopyFromParent,
-		CWBackPixel | CWEventMask | CWOverrideRedirect, &attr);
+			      size_hints.x, size_hints.y,
+			      size_hints.width, size_hints.height,
+			      border_width, CopyFromParent, InputOutput,
+			      (Visual *)CopyFromParent,
+			      CWBackPixel | CWEventMask | CWOverrideRedirect,
+			      &attr);
 
 	wm_hints.flags = InputHint | StateHint | IconPixmapHint;
 	wm_hints.input = True;		/* Allow keyboard input. */
@@ -501,8 +504,9 @@ Window createwindow(Window parent, int x, int y, int width, int height,
 	attr.background_pixel = background;
 	attr.event_mask = events;
 	window = XCreateWindow(display,  parent, x, y, width, height, 1,
-		CopyFromParent, InputOutput, CopyFromParent,
-		CWBackPixel | CWEventMask, &attr);
+			       CopyFromParent, InputOutput,
+			       (Visual *)CopyFromParent,
+			       CWBackPixel | CWEventMask, &attr);
 
 	XMapWindow(display, window);
 

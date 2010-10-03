@@ -98,9 +98,9 @@ struct wdo {
 	int	modecol;		/* column for modeflags */
 	int	modeflags;		/* flags for modeflags */
 #ifdef XWINDOWS
-	ulong	vscroll, vthumb;	/* windows for vert scrollbar */
-	int		vheight;	/* height of vert scrollbar */
-	ulong	hscroll, hthumb;	/* windows for horiz scrollbar */
+	unsigned vscroll, vthumb;	/* windows for vert scrollbar */
+	int      vheight;		/* height of vert scrollbar */
+	unsigned hscroll, hthumb;	/* windows for horiz scrollbar */
 #endif
 	struct wdo	*prev, *next;
 };

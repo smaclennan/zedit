@@ -2,6 +2,8 @@
 
 echo "Running sparse..."
 sparse -D__linux__ *.[ch]
+echo "Running sparse again as X..."
+sparse -D__linux__ -DXWINDOWS -IX *.[ch] X/*.[ch]
 
 echo "Running checkpatch..."
 for f in *.[ch] X/*.[ch]; do

@@ -32,7 +32,7 @@ void Zendline(void)
 }
 
 /* Support routine to calc column to force to for line up and down */
-int forcecol(void)
+static int forcecol(void)
 {
 	static int fcol;
 

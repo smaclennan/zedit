@@ -28,10 +28,11 @@
  */
 
 unsigned Cmdpushed, Cmdstack[10];	/* stack and vars for T[un]getcmd */
+
+#ifndef XWINDOWS
 unsigned Key_mask;
 char *Term;
 
-#ifndef XWINDOWS
 static void tungetkb(void);
 
 int tgetcmd(void)

@@ -65,8 +65,6 @@ char *xeventname(int type)
 }
 
 /* This is tied to Zedit */
-Window Zroot, zwindow;
-
 char *xwindowname(Window window)
 {
 	static char wstr[80];

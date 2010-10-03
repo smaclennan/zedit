@@ -101,39 +101,6 @@ void Zsetavar(void)
 		setavar(Vars[rc].vname, TRUE);
 }
 
-#ifdef XWINDOWS
-int xsetavar(char *str)
-{
-	char pstr[STRMAX], *p;
-	int var;
-
-	Argp = 0;
-	p = strchr(str, ' ');
-	if (p)
-		*p = '\0';
-	for (var = 0; var < NUMVARS; ++var)
-		if (strcmp(str, Vars[var].vname) == 0) {
-			switch (Vars[var].vtype) {
-			case STRING:
-			case DECIMAL:
-				if (p)
-					*p = ' ';
-				setavar(str, TRUE);
-				xflush();
-				break;
-			case FLAG:
-				sprintf(pstr, "%s %d", str, !VAR(var));
-				setavar(pstr, TRUE);
-				xflush();
-				break;
-			}
-			return var;
-		}
-
-	return -1;
-}
-#endif
-
 /* If there is a config.z file, read it! */
 /* CExtends, AExtends, TExtends defaults set in comms1.c */
 static void readconfigfile(char *fname);
@@ -254,9 +221,9 @@ static void do_var_match(int i, char *vin)
 	}
 #ifdef XWINDOWS
 	if (i == VFONT) {
-		if (display == 0)
+		if (!display)
 			return;
-		if (load_font_by_name(VARSTR(VFONT)) == 0) {
+		if (!load_font_by_name(VARSTR(VFONT))) {
 			sprintf(PawStr, "Unknown font %s.",
 				VARSTR(VFONT));
 			error(PawStr);

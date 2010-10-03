@@ -30,7 +30,7 @@ static int pipetobuff(struct buff *buff, char *instr);
 
 /* Do one shell command to the screen */
 #ifdef XWINDOWS
-void Zcmd() { tbell(); }	/* no screen */
+void Zcmd(void) { tbell(); }	/* no screen */
 #elif !defined(BSD)
 void Zcmd(void)
 {

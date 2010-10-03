@@ -104,11 +104,11 @@ x$(ZEXE): $(FILES) $(XFILES)
 	@rm -f ./xze
 	@ln -s zox/xze ./xze
 
-xkey:	X/xkey.c
-	$(CC) -Wall -o xkey X/xkey.c -lX11
+xkey:	utils/xkey.c
+	$(CC) -Wall -o xkey utils/xkey.c -lX11
 
-zfont:	X/zfont.c
-	$(CC) -Wall -o zfont X/zfont.c -lX11
+zfont:	utils/zfont.c
+	$(CC) -Wall -o zfont utils/zfont.c -lX11
 
 TAGS:	$(wildcard *.c) $(wildcard *.h)
 	@$(do_tags)

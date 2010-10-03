@@ -20,7 +20,6 @@
 #include "z.h"
 #include "assert.h"
 
-static int innerdsp(int, int, struct mark *);
 static void pawdisplay(struct mark *, struct mark *);
 
 struct mark *Sstart, *Psstart;	/* Screen start and 'prestart' */
@@ -143,7 +142,7 @@ void refresh(void)
 	tstyle(T_NORMAL);
 
 #ifdef SCROLLBARS
-	UpdateScrollbars();
+	updatescrollbars();
 #endif
 
 	--NESTED;
@@ -166,7 +165,7 @@ static inline int buff_col(void)
  * Do the acutal screen update.
  * Curwdo is not valid.
  */
-static int innerdsp(int from, int to, struct mark *pmark)
+int innerdsp(int from, int to, struct mark *pmark)
 {
 	int trow;
 	 Byte *lptr;

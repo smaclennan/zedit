@@ -60,10 +60,10 @@ void ScrollEvent(XEvent *event);
 #define SCROLLBAR_WIDTH		0
 #endif
 
-void AddWindowSizes(char *str);
-void CreateScrollBars(struct wdo *wdo);
-void DeleteScrollBars(struct wdo *wdo);
-void ResizeScrollBars(struct wdo *wdo);
+void addwindowsizes(char *str);
+void createscrollbars(struct wdo *wdo);
+void deletescrollbars(struct wdo *wdo);
+void resizescrollbars(struct wdo *wdo);
 void Xflush();
 XFontStruct *LoadFontByName(char *fontname);
 
@@ -75,7 +75,7 @@ char *XWindowName(Window window);
 #define closeSockets()
 #define CleanupSocket(i)
 #define ProcessFDs()
-#define XAddBuffer(b)
+#define xaddbuffer(b)
 #define XSwitchto(b)
 #define XDeleteBuffer(b)
 

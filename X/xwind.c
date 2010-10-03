@@ -206,7 +206,7 @@ static Atom WM_DELETE_WINDOW;	/* subtype of WM_PROTOCOLS */
 
 char *PromptString;
 
-void Tinit(int argc, char **argv)
+void tinit(int argc, char **argv)
 {
 	XGCValues values;
 	uint valuemask;
@@ -357,12 +357,12 @@ void Tinit(int argc, char **argv)
 		}
 	} while (event.type != Expose || win_width == 0);
 
-	Initline();		/* Curwdo not defined yet */
+	initline();		/* Curwdo not defined yet */
 
 	Srow = Scol = -1;	/* undefined */
 	Pcol = Prow = 0;	/* start 'em off */
 
-	Termsize();
+	termsize();
 }
 
 /* Create the root window for the editor.
@@ -508,7 +508,7 @@ Window CreateWindow(Window parent, int x, int y, int width, int height,
 	return window;
 }
 
-void Newtitle(char *title)
+void newtitle(char *title)
 {
 	if (title)
 		sprintf(PawStr, "%s  %s", ZSTR, title);
@@ -517,24 +517,24 @@ void Newtitle(char *title)
 	XStoreName(display, Zroot, PawStr);
 }
 
-void Tbell(void)
+void tbell(void)
 {
 #define BELLTIME	100
 	if (VAR(VSILENT) == 0)
 		XBell(display, BELLTIME);
 }
 
-void Tfini(void)
+void tfini(void)
 {
 	CleanupSocket(-1);
 }
 
-void Tclrwind(void)
+void tclrwind(void)
 {
 	XClearWindow(display, zwindow);
 }
 
-void Tcleol(void)
+void tcleol(void)
 {
 	if (Pcol < Clrcol[Prow]) {
 		XClearArea(display, zwindow, Xcol[Pcol], Xrow[Prow],
@@ -546,15 +546,15 @@ void Tcleol(void)
 static int s_row = -1, s_col = -1, s_len;
 static char outline[COLMAX];		/* buffer of chars */
 
-void Tputchar(char c)
+void tputchar(char c)
 {
 	if (Prow != s_row || Pcol != s_col)
-		Tflush();
+		tflush();
 	outline[s_len++] = c;
 	++s_col;
 }
 
-void Tflush(void)
+void tflush(void)
 {
 	if (s_len) {
 		XDrawImageString(display, zwindow, curgc,
@@ -568,12 +568,12 @@ void Tflush(void)
 
 
 /* SAM How do we handle T_BOLD/T_NORMAL pairs when in comment? */
-void Tstyle(int style)
+void tstyle(int style)
 {
 	static int cur_style = -1;
 
 	if (style != cur_style) {
-		Tflush();		/* must flush before switching style */
+		tflush();		/* must flush before switching style */
 		switch (cur_style = style) {
 		case T_NORMAL:
 			curgc = normgc;		break;
@@ -605,7 +605,7 @@ void Tstyle(int style)
 #define HSCROLL_EXTRA 0
 #endif
 
-void Termsize(void)
+void termsize(void)
 {
 	XEvent event;
 
@@ -619,9 +619,9 @@ void Termsize(void)
 	}
 }
 
-Byte Tgetkb(void)
+Byte tgetkb(void)
 {
-	return (Byte)Tgetcmd();
+	return (Byte)tgetcmd();
 }
 
 static char *SelectionData;
@@ -632,25 +632,25 @@ static void SetSelection(void)
 	struct buff *save = Curbuff;
 	char *p;
 
-	Copytomrk(Curbuff->mark);
-	SelectionSize = Blength(Killbuff);
+	copytomrk(Curbuff->mark);
+	SelectionSize = blength(Killbuff);
 	if (SelectionData)
 		free(SelectionData);
 
 	SelectionData = p = malloc(SelectionSize + 1);
 	if (!SelectionData) {
-		Error("Not enough memory");
+		error("Not enough memory");
 		return;
 	}
 
-	Bswitchto(Killbuff);
-	Btostart();
-	for ( ; !Bisend(); Bmove1())
+	bswitchto(Killbuff);
+	btostart();
+	for ( ; !bisend(); bmove1())
 		*p++ = Buff();
-	Bswitchto(save);
+	bswitchto(save);
 
 	XSetSelectionOwner(display, XA_PRIMARY, zwindow, CurrentTime);
-	Echo("Copied to clipboard.");
+	echo("Copied to clipboard.");
 }
 
 
@@ -665,10 +665,10 @@ static Boolean PointerScroll(int row, Boolean down)
 		if (row == wdo->last) {
 			/* on a modeline - scroll it */
 			struct wdo *save = Curwdo;
-			Wswitchto(wdo);
+			wswitchto(wdo);
 			down ? Znextpage() : Zprevpage();
-			Wswitchto(save);
-			Refresh();
+			wswitchto(save);
+			refresh();
 			return TRUE;
 		}
 	return FALSE;
@@ -676,24 +676,24 @@ static Boolean PointerScroll(int row, Boolean down)
 
 static void MarkToPointer(int row, int col)
 {
-	ShowCursor(FALSE);
+	showcursor(FALSE);
 	if (!PointerScroll(row, FALSE)) {
-		Bswappnt(Curbuff->mark);
-		Pntmove(row, col);
-		Bswappnt(Curbuff->mark);
+		bswappnt(Curbuff->mark);
+		pntmove(row, col);
+		bswappnt(Curbuff->mark);
 	}
-	ShowCursor(TRUE);
+	showcursor(TRUE);
 }
 
 static void PointToPointer(int row, int col)
 {
-	ShowCursor(FALSE);
+	showcursor(FALSE);
 	if (!PointerScroll(row, TRUE))
-		Pntmove(row, col);
-	ShowCursor(TRUE);
+		pntmove(row, col);
+	showcursor(TRUE);
 }
 
-/* Initially set in SetupSpecial. Used in Tgetcmd. */
+/* Initially set in SetupSpecial. Used in tgetcmd. */
 static int Special;
 #define Normal	0
 #define Meta	1
@@ -733,7 +733,7 @@ static int HomeCnt, EndCnt;
 #define PAGE_TIMEOUT	150000
 #define KEY_TIMEOUT	999999 /* 1 second - 1 usecond */
 
-int Tgetcmd(void)
+int tgetcmd(void)
 {
 	XEvent event;
 	char c;
@@ -744,7 +744,7 @@ int Tgetcmd(void)
 	static Time ButtonTime;		/* time of last button click */
 
 	/* process events until keypress */
-	ShowCursor(TRUE);	/* only display cursor when waiting */
+	showcursor(TRUE);	/* only display cursor when waiting */
 
 	for (Cmd = K_NODEF; Cmd == K_NODEF; ) {
 		if (!XPending(display))
@@ -769,9 +769,9 @@ int Tgetcmd(void)
 			win_width  = event.xconfigure.width;
 			win_height = event.xconfigure.height;
 			Zredisplay();
-			ShowCursor(FALSE);
-			Refresh();
-			ShowCursor(TRUE);
+			showcursor(FALSE);
+			refresh();
+			showcursor(TRUE);
 			while (XCheckTypedEvent(display, Expose, &event))
 				;
 			continue;
@@ -818,16 +818,16 @@ int Tgetcmd(void)
 				    event.xbutton.time <
 				    ButtonTime + DOUBLE_CLICK) {
 					/* double click means Find Tag */
-					ShowCursor(FALSE);
-					Xfindtag();
-					ShowCursor(TRUE);
+					showcursor(FALSE);
+					xfindtag();
+					showcursor(TRUE);
 				} else {	/* first click */
 					if (Special == Shift)
 						MarkToPointer(PushRow, PushCol);
 					else
 						PointToPointer(PushRow,
 							       PushCol);
-					Refresh();
+					refresh();
 					Dragging = START_DRAG;
 				}
 				ButtonTime = event.xbutton.time;
@@ -839,11 +839,11 @@ int Tgetcmd(void)
 				else { /* Paste */
 					paste = XInternAtom(display,
 							    "PASTEIT", False);
-					ShowCursor(FALSE);
+					showcursor(FALSE);
 					XConvertSelection(display, XA_PRIMARY,
 							  XA_STRING, paste,
 							  zwindow, CurrentTime);
-					ShowCursor(TRUE);
+					showcursor(TRUE);
 				}
 				break;
 			case Button3:
@@ -870,20 +870,20 @@ int Tgetcmd(void)
 				    row < Curwdo->first) {
 					Arg = 1;
 					Zprevline();
-					Refresh();
+					refresh();
 					SetTimer(&event, DRAG_TIMEOUT);
 					Dragging = DRAGSCROLL;
 				} else if (row >= Curwdo->last) {
 					/* scroll down */
 					Arg = 1;
 					Znextline();
-					Refresh();
+					refresh();
 					SetTimer(&event, DRAG_TIMEOUT);
 					Dragging = DRAGSCROLL;
 				} else if (PushRow != row || PushCol != col) {
 					/* move the point */
 					PointToPointer(row, col);
-					Refresh();
+					refresh();
 					PushRow = row; PushCol = col;
 				}
 			}
@@ -891,7 +891,7 @@ int Tgetcmd(void)
 
 		case ButtonRelease:
 			Dragging = NO_DRAG;
-			ShowCursor(TRUE);
+			showcursor(TRUE);
 			break;
 
 		case KeyPress:
@@ -988,7 +988,7 @@ int Tgetcmd(void)
 
 		case FocusIn:
 			Focus = TRUE;
-			ShowCursor(TRUE);
+			showcursor(TRUE);
 			break;
 		case FocusOut:
 			/* We get a NotifyInferior when switching to the PAW.
@@ -996,7 +996,7 @@ int Tgetcmd(void)
 			 */
 			if (event.xfocus.detail != NotifyInferior) {
 				Focus = FALSE;
-				ShowCursor(FALSE);
+				showcursor(FALSE);
 			}
 			break;
 
@@ -1053,12 +1053,12 @@ int Tgetcmd(void)
 #endif
 		}
 	}
-	ShowCursor(FALSE);
+	showcursor(FALSE);
 
 	return Cmd;
 }
 
-int Tkbrdy(void)
+int tkbrdy(void)
 {
 	XEvent event;
 
@@ -1070,7 +1070,7 @@ int Tkbrdy(void)
 }
 
 /* Optimized for monochrome */
-void ShowCursor(Boolean set)
+void showcursor(Boolean set)
 {
 	Window window;
 	static int point_x, point_y;
@@ -1087,10 +1087,10 @@ void ShowCursor(Boolean set)
 				fontwidth, fontheight);
 	else if (set) {
 #if COMMENTBOLD
-		CheckComment();
+		checkcomment();
 #endif
 		wasgc = curgc;
-		wasch = (Bisend() || ISNL(Buff()) ||
+		wasch = (bisend() || ISNL(Buff()) ||
 			 Buff() == '\t') ? ' ' : Buff();
 		XDrawImageString(display, window, cursorgc, point_x,
 			point_y + fontbase, &wasch, 1);
@@ -1104,20 +1104,20 @@ void ShowCursor(Boolean set)
 	}
 }
 
-void SetMark(Boolean prntchar)
+void setmark(Boolean prntchar)
 {
 	if (HasColor) {
 		GC save = curgc;
-		Tflush();
+		tflush();
 		curgc = markgc;
-		Tprntchar(prntchar ? Buff() : ' ');
-		Tflush();
+		tprntchar(prntchar ? Buff() : ' ');
+		tflush();
 		curgc = save;
 	} else {
 		int mark_x = Xcol[Pcol];
 		int mark_y = Xrow[Prow];
-		Tprntchar(prntchar ? Buff() : ' ');
-		Tflush();
+		tprntchar(prntchar ? Buff() : ' ');
+		tflush();
 		XDrawRectangle(display, zwindow, markgc, mark_x, mark_y,
 			fontwidth - 1, fontheight - 1);
 	}
@@ -1200,17 +1200,17 @@ static void Paste(Atom paste)
 		}
 		offset += nitems;
 		for (p = string; nitems-- > 0l; ++p)
-			Binsert(*p);
+			binsert(*p);
 		XFree(string);
 	} while (leftover);
-	Refresh();
+	refresh();
 }
 
 /* This is called before the windows are created */
-void Initline(void)
+void initline(void)
 {
 	if (VAR(VSHOWCWD))
-		Newtitle(Cwd);
+		newtitle(Cwd);
 }
 
 /* SAM HACK IT AS STATIC FOR NOW */
@@ -1221,10 +1221,10 @@ static void Modeline(struct wdo *wdo, int y)
 {
 	memset(modeline, ' ', COLMAX);
 	sprintf(modeline, ZFMT, ZSTR, VERSION,
-		Setmodes(wdo->wbuff), wdo->wbuff->bname);
+		setmodes(wdo->wbuff), wdo->wbuff->bname);
 	if (wdo->wbuff->fname) {
 		int len = (VAR(VLINES) ? 13 : 3) + strlen(modeline);
-		strcat(modeline, Limit(wdo->wbuff->fname, len));
+		strcat(modeline, limit(wdo->wbuff->fname, len));
 	}
 	wdo->modecol = strlen(modeline) + 1;
 
@@ -1238,7 +1238,7 @@ static void Modeline(struct wdo *wdo, int y)
 }
 
 
-void Modeflags(struct wdo *wdo)
+void modeflags(struct wdo *wdo)
 {
 	unsigned line, col, mask;
 #ifdef HSCROLL
@@ -1250,7 +1250,7 @@ void Modeflags(struct wdo *wdo)
 	if (wdo->modeflags == INVALID)
 		Modeline(wdo, y);
 
-	mask = Delcmd() | (wdo->wbuff->bmodf ? 2 : 0);
+	mask = delcmd() | (wdo->wbuff->bmodf ? 2 : 0);
 	if (!InPaw && wdo->modeflags != mask) {
 		char flags[2];
 
@@ -1267,9 +1267,9 @@ void Modeflags(struct wdo *wdo)
 		struct buff *was = Curbuff;
 
 		/* SAM this could be optimized */
-		Bswitchto(wdo->wbuff);
-		Blocation(&line);
-		col = Blines(Curbuff);
+		bswitchto(wdo->wbuff);
+		blocation(&line);
+		col = blines(Curbuff);
 
 		sprintf(PawStr, "%3u%%", (line * 100 + 5) / col);
 
@@ -1277,14 +1277,14 @@ void Modeflags(struct wdo *wdo)
 			Xcol[Colmax - 5], y,
 			PawStr, 4);
 
-		Bswitchto(was);
+		bswitchto(was);
 	} else if (VAR(VLINES)) {
 		/* show as line/col */
 		struct buff *was = Curbuff;
 
-		Bswitchto(wdo->wbuff);
-		Blocation(&line);
-		col = Bgetcol(FALSE, 0) + 1;
+		bswitchto(wdo->wbuff);
+		blocation(&line);
+		col = bgetcol(FALSE, 0) + 1;
 		if (col > 999)
 			sprintf(PawStr, "%5u:???", line);
 		else
@@ -1295,11 +1295,11 @@ void Modeflags(struct wdo *wdo)
 			Xcol[Colmax - 10], y,
 			PawStr, 9);
 
-		Bswitchto(was);
+		bswitchto(was);
 	}
 }
 
-void Clrecho(void)
+void clrecho(void)
 {
 	XClearArea(display, Zroot, 0, Xrow[Rowmax - 1], 0, fontheight, 0);
 }
@@ -1311,12 +1311,12 @@ void Clrecho(void)
  *
  * For XWINDOWS we don't want to wait for key.
  */
-void PutPaw(char *str, int type)
+void putpaw(char *str, int type)
 {
 	if (type == 1)
-		Tbell();
+		tbell();
 	if (!InPaw) {
-		Clrecho();
+		clrecho();
 		XDrawString(display, Zroot, normgc, 0,
 			    Xrow[Rowmax - 1] + fontbase,
 			    str, strlen(str));
@@ -1329,33 +1329,33 @@ void PutPaw(char *str, int type)
 static void ExposeWindow(void)
 {
 	int i;
-	struct mark *psave = Bcremrk();
+	struct mark *psave = bcremrk();
 	int inpaw = InPaw;
 	int prow = Prow, pcol = Pcol;
 	struct buff *bsave = Curbuff;
 	struct wdo *wdo;
 
 	/* invalidate the windows */
-	for (i = 0; i < Tmaxrow() - 1; ++i)
+	for (i = 0; i < tmaxrow() - 1; ++i)
 		Scrnmarks[i].modf = TRUE;
 	Tlrow = -1;
 
 	/* Update all the windows */
 	InPaw = FALSE;
 
-	Mrktomrk(Curwdo->wstart, Sstart);
+	mrktomrk(Curwdo->wstart, Sstart);
 	for (wdo = Whead; wdo; wdo = wdo->next) {
-		Bswitchto(wdo->wbuff);
-		Settabsize(Curbuff->bmode);
-		Bpnttomrk(wdo->wstart);
-		Innerdsp(wdo->first, wdo->last, NULL);
+		bswitchto(wdo->wbuff);
+		settabsize(Curbuff->bmode);
+		bpnttomrk(wdo->wstart);
+		innerdsp(wdo->first, wdo->last, NULL);
 		wdo->modeflags = INVALID;
-		Modeflags(wdo);
+		modeflags(wdo);
 	}
-	Bswitchto(bsave);
-	Settabsize(Curbuff->bmode);
-	Bpnttomrk(psave);
-	Unmark(psave);
+	bswitchto(bsave);
+	settabsize(Curbuff->bmode);
+	bpnttomrk(psave);
+	unmark(psave);
 
 	/* Update paw if necessary */
 	InPaw = inpaw;
@@ -1365,16 +1365,16 @@ static void ExposeWindow(void)
 			PromptString, strlen(PromptString));
 
 		/* We may have changed these above */
-		Funcs = Pawcmds;
+		Curcmds = 2;
 		Keys[CR] = ZNEWLINE;
 
-		Refresh();
+		refresh();
 	}
 
 	XFlush(display);
 
-	Tsetpoint(prow, pcol);
-	ShowCursor(TRUE);
+	tsetpoint(prow, pcol);
+	showcursor(TRUE);
 }
 
 void Xflush(void)
@@ -1423,7 +1423,7 @@ static void SetTimer(XEvent *event, unsigned timeout)
 	setitimer(ITIMER_REAL, &value, NULL);
 }
 
-void AddWindowSizes(char *str)
+void addwindowsizes(char *str)
 {
 	sprintf(str, "   Display: %dx%dx%d   Window: %dx%d",
 		DisplayWidth(display, screen), DisplayHeight(display, screen),

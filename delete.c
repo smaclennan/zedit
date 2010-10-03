@@ -22,7 +22,7 @@
 
 struct buff *Killbuff;
 
-static void copytomrk(struct mark *tmark)
+void copytomrk(struct mark *tmark)
 {
 	struct buff *save = Curbuff;
 	bswitchto(Killbuff);

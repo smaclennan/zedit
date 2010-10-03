@@ -85,7 +85,7 @@ static int GetWindowPosition(Window window, int *absx, int *absy,
 	int dh = DisplayHeight(display, screen);
 
 	if (!XGetWindowAttributes(display, window, &win_attr)) {
-		Error("Can't get window attributes.");
+		error("Can't get window attributes.");
 		return 0;
 	}
 	vistemplate.visualid = XVisualIDFromVisual(win_attr.visual);
@@ -131,7 +131,7 @@ static int GetWindowPosition(Window window, int *absx, int *absy,
 		XWindowAttributes frame_attr;
 
 		if (!XGetWindowAttributes(display, wmframe, &frame_attr)) {
-			Error("Can't get frame attributes.");
+			error("Can't get frame attributes.");
 			return 0;
 		}
 		switch (hints.win_gravity) {

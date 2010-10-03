@@ -118,7 +118,7 @@ static Boolean wdelete(struct wdo *wdo)
 	}
 	wfree(wdo);
 #ifdef SCROLLBARS
-	paw_resizeScrollBars(new);
+	resizescrollbars(new);
 #endif
 	return TRUE;
 }
@@ -147,7 +147,7 @@ static Boolean wsplit(void)
 	new->first = Curwdo->last + 1;
 	Curwdo->modeflags = INVALID;
 #ifdef SCROLLBARS
-	paw_resizeScrollBars(Curwdo);
+	resizescrollbars(Curwdo);
 #endif
 
 	/* link it into chain */
@@ -253,8 +253,8 @@ static Boolean sizewindow(int size)
 	winvalidate(other);
 
 #ifdef SCROLLBARS
-	paw_resizeScrollBars(Curwdo);
-	paw_resizeScrollBars(other);
+	resizescrollbars(Curwdo);
+	resizescrollbars(other);
 #endif
 	return TRUE;
 }
@@ -326,7 +326,7 @@ void wsize(void)
 	{
 		struct wdo *wdo;
 		for (wdo = Whead; wdo; wdo = wdo->next)
-			paw_resizeScrollBars(wdo);
+			resizescrollbars(wdo);
 	}
 #endif
 }
@@ -383,8 +383,8 @@ Boolean wuseother(char *bname)
 			Curwdo->first = Curwdo->last - 8;
 			Curwdo->prev->last = Curwdo->first - 1;
 #ifdef SCROLLBARS
-			paw_resizeScrollBars(Curwdo->prev);
-			paw_resizeScrollBars(Curwdo);
+			resizescrollbars(Curwdo->prev);
+			resizescrollbars(Curwdo);
 #endif
 		}
 	}
@@ -429,7 +429,7 @@ void Z1wind(void)
 	tclrwind();
 
 #ifdef SCROLLBARS
-	paw_resizeScrollBars(Curwdo);
+	resizescrollbars(Curwdo);
 #endif
 }
 

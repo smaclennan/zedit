@@ -35,7 +35,7 @@ static void HscrollEvent(XEvent *event, struct wdo *wdo);
 static void VscrollEvent(XEvent *event, struct wdo *wdo);
 
 /* Called by Wcreate to create scrollbars from line first to last */
-void CreateScrollBars(struct wdo *wdo)
+void createscrollbars(struct wdo *wdo)
 {
 	static int set = 0, thumbColor, troughColor;
 
@@ -89,7 +89,7 @@ void CreateScrollBars(struct wdo *wdo)
 }
 
 /* Called by Wfree */
-void DeleteScrollBars(struct wdo *wdo)
+void deletescrollbars(struct wdo *wdo)
 {
 	XDestroyWindow(display, wdo->vscroll);	/* this will destroy thumb */
 #ifdef HSCROLL
@@ -97,7 +97,7 @@ void DeleteScrollBars(struct wdo *wdo)
 #endif
 }
 
-void ResizeScrollBars(struct wdo *wdo)
+void resizescrollbars(struct wdo *wdo)
 {
 	wdo->vheight = Xrow[wdo->last] - Xrow[wdo->first] - 2;
 	XMoveResizeWindow(display, wdo->vscroll,
@@ -109,7 +109,7 @@ void ResizeScrollBars(struct wdo *wdo)
 		Xcol[Colmax] - 3, SCROLLBAR_WIDTH);
 #endif
 	/* update thumb */
-	UpdateScrollbars();
+	updatescrollbars();
 }
 
 /* Move thumb to pixel value */
@@ -139,11 +139,11 @@ static void GotoLine(struct wdo *wdo, int line)
 {
 	Argp = TRUE;
 	Arg  = line;
-	ShowCursor(FALSE);
-	Wswitchto(wdo);
+	showcursor(FALSE);
+	wswitchto(wdo);
 	Zlgoto();
-	Refresh();
-	ShowCursor(TRUE);
+	refresh();
+	showcursor(TRUE);
 }
 
 void ScrollEvent(XEvent *event)
@@ -174,7 +174,7 @@ static void VscrollEvent(XEvent *event, struct wdo *wdo)
 	int lines;
 
 	ThumbTo(wdo, event->xbutton.y);
-	lines = Blines(wdo->wbuff);
+	lines = blines(wdo->wbuff);
 	GotoLine(wdo, lines * event->xbutton.y / wdo->vheight);
 
 	do {
@@ -191,17 +191,17 @@ static void VscrollEvent(XEvent *event, struct wdo *wdo)
 
 /* Called by Refresh() */
 /*SAM Optimize could make use of window changed? */
-void UpdateScrollbars()
+void updatescrollbars()
 {
 	unsigned line;
-	int lines = Blines(Curwdo->wbuff);
+	int lines = blines(Curwdo->wbuff);
 
 	if (lines < Curwdo->last) {
 		/* thumb fills entire window */
 		ThumbTo(Curwdo, 0);
 		ThumbSize(Curwdo, Curwdo->vheight);
 	} else {
-		Blocation(&line);
+		blocation(&line);
 		ThumbTo(Curwdo, line * Curwdo->vheight / lines);
 		ThumbSize(Curwdo, Curwdo->last * Curwdo->vheight / lines);
 	}

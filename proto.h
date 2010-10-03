@@ -404,7 +404,7 @@ void xusage(void);
 void audioExit(void);
 
 void GrabKeyboard();
-void Xfindtag(void);
+void xfindtag(void);
 #endif
 
 #if COMMENTBOLD
@@ -428,3 +428,9 @@ void updatescrollbars();
 void undo_add(int size);
 void undo_del(int size);
 void undo_clear(struct buff *buff);
+
+#if XWINDOWS
+/* Only exported for X */
+void copytomrk(struct mark *tmark);
+int innerdsp(int from, int to, struct mark *pmark);
+#endif

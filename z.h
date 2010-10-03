@@ -251,7 +251,9 @@ extern int circf;
 
 #define echo(s)		putpaw(s, FALSE)
 #define error(s)	putpaw(s, TRUE)
-#ifndef XWINDOWS
+#ifdef XWINDOWS
+void clrecho(void);
+#else
 #define clrecho(void)	putpaw("", 2)
 #endif
 

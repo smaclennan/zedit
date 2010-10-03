@@ -115,5 +115,6 @@ TAGS:	$(wildcard *.c) $(wildcard *.h)
 
 clean:
 	rm -f *.o */*.o .*.dep ze xze xkey zfont core* TAGS
+	rm -rf zo*
 
 include $(wildcard .*.dep)

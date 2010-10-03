@@ -65,7 +65,7 @@ static void helpit(int type)
 	char buff[STRMAX];
 	int col = 5, i;
 
-	Echo("Please wait...");
+	echo("Please wait...");
 	bempty();
 	if (type == -1)
 		type = was;
@@ -118,20 +118,20 @@ static FILE *findhelp(int code, Boolean func, char *buff)
 	findpath(buff, ZHFILE, FINDPATHS, TRUE);
 	fp = fopen(buff, "r");
 	if (!fp) {
-		Echo("Unable to Open Help File");
+		echo("Unable to Open Help File");
 		return NULL;
 	}
 	ptr = func ? Cnames[code].name : Vars[code].vname;
 	len = strlen(ptr);
 
-	Echo("Looking in help file...");
+	echo("Looking in help file...");
 	while (fgets(buff, STRMAX, fp))
 		if (*buff == ':' && strncmp(ptr, &buff[1], len) == 0) {
 			clrecho();
 			return fp;
 		}
 	fclose(fp);
-	Echo("No Help");
+	echo("No Help");
 	return NULL;
 }
 

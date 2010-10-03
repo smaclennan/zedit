@@ -65,7 +65,7 @@ void Zdeleol(void)
 		Boolean atstart;
 
 		tobegline();
-		atstart = Bisatmrk(tmark);
+		atstart = bisatmrk(tmark);
 		toendline();
 		if (atstart)
 			bmove1(); /* delete the NL */
@@ -112,7 +112,7 @@ void Zyank(void)
 		First = FALSE;
 	}
 
-	Mrktomrk(&save, Send);
+	mrktomrk(&save, Send);
 	tbuff = Curbuff;
 	bmrktopnt(Curbuff->mark);
 	bswitchto(Killbuff);

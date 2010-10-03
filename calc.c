@@ -211,10 +211,10 @@ void Zcalc(void)
 	/* A longjmp is called on error. */
 	n = setjmp(failed);
 	if (n == 1) {
-		Error("Stack overflow.");
+		error("Stack overflow.");
 		return;
 	} else if (n == 2) {
-		Error("Syntax error.");
+		error("Syntax error.");
 		return;
 	}
 
@@ -294,5 +294,5 @@ void Zcalc(void)
 		sprintf(PawStr, "= %ld (%lx)", n, n);
 	}
 
-	Echo(PawStr);
+	echo(PawStr);
 }

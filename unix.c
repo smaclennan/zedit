@@ -29,13 +29,13 @@ void hangup(int signal)
 {
 	struct buff *bsave, *tbuff;
 
-	InPaw = TRUE;	/* Kludge to turn off Error */
+	InPaw = TRUE;	/* Kludge to turn off error */
 	bsave = Curbuff;
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next) {
 		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF)) {
 			bswitchto(tbuff);
-			bwritefile(strcmp(Bfname(),
-					  MAINBUFF) ? Bfname() : "MAIN.HUP");
+			bwritefile(strcmp(bfname(),
+					  MAINBUFF) ? bfname() : "MAIN.HUP");
 		}
 #ifdef PIPESH
 		if (tbuff->child != EOF)
@@ -174,10 +174,10 @@ void sendtopipe(void)
 	int i;
 	struct mark tmark;
 
-	Mrktomrk(&tmark, Curbuff->mark);
+	mrktomrk(&tmark, Curbuff->mark);
 	if (bisaftermrk(&tmark))
 		bswappnt(&tmark);
-	for (i = 0; i < 256 && !Bisatmrk(&tmark); bmove1(), ++i)
+	for (i = 0; i < 256 && !bisatmrk(&tmark); bmove1(), ++i)
 		line[i] = Buff();
 	line[i] = '\0';
 	fputs(line, Curbuff->out_pipe);
@@ -229,14 +229,14 @@ Boolean invoke(struct buff *tbuff, char *argv[])
 				/* fork failed - clean up */
 				(void)close(from[0]);
 				(void)close(to[1]);
-				Error("Unable to fork shell");
+				error("Unable to fork shell");
 			}
 		} else {
 			(void)close(from[0]);
 			(void)close(from[1]);
 		}
 	}
-	Error("Unable to open pipes");
+	error("Unable to open pipes");
 	return FALSE;
 }
 
@@ -301,10 +301,10 @@ Boolean dopipe(struct buff *tbuff, char *icmd)
 		} else {
 			/* fork failed - clean up */
 			(void)close(from[0]);
-			Error("Unable to fork shell");
+			error("Unable to fork shell");
 		}
 	} else
-		Error("Unable to open pipes");
+		error("Unable to open pipes");
 	return FALSE;
 }
 

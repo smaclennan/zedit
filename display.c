@@ -69,7 +69,7 @@ void refresh(void)
 		vsetmrk(was);
 		vsetmrk(Curbuff->mark);
 		Tlrow = -1;
-		Mrktomrk(was, Curbuff->mark);
+		mrktomrk(was, Curbuff->mark);
 	}
 
 	if (bisbeforemrk(Sstart) || (Sendp && !bisbeforemrk(Send)) ||
@@ -77,7 +77,7 @@ void refresh(void)
 		/* The cursor has moved before/after the screen marks */
 		reframe();
 	bpnttomrk(Sstart);
-	if (Bisatmrk(Psstart) && !bisstart()) {
+	if (bisatmrk(Psstart) && !bisstart()) {
 		/* Deleted first char in window that is not at buffer start */
 		bpnttomrk(pmark);
 		reframe();
@@ -129,7 +129,7 @@ void refresh(void)
 	 * and invalidates its position so it will be updated when the
 	 * cursor moves on...
 	 */
-	if (Bisatmrk(Curbuff->mark)) {
+	if (bisatmrk(Curbuff->mark)) {
 		tstyle(T_NORMAL);
 		tprntchar((bisend() || ISNL(Buff())) ? ' ' : Buff());
 		tgoto(pntrow, col + Tstart);
@@ -180,7 +180,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 #ifdef HSCROLL
 		bmove(Hshift);
 #endif
-		if (btstmrk(&Scrnmarks[trow]) || !Bisatmrk(&Scrnmarks[trow])) {
+		if (btstmrk(&Scrnmarks[trow]) || !bisatmrk(&Scrnmarks[trow])) {
 			bmrktopnt(&Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
 			col = Tstart;
@@ -192,7 +192,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 				    Buff() != (Byte)'\376')
 					tgetcol() = col;
 				else {
-					if (Bisatmrk(Curbuff->mark))
+					if (bisatmrk(Curbuff->mark))
 						setmark(TRUE);
 					else {
 						checkcomment();
@@ -207,7 +207,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 				bmove1();
 			}
 			tcleol();
-			if (Bisatmrk(Curbuff->mark) &&
+			if (bisatmrk(Curbuff->mark) &&
 				(ISNL(Buff()) || bisstart() || bisend()))
 					setmark(FALSE);
 #ifdef HSCROLL
@@ -343,19 +343,19 @@ pawshift:
 	for (i = 0, Pcol = Pawcol;
 	     Pcol < Colmax - 2 && !bisend();
 	     bmove1(), ++i) {
-		if (Bisatmrk(pmark))
+		if (bisatmrk(pmark))
 			bcol = Pcol;
 #ifdef XWINDOWS
-		if (Bisatmrk(Curbuff->mark)) {
+		if (bisatmrk(Curbuff->mark)) {
 			setmark(TRUE);
 			tline[i] = Buff();
-		} else if (Bisatmrk(was)) {
+		} else if (bisatmrk(was)) {
 			tprntchar(Buff());
 			tline[i] = Buff();
 		}
 #else
-		if (mrkmoved && (Bisatmrk(Curbuff->mark) || Bisatmrk(was))) {
-			if (Bisatmrk(Curbuff->mark))
+		if (mrkmoved && (bisatmrk(Curbuff->mark) || bisatmrk(was))) {
+			if (bisatmrk(Curbuff->mark))
 				tstyle(T_REVERSE);
 			tprntchar(Buff());
 			tstyle(T_NORMAL);
@@ -373,10 +373,10 @@ pawshift:
 	tcleol();
 
 	if (bisend()) {
-		if (Bisatmrk(Curbuff->mark)) {
+		if (bisatmrk(Curbuff->mark)) {
 			setmark(FALSE);
 			--Pcol;		/* space always 1 character! */
-		} else if (Bisatmrk(pmark))
+		} else if (bisatmrk(pmark))
 			bcol = Pcol;
 	}
 
@@ -403,7 +403,7 @@ pawshift:
 	if (bcol)
 		Pcol = bcol;
 	bpnttomrk(pmark);
-	Mrktomrk(was, Curbuff->mark);
+	mrktomrk(was, Curbuff->mark);
 
 #ifndef XWINDOWS
 	/*
@@ -412,7 +412,7 @@ pawshift:
 	 * and invalidates its position so it will be updated when the
 	 * cursor moves on...
 	 */
-	if (Bisatmrk(Curbuff->mark)) {
+	if (bisatmrk(Curbuff->mark)) {
 		i = Pcol;
 		tprntchar(bisend() ? ' ' : Buff());
 		Pcol = i;

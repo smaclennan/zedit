@@ -94,7 +94,7 @@ struct cnames Cnames[] = {
 	{"Next Bookmark",		ZNXTBOOKMRK,	H_CURSOR},
 	{"Next Buffer",			ZNEXTBUFF,	H_BUFF},
 	{"Next Character",		ZNEXTCHAR,	H_CURSOR},
-	{"Next Error",			ZNEXTERR,	H_SHELL},
+	{"Next error",			ZNEXTERR,	H_SHELL},
 	{"Next Line",			ZNEXTLINE,	H_CURSOR},
 	{"Next Page",			ZNEXTPAGE,	H_CURSOR},
 	{"Next Paragraph",		ZFPARA,		H_CURSOR},
@@ -315,7 +315,7 @@ void fcheck(void)
 
 	/* check the TOLOWER macro */
 	if (TOLOWER('c') != 'c')
-		Error("OLDLOWER set wrong in config.h");
+		error("OLDLOWER set wrong in config.h");
 
 	/* check sizes of various stuff */
 	s1 = sizeof(Cnames) / sizeof(struct cnames);
@@ -343,7 +343,7 @@ void fcheck(void)
 	}
 
 	if (error)
-		Error("INTERNAL ERRORS: check z.out file");
+		error("INTERNAL ERRORS: check z.out file");
 }
 #else
 void fcheck(void) {}

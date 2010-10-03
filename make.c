@@ -24,7 +24,7 @@
  * If clear, the make buffer is scrolled up. Once a next error is
  * called, the buffer is kept at the error line.
  */
-static int NextErrorCalled;
+static int NexterrorCalled;
 
 static int parse(char *fname);
 
@@ -33,7 +33,7 @@ void Zmake(void)
 {
 	struct buff *mbuff;
 
-	NextErrorCalled = 0;	/* reset it */
+	NexterrorCalled = 0;	/* reset it */
 	Arg = 0;
 	if (Argp) {
 		Argp = FALSE;
@@ -44,7 +44,7 @@ void Zmake(void)
 #ifdef PIPESH
 	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
-		Echo("Killing current make.");
+		echo("Killing current make.");
 		unvoke(mbuff, TRUE);
 		clrecho();
 	}
@@ -53,7 +53,7 @@ void Zmake(void)
 	if (mbuff)
 		message(mbuff, mkcmd);
 	else
-		Error("Unable to execute make.");
+		error("Unable to execute make.");
 }
 
 /* Do a "make" command - basically a shell command in the ".make" buffer */
@@ -62,7 +62,7 @@ void Zgrep(void)
 	struct buff *mbuff;
 	char cmd[STRMAX * 2];
 
-	NextErrorCalled = 0;	/* reset it */
+	NexterrorCalled = 0;	/* reset it */
 	Arg = 0;
 	if (Argp) {
 		Argp = FALSE;
@@ -77,7 +77,7 @@ void Zgrep(void)
 #ifdef PIPESH
 	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
-		Error("Make buffer in use...");
+		error("Make buffer in use...");
 		return;
 	}
 #endif
@@ -85,7 +85,7 @@ void Zgrep(void)
 	if (mbuff)
 		message(mbuff, cmd);
 	else
-		Error("Unable to execute grep.");
+		error("Unable to execute grep.");
 }
 
 void Znexterr(void)
@@ -103,8 +103,8 @@ void Znexterr(void)
 	}
 	save = Curbuff;
 	bswitchto(mbuff);
-	if (!NextErrorCalled) {
-		NextErrorCalled = 1;
+	if (!NexterrorCalled) {
+		NexterrorCalled = 1;
 		btostart();
 	}
 	line = parse(fname);
@@ -116,7 +116,7 @@ void Znexterr(void)
 		vsetmrk(Curbuff->mark);
 		wdo = findwdo(mbuff);
 		if (wdo)
-			Mrktomrk(wdo->wstart, Curbuff->mark);
+			mrktomrk(wdo->wstart, Curbuff->mark);
 		pathfixup(path, fname);
 		findfile(path, FALSE);
 		Argp = TRUE;
@@ -127,7 +127,7 @@ void Znexterr(void)
 		btoend();
 		bmrktopnt(Curbuff->mark);
 		bswitchto(save);
-		Echo("No more errors");
+		echo("No more errors");
 	}
 	Argp = FALSE;
 	Arg = 0;
@@ -180,8 +180,8 @@ static Boolean warning(void)
  *	AS		as: "<fname>", line <line>: <msg>
  *	High C		[Ew] "<fname>",L<line>/C<column>: <msg>
  *	Microsoft	<fname>(<line>) : <msg>
- *	MIPS C		cfe: (Warning|Error): <fname>, <line>: <msg>
- *	MIPS AS		as(0|1): (Warning|Error): <fname>, line <line>: <msg>
+ *	MIPS C		cfe: (Warning|error): <fname>, <line>: <msg>
+ *	MIPS AS		as(0|1): (Warning|error): <fname>, line <line>: <msg>
  *
  *	ignores		conflicts: <line>
  */

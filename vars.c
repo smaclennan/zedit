@@ -259,7 +259,7 @@ static void do_var_match(int i, char *vin)
 		if (LoadFontByName(VARSTR(VFONT)) == 0) {
 			sprintf(PawStr, "Unknown font %s.",
 				VARSTR(VFONT));
-			Error(PawStr);
+			error(PawStr);
 			return;
 		}
 	} else
@@ -334,7 +334,7 @@ static void setavar(char *vin, Boolean display)
 				} else
 					sprintf(msg, "%s = %d",
 						Vars[i].vname, VAR(i));
-				Echo(msg);
+				echo(msg);
 				if (i == VLINES)
 					Curwdo->modeflags = INVALID;
 			}
@@ -345,7 +345,7 @@ static void setavar(char *vin, Boolean display)
 			Dbg("no match\n");
 		if (display) {
 			sprintf(PawStr, "Variable '%s' Not Found", vin);
-			Echo(PawStr);
+			echo(PawStr);
 		}
 	}
 	Arg = 0;
@@ -415,7 +415,7 @@ void Zsaveconfig(void)
 	fp = fopen(fname, "w");
 	if (!fp) {
 		sprintf(PawStr, "Unable to create %s: %d", fname, errno);
-		Error(PawStr);
+		error(PawStr);
 		return;
 	}
 
@@ -442,5 +442,5 @@ void Zsaveconfig(void)
 				VAR(i) ? "True" : "False");
 
 	fclose(fp);
-	Echo("saved.");
+	echo("saved.");
 }

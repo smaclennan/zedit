@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 {
 	/* A longjmp is called if bcremrk or Getmemp run out of memory */
 	if (setjmp(zenv) != 0) {
-		Error("FATAL ERROR: Out of memory");
+		error("FATAL ERROR: Out of memory");
 		Argp = FALSE;	/* so Zexit will not default to save */
 		Zexit();
 		tfini();
@@ -283,7 +283,7 @@ static void setup(int argc, char **argv)
 	setmodes(Curbuff);		/* start it off right! */
 
 	if (!Curbuff->mtime && Curbuff->fname)
-		Echo("New File");
+		echo("New File");
 
 	bind();
 	loadbind();		/* Do this after tinit */
@@ -326,7 +326,7 @@ Boolean readone(char *bname, char *path)
 		if (rc >= 0) {
 			toggle_mode(0);
 			if (rc > 0)
-				Echo("New File");
+				echo("New File");
 			else if (access(path, R_OK|W_OK) == EOF)
 				Curbuff->bmode |= VIEW;
 			strcpy(Lbufname, was->bname);
@@ -386,13 +386,13 @@ struct buff *cmakebuff(char *bname, char *fname)
 
 	bptr = bcreate();
 	if (!bptr) {
-		Error("Unable to create buffer");
+		error("Unable to create buffer");
 		return NULL;
 	}
 
 	bptr->bname = addbname(bname);
 	if (!bptr->bname) {
-		Error("Out of buffers");
+		error("Out of buffers");
 		bdelbuff(bptr);
 		bswitchto(save);
 		return NULL;
@@ -480,7 +480,7 @@ void Zcwd(void)
 	if (getdname("CWD: ", path) == 0) {
 		p = strdup(path);
 		if (!p)
-			Error("Not enough memory");
+			error("Not enough memory");
 		else if (chdir(p) == 0) {
 			Cwd = p;
 #ifdef XWINDOWS
@@ -488,7 +488,7 @@ void Zcwd(void)
 				newtitle(Cwd);
 #endif
 		} else
-			Error("chdir failed.");
+			error("chdir failed.");
 	}
 }
 

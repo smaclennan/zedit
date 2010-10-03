@@ -35,9 +35,9 @@ static struct comment *new_comment(struct mark *start, struct mark *end,
 
 	new->type  = type;
 	if (start)
-		Mrktomrk(new->start, start);
+		mrktomrk(new->start, start);
 	if (end)
-		Mrktomrk(new->end,   end);
+		mrktomrk(new->end,   end);
 
 	return new;
 }
@@ -278,7 +278,7 @@ void resetcomments(void)
 {
 	if (delcmdall()) {
 		for (start = Curbuff->comments; start; start = start->next)
-			if (Markch(start->end) != '/') {
+			if (markch(start->end) != '/') {
 				uncomment(Curbuff);
 				break;
 			}
@@ -300,7 +300,7 @@ void checkcomment(void)
 	for ( ; start; start = start->next)
 		if (bisbeforemrk(start->start))
 			break;
-		else if (bisbeforemrk(start->end) || Bisatmrk(start->end)) {
+		else if (bisbeforemrk(start->end) || bisatmrk(start->end)) {
 			tstyle(start->type);
 			return;
 		}

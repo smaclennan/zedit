@@ -249,8 +249,8 @@ extern int circf;
 #define MAX(a, b)	(a > b ? a : b)
 
 
-#define Echo(s)		putpaw(s, FALSE)
-#define Error(s)	putpaw(s, TRUE)
+#define echo(s)		putpaw(s, FALSE)
+#define error(s)	putpaw(s, TRUE)
 #ifndef XWINDOWS
 #define clrecho(void)	putpaw("", 2)
 #endif

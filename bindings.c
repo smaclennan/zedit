@@ -56,23 +56,23 @@ void Zkeybind(void)
 	unsigned key;
 
 	Arg = 0;
-	Echo("Key: ");
+	echo("Key: ");
 	key = Keys[tgetcmd()];
 	if (key == ZCTRLX) {
-		Echo("Key: C-X ");
+		echo("Key: C-X ");
 		key = Keys[tgetcmd() + 256];
 	} else if (key == ZMETA) {
-		Echo("Key: M-");
+		echo("Key: M-");
 		key = Keys[tgetcmd() + 128];
 	}
 
 	if (key == ZNOTIMPL)
-		Echo("Unbound");
+		echo("Unbound");
 	else
 		for (rc = 0; rc < NUMFUNCS; ++rc)
 			if (Cnames[rc].fnum == key) {
 				sprintf(str, "Bound to %s", Cnames[rc].name);
-				Echo(str);
+				echo(str);
 			}
 }
 
@@ -104,9 +104,9 @@ void Zcmdbind(void)
 					found = TRUE;
 				}
 		if (found)
-			Echo(PawStr);
+			echo(PawStr);
 		else
-			Echo("Unbound");
+			echo("Unbound");
 	}
 }
 
@@ -140,14 +140,14 @@ void Zdispbinds(void)
 			return;
 		fp = fopen(line, "w");
 		if (fp == NULL) {
-			Echo("Unable to create");
+			echo("Unable to create");
 			return;
 		}
 	} else {
 		fp = NULL;
 		wuseother(LISTBUFF);
 	}
-	Echo("Please Wait...");
+	echo("Please Wait...");
 	out("COMMAND                            PERMS     BINDING\n", fp);
 	for (f = 0; f < NUMFUNCS; ++f)
 		if (Cnames[f].fnum != ZNOTIMPL && Cnames[f].fnum != ZINSERT) {
@@ -219,7 +219,7 @@ void Zsavebind(void)
 		return;
 	if (bindfile(path, WRITE_MODE)) {
 		sprintf(PawStr, "%s written.", path);
-		Echo(PawStr);
+		echo(PawStr);
 	}
 }
 
@@ -231,7 +231,7 @@ static Boolean bindfile(char *fname, int mode)
 	fd = open(fname, mode, Cmask);
 	if (fd == EOF) {
 		if (mode == WRITE_MODE)
-			Error("Unable to Create Bindings File");
+			error("Unable to Create Bindings File");
 		return FALSE;
 	}
 
@@ -241,15 +241,15 @@ static Boolean bindfile(char *fname, int mode)
 	if (mode == WRITE_MODE) {
 		write(fd, "01", 2);
 		if (write(fd, (char *)Keys, 510) != 510)
-			Error("Unable to Write Bindings File");
+			error("Unable to Write Bindings File");
 		else
 			rc = TRUE;
 	} else {
 		read(fd, version, 2);
 		if (*version != '0')
-			Error("Incompatible Bindings File");
+			error("Incompatible Bindings File");
 		else if (read(fd, (char *)Keys, NUMKEYS) == -1)
-			Error("Unable to Read Bindings File");
+			error("Unable to Read Bindings File");
 		else {
 			CRdefault = Keys[CR];
 			rc = TRUE;
@@ -265,7 +265,7 @@ static Boolean bindfile(char *fname, int mode)
 
 static Boolean bindone(char *prompt, int first, int *key)
 {
-	Echo(prompt);
+	echo(prompt);
 	*key = tgetcmd();
 	if (Keys[*key] == ZABORT)
 		return FALSE;

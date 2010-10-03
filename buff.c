@@ -167,7 +167,7 @@ Boolean bcrsearch(Byte what)
 			}
 		else
 			makeoffset(Curchar - 1);
-		if (Buff() == what)
+		if (*Curcptr == what)
 			return TRUE;
 	}
 }
@@ -205,7 +205,7 @@ Boolean bdelbuff(struct buff *tbuff)
 		else if (tbuff->prev)
 			bswitchto(tbuff->prev);
 		else {
-			Error("Last Buffer.");
+			error("Last Buffer.");
 			return FALSE;
 		}
 	}
@@ -318,8 +318,8 @@ int bgetcol(Boolean flag, int col)
 	bmrktopnt(&pmark);
 	if (bcrsearch(NL))
 		bmove1();
-	while (!Bisatmrk(&pmark) && !bisend()) {
-		col += chwidth(Buff(), col, flag);
+	while (!bisatmrk(&pmark) && !bisend()) {
+		col += chwidth(*Curcptr, col, flag);
 		bmove1();
 	}
 	return col;
@@ -466,8 +466,8 @@ int bmakecol(int col, Boolean must)
 
 	if (bcrsearch(NL))
 		bmove1();
-	while (tcol < col && !ISNL(Buff()) && !bisend()) {
-		tcol += chwidth(Buff(), tcol, !must);
+	while (tcol < col && !ISNL(*Curcptr) && !bisend()) {
+		tcol += chwidth(*Curcptr, tcol, !must);
 		bmove1();
 	}
 	if (must && tcol < col) {
@@ -671,10 +671,10 @@ int breadfile(char *fname)
 		switch (errno) {
 		case EACCES:
 			sprintf(msg, "No read access: %s", fname);
-			Error(msg);
+			error(msg);
 			return -1;
 		case EMFILE:
-			Error("Out of File Descriptors.");
+			error("Out of File Descriptors.");
 			return -2;
 		default:
 			return 1;
@@ -683,7 +683,7 @@ int breadfile(char *fname)
 
 	Curbuff->mtime = sbuf.st_mtime;		/* save the modified time */
 	sprintf(msg, "Reading %s", lastpart(fname));
-	Echo(msg);
+	echo(msg);
 
 	bempty();
 
@@ -731,7 +731,7 @@ int bwritefd(int fd)
 		fstat(fd, &sbuf);
 		Curbuff->mtime = sbuf.st_mtime;
 	} else
-		Error("Unable to write file.");
+		error("Unable to write file.");
 	(void)close(fd);
 	bpnttomrk(&pmark);
 
@@ -831,9 +831,9 @@ int bwritefile(char *fname)
 		status = bwritefd(fd);
 	else {
 		if (errno == EACCES)
-			Error("File is read only.");
+			error("File is read only.");
 		else
-			Error("Unable to open file.");
+			error("Unable to open file.");
 		status = FALSE;
 	}
 
@@ -1078,5 +1078,5 @@ void Zstat(void)
 #ifdef XWINDOWS
 	addwindowsizes(PawStr + strlen(PawStr));
 #endif
-	Echo(PawStr);
+	echo(PawStr);
 }

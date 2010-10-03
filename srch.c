@@ -219,7 +219,7 @@ static void doreplace(int type)
 		clrecho();
 		cswitchto(pmark->mbuff);
 	} else if (!replaceone(type, &query, &exit, ebuf, crgone) && !exit)
-		Echo("Not Found");
+		echo("Not Found");
 	else
 		clrecho();
 
@@ -260,7 +260,7 @@ static Boolean replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
 	struct mark *prevmatch;
 
 	prevmatch = bcremrk();
-	Echo("Searching...");
+	echo("Searching...");
 	while (!*exit &&
 	       (type == REGEXP ? step(ebuf) : bstrsearch(old, FORWARD))) {
 		found = TRUE;
@@ -270,7 +270,7 @@ replace:
 input:
 			switch (tchar = GetQueryCmd(tchar))
 #else
-			Echo("Replace? ");
+			echo("Replace? ");
 			refresh();
 input:
 			switch (tchar = tgetcmd()) {
@@ -287,7 +287,7 @@ input:
 
 				case '!':
 					*query = FALSE; /* global change */
-					Echo("Replacing...");
+					echo("Replacing...");
 					break;
 
 				case 'U': /* goto prev match */
@@ -305,7 +305,7 @@ input:
 					goto replace;
 
 				case '?':
-					Echo(QHELP);
+					echo(QHELP);
 					goto input;
 
 				case 'S': /* skip file */
@@ -357,7 +357,7 @@ input:
 				/* change it back */
 				if (type == REGEXP) {
 					for (dist = 0;
-					     !Bisatmrk(REstart);
+					     !bisatmrk(REstart);
 					     ++dist, bmove(-1))
 						;
 					bdelete(dist);
@@ -373,7 +373,7 @@ input:
 		if (type == REGEXP && (ISNL(Buff()) || circf) && !crgone)
 			bmove1();
 		if (*query)
-			Echo("Searching...");
+			echo("Searching...");
 		else if (tkbrdy())
 			*exit = TRUE;
 	}
@@ -406,7 +406,7 @@ static Boolean dosearch(void)
 
 	tmark = bcremrk();
 	bmove(searchdir[0] == BACKWARD ? -1 : 1);
-	Echo("Searching...");
+	echo("Searching...");
 	if (searchdir[0] == REGEXP) {
 		rc = compile((Byte *)old, ebuf, &ebuf[ESIZE]);
 		if (rc == 0) {
@@ -431,10 +431,10 @@ static Boolean dosearch(void)
 	if (!found) {
 		bpnttomrk(tmark);
 		if (fcnt) {
-			Echo("Found ");
+			echo("Found ");
 			titot(fcnt);
 		} else
-			Echo("Not Found");
+			echo("Not Found");
 	} else
 		clrecho();
 	unmark(tmark);

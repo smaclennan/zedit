@@ -61,7 +61,7 @@ void Zfindtag(void)
 	do {
 		best = found = FALSE;
 		if (getarg("Tag: ", tag, STRMAX) == 0) {
-			Echo("Looking...");
+			echo("Looking...");
 			for (btostart(); !bisend(); bcsearch(NL)) {
 				getbword(word, STRMAX, bistoken);
 				if (strcasecmp(tag, word) == 0) {
@@ -92,7 +92,7 @@ void Zfindtag(void)
 				bpnttomrk(&tmark);
 				getbword(tag, STRMAX, bistoken);
 			} else
-				Echo("Not Found");
+				echo("Not Found");
 		}
 	} while (found);
 	Nextpart = ZNOTIMPL;
@@ -115,7 +115,7 @@ void xfindtag(void)
 	if (!gettagsfile())
 		return;
 
-	Echo("Looking...");
+	echo("Looking...");
 	for (btostart(); !bisend(); bcsearch(NL)) {
 		getbword(word, STRMAX, bistoken);
 		if (strcmp(tag, word) == 0) {
@@ -125,7 +125,7 @@ void xfindtag(void)
 			return;
 		}
 	}
-	Echo("Not found");
+	echo("Not found");
 	tbell();
 	bswitchto(Bsave);			/* go back to original buffer */
 	Curwdo->modeflags = INVALID;
@@ -235,7 +235,7 @@ static Boolean tagfparse(struct buff *bsave)
 			}
 		return TRUE;
 	}
-	Error("Bad Tag File");
+	error("Bad Tag File");
 	return FALSE;
 #endif
 }
@@ -265,7 +265,7 @@ static Boolean gettagsfile(void)
 		} else if (stat(tbuff->fname, &sb) == 0 &&
 			   sb.st_mtime != tbuff->mtime) {
 			/* tags file has been updated */
-			Echo("Reloading tags file.");
+			echo("Reloading tags file.");
 			breadfile(tbuff->fname);
 		}
 		return  TRUE;
@@ -282,7 +282,7 @@ static Boolean gettagsfile(void)
 			return FALSE;
 		if (access(fname, 0)) {
 			sprintf(PawStr, "%s not found.", fname);
-			Error(PawStr);
+			error(PawStr);
 			return FALSE;
 		}
 	} else {
@@ -293,7 +293,7 @@ static Boolean gettagsfile(void)
 		else {
 			tagfname = (char *)VAR(VTAG);
 			if (!tagfname  || access(tagfname, 0)) {
-				Error("No tags file found.");
+				error("No tags file found.");
 				return FALSE;
 			}
 		}
@@ -303,7 +303,7 @@ static Boolean gettagsfile(void)
 
 	tbuff = cmakebuff(TAGBUFNAME, fname);
 	if (!tbuff) {
-		Error("Can't create tag buffer.");
+		error("Can't create tag buffer.");
 		return FALSE;
 	}
 
@@ -337,7 +337,7 @@ void Zref(void)
 
 	mbuff = cmdtobuff(REFBUFF, tag);
 	if (mbuff == NULL)
-		Error("Unable to execute ref.");
+		error("Unable to execute ref.");
 	else
 		message(mbuff, tag);
 }

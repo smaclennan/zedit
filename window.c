@@ -26,7 +26,7 @@ struct wdo *Whead, *Curwdo;
 /* called at startup when out of memory */
 static void nomem(void)
 {
-	Error("Out of memory.");
+	error("Out of memory.");
 	exit(1);
 }
 
@@ -44,7 +44,7 @@ static struct wdo *wcreate(int first, int last)
 		new->modeflags	= INVALID;
 		new->first	= first;
 		new->last	= last;
-		Mrktomrk(new->wmrk, Curbuff->mark);
+		mrktomrk(new->wmrk, Curbuff->mark);
 #ifdef SCROLLBARS
 		createscrollbars(new);
 #endif
@@ -163,7 +163,7 @@ static Boolean wsplit(void)
 	/* Go to new window. */
 	wswitchto(new);
 	reframe();
-	Mrktomrk(Curwdo->wstart, Sstart);
+	mrktomrk(Curwdo->wstart, Sstart);
 	return TRUE;
 }
 
@@ -184,16 +184,16 @@ void wswitchto(struct wdo *wdo)
 	if (wdo != Curwdo) {
 		if (Curwdo) {
 			bmrktopnt(Curwdo->wpnt);
-			Mrktomrk(Curwdo->wmrk, Curbuff->mark);
+			mrktomrk(Curwdo->wmrk, Curbuff->mark);
 			/* don't update wstart unless Sstart for this window */
 			if (Sstart->mbuff == Curwdo->wbuff)
-				Mrktomrk(Curwdo->wstart, Sstart);
+				mrktomrk(Curwdo->wstart, Sstart);
 		}
 		Curwdo = wdo;
 		bswitchto(wdo->wbuff);
 		bpnttomrk(wdo->wpnt);
-		Mrktomrk(Curbuff->mark, wdo->wmrk);
-		Mrktomrk(Sstart, wdo->wstart);
+		mrktomrk(Curbuff->mark, wdo->wmrk);
+		mrktomrk(Sstart, wdo->wstart);
 		Sendp = FALSE;
 #ifdef XWINDOWS
 		XSwitchto(wdo->wbuff->bname);
@@ -209,9 +209,9 @@ void cswitchto(struct buff *buff)
 	if (Curwdo->wbuff != Curbuff) {
 		Curwdo->wbuff = Curbuff;
 		bmrktopnt(Curwdo->wpnt);
-		Mrktomrk(Curwdo->wmrk, Curbuff->mark);
+		mrktomrk(Curwdo->wmrk, Curbuff->mark);
 		if (Sstart->mbuff == Curbuff)
-			Mrktomrk(Curwdo->wstart, Sstart);
+			mrktomrk(Curwdo->wstart, Sstart);
 		else {
 			/* bring to start of buffer - just in case */
 			Curwdo->wstart->mbuff = Curbuff;
@@ -588,7 +588,7 @@ void wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 	new = wcreate(first, last);
 	if (new == NULL)
 		nomem();
-	Mrktomrk(buff->mark, new->wmrk);
+	mrktomrk(buff->mark, new->wmrk);
 	boffset(sloc);
 	bmrktopnt(new->wstart);
 	bpnttomrk(new->wpnt);	/* return it */

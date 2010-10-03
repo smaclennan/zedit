@@ -157,10 +157,10 @@ void Zcount(void)
 		tmark = bcremrk();
 	}
 	l = w = c = 0;
-	Echo("Counting...");
+	echo("Counting...");
 	word = FALSE;
 	for (; Argp ? !bisend() : bisbeforemrk(Curbuff->mark); bmove1(), ++c) {
-		if (ISNL(Buff()))
+		if (ISNL(*Curcptr))
 			++l;
 		if (!bistoken())
 			word = FALSE;
@@ -170,9 +170,9 @@ void Zcount(void)
 		}
 	}
 	sprintf(str, "Lines: %u   Words: %u   Characters: %u", l, w, c);
-	Echo(str);
+	echo(str);
 	if (swapped)
-		Mrktomrk(Curbuff->mark, tmark);
+		mrktomrk(Curbuff->mark, tmark);
 	else
 		bpnttomrk(tmark);
 	unmark(tmark);
@@ -296,14 +296,14 @@ void toggle_mode(int mode)
 
 	if ((Curbuff->bmode & mode) || mode == 0)
 		/* Toggle out of 'mode' - decide which to switch to */
-		if (mode != CMODE && extmatch(Bfname(), CMODE))
+		if (mode != CMODE && extmatch(bfname(), CMODE))
 			new = CMODE;
-		else if (mode != ASMMODE && extmatch(Bfname(), ASMMODE))
+		else if (mode != ASMMODE && extmatch(bfname(), ASMMODE))
 			new = ASMMODE;
-		else if (mode != TCL && extmatch(Bfname(), TCL))
+		else if (mode != TCL && extmatch(bfname(), TCL))
 			new = TCL;
 		else if (mode != TEXT &&
-			 (!VAR(VNORMAL) || extmatch(Bfname(), TEXT)))
+			 (!VAR(VNORMAL) || extmatch(bfname(), TEXT)))
 			new = TEXT;
 		else
 			new = NORMAL;
@@ -344,7 +344,7 @@ void Zdate(void)
 	time(&t);
 	strftime(date, MAXDATE, VARSTR(VDATESTR), localtime(&t));
 	if ((Argp || (Curbuff->bmode & VIEW)) && !InPaw)
-		Echo(date);
+		echo(date);
 	else
 		binstr(date);
 	Arg = 0;
@@ -356,7 +356,7 @@ static void setregion(int (*convert)(int))
 	struct mark tmark;
 
 	if (Curbuff->bmode & PROGMODE) {
-		Echo("Not in program mode");
+		echo("Not in program mode");
 		tbell();
 		return;
 	}
@@ -367,10 +367,10 @@ static void setregion(int (*convert)(int))
 	bmrktopnt(&tmark);
 
 	for (; bisbeforemrk(Curbuff->mark); bmove1())
-		Buff() = (*convert)(Buff());
+		*Curcptr = (*convert)(*Curcptr);
 
 	if (swapped)
-		Mrktomrk(Curbuff->mark, &tmark);
+		mrktomrk(Curbuff->mark, &tmark);
 	else
 		bpnttomrk(&tmark);
 	Curbuff->bmodf = MODIFIED;
@@ -401,18 +401,18 @@ static void indent(Boolean flag)
 	while (bisbeforemrk(Curbuff->mark)) {
 		if (flag) {
 			/* skip comment lines */
-			if (Buff() != '#')
+			if (*Curcptr != '#')
 				for (i = 0; i < Arg; ++i)
 					binsert('\t');
 		} else
-			for (i = 0; i < Arg && Buff() == '\t'; ++i)
+			for (i = 0; i < Arg && *Curcptr == '\t'; ++i)
 				bdelete(1);
 		bcsearch(NL);
 	}
 	bpnttomrk(psave);
 	unmark(psave);
 	if (msave) {
-		Mrktomrk(Curbuff->mark, msave);
+		mrktomrk(Curbuff->mark, msave);
 		unmark(msave);
 	}
 }
@@ -437,7 +437,7 @@ void Zsetenv(void)
 	p = getenv(env);
 	if (p) {
 		if (strlen(p) >= STRMAX) {
-			Error("Variable is too long.");
+			error("Variable is too long.");
 			return;
 		}
 		strcpy(set, p);
@@ -454,7 +454,7 @@ void Zsetenv(void)
 		strcpy(p, env);
 		strcat(p, set);
 		if (putenv(p))
-			Error("Unable to set environment variable.");
+			error("Unable to set environment variable.");
 	} else
-		Error("Out of memory.");
+		error("Out of memory.");
 }

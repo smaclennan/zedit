@@ -88,7 +88,7 @@ void undo_add(int size)
 	if (no_undo(Curbuff))
 		return;
 
-	if (undo && undo->action == ACT_INSERT && Bisatmrk(undo->end)) {
+	if (undo && undo->action == ACT_INSERT && bisatmrk(undo->end)) {
 		undo->size += size;
 		bmrktopnt(undo->end);
 		return;

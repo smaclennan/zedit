@@ -50,13 +50,13 @@ void Zspell(void)
 	was = Curbuff;
 	point = bcremrk();
 	mark = bcremrk();
-	Mrktomrk(mark, Curbuff->mark);
+	mrktomrk(mark, Curbuff->mark);
 
 	/* set Point and emark */
 	if (Argp) {
 		/* use Region */
 		emark = bcremrk();
-		Mrktomrk(emark, Curbuff->mark);
+		mrktomrk(emark, Curbuff->mark);
 		if (bisaftermrk(emark))
 			bswappnt(emark);
 	} else {
@@ -79,7 +79,7 @@ void Zspell(void)
 	paw_resize(-2);
 	refresh();
 	mclear();
-	Echo("Checking...");
+	echo("Checking...");
 	while (bisbeforemrk(emark)) {
 		/* get the next word */
 		moveto(bisalpha, FORWARD);
@@ -120,7 +120,7 @@ void Zspell(void)
 				 * drop thru */
 
 			case '#':		/* no match */
-				Echo(SPELLSTRING);
+				echo(SPELLSTRING);
 				refresh();		/* update mark */
 				cmd = tgetcmd();
 				switch (cmd) {
@@ -165,7 +165,7 @@ void Zspell(void)
 				break;
 
 			default:		/* invalid */
-				Error("Unable to start ispell");
+				error("Unable to start ispell");
 				goto abort;
 			}
 		}
@@ -175,7 +175,7 @@ abort:
 	delbuff(sbuff);
 	bswitchto(was);
 	bpnttomrk(point);
-	Mrktomrk(Curbuff->mark, mark);
+	mrktomrk(Curbuff->mark, mark);
 	unmark(point);
 	unmark(mark);
 	unmark(emark);

@@ -41,7 +41,7 @@ void Zcmd(void)
 		tfini();
 		sprintf(tb, "%s -c \"%s\"", Shell, Command);
 		if (system(tb) == EOF)
-			Echo("command failed");
+			echo("command failed");
 		else {
 			fputs("\n[Hit Return to continue]", stdout);
 			tgetcmd();
@@ -63,7 +63,7 @@ void Zcmdtobuff(void)
 	if (getarg("@ ", Command, STRMAX) == 0) {
 		save = Curwdo;
 		if (wuseother(SHELLBUFF)) {
-			Echo("Please wait...");
+			echo("Please wait...");
 			rc = pipetobuff(Curbuff, Command);
 			if (rc == 0) {
 				message(Curbuff, Command);
@@ -96,7 +96,7 @@ void Zman(void)
 
 	save = Curwdo;
 	if (wuseother(MANBUFF)) {
-		Echo("Please wait...");
+		echo("Please wait...");
 		rc = pipetobuff(Curbuff, entry);
 		if (rc == 0) {
 			/* remove the underlines */
@@ -157,15 +157,15 @@ static void syerr(int err)
 	switch (err) {
 	case E2BIG:
 	case ENOMEM:
-		Error("Not enough memory");
+		error("Not enough memory");
 		break;
 
 	case ENOENT:
-		Error("Command not found");
+		error("Command not found");
 		break;
 
 	default:
-		Error("Unable to execute");
+		error("Unable to execute");
 	}
 }
 
@@ -203,7 +203,7 @@ void Zmail(void)
 		return;
 	}
 
-	Echo("Sending...");
+	echo("Sending...");
 	/* Send the mail.
 	 * We do not check the return code from the system calls because some
 	 * systems (Motorola...) always returns -1 (EINTR).
@@ -214,7 +214,7 @@ void Zmail(void)
 	else
 		sprintf(cmd, "%s %s", VARSTR(VMAIL), to);
 	bufftopipe(Curbuff, cmd);
-	Echo("Mail sent.");
+	echo("Mail sent.");
 }
 
 /* send the current buffer to the printer */
@@ -222,7 +222,7 @@ void Zprint(void)
 {
 	char cmd[STRMAX + 20];
 
-	Echo("Printing...");
+	echo("Printing...");
 	/* note that BuffToPipe updates cmd */
 	strcpy(cmd, VARSTR(VPRINT));
 	printexit(bufftopipe(Curbuff, cmd));
@@ -250,7 +250,7 @@ struct buff *cmdtobuff(char *bname, char *cmd)
 	struct buff *sbuff, *tbuff;
 
 	Arg = Argp = 0;
-	Echo("Working...");
+	echo("Working...");
 	mktemp(strcpy(fname, ZSHFILE));
 	err = dopipe(fname, cmd);
 	if (err)
@@ -289,23 +289,23 @@ void Zbeauty(void)
 
 	Arg = 0;
 	if (!(Curbuff->bmode & PROGMODE)) {
-		Echo("Not a program buffer!");
+		echo("Not a program buffer!");
 		return;
 	}
-	Echo("Beautifying...");
+	echo("Beautifying...");
 	strcpy(fileName1, "/tmp/cbeaut1XXXXXX");
 	fd1 = mkstemp(fileName1);
 	strcpy(fileName2, fileName1);
 	fileName2[11] = '2';
 
 	if (fd1 == -1) {
-		Echo("mkstemp failed");
+		echo("mkstemp failed");
 		return;
 	}
 	status = bwritefd(fd1);
 	close(fd1);
 	if (!status) {
-		Echo("Write failed");
+		echo("Write failed");
 		return;
 	}
 
@@ -325,7 +325,7 @@ void Zbeauty(void)
 
 	if (access(fileName2, 0)) {
 		sprintf(PawStr, "Unable to execute %s.", INDENT);
-		Error(PawStr);
+		error(PawStr);
 	} else {
 		breadfile(fileName2);
 		Curbuff->bmodf = MODIFIED;
@@ -354,7 +354,7 @@ static int bufftopipe(struct buff *buff, char *cmd)
 	bmrktopnt(&spnt);	/* save current Point */
 	if (Argp) {
 		/* Use the region - make sure mark is after Point */
-		Mrktomrk(&end, Curbuff->mark);
+		mrktomrk(&end, Curbuff->mark);
 		if (bisaftermrk(&end))
 			bswappnt(&end);
 	} else {
@@ -398,12 +398,12 @@ static int pipetobuff(struct buff *buff, char *instr)
 static void printexit(int code)
 {
 	if (code == 0)
-		Echo("Done.");
+		echo("Done.");
 	else if (code == -1)
-		Echo("Unable to execute.");
+		echo("Unable to execute.");
 	else {
 		sprintf(PawStr, "Exit %d.", code);
-		Echo(PawStr);
+		echo(PawStr);
 	}
 }
 #else

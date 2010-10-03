@@ -162,7 +162,7 @@ Boolean filesave(void)
 		Curwdo->modeflags = INVALID;
 	}
 	sprintf(PawStr, "Writing %s", lastpart(Curbuff->fname));
-	Echo(PawStr);
+	echo(PawStr);
 	return bwritefile(Curbuff->fname);
 }
 
@@ -199,7 +199,7 @@ void Zfilewrite(void)
 	if (getfname(prompt, path) == 0) {
 		if (Argp) {
 			sprintf(PawStr, "Writing %s", path);
-			Echo(PawStr);
+			echo(PawStr);
 			write_rgn(path);
 			clrecho();
 		} else {
@@ -245,7 +245,7 @@ void Zfileread(void)
 		return;
 	if (fileread(Fname) > 0) {
 		sprintf(PawStr, "Unable to read %s", Fname);
-		Error(PawStr);
+		error(PawStr);
 	}
 }
 

@@ -27,7 +27,7 @@ int ask(char *msg)
 	int rc;
 	unsigned cmd;
 
-	Echo(msg);
+	echo(msg);
 	do
 		switch (cmd = tgetcmd()) {
 		case 'y':
@@ -105,8 +105,8 @@ char PawStr[COLMAX + 10];
 #ifndef XWINDOWS
 /*
 Put a string into the PAW.
-type is:	0 for echo			Echo()		macro
-		1 for error			Error()		macro
+type is:	0 for echo			echo()		macro
+		1 for error			error()		macro
 		2 for save pos
 */
 void putpaw(char *str, int type)
@@ -131,7 +131,7 @@ void putpaw(char *str, int type)
 #endif
 
 
-/* Echo 'str' to the paw and as the filename for 'buff' */
+/* echo 'str' to the paw and as the filename for 'buff' */
 void message(struct buff *buff, char *str)
 {
 	struct wdo *wdo;
@@ -142,7 +142,7 @@ void message(struct buff *buff, char *str)
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (wdo->wbuff == buff)
 			wdo->modeflags = INVALID;
-	Echo(str);
+	echo(str);
 }
 
 /*
@@ -255,7 +255,7 @@ void tindent(int arg)
 	if (VAR(VSPACETAB) == 0)
 		for (; arg >= Tabsize; arg -= Tabsize)
 			binsert('\t');
-	Sindent(arg);
+	sindent(arg);
 }
 
 int bisspace(void)

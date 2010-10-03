@@ -186,7 +186,7 @@ static Boolean advance(Byte *ep)
 			bmrktopnt(&curlp);
 			while (ecmp(bbeg, ct))
 				;
-			while (bisaftermrk(&curlp) || Bisatmrk(&curlp)) {
+			while (bisaftermrk(&curlp) || bisatmrk(&curlp)) {
 				if (advance(ep))
 					return TRUE;
 				bmove(-ct);
@@ -473,5 +473,5 @@ void regerr(int errnum)
 		/*51*/	"\"digit\" out of range.",
 	};
 
-	Error(errs[errnum-40]);
+	error(errs[errnum-40]);
 }

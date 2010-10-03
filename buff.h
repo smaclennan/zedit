@@ -118,11 +118,11 @@ extern int Curmodf;
 #define Buff()		(*Curcptr)
 #define bisstart()	((Curpage == Curbuff->firstp) && (Curchar == 0))
 #define bisend()	((Curpage == Curbuff->lastp) && (Curchar >= Curplen))
-#define Bisatmrk(m)	((Curpage == (m)->mpage) && (Curchar == (m)->moffset))
-#define Mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)
-#define Bfname()	(Curbuff->fname)
+#define bisatmrk(m)	((Curpage == (m)->mpage) && (Curchar == (m)->moffset))
+#define mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)
+#define bfname()	(Curbuff->fname)
 
 /* Return the character a mark points to. */
-#define Markch(mrk)	((mrk)->mpage->pdata[(mrk)->moffset])
+#define markch(mrk)	((mrk)->mpage->pdata[(mrk)->moffset])
 
 #endif

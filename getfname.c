@@ -62,7 +62,7 @@ int getfname(char *prompt, char *path)
 {
 	int rc = getname(prompt, path, FALSE);
 	if (rc > 0)
-		Error("Invalid path.");
+		error("Invalid path.");
 	return rc;
 }
 
@@ -70,7 +70,7 @@ int getdname(char *prompt, char *path)
 {
 	int rc = getname(prompt, path, TRUE);
 	if (rc > 0)
-		Error("Invalid dir.");
+		error("Invalid dir.");
 	return rc;
 }
 

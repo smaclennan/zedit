@@ -152,7 +152,7 @@ void Zswapmrk(void)
 	struct mark tmark;
 
 	Arg = 0;
-	Mrktomrk(&tmark, Curbuff->mark);
+	mrktomrk(&tmark, Curbuff->mark);
 	Zsetmrk();
 	bpnttomrk(&tmark);
 }
@@ -251,14 +251,14 @@ void Zsetbookmrk(void)
 			Bookname[Bookmark], Bookmark + 1);
 	else
 		sprintf(PawStr, "Book Mark %d Set", Bookmark + 1);
-	Echo(PawStr);
+	echo(PawStr);
 }
 
 
 void Znxtbookmrk(void)
 {
 	if (Bookmark < 0) {
-		Echo("No bookmarks set.");
+		echo("No bookmarks set.");
 		return;
 	}
 
@@ -279,7 +279,7 @@ void Znxtbookmrk(void)
 	bpnttomrk(Bookmrks[Bookmark]);
 	Curwdo->modeflags = INVALID;
 	sprintf(PawStr, "Book Mark %d", Bookmark + 1);
-	Echo(PawStr);
+	echo(PawStr);
 	if (--Bookmark < 0)
 		Bookmark = Lastbook;
 }

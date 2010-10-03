@@ -46,8 +46,9 @@ int main(int  argc, char *argv[])
 	attr.background_pixel = BlackPixel(display, screen);
 
 	root = XCreateWindow(display, RootWindow(display, screen),
-		0, 0, 100, 30, 1, CopyFromParent, InputOutput, CopyFromParent,
-		CWBackPixel | CWEventMask, &attr);
+			     0, 0, 100, 30, 1, CopyFromParent, InputOutput,
+			     (Visual *)CopyFromParent,
+			     CWBackPixel | CWEventMask, &attr);
 
 	wm_hints.flags = InputHint;
 	wm_hints.input = True;		/* Allow keyboard input. */

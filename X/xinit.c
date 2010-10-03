@@ -60,7 +60,7 @@ static XrmOptionDescRec opTable[] = {
 
 static char *Appname;
 
-static void MergeDatabaseFile(char *fname)
+static void mergedatabasefile(char *fname)
 {
 	if (fname) {
 		XrmDatabase DB = XrmGetFileDatabase(fname);
@@ -70,7 +70,7 @@ static void MergeDatabaseFile(char *fname)
 }
 
 
-void Xinit(char *app,
+void xinit(char *app,
 	   int  *argc,		/* returns updated */
 	   char **argv)
 {
@@ -79,7 +79,7 @@ void Xinit(char *app,
 	char *env;
 	char *displayname;
 
-	/* for GetResource - must be lowercase */
+	/* for getresource - must be lowercase */
 	Appname = strdup(app);
 	for (p = Appname; *p; ++p)
 		if (isupper(*p))
@@ -94,7 +94,7 @@ void Xinit(char *app,
 
 	/* get and open display now since we need it to get other databases */
 	xDB = cmdDB;
-	displayname = GetResource(".display", ".Display");
+	displayname = getresource(".display", ".Display");
 	xDB = NULL;
 	display = XOpenDisplay(displayname);
 	if (!display) {
@@ -108,21 +108,21 @@ void Xinit(char *app,
 
 	/* get the applications defaults file, if any */
 	sprintf(fname, "/usr/lib/X11/app-defaults/%s", Appname);
-	MergeDatabaseFile(fname);
+	mergedatabasefile(fname);
 
 #ifdef SAM_WHAT_TO_DO
 	/* Merge server defaults (created by xrdb) loaded as a
 	 * property of the root window when the server initializes, and
 	 * loaded into the display structure on XOpenDisplay.
 	 */
-	MergeDatabaseFile(display->xdefaults);
+	mergedatabasefile(display->xdefaults);
 #endif
 
 	env = (char *)getenv("HOME");
 	if (!env)
 		env = ".";
 	sprintf(fname, "%s/.Xdefaults", env);
-	MergeDatabaseFile(fname);
+	mergedatabasefile(fname);
 
 	/* open XENVIRONMENT file, or if not defined, the .Xdefaults */
 	env = (char *)getenv("XENVIRONMENT");
@@ -131,19 +131,19 @@ void Xinit(char *app,
 		gethostname(fname + len, 1024 - len);
 		env = fname;
 	}
-	MergeDatabaseFile(env);
+	mergedatabasefile(env);
 
 	/* command line options take precedence over everything */
 	XrmMergeDatabases(cmdDB, &xDB);
 
-	env = GetResource(".borderwidth", ".BorderWidth");
+	env = getresource(".borderwidth", ".BorderWidth");
 	if (env)
 		border_width = atoi(env);
-	env = GetResource(".highlight", ".HighLight");
+	env = getresource(".highlight", ".HighLight");
 	if (env)
 		highlight = atoi(env);
 
-	initSockets(ConnectionNumber(display));
+	initsockets(ConnectionNumber(display));
 }
 
 
@@ -151,7 +151,7 @@ void Xinit(char *app,
  * return the resouce value as a string.  Appname is always prepended.
  * It returns NULL or a statically allocated name.
  */
-char *GetResource(char *name, char *class)
+char *getresource(char *name, char *class)
 {
 	XrmValue value;
 	char *type;
@@ -164,7 +164,7 @@ char *GetResource(char *name, char *class)
 	return NULL;
 }
 
-int GetXColor(char *color_name, XColor *color)
+static int getxcolor(char *color_name, XColor *color)
 {
 	Colormap cmap = DefaultColormap(display, screen);
 	XColor def;
@@ -176,31 +176,31 @@ int GetXColor(char *color_name, XColor *color)
 	return 0;
 }
 
-int GetColor(char *color_name, int *pixel)
+int getcolor(char *color_name, int *pixel)
 {
 	XColor color;
 
-	if (GetXColor(color_name, &color)) {
+	if (getxcolor(color_name, &color)) {
 		*pixel = color.pixel;
 		return 1;
 	}
 	return 0;
 }
 
-int ColorResource(char *name, char *class, int *pixel)
+int colour_resource(char *name, char *class, int *pixel)
 {
 	char *color_name;
 
-	color_name = GetResource(name, class);
+	color_name = getresource(name, class);
 	if (color_name == NULL)
 		return 0;
-	return GetColor(color_name, pixel);
+	return getcolor(color_name, pixel);
 }
 
 /* Load a font and setup the global variables needed by Zedit.
  * Take care not to destroy old values if fontname is invalid.
  */
-XFontStruct *LoadFontByName(char *fontname)
+XFontStruct *load_font_by_name(char *fontname)
 {
 	static XFontStruct *font_info;
 	XFontStruct *info;
@@ -257,7 +257,7 @@ XFontStruct *LoadFontByName(char *fontname)
 	return font_info = info;
 }
 
-XFontStruct *LoadFonts(void)
+XFontStruct *load_fonts(void)
 {
 	XFontStruct *font_info;
 	char *fontname;
@@ -268,12 +268,12 @@ XFontStruct *LoadFonts(void)
 	if (VARSTR(VFONT))
 		fontname = VARSTR(VFONT);
 	else {
-		fontname = GetResource(".font", ".Font");
+		fontname = getresource(".font", ".Font");
 		if (fontname == NULL)
 			fontname = "fixed";
 	}
 
-	font_info = LoadFontByName(fontname);
+	font_info = load_font_by_name(fontname);
 	if (!font_info) {
 		printf("Unable to load font %s\n", fontname);
 		exit(1);

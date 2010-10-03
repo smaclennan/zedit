@@ -178,16 +178,17 @@ char *KeyNames[] = {
 
 #define DOUBLE_CLICK		500		/* 1/2 second */
 
-static Window CreateRootWindow(int argc, char **argv, int *, int *);
-static void GetGeometry(XSizeHints *sh, int bw);
-static void ExposeWindow(void), SetupSpecial(void);
-static void SetTimer(XEvent *event, unsigned timeout);
+static Window createrootwindow(int argc, char **argv, int *, int *);
+static void getgeometry(XSizeHints *sh, int bw);
+static void exposewindow(void);
+static void setup_special(void);
+static void settimer(XEvent *event, unsigned timeout);
 
-static void Paste(Atom paste);
+static void xpaste(Atom paste);
 
 Window Zroot, zwindow;
 
-/* Note: LoadFontByName needs to know all the gcs */
+/* Note: load_font_by_name needs to know all the gcs */
 GC curgc;
 GC normgc, revgc, boldgc, commentgc, cppgc, cppifgc;
 GC cursorgc, markgc;
@@ -228,20 +229,20 @@ void tinit(int argc, char **argv)
 	background = WhitePixel(display, screen);
 	if (HasColor) {
 		/* override with these values if available */
-		if (!ColorResource(".text.foreground", ".text.Foreground",
+		if (!colour_resource(".text.foreground", ".text.Foreground",
 				   &foreground))
-			ColorResource(".foreground", ".Foreground",
+			colour_resource(".foreground", ".Foreground",
 				      &foreground);
-		if (!ColorResource(".text.background", ".text.Background",
+		if (!colour_resource(".text.background", ".text.Background",
 				   &background))
-			ColorResource(".background", ".Background",
+			colour_resource(".background", ".Background",
 				      &background);
 	}
 
-	LoadFonts();
+	load_fonts();
 
 	/* Create root window */
-	CreateRootWindow(argc, argv, &width, &height);
+	createrootwindow(argc, argv, &width, &height);
 
 	/* only root window exists */
 	zwindow = Zroot;
@@ -259,7 +260,7 @@ void tinit(int argc, char **argv)
 	curgc = normgc = XCreateGC(display, zwindow, valuemask, &values);
 
 	/* GC for bold text */
-	if (HasColor && ColorResource(".boldColor", ".boldColor", &ccolor)) {
+	if (HasColor && colour_resource(".boldColor", ".boldColor", &ccolor)) {
 		/* user specified bold color */
 		values.background = ccolor;
 		boldgc = XCreateGC(display, zwindow, valuemask, &values);
@@ -274,7 +275,7 @@ void tinit(int argc, char **argv)
 	/* create GC for cursor */
 	if (HasColor) {
 		/* try to make a color cursor */
-		if (ColorResource(".cursorColor", ".CursorColor", &ccolor)) {
+		if (colour_resource(".cursorColor", ".CursorColor", &ccolor)) {
 			values.background = ccolor;
 			values.foreground = foreground;
 		} else {
@@ -290,7 +291,7 @@ void tinit(int argc, char **argv)
 
 	/* create GC for mark */
 	if (HasColor) {
-		if (ColorResource(".markColor", ".markColor", &ccolor)) {
+		if (colour_resource(".markColor", ".markColor", &ccolor)) {
 			values.background = ccolor;
 			values.foreground = foreground;
 			values.function = GXcopy;
@@ -303,8 +304,8 @@ void tinit(int argc, char **argv)
 
 	/* Allow user to set comment color but default to blue if possible. */
 	if (HasColor &&
-		(ColorResource(".commentColor", ".CommentColor", &ccolor) ||
-		 GetColor("blue", &ccolor))) {
+		(colour_resource(".commentColor", ".CommentColor", &ccolor) ||
+		 getcolor("blue", &ccolor))) {
 		values.foreground = ccolor;
 		values.background = background;
 		commentgc = XCreateGC(display, zwindow, valuemask, &values);
@@ -313,8 +314,8 @@ void tinit(int argc, char **argv)
 
 	/* Allow user to set cpp color but default to green if possible. */
 	if (HasColor &&
-		(ColorResource(".cppColor", ".CppColor", &ccolor) ||
-		 GetColor("green", &ccolor))) {
+		(colour_resource(".cppColor", ".CppColor", &ccolor) ||
+		 getcolor("green", &ccolor))) {
 		values.foreground = ccolor;
 		values.background = background;
 		cppgc = XCreateGC(display, zwindow, valuemask, &values);
@@ -322,7 +323,7 @@ void tinit(int argc, char **argv)
 		cppgc = commentgc;
 
 	/* Allow user to set cpp color but default to green if possible. */
-	if (ColorResource(".cppifColor", ".CppifColor", &ccolor)) {
+	if (colour_resource(".cppifColor", ".CppifColor", &ccolor)) {
 		values.foreground = ccolor;
 		values.background = background;
 		cppifgc = XCreateGC(display, zwindow, valuemask, &values);
@@ -332,11 +333,11 @@ void tinit(int argc, char **argv)
 	/* create GC for modeline - do this last */
 	if (HasColor) {
 		/* default to reverse */
-		if (ColorResource(".modelinebg", ".modelineBG", &ccolor))
+		if (colour_resource(".modelinebg", ".modelineBG", &ccolor))
 			values.background = ccolor;
 		else
 			values.background = foreground;
-		if (ColorResource(".modelinefg", ".modelingFG", &ccolor))
+		if (colour_resource(".modelinefg", ".modelingFG", &ccolor))
 			values.foreground = ccolor;
 		else
 			values.foreground = background;
@@ -369,7 +370,7 @@ void tinit(int argc, char **argv)
  * Note that width and height are the sizes
  * specified by the user for the source window.
  */
-static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
+static Window createrootwindow(int argc, char **argv, int *width, int *height)
 {
 	XSizeHints size_hints;
 	XWMHints wm_hints;
@@ -387,7 +388,7 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 		ExposureMask | StructureNotifyMask;
 	attr.override_redirect = False;
 
-	GetGeometry(&size_hints, border_width);
+	getgeometry(&size_hints, border_width);
 
 	*width  = size_hints.width;
 	*height = size_hints.height;
@@ -405,7 +406,7 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 	wm_hints.flags = InputHint | StateHint | IconPixmapHint;
 	wm_hints.input = True;		/* Allow keyboard input. */
 
-	resource = GetResource(".iconic", ".Iconic");
+	resource = getresource(".iconic", ".Iconic");
 	if (resource != NULL)
 		wm_hints.initial_state = IconicState;
 	else
@@ -413,7 +414,7 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 	wm_hints.icon_pixmap = XCreateBitmapFromData(display, Zroot, zedit_bits,
 		zedit_width, zedit_height);
 
-	resource = GetResource("*icongeometry", "*iconGeometry");
+	resource = getresource("*icongeometry", "*iconGeometry");
 	if (resource != NULL) {
 		int flags;
 		unsigned dummy;
@@ -436,10 +437,10 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 			 &size_hints, &wm_hints, &class_hints);
 
 	/* read the keyboard modifiers */
-	SetupSpecial();
+	setup_special();
 
 	/* create pointer if necessary */
-	resource = GetResource(".pointershape", ".pointerShape");
+	resource = getresource(".pointershape", ".pointerShape");
 	if (resource)
 		for (i = 0; i < XCURSORS; ++i)
 			if (strcmp(resource, Xcursors[i].name) == 0) {
@@ -450,9 +451,9 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 				break;
 			}
 	/* create scrollpointer - default to vertical scrollbar double arrow */
-	resource = GetResource(".vscrollpointer", ".vscrollPointer");
+	resource = getresource(".vscrollpointer", ".vscrollPointer");
 	if (!resource) {
-		resource = GetResource(".scrollpointer", ".scrollPointer");
+		resource = getresource(".scrollpointer", ".scrollPointer");
 		if (!resource)
 			resource = "sb_v_double_arrow";
 	}
@@ -465,9 +466,9 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 
 	/* create scrollpointer - default to horizontal scrollbar
 	 * double arrow */
-	resource = GetResource(".hscrollpointer", ".hscrollPointer");
+	resource = getresource(".hscrollpointer", ".hscrollPointer");
 	if (!resource) {
-		resource = GetResource(".scrollpointer", ".scrollPointer");
+		resource = getresource(".scrollpointer", ".scrollPointer");
 		if (!resource)
 			resource = "sb_h_double_arrow";
 	}
@@ -483,7 +484,7 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 	XSetWMProtocols(display, Zroot, &WM_DELETE_WINDOW, 1);
 
 	/* get the current keyboard modifiers */
-	SetupSpecial();
+	setup_special();
 
 	/* display window */
 	XMapWindow(display, Zroot);
@@ -491,7 +492,7 @@ static Window CreateRootWindow(int argc, char **argv, int *width, int *height)
 	return Zroot;
 }
 
-Window CreateWindow(Window parent, int x, int y, int width, int height,
+Window createwindow(Window parent, int x, int y, int width, int height,
 		    long events)
 {
 	Window window;
@@ -526,7 +527,7 @@ void tbell(void)
 
 void tfini(void)
 {
-	CleanupSocket(-1);
+	cleanupsocket(-1);
 }
 
 void tclrwind(void)
@@ -627,7 +628,7 @@ Byte tgetkb(void)
 static char *SelectionData;
 static int SelectionSize;
 
-static void SetSelection(void)
+static void setselection(void)
 {
 	struct buff *save = Curbuff;
 	char *p;
@@ -657,7 +658,7 @@ static void SetSelection(void)
 static Boolean Focus = TRUE;
 
 /* If in modeline, scroll buffer. */
-static Boolean PointerScroll(int row, Boolean down)
+static Boolean pointerscroll(int row, Boolean down)
 {
 	struct wdo *wdo;
 
@@ -674,10 +675,10 @@ static Boolean PointerScroll(int row, Boolean down)
 	return FALSE;
 }
 
-static void MarkToPointer(int row, int col)
+static void marktopointer(int row, int col)
 {
 	showcursor(FALSE);
-	if (!PointerScroll(row, FALSE)) {
+	if (!pointerscroll(row, FALSE)) {
 		bswappnt(Curbuff->mark);
 		pntmove(row, col);
 		bswappnt(Curbuff->mark);
@@ -685,15 +686,15 @@ static void MarkToPointer(int row, int col)
 	showcursor(TRUE);
 }
 
-static void PointToPointer(int row, int col)
+static void pointtopointer(int row, int col)
 {
 	showcursor(FALSE);
-	if (!PointerScroll(row, TRUE))
+	if (!pointerscroll(row, TRUE))
 		pntmove(row, col);
 	showcursor(TRUE);
 }
 
-/* Initially set in SetupSpecial. Used in tgetcmd. */
+/* Initially set in setup_special. Used in tgetcmd. */
 static int Special;
 #define Normal	0
 #define Meta	1
@@ -702,7 +703,7 @@ static int Special;
 #define NumLock	8
 
 /* Setup the Specials. We only care about the mask variable. */
-static void SetupSpecial(void)
+static void setup_special(void)
 {
 #ifdef sun
 	Window root, child;
@@ -748,12 +749,12 @@ int tgetcmd(void)
 
 	for (Cmd = K_NODEF; Cmd == K_NODEF; ) {
 		if (!XPending(display))
-			ProcessFDs();
+			processFDs();
 
 		XNextEvent(display, &event);
 #if 0
 		printf("Event %s %s\n",
-			XWindowName(event.xany.window), XEventName(event.type));
+			xwindowname(event.xany.window), xeventname(event.type));
 #endif
 
 		/* Events we always handle */
@@ -761,7 +762,7 @@ int tgetcmd(void)
 		case Expose:
 			while (XCheckTypedEvent(display, Expose, &event))
 				;
-			ExposeWindow();
+			exposewindow();
 			continue;
 
 		case ConfigureNotify:
@@ -801,7 +802,7 @@ int tgetcmd(void)
 
 #ifdef SCROLLBARS
 		if (event.xany.window != zwindow) {
-			ScrollEvent(&event);
+			scrollevent(&event);
 			continue;
 		}
 #endif
@@ -823,9 +824,9 @@ int tgetcmd(void)
 					showcursor(TRUE);
 				} else {	/* first click */
 					if (Special == Shift)
-						MarkToPointer(PushRow, PushCol);
+						marktopointer(PushRow, PushCol);
 					else
-						PointToPointer(PushRow,
+						pointtopointer(PushRow,
 							       PushCol);
 					refresh();
 					Dragging = START_DRAG;
@@ -835,8 +836,8 @@ int tgetcmd(void)
 			case Button2:
 				if (Special & (Shift | Ctrl))
 					/* we want it */
-					SetSelection();
-				else { /* Paste */
+					setselection();
+				else { /* paste */
 					paste = XInternAtom(display,
 							    "PASTEIT", False);
 					showcursor(FALSE);
@@ -847,7 +848,7 @@ int tgetcmd(void)
 				}
 				break;
 			case Button3:
-				MarkToPointer(PushRow, PushCol);
+				marktopointer(PushRow, PushCol);
 				break;
 			}
 			break;
@@ -856,7 +857,7 @@ int tgetcmd(void)
 			if (Dragging) {
 				if (Dragging == START_DRAG)
 					/* Set the mark to start of drag area */
-					MarkToPointer(PushRow, PushCol);
+					marktopointer(PushRow, PushCol);
 				/* reset every itertation due to DRAGSCROLL */
 				Dragging = DRAGGING;
 				while (XCheckMaskEvent(display,
@@ -871,18 +872,18 @@ int tgetcmd(void)
 					Arg = 1;
 					Zprevline();
 					refresh();
-					SetTimer(&event, DRAG_TIMEOUT);
+					settimer(&event, DRAG_TIMEOUT);
 					Dragging = DRAGSCROLL;
 				} else if (row >= Curwdo->last) {
 					/* scroll down */
 					Arg = 1;
 					Znextline();
 					refresh();
-					SetTimer(&event, DRAG_TIMEOUT);
+					settimer(&event, DRAG_TIMEOUT);
 					Dragging = DRAGSCROLL;
 				} else if (PushRow != row || PushCol != col) {
 					/* move the point */
-					PointToPointer(row, col);
+					pointtopointer(row, col);
 					refresh();
 					PushRow = row; PushCol = col;
 				}
@@ -913,7 +914,7 @@ int tgetcmd(void)
 						++HomeCnt;
 					else
 						HomeCnt = 0;
-					SetTimer(NULL, KEY_TIMEOUT);
+					settimer(NULL, KEY_TIMEOUT);
 					switch (HomeCnt) {
 					case 0:
 						Cmd = ZXK_Home;		break;
@@ -927,7 +928,7 @@ int tgetcmd(void)
 						++EndCnt;
 					else
 						EndCnt = 0;
-					SetTimer(NULL, KEY_TIMEOUT);
+					settimer(NULL, KEY_TIMEOUT);
 					switch (EndCnt) {
 					case 0:
 						Cmd = ZXK_End;	break;
@@ -1002,7 +1003,7 @@ int tgetcmd(void)
 
 		case SelectionNotify:
 			if (event.xselection.property == paste)
-				Paste(paste);
+				xpaste(paste);
 			break;
 
 		case SelectionRequest:
@@ -1048,7 +1049,7 @@ int tgetcmd(void)
 #if DBG
 		default:
 			Dbg("Got unexpected event %s\n",
-			    XEventName(event.type));
+			    xeventname(event.type));
 			break;
 #endif
 		}
@@ -1125,7 +1126,7 @@ void setmark(Boolean prntchar)
 
 
 /* must be called after load_font */
-static void GetGeometry(XSizeHints *sh, int bw)
+static void getgeometry(XSizeHints *sh, int bw)
 {
 	char *gstr;
 	int flags = 0;
@@ -1142,7 +1143,7 @@ static void GetGeometry(XSizeHints *sh, int bw)
 	sh->max_height = Xrow[ROWMAX];
 
 	/* now check database */
-	gstr = GetResource(".geometry", ".Geometry");
+	gstr = getresource(".geometry", ".Geometry");
 	if (gstr != NULL) {
 		flags = XParseGeometry(gstr, &sh->x, &sh->y,
 				       (unsigned *)&sh->width,
@@ -1178,7 +1179,7 @@ static void GetGeometry(XSizeHints *sh, int bw)
 		sh->win_gravity = NorthWestGravity;
 }
 
-static void Paste(Atom paste)
+static void xpaste(Atom paste)
 {
 	Atom actual_type;
 	int actual_format;
@@ -1217,7 +1218,7 @@ void initline(void)
 static char modeline[COLMAX + 1];
 
 /* Redraw the modeline except for flags. */
-static void Modeline(struct wdo *wdo, int y)
+static void xmodeline(struct wdo *wdo, int y)
 {
 	memset(modeline, ' ', COLMAX);
 	sprintf(modeline, ZFMT, ZSTR, VERSION,
@@ -1248,7 +1249,7 @@ void modeflags(struct wdo *wdo)
 #endif
 
 	if (wdo->modeflags == INVALID)
-		Modeline(wdo, y);
+		xmodeline(wdo, y);
 
 	mask = delcmd() | (wdo->wbuff->bmodf ? 2 : 0);
 	if (!InPaw && wdo->modeflags != mask) {
@@ -1326,7 +1327,7 @@ void putpaw(char *str, int type)
 /* We cannot call Refresh here since it makes too many assumptions
  * about Curbuff, Prow, Pcol, Inpaw, etc.
  */
-static void ExposeWindow(void)
+static void exposewindow(void)
 {
 	int i;
 	struct mark *psave = bcremrk();
@@ -1377,7 +1378,7 @@ static void ExposeWindow(void)
 	showcursor(TRUE);
 }
 
-void Xflush(void)
+void xflush(void)
 {
 	XFlush(display);
 }
@@ -1403,7 +1404,7 @@ static void setit(int signum)
 	AlarmFlag = 0;
 }
 
-static void SetTimer(XEvent *event, unsigned timeout)
+static void settimer(XEvent *event, unsigned timeout)
 {
 	struct itimerval value;
 

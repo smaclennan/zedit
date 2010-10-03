@@ -23,7 +23,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-static int GetWindowPosition(Window window,
+static int getwindowposition(Window window,
 			     int *absx, int *absy, int *relx, int *rely);
 
 /* Calculate the height lost by the WM decoarations.
@@ -38,7 +38,7 @@ void Zzoom(void)
 	/* keep track of the last unzoomed position */
 	static int was_x, was_y, was_w, was_h;
 
-	GetWindowPosition(Zroot, &absx, &absy, &relx, &rely);
+	getwindowposition(Zroot, &absx, &absy, &relx, &rely);
 
 	if (was_h == 0) {
 		/* zoom */
@@ -70,7 +70,7 @@ void Zzoom(void)
  *
  * This routine will display an error message if it fails and return 0.
  */
-static int GetWindowPosition(Window window, int *absx, int *absy,
+static int getwindowposition(Window window, int *absx, int *absy,
 			     int *relx, int *rely)
 {
 	XWindowAttributes win_attr;

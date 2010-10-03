@@ -119,12 +119,12 @@ int xsetavar(char *str)
 				if (p)
 					*p = ' ';
 				setavar(str, TRUE);
-				Xflush();
+				xflush();
 				break;
 			case FLAG:
 				sprintf(pstr, "%s %d", str, !VAR(var));
 				setavar(pstr, TRUE);
-				Xflush();
+				xflush();
 				break;
 			}
 			return var;
@@ -256,7 +256,7 @@ static void do_var_match(int i, char *vin)
 	if (i == VFONT) {
 		if (display == 0)
 			return;
-		if (LoadFontByName(VARSTR(VFONT)) == 0) {
+		if (load_font_by_name(VARSTR(VFONT)) == 0) {
 			sprintf(PawStr, "Unknown font %s.",
 				VARSTR(VFONT));
 			error(PawStr);

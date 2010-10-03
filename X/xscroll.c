@@ -30,9 +30,9 @@ static int thumbSize = THUMB_SIZE;
 #define THUMB_WIDTH		(SCROLLBAR_WIDTH - 2)
 
 #ifdef HSCROLL
-static void HscrollEvent(XEvent *event, struct wdo *wdo);
+static void hscrollevent(XEvent *event, struct wdo *wdo);
 #endif
-static void VscrollEvent(XEvent *event, struct wdo *wdo);
+static void vscrollevent(XEvent *event, struct wdo *wdo);
 
 /* Called by Wcreate to create scrollbars from line first to last */
 void createscrollbars(struct wdo *wdo)
@@ -40,10 +40,10 @@ void createscrollbars(struct wdo *wdo)
 	static int set = 0, thumbColor, troughColor;
 
 	if (!set) {
-		if (!ColorResource(".thumbColor", ".thumbColor",
+		if (!colour_resource(".thumbColor", ".thumbColor",
 				   &thumbColor))
 			thumbColor = foreground;
-		if (!ColorResource(".troughColor", ".troughColor",
+		if (!colour_resource(".troughColor", ".troughColor",
 				   &troughColor))
 			troughColor = background;
 		set = 1;
@@ -51,12 +51,12 @@ void createscrollbars(struct wdo *wdo)
 
 	wdo->vheight = Xrow[wdo->last] - Xrow[wdo->first] - 2;
 
-	wdo->vscroll = CreateWindow(Zroot,
+	wdo->vscroll = createwindow(Zroot,
 		win_width - SCROLLBAR_WIDTH - 2, Xrow[wdo->first],
 		SCROLLBAR_WIDTH, wdo->vheight,
 		ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
 
-	wdo->vthumb = CreateWindow(wdo->vscroll,
+	wdo->vthumb = createwindow(wdo->vscroll,
 		0, 0,
 		THUMB_WIDTH, THUMB_SIZE, 0);
 
@@ -68,12 +68,12 @@ void createscrollbars(struct wdo *wdo)
 	XClearWindow(display, wdo->vthumb);		/* force update */
 
 #ifdef HSCROLL
-	wdo->hscroll = CreateWindow(Zroot,
+	wdo->hscroll = createwindow(Zroot,
 		0, Xrow[wdo->last],
 		Xcol[Colmax] - 3, SCROLLBAR_WIDTH,
 		ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
 
-	wdo->hthumb = CreateWindow(wdo->hscroll,
+	wdo->hthumb = createwindow(wdo->hscroll,
 		0, 0,
 		Xcol[Colmax] - 4, THUMB_WIDTH, 0);
 
@@ -113,7 +113,7 @@ void resizescrollbars(struct wdo *wdo)
 }
 
 /* Move thumb to pixel value */
-static void ThumbTo(struct wdo *wdo, int y)
+static void thumbto(struct wdo *wdo, int y)
 {
 	if (y < thumbSize)
 		y = 0;
@@ -124,7 +124,7 @@ static void ThumbTo(struct wdo *wdo, int y)
 	XMoveWindow(display, wdo->vthumb, 0, y);
 }
 
-static void ThumbSize(struct wdo *wdo, int height)
+static void thumbsize(struct wdo *wdo, int height)
 {
 	if (thumbSize != height) {
 		if (height < 5)
@@ -135,7 +135,7 @@ static void ThumbSize(struct wdo *wdo, int height)
 }
 
 /* Note that GotoLine is an implicit Wswitchto */
-static void GotoLine(struct wdo *wdo, int line)
+static void gotoline(struct wdo *wdo, int line)
 {
 	Argp = TRUE;
 	Arg  = line;
@@ -146,7 +146,7 @@ static void GotoLine(struct wdo *wdo, int line)
 	showcursor(TRUE);
 }
 
-void ScrollEvent(XEvent *event)
+void scrollevent(XEvent *event)
 {
 	struct wdo *wdo;
 	Window window = event->xany.window;
@@ -157,25 +157,25 @@ void ScrollEvent(XEvent *event)
 	/* find the wdo associated with this window */
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (window == wdo->vscroll) {
-			VscrollEvent(event, wdo);
+			vscrollevent(event, wdo);
 			return;
 		}
 #ifdef HSCROLL
 		else if (window == wdo->hscroll) {
-			HscrollEvent(event, wdo);
+			hscrollevent(event, wdo);
 			return;
 		}
 #endif
 }
 
 /* We received a ButtonPress event in a vscroll window */
-static void VscrollEvent(XEvent *event, struct wdo *wdo)
+static void vscrollevent(XEvent *event, struct wdo *wdo)
 {
 	int lines;
 
-	ThumbTo(wdo, event->xbutton.y);
+	thumbto(wdo, event->xbutton.y);
 	lines = blines(wdo->wbuff);
-	GotoLine(wdo, lines * event->xbutton.y / wdo->vheight);
+	gotoline(wdo, lines * event->xbutton.y / wdo->vheight);
 
 	do {
 		XNextEvent(display, event);
@@ -183,8 +183,8 @@ static void VscrollEvent(XEvent *event, struct wdo *wdo)
 			while (XCheckMaskEvent(display, PointerMotionMask,
 					       event))
 				;
-			ThumbTo(wdo, event->xmotion.y);
-			GotoLine(wdo, lines * event->xmotion.y / wdo->vheight);
+			thumbto(wdo, event->xmotion.y);
+			gotoline(wdo, lines * event->xmotion.y / wdo->vheight);
 		}
 	} while (event->type != ButtonRelease);
 }
@@ -198,12 +198,12 @@ void updatescrollbars()
 
 	if (lines < Curwdo->last) {
 		/* thumb fills entire window */
-		ThumbTo(Curwdo, 0);
-		ThumbSize(Curwdo, Curwdo->vheight);
+		thumbto(Curwdo, 0);
+		thumbsize(Curwdo, Curwdo->vheight);
 	} else {
 		blocation(&line);
-		ThumbTo(Curwdo, line * Curwdo->vheight / lines);
-		ThumbSize(Curwdo, Curwdo->last * Curwdo->vheight / lines);
+		thumbto(Curwdo, line * Curwdo->vheight / lines);
+		thumbsize(Curwdo, Curwdo->last * Curwdo->vheight / lines);
 	}
 }
 
@@ -212,7 +212,7 @@ void updatescrollbars()
 int Hshift;
 
 /* Move thumb to pixel value */
-static void HThumbTo(struct wdo *wdo, int x)
+static void hthumbto(struct wdo *wdo, int x)
 {
 	if (x < 0 || x >= Xcol[Colmax] - 3)
 		return;
@@ -222,9 +222,9 @@ static void HThumbTo(struct wdo *wdo, int x)
 }
 
 /* We received a ButtonPress event in a hscroll window */
-static void HscrollEvent(XEvent *event, struct wdo *wdo)
+static void hscrollevent(XEvent *event, struct wdo *wdo)
 {
-	HThumbTo(wdo, event->xbutton.x);
+	hthumbto(wdo, event->xbutton.x);
 
 	do {
 		XNextEvent(display, event);
@@ -232,7 +232,7 @@ static void HscrollEvent(XEvent *event, struct wdo *wdo)
 			while (XCheckMaskEvent(display, PointerMotionMask,
 					       event))
 				;
-			HThumbTo(wdo, event->xmotion.x);
+			hthumbto(wdo, event->xmotion.x);
 		}
 	} while (event->type != ButtonRelease);
 }

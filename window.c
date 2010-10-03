@@ -196,7 +196,7 @@ void wswitchto(struct wdo *wdo)
 		mrktomrk(Sstart, wdo->wstart);
 		Sendp = FALSE;
 #ifdef XWINDOWS
-		XSwitchto(wdo->wbuff->bname);
+		xswitchto(wdo->wbuff->bname);
 #endif
 	}
 	Curwdo->modeflags = INVALID;
@@ -224,7 +224,7 @@ void cswitchto(struct buff *buff)
 	}
 
 #ifdef XWINDOWS
-		XSwitchto(buff->bname);
+		xswitchto(buff->bname);
 #endif
 }
 

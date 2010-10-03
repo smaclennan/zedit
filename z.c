@@ -129,7 +129,7 @@ static void setup(int argc, char **argv)
 	Boolean Spawn = TRUE;
 
 	/* This MUST be called before any file IO */
-	Xinit("zedit", &argc, argv);
+	xinit("zedit", &argc, argv);
 #endif
 	Me = dup_pwent(getpwuid(geteuid()));
 	if (!Me) {

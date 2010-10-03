@@ -382,31 +382,6 @@ void logfree(char *, char *, unsigned);
 #define free(m)			logfree((m), __FILE__, __LINE__)
 #endif
 
-#ifdef XWINDOWS
-char *KeyToName(int, char *);
-void showcursor(Boolean);
-void showmark(Boolean);
-int Pinvoke(char *argv[], FILE **in, FILE **out);
-int ColorResource(char *name, char *class, int *pixel);
-void tputchar(char);
-int GetColor(char *, int *);
-int GetXColor(char *, XColor *);
-XFontStruct *LoadFonts(void);
-void Xinit(char *app, int *argc, char **argv);
-void XShellInput(void);
-
-void PopupSearch(void);
-char GetQueryCmd(char prev);
-void QueryDone(void);
-
-void xusage(void);
-
-void audioExit(void);
-
-void GrabKeyboard();
-void xfindtag(void);
-#endif
-
 #if COMMENTBOLD
 void addcomment(void);
 void resetcomments(void);
@@ -429,8 +404,6 @@ void undo_add(int size);
 void undo_del(int size);
 void undo_clear(struct buff *buff);
 
-#if XWINDOWS
 /* Only exported for X */
 void copytomrk(struct mark *tmark);
 int innerdsp(int from, int to, struct mark *pmark);
-#endif

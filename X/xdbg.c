@@ -21,7 +21,7 @@
 #include <X11/X.h>
 #include "xwind.h"
 
-char *XEventName(int type)
+char *xeventname(int type)
 {
 	static char errstr[40];
 
@@ -67,7 +67,7 @@ char *XEventName(int type)
 /* This is tied to Zedit */
 Window Zroot, zwindow;
 
-char *XWindowName(Window window)
+char *xwindowname(Window window)
 {
 	static char wstr[80];
 

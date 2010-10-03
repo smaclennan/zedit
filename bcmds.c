@@ -88,7 +88,7 @@ void delbuff(struct buff *buff)
 		*Lbufname = '\0';
 	if (bdelbuff(buff)) {
 #ifdef XWINDOWS
-		XDeleteBuffer(bname);
+		xdeletebuffer(bname);
 #endif
 		delbname(bname);
 		if (wascur && *Lbufname) {

@@ -49,12 +49,12 @@ extern char *KeyNames[];
 
 extern char *PromptString;
 
-Window CreateWindow(Window parent, int x, int y, int w, int h, long ev);
-char *GetResource(char *name, char *class);
+Window createwindow(Window parent, int x, int y, int w, int h, long ev);
+char *getresource(char *name, char *class);
 
 /* defined in xscroll.c */
 #ifdef SCROLLBARS
-void ScrollEvent(XEvent *event);
+void scrollevent(XEvent *event);
 #define SCROLLBAR_WIDTH		11
 #else
 #define SCROLLBAR_WIDTH		0
@@ -64,20 +64,35 @@ void addwindowsizes(char *str);
 void createscrollbars(struct wdo *wdo);
 void deletescrollbars(struct wdo *wdo);
 void resizescrollbars(struct wdo *wdo);
-void Xflush();
-XFontStruct *LoadFontByName(char *fontname);
+void xflush();
 
-char *XEventName(int type);
-char *XWindowName(Window window);
+char *xeventname(int type);
+char *xwindowname(Window window);
+
+char *KeyToName(int, char *);
+void showcursor(Boolean);
+void showmark(Boolean);
+int colour_resource(char *name, char *class, int *pixel);
+void tputchar(char);
+int getcolor(char *, int *);
+XFontStruct *load_fonts(void);
+void xinit(char *app, int *argc, char **argv);
+XFontStruct *load_font_by_name(char *fontname);
+
+void xusage(void);
+
+void audioExit(void);
+
+void xfindtag(void);
 
 /* Keep these around in case we bring back the tcl code */
-#define initSockets(x)
-#define closeSockets()
-#define CleanupSocket(i)
-#define ProcessFDs()
+#define initsockets(x)
+#define closesockets()
+#define cleanupsocket(i)
+#define processFDs()
 #define xaddbuffer(b)
-#define XSwitchto(b)
-#define XDeleteBuffer(b)
+#define xswitchto(b)
+#define xdeletebuffer(b)
 
 #endif
 #endif

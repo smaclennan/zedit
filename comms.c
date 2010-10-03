@@ -588,7 +588,7 @@ void quit(void)
 	tfini();
 
 #ifdef XWINDOWS
-	closeSockets();
+	closesockets();
 #endif
 
 	exit(0);

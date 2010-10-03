@@ -29,6 +29,9 @@ struct buff *Paw, *Buff_save;
 static char **Carray;
 static int Csize, Cnum = 0, Cret;
 unsigned Nextpart = ZNOTIMPL;
+#ifdef XWINDOWS
+char *PromptString;
+#endif
 
 /* General purpose string argument input routine which recursively calls the
  * editor through the PAW buffer.
@@ -37,11 +40,6 @@ unsigned Nextpart = ZNOTIMPL;
  * Only allow max chars.
  * Arg is NOT overwritten if the user aborts, or returns a null string.
  */
-#ifdef XWINDOWS
-char *PromptString;
-#endif
-
-
 Boolean getarg(char *prompt, char *arg, int max)
 {
 	char *ptr;
@@ -84,15 +82,11 @@ Boolean getarg(char *prompt, char *arg, int max)
 	Insearch = FALSE; /* used by Zcase when in search command */
 	Argp = argp_save;
 	Arg = arg_save;
-	bswitchto(Buff_save);					/* go back */
-	Curbuff->bmode = Paw->bmode; /* mainly for EXACT mode */
-#if 0
-	/* SAM ??? */
-	Clrcol[tgetrow()] = tmaxcol();		/* force clear */
-#endif
+	bswitchto(Buff_save);		/* go back */
+	Curbuff->bmode = Paw->bmode;	/* mainly for EXACT mode */
 	tgoto(trow, tcol);
 	Curwdo->modeflags = INVALID;
-	Curcmds = (Curbuff->bmode & VIEW) ? 1 : 0;	/* SAM */
+	Curcmds = (Curbuff->bmode & VIEW) ? 1 : 0;
 	clrecho();
 #ifdef XWINDOWS
 	tflush();
@@ -122,42 +116,6 @@ int getplete(char *prompt, char *def, char **array, int size, int num)
 	Cnum = 0;
 	return Cret;
 }
-
-static int pcmdplete(Boolean show)
-{
-	char cmd[STRMAX + 1], **cca, *mstr = NULL;
-	int i = 0, len, len1 = 0, rc;
-
-	Cret = -1;
-	getbtxt(cmd, STRMAX);
-	len = strlen(cmd);
-	cca = Carray;
-	if (show && !len)
-		for (; i < Cnum; ++i, cca += Csize)
-			pout(*cca, TRUE);
-	else
-		for (; i < Cnum && (rc = strncasecmp(*cca, cmd, len)) <= 0;
-				++i, cca += Csize)
-			if (rc == 0) {
-				if (show)
-					pout(*cca, TRUE);
-				else if (mstr) {
-					Cret = -1;
-					len1 = nmatch(mstr, *cca);
-				} else {
-					Cret = i;
-					len1 = strlen(mstr = *cca);
-				}
-			}
-	if (mstr && !show) {
-		strncpy(cmd, mstr, len1);
-		cmd[len1] = '\0';
-		makepaw(cmd, FALSE);
-		return Cret != -1 ? 2 : 1;
-	}
-	return 0;
-}
-
 
 static int p_row, p_col;
 static int p_ncols = PNUMCOLS;
@@ -213,6 +171,51 @@ static void dline(int trow)
 	}
 }
 
+static void pcmdplete(Boolean show)
+{
+	char cmd[STRMAX + 1], **cca, *mstr = NULL;
+	int i = 0, len, len1 = 0, rc;
+
+	Cret = -1;
+	getbtxt(cmd, STRMAX);
+	len = strlen(cmd);
+	cca = Carray;
+	if (show && !len)
+		for (; i < Cnum; ++i, cca += Csize)
+			pout(*cca, TRUE);
+	else
+		for (; i < Cnum && (rc = strncasecmp(*cca, cmd, len)) <= 0;
+				++i, cca += Csize)
+			if (rc == 0) {
+				if (show)
+					pout(*cca, TRUE);
+				else if (mstr) {
+					Cret = -1;
+					len1 = nmatch(mstr, *cca);
+				} else {
+					Cret = i;
+					len1 = strlen(mstr = *cca);
+				}
+			}
+
+	if (show)
+		return;
+
+	if (mstr) {
+		if (len == len1) {
+			/* Help!!!!*/
+			pclear();
+			pcmdplete(TRUE);
+			dline(p_col ? ++p_row : p_row);
+			return;
+		}
+		strncpy(cmd, mstr, len1);
+		cmd[len1] = '\0';
+		makepaw(cmd, FALSE);
+	} else
+		tbell();
+}
+
 /* Use instead of Zinsert when in PAW */
 void pinsert(void)
 {
@@ -220,11 +223,8 @@ void pinsert(void)
 	struct mark tmark;
 	int width;
 
-	if (Cmd == '?' && Cnum) {
-		/* Help!!!!*/
-		pclear();
-		pcmdplete(TRUE);
-		dline(p_col ? ++p_row : p_row);
+	if (Cmd == '\t' && Cnum) {
+		pcmdplete(FALSE);
 		return;
 	}
 
@@ -247,24 +247,6 @@ void pinsert(void)
 			bdelete(width);
 		}
 		bpnttomrk(&tmark);
-
-		if (Cnum)
-			switch (pcmdplete(FALSE)) {
-			case 0:		/* no match - remove char */
-				bmove(-1);
-				bdelete(1);
-				if (Paw->bmode & OVERWRITE) {
-					binsert(savech);
-					bmove(-1);
-				}
-				break;
-			case 1:		/* partial match */
-				break;
-			case 2:		/* full match */
-				if (VAR(VEXECONMATCH))
-					InPaw = FALSE;
-				break;
-			}
 	} else
 		tbell();
 }

@@ -796,7 +796,7 @@ void Zarg(void)
 }
 
 
-/* voidess Meta (ESC) commands. */
+/* Process Meta (ESC) commands. */
 void Zmeta(void)
 {
 	Boolean tmp;
@@ -808,7 +808,7 @@ void Zmeta(void)
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
-/* voidess ^X commands. */
+/* Process ^X commands. */
 void Zctrlx(void)
 {
 	Boolean tmp;
@@ -820,7 +820,7 @@ void Zctrlx(void)
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
-/* voidess the M-X command */
+/* Process the M-X command */
 void Zmetax(void)
 {
 	int rc = getplete("M-X: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);

@@ -65,8 +65,8 @@
 #define ZNXTBOOKMRK	45
 #define ZNXTOTHRWIND	46
 #define ZQUIT		47
-#define ZOPENLINE	48
-#define ZOVERIN		49
+#define ZOVERIN		48
+#define ZOPENLINE	49
 #define ZPREVCHAR	50
 #define ZPREVLINE	51
 #define ZPREVOTHRWIND	52

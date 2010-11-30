@@ -46,12 +46,12 @@ static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 #endif
 #endif
 
-size_t Clrcol[ROWMAX + 1];	/* Clear if past this */
+int Clrcol[ROWMAX + 1];		/* Clear if past this */
 
-int Prow, Pcol;				/* Point row and column */
-int Srow, Scol;				/* saved row and column */
-size_t Colmax, Rowmax;			/* Row and column maximums */
-int Tstart;					/* Start column and row */
+int Prow, Pcol;			/* Point row and column */
+int Srow, Scol;			/* saved row and column */
+int Colmax, Rowmax;		/* Row and column maximums */
+int Tstart;			/* Start column and row */
 
 #ifndef XWINDOWS
 #ifdef SIGWINCH

@@ -84,11 +84,10 @@ extern unsigned Cmdpushed, Cmdstack[];
 
 
 /* terminal variables */
-/* SAM Why must be byte??? */
-extern size_t Clrcol[ROWMAX + 1];	/* Clear if past this - must be Byte */
+extern int Clrcol[ROWMAX + 1];		/* Clear if past this - must be Byte */
 extern int Prow, Pcol;			/* Point row and column */
 extern int Srow, Scol;			/* saved row and column */
-extern size_t Colmax, Rowmax;		/* Row and column maximums */
+extern int Colmax, Rowmax;		/* Row and column maximums */
 extern int Tstart;			/* Start column and row */
 extern int Tlrow;			/* Last row displayed (-1 for none) */
 

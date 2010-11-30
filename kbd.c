@@ -110,23 +110,22 @@ static void tungetkb(void)
 int tkbrdy(void)
 {
 #ifdef LINUX
-	static struct pollfd stdin_fd = {
-		.fd = 1,
-		.events = POLLIN
-	};
+	struct pollfd stdin_fd;
 
 	if (cpushed || Pending)
 		return TRUE;
 
-	Pending = poll(&stdin_fd, 1, 0);
-	return Pending;
+	stdin_fd.fd = 1;
+	stdin_fd.events = POLLIN;
+	return Pending = poll(&stdin_fd, 1, 0);
 #else
 	static struct timeval poll = { 0, 0 };
 	int fds = 1;
 
-	return cpushed ||
-		(Pending ? Pending :
-		 (Pending = select(1, (fd_set *)&fds, NULL, NULL, &poll)));
+	if (cpushed || Pending)
+		return TRUE;
+
+	return Pending = select(1, (fd_set *)&fds, NULL, NULL, &poll);
 #endif
 }
 #endif /* !XWINDOWS */

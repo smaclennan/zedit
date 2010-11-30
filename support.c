@@ -64,8 +64,10 @@ Boolean delayprompt(char *msg)
 
 Boolean delay(void)
 {
-	static struct pollfd ufd = { .fd = 1, .events = POLLIN };
+	struct pollfd ufd;
 
+	ufd.fd = 1;
+	ufd.events = POLLIN;
 	return InPaw || tkbrdy() || poll(&ufd, 1, 1000) == 1 ? 1 : 0;
 }
 

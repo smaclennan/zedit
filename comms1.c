@@ -107,7 +107,7 @@ void loadsaved(void)
 
 	/* load the buffers */
 	strcpy(save, Lbufname);
-	while (fscanf(fp, "%c %s %s %lu %lu %u\n",
+	while (fscanf(fp, "%c %s %s %lu %lu %d\n",
 			&ch, bname, fname, &ploc, &mloc, &mode) == 6 &&
 	       ch == 'B') {
 #if COMMENTBOLD
@@ -131,7 +131,7 @@ void loadsaved(void)
 	}
 
 	/* load the windows */
-	while (fscanf(fp, "W %s %lu %lu %lu %u\n",
+	while (fscanf(fp, "W %s %lu %lu %lu %d\n",
 		bname, &ploc, &mloc, &sloc, &mode) == 5)
 			wload(bname, ploc, mloc, sloc, mode);
 

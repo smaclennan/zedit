@@ -442,11 +442,11 @@ struct buff *cfindbuff(char *bname)
 /* Return a pointer to the start of the last part of fname */
 char *lastpart(char *fname)
 {
-	char *sp;
-
-	for (sp = fname + strlen(fname) - 1; sp >= fname && *sp != '/'; --sp)
-		;
-	return ++sp;
+	char *p = strrchr(fname, '/');
+	if (p)
+		return p + 1;
+	else
+		return fname;
 }
 
 static void usage(char *prog)

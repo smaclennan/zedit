@@ -117,7 +117,7 @@ int tkbrdy(void)
 
 	stdin_fd.fd = 1;
 	stdin_fd.events = POLLIN;
-	return Pending = poll(&stdin_fd, 1, 0);
+	return Pending = poll(&stdin_fd, 1, 0) == 1;
 #else
 	static struct timeval poll = { 0, 0 };
 	int fds = 1;

@@ -66,9 +66,12 @@ Boolean delay(void)
 {
 	struct pollfd ufd;
 
+	if (InPaw || tkbrdy())
+		return FALSE;
+
 	ufd.fd = 1;
 	ufd.events = POLLIN;
-	return InPaw || tkbrdy() || poll(&ufd, 1, 1000) == 1 ? 1 : 0;
+	return poll(&ufd, 1, 1000) != 1;
 }
 
 #else

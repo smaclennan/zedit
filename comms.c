@@ -797,6 +797,11 @@ void Zarg(void)
 
 
 /* Process Meta (ESC) commands. */
+/* Note: The delayprompt for Zmeta doesn't work. The tgetkb in Tgetcmd
+ * reads the ESC, but matches it in the term entries. It then waits
+ * for a second key. This means we do not get to the Zmeta without a
+ * key waiting and therefore the delayprompt exits immediately. It is
+ * left in for when we add a timeout to the read in tgetkb. */
 void Zmeta(void)
 {
 	Boolean tmp;

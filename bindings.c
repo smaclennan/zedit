@@ -239,14 +239,13 @@ static Boolean bindfile(char *fname, int mode)
 	Curbuff->bmode = NORMAL;
 	Curwdo->modeflags = INVALID;
 	if (mode == WRITE_MODE) {
-		write(fd, "01", 2);
-		if (write(fd, (char *)Keys, 510) != 510)
+		if (write(fd, "01", 2) != 2 ||
+		    write(fd, (char *)Keys, 510) != 510)
 			error("Unable to Write Bindings File");
 		else
 			rc = TRUE;
 	} else {
-		read(fd, version, 2);
-		if (*version != '0')
+		if (read(fd, version, 2) != 2 || *version != '0')
 			error("Incompatible Bindings File");
 		else if (read(fd, (char *)Keys, NUMKEYS) == -1)
 			error("Unable to Read Bindings File");

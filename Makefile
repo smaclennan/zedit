@@ -1,9 +1,13 @@
-.PHONY: all clean zedit xzedit zedit3d
+.PHONY: all clean zedit xzedit
 
 ZEXE = ze
-CC ?= gcc
+CC = gcc
 CFLAGS += -O3 -Wall -g $(CDEFS)
 CFLAGS += -pedantic
+
+# For dependencies
+CFLAGS += -Wp,-MD,$(@D)/.$(@F).d
+
 MFLAGS += -rR --no-print-directory
 
 #LIBS=-lncurses
@@ -23,41 +27,19 @@ XFILES= $D/xinit.o $D/xwind.o $D/xscroll.o $D/xdbg.o $D/xzoom.o
 
 #################
 
-# Default to quiet
-quiet = quiet_
+#
+# Pretty print - "borrowed" from sparse Makefile
+#
+V	      = @
+Q	      = $(V:1=)
+QUIET_CC      = $(Q:@=@echo    '     CC       '$@;)
+QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 
-# make V=1 shows all commands
-ifdef V
-  ifeq ("$(origin V)", "command line")
-	quiet=
-  endif
-endif
+$D/%.o: %.c
+	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
 
-# make -s is completely silent
-ifneq ($(findstring s,$(MAKEFLAGS)),)
-  quiet=silent_
-endif
-
-echo-cmd = $(if $($(quiet)cmd_$(1)),echo '  $($(quiet)cmd_$(1))';)
-
-quiet_cmd_cc = CC $<
-cmd_cc = $(CC) $(CFLAGS) -c -o $@ $<
-do_cc = @$(call echo-cmd,cc) $(cmd_cc)
-
-cmd_dep = $(CC) -M -MM -MT $@ $(CFLAGS) -o .$<.dep $<
-do_dep = @$(call echo-cmd,dep) $(cmd_dep)
-
-quiet_cmd_link = LD $@
-cmd_link = $(CC) -o $D/$@ $+ $(LIBS)
-do_link = @$(call echo-cmd,link) $(cmd_link)
-
-quiet_cmd_strip = STRIP $@
-cmd_strip = $(CROSS_COMPILE)strip $D/$@
-do_strip = @$(call echo-cmd,strip) $(cmd_strip)
-
-# No quiet for tags
-cmd_tags = etags $+
-do_tags =  @$(call echo-cmd,tags) $(cmd_tags)
+$D/%.o : X/%.c
+	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
 
 #################
 
@@ -66,13 +48,6 @@ ifneq ($(ARCH),)
 SUFFIX="-$(ARCH)"
 CDEFS="-DMINCONFIG"
 endif
-
-$D/%.o : %.c
-	$(do_dep)
-	$(do_cc)
-
-$D/%.o : X/%.c
-	$(do_cc)
 
 # WARNING: Full dependencies only work for one target and do not catch
 # X/*.c files
@@ -92,7 +67,7 @@ xzedit:
 		x$(ZEXE)
 
 $(ZEXE): $(FILES)
-	$(do_link)
+	$(QUIET_LINK)$(CC) -o $D/$@ $+ $(LIBS)
 ifeq ($(ARCH),)
 	@rm -f ./ze
 	@ln -s zo/ze ./ze
@@ -118,4 +93,4 @@ clean:
 	rm -f *.o */*.o .*.dep ze xze xkey zfont core* TAGS
 	rm -rf zo*
 
-include $(wildcard .*.dep)
+include $(wildcard .*.o.d)

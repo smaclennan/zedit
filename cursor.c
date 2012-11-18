@@ -100,10 +100,10 @@ void Znextchar(void)
 
 void Zprevpage(void)
 {
-	int i, n, col = forcecol();
+	int i, col = forcecol();
 
 	bpnttomrk(Sstart);
-	for (n = i = wheight() - prefline() - 2; i > 0 && bcrsearch(NL); --i)
+	for (i = wheight() - prefline() - 2; i > 0 && bcrsearch(NL); --i)
 		i -= bgetcol(TRUE, 0) / tmaxcol();
 	bmakecol(col, FALSE);
 	reframe();

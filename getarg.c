@@ -219,7 +219,6 @@ static void pcmdplete(Boolean show)
 /* Use instead of Zinsert when in PAW */
 void pinsert(void)
 {
-	char savech;
 	struct mark tmark;
 	int width;
 
@@ -236,7 +235,6 @@ void pinsert(void)
 
 	width = twidth(Cmd);
 	if (bgetcol(FALSE, 0) + width <= Pawlen) {
-		savech = Buff();	/* in case overwrite mode */
 		Zinsert();
 
 		bmrktopnt(&tmark);

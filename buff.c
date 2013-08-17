@@ -40,6 +40,18 @@ static void freepage(struct buff *tbuff, struct page *page);
 static Boolean pagesplit();
 static Boolean xbput(int fd, Byte *addr, unsigned len);
 
+void bfini(void)
+{
+	Curbuff = NULL;
+
+	bdelbuff(Killbuff);
+	bdelbuff(Paw);
+
+	while (Bufflist)
+		/* bdelbuff will update Bufflist */
+		bdelbuff(Bufflist);
+}
+
 /* Copy from Point to tmark to tbuff. Returns number of bytes
  * copied. Caller must handle undo. */
 int bcopyrgn(struct mark *tmark, struct buff *tbuff)
@@ -113,10 +125,8 @@ struct buff *bcreate(void)
 	struct buff *new;
 	struct page *fpage;
 
-	new = (struct buff *)malloc(sizeof(struct buff));
+	new = calloc(1, sizeof(struct buff));
 	if (new) {
-		/* initialize before newpage call! */
-		memset(new, 0, sizeof(struct buff));
 		fpage = newpage(new, NULL, NULL);
 		if (!fpage) {
 			/* bad news, de-allocate */
@@ -938,14 +948,13 @@ void unmark(struct mark *mptr)
 static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage)
 {
-	struct page *new = malloc(sizeof(struct page));
+	struct page *new = calloc(1, sizeof(struct page));
 
 	if (new) {
 		new->nextp = npage;
 		new->prevp = ppage;
 		npage ? (npage->prevp = new) : (tbuff->lastp = new);
 		ppage ? (ppage->nextp = new) : (tbuff->firstp = new);
-		new->plen  = 0;
 		new->lines = EOF;	/* undefined */
 		++NumPages;
 	}

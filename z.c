@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 
 	setup(argc, argv);
 	edit();
-	tfini();
+	cleanup();
 
 	exit(ExitStatus);
 }
@@ -280,6 +280,12 @@ static void setup(int argc, char **argv)
 #endif
 }
 
+void cleanup(void)
+{	/* Mainly for valgrind */
+	tfini();
+	vfini();
+	bfini();
+}
 
 /* Read one file, creating the buffer is necessary.
  * Returns FALSE if unable to create buffer only.

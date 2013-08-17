@@ -586,6 +586,7 @@ void quit(void)
 		save(Curbuff);
 	Exitflag = TRUE;
 	tfini();
+	cleanup();
 
 	exit(0);
 }

@@ -360,7 +360,7 @@ int pathfixup(char *to, char *from)
 Boolean isdir(char *path)
 {
 	struct stat sbuf;
-	return stat(path, &sbuf) == 0 && (sbuf.st_mode & S_IFDIR);
+	return path && stat(path, &sbuf) == 0 && (sbuf.st_mode & S_IFDIR);
 }
 
 Boolean isfile(char *path, char *dir, char *fname, Boolean must)

@@ -147,7 +147,7 @@ void readvfile(void)
 
 
 	/* If ConfigDir is really a file, read the file and set to 0. */
-	if (!isdir(ConfigDir)) {
+	if (ConfigDir && !isdir(ConfigDir)) {
 		readconfigfile(ConfigDir);
 		ConfigDir = NULL;
 	}
@@ -397,4 +397,14 @@ void Zsaveconfig(void)
 
 	fclose(fp);
 	echo("saved.");
+}
+
+void vfini(void)
+{
+	int i;
+
+	for (i = 0; i < NUMVARS; ++i)
+		if (Vars[i].vtype == STRING)
+			if (VARSTR(i))
+				free(VARSTR(i));
 }

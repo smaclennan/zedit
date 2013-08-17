@@ -107,12 +107,6 @@ void Zrincsrch(void)
 
 void Zsearch(void)
 {
-#if defined(XWINDOWS) && defined(POPTARTS)
-	if (Argp) {
-		popupsearch();
-		return;
-	}
-#endif
 	promptsearch("Search: ", FORWARD);
 }
 
@@ -266,15 +260,10 @@ static Boolean replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
 		found = TRUE;
 		if (*query) {
 replace:
-#if defined(XWINDOWS) && defined(POPTARTS)
-input:
-			switch (tchar = GetQueryCmd(tchar))
-#else
 			echo("Replace? ");
 			refresh();
 input:
 			switch (tchar = tgetcmd()) {
-#endif
 				case ' ':
 				case ',':	/* handled later */
 				case 'Y':
@@ -378,9 +367,6 @@ input:
 			*exit = TRUE;
 	}
 	unmark(prevmatch);
-#if defined(XWINDOWS) && defined(POPTARTS)
-	QueryDone();
-#endif
 	return found;
 }
 

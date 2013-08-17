@@ -63,7 +63,7 @@ void Zzoom(void)
 	Zredisplay();
 }
 
-/* This routine returns the absolure and relative positions of the window.
+/* This routine returns the absolute and relative positions of the window.
  * The absolute is the top-left corner of the Zroot window.
  * The relative is the top-left corner including the WM decorations.
  * A negative value means the window is off the screen.
@@ -74,29 +74,20 @@ static int getwindowposition(Window window, int *absx, int *absy,
 			     int *relx, int *rely)
 {
 	XWindowAttributes win_attr;
-	XVisualInfo vistemplate, *vinfo;
 	XSizeHints hints;
-	int rx, ry, xright, ybelow;
+	int rx, ry;
 	Window wmframe;
-	int  junk;
 	long longjunk;
 	Window junkwin;
-	int dw = DisplayWidth(display, screen);
-	int dh = DisplayHeight(display, screen);
 
 	if (!XGetWindowAttributes(display, window, &win_attr)) {
 		error("Can't get window attributes.");
 		return 0;
 	}
-	vistemplate.visualid = XVisualIDFromVisual(win_attr.visual);
-	vinfo = XGetVisualInfo(display, VisualIDMask, &vistemplate, &junk);
 	XTranslateCoordinates(display, window, win_attr.root,
 			      -win_attr.border_width,
 			      -win_attr.border_width,
 			      &rx, &ry, &junkwin);
-
-	xright = dw - rx - win_attr.border_width * 2 - win_attr.width;
-	ybelow = dh - ry - win_attr.border_width * 2 - win_attr.height;
 
 	/* save the absolute values */
 	*absx = rx;

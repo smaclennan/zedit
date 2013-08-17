@@ -3,7 +3,7 @@
 ZEXE = ze
 CC = gcc
 CFLAGS += -O3 -Wall -g $(CDEFS)
-CFLAGS += -pedantic
+#CFLAGS += -pedantic
 
 # For dependencies
 CFLAGS += -Wp,-MD,$(@D)/.$(@F).d
@@ -76,9 +76,7 @@ else
 endif
 
 x$(ZEXE): $(FILES) $(XFILES)
-	$(do_link)
-	@rm -f ./xze
-	@ln -s zox/xze ./xze
+	$(QUIET_LINK)$(CC) -o $@ $+ $(LIBS)
 
 xkey:	utils/xkey.c
 	$(CC) -Wall -o xkey utils/xkey.c -lX11

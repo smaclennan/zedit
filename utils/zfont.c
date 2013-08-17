@@ -62,3 +62,10 @@ int main(int  argc, char *argv[])
 	pclose(pfp);
 	return 0;
 }
+
+
+/*
+ * Local Variables:
+ * compile-command: "gcc -O3 -Wall zfont.c -o zfont -lX11"
+ * End:
+ */

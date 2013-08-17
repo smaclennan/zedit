@@ -111,3 +111,9 @@ int main(int  argc, char *argv[])
 		}
 	}
 }
+
+/*
+ * Local Variables:
+ * compile-command: "gcc -O3 -Wall xkey.c -o xkey -lX11"
+ * End:
+ */

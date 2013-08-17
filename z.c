@@ -51,17 +51,10 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-#ifdef MEMLOG
-	loginit("/tmp/malloc");
-#endif
-
 	setup(argc, argv);
 	edit();
 	tfini();
 
-#ifdef MEMLOG
-	logfini();
-#endif
 	exit(ExitStatus);
 }
 

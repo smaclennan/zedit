@@ -360,18 +360,6 @@ void wswitchto(struct wdo *wdo);
 void wsize(void);
 Boolean wuseother(char *);
 
-#ifdef MEMLOG
-void loginit(char *);
-void logfini(void);
-char *logmalloc(unsigned, char *, unsigned);
-char *logdup(char *, char *, unsigned);
-void logfree(char *, char *, unsigned);
-
-#define malloc(n)		logmalloc((n), __FILE__, __LINE__)
-#define strdup(m)		logdup((m), __FILE__, __LINE__)
-#define free(m)			logfree((m), __FILE__, __LINE__)
-#endif
-
 #if COMMENTBOLD
 void addcomment(void);
 void resetcomments(void);

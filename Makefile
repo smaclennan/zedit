@@ -3,7 +3,7 @@
 ZEXE = ze
 CC = gcc
 CFLAGS += -O3 -Wall -g $(CDEFS)
-#CFLAGS += -pedantic
+CFLAGS += -pedantic
 
 #LIBS=-lncurses
 

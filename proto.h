@@ -291,20 +291,12 @@ void tcleol(void);
 void tclrwind(void);
 void termsize(void);
 void tfini(void);
-#ifdef XWINDOWS
-void tflush(void);
-#else
 void tforce(void);
-#endif
 int tgetcmd(void);
 Byte tgetkb(void);
 void tgoto(int, int);
 void tindent(int);
-#ifdef XWINDOWS
-void tinit(int, char **);
-#else
 void tinit(void);
-#endif
 void titot(unsigned);
 int tkbrdy(void);
 void tobegline(void);
@@ -326,10 +318,8 @@ Boolean notdup_key(int k);
 void quit(void);
 
 /* Terminal driver specific routines */
-#ifndef XWINDOWS
 void tlinit(void);
 void tlfini(void);
-#endif
 
 /* compile switched routines */
 void message(struct buff *, char *);

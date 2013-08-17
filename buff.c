@@ -1075,8 +1075,5 @@ static Boolean xbput(int fd, Byte *addr, unsigned len)
 void Zstat(void)
 {
 	sprintf(PawStr, "Buffers: %d   Pages: %d", Numbuffs, NumPages);
-#ifdef XWINDOWS
-	addwindowsizes(PawStr + strlen(PawStr));
-#endif
 	echo(PawStr);
 }

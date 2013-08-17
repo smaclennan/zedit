@@ -77,7 +77,6 @@ char *setmodes(struct buff *buff)
 	return PawStr;
 }
 
-#ifndef XWINDOWS
 /* This is called before the windows are created */
 void initline(void)
 {
@@ -156,4 +155,3 @@ void modeflags(struct wdo *wdo)
 	tstyle(T_NORMAL);
 	tgoto(trow, tcol);
 }
-#endif

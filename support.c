@@ -18,6 +18,8 @@
  */
 
 #include "z.h"
+#include <sys/time.h>
+#include <sys/poll.h>
 
 /* ask Yes/No question.
  * Returns YES, NO, or ABORT
@@ -58,10 +60,6 @@ Boolean delayprompt(char *msg)
 	return rc;
 }
 
-#ifndef XWINDOWS
-#include <sys/time.h>
-#include <sys/poll.h>
-
 Boolean delay(void)
 {
 	struct pollfd ufd;
@@ -73,23 +71,6 @@ Boolean delay(void)
 	ufd.events = POLLIN;
 	return poll(&ufd, 1, 1000) != 1;
 }
-
-#else
-
-Boolean delay(void)
-{
-	long t;
-
-	if (InPaw)
-		return FALSE;
-	t = time((long *)0) + 2;	/* at least 1 second */
-	do
-		if (tkbrdy())
-			return FALSE;
-	while (time(NULL) < t);
-	return TRUE;
-}
-#endif
 
 /* Was the last command a delete to kill buffer command? */
 Boolean delcmd(void)
@@ -107,7 +88,6 @@ Boolean delcmdall(void)
 
 char PawStr[COLMAX + 10];
 
-#ifndef XWINDOWS
 /*
 Put a string into the PAW.
 type is:	0 for echo			echo()		macro
@@ -133,8 +113,6 @@ void putpaw(char *str, int type)
 			tgetcmd();
 	}
 }
-#endif
-
 
 /* echo 'str' to the paw and as the filename for 'buff' */
 void message(struct buff *buff, char *str)
@@ -297,48 +275,6 @@ int rename(char *from, char *to)
 	if (rc == 0)
 		unlink(from);
 	return rc;
-}
-#endif
-
-#ifdef XWINDOWS
-/* Move the buffer point to an absolute row, col */
-void pntmove(int row, int col)
-{
-	struct wdo *wdo;
-	int i;
-
-	if (InPaw) {
-		/* Can't move out of paw */
-		if (row != Rowmax - 1 || col < Pawcol)
-			tbell();
-		else {
-			col = bmakecol(col - Pawcol, FALSE);
-			tsetpoint(Rowmax - 1, col);
-		}
-		return;
-	}
-
-	/* don't move Point into Paw or mode row */
-	for (wdo = Whead; wdo; wdo = wdo->next)
-		if (row >= wdo->first && row < wdo->last) {
-			/* find offset in window */
-			for (i = wdo->first; i < row; ++i) {
-				wswitchto(wdo);
-				bpnttomrk(&Scrnmarks[i]);
-				if (bisend()) {
-					/* at end of buffer - stop */
-					if (i > wdo->first)
-						--i;
-					col = Colmax;
-					break;
-				}
-			}
-			bpnttomrk(&Scrnmarks[i]);
-			col = bmakecol(col, FALSE);
-			tsetpoint(i, col);
-			return;
-		}
-	tbell();
 }
 #endif
 

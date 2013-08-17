@@ -195,9 +195,6 @@ void wswitchto(struct wdo *wdo)
 		mrktomrk(Curbuff->mark, wdo->wmrk);
 		mrktomrk(Sstart, wdo->wstart);
 		Sendp = FALSE;
-#ifdef XWINDOWS
-		xswitchto(wdo->wbuff->bname);
-#endif
 	}
 	Curwdo->modeflags = INVALID;
 }
@@ -223,9 +220,6 @@ void cswitchto(struct buff *buff)
 		settabsize(buff->bmode);
 	}
 
-#ifdef XWINDOWS
-		xswitchto(buff->bname);
-#endif
 }
 
 /* Local routine to change the current window by 'size' lines */

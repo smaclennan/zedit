@@ -48,7 +48,7 @@ int _putchar(int);
 int _putchar(char);
 #endif
 
-#if defined(TERMINFO)
+#ifdef TERMINFO
 #define TPUTS(s)		tputs(s, 1, _putchar)
 #elif defined(ANSI)
 #define TPUTS(s)		fputs(s, stdout)
@@ -64,14 +64,10 @@ extern int Tabsize;
 #define bwidth(ch, col)		chwidth(ch, col, TRUE)
 #define sindent(arg)		while (arg-- > 0) binsert(' ')
 
-#ifdef XWINDOWS
-#define tforce()
-#else
 #define showcursor(x)
 #define showmark(x)
 #define tputchar(c)		putchar(c)
 #define tflush()		fflush(stdout)
-#endif
 
 extern unsigned Cmdpushed, Cmdstack[];
 #define POPCMD()		Cmdstack[--Cmdpushed]

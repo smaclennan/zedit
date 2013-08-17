@@ -36,14 +36,11 @@
 #endif
 
 /* SCREEN DRIVER - define only one.
- * XWINDOWS should be set automagically.
  * Unless you are running on an ancient dumb terminal, you probably want ANSI.
  * Linux wants ANSI, trust me on this ;)
  */
-#ifndef XWINDOWS
 #define ANSI
 /* #define TERMINFO */
-#endif
 
 /* USER CONFIGURABLE - don't define any, see if I care */
 #define DBG		1		/* turn debugs on */
@@ -70,8 +67,4 @@
 #endif
 #if defined(HELP) || defined(SHELL) || defined(SPELL) || defined(TAGS)
 #define PIPESH
-#elif defined(XWINDOWS)
-/* X always needs these */
-#define PIPESH
-#define SHELL
 #endif

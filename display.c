@@ -121,7 +121,6 @@ void refresh(void)
 		col = 0;
 	tgoto(pntrow, col + Tstart);
 
-#ifndef XWINDOWS
 	/*
 	 * If we display the cursor on the mark, they both disappear.
 	 * This code checks for this case: if true it removes the mark
@@ -134,7 +133,6 @@ void refresh(void)
 		tgoto(pntrow, col + Tstart);
 		was->moffset = PSIZE + 1; /* Invalidate it */
 	}
-#endif
 
 	modeflags(Curwdo);
 	setmodes(Curbuff);	/* displaying other windows can blow modes */
@@ -333,9 +331,8 @@ void vsetmrk(struct mark *mrk)
 static void pawdisplay(struct mark *pmark, struct mark *was)
 {
 	int bcol = 0, i, nested = 0;
-#ifndef XWINDOWS
 	Boolean mrkmoved = !mrkatmrk(was, Curbuff->mark);
-#endif
+
 	Prow = Rowmax - 1;
 pawshift:
 	btostart(); bmove(Pshift);
@@ -344,15 +341,6 @@ pawshift:
 	     bmove1(), ++i) {
 		if (bisatmrk(pmark))
 			bcol = Pcol;
-#ifdef XWINDOWS
-		if (bisatmrk(Curbuff->mark)) {
-			setmark(TRUE);
-			tline[i] = Buff();
-		} else if (bisatmrk(was)) {
-			tprntchar(Buff());
-			tline[i] = Buff();
-		}
-#else
 		if (mrkmoved && (bisatmrk(Curbuff->mark) || bisatmrk(was))) {
 			if (bisatmrk(Curbuff->mark))
 				tstyle(T_REVERSE);
@@ -360,7 +348,6 @@ pawshift:
 			tstyle(T_NORMAL);
 			tline[i] = Buff();
 		}
-#endif
 		else if (tline[i] == Buff())
 			Pcol += chwidth(Buff(), 0, 0);
 		else {
@@ -404,7 +391,6 @@ pawshift:
 	bpnttomrk(pmark);
 	mrktomrk(was, Curbuff->mark);
 
-#ifndef XWINDOWS
 	/*
 	 * If we display the cursor on the mark, they both disappear.
 	 * This code checks for this case: if true it removes the mark
@@ -417,7 +403,6 @@ pawshift:
 		Pcol = i;
 		was->moffset = PSIZE + 1;		/* Invalidate it */
 	}
-#endif
 
 	unmark(pmark);
 	--NESTED;

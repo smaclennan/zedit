@@ -97,11 +97,6 @@ struct wdo {
 	int	first, last;		/* screen line boundries */
 	int	modecol;		/* column for modeflags */
 	int	modeflags;		/* flags for modeflags */
-#ifdef XWINDOWS
-	unsigned vscroll, vthumb;	/* windows for vert scrollbar */
-	int      vheight;		/* height of vert scrollbar */
-	unsigned hscroll, hthumb;	/* windows for horiz scrollbar */
-#endif
 	struct wdo	*prev, *next;
 };
 

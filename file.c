@@ -71,9 +71,6 @@ void Zrevertfile(void)
 	offset = blocation(NULL);
 	breadfile(Curbuff->fname);
 	boffset(offset);
-#ifdef XWINDOWS
-	Zredisplay();
-#endif
 }
 
 Boolean findfile(char *path, int startup)

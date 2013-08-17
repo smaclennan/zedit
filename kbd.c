@@ -29,7 +29,6 @@
 
 unsigned Cmdpushed, Cmdstack[10];	/* stack and vars for T[un]getcmd */
 
-#ifndef XWINDOWS
 unsigned Key_mask;
 char *Term;
 
@@ -128,4 +127,3 @@ int tkbrdy(void)
 	return Pending = select(1, (fd_set *)&fds, NULL, NULL, &poll);
 #endif
 }
-#endif /* !XWINDOWS */

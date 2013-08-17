@@ -587,10 +587,6 @@ void quit(void)
 	Exitflag = TRUE;
 	tfini();
 
-#ifdef XWINDOWS
-	closesockets();
-#endif
-
 	exit(0);
 }
 
@@ -919,6 +915,4 @@ void toendline(void)
 		bmove(-1);
 }
 
-#ifndef XWINDOWS
 void Zzoom(void)	{ tbell(); }
-#endif

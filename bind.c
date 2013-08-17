@@ -181,7 +181,6 @@ void bind(void)
 	Keys[256 + 'Z'] = Keys[256 + 'z'] = ZEXIT;		/* C-X Z */
 	Keys[256 + '^'] = ZGROWWINDOW;				/* C-X ^ */
 
-#ifndef XWINDOWS
 	Keys[TC_UP]	= ZPREVLINE;
 	Keys[TC_C_UP]	= ZPREVPAGE;
 
@@ -218,66 +217,4 @@ void bind(void)
 	Keys[TC_F10]	= ZNXTBOOKMRK;
 	/* Keys[TC_F11] = ; */
 	Keys[TC_F12]	= ZREVERTFILE;
-#endif
-
-#ifdef XWINDOWS
-	Keys[ZXK_Home]		= ZBEGLINE;
-	Keys[ZXK_CHome]		= ZTOSTART;
-	Keys[ZXK_SHome]		= ZBEGWIND;
-
-	Keys[ZXK_End]		= ZENDLINE;
-	Keys[ZXK_CEnd]		= ZTOEND;
-	Keys[ZXK_SEnd]		= ZENDWIND;
-
-	Keys[ZXK_Up]		= ZPREVLINE;
-	Keys[ZXK_CUp]		= ZPREVPAGE;
-/*	Keys[ZXK_SUp]		= ; */
-
-	Keys[ZXK_Down]		= ZNEXTLINE;
-	Keys[ZXK_CDown]		= ZNEXTPAGE;
-/*	Keys[ZXK_SDown]		= ; */
-
-	Keys[ZXK_Left]		= ZPREVCHAR;
-	Keys[ZXK_CLeft]		= ZBWORD;
-/*	Keys[ZXK_SLeft]		= ; */
-
-	Keys[ZXK_Right]		= ZNEXTCHAR;
-	Keys[ZXK_CRight]	= ZFWORD;
-/*	Keys[ZXK_SRight]	= ; */
-
-	Keys[ZXK_Prior]		= ZPREVPAGE;
-/*	Keys[ZXK_CPrior]	= ; */
-/*	Keys[ZXK_SPrior]	= ; */
-
-	Keys[ZXK_Next]		= ZNEXTPAGE;
-/*	Keys[ZXK_CNext]		= ; */
-/*	Keys[ZXK_SNext]		= ; */
-
-	Keys[ZXK_Begin]		= ZBEGLINE;
-	Keys[ZXK_Select]	= ZSETMRK;
-	Keys[ZXK_Print]		= ZPRINT;
-/*	Keys[ZXK_Execute]	= ; */
-	Keys[ZXK_Insert]	= ZOVERIN;
-/*	Keys[ZXK_Undo]		= ; */
-	Keys[ZXK_Redo]		= ZAGAIN;
-/*	Keys[ZXK_Menu]		= ; */
-	Keys[ZXK_Find]		= ZSEARCH;
-	Keys[ZXK_Cancel]	= ZABORT;
-	Keys[ZXK_Help]		= ZHELP;
-/*	Keys[ZXK_Break]		= ; */
-/*	Keys[ZXK_CBegin]	= ; */
-/*	Keys[ZXK_SBegin]	= ; */
-	Keys[ZXK_F1]		= ZFINDFILE;
-	Keys[ZXK_F2]		= ZSEARCH;
-	Keys[ZXK_F3]		= ZAGAIN;
-	Keys[ZXK_F4]		= ZSETMRK;
-/*	Keys[ZXK_F5]		= ; */
-	Keys[ZXK_F6]		= ZSETBOOKMRK;
-	Keys[ZXK_F7]		= ZMAKE;
-	Keys[ZXK_F8]		= ZGREP;
-/*	Keys[ZXK_F9]		= ; */
-/*	Keys[ZXK_F10]		= ; */
-/*	Keys[ZXK_F11]		= ; */
-/*	Keys[ZXK_F12]		= ; */
-#endif
 }

@@ -87,9 +87,6 @@ void delbuff(struct buff *buff)
 	if (strcmp(Lbufname, bname) == 0)
 		*Lbufname = '\0';
 	if (bdelbuff(buff)) {
-#ifdef XWINDOWS
-		xdeletebuffer(bname);
-#endif
 		delbname(bname);
 		if (wascur && *Lbufname) {
 			struct buff *tbuff = cfindbuff(Lbufname);

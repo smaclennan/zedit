@@ -56,10 +56,6 @@ extern struct passwd *Me;
 #include <time.h>
 #endif
 
-#ifdef XWINDOWS
-#include "xwind.h"
-#endif
-
 #define ZSTR	"Zedit"
 #define VERSION	"5 beta"
 #define ZFMT	"%s %s  (%s)  %s: "
@@ -251,11 +247,7 @@ extern int circf;
 
 #define echo(s)		putpaw(s, FALSE)
 #define error(s)	putpaw(s, TRUE)
-#ifdef XWINDOWS
-void clrecho(void);
-#else
 #define clrecho(void)	putpaw("", 2)
-#endif
 
 #include "proto.h"
 

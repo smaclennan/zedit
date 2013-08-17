@@ -29,9 +29,6 @@ struct buff *Paw, *Buff_save;
 static char **Carray;
 static int Csize, Cnum = 0, Cret;
 unsigned Nextpart = ZNOTIMPL;
-#ifdef XWINDOWS
-char *PromptString;
-#endif
 
 /* General purpose string argument input routine which recursively calls the
  * editor through the PAW buffer.
@@ -47,11 +44,6 @@ Boolean getarg(char *prompt, char *arg, int max)
 	int tcol, trow;
 
 	tcol = Pcol; trow = Prow;
-#ifdef XWINDOWS
-	/* We need this global so we can redisplay on an exposure event */
-	PromptString = prompt;
-	tstyle(T_NORMAL);		/* always display paw in normal */
-#endif
 	tgoto(tmaxrow() - 1 , 0);			/* display the prompt */
 	tprntstr(prompt);
 	Pawcol = Pcol = strlen(prompt); /* prompts are always simple ascii */
@@ -88,11 +80,6 @@ Boolean getarg(char *prompt, char *arg, int max)
 	Curwdo->modeflags = INVALID;
 	Curcmds = (Curbuff->bmode & VIEW) ? 1 : 0;
 	clrecho();
-#ifdef XWINDOWS
-	tflush();
-	showcursor(TRUE);
-	showcursor(FALSE);
-#endif
 	return rc;
 }
 

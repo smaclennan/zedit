@@ -76,7 +76,7 @@ static void edit(void)
 
 void execute(void)
 {
-#if defined(PIPESH) && !defined(XWINDOWS)
+#ifdef PIPESH
 	fd_set fds = SelectFDs;
 
 	refresh();
@@ -125,12 +125,7 @@ static void setup(int argc, char **argv)
 	char *progname;
 	int col = 0, arg, files = 0, textMode = 0;
 	struct buff *tbuff, *other = NULL;
-#ifdef XWINDOWS
-	Boolean Spawn = TRUE;
 
-	/* This MUST be called before any file IO */
-	xinit("zedit", &argc, argv);
-#endif
 	Me = dup_pwent(getpwuid(geteuid()));
 	if (!Me) {
 		Me = dup_pwent(getpwuid(getuid()));
@@ -195,11 +190,6 @@ static void setup(int argc, char **argv)
 		case 'l':
 			Argp = Arg = atoi(optarg);
 			break;
-#ifdef XWINDOWS
-		case 'n':
-			Spawn = FALSE;
-			break;
-#endif
 		case 'o':
 			col = atoi(optarg);
 			break;
@@ -229,12 +219,7 @@ static void setup(int argc, char **argv)
 	Paw->bname = PAWBUFNAME;
 	InPaw = FALSE;
 
-#ifdef XWINDOWS
-	xaddbuffer(MAINBUFF);
-	tinit(argc, argv);
-#else
 	tinit();
-#endif
 
 	REstart	= bcremrk();
 	Sstart	= bcremrk();
@@ -295,14 +280,7 @@ static void setup(int argc, char **argv)
 	if (col > 1)
 		bmakecol(col - 1, FALSE);
 
-#ifdef XWINDOWS
-	if (Spawn) {
-		if (fork() == 0)		/* fork off editor */
-			return;
-		exit(0);	/* kill parent */
-	}
-#elif defined(PIPESH)
-	/* For xwindows this is set in initSockets */
+#ifdef PIPESH
 	FD_ZERO(&SelectFDs);
 	FD_SET(1, &SelectFDs);
 	NumFDs = 2;
@@ -330,9 +308,6 @@ Boolean readone(char *bname, char *path)
 			else if (access(path, R_OK|W_OK) == EOF)
 				Curbuff->bmode |= VIEW;
 			strcpy(Lbufname, was->bname);
-#ifdef XWINDOWS
-			xaddbuffer(bname);
-#endif
 		} else { /* error */
 			delbname(Curbuff->bname);
 			bdelbuff(Curbuff);
@@ -452,15 +427,8 @@ char *lastpart(char *fname)
 static void usage(char *prog)
 {
 	printf(
-#ifdef XWINDOWS
-		"usage: %s [-hnt] [-c config_dir] [fname ... [-l#] [-o#]]\n"
-#else
 		"usage: %s [-ht] [-c config_dir] [fname ... [-l#] [-o#]]\n"
-#endif
 		"where:\t-h  displays this message.\n"
-#ifdef XWINDOWS
-		"\t-n  do not spawn window.\n"
-#endif
 		"\t-t  default to text mode.\n"
 		"\t-c  specifies a config dir.\n"
 		"\t-l  goto specified line number.\n"
@@ -481,13 +449,9 @@ void Zcwd(void)
 		p = strdup(path);
 		if (!p)
 			error("Not enough memory");
-		else if (chdir(p) == 0) {
+		else if (chdir(p) == 0)
 			Cwd = p;
-#ifdef XWINDOWS
-			if (VAR(VSHOWCWD))
-				newtitle(Cwd);
-#endif
-		} else
+		else
 			error("chdir failed.");
 	}
 }

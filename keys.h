@@ -17,10 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef XWINDOWS
-#include "xkeys.h"
-#else
-
 /*
 	The keys defined by TERMCAP
 	Don't change these without changing kbd.c
@@ -67,8 +63,6 @@ struct key_array {
 extern struct key_array Tkeys[];
 extern unsigned int Key_mask;
 extern char *Term;
-
-#endif
 
 #define K_NODEF			0xffff
 #define SPECIAL_START		384

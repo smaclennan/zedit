@@ -218,51 +218,39 @@ static void do_var_match(int i, char *vin)
 		if (*ptr)
 			setit(i, ptr);
 	}
-#ifdef XWINDOWS
-	if (i == VFONT) {
-		if (!display)
-			return;
-		if (!load_font_by_name(VARSTR(VFONT))) {
-			sprintf(PawStr, "Unknown font %s.",
-				VARSTR(VFONT));
-			error(PawStr);
-			return;
-		}
-	} else
-#endif
 
-		/* This block handles the Wordprocessing variables */
-		if (i == VFILLWIDTH || i == VMARGIN) {
-			/* Fillwidth must be > 0 */
-			if (VAR(VFILLWIDTH) == 0)
-				VAR(VFILLWIDTH) = 1;
-			/* Fillwidth must be greater than Margin */
-			if (VAR(VFILLWIDTH) <= VAR(VMARGIN)) {
-				if (i == VMARGIN)
-					VAR(VMARGIN) =
-						VAR(VFILLWIDTH) - 1;
-				else
-					VAR(VFILLWIDTH) =
-						VAR(VMARGIN) + 1;
-				}
-		} else if (i == VMAKE)
-			strcpy(mkcmd, VARSTR(i));
-		else if (i == VGREP)
-			strcpy(grepcmd, VARSTR(i));
-		else if (i == VCEXTS)
-			parsem(VARSTR(i), CMODE);
-		else if (i == VASEXTS)
-			parsem(VARSTR(i), ASMMODE);
-		else if (i == VASCHAR) {
-			/* set current buffer and redisplay */
+	/* This block handles the Wordprocessing variables */
+	if (i == VFILLWIDTH || i == VMARGIN) {
+		/* Fillwidth must be > 0 */
+		if (VAR(VFILLWIDTH) == 0)
+			VAR(VFILLWIDTH) = 1;
+		/* Fillwidth must be greater than Margin */
+		if (VAR(VFILLWIDTH) <= VAR(VMARGIN)) {
+			if (i == VMARGIN)
+				VAR(VMARGIN) =
+					VAR(VFILLWIDTH) - 1;
+			else
+				VAR(VFILLWIDTH) =
+					VAR(VMARGIN) + 1;
+		}
+	} else if (i == VMAKE)
+		strcpy(mkcmd, VARSTR(i));
+	else if (i == VGREP)
+		strcpy(grepcmd, VARSTR(i));
+	else if (i == VCEXTS)
+		parsem(VARSTR(i), CMODE);
+	else if (i == VASEXTS)
+		parsem(VARSTR(i), ASMMODE);
+	else if (i == VASCHAR) {
+		/* set current buffer and redisplay */
 #if COMMENTBOLD
-			Curbuff->comchar = *(char *)VARSTR(VASCHAR);
-			Zredisplay();
+		Curbuff->comchar = *(char *)VARSTR(VASCHAR);
+		Zredisplay();
 #endif
-		} else if (i == VSEXTS)
-			parsem(VARSTR(i), TCL);
-		else if (i == VTEXTS)
-			parsem(VARSTR(i), TEXT);
+	} else if (i == VSEXTS)
+		parsem(VARSTR(i), TCL);
+	else if (i == VTEXTS)
+		parsem(VARSTR(i), TEXT);
 }
 
 static void setavar(char *vin, Boolean display)

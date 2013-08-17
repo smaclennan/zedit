@@ -26,7 +26,6 @@
 #include <signal.h>
 #include <sys/wait.h>	/* need for WNOWAIT */
 
-#ifndef XWINDOWS
 #if defined(LINUX)
 #include <termios.h>
 static struct termios savetty;
@@ -44,7 +43,6 @@ static struct tchars setchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 static struct ltchars savelchars;
 static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 #endif
-#endif
 
 int Clrcol[ROWMAX + 1];		/* Clear if past this */
 
@@ -53,7 +51,6 @@ int Srow, Scol;			/* saved row and column */
 int Colmax, Rowmax;		/* Row and column maximums */
 int Tstart;			/* Start column and row */
 
-#ifndef XWINDOWS
 #ifdef SIGWINCH
 /* This is called if the window has changed size.
  * If Exitflag is set, we are not ready to update display yet.
@@ -236,7 +233,6 @@ void termsize(void)
 	if (Colmax > COLMAX)
 		Colmax = COLMAX;
 }
-#endif /* !XWINDOWS */
 
 void extendedlinemarker(void)
 {
@@ -362,7 +358,6 @@ int prefline(void)
 	return line < w ? line : w >> 1;
 }
 
-#ifndef XWINDOWS
 void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
@@ -413,4 +408,3 @@ int _putchar(char ch)
 }
 
 void newtitle(char *str) {}
-#endif /* !XWINDOWS */

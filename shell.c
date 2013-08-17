@@ -29,9 +29,7 @@ static int bufftopipe(struct buff *buff, char *cmd);
 static int pipetobuff(struct buff *buff, char *instr);
 
 /* Do one shell command to the screen */
-#ifdef XWINDOWS
-void Zcmd(void) { tbell(); }	/* no screen */
-#elif !defined(BSD)
+#if !defined(BSD)
 void Zcmd(void)
 {
 	char tb[STRMAX * 2];

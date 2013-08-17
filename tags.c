@@ -100,38 +100,6 @@ void Zfindtag(void)
 	Curwdo->modeflags = INVALID;
 }
 
-#ifdef XWINDOWS
-void xfindtag(void)
-{
-	char tag[STRMAX + 1], word[PATHMAX + 1];
-	struct mark smark;
-
-	/* do BEFORE switching buffer! */
-	Arg = 0;
-	getbword(tag, STRMAX, bistoken);
-	Bsave = Curbuff;
-	bmrktopnt(&smark);
-
-	if (!gettagsfile())
-		return;
-
-	echo("Looking...");
-	for (btostart(); !bisend(); bcsearch(NL)) {
-		getbword(word, STRMAX, bistoken);
-		if (strcmp(tag, word) == 0) {
-			/* found a match in the tag file */
-			gotomatch(&smark);
-			refresh();
-			return;
-		}
-	}
-	echo("Not found");
-	tbell();
-	bswitchto(Bsave);			/* go back to original buffer */
-	Curwdo->modeflags = INVALID;
-}
-#endif
-
 static void gotomatch(struct mark *smark)
 {
 	struct mark tmark;
@@ -149,8 +117,6 @@ static void gotomatch(struct mark *smark)
 /* Parse the line in the tag file and find the correct file and position. */
 static Boolean tagfparse(struct buff *bsave)
 {
-#if ETAGS
-#else
 	Boolean byte = 0, smatch = 0, ematch = 0, found;	/*shutup*/
 	Byte mch;
 	struct mark tmark;
@@ -237,7 +203,6 @@ static Boolean tagfparse(struct buff *bsave)
 	}
 	error("Bad Tag File");
 	return FALSE;
-#endif
 }
 
 

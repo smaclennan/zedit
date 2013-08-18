@@ -45,9 +45,6 @@ static struct wdo *wcreate(int first, int last)
 		new->first	= first;
 		new->last	= last;
 		mrktomrk(new->wmrk, Curbuff->mark);
-#ifdef SCROLLBARS
-		createscrollbars(new);
-#endif
 	}
 	return new;
 }
@@ -58,9 +55,6 @@ static void wfree(struct wdo *wdo)
 	unmark(wdo->wpnt);
 	unmark(wdo->wmrk);
 	unmark(wdo->wstart);
-#ifdef SCROLLBARS
-	deletescrollbars(wdo);
-#endif
 	free((char *)wdo);
 }
 
@@ -117,9 +111,6 @@ static Boolean wdelete(struct wdo *wdo)
 		reframe();	/*SAM*/
 	}
 	wfree(wdo);
-#ifdef SCROLLBARS
-	resizescrollbars(new);
-#endif
 	return TRUE;
 }
 
@@ -146,9 +137,6 @@ static Boolean wsplit(void)
 	Curwdo->last = first - 1;
 	new->first = Curwdo->last + 1;
 	Curwdo->modeflags = INVALID;
-#ifdef SCROLLBARS
-	resizescrollbars(Curwdo);
-#endif
 
 	/* link it into chain */
 	new->prev = Curwdo;
@@ -246,10 +234,6 @@ static Boolean sizewindow(int size)
 	winvalidate(Curwdo);
 	winvalidate(other);
 
-#ifdef SCROLLBARS
-	resizescrollbars(Curwdo);
-	resizescrollbars(other);
-#endif
 	return TRUE;
 }
 
@@ -314,15 +298,6 @@ void wsize(void)
 		else
 			Whead->last = Rowmax - 2;
 	}
-
-#ifdef SCROLLBARS
-	/* We always update scrollbars since width may have changed. */
-	{
-		struct wdo *wdo;
-		for (wdo = Whead; wdo; wdo = wdo->next)
-			resizescrollbars(wdo);
-	}
-#endif
 }
 
 /* paw_resize PAW by moving bottom window by 'diff' lines, if possible. */
@@ -376,10 +351,6 @@ Boolean wuseother(char *bname)
 			/* .make/.ref buffers are smaller */
 			Curwdo->first = Curwdo->last - 8;
 			Curwdo->prev->last = Curwdo->first - 1;
-#ifdef SCROLLBARS
-			resizescrollbars(Curwdo->prev);
-			resizescrollbars(Curwdo);
-#endif
 		}
 	}
 	winvalidate(Curwdo);
@@ -421,10 +392,6 @@ void Z1wind(void)
 		Scrnmarks[i].modf = TRUE;
 
 	tclrwind();
-
-#ifdef SCROLLBARS
-	resizescrollbars(Curwdo);
-#endif
 }
 
 /* Delete current window if more than one */

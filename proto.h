@@ -379,10 +379,6 @@ static inline void recomment(void) {}
 static inline void addcpp(void) {}
 #endif
 
-#ifdef SCROLLBARS
-void updatescrollbars();
-#endif
-
 void undo_add(int size);
 void undo_del(int size);
 void undo_clear(struct buff *buff);

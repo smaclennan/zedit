@@ -139,10 +139,6 @@ void refresh(void)
 	tflush();
 	tstyle(T_NORMAL);
 
-#ifdef SCROLLBARS
-	updatescrollbars();
-#endif
-
 	--NESTED;
 }
 

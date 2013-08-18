@@ -47,7 +47,7 @@
 #define SLOW_DISK	0		/* File writes try to buffer up
 					 * the data to a block size.
 					 */
-#define COMMENTBOLD	1		/* bold C comments */
+#define COMMENTBOLD	0		/* bold C comments */
 #define UNDO            0		/* EXPERIMENTAL undo code */
 
 #ifndef MINCONFIG

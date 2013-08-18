@@ -343,8 +343,7 @@ pawshift:
 			tprntchar(Buff());
 			tstyle(T_NORMAL);
 			tline[i] = Buff();
-		}
-		else if (tline[i] == Buff())
+		} else if (tline[i] == Buff())
 			Pcol += chwidth(Buff(), 0, 0);
 		else {
 			tline[i] = Buff();

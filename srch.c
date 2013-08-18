@@ -264,59 +264,59 @@ replace:
 			refresh();
 input:
 			switch (tchar = tgetcmd()) {
-				case ' ':
-				case ',':	/* handled later */
-				case 'Y':
-				case 'y':
-					break;	/* do the change */
+			case ' ':
+			case ',':	/* handled later */
+			case 'Y':
+			case 'y':
+				break;	/* do the change */
 
-				case '.':
-					*exit = TRUE; /* change, then abort */
-					break;
+			case '.':
+				*exit = TRUE; /* change, then abort */
+				break;
 
-				case '!':
-					*query = FALSE; /* global change */
-					echo("Replacing...");
-					break;
+			case '!':
+				*query = FALSE; /* global change */
+				echo("Replacing...");
+				break;
 
-				case 'U': /* goto prev match */
-				case 'u':
-					if (type == REGEXP)
-						tbell();
-					else {
+			case 'U': /* goto prev match */
+			case 'u':
+				if (type == REGEXP)
+					tbell();
+				else {
+					bpnttomrk(prevmatch);
+					if (changeprev) {
+						bdelete(strlen(new));
+						binstr(old);
 						bpnttomrk(prevmatch);
-						if (changeprev) {
-							bdelete(strlen(new));
-							binstr(old);
-							bpnttomrk(prevmatch);
-						}
 					}
-					goto replace;
+				}
+				goto replace;
 
-				case '?':
-					echo(QHELP);
-					goto input;
+			case '?':
+				echo(QHELP);
+				goto input;
 
-				case 'S': /* skip file */
-				case 's':
-					unmark(prevmatch);
-					return FALSE;
+			case 'S': /* skip file */
+			case 's':
+				unmark(prevmatch);
+				return FALSE;
 
-				case 'q': /* abort */
-				case 'Q':
+			case 'q': /* abort */
+			case 'Q':
+				*exit = TRUE;
+				continue;
+
+			default:
+				if (Keys[(int)tchar] == ZABORT)
 					*exit = TRUE;
-					continue;
-
-				default:
-					if (Keys[(int)tchar] == ZABORT)
-						*exit = TRUE;
-					else {
-						bmrktopnt(prevmatch);
-						changeprev = 0;
-						/* skip and continue */
-						bmove1();
-					}
-					continue;
+				else {
+					bmrktopnt(prevmatch);
+					changeprev = 0;
+					/* skip and continue */
+					bmove1();
+				}
+				continue;
 			}
 		}
 		bmrktopnt(prevmatch);

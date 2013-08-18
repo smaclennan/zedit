@@ -229,6 +229,22 @@ static char *texts[9];
 static char *sexts[9];	/* s for shell */
 static char *asexts[9];
 
+void free_extensions(void)
+{
+	int i;
+
+	for (i = 0; i < 9; ++i) {
+		if (cexts[i])
+			free(cexts[i]);
+		if (texts[i])
+			free(texts[i]);
+		if (sexts[i])
+			free(sexts[i]);
+		if (asexts[i])
+			free(asexts[i]);
+	}
+}
+
 static int get_mode(int mode, char ***exts)
 {
 	switch (mode & PROGMODE) {

@@ -284,7 +284,11 @@ void cleanup(void)
 {	/* Mainly for valgrind */
 	tfini();
 	vfini();
+	wfini();
 	bfini();
+
+	free_pwent(Me);
+	Dbgname(NULL);
 }
 
 /* Read one file, creating the buffer is necessary.

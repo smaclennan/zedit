@@ -407,4 +407,6 @@ void vfini(void)
 		if (Vars[i].vtype == STRING)
 			if (VARSTR(i))
 				free(VARSTR(i));
+
+	free_extensions();
 }

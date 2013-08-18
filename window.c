@@ -34,7 +34,7 @@ static void nomem(void)
 /* Create a new window pointer - screen info invalid */
 static struct wdo *wcreate(int first, int last)
 {
-	struct wdo *new = calloc(sizeof(struct wdo), 1);
+	struct wdo *new = calloc(1, sizeof(struct wdo));
 
 	if (new) {
 		new->wbuff	= Curbuff;
@@ -558,6 +558,15 @@ void winit(void)
 			Whead = Whead->prev;
 		wswitchto(Wstart);
 		wsize();
+	}
+}
+
+void wfini(void)
+{
+	while (Whead) {
+		struct wdo *next = Whead->next;
+		wfree(Whead);
+		Whead = next;
 	}
 }
 

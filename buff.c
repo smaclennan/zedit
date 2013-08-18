@@ -29,7 +29,7 @@ int Curchar;			/* current offset in Cpstart */
 int Curplen;			/* current page length */
 struct buff *Bufflist;		/* the buffer list */
 struct buff *Curbuff;		/* the current buffer */
-struct mark *Mrklist;		/* the marks list */
+struct mark *Mrklist;		/* the marks list tail */
 struct page *Curpage;		/* the current page */
 
 static int NumPages;
@@ -42,14 +42,26 @@ static Boolean xbput(int fd, Byte *addr, unsigned len);
 
 void bfini(void)
 {
+	struct mark *mhead = &Scrnmarks[ROWMAX - 1];
+
 	Curbuff = NULL;
 
 	bdelbuff(Killbuff);
 	bdelbuff(Paw);
 
-	while (Bufflist)
+	while (Bufflist) {
+		if (Bufflist->fname)
+			free(Bufflist->fname);
+		if (Bufflist->bname)
+			free(Bufflist->bname);
 		/* bdelbuff will update Bufflist */
 		bdelbuff(Bufflist);
+	}
+	free(Bnames);
+
+	/* Do not unmark the Scrnmarks */
+	while (Mrklist && Mrklist != mhead)
+		unmark(Mrklist);
 }
 
 /* Copy from Point to tmark to tbuff. Returns number of bytes
@@ -152,7 +164,7 @@ struct buff *bcreate(void)
  */
 struct mark *bcremrk(void)
 {
-	struct mark *new = malloc(sizeof(struct mark));
+	struct mark *new = calloc(1, sizeof(struct mark));
 
 	if (!new)
 		longjmp(zenv, -1);	/* ABORT */

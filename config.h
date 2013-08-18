@@ -48,7 +48,7 @@
 					 * the data to a block size.
 					 */
 #define COMMENTBOLD	1		/* bold C comments */
-#define UNDO            1		/* EXPERIMENTAL undo code */
+#define UNDO            0		/* EXPERIMENTAL undo code */
 
 #ifndef MINCONFIG
 /* Warning: These are ifdefs, you must comment them out to disable them! */

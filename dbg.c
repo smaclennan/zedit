@@ -44,10 +44,13 @@ void Dbgname(char *name)
 {
 	if (dbgfname)
 		free(dbgfname);
-	dbgfname = malloc(strlen(name) + 1);
-	if (dbgfname) {
-		strcpy(dbgfname, name);
-		unlink(dbgfname);
+
+	if (name) {
+		dbgfname = malloc(strlen(name) + 1);
+		if (dbgfname) {
+			strcpy(dbgfname, name);
+			unlink(dbgfname);
+		}
 	}
 }
 #else

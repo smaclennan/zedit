@@ -180,6 +180,7 @@ void initscrnmarks(void);
 int ask(char *);
 int batoi(void);
 void cleanup(void);
+void free_extensions(void);
 void bfini(void);
 int bcopyrgn(struct mark *, struct buff*);
 struct buff *bcreate(void);
@@ -329,6 +330,7 @@ void message(struct buff *, char *);
 
 int dopipe(struct buff *, char *);
 void winit(void);
+void wfini(void);
 
 #ifdef PIPESH
 int checkpipes(int);

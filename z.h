@@ -50,7 +50,7 @@ extern struct passwd *Me;
 #endif
 
 #define ZSTR	"Zedit"
-#define VERSION	"5 beta"
+#define VERSION	"5.0"
 #define ZFMT	"%s %s  (%s)  %s: "
 
 /* These are portable across different Unix's */

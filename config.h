@@ -25,9 +25,6 @@
 # define LINUX
 #elif defined(__BSD__)
 # define BSD
-/* You can also set either of these variations. */
-/* # define SUNBSD */
-/* # define ULTRIX */
 #elif defined(__unix__)
 # define SYSV4
 /* # define SYSV2 */
@@ -47,10 +44,12 @@
 #define SLOW_DISK	0		/* File writes try to buffer up
 					 * the data to a block size.
 					 */
-#define COMMENTBOLD	0		/* bold C comments */
-#define UNDO            0		/* EXPERIMENTAL undo code */
+#define MINCONFIG	1		/* Minimal configuration */
 
-#ifndef MINCONFIG
+#if !MINCONFIG
+#define COMMENTBOLD	1		/* bold C comments */
+#define UNDO            1		/* EXPERIMENTAL undo code */
+
 /* Warning: These are ifdefs, you must comment them out to disable them! */
 #define HELP				/* Help */
 #define SHELL				/* shell interface */

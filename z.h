@@ -251,8 +251,4 @@ extern int circf;
 
 #include "proto.h"
 
-#ifdef SUNBSD
-#include "sun.h"
-#endif
-
 #endif /* _Z_H_ */

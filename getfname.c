@@ -100,15 +100,9 @@ static struct llist *fill_list(char *dir)
 	if (dp == NULL)
 		return Flist;
 
-	while ((dirp = readdir(dp))) {
-#ifdef ULTRIX
-		char *fname = dirp->gd_name;
-#else
-		char *fname = dirp->d_name;
-#endif
-		if (!isext(fname, OBJEXT))
-			add(&Flist, fname);
-	}
+	while ((dirp = readdir(dp)))
+		if (!isext(dirp->d_name, OBJEXT))
+			add(&Flist, dirp->d_name);
 
 	closedir(dp);
 

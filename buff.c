@@ -672,10 +672,9 @@ void btostart(void)
 
 /*
 Load the file 'fname' into the current buffer.
-Returns  0	successfully opened file
-		 1  ENOENT		no such file
-		-1	EACCESS		file share violation
-		-2	EMFILE		out of fds
+Returns  0  successfully opened file
+	 1  no such file
+	-<errno> on error
 */
 int breadfile(char *fname)
 {
@@ -692,10 +691,10 @@ int breadfile(char *fname)
 		case EACCES:
 			sprintf(buf, "No read access: %s", fname);
 			error(buf);
-			return -1;
+			return -EACCES;
 		case EMFILE:
 			error("Out of File Descriptors.");
-			return -2;
+			return -EMFILE;
 		default:
 			return 1;
 		}
@@ -713,7 +712,7 @@ int breadfile(char *fname)
 			if (!newpage(Curbuff, Curpage, NULL)) {
 				bempty();
 				error("Out of memory!");
-				return 1;
+				return -ENOMEM;
 			}
 			makecur(Curpage->nextp);
 		}

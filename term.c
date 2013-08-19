@@ -30,7 +30,7 @@
 #include <termios.h>
 static struct termios savetty;
 static struct termios settty;
-#elif defined(SYSV2)
+#elif defined(SYSV4)
 #include <termio.h>
 static struct termio savetty;
 static struct termio settty;
@@ -62,7 +62,7 @@ static void sigwinch(int sig)
 		refresh();			/* force a screen update */
 	}
 
-#ifdef SYSV2
+#ifdef SYSV4
 	signal(SIGWINCH, sigwinch);
 #endif
 }
@@ -86,7 +86,7 @@ void tinit(void)
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(fileno(stdin), TCSANOW, &settty);
-#elif defined(SYSV2)
+#elif defined(SYSV4)
 	ioctl(fileno(stdin), TCGETA, &savetty);
 	ioctl(fileno(stdin), TCGETA, &settty);
 	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
@@ -145,7 +145,7 @@ void tfini(void)
 {
 #if defined(LINUX)
 	tcsetattr(fileno(stdin), TCSAFLUSH, &savetty);
-#elif defined(SYSV2)
+#elif defined(SYSV4)
 	ioctl(fileno(stdin), TCSETAF, &savetty);
 #elif defined(BSD)
 	stty(fileno(stdin), &savetty);

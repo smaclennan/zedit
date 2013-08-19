@@ -22,7 +22,7 @@
 #ifdef TERMINFO
 #undef TRUE
 #undef FALSE
-#undef SYSV2
+#undef SYSV4
 #undef ISPRINT
 #include <curses.h>
 #undef ISPRINT		/* guarentee we don't get the wrong one! */

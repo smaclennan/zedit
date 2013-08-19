@@ -27,7 +27,6 @@
 # define BSD
 #elif defined(__unix__)
 # define SYSV4
-/* # define SYSV2 */
 #else
 # error OS not detected.
 #endif
@@ -60,9 +59,6 @@
 /* DON'T TOUCH THESE */
 #ifdef LINUX
 #define SYSV4
-#endif
-#ifdef SYSV4
-#define SYSV2
 #endif
 #if defined(HELP) || defined(SHELL) || defined(SPELL) || defined(TAGS)
 #define PIPESH

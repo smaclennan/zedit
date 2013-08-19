@@ -126,9 +126,9 @@ int checkpipes(int type)
 			}
 	}
 
-#ifdef SYSV2
+#ifdef SYSV4
 	/* See note in sigchild() */
-#if !defined(SYSV4) || !defined(WNOWAIT)
+#if !defined(WNOWAIT)
 	signal(SIGCLD, sigchild);
 #endif
 	signal(SIGPIPE, sigchild);

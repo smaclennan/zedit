@@ -80,7 +80,7 @@ void execute(void)
 		/* select returns -1 if a child dies (SIGPIPE) -
 		 * sigchild handles it */
 		while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
-#ifdef SYSV2
+#ifdef SYSV4
 			checkpipes(1);
 			refresh();
 #endif

@@ -149,7 +149,7 @@ Boolean doshell(void)
 	argv[2] = NULL;
 	return invoke(Curbuff, argv);
 }
-#elif defined(SYSV2)
+#else
 static void syerr(int err)
 {
 	switch (err) {

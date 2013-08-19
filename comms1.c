@@ -193,7 +193,7 @@ static struct _amode
 	{ "ASM",	ASMMODE },
 	{ "C",		CMODE	},
 	{ "Normal",	NORMAL	},
-	{ "TCL",	TCL		},
+	{ "sh",		SHMODE	},
 	{ "Text",	TEXT	},
 	{ "View",	VIEW	},
 #define TEXTMODE	4
@@ -252,8 +252,8 @@ static int get_mode(int mode, char ***exts)
 		mode = CMODE;	*exts = cexts; break;
 	case ASMMODE:
 		mode = ASMMODE;	*exts = asexts; break;
-	case TCL:
-		mode = TCL;	*exts = sexts; break;
+	case SHMODE:
+		mode = SHMODE;	*exts = sexts; break;
 	case TEXT:
 	default:
 		mode = TEXT;	*exts = texts; break;
@@ -316,8 +316,8 @@ void toggle_mode(int mode)
 			new = CMODE;
 		else if (mode != ASMMODE && extmatch(bfname(), ASMMODE))
 			new = ASMMODE;
-		else if (mode != TCL && extmatch(bfname(), TCL))
-			new = TCL;
+		else if (mode != SHMODE && extmatch(bfname(), SHMODE))
+			new = SHMODE;
 		else if (mode != TEXT &&
 			 (!VAR(VNORMAL) || extmatch(bfname(), TEXT)))
 			new = TEXT;

@@ -39,8 +39,8 @@ char *setmodes(struct buff *buff)
 		strcpy(PawStr, "C");		break;
 	case ASMMODE:
 		strcpy(PawStr, "ASM");		break;
-	case TCL:
-		strcpy(PawStr, "TCL");		break;
+	case SHMODE:
+		strcpy(PawStr, "sh");		break;
 	case TEXT:
 		strcpy(PawStr, "Text");		break;
 	default:
@@ -64,6 +64,8 @@ char *setmodes(struct buff *buff)
 #endif
 			break;
 		case ASMMODE:
+			break;
+		case SHMODE:
 			break;
 		case TEXT:
 			Keys[' '] = ZFILLCHK;

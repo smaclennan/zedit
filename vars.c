@@ -129,8 +129,8 @@ void readvfile(void)
 		parsem(VARSTR(VCEXTS), CMODE);
 	}
 	if (!VARSTR(VSEXTS)) {
-		VARSTR(VSEXTS) = strdup(".tcl");
-		parsem(VARSTR(VSEXTS), TCL);
+		VARSTR(VSEXTS) = strdup(".sh:.csh");
+		parsem(VARSTR(VSEXTS), SHMODE);
 	}
 	if (!VARSTR(VTEXTS)) {
 		VARSTR(VTEXTS) = strdup(".DOC:.doc:.tex:.txt:.d");
@@ -248,7 +248,7 @@ static void do_var_match(int i, char *vin)
 		Zredisplay();
 #endif
 	} else if (i == VSEXTS)
-		parsem(VARSTR(i), TCL);
+		parsem(VARSTR(i), SHMODE);
 	else if (i == VTEXTS)
 		parsem(VARSTR(i), TEXT);
 }

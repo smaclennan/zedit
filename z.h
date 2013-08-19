@@ -118,13 +118,13 @@ extern struct passwd *Me;
 #define CMODE				0x020
 #define TEXT				0x040
 #define ASMMODE				0x080
-#define TCL					0x100
+#define SHMODE				0x100
 /* super modes - 0 to all allowed */
 #define VIEW				0x40000
 #define SYSBUFF				0x80000
 /* some handy macro for buffer modes */
 #define MAJORMODE			(0xfff0)
-#define PROGMODE			(CMODE | ASMMODE | TCL)
+#define PROGMODE			(CMODE | ASMMODE | SHMODE)
 #define MODEMASK			(~(NORMAL | TEXT | PROGMODE))
 
 /* System buffer names */

@@ -19,7 +19,8 @@
 
 #include "z.h"
 
-Boolean Exitflag = TRUE;	/* set to true during initialization */
+Boolean Initializing = TRUE;
+Boolean Exitflag;
 static int ExitStatus;
 char *Thispath, *Cwd;
 char *ConfigDir;
@@ -61,7 +62,6 @@ int main(int argc, char **argv)
 
 static void edit(void)
 {
-	Exitflag = FALSE;
 	while (!Exitflag)
 		execute();
 }
@@ -173,7 +173,7 @@ static void setup(int argc, char **argv)
 
 	/* Note: for X we cannot use -m */
 	opterr = 0;
-	while ((arg = getopt(argc, argv, "c:hl:o:tv")) != EOF)
+	while ((arg = getopt(argc, argv, "c:hl:o:tvE")) != EOF)
 		switch (arg) {
 		case 'c':
 			ConfigDir = optarg;
@@ -191,6 +191,9 @@ static void setup(int argc, char **argv)
 			break;
 		case 'v':
 			++Verbose;
+			break;
+		case 'E':
+			Exitflag = TRUE;
 			break;
 		}
 
@@ -278,6 +281,8 @@ static void setup(int argc, char **argv)
 	FD_SET(1, &SelectFDs);
 	NumFDs = 2;
 #endif
+
+	Initializing = FALSE;
 }
 
 void cleanup(void)

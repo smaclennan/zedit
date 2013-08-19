@@ -584,7 +584,6 @@ void quit(void)
 
 	if (VAR(VDOSAVE))
 		save(Curbuff);
-	Exitflag = TRUE;
 	tfini();
 	cleanup();
 

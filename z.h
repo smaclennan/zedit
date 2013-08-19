@@ -221,7 +221,7 @@ extern struct buff *Buff_save;
 extern struct mark *Sstart, *Psstart, *Send, *REstart;
 extern struct mark Scrnmarks[];
 
-extern Boolean Exitflag;
+extern Boolean Initializing;
 extern Boolean Insearch;
 
 extern char **Bnames;

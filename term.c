@@ -52,12 +52,10 @@ int Colmax, Rowmax;		/* Row and column maximums */
 int Tstart;			/* Start column and row */
 
 #ifdef SIGWINCH
-/* This is called if the window has changed size.
- * If Exitflag is set, we are not ready to update display yet.
- */
+/* This is called if the window has changed size. */
 static void sigwinch(int sig)
 {
-	if (Exitflag)
+	if (Initializing)
 		termsize();
 	else {
 		Zredisplay();		/* update the windows */
@@ -137,7 +135,7 @@ void tinit(void)
 	}
 
 	Srow = Scol = -1;	/* undefined */
-	if (Exitflag)
+	if (Initializing)
 		initline();		/* Curwdo not defined yet */
 	else
 		Zredisplay();

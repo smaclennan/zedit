@@ -237,6 +237,9 @@ Boolean bdelbuff(struct buff *tbuff)
 		unvoke(tbuff, TRUE);
 #endif
 
+	uncomment(tbuff, FALSE);
+	undo_clear(tbuff);
+
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);
 	unmark(tbuff->mark);	/* free the user mark */
@@ -247,8 +250,6 @@ Boolean bdelbuff(struct buff *tbuff)
 	if (tbuff->next)
 		tbuff->next->prev = tbuff->prev;
 	free((char *)tbuff);	/* free the buffer proper */
-
-	undo_clear(tbuff);
 
 	return TRUE;
 }

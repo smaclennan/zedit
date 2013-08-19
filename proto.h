@@ -371,12 +371,14 @@ void resetcomments(void);
 void checkcomment(void);
 void recomment(void);
 void addcpp(void);
+void uncomment(struct buff *buff, int need_update);
 #else
 static inline void addcomment(void) {}
 static inline void resetcomments(void) {}
 static inline void checkcomment(void) {}
 static inline void recomment(void) {}
 static inline void addcpp(void) {}
+static inline void uncomment(struct buff *buff, int need_update) {}
 #endif
 
 void undo_add(int size);

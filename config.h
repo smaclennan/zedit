@@ -44,9 +44,9 @@
 					 * the data to a block size.
 					 */
 #define MINCONFIG	1		/* Minimal configuration */
+#define COMMENTBOLD	1		/* bold C comments */
 
 #if !MINCONFIG
-#define COMMENTBOLD	1		/* bold C comments */
 #define UNDO            1		/* EXPERIMENTAL undo code */
 
 /* Warning: These are ifdefs, you must comment them out to disable them! */

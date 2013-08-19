@@ -187,22 +187,23 @@ again:
 #endif
 
 /* Remove all comments from buffer and mark unscanned */
-static void uncomment(struct buff *buff)
+void uncomment(struct buff *buff, int need_update)
 {
-	struct comment *com, *next;
-	int i;
-
-	for (com = buff->comments; com; com = next) {
+	while (buff->comments) {
+		struct comment *com = buff->comments;
+		buff->comments = buff->comments->next;
 		unmark(com->start);
 		unmark(com->end);
-		next = com->next;
 		free(com);
 	}
 	buff->comstate = 0;
-	buff->comments = NULL;
 
-	for (i = 0; i < tmaxrow() - 2; ++i)
-		Scrnmarks[i].modf = 1;
+	if (need_update) {
+		int i;
+
+		for (i = 0; i < tmaxrow() - 2; ++i)
+			Scrnmarks[i].modf = 1;
+	}
 }
 
 /* Scan an entire buffer for comments. */
@@ -279,11 +280,11 @@ void resetcomments(void)
 	if (delcmdall()) {
 		for (start = Curbuff->comments; start; start = start->next)
 			if (markch(start->end) != '/') {
-				uncomment(Curbuff);
+				uncomment(Curbuff, TRUE);
 				break;
 			}
 	} else if (Lfunc == ZYANK)
-		uncomment(Curbuff);
+		uncomment(Curbuff, TRUE);
 	start = Curbuff->comments;
 }
 
@@ -326,6 +327,6 @@ void recomment(void)
 	struct buff *buff;
 
 	for (buff = Bufflist; buff; buff = buff->next)
-		uncomment(buff);
+		uncomment(buff, TRUE);
 }
 #endif

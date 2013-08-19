@@ -670,8 +670,6 @@ void btostart(void)
 }
 
 
-#define xbread(fd, blk, addr) read(fd, addr, PSIZE)
-
 /*
 Load the file 'fname' into the current buffer.
 Returns  0	successfully opened file
@@ -681,9 +679,9 @@ Returns  0	successfully opened file
 */
 int breadfile(char *fname)
 {
-	char msg[PATHMAX + 20];
+	char buf[PSIZE];
 	struct stat sbuf;
-	int fd, len, blk;
+	int fd, len;
 
 	fd = open(fname, READ_MODE);
 	if (fd < 0  || fstat(fd, &sbuf) == EOF) {
@@ -692,8 +690,8 @@ int breadfile(char *fname)
 
 		switch (errno) {
 		case EACCES:
-			sprintf(msg, "No read access: %s", fname);
-			error(msg);
+			sprintf(buf, "No read access: %s", fname);
+			error(buf);
 			return -1;
 		case EMFILE:
 			error("Out of File Descriptors.");
@@ -704,21 +702,24 @@ int breadfile(char *fname)
 	}
 
 	Curbuff->mtime = sbuf.st_mtime;		/* save the modified time */
-	sprintf(msg, "Reading %s", lastpart(fname));
-	echo(msg);
+	sprintf(buf, "Reading %s", lastpart(fname));
+	echo(buf);
 
 	bempty();
 
-	for (blk = 0; (len = xbread(fd, blk, Cpstart)) > 0; ++blk) {
-		Curplen = len;
-		makeoffset(0);
+	while ((len = read(fd, buf, PSIZE)) > 0) {
 		Curmodf = TRUE;
-		if (!newpage(Curbuff, Curpage, NULL))
-			break;
-		makecur(Curpage->nextp);
+		if (Curplen) {
+			if (!newpage(Curbuff, Curpage, NULL)) {
+				bempty();
+				error("Out of memory!");
+				return 1;
+			}
+			makecur(Curpage->nextp);
+		}
+		memcpy(Cpstart, buf, len);
+		Curplen = len;
 	}
-	if (blk > 0 && Curplen == 0)
-		freepage(Curbuff, Curpage); /* whoops - alloced 1 too many */
 	(void)close(fd);
 
 	btostart();

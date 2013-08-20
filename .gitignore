@@ -1,3 +1,4 @@
 *.o
 ze
 TAGS
+configure.h

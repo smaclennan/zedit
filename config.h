@@ -57,6 +57,8 @@
 #define TAGS				/* tag file support */
 #endif
 
+#include "configure.h"
+
 /* DON'T TOUCH THESE */
 #if defined(HELP) || defined(SHELL) || defined(SPELL) || defined(TAGS)
 #define PIPESH

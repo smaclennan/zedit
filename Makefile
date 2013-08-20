@@ -24,11 +24,14 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 
 #################
 
-all:	$(ZEXE)
+all:	configure.h $(ZEXE)
 
 $(ZEXE): $(CFILES:.c=.o)
 	$(QUIET_LINK)$(CC) -o $@ $+ $(LIBS)
 	@etags $(CFILES) *.h
+
+configure.h:
+	@touch configure.h
 
 # We don't have that many .h files...
 # Make all c files depend on all .h files

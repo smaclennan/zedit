@@ -45,9 +45,9 @@ static int forcecol(void)
 
 static void ScrollLine(Boolean forward)
 {
-	struct mark save;
-
 	if (VAR(VSINGLE)) {
+		struct mark save;
+
 		bmrktopnt(&save);
 		bpnttomrk(Sstart);
 		forward ? bcsearch(NL) : bcrsearch(NL);

@@ -23,6 +23,7 @@
  */
 #ifdef __linux__
 # define LINUX
+# define SYSV4
 #elif defined(__BSD__)
 # define BSD
 #elif defined(__unix__)
@@ -44,9 +45,9 @@
 					 * the data to a block size.
 					 */
 #define MINCONFIG	1		/* Minimal configuration */
-#define COMMENTBOLD	1		/* bold C comments */
 
 #if !MINCONFIG
+#define COMMENTBOLD	1		/* bold C comments */
 #define UNDO            1		/* EXPERIMENTAL undo code */
 
 /* Warning: These are ifdefs, you must comment them out to disable them! */
@@ -57,9 +58,6 @@
 #endif
 
 /* DON'T TOUCH THESE */
-#ifdef LINUX
-#define SYSV4
-#endif
 #if defined(HELP) || defined(SHELL) || defined(SPELL) || defined(TAGS)
 #define PIPESH
 #endif

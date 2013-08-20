@@ -38,6 +38,7 @@ echo ".m3 0"	>>help.head
 echo ".m4 0"	>>help.head
 echo ":ZEDIT" | nroff -me help.head command.doc variable.doc - |
    ./zhack >help.z
+rm help.head
 
 # create appendix A and B if necessary
 [ -z "$all" ] && { echo -n "Create appendicies A and B? "; read go; }

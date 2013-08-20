@@ -159,15 +159,15 @@ The concatenation of REs is a RE that matches the concatenation of
 the strings matched by each component.
 
 .ip -
-A RE enclosed between the character sequences \( and \) is a RE that
+A RE enclosed between the character sequences \\( and \\) is a RE that
 matches whatever the unadorned RE matches.
 
 .ip -
-The expression \n matches the same string of characters as was
-matched by an expression enclosed between \( and \) earlier in the same
+The expression \\n matches the same string of characters as was
+matched by an expression enclosed between \\( and \\) earlier in the same
 RE. Here n is a digit; the sub-expression specified is that beginning
-with the n-th occurrence of \( counting from the left. For example, the
-expression ^\(.*\)\1$ matches a line consisting of two repeated
+with the n-th occurrence of \\( counting from the left. For example, the
+expression ^\\(.*\\)\\1$ matches a line consisting of two repeated
 appearances of the same string.
 
 .ip -
@@ -237,7 +237,7 @@ next partial match.
 Zedit has a built-in six function integer calculator. The calculator is
 very simple but useful for doing addition, subtraction, multiplication,
 and division of decimal, hexadecimal, or octal numbers. The output is
-displayed in both decimal and hexadecimal. 
+displayed in both decimal and hexadecimal.
 
 The calculator can also be used to convert from decimal, hexadecimal, or
 octal to decimal and hexadecimal. Just enter the number to be converted
@@ -251,7 +251,7 @@ with 1 through 9. The bases can be mixed within a given command string.
 .sh 2 "Macros"
 
 Zedit supports keystroke macros. Keystroke macros are a way of saving a
-sequence of keystrokes, then playing them back latter. 
+sequence of keystrokes, then playing them back latter.
 
 To define a macro, the Start Macro command is first executed. All keys
 typed after the Start Macro command are stored in the macro buffer. This

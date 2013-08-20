@@ -60,6 +60,6 @@
 #include "configure.h"
 
 /* DON'T TOUCH THESE */
-#if defined(HELP) || defined(SHELL) || defined(SPELL) || defined(TAGS)
+#if defined(SHELL) || defined(SPELL) || defined(TAGS)
 #define PIPESH
 #endif

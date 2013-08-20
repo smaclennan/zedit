@@ -294,6 +294,7 @@ void cleanup(void)
 
 	free_pwent(Me);
 	Dbgname(NULL);
+	free(Cwd);
 }
 
 /* Read one file, creating the buffer is necessary.
@@ -457,9 +458,10 @@ void Zcwd(void)
 		p = strdup(path);
 		if (!p)
 			error("Not enough memory");
-		else if (chdir(p) == 0)
+		else if (chdir(p) == 0) {
+			free(Cwd);
 			Cwd = p;
-		else
+		} else
 			error("chdir failed.");
 	}
 }

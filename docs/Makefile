@@ -1,5 +1,6 @@
-all:
-	./build
+CFLAGS += -Wall
+
+all:	zhack zhsort
 
 clean:
-	rm -f zhack.c zhack zhsort.c zhsort
+	rm -f zhack zhsort

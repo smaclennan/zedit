@@ -195,7 +195,7 @@ Deletes the characters in the region. The deleted characters are put in
 the Kill Buffer based on the delete flag. A Universal Argument is
 ignored.
 .sp 2
-Delete to End of Line
+Delete to EOL
 
 Deletes the characters from the Point to the end of the line. If the
 Point is at the end of a line, the Newline character is deleted and the
@@ -412,18 +412,18 @@ Normally bound to the printable characters, causes the character to be
 inserted in the buffer. A Universal Argument causes the command to
 repeat.
 .sp 2
-Insert Space
-
-Inserts a space at the Point and leaves the Point on the space. Useful
-for inserting a character in Over mode. A Universal Argument causes the
-command to repeat.
-.sp 2
 Insert/Overwrite
 
 Toggles the current buffers minor mode between Insert, the default, and
 overwrite modes. On the PC the cursor shape reflects the mode. Insert
 mode has an underline cursor while overwrite mode has a block cursor. A
 Universal Argument is ignored.
+.sp 2
+Insert Space
+
+Inserts a space at the Point and leaves the Point on the space. Useful
+for inserting a character in Over mode. A Universal Argument causes the
+command to repeat.
 .sp 2
 Join
 
@@ -716,7 +716,7 @@ position it was in before the Query Replace. If the mode Exact is set,
 the search will be case sensitive. A Universal Argument causes the
 replacement to be done globally in all the buffers.
 .sp 2
-Reverse Inc. Search
+Reverse Inc Search
 
 Searches backwards for the string after every character is entered in
 the PAW. The Delete Previous Character command can be used to delete a
@@ -965,16 +965,16 @@ Appendix B: Variable Descriptions
 Appendix B: Variable Descriptions
 .)x \n%
 .sp 2
-AddNL
+Add NL
 
 If this flag variable is set, the editor will insure that all saved files
 end in a Newline. The default is on.
 .sp 2
-AsmChar
+Asm Char
 
 The character used to mark ASM comments. The default is a semicolon (;).
 .sp 2
-AsmExtends
+Asm Extends
 
 This variable defines the extensions that turn on ASM Mode. The
 extensions are seperated with the colon (:). There is a maximum of eight
@@ -985,31 +985,31 @@ Backup
 If this flag variable is set, a backup file is created when a file is
 written. The default is on.
 .sp 2
-CExtends
+C Extends
 
 This variable defines the extensions that turn on C Mode. The
 extensions are seperated with the colon (:). There is a maximum of eight
 extensions. See also AExtends, TExtends.
 .sp 2
-ClearExit
+Clear Exit
 
 If this variable is set, Zedit will clear the screen on exit. Default is
 off. Not available on PC.
 .sp 2
-CTabs
+C Tabs
 
 A tab is a single character that is displayed as one or more spaces on
 the screen. This variable defines the number of spaces displayed per tab
 in C mode buffers, even if the buffer is in View mode. The default is 4
 spaces. See also Tabs.
 .sp 2
-DateFormat
+Date Format
 
 The Date command uses strftime to format the output string. This varable
 is passed to strftime as the format string. It has a default of "%c" which
 is the preferred date for the current locale. See strftime for details.
 .sp 2
-DoSave
+Do Save
 
 If this flag variable is set, the current state of the editor will be
 saved on exit. If Zedit is then started with no command line arguments,
@@ -1021,26 +1021,19 @@ If Exact is set, all searches and replaces are case sensitive. This
 means that the search string "string" will only match "string", not
 "STRING", or "String". The default is on.
 .sp 2
-ExecOnMatch
-
-If this flag variable is set, command completions are executed as soon
-as they are uniquely defined without having to hit the Enter or Return
-key. If it is off, the user must hit Enter or Return to confirm the
-completion. The default is off.
-.sp 2
-ExpandPaths
+Expand Paths
 
 If ExpandPaths is set, all file names are expanded to a full path. For
 example, the file name "../file.c" might be expanded to
 "/home/sam/dir/file.c". ~ and $ prefixed paths are always expanded. The
 default is on.
 .sp 2
-FillWidth
+Fill Ch Width
 
 This is the column at which the Text mode commands wrap the right
 margin. It is also used by the Center Line command. The default is 72.
 .sp 2
-FlowControl
+Flow Control
 
 On SYS3 and SYS5 machines, the flow control is user definable. If
 FlowControl is set, ^S and ^Q stop and start the terminal. However, the
@@ -1055,7 +1048,7 @@ Grep
 
 The command to use for the Zedit grep command. The default is `grep -n'.
 .sp 2
-KillLine
+Kill Line
 
 If this variable is set, the 'Delete to End of Line' command will
 delete the entire line. If at the start of line, it will delete the
@@ -1068,13 +1061,13 @@ The Lines feature can cause a lot of cursor movement and is irritating
 on some slow terminals. It can also be slow in Fastread buffers. The
 default is on.
 .sp 2
-MailCmd
+Mail Cmd
 
 Specifies the command to use with the Mail command. It is usually mail,
 however, on some machines the command mailx may be needed. Note that
 Zedit appends "-s <subject> <to_list> < <mail_message>" to the command.
 .sp 2
-MakeCmd
+Make Cmd
 
 This is a string variable which contains the default string for the Make
 command. The default is "make".
@@ -1117,13 +1110,13 @@ Print
 Specifies the print command to execute. It will append the file name to
 this string.
 .sp 2
-SaveOnExit
+Save On Exit
 
 Usually, the editor prompts to save modified files when the Exit command
 is executed. If SaveOnExit is set, all modified buffers are saved on
 exit. The default is off.
 .sp 2
-ShowCWD
+Show CWD
 
 This variable is for XWINDOWS only. If set, the current working
 directory is shown in the title bar of the window. The default is True.
@@ -1132,13 +1125,13 @@ Silent
 
 If set, turns the bell off. Default is off (bell on).
 .sp 2
-SingleScroll
+Single Scroll
 
 If SingleScroll is set, a Next Line command at the bottom of the screen
 will scroll one line. If not set, the Next Line will scroll a few lines.
 The default is set. It would be turned off only on very slow terminals.
 .sp 2
-SpaceTabs
+Space Tabs
 
 The tab character is normally inserted into the buffer as a single ASCII
 9 character. If the SpaceTabs variable is set, then a tab is inserted as
@@ -1157,14 +1150,14 @@ Tagfile
 This specifies the tag file name used by the Find Tag command. It is a
 full path name to the tag file. The default is "NONE".
 .sp 2
-TCLExtends
+TCL Extends
 
 This variable defines the extensions that turn on TCL Mode. The
 extensions are seperated with the colon (:). Note that CExtends takes
 precedence. There is a maximum of eight extensions. See
 also CExtends, TExtends.
 .sp 2
-TExtends
+T Extends
 
 This variable defines the extensions that turn on Text Mode. The
 extensions are seperated with the colon (:). An extension of "." matches
@@ -1172,7 +1165,7 @@ no extension (i.e. no "." in file name). Note that the CExtends then
 AExtends take precedence over TExtends. There is a maximum of eight
 extensions. See also CExtends, TCLExtends.
 .sp 2
-VisibleBell
+Visible Bell
 
 If this variable is set, the bell will flash the screen rather than
 producing an audible tone. The default is on if flashing the screen

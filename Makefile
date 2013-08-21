@@ -1,4 +1,4 @@
-.PHONY: all clean
+.PHONY: all install install-help clean
 
 ZEXE = ze
 CC = gcc
@@ -37,6 +37,13 @@ configure.h:
 # We don't have that many .h files...
 # Make all c files depend on all .h files
 *.o: *.h
+
+install:
+	install ze $(DESTDIR)/bin/z
+
+# You only need this file if HELP is enabled
+install-help:
+	install -D -m 644 docs/help.z $(DESTDIR)/usr/share/zedit/help.z
 
 clean:
 	rm -f configure.h *.o ze core* TAGS

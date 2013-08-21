@@ -102,12 +102,9 @@ END_TAIL
 [ -f zhead ] || { echo zhead; exit; }
 [ -f intro.doc ] || { echo intro.doc; exit; }
 [ -f cmds.doc ] || { echo cmds.doc; exit; }
-[ -f tech.doc ] || { echo tech.doc; exit; }
-# [ -f zc.doc ] || { echo zc.doc; exit; }
 [ -f appab.doc ] || { echo appab.doc; exit; }
 [ -f unix.doc ] || { echo unix.doc; exit; }
-[ -f pc.doc ] || { echo pc.doc; exit; }
 [ -f ztail ] || { echo ztail; exit; }
-nroff -me zhead intro.doc cmds.doc tech.doc appab.doc unix.doc pc.doc \
+nroff -me zhead intro.doc cmds.doc appab.doc unix.doc \
 	ztail | ./zhack >zedit.doc
 rm zhead ztail

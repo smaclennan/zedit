@@ -1,149 +1,33 @@
-README for release 4.3
+Zedit - A Short History
+-----------------------
 
-New Features
-------------
+Back in 1988 I was using three editors on a daily basis. One for the
+bulk of my editing, one for regular expressions, and one for large
+files (memory maps mainly). I had access to an unused Unix workstation
+so I started writing an Emacs like editor.
 
-- -M option for macrofiles. X won't allow -m.
+Once it was usable under Unix, I ported it to DOS and it became my
+only editor.
 
-- Zblist now always highlights the current buffer and skips system buffers
+The DOS version became fairly full-featured. In 1990 I joined
+Toolsmiths and switched to Sun computers. Zedit grew and a raw X11
+version and later a slightly better looking version where created.
 
-- Font variable. Only for Xwindows you say?
+In 1996 I joined Pika and didn't have the energy to port Zedit to
+Windows NT, so it languished. I switched to GNU Emacs and then
+XEmacs.
 
-- different pointer in scrollbar "scrollpointer" resource
+But it has morphed back into a nice little terminal only editor to use
+for those quick edits of config files. Or for low powered machines.
 
-- added Zoom command since CDE dosen't have one
+About the Name
+--------------
 
-- find tag command will now reload the tags buffer if the tags file
-  was updated.
+The program is called Zedit, but the executable was always z. I liked
+the fact that if you say z the British/Canadian way (zed not zee) it
+has the word ed in it but only needs one letter.
 
-- Drag now scrolls.
-
-- Shift Button 2 does a "clipboard" copy.
-
-- -o options
-
-- -c <configdir> configdir can now be a file name or a directory
-
-- ASM mode (AsmChar, AsmExtends)
-	- single char comment markers, '.' cpp instructions
-
-- changes to modeline
-	- (View) now (<mode> RO) e.g. (C RO) or (Text RO)
-	- (<mode> Over) now (<mode> OVWRT)
-
-README for release 4.2
-
-New Features
-------------
-
-The big new feature is the 3D look and menubar! Old X interface still alive.
-
-Zblist / Zfindfile / Zmake / Zvarhelp calls.
-
-Make within editor has been streamlined.
-
-cppifColor highlighting and more color control all around.
-
-Fill Paragraph in C mode (which does a "format comments") now asks are
-you sure?
-
-What the buttons do...
-----------------------
-
-The buttons are currently hardcoded as follows:
-If on modeline
-	Left		Page Down Window
-	Right		Page Up Window
-Else
-	Left		Set Point
-	Left and Drag	Set Point then Set Mark on release
-	Double left	Set Point and Find Tag
-	Shift Left	Set Mark
-	Middle		Paste
-	Right		Set Mark
-
-In SCROLLBARS
-	Right		Move point to offset in buffer
-	Right and Drag	Move point and scroll
-
-	Note that moving a scrollbar in a window is an implicit switch
-	window.
-
-Bug Fixes
----------
-
-- fixed Save Bindings command
-
-- fixed "other window" window updates problem. When redisplaying the
- "other windows" we had two problems:
-	1. would not reframe i.e. if point moved window didn't always follow
-	2. point could get moved by update routine!
-
-- in cpp "coloring" algo, a certain call to get buffer word routine could go
-  into an infinite loop
-
-- many X bugs...
-
-- A '#' that was automagically moved to the start of the line would put
-the deleted whitespace in the kill buffer. Now it is deleted to /dev/null.
-
-- A c++ comment after a #define messed up the comment coloring.
-
-- bug with files called "tmp" and write region
-
-- tags of the form ^<line>$ did not match EOL properly
-
-- bolding characters tended to bold too much under Xwindows.
-
-- algo for bolding changed for Xwindows
-	if user has color and boldcolor specified
-		use boldcolor
-	else if bold font specified
-		use boldfont
-	else
-		no bolding
-
-- when switching from C mode buffer to non-C mode buffer, the colour from
-the C mode buffer would carry over. Fixed.
-
-- The M-Z command put back in Xwindows version.
-
-Known Bugs
-----------
-
-- Scrollbar dosen't handle partial bottom screen well....
-
-- XWINDOWs - see below
-
-- clean up Waiting for SYSV4
-	- maybe count of "child" buffers with active pipes
-		- only do waitpid when set
-
-- on PC pathfixup for drives untested
-
-- xb.c xb.h still in RCS
-
-- RCS ci not supported
-
-
-Known X Bugs
-------------
-
-- COMMENTBOLD
-	- typing */ by itself causes problems
-	- at EOB, deleteing last / does not clear comment until * deleted
-	- CPP does not handle new lines until a delete command
-	- workaround for all comment bold problems: type C-L
-
-- X resource names case sensitive
-
-- kill make on exit does not seem to work
-
-- paste limited to 1M (he he he...)
-
-- get geometry does not make sure window is on screen
-
-- sometimes gets unknown events 18,19,21
-
-- colors are not cached - i.e. using a color mulitple times creates
-  multiple definitions of the color
+So why does the Makefile produce ze? When I worked at Toolsmiths other
+developers used Zedit. When making changes, I would create ze (z
+experimental) and when it was stable copy it over z. This way I didn't
+affect other users. That has just stuck over the years.

@@ -4,6 +4,7 @@ ZEXE = ze
 CC = gcc
 CFLAGS += -Wall -g
 CFLAGS += -pedantic
+MAKEFLAGS += --no-print-directory
 
 #LIBS=-lncurses
 
@@ -38,4 +39,6 @@ configure.h:
 *.o: *.h
 
 clean:
-	rm -f *.o ze core* TAGS
+	rm -f configure.h *.o ze core* TAGS
+	@make -C docs clean
+

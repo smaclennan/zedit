@@ -1,3 +1,5 @@
+#include "z.h"
+
 struct cnames Cnames[] = {
 	{"abort",			ZABORT,		H_MISC},
 	{"again",			ZAGAIN,		H_SEARCH},

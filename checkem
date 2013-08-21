@@ -8,5 +8,6 @@ sparse -D__linux__ *.[ch]
 echo "Running checkpatch..."
 for f in *.[ch]; do
     [ $f = typedefs.h ] && continue
+    [ -s $f ] || continue
     $checkpatch --file $f | fgrep -q "no obvious style problems" || echo "$f"
 done

@@ -736,14 +736,15 @@ int breadfile(char *fname)
 int bwritefd(int fd)
 {
 	struct page *tpage;
-	int status = TRUE;
+	int n, status = TRUE;
 	Byte lastch = '\n'; /* don't add NL to zero byte file */
 
 	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			lastch = tpage->pdata[tpage->plen - 1];
-			status = write(fd, tpage->pdata, tpage->plen) == tpage->plen;
+			n = write(fd, tpage->pdata, tpage->plen);
+			status = n == tpage->plen;
 		}
 
 	/* handle ADDNL */

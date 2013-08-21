@@ -1,3 +1,7 @@
+#ifndef VARSTR
+#include "vars.h"
+#endif
+
 #define DEFAULT(n)	{n}
 
 /* NOTE: Spaces not allowed in variable names!!! */

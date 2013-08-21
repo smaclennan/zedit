@@ -20,8 +20,7 @@
 #include "z.h"
 
 Boolean Initializing = TRUE;
-Boolean Exitflag;
-static int ExitStatus;
+static Boolean Exitflag;
 char *Thispath, *Cwd;
 char *ConfigDir = "/usr/share/zedit";
 int Cmask;
@@ -56,7 +55,7 @@ int main(int argc, char **argv)
 	edit();
 	cleanup();
 
-	exit(ExitStatus);
+	return 0;
 }
 
 

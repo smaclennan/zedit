@@ -54,7 +54,7 @@ struct key_array Tkeys[] = {
 	{ "\033[7^",	"C-home" },
 	{ "\033[8^",	"C-end" },
 };
-#define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
+#define N_KEYS ((int)(sizeof(Tkeys) / sizeof(struct key_array)))
 
 
 void tlinit(void)

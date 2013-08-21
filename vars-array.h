@@ -38,4 +38,4 @@ struct avar Vars[] = {
 	{ "visible-bell",	FLAG,		DEFAULT(1) },
 };
 #define VARSIZE		sizeof(struct avar)
-#define NUMVARS		(sizeof(Vars) / VARSIZE)
+#define NUMVARS		((int)(sizeof(Vars) / VARSIZE))

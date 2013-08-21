@@ -347,6 +347,8 @@ void unvoke(struct buff *, Boolean);
 
 void Dbg(char *fmt, ...);
 void Dbgname(char *);
+void dbg_startwatch(void);
+void dbg_stopwatch(char *str);
 void fcheck(void);
 
 

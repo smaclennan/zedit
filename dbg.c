@@ -21,6 +21,7 @@
 
 #if DBG
 #include <stdarg.h>
+#include <sys/time.h>
 
 static char *dbgfname;
 
@@ -53,6 +54,33 @@ void Dbgname(char *name)
 		}
 	}
 }
+
+static struct timeval stopwatch;
+
+void dbg_startwatch(void)
+{
+	gettimeofday(&stopwatch, NULL);
+}
+
+void dbg_stopwatch(char *str)
+{
+	struct timeval end;
+
+	gettimeofday(&end, NULL);
+
+	if (stopwatch.tv_usec > end.tv_usec) {
+		--end.tv_sec;
+		end.tv_usec += 1000000;
+	}
+
+	if (!str)
+		str = "stopwatch";
+
+	Dbg("%s: %ld.%06ld\n", str,
+	    end.tv_sec - stopwatch.tv_sec,
+	    end.tv_usec - stopwatch.tv_usec);
+}
+
 #else
 void Dbg(char *fmt, ...) {}
 void Dbgname(char *name) {}

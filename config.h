@@ -41,9 +41,6 @@
 
 /* USER CONFIGURABLE - don't define any, see if I care */
 #define DBG		1		/* turn debugs on */
-#define SLOW_DISK	0		/* File writes try to buffer up
-					 * the data to a block size.
-					 */
 #define MINCONFIG	1		/* Minimal configuration */
 
 #if !MINCONFIG

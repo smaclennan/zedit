@@ -38,7 +38,6 @@ static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage);
 static void freepage(struct buff *tbuff, struct page *page);
 static Boolean pagesplit();
-static Boolean xbput(int fd, Byte *addr, unsigned len);
 
 void bfini(void)
 {
@@ -731,35 +730,39 @@ int breadfile(char *fname)
 
 
 /*	Write the current buffer to an open file descriptor.
- *	Returns:	TRUE	if write successfull
+ *	Returns:	TRUE	if write successful
  *			FALSE	if write failed
  */
 int bwritefd(int fd)
 {
-	struct mark pmark;				/* no mallocs! */
 	struct page *tpage;
-	struct stat sbuf;
 	int status = TRUE;
+	Byte lastch = '\n'; /* don't add NL to zero byte file */
 
-	bmrktopnt(&pmark);
-	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp) {
-		makecur(tpage);
-		status = xbput(fd, Cpstart, Curplen);
+	Curpage->plen = Curplen;
+	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
+		if (tpage->plen) {
+			lastch = tpage->pdata[tpage->plen - 1];
+			status = write(fd, tpage->pdata, tpage->plen) == tpage->plen;
+		}
+
+	/* handle ADDNL */
+	if (VAR(VADDNL) && lastch != '\n') {
+		char buf = '\n';
+		status &= write(fd, &buf, 1) == 1;
 	}
-	/* flush the buffers */
-	status &= xbput(fd, NULL, EOF);
+
 	if (status) {
 		/* get the time here - on some machines (SUN) 'time'
 		 * incorrect */
+		struct stat sbuf;
 		fstat(fd, &sbuf);
 		Curbuff->mtime = sbuf.st_mtime;
+		Curbuff->bmodf = FALSE;
 	} else
 		error("Unable to write file.");
-	(void)close(fd);
-	bpnttomrk(&pmark);
 
-	if (status)
-		Curbuff->bmodf = FALSE;
+	(void)close(fd);
 
 	return status;
 }
@@ -1032,67 +1035,6 @@ static Boolean pagesplit(void)
 	}
 	return TRUE;
 }
-
-/* High level write for non-block writes.
- * SLOW_DISK version buffers up the input until a PSIZE block is
- * reached, then sends it to XBwrite.  Can only be used on ONE file at
- * a time!  A 'xbput(fd, NULL, EOF)' call should be made before
- * closing the file to handle AddNL.
- */
-#if SLOW_DISK
-static Boolean xbput(int fd, Byte *addr, unsigned len)
-{
-	static Byte buf[PSIZE];
-	static int buflen, lastch;
-	int wrlen, rc = TRUE;
-
-	if (len == 0)
-		return TRUE;
-	if (len == EOF) {
-		/* flush the buffer and reset */
-		if (VAR(VADDNL)) {
-			if (buflen > 0)
-				lastch = buf[buflen - 1];
-			if (lastch != '\n')
-				xbput(fd, (Byte *)"\n", 1);
-		}
-		rc = write(fd, buf, buflen) == buflen;
-		buflen = lastch = 0;
-	} else {
-		wrlen = (buflen + len > PSIZE) ? (PSIZE - buflen) : len;
-		memcpy(&buf[buflen], addr, wrlen);
-		buflen += wrlen;
-		if (buflen == PSIZE) {
-			rc = write(fd, buf, PSIZE) == PSIZE;
-			lastch = buf[PSIZE - 1];
-			buflen = 0;
-			rc &= xbput(fd, &addr[wrlen], len - wrlen);
-		}
-	}
-	return rc;
-}
-#else
-static Boolean xbput(int fd, Byte *addr, unsigned len)
-{
-	static int lastch;
-
-	if (len == 0)
-		return TRUE;
-	if (len == EOF) {
-		/* handle ADDNL */
-		if (VAR(VADDNL) && lastch != '\n') {
-			char buf = '\n';
-			return write(fd, &buf, 1) == 1;
-		} else {
-			lastch = 0;
-			return TRUE;
-		}
-	}
-
-	lastch = addr[len - 1];
-	return write(fd, addr, len) == len;
-}
-#endif
 
 void Zstat(void)
 {

@@ -4,7 +4,6 @@ do_help() {
 	echo "Optional features:"
 	echo "  --enable-termcap	enable termcap and disable ansi"
 	echo "  --enable-dbg		debugging and runtime error checking"
-	echo "  --enable-slow-disk	for really really slow systems"
 	echo "  --enable-comment-bold	bold comments for C code"
 	echo "  --enable-help		enable builtin help"
 	echo "  --enable-shell	enable shell commands"
@@ -33,7 +32,6 @@ while [ -n "$1" ]; do
 	case "$1" in
 	*-termcap) termcap=$enable;;
 	*-dbg) dbg=$enable;;
-	*-slow-disk) slow_disk=$enable;;
 	*-minconfig) minconfig=$enable;;
 	*-maxconfig) maxconfig=$enable;;
 	*-comment-bold) comment=$enable;;
@@ -68,7 +66,6 @@ if [ -n "$termcap" ]; then
 fi
 
 [ -n "$dbg" ] && echo -e "#undef  DBG\n#define DBG $dbg" >> configure.h
-[ -n "$slow_disk" ] && echo -e "#undef  SLOW_DISK\n#define SLOW_DISK $slow_disk" >> configure.h
 
 if [ "$minconfig" = 1 ]; then
 	# Sanity check

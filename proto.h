@@ -386,6 +386,7 @@ static inline void uncomment(struct buff *buff, int need_update) {}
 void undo_add(int size);
 void undo_del(int size);
 void undo_clear(struct buff *buff);
+void ufini(void);
 
 /* Only exported for X */
 void copytomrk(struct mark *tmark);

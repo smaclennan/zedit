@@ -43,7 +43,6 @@ static struct undo *new_undo(struct buff *buff)
 		freelist = freelist->prev;
 	} else {
 		undo = malloc(sizeof(struct undo));
-
 		if (!undo)
 			return NULL;
 	}
@@ -62,8 +61,9 @@ static void recycle_undo(struct buff *buff)
 {
 	struct undo *undo = buff->undo_tail;
 
-	buff->undo_tail = undo->next;
+	buff->undo_tail = undo->prev;
 
+	unmark(undo->end);
 	if (undo->data)
 		free(undo->data);
 
@@ -139,6 +139,15 @@ void undo_clear(struct buff *buff)
 		recycle_undo(buff);
 }
 
+void ufini(void)
+{
+	while (freelist) {
+		struct undo *next = freelist->prev;
+		free(freelist);
+		freelist = next;
+	}
+}
+
 void Zundo(void)
 {
 	struct undo *undo = Curbuff->undo_tail;
@@ -173,4 +182,5 @@ void Zundo(void) { tbell(); }
 void undo_add(int size) {}
 void undo_del(int size) {}
 void undo_clear(struct buff *buff) {}
+void ufini() {}
 #endif

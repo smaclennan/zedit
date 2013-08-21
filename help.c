@@ -109,6 +109,19 @@ static void dump_bindings(char *buff, int fnum)
 		binstr("Unbound");
 }
 
+static void massage(char *buff)
+{
+	while (*buff) {
+		if (*buff == ' ' || *buff == '/')
+			*buff = '-';
+		else if (isupper(*buff))
+			*buff = tolower(*buff);
+		else if (*buff == '\n')
+			*buff = '\0';
+		++buff;
+	}
+}
+
 static FILE *findhelp(int code, Boolean func, char *buff)
 {
 	FILE *fp;
@@ -125,11 +138,13 @@ static FILE *findhelp(int code, Boolean func, char *buff)
 	len = strlen(ptr);
 
 	echo("Looking in help file...");
-	while (fgets(buff, STRMAX, fp))
+	while (fgets(buff, STRMAX, fp)) {
+		massage(buff);
 		if (*buff == ':' && strncmp(ptr, &buff[1], len) == 0) {
 			clrecho();
 			return fp;
 		}
+	}
 	fclose(fp);
 	echo("No Help");
 	return NULL;

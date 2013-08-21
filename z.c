@@ -23,7 +23,7 @@ Boolean Initializing = TRUE;
 Boolean Exitflag;
 static int ExitStatus;
 char *Thispath, *Cwd;
-char *ConfigDir;
+char *ConfigDir = "/usr/share/zedit";
 int Cmask;
 unsigned Cmd;
 jmp_buf	zenv;

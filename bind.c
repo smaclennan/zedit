@@ -167,7 +167,7 @@ void bind(void)
 	Keys[256 + 'L'] = Keys[256 + 'l'] = ZLSTBUFF;		/* C-X L */
 	Keys[256 + 'M'] = Keys[256 + 'm'] = ZSETBOOKMRK;	/* C-X M */
 	Keys[256 + 'N'] = Keys[256 + 'n'] = ZNEXTWIND;		/* C-X N */
-/* C-X O */
+	Keys[256 + 'O'] = Keys[256 + 'o'] - ZNEXTWIND;		/* C-X O */
 	Keys[256 + 'P'] = Keys[256 + 'p'] = ZPREVWIND;		/* C-X P */
 /* C-X Q */
 /* C-X R */

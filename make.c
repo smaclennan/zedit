@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-#ifdef SHELL
+#if MAKE
 /* This is cleared in Zmake and set in Znexterror.
  * If clear, the make buffer is scrolled up. Once a next error is
  * called, the buffer is kept at the error line.

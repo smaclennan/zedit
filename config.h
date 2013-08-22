@@ -46,17 +46,17 @@
 #if !MINCONFIG
 #define COMMENTBOLD	1		/* bold C comments */
 #define UNDO            1		/* EXPERIMENTAL undo code */
+#define HELP		1		/* Help */
 
-/* Warning: These are ifdefs, you must comment them out to disable them! */
-#define HELP				/* Help */
-#define SHELL				/* shell interface */
-#define SPELL				/* ispell interface */
-#define TAGS				/* tag file support */
+#define SHELL		1		/* shell interface */
+#define SPELL		1		/* ispell interface */
+#define MAKE		1		/* make command */
+#define TAGS		1		/* tag file support */
 #endif
 
 #include "configure.h"
 
 /* DON'T TOUCH THESE */
-#if defined(SHELL) || defined(SPELL) || defined(TAGS)
+#if SHELL || SPELL || TAGS || MAKE
 #define PIPESH
 #endif

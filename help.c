@@ -20,7 +20,7 @@
 #include "z.h"
 #include "keys.h"
 
-#ifdef HELP
+#if HELP
 static char *Htype[] = {
 	"Special",
 	"Other",
@@ -275,5 +275,5 @@ void Zhelp(void)
 
 #else
 void Zhelp(void) { tbell(); }
-#endif /* HELP */
+#endif
 

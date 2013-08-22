@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-#ifdef SHELL
+#if SHELL
 #ifdef BSD
 #include <signal.h>
 #endif

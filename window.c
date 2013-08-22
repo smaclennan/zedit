@@ -542,7 +542,7 @@ void wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
 	struct wdo *new;
 	struct buff *buff;
 
-#ifdef SHELL
+#if SHELL
 	if (strcmp(bname, SHELLBUFF) == 0) {
 		/* invoke the shell */
 		buff = cmakebuff(SHELLBUFF, NULL);

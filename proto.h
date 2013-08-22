@@ -354,7 +354,7 @@ void Zfname(void);
 int nmatch(char *, char *);
 
 
-#ifdef SPELL
+#if SPELL
 void sreplace(char *);
 #endif
 

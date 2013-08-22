@@ -1037,6 +1037,22 @@ static Boolean pagesplit(void)
 	return TRUE;
 }
 
+/* Peek the previous byte */
+Byte bpeek(void)
+{
+	Byte ch;
+
+	if (bisstart())
+		ch = Buff();
+	else {
+		bmove(-1);
+		ch = Buff();
+		bmove(1);
+	}
+
+	return ch;
+}
+
 void Zstat(void)
 {
 	sprintf(PawStr, "Buffers: %d   Pages: %d", Numbuffs, NumPages);

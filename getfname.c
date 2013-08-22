@@ -38,18 +38,22 @@ static void freelist(struct llist **list);
  */
 static int getname(char *prompt, char *path, Boolean isdir)
 {
+	const char mod[3] = { '\t', '/', '~' };
 	char tmp[PATHMAX + 1];
-	int tab, rc;
+	int was[3], rc, i;
 
-	tab = Keys['\t'];
-	Keys['\t'] = ZFNAME;
+	for (i = 0; i < 3; ++i) {
+		was[i] = Keys[(int)mod[i]];
+		Keys[(int)mod[i]] = ZFNAME;
+	}
 	rc = getarg(prompt, strcpy(tmp, path), PATHMAX);
 	if (rc == 0) {
 		rc = pathfixup(path, tmp);
 		if (rc == -1)
 			rc = isdir ? 0 : 1;
 	}
-	Keys['\t'] = tab;
+	for (i = 0; i < 3; ++i)
+		Keys[(int)mod[i]] = was[i];
 	freelist(&Flist);
 	if (Didmatch) {
 		Zredisplay();
@@ -197,7 +201,20 @@ void Zfname(void)
 	char dir[PATHMAX + 1], *p;
 	int row, col;
 	int len, n = 0, f = 0, rc;
-	int did_something = 0;
+	int did_something
+
+		= 0;
+
+	if (Cmd == '/') {
+		if (bpeek() == '/')
+			bempty();
+		pinsert();
+		return;
+	} else if (Cmd == '~') {
+		bempty();
+		pinsert();
+		return;
+	}
 
 	head = list = getfill(dir, &fname, &len, &update);
 	if (!list) {

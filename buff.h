@@ -117,6 +117,8 @@ extern int Curmodf;
 #define mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)
 #define bfname()	(Curbuff->fname)
 
+Byte bpeek(void);
+
 /* Return the character a mark points to. */
 #define markch(mrk)	((mrk)->mpage->pdata[(mrk)->moffset])
 

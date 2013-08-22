@@ -18,142 +18,142 @@
  */
 
 #define Z1WIND		0
-#define Z2WIND		1
-#define ZABORT		2
-#define ZAGAIN		3
-#define ZARG		4
-#define ZBEGLINE	5
-#define ZBPARA		6
-#define ZBWORD		7
-#define ZCALC		8
-#define ZCAPWORD	9
-#define ZCASE		10
-#define ZCENTER		11
-#define ZCOPYRGN	12
-#define ZCTRLX		13
-#define ZDELCHAR	14
-#define ZDELEOL		15
-#define ZDELLINE	16
-#define ZDELRGN		17
-#define ZDELWHITE	18
-#define ZDELWORD	19
-#define ZENDLINE	20
-#define ZEXIT		21
-#define ZFILEREAD	22
-#define ZFILESAVE	23
-#define ZFILEWRITE	24
-#define ZMODE		25
-#define ZFILLPARA	26
-#define ZFINDFILE	27
-#define ZFINDTAG	28
-#define ZFPARA		29
-#define ZFWORD		30
-#define ZGETBWORD	31
-#define ZGROWWINDOW	32
-#define ZHEXOUT		33
-#define ZINSERT		34	/* Also used for pinsert */
-#define ZKILLBUFF	35
-#define ZLGOTO		36
-#define ZLOWWORD	37
-#define ZLSTBUFF	38
-#define ZMAKEDEL	39
-#define ZMETA		40
-#define ZNEXTCHAR	41
-#define ZNEXTLINE	42
-#define ZNEXTPAGE	43
-#define ZNOTIMPL	44
-#define ZNXTBOOKMRK	45
-#define ZNXTOTHRWIND	46
-#define ZQUIT		47
-#define ZOVERIN		48
-#define ZOPENLINE	49
-#define ZPREVCHAR	50
-#define ZPREVLINE	51
-#define ZPREVOTHRWIND	52
-#define ZPREVPAGE	53
-#define ZPRINTPOS	54
-#define ZQUERY		55
-#define ZQUOTE		56
-#define ZRDELCHAR	57
-#define ZRDELWORD	58
-#define ZREREPLACE	59
-#define ZRESRCH		60
-#define ZRSEARCH	61
-#define ZSEARCH		62
-#define ZSETAVAR	63
-#define ZSETBOOKMRK	64
-#define ZSETMRK		65
-#define ZSHELL		66
-#define ZSTAT		67
-#define ZSWAPCHAR	68
-#define ZSWAPMRK	69
-#define ZNEXTWIND	70
-#define ZSWAPWORD	71
-#define ZSWITCHTO	72
-#define ZTAB		73
-#define ZTOEND		74
-#define ZTOSTART	75
-#define ZUPWORD		76
-#define ZYANK		77
-#define ZCINDENT	78
-#define ZCINSERT	79
-#define ZFILLCHK	80
-#define ZNEWLINE	81
-#define ZREDISPLAY	82
-#define ZMETAX		83
-#define ZBIND		84
-#define ZSAVEBIND	85
-#define ZDISPBINDS	86
-#define ZNEXTBUFF	87
-#define ZKEYBIND	88
-#define ZCOUNT		89
-#define ZINCSRCH	90
-#define ZRINCSRCH	91
-#define ZUNMODF		92
-#define ZISPACE		93
-#define ZPRINT		94
-#define ZDELBLANKS	95
-#define ZMRKPARA	96
-#define ZUPREGION	97
-#define ZLOWREGION	98
-#define ZVIEWLINE	99
-#define ZCMD		100
-#define ZJOIN		101
-#define ZDATE		102
-#define ZCGOTO		103
-#define ZMAKE		104
-#define ZNEXTERR	105
-#define ZCMDTOBUFF	106
-#define ZKILL		107
-#define ZPREVWIND	108
-#define ZBEGWIND	109
-#define ZENDWIND	110
-#define ZHELP		111
-#define ZGSEARCH	112
-#define ZINDENT		113
-#define ZUNDENT		114
-#define ZEMPTY		115
-#define ZREPLACE	116
-#define ZSAVEALL	117
-#define ZVIEWFILE	118
-#define ZDELWIND	119
-#define ZSHRINKWIND	120
-#define ZSIZEWIND	121
-#define ZSPELL		122
-#define ZREVERTFILE	123
-#define ZSCROLLDOWN	124
-#define ZSCROLLUP	125
-#define ZFORMTAB	126
-#define ZCWD		127
-#define ZCMDBIND	128
-#define ZSAVECONFIG	129
-#define ZSETENV		130
-#define ZREF		131
-#define ZZOOM		132
-#define ZGRESRCH	133
-#define ZGREP		134
-#define ZUNDO		135
-#define NUMFUNCS	136
+#define Z2WIND		Z1WIND + 1
+#define ZABORT		Z2WIND + 1
+#define ZAGAIN		ZABORT + 1
+#define ZARG		ZAGAIN + 1
+#define ZBEGLINE	ZARG + 1
+#define ZBPARA		ZBEGLINE + 1
+#define ZBWORD		ZBPARA + 1
+#define ZCALC		ZBWORD + 1
+#define ZCAPWORD	ZCALC + 1
+#define ZCASE		ZCAPWORD + 1
+#define ZCENTER		ZCASE + 1
+#define ZCOPYRGN	ZCENTER + 1
+#define ZCTRLX		ZCOPYRGN + 1
+#define ZDELCHAR	ZCTRLX + 1
+#define ZDELEOL		ZDELCHAR + 1
+#define ZDELLINE	ZDELEOL + 1
+#define ZDELRGN		ZDELLINE + 1
+#define ZDELWHITE	ZDELRGN + 1
+#define ZDELWORD	ZDELWHITE + 1
+#define ZENDLINE	ZDELWORD + 1
+#define ZEXIT		ZENDLINE + 1
+#define ZFILEREAD	ZEXIT + 1
+#define ZFILESAVE	ZFILEREAD + 1
+#define ZFILEWRITE	ZFILESAVE + 1
+#define ZMODE		ZFILEWRITE + 1
+#define ZFILLPARA	ZMODE + 1
+#define ZFINDFILE	ZFILLPARA + 1
+#define ZFINDTAG	ZFINDFILE + 1
+#define ZFPARA		ZFINDTAG + 1
+#define ZFWORD		ZFPARA + 1
+#define ZGETBWORD	ZFWORD + 1
+#define ZGROWWINDOW	ZGETBWORD + 1
+#define ZHEXOUT		ZGROWWINDOW + 1
+#define ZINSERT		ZHEXOUT + 1 /* Also used for pinsert */
+#define ZKILLBUFF	ZINSERT + 1
+#define ZLGOTO		ZKILLBUFF + 1
+#define ZLOWWORD	ZLGOTO + 1
+#define ZLSTBUFF	ZLOWWORD + 1
+#define ZMAKEDEL	ZLSTBUFF + 1
+#define ZMETA		ZMAKEDEL + 1
+#define ZNEXTCHAR	ZMETA + 1
+#define ZNEXTLINE	ZNEXTCHAR + 1
+#define ZNEXTPAGE	ZNEXTLINE + 1
+#define ZNOTIMPL	ZNEXTPAGE + 1
+#define ZNXTBOOKMRK	ZNOTIMPL + 1
+#define ZNXTOTHRWIND	ZNXTBOOKMRK + 1
+#define ZQUIT		ZNXTOTHRWIND + 1
+#define ZOVERIN		ZQUIT + 1
+#define ZOPENLINE	ZOVERIN + 1
+#define ZPREVCHAR	ZOPENLINE + 1
+#define ZPREVLINE	ZPREVCHAR + 1
+#define ZPREVOTHRWIND	ZPREVLINE + 1
+#define ZPREVPAGE	ZPREVOTHRWIND + 1
+#define ZPRINTPOS	ZPREVPAGE + 1
+#define ZQUERY		ZPRINTPOS + 1
+#define ZQUOTE		ZQUERY + 1
+#define ZRDELCHAR	ZQUOTE + 1
+#define ZRDELWORD	ZRDELCHAR + 1
+#define ZREREPLACE	ZRDELWORD + 1
+#define ZRESRCH		ZREREPLACE + 1
+#define ZRSEARCH	ZRESRCH + 1
+#define ZSEARCH		ZRSEARCH + 1
+#define ZSETAVAR	ZSEARCH + 1
+#define ZSETBOOKMRK	ZSETAVAR + 1
+#define ZSETMRK		ZSETBOOKMRK + 1
+#define ZSHELL		ZSETMRK + 1
+#define ZSTAT		ZSHELL + 1
+#define ZSWAPCHAR	ZSTAT + 1
+#define ZSWAPMRK	ZSWAPCHAR + 1
+#define ZNEXTWIND	ZSWAPMRK + 1
+#define ZSWAPWORD	ZNEXTWIND + 1
+#define ZSWITCHTO	ZSWAPWORD + 1
+#define ZTAB		ZSWITCHTO + 1
+#define ZTOEND		ZTAB + 1
+#define ZTOSTART	ZTOEND + 1
+#define ZUPWORD		ZTOSTART + 1
+#define ZYANK		ZUPWORD + 1
+#define ZCINDENT	ZYANK + 1
+#define ZCINSERT	ZCINDENT + 1
+#define ZFILLCHK	ZCINSERT + 1
+#define ZNEWLINE	ZFILLCHK + 1
+#define ZREDISPLAY	ZNEWLINE + 1
+#define ZMETAX		ZREDISPLAY + 1
+#define ZBIND		ZMETAX + 1
+#define ZSAVEBIND	ZBIND + 1
+#define ZDISPBINDS	ZSAVEBIND + 1
+#define ZNEXTBUFF	ZDISPBINDS + 1
+#define ZKEYBIND	ZNEXTBUFF + 1
+#define ZCOUNT		ZKEYBIND + 1
+#define ZINCSRCH	ZCOUNT + 1
+#define ZRINCSRCH	ZINCSRCH + 1
+#define ZUNMODF		ZRINCSRCH + 1
+#define ZISPACE		ZUNMODF + 1
+#define ZPRINT		ZISPACE + 1
+#define ZDELBLANKS	ZPRINT + 1
+#define ZMRKPARA	ZDELBLANKS + 1
+#define ZUPREGION	ZMRKPARA + 1
+#define ZLOWREGION	ZUPREGION + 1
+#define ZVIEWLINE	ZLOWREGION + 1
+#define ZCMD		ZVIEWLINE + 1
+#define ZJOIN		ZCMD + 1
+#define ZDATE		ZJOIN + 1
+#define ZCGOTO		ZDATE + 1
+#define ZMAKE		ZCGOTO + 1
+#define ZNEXTERR	ZMAKE + 1
+#define ZCMDTOBUFF	ZNEXTERR + 1
+#define ZKILL		ZCMDTOBUFF + 1
+#define ZPREVWIND	ZKILL + 1
+#define ZBEGWIND	ZPREVWIND + 1
+#define ZENDWIND	ZBEGWIND + 1
+#define ZHELP		ZENDWIND + 1
+#define ZGSEARCH	ZHELP + 1
+#define ZINDENT		ZGSEARCH + 1
+#define ZUNDENT		ZINDENT + 1
+#define ZEMPTY		ZUNDENT + 1
+#define ZREPLACE	ZEMPTY + 1
+#define ZSAVEALL	ZREPLACE + 1
+#define ZVIEWFILE	ZSAVEALL + 1
+#define ZDELWIND	ZVIEWFILE + 1
+#define ZSHRINKWIND	ZDELWIND + 1
+#define ZSIZEWIND	ZSHRINKWIND + 1
+#define ZSPELL		ZSIZEWIND + 1
+#define ZREVERTFILE	ZSPELL + 1
+#define ZSCROLLDOWN	ZREVERTFILE + 1
+#define ZSCROLLUP	ZSCROLLDOWN + 1
+#define ZFORMTAB	ZSCROLLUP + 1
+#define ZCWD		ZFORMTAB + 1
+#define ZCMDBIND	ZCWD + 1
+#define ZSAVECONFIG	ZCMDBIND + 1
+#define ZSETENV		ZSAVECONFIG + 1
+#define ZREF		ZSETENV + 1
+#define ZZOOM		ZREF + 1
+#define ZGRESRCH	ZZOOM + 1
+#define ZGREP		ZGRESRCH + 1
+#define ZUNDO		ZGREP + 1
+#define NUMFUNCS	ZUNDO + 1
 
 /* this is used by the getfname command in the PAW for command completion */
 #define ZFNAME		NUMFUNCS

@@ -71,7 +71,6 @@ void Zfillmode(void);
 void Zfillpara(void);
 void Zfindfile(void);
 void Zfindtag(void);
-void Zformtab(void);
 void Zfpara(void);
 void Zfword(void);
 void Zgetbword(void);

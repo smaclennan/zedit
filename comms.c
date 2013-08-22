@@ -529,16 +529,6 @@ Boolean Ispara(char pc, char ch)
 }
 
 
-/* FORM MODE COMMANDS */
-
-void Zformtab(void)
-{
-	if (bstrsearch(FORMSTRING, TRUE))
-		bdelete(strlen(FORMSTRING));
-	else
-		tbell();
-}
-
 /* MISC COMMANDS */
 
 void Zprintpos(void)

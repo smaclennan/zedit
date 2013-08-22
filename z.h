@@ -144,8 +144,6 @@ extern struct passwd *Me;
 #define ABORT		-1
 #define BADCHAR		-2
 
-#define FORMSTRING	">FIELD<"
-
 /* Help Types */
 #define H_NONE				0
 #define H_MISC				1

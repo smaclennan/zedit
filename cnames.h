@@ -45,7 +45,6 @@ struct cnames Cnames[] = {
 	{"fill-paragraph",		ZFILLPARA,	H_MODE},
 	{"find-file",			ZFINDFILE,	H_FILE},
 	{"find-tag",			ZFINDTAG,	H_FILE},
-	{"form-tab",			ZFORMTAB,	H_MODE},
 	{"global-re-search",		ZGRESRCH,	H_SEARCH},
 	{"global-search",		ZGSEARCH,	H_SEARCH},
 	{"goto-line",			ZLGOTO,		H_CURSOR},

@@ -145,7 +145,6 @@ void (*Cmds[NUMFUNCS + 1][3])() = {
 	{ Zrevertfile,		Zrevertfile,		Znotimpl },
 	{ Zscrolldown,		Zscrolldown,		Znotimpl },
 	{ Zscrollup,		Zscrollup,		Znotimpl },
-	{ Zformtab,		Znotimpl,		Znotimpl },
 	{ Zcwd,			Zcwd,			Znotimpl },
 	{ Zcmdbind,		Zcmdbind,		Znotimpl },
 	{ Zsaveconfig,		Zsaveconfig,		Znotimpl },

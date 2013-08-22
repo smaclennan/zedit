@@ -18,6 +18,8 @@ else
 	version=$1
 fi
 
+make
+
 # if these don't exist, rebuild all
 [ -f help.z -a -f appab.doc ] || all=1
 

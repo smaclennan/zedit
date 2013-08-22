@@ -54,11 +54,6 @@ Bound To
 Prompts for a command with command complete and gives a list of the keys
 the command is bound to. A Universal Argument is ignored.
 .sp 2
-C Beautify
-
-Runs the "indent" command on the current buffer. "indent" comes bundled
-with the editor. A Universal Argument is ignored.
-.sp 2
 C Indent
 
 Causes Newline characters to auto-indent to the current tab level. If a
@@ -253,10 +248,9 @@ current window.
 .sp 2
 Exit
 
-Exits from the editor. If SaveOnExit is set, it saves all modified
-buffers before exiting. If SaveOnExit is off, it asks to save all
-modified buffers. A Universal Argument causes all modified buffers to be
-saved without prompting.
+Exits from the editor. It asks to save all modified buffers. A bang
+(!) saves all remaining buffers. A Universal Argument causes all
+modified buffers to be saved without prompting.
 .sp 2
 Expression Replace
 
@@ -320,14 +314,6 @@ with the first substring match as the default. To see the next substring
 match use the Again command. The tag file is the file defined in the
 variable "Tagfile", or the file "tags" in the current directory.
 Universal Arguments are ignored.
-.sp 2
-Form Tab
-
-Searchs from the Point for the string ">FIELD<". If it finds the string,
-it deletes the string and leaves the Point at the position the string
-was found at. If not found, leaves the Point at the end of the buffer. A
-Universal Argument causes the command to repeat, deleting and skipping
-intermediate strings.
 .sp 2
 Global RE Search
 
@@ -465,25 +451,12 @@ Converts the current word starting at the Point to lowercase. It leaves
 the Point at the end of the word. A Universal Argument causes the
 command to repeat.
 .sp 2
-Mail
-
-Sends the current buffer or, if a Universal Argument is specified, the
-current region via the Unix mail command. It prompts for the user to
-send to. Any valid mail commands may be specified at this prompt. This
-command is only available if the define MAIL is set in the config file.
-.sp 2
 Make
 
 This command performs the command specified in the Make variable and
 puts the output in the ".make" buffer. The command is usually "make" and
 is used in conjunction with the Next Error command. A Universal Argument
 prompts for the command to execute.
-.sp 2
-Man
-
-This asks for a string to do a 'man' on. It reads the man entry and
-formats it for Zedit. Only valid on Unix machines. A Universal Argument
-is ignored.
 .sp 2
 Mark Paragraph
 
@@ -670,12 +643,6 @@ Others         Continue without replacing current match.
 The Point is left at the position it was in before the Query Replace. If
 the mode Exact is set, the search will be case sensitive. A Universal
 Argument causes the replacement to be done globally in all the buffers.
-.sp 2
-Quit
-
-Quit the editor without prompting to save files. Will prompt once if
-there are modified buffers. A Universal Argument causes a quit, even if
-there are modified buffers, without prompting.
 .sp 2
 Quote
 
@@ -983,18 +950,13 @@ extensions. See also CExtends, TExtends.
 Backup
 
 If this flag variable is set, a backup file is created when a file is
-written. The default is on.
+written. The default is off.
 .sp 2
 C Extends
 
 This variable defines the extensions that turn on C Mode. The
 extensions are seperated with the colon (:). There is a maximum of eight
 extensions. See also AExtends, TExtends.
-.sp 2
-Clear Exit
-
-If this variable is set, Zedit will clear the screen on exit. Default is
-off. Not available on PC.
 .sp 2
 C Tabs
 
@@ -1008,12 +970,6 @@ Date Format
 The Date command uses strftime to format the output string. This varable
 is passed to strftime as the format string. It has a default of "%c" which
 is the preferred date for the current locale. See strftime for details.
-.sp 2
-Do Save
-
-If this flag variable is set, the current state of the editor will be
-saved on exit. If Zedit is then started with no command line arguments,
-the editor reverts to the saved state. The default is on.
 .sp 2
 Exact
 
@@ -1040,10 +996,6 @@ FlowControl is set, ^S and ^Q stop and start the terminal. However, the
 ^S cannot be used as the Search command. If FlowControl is off, ^S can
 be used. The default is off.
 .sp 2
-Font
-
-Set the font to be used by Zedit. Xwindows only.
-.sp 2
 Grep
 
 The command to use for the Zedit grep command. The default is `grep -n'.
@@ -1058,14 +1010,7 @@ Lines
 
 This flag variable turns on a line:column indicator on the mode line.
 The Lines feature can cause a lot of cursor movement and is irritating
-on some slow terminals. It can also be slow in Fastread buffers. The
-default is on.
-.sp 2
-Mail Cmd
-
-Specifies the command to use with the Mail command. It is usually mail,
-however, on some machines the command mailx may be needed. Note that
-Zedit appends "-s <subject> <to_list> < <mail_message>" to the command.
+on some slow terminals. The default is on.
 .sp 2
 Make Cmd
 
@@ -1104,22 +1049,6 @@ Overwrite
 
 If overwrite is set, newly created buffers default to overwrite mode
 instead of insert mode. Default is off.
-.sp 2
-Print
-
-Specifies the print command to execute. It will append the file name to
-this string.
-.sp 2
-Save On Exit
-
-Usually, the editor prompts to save modified files when the Exit command
-is executed. If SaveOnExit is set, all modified buffers are saved on
-exit. The default is off.
-.sp 2
-Show CWD
-
-This variable is for XWINDOWS only. If set, the current working
-directory is shown in the title bar of the window. The default is True.
 .sp 2
 Silent
 

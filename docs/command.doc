@@ -47,11 +47,6 @@ causes the Bind command to reset all the default arguments.  Keys can be
 Prompts for a command with command complete and gives a list of the keys
 the command is bound to. A Universal Argument is ignored.
 .sp 0
-:C Beautify
-
-Runs the "indent" command on the current buffer. "indent" comes bundled
-with the editor. A Universal Argument is ignored.
-.sp 0
 :C Indent
 
 Causes Newline characters to auto-indent to the current tab level. If a
@@ -246,10 +241,9 @@ current window.
 .sp 0
 :Exit
 
-Exits from the editor. If SaveOnExit is set, it saves all modified
-buffers before exiting. If SaveOnExit is off, it asks to save all
-modified buffers. A Universal Argument causes all modified buffers to be
-saved without prompting.
+Exits from the editor. It asks to save all modified buffers. A bang
+(!) saves all remaining buffers. A Universal Argument causes all
+modified buffers to be saved without prompting.
 .sp 0
 :Expression Replace
 
@@ -313,14 +307,6 @@ with the first substring match as the default. To see the next substring
 match use the Again command. The tag file is the file defined in the
 variable "Tagfile", or the file "tags" in the current directory.
 Universal Arguments are ignored.
-.sp 0
-:Form Tab
-
-Searchs from the Point for the string ">FIELD<". If it finds the string,
-it deletes the string and leaves the Point at the position the string
-was found at. If not found, leaves the Point at the end of the buffer. A
-Universal Argument causes the command to repeat, deleting and skipping
-intermediate strings.
 .sp 0
 :Global RE Search
 
@@ -458,25 +444,12 @@ Converts the current word starting at the Point to lowercase. It leaves
 the Point at the end of the word. A Universal Argument causes the
 command to repeat.
 .sp 0
-:Mail
-
-Sends the current buffer or, if a Universal Argument is specified, the
-current region via the Unix mail command. It prompts for the user to
-send to. Any valid mail commands may be specified at this prompt. This
-command is only available if the define MAIL is set in the config file.
-.sp 0
 :Make
 
 This command performs the command specified in the Make variable and
 puts the output in the ".make" buffer. The command is usually "make" and
 is used in conjunction with the Next Error command. A Universal Argument
 prompts for the command to execute.
-.sp 0
-:Man
-
-This asks for a string to do a 'man' on. It reads the man entry and
-formats it for Zedit. Only valid on Unix machines. A Universal Argument
-is ignored.
 .sp 0
 :Mark Paragraph
 
@@ -663,12 +636,6 @@ Others         Continue without replacing current match.
 The Point is left at the position it was in before the Query Replace. If
 the mode Exact is set, the search will be case sensitive. A Universal
 Argument causes the replacement to be done globally in all the buffers.
-.sp 0
-:Quit
-
-Quit the editor without prompting to save files. Will prompt once if
-there are modified buffers. A Universal Argument causes a quit, even if
-there are modified buffers, without prompting.
 .sp 0
 :Quote
 

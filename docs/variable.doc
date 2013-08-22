@@ -78,12 +78,6 @@ This flag variable turns on a line:column indicator on the mode line.
 The Lines feature can cause a lot of cursor movement and is irritating
 on some slow terminals. The default is on.
 .sp 0
-:Mail Cmd
-
-Specifies the command to use with the Mail command. It is usually mail,
-however, on some machines the command mailx may be needed. Note that
-Zedit appends "-s <subject> <to_list> < <mail_message>" to the command.
-.sp 0
 :Make Cmd
 
 This is a string variable which contains the default string for the Make

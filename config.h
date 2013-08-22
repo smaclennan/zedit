@@ -60,3 +60,7 @@
 #if SHELL || SPELL || TAGS || MAKE
 #define PIPESH
 #endif
+#if defined(LINUX) && defined(ANSI)
+/* Try defining this if you find the F6 and up keys are messed up. */
+#define ANSI_KEY_HACK
+#endif

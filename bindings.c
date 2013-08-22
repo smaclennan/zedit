@@ -51,27 +51,32 @@ void Zbind(void)
 
 void Zkeybind(void)
 {
-	char str[STRMAX];
+	char str[STRMAX], kstr[12];
 	int rc;
-	unsigned key;
+	unsigned raw, key;
 
 	Arg = 0;
 	echo("Key: ");
-	key = Keys[tgetcmd()];
+	raw = tgetcmd();
+	key = Keys[raw];
 	if (key == ZCTRLX) {
 		echo("Key: C-X ");
-		key = Keys[tgetcmd() + 256];
+		raw = tgetcmd() + 256;
+		key = Keys[raw];
 	} else if (key == ZMETA) {
 		echo("Key: M-");
-		key = Keys[tgetcmd() + 128];
+		raw = tgetcmd() + 128;
+		key = Keys[raw];
 	}
 
-	if (key == ZNOTIMPL)
-		echo("Unbound");
-	else
+	if (key == ZNOTIMPL) {
+		snprintf(str, sizeof(str), "%s Unbound", dispkey(raw, kstr));
+		echo(str);
+	} else
 		for (rc = 0; rc < NUMFUNCS; ++rc)
 			if (Cnames[rc].fnum == key) {
-				sprintf(str, "Bound to %s", Cnames[rc].name);
+				snprintf(str, sizeof(str), "%s Bound to %s",
+					dispkey(raw, kstr), Cnames[rc].name);
 				echo(str);
 			}
 }

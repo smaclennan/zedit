@@ -59,7 +59,13 @@ if [ -n "$termcap" ]; then
 	fi
 fi
 
-[ -n "$dbg" ] && echo -e "#undef  DBG\n#define DBG $dbg" >> configure.h
+# dash does not support -e
+set_one() {
+    if [ -n "$2" ]; then
+	echo "#undef  $1" >> configure.h
+	echo "#define $1 $2" >> configure.h
+    fi
+}
 
 if [ "$minconfig" = 1 ]; then
 	# Sanity check
@@ -73,11 +79,12 @@ elif [ "$maxconfig" = 1 ]; then
 	comment=1; undo=1; help=1; shell=1; spell=1; tags=1
 fi
 
-[ -n "$comment" ] && echo -e "#undef  COMMENTBOLD\n#define COMMENTBOLD $comment" >> configure.h
-[ -n "$undo" ] && echo -e "#undef  UNDO\n#define UNDO $undo" >> configure.h
-[ -n "$help" ] && echo -e "#undef  HELP\n#define HELP $help" >> configure.h
+set_one DBG $dbg
+set_one COMMENTBOLD $comment
+set_one UNDO $undo
+set_one HELP $help
 
-[ -n "$shell" ] && echo -e "#undef  SHELL\n#define SHELL $shell" >> configure.h
-[ -n "$spell" ] && echo -e "#undef  SPELL\n#define SPELL $spell" >> configure.h
-[ -n "$make" ] && echo -e "#undef  MAKE\n#define MAKE $make" >> configure.h
-[ -n "$tags" ] && echo -e "#undef  TAGS\n#define TAGS $tags" >> configure.h
+set_one SHELL $shell
+set_one SPELL $spell
+set_one MAKE  $make
+set_one TAGS  $tags

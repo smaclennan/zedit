@@ -79,39 +79,6 @@ void Zcmdtobuff(void)
 #endif
 }
 
-/* Perform man command on pipe, wait for completion, and format */
-void Zman(void)
-{
-	char entry[STRMAX + 5], *p;
-	int rc;
-	struct wdo *save;
-
-	strcpy(entry, "man ");
-	p = entry + strlen(entry);
-	getbword(p, STRMAX, bistoken);	/* get word */
-	if (getarg("Man: ", p, STRMAX))
-		return;
-
-	save = Curwdo;
-	if (wuseother(MANBUFF)) {
-		echo("Please wait...");
-		rc = pipetobuff(Curbuff, entry);
-		if (rc == 0) {
-			/* remove the underlines */
-			message(Curbuff, p);
-			btoend();
-			while (bcrsearch('\010')) {
-				bmove(-1);
-				bdelete(2);
-			}
-		}
-		Curbuff->bmodf = FALSE;
-		Curbuff->bmode |= VIEW;
-		printexit(rc);
-		wswitchto(save);
-	}
-}
-
 #ifdef BSD
 #ifdef PIPESH
 void Zcmd(void)
@@ -181,51 +148,6 @@ void Zshell(void)	/*for tags*/
 }
 #endif
 
-/* send the current buffer as a mail buffer */
-void Zmail(void)
-{
-	char to[STRMAX + 1], subject[STRMAX + 1], cmd[STRMAX * 2 + 20];
-
-	*to = '\0';
-	if (getarg("Mail To: ", to, STRMAX))
-		return;
-	*subject = '\0';
-	switch (getarg("Subject: ", subject, STRMAX)) {
-	case 0:
-		break;
-	case 1:
-		if (ask("Send with empty subject? ") != YES)
-			return;
-		break;
-	case ABORT:
-		return;
-	}
-
-	echo("Sending...");
-	/* Send the mail.
-	 * We do not check the return code from the system calls because some
-	 * systems (Motorola...) always returns -1 (EINTR).
-	 */
-	if (*subject)
-		sprintf(cmd, "%s -s \"%s\" %s",
-			VARSTR(VMAIL), subject, to);
-	else
-		sprintf(cmd, "%s %s", VARSTR(VMAIL), to);
-	bufftopipe(Curbuff, cmd);
-	echo("Mail sent.");
-}
-
-/* send the current buffer to the printer */
-void Zprint(void)
-{
-	char cmd[STRMAX + 20];
-
-	echo("Printing...");
-	/* note that BuffToPipe updates cmd */
-	strcpy(cmd, VARSTR(VPRINT));
-	printexit(bufftopipe(Curbuff, cmd));
-}
-
 #ifdef PIPESH
 struct buff *cmdtobuff(char *bname, char *cmd)
 {
@@ -275,64 +197,6 @@ int dopipe(char *fname, char *cmd)
 	return 0;
 }
 #endif
-
-/* beautify the current buffer */
-#define INDENT		"indent"
-
-void Zbeauty(void)
-{
-	char cmdStr[128];
-	char fileName1[25], fileName2[25];
-	int status, fd1;
-
-	Arg = 0;
-	if (!(Curbuff->bmode & PROGMODE)) {
-		echo("Not a program buffer!");
-		return;
-	}
-	echo("Beautifying...");
-	strcpy(fileName1, "/tmp/cbeaut1XXXXXX");
-	fd1 = mkstemp(fileName1);
-	strcpy(fileName2, fileName1);
-	fileName2[11] = '2';
-
-	if (fd1 == -1) {
-		echo("mkstemp failed");
-		return;
-	}
-	status = bwritefd(fd1);
-	close(fd1);
-	if (!status) {
-		echo("Write failed");
-		return;
-	}
-
-#ifdef PIPESH
-	sprintf(cmdStr, "%s %s %s", INDENT, fileName1, fileName2);
-	if (!dopipe(Curbuff, cmdStr))
-		return;
-
-	while (Curbuff->child != EOF)
-		checkpipes(2);
-#else
-	sprintf(cmdStr, "%s %s %s >/dev/null 2>&1", INDENT, fileName1,
-		fileName2);
-	if (system(cmdStr))
-		return;
-#endif
-
-	if (access(fileName2, 0)) {
-		sprintf(PawStr, "Unable to execute %s.", INDENT);
-		error(PawStr);
-	} else {
-		breadfile(fileName2);
-		Curbuff->bmodf = MODIFIED;
-		clrecho();
-	}
-
-	unlink(fileName1);
-	unlink(fileName2);
-}
 
 /* Returns -1 if popen failed, else exit code.
  * Leaves Point and Mark where they where.
@@ -406,10 +270,6 @@ static void printexit(int code)
 }
 #else
 void Zshell(void) { tbell(); }
-void Zprint(void) { tbell(); }
 void Zcmd(void) { tbell(); }
 void Zcmdtobuff(void) { tbell(); }
-void Zmail(void) { tbell(); }
-void Zman(void) { tbell(); }
-void Zbeauty(void) { tbell(); }
 #endif /* SHELL */

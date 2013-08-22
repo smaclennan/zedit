@@ -153,12 +153,8 @@ void tfini(void)
 	ioctl(fileno(stdin), TIOCSLTC, &savelchars);
 #endif
 
-	if (VAR(VCLEAR))
-		tclrwind();
-	else {
-		clrecho();
-		tgoto(Rowmax - 1, 0);
-	}
+	clrecho();
+	tgoto(Rowmax - 1, 0);
 	tflush();
 	tlfini();
 }

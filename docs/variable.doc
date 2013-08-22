@@ -16,18 +16,13 @@ extensions. See also CExtends, TExtends.
 :Backup
 
 If this flag variable is set, a backup file is created when a file is
-written. The default is on.
+written. The default is off.
 .sp 0
 :C Extends
 
 This variable defines the extensions that turn on C Mode. The
 extensions are seperated with the colon (:). There is a maximum of eight
 extensions. See also AExtends, TExtends.
-.sp 0
-:Clear Exit
-
-If this variable is set, Zedit will clear the screen on exit. Default is
-off. Not available on PC.
 .sp 0
 :C Tabs
 
@@ -81,8 +76,7 @@ line including the NL. The default is on.
 
 This flag variable turns on a line:column indicator on the mode line.
 The Lines feature can cause a lot of cursor movement and is irritating
-on some slow terminals. It can also be slow in Fastread buffers. The
-default is on.
+on some slow terminals. The default is on.
 .sp 0
 :Mail Cmd
 
@@ -127,17 +121,6 @@ default is on.
 
 If overwrite is set, newly created buffers default to overwrite mode
 instead of insert mode. Default is off.
-.sp 0
-:Print
-
-Specifies the print command to execute. It will append the file name to
-this string.
-.sp 0
-:Save On Exit
-
-Usually, the editor prompts to save modified files when the Exit command
-is executed. If SaveOnExit is set, all modified buffers are saved on
-exit. The default is off.
 .sp 0
 :Silent
 

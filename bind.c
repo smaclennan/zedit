@@ -67,7 +67,7 @@ void bind(void)
 
 	Keys[128 + 2] = ZCMDBIND;	/* M-C-B */
 	Keys[128 + 7] = ZABORT;		/* M-C-G */
-	Keys[128 + 12] = ZMAN;		/* M-C-L */
+/* M-C-L */
 /*	Keys[128 + 13] = ;		 * M-C-M */
 	Keys[128 + 14] = ZSCROLLDOWN;	/* M-C-N */
 	Keys[128 + 16] = ZSCROLLUP;	/* M-C-P */

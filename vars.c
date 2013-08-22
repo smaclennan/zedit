@@ -76,12 +76,8 @@ void readvfile(void)
 		getchar();
 	}
 #endif
-	if (!VARSTR(VMAIL))
-		VARSTR(VMAIL) = strdup("mail");
 	if (!VARSTR(VMAKE))
 		VARSTR(VMAKE) = strdup("make");
-	if (!VARSTR(VPRINT))
-		VARSTR(VPRINT) = strdup("lp");
 	if (!VARSTR(VCEXTS)) {
 		VARSTR(VCEXTS) =
 			strdup(".c:.h:.cpp:.cc:.cxx:.y:.l:.m:.m4");

@@ -40,7 +40,7 @@ extern jmp_buf zenv;
 struct page {
 	Byte pdata[PSIZE];		/* the page data */
 	int plen;			/* current length of the page */
-	int lines;			/* number of lines in page */
+	int plines;			/* number of lines in page */
 	struct page *nextp, *prevp;	/* list of pages in buffer */
 };
 

@@ -420,7 +420,7 @@ long blength(struct buff *tbuff)
 	Curpage->plen = Curplen;
 	spage = Curpage;
 	for (len = 0, tpage = tbuff->firstp; tpage; tpage = tpage->nextp) {
-		if (tpage->lines == EOF)
+		if (tpage->plines == EOF)
 			makecur(tpage);
 		len += tpage->plen;
 	}
@@ -440,12 +440,12 @@ unsigned long blocation(unsigned *lines)
 	if (lines)
 		*lines = 1;
 	for (tpage = Curbuff->firstp; tpage != spage; tpage = tpage->nextp) {
-		if (tpage->lines == EOF) {
+		if (tpage->plines == EOF) {
 			makecur(tpage);
-			tpage->lines = cntlines(Curplen);
+			tpage->plines = cntlines(Curplen);
 		}
 		if (lines)
-			*lines += tpage->lines;
+			*lines += tpage->plines;
 		len += tpage->plen;
 	}
 	makecur(spage);
@@ -462,16 +462,16 @@ long blines(struct buff *buff)
 	struct page *tpage, *spage;
 
 	if (Curmodf)
-		Curpage->lines = EOF;
+		Curpage->plines = EOF;
 	spage = Curpage;
 	lines = 1;
 
 	for (tpage = buff->firstp; tpage; tpage = tpage->nextp) {
-		if (tpage->lines == EOF) {
+		if (tpage->plines == EOF) {
 			makecur(tpage);
-			tpage->lines = cntlines(Curplen);
+			tpage->plines = cntlines(Curplen);
 		}
-		lines += tpage->lines;
+		lines += tpage->plines;
 	}
 
 	makecur(spage);
@@ -972,7 +972,7 @@ static struct page *newpage(struct buff *tbuff,
 		new->prevp = ppage;
 		npage ? (npage->prevp = new) : (tbuff->lastp = new);
 		ppage ? (ppage->nextp = new) : (tbuff->firstp = new);
-		new->lines = EOF;	/* undefined */
+		new->plines = EOF;	/* undefined */
 		++NumPages;
 	}
 
@@ -1001,8 +1001,8 @@ void makecur(struct page *page)
 		return;
 	if (Curpage) {
 		Curpage->plen = Curplen;
-		if (Curmodf || Curpage->lines == EOF)
-			Curpage->lines = cntlines(Curplen);
+		if (Curmodf || Curpage->plines == EOF)
+			Curpage->plines = cntlines(Curplen);
 	}
 	Curpage = page;
 	Cpstart = page->pdata;

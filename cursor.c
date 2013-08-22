@@ -193,13 +193,13 @@ void Zlgoto(void)
 
 	/* find the correct page */
 	for (tpage = Curbuff->firstp; tpage->nextp; tpage = tpage->nextp) {
-		if (tpage->lines == EOF) {
+		if (tpage->plines == EOF) {
 			makecur(tpage);
-			tpage->lines = cntlines(Curplen);
+			tpage->plines = cntlines(Curplen);
 		}
-		cnt += tpage->lines;
+		cnt += tpage->plines;
 		if (cnt >= line) {
-			cnt -= tpage->lines;
+			cnt -= tpage->plines;
 			break;
 		}
 	}

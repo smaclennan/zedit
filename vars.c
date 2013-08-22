@@ -234,8 +234,7 @@ static void setavar(char *vin, Boolean display)
 				if (i == VTABS || i == VCTABS) {
 					settabsize(Curbuff->bmode);
 					Zredisplay();
-				} else if (i == VSHOWCWD)
-					newtitle(VAR(i) ? Cwd : NULL);
+				}
 				if (Vars[i].vtype == STRING) {
 					if (VARSTR(i))
 						sprintf(msg, "%s = %s",

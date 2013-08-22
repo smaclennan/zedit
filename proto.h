@@ -263,7 +263,6 @@ void moveto(int (*pred)(), Boolean forward);
 Boolean mrkaftermrk(struct mark *, struct mark *);
 Boolean mrkatmrk(struct mark *, struct mark *);
 Boolean mrkbeforemrk(struct mark *, struct mark *);
-void newtitle(char *);
 char *nocase(char *);
 void parsem(char *, Boolean);
 int pathfixup(char *, char *);

@@ -126,22 +126,15 @@ static void setup(int argc, char **argv)
 			exit(1);
 		}
 	}
+	Dbgname(Me->pw_dir);
 
 	Shell = getenv("SHELL");
 	if (!Shell)
 		Shell = "/bin/sh";
-	/* SAM - can't get tcsh to work...use csh */
-	if (strcmp(lastpart(Shell), "tcsh") == 0)
-		Shell = "/bin/csh";
 
-	sprintf(path, "%s/%s", Me->pw_dir, ZDBGFILE);
-	Dbgname(path);
-
-	Cmask = umask(0);		/* get the current umask */
-	umask(Cmask);			/* set it back */
+	Cmask = umask(0);	/* get the current umask */
+	umask(Cmask);		/* set it back */
 	Cmask = ~Cmask & 0666;	/* make it usable */
-
-	srand(time(NULL));
 
 	/* see if ZPATH set */
 	Thispath = getenv("ZPATH");
@@ -170,8 +163,6 @@ static void setup(int argc, char **argv)
 	Colmax = EOF;
 	Tstart = 0;
 
-	/* Note: for X we cannot use -m */
-	opterr = 0;
 	while ((arg = getopt(argc, argv, "c:hl:o:tvE")) != EOF)
 		switch (arg) {
 		case 'c':
@@ -248,8 +239,7 @@ static void setup(int argc, char **argv)
 		       Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
 
 		clrecho();
-	} else
-		loadsaved();
+	}
 
 	winit();
 	if (other) {

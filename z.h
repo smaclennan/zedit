@@ -80,9 +80,6 @@ extern struct passwd *Me;
 #define ZDBGFILE	"z.out"
 #define ZHFILE		"help.z"
 
-/* Zedit globals */
-#define VERSTR		"1.4"		/* save file version string */
-
 /* the first three must follow:  (define + 1) % 4 = 0 */
 #define BUFNAMMAX	31			/* max buffer name */
 #define PATHMAX		255			/* max file name */

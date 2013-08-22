@@ -41,17 +41,16 @@ void Dbg(char *fmt, ...)
 	}
 }
 
-void Dbgname(char *name)
+void Dbgname(char *dir)
 {
 	if (dbgfname)
 		free(dbgfname);
 
-	if (name) {
-		dbgfname = malloc(strlen(name) + 1);
-		if (dbgfname) {
-			strcpy(dbgfname, name);
-			unlink(dbgfname);
-		}
+	if (dir) {
+		char path[PATHMAX];
+		snprintf(path, sizeof(path), "%s/%s", dir, ZDBGFILE);
+		unlink(path);
+		dbgfname = strdup(path);
 	}
 }
 

@@ -582,8 +582,6 @@ void quit(void)
 	checkpipes(0);		/* make sure waited for ALL children */
 #endif
 
-	if (VAR(VDOSAVE))
-		save(Curbuff);
 	tfini();
 	cleanup();
 

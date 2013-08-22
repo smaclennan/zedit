@@ -404,5 +404,3 @@ int _putchar(char ch)
 	putchar(ch);
 	return 0;	/*shutup*/
 }
-
-void newtitle(char *str) {}

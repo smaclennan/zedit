@@ -27,10 +27,9 @@
 /* Come here on SIGHUP or SIGTERM */
 void hangup(int signal)
 {
-	struct buff *bsave, *tbuff;
+	struct buff *tbuff;
 
 	InPaw = TRUE;	/* Kludge to turn off error */
-	bsave = Curbuff;
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next) {
 		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF)) {
 			bswitchto(tbuff);
@@ -45,7 +44,6 @@ void hangup(int signal)
 #ifdef PIPESH
 	checkpipes(0);
 #endif
-	save(bsave);
 	tfini();
 	exit(1);
 }

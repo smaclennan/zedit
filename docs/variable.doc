@@ -42,12 +42,6 @@ The Date command uses strftime to format the output string. This varable
 is passed to strftime as the format string. It has a default of "%c" which
 is the preferred date for the current locale. See strftime for details.
 .sp 0
-:Do Save
-
-If this flag variable is set, the current state of the editor will be
-saved on exit. If Zedit is then started with no command line arguments,
-the editor reverts to the saved state. The default is on.
-.sp 0
 :Exact
 
 If Exact is set, all searches and replaces are case sensitive. This
@@ -72,10 +66,6 @@ On SYS3 and SYS5 machines, the flow control is user definable. If
 FlowControl is set, ^S and ^Q stop and start the terminal. However, the
 ^S cannot be used as the Search command. If FlowControl is off, ^S can
 be used. The default is off.
-.sp 0
-:Font
-
-Set the font to be used by Zedit. Xwindows only.
 .sp 0
 :Grep
 
@@ -148,11 +138,6 @@ this string.
 Usually, the editor prompts to save modified files when the Exit command
 is executed. If SaveOnExit is set, all modified buffers are saved on
 exit. The default is off.
-.sp 0
-:Show CWD
-
-This variable is for XWINDOWS only. If set, the current working
-directory is shown in the title bar of the window. The default is True.
 .sp 0
 :Silent
 

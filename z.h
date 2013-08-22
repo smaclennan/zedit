@@ -189,7 +189,7 @@ extern char *Thispath;
 extern char *ConfigDir;
 
 extern struct cnames Cnames[];
-extern void (*Cmds[NUMFUNCS + 1][3])();
+extern void (*Cmds[][3])();
 extern int Curcmds;
 extern Byte Keys[], Lfunc;
 extern Boolean First;

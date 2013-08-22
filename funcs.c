@@ -20,7 +20,7 @@
 #include "z.h"
 #include "cnames.h"
 
-void (*Cmds[NUMFUNCS + 1][3])() = {
+void (*Cmds[][3])() = {
 	{ Z1wind,		Z1wind,			Znotimpl },
 	{ Z2wind,		Z2wind,			Znotimpl },
 	{ Zabort,		Zabort,			Zabort },

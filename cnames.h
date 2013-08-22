@@ -90,7 +90,6 @@ struct cnames Cnames[] = {
 	{"previous-paragraph",		ZBPARA,		H_CURSOR},
 	{"previous-window",		ZPREVWIND,	H_DISP},
 	{"previous-word",		ZBWORD,		H_CURSOR},
-	{"print",			ZPRINT,		H_SHELL},
 	{"query-replace",		ZQUERY,		H_SEARCH},
 	{"quote",			ZQUOTE,		H_MISC},
 	{"read-file",			ZFILEREAD,	H_FILE},

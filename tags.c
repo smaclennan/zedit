@@ -256,7 +256,7 @@ static Boolean gettagsfile(void)
 		else if (access("TAGS", 0) == 0)
 			tagfname = "TAGS";
 		else {
-			tagfname = (char *)VAR(VTAG);
+			tagfname = VARSTR(VTAG);
 			if (!tagfname  || access(tagfname, 0)) {
 				error("No tags file found.");
 				return FALSE;

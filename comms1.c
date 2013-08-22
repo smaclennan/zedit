@@ -208,7 +208,7 @@ void toggle_mode(int mode)
 
 #if COMMENTBOLD
 	if (mode == 0)
-		Curbuff->comchar = *(char *)VAR(VASCHAR);
+		Curbuff->comchar = *VARSTR(VASCHAR);
 #endif
 
 	Curbuff->bmode = (Curbuff->bmode & MODEMASK) | new;

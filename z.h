@@ -138,6 +138,7 @@ extern struct passwd *Me;
 #define REFBUFF		"*ref*"
 
 /* ask return values */
+#define BANG		2
 #define YES		1
 #define NO		0
 #define ABORT		-1

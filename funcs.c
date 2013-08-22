@@ -68,7 +68,6 @@ void (*Cmds[NUMFUNCS + 1][3])() = {
 	{ Znotimpl,		Znotimpl,		Znotimpl },
 	{ Znxtbookmrk,		Znxtbookmrk,		Znotimpl },
 	{ Znxtothrwind,		Znxtothrwind,		Znotimpl },
-	{ Zquit,		Zquit,			Znotimpl },
 	{ Zopenline,		Znotimpl,		Znotimpl },
 	{ Zoverin,		Znotimpl,		Zoverin },
 	{ Zprevchar,		Zprevchar,		Zprevchar },

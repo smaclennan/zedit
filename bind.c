@@ -124,7 +124,7 @@ void bind(void)
 
 	Keys[256 +  1]  = ZSAVEALL;		/* C-X C-A */
 	Keys[256 +  2]  = ZSWITCHTO;		/* C-X C-B */
-	Keys[256 +  3]  = ZQUIT;		/* C-X C-C */
+	Keys[256 +  3]  = ZEXIT;		/* C-X C-C */
 	Keys[256 +  4]  = ZKILLBUFF;		/* C-X C-D */
 /* C-X C-E */
 	Keys[256 +  6]  = ZFINDFILE;		/* C-X C-F */

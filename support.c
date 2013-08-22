@@ -22,15 +22,15 @@
 #include <sys/poll.h>
 
 /* ask Yes/No question.
- * Returns YES, NO, or ABORT
+ * Returns YES, NO, BANG, or ABORT
  */
-int ask(char *msg)
+int ask2(char *msg, Boolean allow_bang)
 {
-	int rc;
+	int rc = BADCHAR;
 	unsigned cmd;
 
 	echo(msg);
-	do
+	while (rc == BADCHAR)
 		switch (cmd = tgetcmd()) {
 		case 'y':
 		case 'Y':
@@ -40,14 +40,27 @@ int ask(char *msg)
 		case 'n':
 			rc = NO;
 			break;
+		case '!':
+			if (allow_bang)
+				rc = BANG;
+			else
+				tbell();
+			break;
 		default:
 			tbell();
-			rc = (Keys[cmd] == ZABORT) ? ABORT : BADCHAR;
-			break;
+			if (Keys[cmd] == ZABORT)
+				rc = ABORT;
 		}
-	while (rc == BADCHAR);
 	clrecho();
 	return rc;
+}
+
+/* ask Yes/No question.
+ * Returns YES, NO, or ABORT
+ */
+int ask(char *msg)
+{
+	return ask2(msg, FALSE);
 }
 
 Boolean delayprompt(char *msg)

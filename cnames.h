@@ -93,7 +93,6 @@ struct cnames Cnames[] = {
 	{"previous-word",		ZBWORD,		H_CURSOR},
 	{"print",			ZPRINT,		H_SHELL},
 	{"query-replace",		ZQUERY,		H_SEARCH},
-	{"quit",			ZQUIT,		H_MISC},
 	{"quote",			ZQUOTE,		H_MISC},
 	{"read-file",			ZFILEREAD,	H_FILE},
 	{"redisplay",			ZREDISPLAY,	H_DISP},

@@ -25,7 +25,6 @@ struct avar Vars[] = {
 	{ "match",		DECIMAL,	DEFAULT(1) },
 	{ "normal",		FLAG,		DEFAULT(1) },
 	{ "overwrite",		FLAG,		DEFAULT(0) },
-	{ "save-on-exit",	FLAG,		DEFAULT(0) },
 	{ "silent",		FLAG,		DEFAULT(0) },
 	{ "single-scroll",	FLAG,		DEFAULT(0) },
 	{ "space-tabs",		FLAG,		DEFAULT(0) },

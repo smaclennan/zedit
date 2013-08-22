@@ -588,22 +588,6 @@ void quit(void)
 	exit(0);
 }
 
-void Zquit(void)
-{
-	struct buff *tbuff;
-	Boolean modf = FALSE;
-
-	if (!Argp) {
-		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-			if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF))
-				modf = TRUE;
-		if (modf && ask("Modified buffers. quit anyway? ") != YES)
-			return;
-	}
-	quit();
-}
-
-
 /* Exit the editor.
  * Warn about makes in progress.
  * If a buffer is modified, ask to write it out.
@@ -611,6 +595,8 @@ void Zquit(void)
  */
 void Zexit(void)
 {
+	struct buff *tbuff;
+	Boolean modf = FALSE;
 #ifdef PIPESH
 	struct buff *make = cfindbuff(MAKEBUFF);
 
@@ -619,28 +605,40 @@ void Zexit(void)
 			return;
 #endif
 
-	if (saveall(Argp))
-		quit();
+	if (!saveall(Argp))
+		return;
+
+	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF))
+			modf = TRUE;
+	if (modf && ask("Modified buffers. quit anyway? ") != YES)
+		return;
+
+	quit();
 }
 
 /* Prompt to save buffer if the buffer has been modified.
  * Always saves if 'must' is TRUE or saveOnExit is set.
  * Returns FALSE if the user ABORTS the prompt.
  */
+static int save_all;
+
 static Boolean promptsave(struct buff *tbuff, Boolean must)
 {
 	char str[BUFNAMMAX + 20];
 	int ok = YES;
 
 	if (tbuff->bmodf) {
-		if (!must && !VAR(VSAVE)) {
+		if (!must && !save_all) {
 			sprintf(str, "save buffer %s? ", tbuff->bname);
-			ok = ask(str);
-			if (ok == ABORT)
+			ok = ask2(str, TRUE);
+			if (ok == BANG)
+				save_all = 1;
+			else if (ok == ABORT)
 				return FALSE;
 		}
 
-		if (ok == YES || VAR(VSAVE)) {
+		if (ok == YES || save_all) {
 			bswitchto(tbuff);
 			if (filesave() != TRUE)
 				return FALSE;

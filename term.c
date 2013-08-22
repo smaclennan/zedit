@@ -17,11 +17,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
+#ifdef TERMINFO
+#include "zterminfo.h"
+#endif
+
 #include "z.h"
 #include "keys.h"
-#ifdef TERMINFO
-#include <term.h>
-#endif
 
 #include <signal.h>
 #include <sys/wait.h>	/* need for WNOWAIT */
@@ -244,7 +246,7 @@ void tprntchar(Byte ichar)
 {
 	int tcol;
 
-	if (ISPRINT(ichar)) {
+	if (ZISPRINT(ichar)) {
 		tforce();
 		tputchar(ichar);
 		++Scol;
@@ -294,7 +296,7 @@ int chwidth(Byte ch, int col, Boolean adjust)
 {
 	int wid;
 
-	if (ISPRINT(ch))
+	if (ZISPRINT(ch))
 		return 1;
 	if (InPaw && (ch == '\n' || ch == '\t'))
 		return 2;

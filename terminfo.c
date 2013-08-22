@@ -17,16 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "z.h"
+#include "config.h"
 
 #ifdef TERMINFO
-#undef TRUE
-#undef FALSE
-#undef SYSV4
-#undef ISPRINT
-#include <curses.h>
-#undef ISPRINT		/* guarentee we don't get the wrong one! */
-#include <term.h>
+#include "zterminfo.h"
+#include "z.h"
 #include "keys.h"
 
 
@@ -68,7 +63,6 @@ struct key_array Tkeys[] = { {
 
 void tlinit()
 {
-	char *n;
 	int rc, i;
 
 #if DBG
@@ -107,7 +101,7 @@ void tlinit()
 		enter_reverse_mode = enter_standout_mode = enter_bold_mode = 0;
 
 	if (!flash_screen)
-		Vars[VVISBELL].val = 0;
+		VAR(VVISBELL) = 0;
 
 	/* initialize the terminal */
 	TPUTS(init_1string);
@@ -143,7 +137,7 @@ void tlinit()
 			Key_mask |= 1 << i;
 }
 
-void tsize(int *rows, *cols)
+void tsize(int *rows, int *cols)
 {	/* default to values in terminfo file */
 	*rows = lines;
 	*cols = columns;
@@ -199,4 +193,6 @@ void tstyle(int style)
 	fflush(stdout);
 }
 
+#else
+void terminfo_dummy(void) {} /* for pedantic */
 #endif

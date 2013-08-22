@@ -192,8 +192,8 @@ int innerdsp(int from, int to, struct mark *pmark)
 						tprntchar(Buff());
 					}
 					if (trow == Tlrow &&
-					    (!ISPRINT(*lptr) ||
-					     !ISPRINT(Buff())))
+					    (!ZISPRINT(*lptr) ||
+					     !ZISPRINT(Buff())))
 						Tlrow = -1;
 				}
 				*lptr++ = Buff();

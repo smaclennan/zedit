@@ -76,7 +76,7 @@ extern unsigned Cmdpushed, Cmdstack[];
 #define wheight()		(Curwdo->last - Curwdo->first)
 
 /* this is MUCH faster than an isascii isprint pair */
-#define ISPRINT(c)		(c >= ' ' && c <= '~')
+#define ZISPRINT(c)		(c >= ' ' && c <= '~')
 
 
 /* terminal variables */

@@ -25,12 +25,12 @@ struct avar Vars[] = {
 	{ "match",		DECIMAL,	DEFAULT(1) },
 	{ "normal",		FLAG,		DEFAULT(1) },
 	{ "overwrite",		FLAG,		DEFAULT(0) },
+	{ "sh-extends",		STRING,		DEFAULT(0) },
 	{ "silent",		FLAG,		DEFAULT(0) },
 	{ "single-scroll",	FLAG,		DEFAULT(0) },
 	{ "space-tabs",		FLAG,		DEFAULT(0) },
 	{ "tabs",		DECIMAL,	DEFAULT(8) },
 	{ "tagfile",		STRING,		DEFAULT(0) },
-	{ "tcl-extends",	STRING,		DEFAULT(0) },
 	{ "t-extends",		STRING,		DEFAULT(0) },
 	{ "visible-bell",	FLAG,		DEFAULT(1) },
 };

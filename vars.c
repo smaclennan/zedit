@@ -47,6 +47,10 @@ void Zsetavar(void)
 		if (Vars[rc].vtype == STRING)
 			if (VARSTR(rc))
 				strcpy(arg, VARSTR(rc));
+			else if (rc == VMAKE)
+				strcpy(arg, MAKE_CMD);
+			else if (rc == VGREP)
+				strcpy(arg, GREP_CMD);
 			else
 				*arg = '\0';
 		else
@@ -76,8 +80,6 @@ void readvfile(void)
 		getchar();
 	}
 #endif
-	if (!VARSTR(VMAKE))
-		VARSTR(VMAKE) = strdup("make");
 	if (!VARSTR(VCEXTS)) {
 		VARSTR(VCEXTS) =
 			strdup(".c:.h:.cpp:.cc:.cxx:.y:.l:.m:.m4");
@@ -195,19 +197,15 @@ static void do_var_match(int i, char *vin)
 	else if (i == VASCHAR) {
 		/* set current buffer and redisplay */
 #if COMMENTBOLD
-		Curbuff->comchar = *(char *)VARSTR(VASCHAR);
-		Zredisplay();
+		if (!Initializing) {
+			Curbuff->comchar = *VARSTR(VASCHAR);
+			Zredisplay();
+		}
 #endif
 	} else if (i == VSEXTS)
 		parsem(VARSTR(i), SHMODE);
 	else if (i == VTEXTS)
 		parsem(VARSTR(i), TEXT);
-#if MAKE
-	else if (i == VMAKE)
-		strcpy(mkcmd, VARSTR(i));
-	else if (i == VGREP)
-		strcpy(grepcmd, VARSTR(i));
-#endif
 }
 
 static void setavar(char *vin, Boolean display)
@@ -308,6 +306,9 @@ void varval(int code)
 /* save the current variables in the config.z file */
 void Zsaveconfig(void)
 {
+#if MIN_CONFIG
+	tbell();
+#else
 	FILE *fp;
 	char fname[PATHMAX];
 	int i;
@@ -353,6 +354,7 @@ void Zsaveconfig(void)
 
 	fclose(fp);
 	echo("saved.");
+#endif
 }
 
 void vfini(void)

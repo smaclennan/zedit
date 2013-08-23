@@ -137,6 +137,9 @@ extern struct passwd *Me;
 #define LISTBUFF	"*list*"
 #define REFBUFF		"*ref*"
 
+#define MAKE_CMD	"make "
+#define GREP_CMD	"grep -n "
+
 /* ask return values */
 #define BANG		2
 #define YES		1
@@ -217,9 +220,6 @@ extern int Numbuffs;
 extern unsigned Nextpart;
 
 extern Byte CRdefault;
-
-extern char mkcmd[];
-extern char grepcmd[];
 
 extern int circf;
 

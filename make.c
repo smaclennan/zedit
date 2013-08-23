@@ -26,23 +26,35 @@
  */
 static int NexterrorCalled;
 
-char mkcmd[STRMAX + 1] = "make";
-char grepcmd[STRMAX + 1] = "grep -n";
-
 static int parse(char *fname);
+
+static int set_cmd(int which, char *prompt)
+{
+	char cmd[STRMAX + 1];
+
+	Argp = FALSE;
+	strcpy(cmd, VARSTR(which));
+	if (getarg(prompt, cmd, STRMAX))
+		return 0;
+	if (VARSTR(which))
+		free(VARSTR(which));
+	VARSTR(which) = strdup(cmd);
+	return 1;
+}
 
 /* Do a "make" command - basically a shell command in the ".make" buffer */
 void Zmake(void)
 {
 	struct buff *mbuff;
 
+	if (!VARSTR(VMAKE))
+		VARSTR(VMAKE) = strdup(MAKE_CMD);
+
 	NexterrorCalled = 0;	/* reset it */
 	Arg = 0;
-	if (Argp) {
-		Argp = FALSE;
-		if (getarg("Make: ", mkcmd, STRMAX))
+	if (Argp)
+		if (!set_cmd(VMAKE, "Make: "))
 			return;
-	}
 	saveall(TRUE);
 #ifdef PIPESH
 	mbuff = cfindbuff(MAKEBUFF);
@@ -52,9 +64,9 @@ void Zmake(void)
 		clrecho();
 	}
 #endif
-	mbuff = cmdtobuff(MAKEBUFF, mkcmd);
+	mbuff = cmdtobuff(MAKEBUFF, VARSTR(VMAKE));
 	if (mbuff)
-		message(mbuff, mkcmd);
+		message(mbuff, VARSTR(VMAKE));
 	else
 		error("Unable to execute make.");
 }
@@ -65,14 +77,15 @@ void Zgrep(void)
 	struct buff *mbuff;
 	char cmd[STRMAX * 2];
 
+	if (!VARSTR(VGREP))
+		VARSTR(VGREP) = strdup(GREP_CMD);
+
 	NexterrorCalled = 0;	/* reset it */
 	Arg = 0;
-	if (Argp) {
-		Argp = FALSE;
-		if (getarg("grep command: ", grepcmd, STRMAX))
+	if (Argp)
+		if (!set_cmd(VGREP, "grep: "))
 			return;
-	}
-	sprintf(cmd, "sh -c '%s ", grepcmd);
+	sprintf(cmd, "sh -c '%s ", VARSTR(VGREP));
 	if (getarg("grep: ", cmd + strlen(cmd), STRMAX))
 		return;
 	strcat(cmd, "'");

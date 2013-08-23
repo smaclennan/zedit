@@ -19,12 +19,13 @@
 
 <h2>What is Zedit?</h2>
 
-<p>Zedit is a fully configurable text editor. It supports multiple windows
-and multiple buffers. There is a virtual buffering scheme for machines
-with limited memory. It is available for Unix machines and PCs.
+<p>Zedit is a simple terminal based text editor very loosely based on
+Emacs.
+
+<p>It supports multiple windows and multiple buffers.
 
 <p>Editing commands are "bound" (assigned) to key sequences. These
-sequences can be control key, function key, PC ALT key, or keypad key
+sequences can be control key, function key, ALT key, or keypad key
 combinations. A set of default bindings comes with the editor, but all
 key bindings can be modified. This allows you to set up the editor the
 way you want it.
@@ -32,9 +33,6 @@ way you want it.
 <p>To allow further customization of Zedit, there are user variables that
 allow you to change the workings of Zedit. For example, there is a
 variable called "Tabs" that controls the tab columns.
-
-<p>Zedit can also have disk caching to speed up disk access. On PCs, Zedit
-will utilize extended or expanded memory.
 
 <p>One of the most powerful features of the editor is tag files. A tag file
 allows you to find files by "tag" name instead of file name. For
@@ -48,12 +46,12 @@ description of tag files.
 
 <p>A few terms need to be defined.
 
-<p>A buffer is a collection of characters that can be manipulated with the
+<p>A <b>buffer</b> is a collection of characters that can be manipulated with the
 editor. A buffer is usually, but does not have to be, associated with a
-file. A buffer called "Main" is always created on startup. The number of
+file. A buffer called "*scratch*" is always created on startup. The number of
 buffers is only limited by available memory.
 
-<p>A buffer can be much larger than the size of a computer screen. A window
+<p>A buffer can be much larger than the size of a computer screen. A <b>window</b>
 is the portion of the buffer that is displayed on the screen. By moving
 the window over the buffer, the entire buffer can be edited.
 
@@ -67,20 +65,21 @@ continue the buffer line on the next screen line. The '>' character will
 be displayed in the last column of the screen line to show the line has
 wrapped. This character is not put in the buffer.
 
-<p>The Point is the current location in the buffer. Every buffer has its
-own Point. Most work on the buffer is done relative to the Point. The
-Point is represented in the active window by the cursor.
+<p>The <b>Point</b> is the current location in the buffer. Every
+buffer has its own Point. Most work on the buffer is done relative to
+the Point. The Point is represented in the active window by the
+cursor.
 
-<p>Every buffer also has a user defined Mark, which is set with the Set
+<p>Every buffer also has a user defined <b>Mark</b>, which is set with the Set
 Mark command. The Mark is represented by a reverse video block on the
 screen. The Mark is like a bookmark, it is used to keep track of a
-specific place in a buffer. The Mark is most often used with commands
-that deal with the Region.
+specific place in a buffer. One difference between Zedit and Emacs is that Zedit always
+has a mark set.
 
-<p>The Point and Mark are actually before the character they are displayed
+<p>Hint: The Point and Mark are actually before the character they are displayed
 on but after the previous character.
 
-<p>The Region is all the characters in the buffer bounded by the Mark and
+<p>The <b>Region</b> is all the characters in the buffer bounded by the Mark and
 the Point. The Region can be before or after the Point. The Region is
 used to work with blocks of text.
 
@@ -88,7 +87,7 @@ used to work with blocks of text.
 <h2>Invocation</h2>
 
 <p>The easiest method of starting Zedit is to type "z" at the prompt. This
-will start Zedit and put you in a buffer called Main. If you want to
+will start Zedit and put you in a buffer called *scratch*. If you want to
 edit a specific file, "z filename" will start Zedit and load the file
 into a buffer. More than one file can be specified, and wildcards are
 supported. If more than one file is specified, Zedit will load all the
@@ -101,30 +100,7 @@ will be placed at the start of the given line or at the end of the
 buffer is the line is not in the file. This only affects the buffer that
 is made active at startup.
 
-<p>If the variable DoSave is set, Zedit will create a save file at exit. If
-Zedit is then started with no arguments it will read this file and
-return Zedit to the state it was in when you exited. This is extremely
-useful for edit/compile/run cycles. See the "Save" section for more
-information. A simple way to start the editor without reading the save
-file is to type "z -".
-
-<p>The full Zedit command line is:
-z [-l#] [-b] [-u] [-p#] [-s#] [file ...]
-
-<p>On PCs, a "-b" option can be given to read files as binary files. All
-file after the  "-b"  on the command line are opened in binary mode.
-This allows the editing of executable files. A 'B' is shown on the mode
-line for binary files. For more information on the "-b" option, see the
-appendix for PCs.
-
-<p>On PCs, the "-u" command can be used to change the meaning of some of
-the key bindings from a "Unix" to "PC" standard. See the section on the
-Meta key.
-
-<p>The last two options, "-s" and "-p", are to allow the customization of
-the low level virtual buffering scheme. They are described in detail in
-the "Technical" section.
-
+<p>The full Zedit command line can be seen with: <code>z -h</code>
 
 <h2>The Status Line</h2>
 
@@ -133,33 +109,30 @@ reverse video if supported by the terminal. The status line describes
 the current status of the buffer in that window. A typical status line
 is shown below:
 
-.ce
-Zedit 3.0  (Text)  zedit.doc: /home/zedit/doc/zedit.doc *+
+<p><code>Zedit 5.0  (Text)  zedit.doc: /home/zedit/doc/zedit.doc *+   20:14</code>
 
-<p>"Zedit 3.0" is the version of Zedit. "(Text)" is the current buffer
-mode. After the mode comes the buffer name. Every buffer must have a
+	  <ol>
+<li>"Zedit 5.0" is the version of Zedit
+	    <li>"(Text)" is the current buffer
+mode
+	    <li> After the mode comes the buffer name. Every buffer must have a
 unique buffer name of up to 15 characters. The main use of the buffer
 name is for the Switch to Buffer command.
 
-<p>After the buffer name comes the file name. A buffer does not have to
+<li>After the buffer name comes the file name. A buffer does not have to
 have a file name. This name is usually the name of the file read into
 the buffer at startup or with the Find File command. If the file name is
 too large to fit on the status line, it will be left truncated.
 
-<p>The last group of characters are flags used to specify buffer status.
-The asterisk (*) means that the buffer has been modified. The Exit
+<li>The asterisk (*) means that the buffer has been modified. The Exit
 command, for example, uses this flag to decide whether to ask to save a
-buffer. The plus sign (+) is the delete flag. See the "Kill Ring"
+buffer.
+	    <li>The plus sign (+) is the delete flag. See the "Kill Ring"
 section for more detail on the delete flag and its use.
 
-<p>The 'F' flag, means that this is a Fastread buffer. The 'B' signifies a
-Binary buffer. See the "Technical" section for more detail.
-
-<p>The current line and column can also be displayed in the status line by
-setting the Lines variable. Lines displays the current line and column
-the Point is at in the format "line:column". This is displayed at the
-extreme right of the status line.
-
+<li>20:14 are the line and column. This can be disabled with the Lines
+variable.
+</ol>
 
 <h3>Major Modes</h3>
 
@@ -438,7 +411,253 @@ name. The command name MUST start with a ':'s. Note that if you
 change the help file, it may not work with later versions of the
 editor.
 
-	  <hr>
-<p><a href="cmds.html">Page 2: Commands</a>
+<h1>Commands</h1>
+
+<p>Almost every key on the keyboard can be bound to a
+command. Commands can be one or two keystrokes long. Commands that are
+prefixed with C- are control commands. It means type the Ctrl key and
+the key listed after the - at the same time.
+
+<p>The command prefix C-X means to type Ctrl and X at the same time, then
+type the sequence after it. For example, C-X C-A tells you to type Ctrl
+and X at the same time, then to type Ctrl and A at the same time.
+
+<p>The prefix M- means to hit the Meta key, then the key after it. The
+Meta key can be Esc, in which case you type Esc then the next key
+sequence. On most keyboards Meta is also the Alt key. The Alt key
+works like the Ctrl key.
+
+<p>So M-A could be Esc then A or Alt and A at the same time. Currently
+all alphabetic Meta characters are case insensitive. So M-A and M-a
+are the same thing.
+
+<h2>Point Movement</h2>
+
+<p>Aside from text input, Point movement is the most used feature of an
+editor. Zedit has commands that move the point by characters, words,
+lines, paragraphs, and buffer.
+
+<p>On most terminals, the character Point movement will be done with the
+arrow keys, however, control commands are included for terminals without
+such keys.
+
+<h2>Search and Replace Commands</h2>
+
+<p>Zedit supports a wide variety of search and replace commands. There
+three basic types of searches: literal, incremental, and expression. The
+literal searches are performed by the Forward Search and Reverse Search
+commands. These commands prompt for a search string and look for a match
+of that string in the buffer. A Universal Argument causes the literal
+and expression searches to look for exactly Arg matches. If they cannot
+find the correct number of matches, they display the message "Found #",
+where # is the number of matches found. "Not Found" is displayed if no
+matches where found.
+
+<p>The incremental search commands (Incremental Search and Reverse Inc.
+Search) are used to find a match in the least amount of key strokes. On
+every normal ASCII character entered, Zedit will try to find a match for
+the current string in the PAW. If a match is found, the Mark is
+displayed at this Point on the screen. If the Delete Previous Character
+command is executed, the previous character is deleted in the PAW and
+the Mark is backed up to the last complete match.
+
+<p>The Abort command can be executed to leave the incremental search and
+return to the original Point. A Newline command terminates the search
+and moves the Point to the match. Any other command causes the search to
+terminate and that command to be immediately executed.
+
+<p>Assume the buffer contains the text "Do not panic." and that the Point
+is currently on the "D" in "Do".
+
+      <table>
+<tr><th>User<th>PAW<th>Point
+<tr><td>n<td>		n		<td>"n" in "not"
+<tr><td>i		<td>ni		<td>"n" in "panic"
+<tr><td>Backspace	<td>n		<td>"n" in "not"
+</table>
+
+<p>The last type of search is the expression search. The only command is
+the Expression Search. This command prompts for a regular expression to
+search for instead of a literal. Regular expressions are discussed in
+Section 1.10. Expression searches are much more powerful than literal
+searches, but are also slower.
+
+<p>There are two replace commands: Query Replace and Expression Replace.
+Query Replace expects a literal search string while the Expression
+Replace expects a regular expression search string. The replace string
+for Query Replace is also a literal, however the Expression Replace is a
+literal with two exceptions. An '&' character in the replace string
+causes the matched string to be placed in the buffer instead of the '&'
+character itself. For example, if the search string was ".*", and the
+replace string was "&&", all lines would be doubled. The escape
+character '\' can be used to turn off this special meaning of the '&'.
+
+<p>The replacement commands prompt for a search string and a replacement
+string. For each occurrence of the search string, the user is prompted
+for what they want to do with the string. The valid responses are:
+
+	<table>
+      <tr><th>Key<th>Action
+<tr><td>,
+<td>Replace current match and ask for confirmation. The confirmation is y/Y
+to go ahead with the replace, or n/N to leave the string as it was.
+
+<tr><td>y
+<td>Replace current match and continue.
+
+	    <tr><td>&lt;Space&gt;
+	  <td>Replace current match and continue.
+
+<tr><td>.
+<td>Replace and exit.
+
+<tr><td>!
+<td>Replace this and all succeeding occurrences. The editor will no
+longer prompt on each occurrence.
+
+<tr><td>C-G (Abort)
+<td>Exit without replacing current match.
+
+<tr><td>Others
+<td>Continue without replacing current match.
+</table>
+
+    <p>The commands are the same for both versions of the replace command.
+
+<p>If a Universal Argument is given to a replace command, it performs a
+global replace. Instead of performing the replace on the current Point
+to the end of the current buffer, the replacement is performed on ALL of
+the buffers in the buffer list.
+
+<p>NOTE: You cannot search for or replace with a string that has a NULL
+(ASCII 0) character in it.
+
+
+<h2>Pattern Matching</h2>
+
+<p>Zedit supports pattern matching using regular expressions (REs). The REs
+are the same as the Unix grep command. The rules for created the REs are
+described below.
+
+    <ul>
+<li>An ordinary character matches itself.
+
+<li>A period (.) matches any one character except Newline.
+
+<li>A non-empty string of characters enclosed in square brackets ([])
+matches any one of the characters in the string. If the first character
+of the string is a caret (^), it matches any character except the
+Newline and the characters in the string. The caret (^) has this special
+meaning only if it occurs as the first character after the '['. The
+minus (-) may be used to indicate a range of consecutive ASCII
+characters; for example, [0-9] is equivalent to [0123456789]. The -
+loses this special meaning if it occurs first (after an initial ^, if
+any) or last in the string. The right square bracket (]) does not
+terminate such a string when it is the first character within it (after
+an initial ^, if any); e.g. []a-f] matches either a right square bracket
+(]) or one of the characters a through f inclusive. None of the other
+special characters are special inside the [].
+
+<li>A backslash (\) escapes a special character.
+
+<li>A one-character RE followed by an asterisk (*) matches zero or more
+occurrences of the one-character RE. If there is any choice, the longest
+leftmost string that permits a match is chosen.
+
+<li>A one-character RE followed by \{m\}, \{m,\}, or \{m,n\} matches a range
+of occurrences of the one-character RE. The values of m and n must be
+positive integers less than 256; \{m\} matches exactly m occurrences;
+\{m,\} matches at least m occurrences; \{m,n\} matches any number of
+occurrences between m and n inclusive. Whenever a choice exists, the RE
+matches as many occurrences as possible.
+
+<li>The concatenation of REs is a RE that matches the concatenation of
+the strings matched by each component.
+
+<li>A RE enclosed between the character sequences \\( and \\) is a RE that
+matches whatever the unadorned RE matches.
+
+<li>The expression \\n matches the same string of characters as was
+matched by an expression enclosed between \\( and \\) earlier in the same
+RE. Here n is a digit; the sub-expression specified is that beginning
+with the n-th occurrence of \\( counting from the left. For example, the
+expression ^\\(.*\\)\\1$ matches a line consisting of two repeated
+appearances of the same string.
+
+<li>A caret (^) at the beginning of an entire RE constrains that RE to match
+an initial segment of a line.
+
+<li>A dollar sign ($) at the end of an entire RE constrains that RE to match
+a final segment of a line.
+</ul>
+
+<h2>Tag Files</h2>
+
+<p>Tag files are a list of tags, usually function names, and their
+associated file name and position in the file. Tag files allow files to
+be found by function names instead of file names.
+
+<p>Zedit does not produce the tag files. They must be created by an
+external program. The tag file formats supported are:
+
+      <ul>
+	<li>&lt;tag&gt; &lt;num&gt;   &lt;fname&gt;
+	<li>&lt;tag&gt; &lt;fname&gt; &lt;num&gt;
+	<li>&lt;tag&gt; &lt;fname&gt; &lt;match_ch&gt;[^]&lt;search_string&gt;[$][&lt;match_ch&gt;]
+    </ul>
+
+<p>The single space shown can actually be any number of spaces and/or tabs
+as long as there is at least one space or tab. If the number <num> has a
+leading 0 it is assumed to be a byte offset, else a line offset.
+
+<p>The first format is produced by ctags with the -x option. The second is
+produced by Microsoft's calltree program. The third format is the ctags
+type format. The match_ch is any character except '\'. The '^' and '$'
+are optional and match the start of line and end of line respectively.
+The ending match_ch is also optional. The search_string ends at the end
+of the line. The search string is a literal. '\' characters can be used
+to escape the match_ch in the string.
+
+<p>Other programs that produce one of these formats can be used.
+
+<p>The command Find Tag is used to look for a tag in the tags file. If it
+finds the tag, it sets a bookmark at the current Point, performs a Find
+File with the matched filename, and positions the Point in the opened
+file. The first time the Find Tag command is executed, it creates the
+".tags" buffer and loads the tags file. The tag file is only loaded
+once.
+
+<p>The tag file is loaded into a special buffer called ".tags". This buffer
+is editable. If a line in the file needs to be changed, it can be edited
+in the ".tags" buffer and saved to disk with the Write File command.
+
+<p>The Tagfile variable is used to find the tag file. The editor first
+looks for the tag file in the current directory under the name "tags",
+the default output name for the ctags command. If the file is not found,
+it looks for the file specified by the Tagfile variable. A Universal
+Argument will prompt for the tag file to read.
+
+<p>If Zedit cannot find the tag, it will return the first partial match, if
+any. If the tag string is "file" and there is no tag "file" but a tag
+"Readfilename" exists, Zedit will reprompt for the tag with
+"Readfilename" as the default. The Again command can be used to find the
+next partial match.
+
+
+<h2>Calculator</h2>
+
+<p>Zedit has a built-in six function integer calculator. The calculator is
+very simple but useful for doing addition, subtraction, multiplication,
+and division of decimal, hexadecimal, or octal numbers. The output is
+displayed in both decimal and hexadecimal.
+
+<p>The calculator can also be used to convert from decimal, hexadecimal, or
+octal to decimal and hexadecimal. Just enter the number to be converted
+and hit Newline.
+
+<p>To differentiate between the different bases, hexadecimal numbers begin
+with 0x or 0X, octal numbers begin with 0, and decimal numbers begin
+with 1 through 9. The bases can be mixed within a given command string.
+
   </body>
   </html>

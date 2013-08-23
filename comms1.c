@@ -239,7 +239,7 @@ void Zdate(void)
 
 	time(&t);
 	strftime(date, MAXDATE, VARSTR(VDATESTR), localtime(&t));
-	if ((Argp || (Curbuff->bmode & VIEW)) && !InPaw)
+	if (Argp && !InPaw)
 		echo(date);
 	else
 		binstr(date);

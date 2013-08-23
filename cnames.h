@@ -129,7 +129,6 @@ struct cnames Cnames[] = {
 	{"unmodify",			ZUNMODF,	H_DELETE},
 	{"uppercase-region",		ZUPREGION,	H_DISP},
 	{"uppercase-word",		ZUPWORD,	H_DISP},
-	{"view-file",			ZVIEWFILE,	H_FILE},
 	{"view-line",			ZVIEWLINE,	H_DISP},
 	{"write-file",			ZFILEWRITE,	H_FILE},
 	{"yank",			ZYANK,		H_DELETE},

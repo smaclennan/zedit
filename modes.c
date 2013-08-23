@@ -24,7 +24,7 @@
 char *setmodes(struct buff *buff)
 {
 	if (!InPaw)	/* we should never be in the Paw but .... */
-		Curcmds = (buff->bmode & VIEW) ? 1 : 0;
+		Curcmds = 0;
 
 	/* set all keys back to default */
 	Keys[CR] = CRdefault;

@@ -156,9 +156,8 @@ void Zdispbinds(void)
 	out("COMMAND                            PERMS     BINDING\n", fp);
 	for (f = 0; f < NUMFUNCS; ++f)
 		if (Cnames[f].fnum != ZNOTIMPL && Cnames[f].fnum != ZINSERT) {
-			sprintf(line, "%-35s%cw%c       ", Cnames[f].name,
-				Cmds[Cnames[f].fnum][1] == Znotimpl ? '-' : 'r',
-				Cmds[Cnames[f].fnum][2] == Znotimpl ? '-' : 'p'
+			sprintf(line, "%-35s %c       ", Cnames[f].name,
+				Cmds[Cnames[f].fnum][1] == Znotimpl ? '-' : 'p'
 				);
 			out(line, fp);
 			found = FALSE;

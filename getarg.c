@@ -53,8 +53,7 @@ Boolean getarg(char *prompt, char *arg, int max)
 	Buff_save = Curbuff;
 	Paw->bmode = Curbuff->bmode;
 	InPaw = TRUE;
-	Curcmds = 2;
-	Keys[CR] = ZNEWLINE; /* in case we are in a VIEW buff */
+	Curcmds = 1;
 	Pshift = 0;
 	Pawlen = max;
 	makepaw(arg, FALSE);
@@ -78,7 +77,7 @@ Boolean getarg(char *prompt, char *arg, int max)
 	Curbuff->bmode = Paw->bmode;	/* mainly for EXACT mode */
 	tgoto(trow, tcol);
 	Curwdo->modeflags = INVALID;
-	Curcmds = (Curbuff->bmode & VIEW) ? 1 : 0;
+	Curcmds = 0;
 	clrecho();
 	return rc;
 }

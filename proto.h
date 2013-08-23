@@ -158,7 +158,6 @@ void Zundo(void);
 void Zunmodf(void);
 void Zupregion(void);
 void Zupword(void);
-void Zviewfile(void);
 void Zviewline(void);
 void Zvmode(void);
 void Zyank(void);

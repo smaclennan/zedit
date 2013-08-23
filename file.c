@@ -48,15 +48,6 @@ void Zfindfile(void)
 		findfile(Fname, FALSE);
 }
 
-void Zviewfile(void)
-{
-	if (get_findfile("View File: "))
-		return;
-	findfile(Fname, FALSE);
-	Curbuff->bmode |= VIEW;
-	Curwdo->modeflags = INVALID;
-}
-
 void Zrevertfile(void)
 {
 	unsigned long offset;

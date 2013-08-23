@@ -900,5 +900,3 @@ void toendline(void)
 	if (bcsearch(NL))
 		bmove(-1);
 }
-
-void Zzoom(void)	{ tbell(); }

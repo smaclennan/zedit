@@ -337,11 +337,6 @@ Toggles the current buffers minor mode between Insert, the default, and  over-
 write  modes. On the PC the cursor shape reflects the mode. Insert mode has an
 underline cursor while overwrite mode has a block cursor. A Universal Argument
 is ignored.
-:Insert Space
-
-Inserts  a  space  at  the Point and leaves the Point on the space. Useful for
-inserting a character in Over mode. A Universal Argument causes the command to
-repeat.
 :Join
 
 Joins two lines. Performs the following Zedit commands:
@@ -394,10 +389,11 @@ Change the mode of the current buffer. Prompts (with command  completion)  for
 the mode to change to.  A Universal Argument causes multiple toggles.
 :Newline
 
-
 The  command  normally  bound to the Enter or Return key. A Universal Argument
 causes the command to repeat.
 :Next Bookmark
+
+
 
 Moves the Point to the last bookmark set in the bookmark  ring.  The  bookmark
 moved  to is displayed in the echo window. A Universal Argument in the range 1
@@ -459,12 +455,12 @@ this command has no effect. A Universal Argument is ignored.
 Inserts a Newline at the Point but leaves the Point in front of  the  Newline.
 It  is  the  same as typing a Newline and then a Previous Character command. A
 Universal Argument causes the command to repeat.
-
-
 :Other Next Page
 
 Performs a Next Page command in the bottom window or the top window if you are
 in the bottom window. It leaves the Point where it is in the active window. If
+
+
 there is only one window, this command has no effect.   A  Universal  Argument
 causes the command to page the Nth window.
 :Other Previous Page
@@ -514,18 +510,12 @@ lar list. A Universal Argument goes to the Nth previous window.
 
 Moves the Point back to the start of a word or to the start  of  the  previous
 word. A Universal Argument causes the command to repeat.
-:Print
-
-Send  the  current  buffer to the printer. Uses the print command specified in
-the Print variable. A Universal Argument prints only the region.
 :Query Replace
 
-Prompts for a search string and a replacement string  and  searches  from  the
-current  Point  looking for matches of the search string. If it finds a match,
+Prompts  for  a  search  string and a replacement string and searches from the
+current Point looking for matches of the search string. If it finds  a  match,
 it moves the Point to the match and waits for one of the following input char-
 acters:
-
-
 
     ,              Replace current match and confirm.
     <space> or 'y' Replace current match and continue.
@@ -534,25 +524,27 @@ acters:
     Abort Command  Exit without replacing current match.
     Others         Continue without replacing current match.
 
-The  Point  is left at the position it was in before the Query Replace. If the
-mode Exact is set, the search will be case  sensitive.  A  Universal  Argument
+The Point is left at the position it was in before the Query Replace.  If  the
+
+
+mode  Exact  is  set,  the search will be case sensitive. A Universal Argument
 causes the replacement to be done globally in all the buffers.
 :Quote
 
-The  Quote command is used to insert a character into a buffer or String Argu-
+The Quote command is used to insert a character into a buffer or String  Argu-
 ment that would normally be a command. The next character after the Quote com-
-mand  is  taken literally, unless the key is a valid hexadecimal digit. If the
-key is a valid hexadecimal digit, it and the next key are taken together as  a
-hexadecimal  number  and  the  ASCII  character  equivalent  of this number is
+mand is taken literally, unless the key is a valid hexadecimal digit.  If  the
+key  is a valid hexadecimal digit, it and the next key are taken together as a
+hexadecimal number and the  ASCII  character  equivalent  of  this  number  is
 inserted into the buffer. If a key is not hit within approximately one second,
-"Quote:"  is  displayed  in  the  echo window. The Quote command does not work
+"Quote:" is displayed in the echo window. The  Quote  command  does  not  work
 within a Universal Argument. A Universal Argument inserts Arg characters.
 :Read File
 
 Prompts for a path name, with file name completion,  and inserts the file into
-the  current  buffer  before  the Point. If there is a Universal Argument, the
-current buffer is deleted, first asking to save the file if  it  is  modified,
-before  reading  in  the  new  file. The buffers file name is not changed, any
+the current buffer before the Point. If there is  a  Universal  Argument,  the
+current  buffer  is  deleted, first asking to save the file if it is modified,
+before reading in the new file. The buffers file  name  is  not  changed,  any
 writes will be to the old file name.
 :Redisplay
 
@@ -563,71 +555,72 @@ Prompts for a tag and then runs the 'ref' command on it. See the documentation
 for `elvis'.
 :Replace
 
-Prompts  for  a  search  string and a replacement string and searches from the
-current Point looking for matches of the search string. If it finds  a  match,
+Prompts for a search string and a replacement string  and  searches  from  the
+current  Point  looking for matches of the search string. If it finds a match,
 it replaces the string and continues. The Point is left at the position it was
 in before the Query Replace. If the mode Exact is set, the search will be case
-sensitive.  A Universal Argument causes the replacement to be done globally in
+sensitive. A Universal Argument causes the replacement to be done globally  in
 all the buffers.
 :Reverse Inc Search
 
 Searches backwards for the string after every character is entered in the PAW.
-The  Delete  Previous  Character command can be used to delete a character and
-"forward up" (???) the search. The Newline character  terminates  the  search.
-The  Abort  command  terminates  the search and places the Point back where it
-was. Any other command terminates the search and performs the command. A  Uni-
+The Delete Previous Character command can be used to delete  a  character  and
+"forward  up"  (???)  the search. The Newline character terminates the search.
+The Abort command terminates the search and places the  Point  back  where  it
+was.  Any other command terminates the search and performs the command. A Uni-
 versal Argument causes the command to repeat.
 :Reverse Search
 
-Prompts  for  a search string and searches from the Point backward for a match
-in the buffer. If a match is found, the Point is moved to  the  start  of  the
-match.  If  the string is not found, then "Not Found" is displayed in the echo
-window and the Point is not moved. The search string is saved  and  subsequent
-search  and  replace  commands  will default to the last search string. If the
-mode Exact is set, the search will be case  sensitive.  A  Universal  Argument
+Prompts for a search string and searches from the Point backward for  a  match
+in  the  buffer.  If  a match is found, the Point is moved to the start of the
+match. If the string is not found, then "Not Found" is displayed in  the  echo
+window  and  the Point is not moved. The search string is saved and subsequent
+search and replace commands will default to the last  search  string.  If  the
+mode  Exact  is  set,  the search will be case sensitive. A Universal Argument
 causes the search to look for exactly Arg matches of the String Argument.
 :Revert File
 
-Rereads  the current file. If the file has changed, asks to overwrite changes.
+Rereads the current file. If the file has changed, asks to overwrite  changes.
 A Universal Argument causes multiple rereads. Mimics the vi "e" command.
 :Save All Files
-
 
 Saves all modified buffers. A Universal Argument causes ALL files to be saved,
 modified or not.
 :Save Bindings
 
 A key bound with the Bind command only stays in effect for the duration of the
-edit session. The Save Bindings command is used to permanently  save  any  new
+edit  session.  The  Save Bindings command is used to permanently save any new
 bindings in the bindings file. A Universal Argument causes Arg saves!
+
+
 :Save Config
 
 Save the current settings of all the Zedit variables in the .config.z file.
 :Save File
 
-Saves  the current buffer to its file. If the current buffer has no path name,
-a path name is prompted for (with file name completion). A Universal  Argument
+Saves the current buffer to its file. If the current buffer has no path  name,
+a  path name is prompted for (with file name completion). A Universal Argument
 is ignored.
 :Scroll Down
 
-Scrolls  the  screen down one line. A Universal Argument causes the command to
+Scrolls the screen down one line. A Universal Argument causes the  command  to
 scroll multiple lines.
 :Scroll Up
 
-Scrolls the screen up one line. A Universal Argument  causes  the  command  to
+Scrolls  the  screen  up  one line. A Universal Argument causes the command to
 scroll multiple lines.
 :Search
 
 Prompts for a search string and searches from the Point forward for a match in
 the buffer. If a match is found, the Point is moved to the start of the match.
-If  the  string is not found, then "Not Found" is displayed in the echo window
-and the Point is not moved. The search string is saved and  subsequent  search
-or  replace commands will default to the last search string. If the mode Exact
-is set, the search will be case sensitive. A  Universal  Argument  causes  the
+If the string is not found, then "Not Found" is displayed in the  echo  window
+and  the  Point is not moved. The search string is saved and subsequent search
+or replace commands will default to the last search string. If the mode  Exact
+is  set,  the  search  will be case sensitive. A Universal Argument causes the
 search to look for exactly Arg matches.
 :Set Bookmark
 
-Places  an invisible "bookmark" at the Point. There are 10 bookmarks placed in
+Places an invisible "bookmark" at the Point. There are 10 bookmarks placed  in
 a ring. The bookmark set is displayed in the PAW.  A Universal Argument causes
 the command to repeat.
 :Set Mark
@@ -636,8 +629,8 @@ Sets the Mark at the Point. A Universal Argument is ignored.
 :Set Variable
 
 Allows any of the configurable variables to be set. Command completion is sup-
-ported. Prompts for the variable, then prompts for the new setting. A  Univer-
-sal  Argument  causes numeric or flag variables to be set to Arg, string vari-
+ported.  Prompts for the variable, then prompts for the new setting. A Univer-
+sal Argument causes numeric or flag variables to be set to Arg,  string  vari-
 ables ignore the Universal Argument.
 :Setenv
 
@@ -645,39 +638,39 @@ Performs a 'setenv' command on an environment variable. The variable will keep
 the setting during the the Zedit session.
 :Shell
 
-On  PCs,  exits  to the shell pointed to by the environment variable SHELL. If
+On PCs, exits to the shell pointed to by the environment  variable  SHELL.  If
 SHELL is not set, it will use COMSPEC. Type "exit" to get back to Zedit.
 
 On Unix machines, forks an interactive shell in a special ".shell" window.
 :Shrink Window
 
-Shrinks the current window one line. A Universal Argument shrinks  the  window
+Shrinks  the  current window one line. A Universal Argument shrinks the window
 Arg lines.
 :Size Window
 
 Sets the window to Universal Argument lines.
 :Spell
 
-
-This  command  is  an interactive interface to the "ispell" program. It allows
+This command is an interactive interface to the "ispell"  program.  It  allows
 you to perform spell checking on the current buffer. A Universal Argument lim-
 its the spell check to the Region. The default is to check the entire buffer.
 
 The "ispell" program is bundled with the Zedit. Unix only.
 :Stats
 
-Displays  Zedit  memory  statistics  in  the  PAW. A Universal Argument on PCs
-machines will display how much memory is available and which  type  of  memory
+
+Displays Zedit memory statistics in the  PAW.  A  Universal  Argument  on  PCs
+machines  will  display  how much memory is available and which type of memory
 you are using: expanded, extended, or virtual.
 :Swap Mark and Point
 
-The  Point  goes to the current position of the Mark and the Mark is set where
+The Point goes to the current position of the Mark and the Mark is  set  where
 the Point was. A Universal Argument is ignored.
 :Switch to Buffer
 
-Prompts for a buffer name to switch to with command completion.  The  previous
-buffer  is  stored  and  displayed  as  a default. This allows quick switching
-between two buffers. The Again command can be used to scroll through the  buf-
+Prompts  for a buffer name to switch to with command completion.  The previous
+buffer is stored and displayed as  a  default.  This  allows  quick  switching
+between  two buffers. The Again command can be used to scroll through the buf-
 fer list. A Universal Argument is ignored.
 :Tab
 
@@ -688,31 +681,31 @@ Switches the current buffers minor mode between case sensitive and case insen-
 sitive for searches and replacements. Ignores the Universal Argument.
 :Transpose Characters
 
-Transposes the character before the Point with the character at the Point.  It
-leaves  the  Point after the second character. Successive commands will "drag"
-the character that was before the Point towards the end of the  line.  If  the
+Transposes  the character before the Point with the character at the Point. It
+leaves the Point after the second character. Successive commands  will  "drag"
+the  character  that  was before the Point towards the end of the line. If the
 Point was at the end of a line, the two characters before the Point are trans-
-posed. If the Point is at the beginning of the buffer, the  character  at  the
-Point  and  the character after the Point are transposed. A Universal Argument
+posed.  If  the  Point is at the beginning of the buffer, the character at the
+Point and the character after the Point are transposed. A  Universal  Argument
 causes the command to repeat.
 :Transpose Words
 
-Transposes the words before and after the Point. The Point is left  after  the
+Transposes  the  words before and after the Point. The Point is left after the
 second word. Successive commands will "drag" the word before the Point towards
-the end of the line. If the Point is at the end of a line, the  last  word  on
-the  line is transposed with the first word on the next line. The command does
+the  end  of  the line. If the Point is at the end of a line, the last word on
+the line is transposed with the first word on the next line. The command  does
 nothing at the end of the buffer. If the Point is in the middle of a word, the
 two halves of the word are transposed. A Universal Argument causes the command
 to repeat.
 :Trim White Space
 
-Removes all spaces and tabs on both sides of the Point. The Point is  left  on
+Removes  all  spaces and tabs on both sides of the Point. The Point is left on
 the character that is to the right of the deleted text. The deleted characters
 are not put in the Kill Buffer. A Universal Argument is ignored.
 :Two Windows
 
-Splits the current window into two windows. The same buffer  is  displayed  in
-both  windows and the bottom window is made active. A Universal Argument keeps
+Splits  the  current  window into two windows. The same buffer is displayed in
+both windows and the bottom window is made active. A Universal Argument  keeps
 splitting the current window.
 :Undent
 
@@ -722,30 +715,26 @@ Removes Universal Argument tabs from the start of every line in the region.
 Undo the previous edit. There is a list of undos.
 :Universal Argument
 
-Many of the commands accept a Universal  Argument  to  cause  the  command  to
-
-
-repeat  or  to modify the meaning of the command in some way. It reads decimal
-digits and displays them in the PAW. The first non-digit  is  processed  as  a
-command.  The  digits  cannot  be deleted since Delete is a valid command that
+Many  of  the  commands  accept  a  Universal Argument to cause the command to
+repeat or to modify the meaning of the command in some way. It  reads  decimal
+digits  and  displays  them  in the PAW. The first non-digit is processed as a
+command. The digits cannot be deleted since Delete is  a  valid  command  that
 accepts a Universal Argument. If a mistake is made, use the Abort Command.
 :Unmodify
 
 Turns off the modified flag for the current buffer. Does not change the buffer
+
+
 itself. A Universal Argument is ignored.
 :Uppercase Region
 
-Convert  the  Region to uppercase. Not allowed in program mode buffers. A Uni-
+Convert the Region to uppercase. Not allowed in program mode buffers.  A  Uni-
 versal Argument is ignored.
 :Uppercase Word
 
-Converts the current word starting at the Point to uppercase.  It  leaves  the
-Point  at  the  end  of  the  word. A Universal Argument causes the command to
+Converts  the  current  word starting at the Point to uppercase. It leaves the
+Point at the end of the word. A  Universal  Argument  causes  the  command  to
 repeat.
-:View File
-
-Like Find File except that the buffer is opened in VIEW mode. A Universal Com-
-mand causes the command to repeat.
 :View Line
 
 Makes  the  Point line the top line in the window. A Universal Argument causes
@@ -789,8 +778,6 @@ AExtends, TExtends.
 
 A  tab  is  a  single character that is displayed as one or more spaces on the
 screen. This variable defines the number of spaces displayed per tab in C mode
-
-
 buffers, even if the buffer is in View mode. The default is 4 spaces. See also
 Tabs.
 :Date Format
@@ -802,6 +789,8 @@ preferred date for the current locale. See strftime for details.
 
 If Exact is set, all searches and replaces are case sensitive. This means that
 the  search  string  "string"  will  only  match  "string",  not  "STRING", or
+
+
 "String". The default is on.
 :Expand Paths
 
@@ -855,8 +844,6 @@ This variable controls the C Mode "matching" function.
 
 2    Zedit will insert a ')' or ']' for every '(' or '[' typed.
 
-
-
 :Normal
 
 If on, sets the default buffer mode to Normal. If off, sets the default buffer
@@ -868,6 +855,8 @@ of insert mode. Default is off.
 :Silent
 
 If set, turns the bell off. Default is off (bell on).
+
+
 :Single Scroll
 
 If  SingleScroll  is set, a Next Line command at the bottom of the screen will
@@ -906,6 +895,17 @@ tends, TCLExtends.
 If this variable is set, the bell will flash the screen rather than  producing
 an audible tone. The default is on if flashing the screen is supported.
 :ZEDIT
+
+
+
+
+
+
+
+
+
+
+
 
 
 

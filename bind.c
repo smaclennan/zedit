@@ -78,7 +78,7 @@ void bind(void)
 /* SAM	Keys[128 + '!'] = Keys[128 + '1'] = ZCMD; */
 	Keys[128 + '@'] = Keys[128 + '2'] = ZCMDTOBUFF;
 	Keys[128 + '#'] = Keys[128 + '3'] = ZCALC;
-	Keys[128 + '&'] = Keys[128 + '7'] = ZISPACE;
+/*	Keys[128 + '&'] = Keys[128 + '7'] = ; */
 	Keys[128 + '*'] = Keys[128 + '8'] = ZUNMODF;
 	Keys[128 + '('] = Keys[128 + '9'] = ZTOSTART;
 	Keys[128 + ')'] = Keys[128 + '0'] = ZTOEND;

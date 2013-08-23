@@ -58,12 +58,6 @@ void Zcount(void)
 	unmark(tmark);
 }
 
-void Zispace(void)
-{
-	binsert(' ');
-	bmove(-1);
-}
-
 /* this struct must be sorted */
 static struct _amode
 {

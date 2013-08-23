@@ -83,7 +83,6 @@ void Zincsrch(void);
 void Zindent(void);
 void Zindent(void);
 void Zinsert(void);
-void Zispace(void);
 void Zjoin(void);
 void Zkeybind(void);
 void Zkill(void);
@@ -161,7 +160,6 @@ void Zupword(void);
 void Zviewline(void);
 void Zvmode(void);
 void Zyank(void);
-void Zzoom(void);
 
 /* General routines */
 

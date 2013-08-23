@@ -56,7 +56,6 @@ struct cnames Cnames[] = {
 	{"indent",			ZINDENT,	H_DISP},
 	{"insert-character",		ZINSERT,	H_NONE},
 	{"insert-overwrite",		ZOVERIN,	H_MODE},
-	{"insert-space",		ZISPACE,	H_DISP},
 	{"join",			ZJOIN,		H_DELETE},
 	{"key-binding",			ZKEYBIND,	H_BIND},
 	{"kill",			ZKILL,		H_SHELL},
@@ -132,5 +131,4 @@ struct cnames Cnames[] = {
 	{"view-line",			ZVIEWLINE,	H_DISP},
 	{"write-file",			ZFILEWRITE,	H_FILE},
 	{"yank",			ZYANK,		H_DELETE},
-	{"zoom",			ZZOOM,		H_DISP},
 };

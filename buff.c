@@ -33,6 +33,7 @@ struct mark *Mrklist;		/* the marks list tail */
 struct page *Curpage;		/* the current page */
 
 static int NumPages;
+static int NumMarks;
 
 static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage);
@@ -173,6 +174,7 @@ struct mark *bcremrk(void)
 	if (Mrklist)
 		Mrklist->next = new;
 	Mrklist = new;
+	++NumMarks;
 	return new;
 }
 
@@ -701,8 +703,7 @@ int breadfile(char *fname)
 	}
 
 	Curbuff->mtime = sbuf.st_mtime;		/* save the modified time */
-	sprintf(buf, "Reading %s", lastpart(fname));
-	echo(buf);
+	putpaw("Reading %s", lastpart(fname));
 
 	bempty();
 
@@ -955,6 +956,7 @@ void unmark(struct mark *mptr)
 		if (mptr == Mrklist)
 			Mrklist = mptr->prev;
 		free((char *)mptr);
+		--NumMarks;
 	}
 }
 
@@ -1067,6 +1069,5 @@ int batoi(void)
 
 void Zstat(void)
 {
-	sprintf(PawStr, "Buffers: %d   Pages: %d", Numbuffs, NumPages);
-	echo(PawStr);
+	putpaw("Buffers: %d   Pages: %d  Marks: %d", Numbuffs, NumPages, NumMarks);
 }

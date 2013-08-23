@@ -228,9 +228,8 @@ extern int circf;
 #define MAX(a, b)	(a > b ? a : b)
 
 
-#define echo(s)		putpaw(s, FALSE)
-#define error(s)	putpaw(s, TRUE)
-#define clrecho(void)	putpaw("", 2)
+#define echo(s)		putpaw(s)
+#define clrecho(void)	putpaw("")
 
 #include "proto.h"
 

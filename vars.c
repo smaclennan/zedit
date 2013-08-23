@@ -233,16 +233,15 @@ static void setavar(char *vin, Boolean display)
 				}
 				if (Vars[i].vtype == STRING) {
 					if (VARSTR(i))
-						sprintf(msg, "%s = %s",
-							Vars[i].vname,
-							VARSTR(i));
+						putpaw("%s = %s",
+						       Vars[i].vname,
+						       VARSTR(i));
 					else
-						sprintf(msg, "%s = NONE",
-							Vars[i].vname);
+						putpaw("%s = NONE",
+						       Vars[i].vname);
 				} else
-					sprintf(msg, "%s = %d",
+					putpaw("%s = %d",
 						Vars[i].vname, VAR(i));
-				echo(msg);
 				if (i == VLINES)
 					Curwdo->modeflags = INVALID;
 			}
@@ -251,10 +250,8 @@ static void setavar(char *vin, Boolean display)
 	if (i == NUMVARS) {
 		if (Verbose > 1)
 			Dbg("no match\n");
-		if (display) {
-			sprintf(PawStr, "Variable '%s' Not Found", vin);
-			echo(PawStr);
-		}
+		if (display)
+			putpaw("Variable '%s' Not Found", vin);
 	}
 	Arg = 0;
 }

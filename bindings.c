@@ -51,7 +51,7 @@ void Zbind(void)
 
 void Zkeybind(void)
 {
-	char str[STRMAX], kstr[12];
+	char kstr[12];
 	int rc;
 	unsigned raw, key;
 
@@ -69,16 +69,13 @@ void Zkeybind(void)
 		key = Keys[raw];
 	}
 
-	if (key == ZNOTIMPL) {
-		snprintf(str, sizeof(str), "%s Unbound", dispkey(raw, kstr));
-		echo(str);
-	} else
+	if (key == ZNOTIMPL)
+		putpaw("%s Unbound", dispkey(raw, kstr));
+	else
 		for (rc = 0; rc < NUMFUNCS; ++rc)
-			if (Cnames[rc].fnum == key) {
-				snprintf(str, sizeof(str), "%s Bound to %s",
+			if (Cnames[rc].fnum == key)
+				putpaw("%s Bound to %s",
 					dispkey(raw, kstr), Cnames[rc].name);
-				echo(str);
-			}
 }
 
 /* Don't display both C-X A and C-X a if bound to same Ditto for Meta */
@@ -109,7 +106,7 @@ void Zcmdbind(void)
 					found = TRUE;
 				}
 		if (found)
-			echo(PawStr);
+			putpaw(PawStr);
 		else
 			echo("Unbound");
 	}
@@ -217,10 +214,8 @@ void Zsavebind(void)
 		sprintf(path, "%s/%s", Me->pw_dir, fname);
 	if (Argp && getfname("Bind File: ", path))
 		return;
-	if (bindfile(path, WRITE_MODE)) {
-		sprintf(PawStr, "%s written.", path);
-		echo(PawStr);
-	}
+	if (bindfile(path, WRITE_MODE))
+		putpaw("%s written.", path);
 }
 
 static Boolean bindfile(char *fname, int mode)
@@ -264,7 +259,7 @@ static Boolean bindfile(char *fname, int mode)
 
 static Boolean bindone(char *prompt, int first, int *key)
 {
-	echo(prompt);
+	putpaw("%s", prompt);
 	*key = tgetcmd();
 	if (Keys[*key] == ZABORT)
 		return FALSE;

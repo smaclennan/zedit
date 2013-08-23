@@ -226,8 +226,7 @@ static void printexit(int code)
 	else if (code == -1)
 		echo("Unable to execute.");
 	else {
-		sprintf(PawStr, "Exit %d.", code);
-		echo(PawStr);
+		putpaw("Exit %d.", code);
 	}
 }
 #else

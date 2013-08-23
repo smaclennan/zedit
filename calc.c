@@ -290,11 +290,9 @@ void Zcalc(void)
 	}
 
 	if (is_float)
-		sprintf(PawStr, "= %g", pop_num().f);
+		putpaw("= %g", pop_num().f);
 	else {
 		long n = pop_num().i;
-		sprintf(PawStr, "= %ld (%lx)", n, n);
+		putpaw("= %ld (%lx)", n, n);
 	}
-
-	echo(PawStr);
 }

@@ -18,6 +18,7 @@
  */
 
 #include "z.h"
+#include <stdarg.h>
 #include <sys/time.h>
 #include <sys/poll.h>
 
@@ -29,7 +30,7 @@ int ask2(char *msg, Boolean allow_bang)
 	int rc = BADCHAR;
 	unsigned cmd;
 
-	echo(msg);
+	putpaw("%s", msg);
 	while (rc == BADCHAR)
 		switch (cmd = tgetcmd()) {
 		case 'y':
@@ -69,7 +70,7 @@ Boolean delayprompt(char *msg)
 
 	rc = delay();
 	if (rc)
-		putpaw(msg, 2);
+		putpaw(msg);
 	return rc;
 }
 
@@ -101,30 +102,33 @@ Boolean delcmdall(void)
 
 char PawStr[COLMAX + 10];
 
-/*
-Put a string into the PAW.
-type is:	0 for echo			echo()		macro
-		1 for error			error()		macro
-		2 for save pos
-*/
-void putpaw(char *str, int type)
+/* Put a string into the PAW. */
+void putpaw(const char *fmt, ...)
 {
 	int trow, tcol;
+	char str[STRMAX];
+	va_list ap;
 
-	if (type == 1)
-		tbell();
-	if (!InPaw) {
-		trow = Prow; tcol = Pcol;
-		tsetpoint(tmaxrow() - 1, 0);
-		tprntstr(str);
-		tcleol();
-		if (type != 1)
-			tsetpoint(trow, tcol);
-		tforce();
-		tflush();
-		if (type == 1)
-			tgetcmd();
-	}
+	if (InPaw)
+		return;
+
+	va_start(ap, fmt);
+	vsnprintf(str, sizeof(str), fmt, ap);
+	va_end(ap);
+
+	trow = Prow; tcol = Pcol;
+	tsetpoint(tmaxrow() - 1, 0);
+	tprntstr(str);
+	tcleol();
+	tsetpoint(trow, tcol);
+	tforce();
+	tflush();
+}
+
+void error(char *str)
+{
+	tbell();
+	putpaw("%s", str);
 }
 
 /* echo 'str' to the paw and as the filename for 'buff' */
@@ -138,7 +142,7 @@ void message(struct buff *buff, char *str)
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		if (wdo->wbuff == buff)
 			wdo->modeflags = INVALID;
-	echo(str);
+	putpaw("%s", str);
 }
 
 /*

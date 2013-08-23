@@ -247,11 +247,10 @@ void Zsetbookmrk(void)
 		bmrktopnt(Bookmrks[Bookmark]);
 
 	if (Argp)
-		sprintf(PawStr, "Book Mark %s(%d) Set",
-			Bookname[Bookmark], Bookmark + 1);
+		putpaw("Book Mark %s(%d) Set",
+		       Bookname[Bookmark], Bookmark + 1);
 	else
-		sprintf(PawStr, "Book Mark %d Set", Bookmark + 1);
-	echo(PawStr);
+		putpaw("Book Mark %d Set", Bookmark + 1);
 }
 
 
@@ -278,8 +277,7 @@ void Znxtbookmrk(void)
 	}
 	bpnttomrk(Bookmrks[Bookmark]);
 	Curwdo->modeflags = INVALID;
-	sprintf(PawStr, "Book Mark %d", Bookmark + 1);
-	echo(PawStr);
+	putpaw("Book Mark %d", Bookmark + 1);
 	if (--Bookmark < 0)
 		Bookmark = Lastbook;
 }

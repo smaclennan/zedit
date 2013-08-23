@@ -22,7 +22,6 @@
 void Zcount(void)
 {
 	Boolean word, swapped = FALSE;
-	char str[STRMAX];
 	unsigned l, w, c;
 	struct mark *tmark;
 
@@ -49,8 +48,7 @@ void Zcount(void)
 			word = TRUE;
 		}
 	}
-	sprintf(str, "Lines: %u   Words: %u   Characters: %u", l, w, c);
-	echo(str);
+	putpaw("Lines: %u   Words: %u   Characters: %u", l, w, c);
 	if (swapped)
 		mrktomrk(Curbuff->mark, tmark);
 	else

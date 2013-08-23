@@ -151,7 +151,7 @@ static void handle_close_bracket(struct mark *tmark, int crfound)
 			PawStr[i] = *Curcptr;
 		}
 		PawStr[i] = '\0';
-		echo(PawStr);
+		putpaw("%s", PawStr);
 		bpnttomrk(&t);
 	}
 	movepast(biswhite, FORWARD);
@@ -533,7 +533,6 @@ Boolean Ispara(char pc, char ch)
 
 void Zprintpos(void)
 {
-	char str[STRMAX];
 	unsigned long mark, point;
 	unsigned line;
 
@@ -541,9 +540,8 @@ void Zprintpos(void)
 	mark = blocation(&line);
 	bswappnt(Curbuff->mark);
 	point = blocation(&line);
-	sprintf(str, "Line: %u  Column: %u  Point: %lu  Mark: %lu  Length: %lu",
-		line, bgetcol(FALSE, 0) + 1, point, mark, blength(Curbuff));
-	echo(str);
+	putpaw("Line: %u  Column: %u  Point: %lu  Mark: %lu  Length: %lu",
+	       line, bgetcol(FALSE, 0) + 1, point, mark, blength(Curbuff));
 }
 
 
@@ -766,12 +764,12 @@ void Zarg(void)
 	Arg = 0;
 	strcpy(str, "Arg: 0");
 	p = str + 5;	/* point to first digit */
-	putpaw(str, 2);
+	putpaw(str);
 	while ((Cmd = tgetcmd()) >= '0' && Cmd <= '9') {
 		Arg = Arg * 10 + Cmd - '0';
 		*p++ = Cmd;
 		*p = '\0';
-		putpaw(str, 2);
+		putpaw(str);
 	}
 	clrecho();
 	CMD(Keys[Cmd]);
@@ -861,7 +859,7 @@ void Zhexout(void)
 		p = strchr(p, '\0');
 		sprintf(p, " %02x", *Curcptr & 0xff);
 	}
-	echo(str);
+	putpaw("%s", str);
 }
 
 void Zswapchar(void)

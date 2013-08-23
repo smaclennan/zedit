@@ -48,7 +48,7 @@ static void doincsrch(char *prompt, Boolean forward)
 	p = str + strlen(str);
 	while (go) {
 		refresh();
-		putpaw(str, 2);
+		putpaw(str);
 		cmd = tgetcmd();
 		if (isprint(cmd) && i < STRMAX) {
 			bmrktopnt(&marks[i]);

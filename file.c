@@ -153,8 +153,7 @@ Boolean filesave(void)
 			return FALSE;
 		Curwdo->modeflags = INVALID;
 	}
-	sprintf(PawStr, "Writing %s", lastpart(Curbuff->fname));
-	echo(PawStr);
+	putpaw("Writing %s", lastpart(Curbuff->fname));
 	return bwritefile(Curbuff->fname);
 }
 
@@ -190,8 +189,7 @@ void Zfilewrite(void)
 	*path = '\0';
 	if (getfname(prompt, path) == 0) {
 		if (Argp) {
-			sprintf(PawStr, "Writing %s", path);
-			echo(PawStr);
+			putpaw("Writing %s", path);
 			write_rgn(path);
 			clrecho();
 		} else {

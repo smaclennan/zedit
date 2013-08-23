@@ -161,7 +161,7 @@ int Curcmds;
 void fcheck(void)
 {
 	int s1, s2;
-	int error = 0;
+	int err = 0;
 
 	/* check the TOLOWER macro */
 	if (TOLOWER('c') != 'c')
@@ -171,28 +171,28 @@ void fcheck(void)
 	s1 = sizeof(Cnames) / sizeof(struct cnames);
 	s2 = (sizeof(Cmds) / sizeof(void *) / 2) - 1;
 	if (s1 != NUMFUNCS || s2 != NUMFUNCS) {
-		++error;
+		++err;
 		Dbg("Cnames: %d Cmds: %d NUMFUNCS: %d\n", s1, s2, NUMFUNCS);
 	}
 
 	/* validate the Cnames array the best we can */
 	for (s1 = 1; s1 < NUMFUNCS; ++s1) {
 		if (strcasecmp(Cnames[s1].name, Cnames[s1 - 1].name) <= 0) {
-			++error;
+			++err;
 			Dbg("Problem: (%d) %s and %s\n",
 			    s1, Cnames[s1 - 1].name, Cnames[s1].name);
 		}
 		if (strlen(Cnames[s1].name) > (size_t)30) {
-			++error;
+			++err;
 			Dbg("%s too long\n", Cnames[s1].name);
 		}
 		if (strncmp(Cnames[s1].name, "Top", 3) == 0) {
-			++error;
+			++err;
 			Dbg("Zhelp() Top: %s\n", Cnames[s1].name);
 		}
 	}
 
-	if (error)
+	if (err)
 		error("INTERNAL ERRORS: check z.out file");
 }
 #else

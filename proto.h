@@ -382,6 +382,4 @@ void undo_del(int size);
 void undo_clear(struct buff *buff);
 void ufini(void);
 
-/* Only exported for X */
-void copytomrk(struct mark *tmark);
-int innerdsp(int from, int to, struct mark *pmark);
+void findtag_part(void);

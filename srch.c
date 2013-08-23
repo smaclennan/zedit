@@ -28,6 +28,9 @@ static Boolean replaceone(int, Boolean *, Boolean *, Byte *, Boolean);
 
 Boolean Insearch;	/* set by nocase, reset by getarg */
 
+static char old[STRMAX + 1];	/* Search string */
+static char new[STRMAX + 1];	/* Replace string */
+static Boolean searchdir[2];	/* Current direction for Again. */
 static struct mark *Gmark;	/* used by global search routines */
 
 #define QHELP	\

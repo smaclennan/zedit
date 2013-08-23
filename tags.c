@@ -22,7 +22,7 @@
 #if TAGS
 #include <sys/stat.h>
 
-char savetag[STRMAX + 1];
+static char savetag[STRMAX + 1];
 static struct buff *Bsave;
 
 static void gotomatch(struct mark *smark);
@@ -98,6 +98,22 @@ void Zfindtag(void)
 	Nextpart = ZNOTIMPL;
 	bswitchto(Bsave);			/* go back to original buffer */
 	Curwdo->modeflags = INVALID;
+}
+
+void findtag_part(void)
+{
+	char word[STRMAX + 1];
+
+	bswitchto(cfindbuff(TAGBUFNAME));
+	for (bcsearch(NL); !bisend(); bcsearch(NL)) {
+		getbword(word, STRMAX, bistoken);
+		if (stristr(word, savetag)) {
+			makepaw(word, TRUE);
+			return;
+		}
+	}
+	bswitchto(Paw);
+	tbell();
 }
 
 static void gotomatch(struct mark *smark)

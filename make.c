@@ -26,6 +26,9 @@
  */
 static int NexterrorCalled;
 
+char mkcmd[STRMAX + 1] = "make";
+char grepcmd[STRMAX + 1] = "grep -n";
+
 static int parse(char *fname);
 
 /* Do a "make" command - basically a shell command in the ".make" buffer */

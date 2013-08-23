@@ -24,6 +24,8 @@
 #include <signal.h>
 #endif
 
+static char Command[STRMAX + 1];
+
 static void printexit(int code);
 static int pipetobuff(struct buff *buff, char *instr);
 

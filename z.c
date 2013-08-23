@@ -156,9 +156,6 @@ static void setup(int argc, char **argv)
 		puts("Unable to get CWD");
 		exit(1);
 	}
-	/* default for Zfindfile */
-	strcpy(Fname, Cwd);
-	strcat(Fname, "/");
 
 	Colmax = EOF;
 	Tstart = 0;

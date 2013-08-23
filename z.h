@@ -203,7 +203,6 @@ extern int NumFDs;
 extern Boolean Sendp;
 extern struct buff *Killbuff;
 extern char Lbufname[];
-extern char Fname[];
 extern struct avar Vars[];
 extern struct buff *Bufflist, *Paw;
 extern struct buff *Buff_save;
@@ -219,14 +218,8 @@ extern unsigned Nextpart;
 
 extern Byte CRdefault;
 
-extern char G_start[], G_end[];
-extern char Calc_str[];
-extern char savetag[];
-extern char Command[];
 extern char mkcmd[];
 extern char grepcmd[];
-extern char old[], new[];
-extern Boolean searchdir[];
 
 extern int circf;
 

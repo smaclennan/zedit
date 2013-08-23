@@ -86,6 +86,8 @@ static jmp_buf failed;
 #define STACK_OVERFLOW 1
 #define SYNTAX_ERROR   2
 
+static char Calc_str[STRMAX + 1] = "";
+
 static void push_op(char op)
 {
 	if (cur_op >= MAX_OPS)

@@ -21,14 +21,18 @@
 #include <sys/stat.h>
 #include <assert.h>
 
+static char Fname[PATHMAX + 1];
+
 static struct passwd *zgetpwnam(char *name);
 
 static int get_findfile(char *prompt)
 {
 	struct stat sbuf;
 
-	/* If Fname is a file, convert to directory */
-	if (stat(Fname, &sbuf) == 0)
+	if (!*Fname)
+		sprintf(Fname, "%s/", Cwd);
+	else if (stat(Fname, &sbuf) == 0)
+		/* If Fname is a file, convert to directory */
 		if (S_ISREG(sbuf.st_mode)) {
 			char *p = strrchr(Fname, '/');
 			if (p)

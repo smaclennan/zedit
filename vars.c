@@ -188,11 +188,7 @@ static void do_var_match(int i, char *vin)
 				VAR(VFILLWIDTH) =
 					VAR(VMARGIN) + 1;
 		}
-	} else if (i == VMAKE)
-		strcpy(mkcmd, VARSTR(i));
-	else if (i == VGREP)
-		strcpy(grepcmd, VARSTR(i));
-	else if (i == VCEXTS)
+	} else if (i == VCEXTS)
 		parsem(VARSTR(i), CMODE);
 	else if (i == VASEXTS)
 		parsem(VARSTR(i), ASMMODE);
@@ -206,6 +202,12 @@ static void do_var_match(int i, char *vin)
 		parsem(VARSTR(i), SHMODE);
 	else if (i == VTEXTS)
 		parsem(VARSTR(i), TEXT);
+#if MAKE
+	else if (i == VMAKE)
+		strcpy(mkcmd, VARSTR(i));
+	else if (i == VGREP)
+		strcpy(grepcmd, VARSTR(i));
+#endif
 }
 
 static void setavar(char *vin, Boolean display)

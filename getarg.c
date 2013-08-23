@@ -262,16 +262,7 @@ void Zpart(void)
 
 #if TAGS
 	if (Nextpart == ZFINDTAG) {
-		bswitchto(cfindbuff(TAGBUFNAME));
-		for (bcsearch(NL); !bisend(); bcsearch(NL)) {
-			getbword(word, STRMAX, bistoken);
-			if (stristr(word, savetag)) {
-				makepaw(word, TRUE);
-				return;
-			}
-		}
-		bswitchto(Paw);
-		tbell();
+		findtag_part();
 		return;
 	}
 #endif

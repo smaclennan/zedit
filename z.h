@@ -136,6 +136,7 @@ extern struct passwd *Me;
 #define SPELLBUFF	"*spell*"
 #define LISTBUFF	"*list*"
 #define REFBUFF		"*ref*"
+#define CONFBUFF	"*config*"
 
 #define MAKE_CMD	"make "
 #define GREP_CMD	"grep -n "

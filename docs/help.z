@@ -593,9 +593,6 @@ edit  session.  The  Save Bindings command is used to permanently save any new
 bindings in the bindings file. A Universal Argument causes Arg saves!
 
 
-:Save Config
-
-Save the current settings of all the Zedit variables in the .config.z file.
 :Save File
 
 Saves the current buffer to its file. If the current buffer has no path  name,
@@ -642,6 +639,11 @@ On PCs, exits to the shell pointed to by the environment  variable  SHELL.  If
 SHELL is not set, it will use COMSPEC. Type "exit" to get back to Zedit.
 
 On Unix machines, forks an interactive shell in a special ".shell" window.
+:Show Config
+
+Show  the  current settings of all the Zedit variables in a buffer. The buffer
+is suitable for use as a .config.z file and can be saved to a file using Write
+File.
 :Shrink Window
 
 Shrinks  the  current window one line. A Universal Argument shrinks the window
@@ -655,9 +657,10 @@ This command is an interactive interface to the "ispell"  program.  It  allows
 you to perform spell checking on the current buffer. A Universal Argument lim-
 its the spell check to the Region. The default is to check the entire buffer.
 
+
+
 The "ispell" program is bundled with the Zedit. Unix only.
 :Stats
-
 
 Displays Zedit memory statistics in the  PAW.  A  Universal  Argument  on  PCs
 machines  will  display  how much memory is available and which type of memory
@@ -720,11 +723,11 @@ repeat or to modify the meaning of the command in some way. It  reads  decimal
 digits  and  displays  them  in the PAW. The first non-digit is processed as a
 command. The digits cannot be deleted since Delete is  a  valid  command  that
 accepts a Universal Argument. If a mistake is made, use the Abort Command.
+
+
 :Unmodify
 
 Turns off the modified flag for the current buffer. Does not change the buffer
-
-
 itself. A Universal Argument is ignored.
 :Uppercase Region
 
@@ -750,9 +753,6 @@ ten and does not change the name of the buffer.
 Inserts  the  characters from the Kill Buffer before the Point. The characters
 are inserted, even in overwrite mode. A Universal Argument causes the  command
 to repeat.
-:Zoom
-
-In X, will perform a window manager zoom command.
 :Add NL
 
 If  this flag variable is set, the editor will insure that all saved files end
@@ -852,11 +852,16 @@ mode to Text. Some file extensions override this variable. The default is on.
 
 If overwrite is set, newly created buffers default to overwrite  mode  instead
 of insert mode. Default is off.
+:SH Extends
+
+This  variable  defines the extensions that turn on Shell Mode. The extensions
+
+
+are seperated with the colon (:). Note that CExtends takes  precedence.  There
+is a maximum of eight extensions. See also CExtends, TExtends.
 :Silent
 
 If set, turns the bell off. Default is off (bell on).
-
-
 :Single Scroll
 
 If  SingleScroll  is set, a Next Line command at the bottom of the screen will
@@ -878,18 +883,13 @@ See also AdaTabs and CTabs.
 
 This  specifies  the  tag file name used by the Find Tag command. It is a full
 path name to the tag file. The default is "NONE".
-:TCL Extends
-
-This variable defines the extensions that turn on TCL Mode. The extensions are
-seperated  with the colon (:). Note that CExtends takes precedence. There is a
-maximum of eight extensions. See also CExtends, TExtends.
 :T Extends
 
 This variable defines the extensions that turn on Text  Mode.  The  extensions
 are  seperated  with  the  colon (:). An extension of "." matches no extension
 (i.e. no "." in file name). Note that the CExtends then AExtends  take  prece-
 dence  over  TExtends.  There  is a maximum of eight extensions. See also CEx-
-tends, TCLExtends.
+tends, ShExtends.
 :Visible Bell
 
 If this variable is set, the bell will flash the screen rather than  producing

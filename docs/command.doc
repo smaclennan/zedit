@@ -704,11 +704,6 @@ of the edit session. The Save Bindings command is used to permanently
 save any new bindings in the bindings file. A Universal Argument
 causes Arg saves!
 .sp 0
-:Save Config
-
-Save the current settings of all the Zedit variables in the .config.z
-file.
-.sp 0
 :Save File
 
 Saves the current buffer to its file. If the current buffer has no path
@@ -765,6 +760,12 @@ SHELL. If SHELL is not set, it will use COMSPEC. Type "exit" to
 get back to Zedit.
 
 On Unix machines, forks an interactive shell in a special ".shell" window.
+.sp 0
+:Show Config
+
+Show the current settings of all the Zedit variables in a buffer. The buffer
+is suitable for use as a .config.z file and can be saved to a file using Write
+File.
 .sp 0
 :Shrink Window
 
@@ -897,8 +898,4 @@ the Region to be written and does not change the name of the buffer.
 Inserts the characters from the Kill Buffer before the Point. The
 characters are inserted, even in overwrite mode. A Universal Argument
 causes the command to repeat.
-.sp 0
-:Zoom
-
-In X, will perform a window manager zoom command.
 .sp 0

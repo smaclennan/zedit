@@ -21,7 +21,9 @@ fi
 make
 
 # if these don't exist, rebuild all
-[ -f help.z -a -f appab.doc ] || all=1
+#[ -f help.z -a -f appab.doc ] || all=1
+# Computers are much faster now. Always rebuild all.
+all=1
 
 echo "Checking commands..."
 $EXE c command.doc >cmd.tmp

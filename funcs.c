@@ -145,7 +145,7 @@ void (*Cmds[][2])() = {
 	{ Zscrollup,		Znotimpl },
 	{ Zcwd,			Znotimpl },
 	{ Zcmdbind,		Znotimpl },
-	{ Zsaveconfig,		Znotimpl },
+	{ Zshowconfig,		Znotimpl },
 	{ Zsetenv,		Znotimpl },
 	{ Zref,			Znotimpl },
 	{ Zgresrch,		Znotimpl },

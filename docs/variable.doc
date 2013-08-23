@@ -116,6 +116,13 @@ default is on.
 If overwrite is set, newly created buffers default to overwrite mode
 instead of insert mode. Default is off.
 .sp 0
+:SH Extends
+
+This variable defines the extensions that turn on Shell Mode. The
+extensions are seperated with the colon (:). Note that CExtends takes
+precedence. There is a maximum of eight extensions. See
+also CExtends, TExtends.
+.sp 0
 :Silent
 
 If set, turns the bell off. Default is off (bell on).
@@ -145,20 +152,13 @@ is 8 spaces per tab. See also AdaTabs and CTabs.
 This specifies the tag file name used by the Find Tag command. It is a
 full path name to the tag file. The default is "NONE".
 .sp 0
-:TCL Extends
-
-This variable defines the extensions that turn on TCL Mode. The
-extensions are seperated with the colon (:). Note that CExtends takes
-precedence. There is a maximum of eight extensions. See
-also CExtends, TExtends.
-.sp 0
 :T Extends
 
 This variable defines the extensions that turn on Text Mode. The
 extensions are seperated with the colon (:). An extension of "." matches
 no extension (i.e. no "." in file name). Note that the CExtends then
 AExtends take precedence over TExtends. There is a maximum of eight
-extensions. See also CExtends, TCLExtends.
+extensions. See also CExtends, ShExtends.
 .sp 0
 :Visible Bell
 

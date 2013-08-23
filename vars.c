@@ -303,58 +303,46 @@ void varval(int code)
 	}
 }
 
-/* save the current variables in the config.z file */
-void Zsaveconfig(void)
+/* Show the current variables in a buffer suitable for writing to file */
+void Zshowconfig(void)
 {
-#if MIN_CONFIG
-	tbell();
-#else
-	FILE *fp;
-	char fname[PATHMAX];
 	int i;
-
-	if (Argp)
-		/* use current directory */
-		strcpy(fname, ZCFILE);
-	else
-		/* use home directory */
-		sprintf(fname, "%s/%s", Me->pw_dir, ZCFILE);
-
-	if (access(fname, R_OK) == 0 && ask("Overwrite existing file? ") != YES)
+	char line[STRMAX * 2];
+	struct buff *tbuff = cmakebuff(CONFBUFF, NULL);
+	if (!tbuff)
 		return;
 
-	fp = fopen(fname, "w");
-	if (!fp) {
-		sprintf(PawStr, "Unable to create %s: %d", fname, errno);
-		error(PawStr);
-		return;
-	}
-
-	fprintf(fp, "# String variables:\n");
+	bempty();
+	binstr("# String variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
 		if (Vars[i].vtype == STRING) {
 			if (VARSTR(i))
-				fprintf(fp, "%-15s %s\n",
-					Vars[i].vname, VARSTR(i));
+				snprintf(line, sizeof(line), "%-15s %s\n",
+					 Vars[i].vname, VARSTR(i));
 			else
-				fprintf(fp, "%-15s 0\n",
-					Vars[i].vname);
+				snprintf(line, sizeof(line), "%-15s 0\n",
+					 Vars[i].vname);
+			binstr(line);
 		}
 
-	fprintf(fp, "\n# Decimal variables:\n");
+	binstr("\n# Decimal variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
-		if (Vars[i].vtype == DECIMAL)
-			fprintf(fp, "%-15s %d\n", Vars[i].vname, VAR(i));
+		if (Vars[i].vtype == DECIMAL) {
+			snprintf(line, sizeof(line), "%-15s %d\n", Vars[i].vname, VAR(i));
+			binstr(line);
+		}
 
-	fprintf(fp, "\n# Flag variables:\n");
+	binstr("\n# Flag variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
-		if (Vars[i].vtype == FLAG)
-			fprintf(fp, "%-15s %s\n", Vars[i].vname,
+		if (Vars[i].vtype == FLAG) {
+			snprintf(line, sizeof(line), "%-15s %s\n", Vars[i].vname,
 				VAR(i) ? "True" : "False");
+			binstr(line);
+		}
 
-	fclose(fp);
-	echo("saved.");
-#endif
+	tbuff->bmodf = FALSE;
+	btostart();
+	cswitchto(tbuff);
 }
 
 void vfini(void)

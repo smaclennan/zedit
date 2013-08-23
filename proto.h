@@ -132,7 +132,7 @@ void Zrincsrch(void);
 void Zrsearch(void);
 void Zsaveall(void);
 void Zsavebind(void);
-void Zsaveconfig(void);
+void Zshowconfig(void);
 void Zscrolldown(void);
 void Zscrollup(void);
 void Zsearch(void);

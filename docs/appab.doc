@@ -405,12 +405,6 @@ overwrite modes. On the PC the cursor shape reflects the mode. Insert
 mode has an underline cursor while overwrite mode has a block cursor. A
 Universal Argument is ignored.
 .sp 2
-Insert Space
-
-Inserts a space at the Point and leaves the Point on the space. Useful
-for inserting a character in Over mode. A Universal Argument causes the
-command to repeat.
-.sp 2
 Join
 
 Joins two lines. Performs the following Zedit commands:
@@ -620,11 +614,6 @@ Previous Word
 Moves the Point back to the start of a word or to the start of the
 previous word. A Universal Argument causes the command to repeat.
 .sp 2
-Print
-
-Send the current buffer to the printer. Uses the print command specified
-in the Print variable. A Universal Argument prints only the region.
-.sp 2
 Query Replace
 
 Prompts for a search string and a replacement string and searches from the
@@ -722,11 +711,6 @@ of the edit session. The Save Bindings command is used to permanently
 save any new bindings in the bindings file. A Universal Argument
 causes Arg saves!
 .sp 2
-Save Config
-
-Save the current settings of all the Zedit variables in the .config.z
-file.
-.sp 2
 Save File
 
 Saves the current buffer to its file. If the current buffer has no path
@@ -783,6 +767,12 @@ SHELL. If SHELL is not set, it will use COMSPEC. Type "exit" to
 get back to Zedit.
 
 On Unix machines, forks an interactive shell in a special ".shell" window.
+.sp 2
+Show Config
+
+Show the current settings of all the Zedit variables in a buffer. The buffer
+is suitable for use as a .config.z file and can be saved to a file using Write
+File.
 .sp 2
 Shrink Window
 
@@ -898,11 +888,6 @@ Converts the current word starting at the Point to uppercase. It leaves
 the Point at the end of the word. A Universal Argument causes the
 command to repeat.
 .sp 2
-View File
-
-Like Find File except that the buffer is opened in VIEW mode. A
-Universal Command causes the command to repeat.
-.sp 2
 View Line
 
 Makes the Point line the top line in the window. A Universal Argument
@@ -920,10 +905,6 @@ Yank
 Inserts the characters from the Kill Buffer before the Point. The
 characters are inserted, even in overwrite mode. A Universal Argument
 causes the command to repeat.
-.sp 2
-Zoom
-
-In X, will perform a window manager zoom command.
 .sp 2
 .bp
 .ce
@@ -1050,6 +1031,13 @@ Overwrite
 If overwrite is set, newly created buffers default to overwrite mode
 instead of insert mode. Default is off.
 .sp 2
+SH Extends
+
+This variable defines the extensions that turn on Shell Mode. The
+extensions are seperated with the colon (:). Note that CExtends takes
+precedence. There is a maximum of eight extensions. See
+also CExtends, TExtends.
+.sp 2
 Silent
 
 If set, turns the bell off. Default is off (bell on).
@@ -1079,20 +1067,13 @@ Tagfile
 This specifies the tag file name used by the Find Tag command. It is a
 full path name to the tag file. The default is "NONE".
 .sp 2
-TCL Extends
-
-This variable defines the extensions that turn on TCL Mode. The
-extensions are seperated with the colon (:). Note that CExtends takes
-precedence. There is a maximum of eight extensions. See
-also CExtends, TExtends.
-.sp 2
 T Extends
 
 This variable defines the extensions that turn on Text Mode. The
 extensions are seperated with the colon (:). An extension of "." matches
 no extension (i.e. no "." in file name). Note that the CExtends then
 AExtends take precedence over TExtends. There is a maximum of eight
-extensions. See also CExtends, TCLExtends.
+extensions. See also CExtends, ShExtends.
 .sp 2
 Visible Bell
 

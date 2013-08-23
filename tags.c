@@ -292,19 +292,6 @@ static Boolean gettagsfile(void)
 	return TRUE;
 }
 
-/* Convert the next portion of buffer to integer. Skip leading ws. */
-int batoi(void)
-{
-	int num;
-
-	while (biswhite())
-		bmove1();
-	for (num = 0; isdigit(Buff()); bmove1())
-		num = num * 10 + Buff() - '0';
-	return num;
-}
-
-
 void Zref(void)
 {
 	struct buff *mbuff;

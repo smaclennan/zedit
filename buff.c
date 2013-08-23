@@ -1053,6 +1053,18 @@ Byte bpeek(void)
 	return ch;
 }
 
+/* Convert the next portion of buffer to integer. Skip leading ws. */
+int batoi(void)
+{
+	int num;
+
+	while (biswhite())
+		bmove1();
+	for (num = 0; isdigit(Buff()); bmove1())
+		num = num * 10 + Buff() - '0';
+	return num;
+}
+
 void Zstat(void)
 {
 	sprintf(PawStr, "Buffers: %d   Pages: %d", Numbuffs, NumPages);

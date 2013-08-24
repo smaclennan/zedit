@@ -32,6 +32,10 @@ struct buff *Curbuff;		/* the current buffer */
 struct mark *Mrklist;		/* the marks list tail */
 struct page *Curpage;		/* the current page */
 
+/* Keeping just one mark around is a HUGE win for a trivial amount of code. */
+static struct mark *freemark;
+
+/* stats only */
 static int NumPages;
 static int NumMarks;
 
@@ -62,6 +66,9 @@ void bfini(void)
 	/* Do not unmark the Scrnmarks */
 	while (Mrklist && Mrklist != mhead)
 		unmark(Mrklist);
+
+	if (freemark)
+		free(freemark);
 }
 
 /* Copy from Point to tmark to tbuff. Returns number of bytes
@@ -164,10 +171,17 @@ struct buff *bcreate(void)
  */
 struct mark *bcremrk(void)
 {
-	struct mark *new = calloc(1, sizeof(struct mark));
+	struct mark *new;
 
-	if (!new)
-		longjmp(zenv, -1);	/* ABORT */
+	if (freemark) {
+		new = freemark;
+		freemark = NULL;
+	} else {
+		new = calloc(1, sizeof(struct mark));
+		if (!new)
+			longjmp(zenv, -1);	/* ABORT */
+	}
+
 	bmrktopnt(new);
 	new->prev = Mrklist;		/* add to end of list */
 	new->next = NULL;
@@ -177,6 +191,28 @@ struct mark *bcremrk(void)
 	++NumMarks;
 	return new;
 }
+
+/* Free up the given mark and remove it from the list.
+ * Cannot free a scrnmark!
+ */
+void unmark(struct mark *mptr)
+{
+	if (mptr) {
+		if (mptr->prev)
+			mptr->prev->next = mptr->next;
+		if (mptr->next)
+			mptr->next->prev = mptr->prev;
+		if (mptr == Mrklist)
+			Mrklist = mptr->prev;
+
+		if (!freemark) {
+			freemark = mptr;
+		} else
+			free((char *)mptr);
+		--NumMarks;
+	}
+}
+
 
 Boolean bcrsearch(Byte what)
 {
@@ -943,24 +979,6 @@ Boolean mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 }
 
 
-/* Free up the given mark and remove it from the list.
- * Cannot free a scrnmark!
- */
-void unmark(struct mark *mptr)
-{
-	if (mptr) {
-		if (mptr->prev)
-			mptr->prev->next = mptr->next;
-		if (mptr->next)
-			mptr->next->prev = mptr->prev;
-		if (mptr == Mrklist)
-			Mrklist = mptr->prev;
-		free((char *)mptr);
-		--NumMarks;
-	}
-}
-
-
 /* Low level memory buffer routines */
 
 /* Create a new memory page and link into chain */
@@ -1069,5 +1087,6 @@ int batoi(void)
 
 void Zstat(void)
 {
-	putpaw("Buffers: %d   Pages: %d  Marks: %d", Numbuffs, NumPages, NumMarks);
+	putpaw("Buffers: %d   Pages: %d  Marks: %d",
+	       Numbuffs, NumPages, NumMarks);
 }

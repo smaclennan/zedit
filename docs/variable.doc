@@ -3,16 +3,6 @@
 If this flag variable is set, the editor will insure that all saved files
 end in a Newline. The default is on.
 .sp 0
-:Asm Char
-
-The character used to mark ASM comments. The default is a semicolon (;).
-.sp 0
-:Asm Extends
-
-This variable defines the extensions that turn on ASM Mode. The
-extensions are seperated with the colon (:). There is a maximum of eight
-extensions. See also CExtends, TExtends.
-.sp 0
 :Backup
 
 If this flag variable is set, a backup file is created when a file is

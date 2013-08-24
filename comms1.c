@@ -62,7 +62,6 @@ static struct _amode
 	char *str;
 	int mode;
 } modes[] = {
-	{ "ASM",	ASMMODE },
 	{ "C",		CMODE	},
 	{ "Normal",	NORMAL	},
 	{ "sh",		SHMODE	},
@@ -99,7 +98,6 @@ static int NoExt;
 static char *cexts[9];
 static char *texts[9];
 static char *sexts[9];	/* s for shell */
-static char *asexts[9];
 
 void free_extensions(void)
 {
@@ -112,8 +110,6 @@ void free_extensions(void)
 			free(texts[i]);
 		if (sexts[i])
 			free(sexts[i]);
-		if (asexts[i])
-			free(asexts[i]);
 	}
 }
 
@@ -122,8 +118,6 @@ static int get_mode(int mode, char ***exts)
 	switch (mode & PROGMODE) {
 	case CMODE:
 		mode = CMODE;	*exts = cexts; break;
-	case ASMMODE:
-		mode = ASMMODE;	*exts = asexts; break;
 	case SHMODE:
 		mode = SHMODE;	*exts = sexts; break;
 	case TEXT:
@@ -186,8 +180,6 @@ void toggle_mode(int mode)
 		/* Toggle out of 'mode' - decide which to switch to */
 		if (mode != CMODE && extmatch(bfname(), CMODE))
 			new = CMODE;
-		else if (mode != ASMMODE && extmatch(bfname(), ASMMODE))
-			new = ASMMODE;
 		else if (mode != SHMODE && extmatch(bfname(), SHMODE))
 			new = SHMODE;
 		else if (mode != TEXT &&
@@ -199,8 +191,7 @@ void toggle_mode(int mode)
 		new = mode;
 
 #if COMMENTBOLD
-	if (mode == 0)
-		Curbuff->comchar = *VARSTR(VASCHAR);
+	Curbuff->comchar = new == SHMODE ? '#' : 0;
 #endif
 
 	Curbuff->bmode = (Curbuff->bmode & MODEMASK) | new;

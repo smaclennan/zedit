@@ -37,8 +37,6 @@ char *setmodes(struct buff *buff)
 	switch (buff->bmode & MAJORMODE) {
 	case CMODE:
 		strcpy(PawStr, "C");		break;
-	case ASMMODE:
-		strcpy(PawStr, "ASM");		break;
 	case SHMODE:
 		strcpy(PawStr, "sh");		break;
 	case TEXT:
@@ -62,8 +60,6 @@ char *setmodes(struct buff *buff)
 #if COMMENTBOLD
 			Keys['/'] = ZCINSERT;
 #endif
-			break;
-		case ASMMODE:
 			break;
 		case SHMODE:
 			break;

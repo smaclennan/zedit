@@ -219,10 +219,10 @@ the perms column.
 .(l
 Letter		Buffer
 ------		----------------
-  r		All readable
-  w		All writable
-  p		PAW
-  -		Not allowed
+r		All readable
+w		All writable
+p		PAW
+-		Not allowed
 .)l
 A Universal Argument prompts for an output file to put the list in.
 .sp 2
@@ -423,16 +423,7 @@ it can continue. Unix only.
 .sp 2
 List Buffers
 
-/* SAM WRONG */
-Displays a list of the current buffers on the display. The first command
-executed removes the display. For Fastread buffers, the buffer length
-may be too large. A Universal Argument is ignored. The format for one
-buffer line is:
-.(b I
-Buffer_name   *  Buffer_length   Path_name
-
-The '*' is displayed if the buffer has been modified.
-.)b
+Displays a list of the current buffers on the display.
 .sp 2
 Lowercase Region
 
@@ -622,11 +613,12 @@ match, it moves the Point to the match and waits for one of the
 following input characters:
 .(l
 ,              Replace current match and confirm.
-<space> or 'y' Replace current match and continue.
+space          Replace current match and continue.
+y              Replace current match and continue.
 .              Replace and exit.
 !              Global replace.
 ^              Goto previous match.
-Abort Command  Exit without replacing current match.
+Abort          Exit without replacing current match.
 Others         Continue without replacing current match.
 .)l
 The Point is left at the position it was in before the Query Replace. If
@@ -918,16 +910,6 @@ Add NL
 If this flag variable is set, the editor will insure that all saved files
 end in a Newline. The default is on.
 .sp 2
-Asm Char
-
-The character used to mark ASM comments. The default is a semicolon (;).
-.sp 2
-Asm Extends
-
-This variable defines the extensions that turn on ASM Mode. The
-extensions are seperated with the colon (:). There is a maximum of eight
-extensions. See also CExtends, TExtends.
-.sp 2
 Backup
 
 If this flag variable is set, a backup file is created when a file is
@@ -1008,18 +990,14 @@ Match
 
 This variable controls the C Mode "matching" function.
 
-.ip 0
-No matching occurs.
+0 No matching occurs.
 
-.ip 1
-Zedit will "match" all ')' and ']' with their matching '(' or '[' by
+1 Zedit will "match" all ')' and ']' with their matching '(' or '[' by
 moving the cursor to the matching character temporarily. If there is no
 match, Zedit will beep. Default.
 
-.ip 2
-Zedit will insert a ')' or ']' for every '(' or '[' typed.
+2 Zedit will insert a ')' or ']' for every '(' or '[' typed.
 .sp 2
-.lp
 Normal
 
 If on, sets the default buffer mode to Normal. If off, sets the default

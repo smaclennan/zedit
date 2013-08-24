@@ -38,9 +38,7 @@ extern struct avar Vars[];
 
 /* var defines */
 #define VADDNL		0
-#define VASCHAR		(VADDNL + 1)
-#define VASEXTS		(VASCHAR + 1)
-#define VBACKUP		(VASEXTS + 1)
+#define VBACKUP		(VADDNL + 1)
 #define VCEXTS		(VBACKUP + 1)
 #define VCTABS		(VCEXTS + 1)
 #define VDATESTR	(VCTABS + 1)

@@ -211,7 +211,7 @@ static void scanbuffer(void)
 {
 	struct mark tmark;
 	struct mark start;
-	char comchar = (Curbuff->bmode & ASMMODE) ? Curbuff->comchar : 0;
+	char comchar = Curbuff->comchar;
 
 	COMhead = COMtail = CPPhead = CPPtail = NULL;
 
@@ -236,7 +236,7 @@ static void scanbuffer(void)
 			bmove(-1);
 			newcomment(&start, NULL);
 		}
-	else
+	else {
 		/* Look for both C and C++ comments. */
 		while (bcsearch('/') && !bisend()) {
 			if (Buff() == '*') {
@@ -254,18 +254,19 @@ static void scanbuffer(void)
 			}
 		}
 
-	/* find CPP statements */
-	btostart();
-	do {
-		if (Buff() == '#')
-			cppstatement();
-		else if (comchar) {
-			/* for assembler */
-			movepast(biswhite, 1);
-			if (Buff() == '.')
+		/* find CPP statements */
+		btostart();
+		do {
+			if (Buff() == '#')
 				cppstatement();
-		}
-	} while (bcsearch('\n') && !bisend());
+			else if (comchar) {
+				/* for assembler */
+				movepast(biswhite, 1);
+				if (Buff() == '.')
+					cppstatement();
+			}
+		} while (bcsearch('\n') && !bisend());
+	}
 
 	mergecomments();
 	bpnttomrk(&tmark);
@@ -292,7 +293,7 @@ void resetcomments(void)
 void checkcomment(void)
 {
 	if (!Curbuff->comstate) {
-		if (!(Curbuff->bmode & (CMODE | ASMMODE)))
+		if (!(Curbuff->bmode & (CMODE | SHMODE)))
 			return;
 		scanbuffer();
 		Curbuff->comstate = 1;

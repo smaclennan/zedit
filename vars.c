@@ -93,12 +93,6 @@ void readvfile(void)
 		VARSTR(VTEXTS) = strdup(".DOC:.doc:.tex:.txt:.d");
 		parsem(VARSTR(VTEXTS), TEXT);
 	}
-	if (!VARSTR(VASEXTS)) {
-		VARSTR(VASEXTS) = strdup(".s:.asm");
-		parsem(VARSTR(VASEXTS), ASMMODE);
-	}
-	if (!VARSTR(VASCHAR))
-		VARSTR(VASCHAR) = strdup(";");
 	if (!VARSTR(VDATESTR))
 		VARSTR(VDATESTR) = strdup("%c");
 
@@ -192,17 +186,7 @@ static void do_var_match(int i, char *vin)
 		}
 	} else if (i == VCEXTS)
 		parsem(VARSTR(i), CMODE);
-	else if (i == VASEXTS)
-		parsem(VARSTR(i), ASMMODE);
-	else if (i == VASCHAR) {
-		/* set current buffer and redisplay */
-#if COMMENTBOLD
-		if (!Initializing) {
-			Curbuff->comchar = *VARSTR(VASCHAR);
-			Zredisplay();
-		}
-#endif
-	} else if (i == VSEXTS)
+	else if (i == VSEXTS)
 		parsem(VARSTR(i), SHMODE);
 	else if (i == VTEXTS)
 		parsem(VARSTR(i), TEXT);

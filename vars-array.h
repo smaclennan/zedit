@@ -7,8 +7,6 @@
 /* NOTE: Spaces not allowed in variable names!!! */
 struct avar Vars[] = {
 	{ "add-nl",		FLAG,		DEFAULT(1) },
-	{ "asm-char",		STRING,		DEFAULT(0) },
-	{ "asm-extends",	STRING,		DEFAULT(0) },
 	{ "backup",		FLAG,		DEFAULT(0) },
 	{ "c-extends",		STRING,		DEFAULT(0) },
 	{ "c-tabs",		DECIMAL,	DEFAULT(8) },

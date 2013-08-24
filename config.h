@@ -41,7 +41,7 @@
 
 /* USER CONFIGURABLE - don't define any, see if I care */
 #define DBG		1		/* turn debugs on */
-#define MINCONFIG	1		/* Minimal configuration */
+#define MINCONFIG	0		/* Minimal configuration */
 
 #if !MINCONFIG
 #define COMMENTBOLD	1		/* bold C comments */

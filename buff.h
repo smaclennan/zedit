@@ -57,7 +57,6 @@ struct mark {
 struct comment {
 	struct mark *start;
 	struct mark *end;
-	int  type;
 	struct comment *next;
 };
 #endif
@@ -118,6 +117,23 @@ extern int Curmodf;
 #define bfname()	(Curbuff->fname)
 
 Byte bpeek(void);
+int batoi(void);
+
+Boolean bmove(int);
+Boolean bmove1(void);
+#ifdef INT_IS_16BITS
+#define MAXMOVE		(0x7fff - 1024)
+
+static inline void boffset(unsigned long off)
+{
+	btostart();
+	for (; off > MAXMOVE; off -= MAXMOVE)
+		bmove(MAXMOVE);
+	bmove(off);
+}
+#else
+static inline void boffset(unsigned long offset) { bmove((int)offset); }
+#endif
 
 /* Return the character a mark points to. */
 #define markch(mrk)	((mrk)->mpage->pdata[(mrk)->moffset])

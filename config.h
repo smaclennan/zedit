@@ -31,6 +31,8 @@
 #else
 # error OS not detected.
 #endif
+/* Define this if you have 16bit ints */
+/* #define INT_IS_16BITS */
 
 /* SCREEN DRIVER - define only one.
  * Unless you are running on an ancient dumb terminal, you probably want ANSI.
@@ -45,6 +47,7 @@
 
 #if !MINCONFIG
 #define COMMENTBOLD	1		/* bold C comments */
+#define WANT_CPPS       0		/* also bold C preprocessor lines */
 #define UNDO            1		/* EXPERIMENTAL undo code */
 #define HELP		1		/* Help */
 

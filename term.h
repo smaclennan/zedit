@@ -39,8 +39,6 @@
 #define T_REVERSE			5
 #define T_BOLD				6
 #define T_COMMENT			10	/* COMMENTBOLD only */
-#define T_CPP				11	/* COMMENTBOLD only */
-#define T_CPPIF				12	/* COMMENTBOLD only */
 
 #ifdef LINUX
 int _putchar(int);

@@ -21,11 +21,9 @@
 
 #if COMMENTBOLD
 
-static struct comment *CPPhead, *CPPtail;	/* list of CPP statements */
 static struct comment *COMhead, *COMtail;	/* list of Comments */
 
-static struct comment *new_comment(struct mark *start, struct mark *end,
-				   int type)
+static struct comment *new_comment(struct mark *start)
 {
 	struct comment *new = calloc(sizeof(struct comment), 1);
 	if (!new)
@@ -33,21 +31,16 @@ static struct comment *new_comment(struct mark *start, struct mark *end,
 	new->start = bcremrk();
 	new->end   = bcremrk();
 
-	new->type  = type;
 	if (start)
 		mrktomrk(new->start, start);
-	if (end)
-		mrktomrk(new->end,   end);
 
 	return new;
 }
 
-/* Mark a new comment from start to end.
- * If start or end are NULL, use Point.
- */
-static void newcomment(struct mark *start, struct mark *end)
+/* Mark a new comment from start to Point. */
+static void newcomment(struct mark *start)
 {
-	struct comment *new = new_comment(start, end, T_COMMENT);
+	struct comment *new = new_comment(start);
 	if (!new)
 		return;
 
@@ -58,9 +51,12 @@ static void newcomment(struct mark *start, struct mark *end)
 	COMtail = new;
 }
 
-static void newcpp(struct mark *start, struct mark *end, int type)
+#if WANT_CPPS
+static struct comment *CPPhead, *CPPtail;	/* list of CPP statements */
+
+static void newcpp(struct mark *start)
 {
-	struct comment *new = new_comment(start, end, type);
+	struct comment *new = new_comment(start);
 	if (!new)
 		return;
 
@@ -115,12 +111,10 @@ static void mergecomments(void)
 	}
 }
 
-#if 1
 /* Highlight a CPP. */
 static void cppstatement(void)
 {
 	struct mark start;
-	int type;
 
 	bmrktopnt(&start);
 
@@ -132,13 +126,6 @@ static void cppstatement(void)
 			return;
 	} while (biswhite());
 
-	if (Buff() == 'i' && bmove1() && Buff() == 'f')
-		type = T_CPPIF;
-	else if (Buff() == 'e' && bmove1() && (Buff() == 'l' || Buff() == 'n'))
-		type = T_CPPIF;
-	else
-		type = T_CPP;
-
 again:
 	while (Buff() != '\n' && !bisend()) {
 		if (Buff() == '/') {
@@ -146,7 +133,7 @@ again:
 			if (Buff() == '*') {
 				/* found comment start */
 				bmove(-2);
-				newcpp(&start, NULL, type);
+				newcpp(&start);
 
 				/* find comment end */
 				if (bstrsearch("*/", FORWARD)) {
@@ -161,7 +148,7 @@ again:
 			} else if (Buff() == '/') {
 				/* found c++ comment start */
 				bmove(-2);
-				newcpp(&start, NULL, type);
+				newcpp(&start);
 
 				/* find comment end */
 				bcsearch('\n');
@@ -182,7 +169,7 @@ again:
 		bmove1();
 
 	}
-	newcpp(&start, NULL, type);
+	newcpp(&start);
 }
 #endif
 
@@ -211,9 +198,8 @@ static void scanbuffer(void)
 {
 	struct mark tmark;
 	struct mark start;
-	char comchar = Curbuff->comchar;
 
-	COMhead = COMtail = CPPhead = CPPtail = NULL;
+	COMhead = COMtail = NULL;
 
 	/* free existings comments */
 	while (Curbuff->comments) {
@@ -227,16 +213,25 @@ static void scanbuffer(void)
 	bmrktopnt(&tmark);
 
 	btostart();
-	if (comchar)
-		while (bcsearch(comchar) && !bisend()) {
+	if (Curbuff->comchar) {
+		while (bcsearch(Curbuff->comchar) && !bisend()) {
+			if (bmove(-2) == 0) { /* skip to char *before* # */
+				/* # is first character in buffer */
+			} else if (isspace(*Curcptr))
+				bmove1();
+			else {
+				bmove(2);
+				continue;
+			}
+
 			/* mark to end of line as comment */
-			bmove(-1);
 			bmrktopnt(&start);
 			bcsearch('\n');
 			bmove(-1);
-			newcomment(&start, NULL);
+			newcomment(&start);
 		}
-	else {
+		Curbuff->comments = COMhead;
+	} else {
 		/* Look for both C and C++ comments. */
 		while (bcsearch('/') && !bisend()) {
 			if (Buff() == '*') {
@@ -244,31 +239,32 @@ static void scanbuffer(void)
 				bmrktopnt(&start);
 				if (bstrsearch("*/", FORWARD)) {
 					bmove1();
-					newcomment(&start, NULL);
+					newcomment(&start);
 				}
 			} else if (Buff() == '/') {
 				bmove(-1);
 				bmrktopnt(&start);
 				toendline();
-				newcomment(&start, NULL);
+				newcomment(&start);
 			}
 		}
 
+#if WANT_CPPS
+		CPPhead = CPPtail = NULL;
+
 		/* find CPP statements */
 		btostart();
-		do {
+		do
 			if (Buff() == '#')
 				cppstatement();
-			else if (comchar) {
-				/* for assembler */
-				movepast(biswhite, 1);
-				if (Buff() == '.')
-					cppstatement();
-			}
-		} while (bcsearch('\n') && !bisend());
+		while (bcsearch('\n') && !bisend());
+
+		mergecomments();
+#else
+		Curbuff->comments = COMhead;
+#endif
 	}
 
-	mergecomments();
 	bpnttomrk(&tmark);
 }
 
@@ -303,7 +299,7 @@ void checkcomment(void)
 		if (bisbeforemrk(start->start))
 			break;
 		else if (bisbeforemrk(start->end) || bisatmrk(start->end)) {
-			tstyle(start->type);
+			tstyle(T_COMMENT);
 			return;
 		}
 
@@ -312,12 +308,6 @@ void checkcomment(void)
 
 /* Called from Zcinsert when end comment entered */
 void addcomment(void)
-{
-	scanbuffer();
-}
-
-/* Called from Zcinsert when '#' entered at start of line */
-void addcpp(void)
 {
 	scanbuffer();
 }

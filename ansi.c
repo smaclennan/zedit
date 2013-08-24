@@ -114,10 +114,6 @@ void tstyle(int style)
 		TPUTS("\033[0;30m"); break; /* black */
 	case T_COMMENT:
 		TPUTS("\033[31m"); break; /* red */
-	case T_CPP:
-		TPUTS("\033[32m"); break; /* green */
-	case T_CPPIF:
-		TPUTS("\033[35m"); break; /* magenta */
 #else
 	case T_NORMAL:
 		TPUTS("\033[0m"); break;

@@ -170,7 +170,6 @@ struct passwd *dup_pwent(struct passwd *);
 void initscrnmarks(void);
 int ask(char *);
 int ask2(char *, Boolean);
-int batoi(void);
 void cleanup(void);
 void free_extensions(void);
 void bfini(void);
@@ -194,10 +193,7 @@ long blength(struct buff *);
 long blines(struct buff *);
 unsigned long blocation(unsigned *);
 int bmakecol(int, Boolean);
-Boolean bmove(int);
-Boolean bmove1(void);
 void bmrktopnt(struct mark *);
-void boffset(unsigned long);
 void bpnttomrk(struct mark *);
 int breadfile(char *);
 Boolean bstrsearch(char *, Boolean);
@@ -361,17 +357,16 @@ Boolean wuseother(char *);
 
 #if COMMENTBOLD
 void addcomment(void);
+#define addcpp addcomment
 void resetcomments(void);
 void checkcomment(void);
 void recomment(void);
-void addcpp(void);
 void uncomment(struct buff *buff, int need_update);
 #else
 static inline void addcomment(void) {}
 static inline void resetcomments(void) {}
 static inline void checkcomment(void) {}
 static inline void recomment(void) {}
-static inline void addcpp(void) {}
 static inline void uncomment(struct buff *buff, int need_update) {}
 #endif
 

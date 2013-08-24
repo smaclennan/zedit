@@ -603,20 +603,6 @@ Boolean bmove(int dist)
 	return TRUE;
 }
 
-/* bmove can only move the Point +/-32767 bytes. This routine overcomes
- * this limitation.
- * NOTE: Can only move forward.
- */
-#define MAXMOVE		(0x7fff - 1024)
-
-void boffset(unsigned long off)
-{
-	btostart();
-	for (; off > MAXMOVE; off -= MAXMOVE)
-		bmove(MAXMOVE);
-	bmove(off);
-}
-
 /* Put the mark where the point is. */
 void bmrktopnt(struct mark *tmark)
 {
@@ -1067,7 +1053,7 @@ Byte bpeek(void)
 	else {
 		bmove(-1);
 		ch = Buff();
-		bmove(1);
+		bmove1();
 	}
 
 	return ch;

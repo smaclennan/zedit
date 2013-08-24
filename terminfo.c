@@ -169,12 +169,6 @@ void tstyle(int style)
 	case T_COMMENT:
 		TPUTS(tparm(set_a_foreground, COLOR_RED));
 		break;
-	case T_CPP:
-		TPUTS(tparm(set_a_foreground, COLOR_GREEN));
-		break;
-	case T_CPPIF:
-		TPUTS(tparm(set_a_foreground, COLOR_MAGENTA));
-		break;
 #else
 	case T_NORMAL:
 		TPUTS(exit_attribute_mode);

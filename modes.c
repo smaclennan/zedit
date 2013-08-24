@@ -62,6 +62,7 @@ char *setmodes(struct buff *buff)
 #endif
 			break;
 		case SHMODE:
+			Keys[CR] = ZCINDENT;
 			break;
 		case TEXT:
 			Keys[' '] = ZFILLCHK;

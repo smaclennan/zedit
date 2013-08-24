@@ -231,7 +231,9 @@ void Zcinsert(void)
 		bmove(2);
 		if (comment)
 			addcomment();
-	} else if (STRIP(Cmd) == '#') {
+	}
+#if WANT_CPPS
+	else if (STRIP(Cmd) == '#') {
 		if (bmove(-2) == 0) {
 			/* # is first character in buffer */
 			bmove1();
@@ -243,6 +245,7 @@ void Zcinsert(void)
 				addcpp();
 		}
 	}
+#endif
 #endif
 }
 

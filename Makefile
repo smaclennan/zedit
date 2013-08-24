@@ -46,6 +46,6 @@ install-help:
 	install -D -m 644 docs/help.z $(DESTDIR)/usr/share/zedit/help.z
 
 clean:
-	rm -f configure.h *.o ze core* TAGS
+	rm -f configure.h *.o ze core* TAGS valgrind.out
 	@make -C docs clean
 

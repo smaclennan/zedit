@@ -34,22 +34,66 @@ static void footer(FILE *out)
 	fputs("</html>\n", out);
 }
 
+/* In practice the lists are two column tables */
+static void do_list(FILE *in, FILE *out)
+{
+	char line[128], *p;
+
+	fputs("<p><table border=1>\n", out);
+	while (fgets(line, sizeof(line), in))
+	       if (strcmp(line, ".)l\n") == 0)
+		       break;
+	       else {
+		       for (p = line; *p && !isspace(*p); ++p) ;
+		       *p++ = '\0';
+		       while (isspace(*p)) ++p;
+		       fprintf(out, "<tr><td>%s<td>%s", line, p);
+	       }
+	fputs("</table>\n", out);
+}
+
+static void help(FILE *in, FILE *out)
+{
+	char line[128];
+
+	while (fgets(line, sizeof(line), in))
+	       if (strcmp(line, ".sp 0\n") == 0)
+		       break;
+	       else printf("Skipping: %s", line);
+
+	/* SAM Need doc about help in the manual proper */
+	fputs("<p>Enters the help subsytem if help is enabled.\n"
+	      "Help requires the help.z file to exist, usually in\n"
+	      "/usr/share/zedit/help.z\n\n"
+	      , out);
+}
 
 int main(int argc, char *argv[])
 {
-	if (argc == 1) {
+	int c;
+	char *heading = NULL;
+
+	while ((c = getopt(argc, argv, "H:")) != EOF)
+		if (c == 'H')
+			heading = optarg;
+		else {
+			puts("Sorry!");
+			exit(1);
+		}
+
+	if (optind == argc) {
 		puts("I need a file.");
 		exit(1);
 	}
 
-	FILE *in = fopen(argv[1], "r");
+	FILE *in = fopen(argv[optind], "r");
 	if (!in) {
-		perror(argv[1]);
+		perror(argv[optind]);
 		exit(1);
 	}
 
 	char outname[255], *p;
-	snprintf(outname, sizeof(outname) - 4, "%s", argv[1]);
+	snprintf(outname, sizeof(outname) - 4, "%s", argv[optind]);
 	p = strrchr(outname, '.');
 	if (!p)
 		exit(1);
@@ -62,16 +106,24 @@ int main(int argc, char *argv[])
 
 	header(out);
 
+	if (heading)
+		fprintf(out, "<h1>%s</h1>\n\n", heading);
+
 	char line[128];
 	int need_para = 0;
 	while (fgets(line, sizeof(line), in)) {
 		if ((p = strrchr(line, '\n'))) *p = '\0';
 		if (*line == ':')
-			fprintf(out, "<p><b>%s</b>\n", line + 1);
+			fprintf(out, "<p><h3>%s</h3>\n", line + 1);
 		else if (*line == '\0')
 			need_para = 1;
 		else if (strcmp(line, ".sp 0") == 0)
 			fputs("\n", out);
+		else if (strcmp(line, ".(l") == 0) {
+			do_list(in, out);
+			need_para = 1;
+		} else if (strcmp(line, ".(b C") == 0)
+			help(in, out);
 		else {
 			if (need_para) {
 				fputs("<p>", out);

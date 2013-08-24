@@ -93,18 +93,14 @@ the paragraph. The default is 0.
 
 This variable controls the C Mode "matching" function.
 
-.ip 0
-No matching occurs.
+0 No matching occurs.
 
-.ip 1
-Zedit will "match" all ')' and ']' with their matching '(' or '[' by
+1 Zedit will "match" all ')' and ']' with their matching '(' or '[' by
 moving the cursor to the matching character temporarily. If there is no
 match, Zedit will beep. Default.
 
-.ip 2
-Zedit will insert a ')' or ']' for every '(' or '[' typed.
+2 Zedit will insert a ')' or ']' for every '(' or '[' typed.
 .sp 0
-.lp
 :Normal
 
 If on, sets the default buffer mode to Normal. If off, sets the default

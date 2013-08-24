@@ -212,10 +212,10 @@ the perms column.
 .(l
 Letter		Buffer
 ------		----------------
-  r		All readable
-  w		All writable
-  p		PAW
-  -		Not allowed
+r		All readable
+w		All writable
+p		PAW
+-		Not allowed
 .)l
 A Universal Argument prompts for an output file to put the list in.
 .sp 0
@@ -416,16 +416,7 @@ it can continue. Unix only.
 .sp 0
 :List Buffers
 
-/* SAM WRONG */
-Displays a list of the current buffers on the display. The first command
-executed removes the display. For Fastread buffers, the buffer length
-may be too large. A Universal Argument is ignored. The format for one
-buffer line is:
-.(b I
-Buffer_name   *  Buffer_length   Path_name
-
-The '*' is displayed if the buffer has been modified.
-.)b
+Displays a list of the current buffers on the display.
 .sp 0
 :Lowercase Region
 
@@ -615,11 +606,12 @@ match, it moves the Point to the match and waits for one of the
 following input characters:
 .(l
 ,              Replace current match and confirm.
-<space> or 'y' Replace current match and continue.
+space          Replace current match and continue.
+y              Replace current match and continue.
 .              Replace and exit.
 !              Global replace.
 ^              Goto previous match.
-Abort Command  Exit without replacing current match.
+Abort          Exit without replacing current match.
 Others         Continue without replacing current match.
 .)l
 The Point is left at the position it was in before the Query Replace. If

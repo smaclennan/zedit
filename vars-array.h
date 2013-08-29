@@ -10,7 +10,6 @@ struct avar Vars[] = {
 	{ "backup",		FLAG,		DEFAULT(0) },
 	{ "c-extends",		STRING,		DEFAULT(0) },
 	{ "c-tabs",		DECIMAL,	DEFAULT(8) },
-	{ "date-format",	STRING,		DEFAULT(0) },
 	{ "exact",		FLAG,		DEFAULT(1) },
 	{ "expand-paths",	FLAG,		DEFAULT(1) },
 	{ "fill-ch-width",	DECIMAL,	DEFAULT(72) },

@@ -48,7 +48,6 @@ void Zcopyrgn(void);
 void Zcount(void);
 void Zctrlx(void);
 void Zcwd(void);
-void Zdate(void);
 void Zdelblanks(void);
 void Zdelchar(void);
 void Zdeleol(void);

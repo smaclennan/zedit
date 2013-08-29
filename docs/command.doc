@@ -134,11 +134,6 @@ files will be relative to the new working directory. The default is the
 directory the editor was started in. A Universal Argument causes the
 command to repeat.
 .sp 0
-:Date
-
-Displays the current date and time in the PAW. If a Universal Argument is
-specified, the date and time are placed in the buffer at the Point.
-.sp 0
 :Delete Blanks
 
 Delete all the blank lines around the Point. The lines are not put in

@@ -120,7 +120,6 @@ void (*Cmds[][2])() = {
 	{ Zviewline,		Znotimpl },
 	{ Zcmd,			Znotimpl },
 	{ Zjoin,		Znotimpl },
-	{ Zdate,		Zdate },
 	{ Zcgoto,		Znotimpl },
 	{ Zmake,		Znotimpl },
 	{ Znexterr,		Znotimpl },

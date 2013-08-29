@@ -220,22 +220,6 @@ void Zmrkpara(void)
 	Arg = 0;
 }
 
-#define MAXDATE	80
-
-void Zdate(void)
-{
-	char date[MAXDATE + 1];
-	long t;
-
-	time(&t);
-	strftime(date, MAXDATE, VARSTR(VDATESTR), localtime(&t));
-	if (Argp && !InPaw)
-		echo(date);
-	else
-		binstr(date);
-	Arg = 0;
-}
-
 static void setregion(int (*convert)(int))
 {
 	Boolean swapped;

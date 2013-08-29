@@ -93,9 +93,6 @@ void readvfile(void)
 		VARSTR(VTEXTS) = strdup(".DOC:.doc:.tex:.txt:.d");
 		parsem(VARSTR(VTEXTS), TEXT);
 	}
-	if (!VARSTR(VDATESTR))
-		VARSTR(VDATESTR) = strdup("%c");
-
 
 	/* If ConfigDir is really a file, read the file and set to 0. */
 	if (ConfigDir && !isdir(ConfigDir)) {

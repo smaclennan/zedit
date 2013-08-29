@@ -21,7 +21,6 @@ struct cnames Cnames[] = {
 	{"copy-word",			ZGETBWORD,	H_DELETE},
 	{"count",			ZCOUNT,		H_HELP},
 	{"cwd",				ZCWD,		H_MISC},
-	{"date",			ZDATE,		H_HELP},
 	{"delete-blanks",		ZDELBLANKS,	H_DELETE},
 	{"delete-buffer",		ZKILLBUFF,	H_BUFF},
 	{"delete-character",		ZDELCHAR,	H_DELETE},

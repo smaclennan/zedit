@@ -141,11 +141,6 @@ files will be relative to the new working directory. The default is the
 directory the editor was started in. A Universal Argument causes the
 command to repeat.
 .sp 2
-Date
-
-Displays the current date and time in the PAW. If a Universal Argument is
-specified, the date and time are placed in the buffer at the Point.
-.sp 2
 Delete Blanks
 
 Delete all the blank lines around the Point. The lines are not put in
@@ -927,12 +922,6 @@ A tab is a single character that is displayed as one or more spaces on
 the screen. This variable defines the number of spaces displayed per tab
 in C mode buffers, even if the buffer is in View mode. The default is 4
 spaces. See also Tabs.
-.sp 2
-Date Format
-
-The Date command uses strftime to format the output string. This varable
-is passed to strftime as the format string. It has a default of "%c" which
-is the preferred date for the current locale. See strftime for details.
 .sp 2
 Exact
 

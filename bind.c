@@ -156,7 +156,7 @@ void bind(void)
 	Keys[256 + 'A'] = Keys[256 + 'a'] = ZGSEARCH;		/* C-X A */
 	Keys[256 + 'B'] = Keys[256 + 'b'] = ZNXTBOOKMRK;	/* C-X B */
 	Keys[256 + 'C'] = Keys[256 + 'c'] = ZCOUNT;		/* C-X C */
-	Keys[256 + 'D'] = Keys[256 + 'd'] = ZDATE;		/* C-X D */
+/* C-X D */
 	Keys[256 + 'E'] = Keys[256 + 'e'] = ZREREPLACE;		/* C-X E */
 /* C-X F */
 /* C-X G */

@@ -21,12 +21,6 @@ the screen. This variable defines the number of spaces displayed per tab
 in C mode buffers, even if the buffer is in View mode. The default is 4
 spaces. See also Tabs.
 .sp 0
-:Date Format
-
-The Date command uses strftime to format the output string. This varable
-is passed to strftime as the format string. It has a default of "%c" which
-is the preferred date for the current locale. See strftime for details.
-.sp 0
 :Exact
 
 If Exact is set, all searches and replaces are case sensitive. This

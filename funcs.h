@@ -116,8 +116,7 @@
 #define ZVIEWLINE	ZLOWREGION + 1
 #define ZCMD		ZVIEWLINE + 1
 #define ZJOIN		ZCMD + 1
-#define ZDATE		ZJOIN + 1
-#define ZCGOTO		ZDATE + 1
+#define ZCGOTO		ZJOIN + 1
 #define ZMAKE		ZCGOTO + 1
 #define ZNEXTERR	ZMAKE + 1
 #define ZCMDTOBUFF	ZNEXTERR + 1

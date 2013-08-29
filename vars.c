@@ -86,7 +86,7 @@ void readvfile(void)
 		parsem(VARSTR(VCEXTS), CMODE);
 	}
 	if (!VARSTR(VSEXTS)) {
-		VARSTR(VSEXTS) = strdup(".sh:.csh");
+		VARSTR(VSEXTS) = strdup(".sh:.csh:.el");
 		parsem(VARSTR(VSEXTS), SHMODE);
 	}
 	if (!VARSTR(VTEXTS)) {

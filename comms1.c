@@ -191,7 +191,14 @@ void toggle_mode(int mode)
 		new = mode;
 
 #if COMMENTBOLD
-	Curbuff->comchar = new == SHMODE ? '#' : 0;
+	if (new == SHMODE) {
+		char *p = strrchr(bfname(), '.');
+		if (p && strcmp(p, ".el") == 0)
+			Curbuff->comchar = ';';
+		else
+			Curbuff->comchar = '#';
+	} else
+		Curbuff->comchar = 0;
 #endif
 
 	Curbuff->bmode = (Curbuff->bmode & MODEMASK) | new;

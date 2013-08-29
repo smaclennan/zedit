@@ -64,7 +64,7 @@ static struct _amode
 } modes[] = {
 	{ "C",		CMODE	},
 	{ "Normal",	NORMAL	},
-	{ "sh",		SHMODE	},
+	{ "SH",		SHMODE	},
 	{ "Text",	TEXT	},
 	{ "View",	VIEW	},
 #define TEXTMODE	4

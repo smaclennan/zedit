@@ -19,7 +19,6 @@
 
 #include "z.h"
 #include "keys.h"
-#include <sys/stat.h>
 
 Byte CRdefault = ZNEWLINE;
 

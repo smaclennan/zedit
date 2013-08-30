@@ -134,7 +134,7 @@ void Znexterr(void)
 		if (wdo)
 			mrktomrk(wdo->wstart, Curbuff->mark);
 		pathfixup(path, fname);
-		findfile(path, FALSE);
+		findfile(path);
 		Argp = TRUE;
 		Arg = line;
 		Zlgoto();

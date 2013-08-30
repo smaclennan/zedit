@@ -19,7 +19,6 @@
 
 #include "z.h"
 #include <setjmp.h>
-#include <sys/stat.h>
 #include <time.h>
 
 Boolean Curmodf;		/* page modified?? */

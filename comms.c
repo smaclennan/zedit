@@ -561,6 +561,17 @@ void Zsetmrk(void)
 	echo("Mark Set.");
 }
 
+static void cleanup(void)
+{	/* Mainly for valgrind */
+	vfini();
+	wfini();
+	bfini();
+	ufini(); /* must be after bfini */
+
+	free_pwent(Me);
+	free(Cwd);
+}
+
 /* Exit the editor.
  * Warn about makes in progress.
  * If a buffer is modified, ask to write it out.

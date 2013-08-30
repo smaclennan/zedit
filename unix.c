@@ -331,8 +331,6 @@ void sigchild(int signo)
 #endif
 
 #ifdef BSD
-#include <sys/stat.h>
-
 int access(char *path, int mode)
 {
 	int rc;

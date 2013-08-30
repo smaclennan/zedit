@@ -20,8 +20,6 @@
 #include "z.h"
 
 #if TAGS
-#include <sys/stat.h>
-
 static char savetag[STRMAX + 1];
 static struct buff *Bsave;
 
@@ -185,7 +183,7 @@ static Boolean tagfparse(struct buff *bsave)
 	if (i && (num != -1 || *str)) {
 		bswitchto(bsave);		/* restore correct buffer */
 		pathfixup(path, fname);
-		findfile(path, FALSE);
+		findfile(path);
 		btostart();
 
 		if (num != -1)

@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include <sys/stat.h>
 #include <assert.h>
 
 static char Fname[PATHMAX + 1];
@@ -45,7 +44,7 @@ static int get_findfile(char *prompt)
 void Zfindfile(void)
 {
 	if (get_findfile("Find File: ") == 0)
-		findfile(Fname, FALSE);
+		findfile(Fname);
 }
 
 void Zrevertfile(void)
@@ -68,7 +67,38 @@ void Zrevertfile(void)
 	boffset(offset);
 }
 
-Boolean findfile(char *path, int startup)
+/* Read one file, creating the buffer is necessary.
+ * Returns FALSE if unable to create buffer only.
+ * FALSE means that there is no use continuing.
+ */
+static Boolean readone(char *bname, char *path)
+{
+	struct buff *was = Curbuff;
+
+	if (cfindbuff(bname))
+		return TRUE;
+
+	if (cmakebuff(bname, path)) {
+		int rc = breadfile(path);
+		if (rc >= 0) {
+			toggle_mode(0);
+			if (rc > 0)
+				echo("New File");
+			else if (access(path, R_OK|W_OK) == EOF)
+				Curbuff->bmode |= VIEW;
+			strcpy(Lbufname, was->bname);
+		} else { /* error */
+			delbname(Curbuff->bname);
+			bdelbuff(Curbuff);
+			bswitchto(was);
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
+Boolean findfile(char *path)
 {
 	char tbname[BUFNAMMAX + 1];
 	char *was;
@@ -87,9 +117,9 @@ Boolean findfile(char *path, int startup)
 	 */
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (tbuff->fname && strcmp(path, tbuff->fname) == 0) {
-			if (startup)
-				return TRUE;
 			bswitchto(tbuff);
+			if (Initializing)
+				return TRUE;
 			strcpy(Lbufname, was);
 			break;
 		}
@@ -112,7 +142,7 @@ Boolean findfile(char *path, int startup)
 		rc = readone(tbname, path);
 	}
 
-	if (!startup) {
+	if (!Initializing) {
 		cswitchto(Curbuff);
 		reframe();
 	}

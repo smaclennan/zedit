@@ -50,8 +50,8 @@ int Clrcol[ROWMAX + 1];		/* Clear if past this */
 
 int Prow, Pcol;			/* Point row and column */
 int Srow, Scol;			/* saved row and column */
-int Colmax, Rowmax;		/* Row and column maximums */
-int Tstart;			/* Start column and row */
+int Colmax = EOF, Rowmax;	/* Row and column maximums */
+int Tstart = 0;			/* Start column and row */
 
 #ifdef SIGWINCH
 /* This is called if the window has changed size. */

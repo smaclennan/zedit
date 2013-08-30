@@ -20,7 +20,6 @@
 #include "z.h"
 
 Boolean Initializing = TRUE;
-static Boolean Exitflag;
 char *Cwd;
 char *ConfigDir;
 int Cmask;
@@ -31,37 +30,38 @@ int Verbose;
 char **Bnames;			/* array of ptrs to buffer names */
 int Numbuffs;			/* number of buffers */
 
-#include <sys/stat.h>
 struct passwd *Me;
 
-static void edit(void);
-static void dotty(void);
 static void setup(int, char **);
 static void usage(char *prog);
 
 int main(int argc, char **argv)
 {
-	/* A longjmp is called if bcremrk or Getmemp run out of memory */
+	/* A longjmp is called if bcremrk runs out of memory */
 	if (setjmp(zenv) != 0) {
 		error("FATAL ERROR: Out of memory");
 		Argp = FALSE;	/* so Zexit will not default to save */
 		Zexit();
-		tfini();
-		exit(1);
 	}
 
 	setup(argc, argv);
-	edit();
-	cleanup();
 
-	return 0;
+	while (1)
+		execute();
 }
 
-
-static void edit(void)
+/* NOTE: Dotty blocks */
+static void dotty(void)
 {
-	while (!Exitflag)
-		execute();
+	Cmd = tgetcmd();
+	Arg = 1;
+	Argp = FALSE;
+	while (Arg > 0) {
+		CMD(Keys[Cmd]);
+		--Arg;
+	}
+	Lfunc = Keys[Cmd];
+	First = FALSE;				/* used by pinsert when InPaw */
 }
 
 
@@ -94,27 +94,11 @@ void execute(void)
 #endif
 }
 
-
-/* NOTE: Dotty blocks */
-static void dotty(void)
-{
-	Cmd = tgetcmd();
-	Arg = 1;
-	Argp = FALSE;
-	while (Arg > 0) {
-		CMD(Keys[Cmd]);
-		--Arg;
-	}
-	Lfunc = Keys[Cmd];
-	First = FALSE;				/* used by pinsert when InPaw */
-}
-
-
 static void setup(int argc, char **argv)
 {
 	char path[PATHMAX + 1];
-	int col = 0, arg, files = 0, textMode = 0;
-	struct buff *tbuff, *other = NULL;
+	int arg, files = 0, textMode = 0, exitflag = 0;
+	struct buff *tbuff = NULL;
 
 	Me = dup_pwent(getpwuid(geteuid()));
 	if (!Me) {
@@ -139,18 +123,15 @@ static void setup(int argc, char **argv)
 	Colmax = EOF;
 	Tstart = 0;
 
-	while ((arg = getopt(argc, argv, "c:hl:o:tvE")) != EOF)
+	while ((arg = getopt(argc, argv, "c:hl:tvE")) != EOF)
 		switch (arg) {
 		case 'c':
 			ConfigDir = optarg;
 			break;
 		case 'h':
-			usage(lastpart(argv[0]));
+			usage(argv[0]);
 		case 'l':
 			Argp = Arg = atoi(optarg);
-			break;
-		case 'o':
-			col = atoi(optarg);
 			break;
 		case 't':
 			textMode = 1;
@@ -159,7 +140,7 @@ static void setup(int argc, char **argv)
 			++Verbose;
 			break;
 		case 'E':
-			Exitflag = TRUE;
+			exitflag = TRUE;
 			break;
 		}
 
@@ -196,27 +177,13 @@ static void setup(int argc, char **argv)
 	Send	= bcremrk();
 	Sendp	= FALSE;
 
-	for ( ; optind < argc; ++optind)
-		if (argv[optind][0] == '-') {
-			if (argv[optind][1] == 'l') {
-				Argp = TRUE;
-				Arg = atoi(&argv[optind][2]);
-			} else if (argv[optind][1] == 'o')
-				col = atoi(&argv[optind][2]);
-			else if (argv[optind][1] == '\0')
-				++files;
-		} else {
-			++files;
-			if (pathfixup(path, argv[optind]) == 0)
-				if (!findfile(path, TRUE))
-					break;
-		}
+	for ( ; optind < argc; ++optind, ++files)
+		if (pathfixup(path, argv[optind]) == 0)
+			if (findfile(path) && !tbuff)
+				tbuff = Curbuff;
 
-	if (files) {
-		/* find the first buffer read or Main */
-		for (tbuff = Bufflist; tbuff->next; tbuff = tbuff->next)
-			;
-		bswitchto(tbuff->prev ? tbuff->prev : tbuff);
+	if (tbuff) {
+		bswitchto(tbuff);
 
 		strcpy(Lbufname,
 		       Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
@@ -225,12 +192,6 @@ static void setup(int argc, char **argv)
 	}
 
 	winit();
-	if (other) {
-		Z2wind();
-		cswitchto(other);
-		reframe();
-		Znextwind();
-	}
 
 	reframe();
 	setmodes(Curbuff);		/* start it off right! */
@@ -245,8 +206,6 @@ static void setup(int argc, char **argv)
 
 	if (Argp)
 		Zlgoto();
-	if (col > 1)
-		bmakecol(col - 1, FALSE);
 
 #ifdef PIPESH
 	FD_ZERO(&SelectFDs);
@@ -255,50 +214,10 @@ static void setup(int argc, char **argv)
 #endif
 
 	Initializing = FALSE;
+
+	if (exitflag)
+		Zexit();
 }
-
-void cleanup(void)
-{	/* Mainly for valgrind */
-	tfini();
-	vfini();
-	wfini();
-	bfini();
-	ufini(); /* must be after bfini */
-
-	free_pwent(Me);
-	free(Cwd);
-}
-
-/* Read one file, creating the buffer is necessary.
- * Returns FALSE if unable to create buffer only.
- * FALSE means that there is no use continuing.
- */
-Boolean readone(char *bname, char *path)
-{
-	struct buff *was = Curbuff;
-
-	if (cfindbuff(bname))
-		return TRUE;
-
-	if (cmakebuff(bname, path)) {
-		int rc = breadfile(path);
-		if (rc >= 0) {
-			toggle_mode(0);
-			if (rc > 0)
-				echo("New File");
-			else if (access(path, R_OK|W_OK) == EOF)
-				Curbuff->bmode |= VIEW;
-			strcpy(Lbufname, was->bname);
-		} else { /* error */
-			delbname(Curbuff->bname);
-			bdelbuff(Curbuff);
-			bswitchto(was);
-		}
-		return TRUE;
-	}
-	return FALSE;
-}
-
 
 /* Add the new bname to the Bname array.
  * If we hit maxbuffs, try to enlarge the Bnames array.
@@ -408,15 +327,12 @@ char *lastpart(char *fname)
 static void usage(char *prog)
 {
 	printf(
-		"usage: %s [-ht] [-c config_dir] [fname ... [-l#] [-o#]]\n"
+		"usage: %s [-ht] [-c config_dir] [-l line] [fname ...]\n"
 		"where:\t-h  displays this message.\n"
 		"\t-t  default to text mode.\n"
 		"\t-c  specifies a config dir.\n"
-		"\t-l  goto specified line number.\n"
-		"\t    this only applies to the first file.\n"
-		"\t-o  goto specified offset in line.\n"
-		"\t    this only applies to the first file.\n",
-		prog);
+		"\t-l  goto specified line number. (First file only)\n"
+		, prog);
 
 	exit(1);
 }

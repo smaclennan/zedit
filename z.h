@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <pwd.h>
+#include <sys/stat.h>
 
 #include "typedefs.h"
 #include "vars.h"

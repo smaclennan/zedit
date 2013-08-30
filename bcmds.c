@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include <sys/stat.h>
 
 char Lbufname[BUFNAMMAX + 1];
 

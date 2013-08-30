@@ -21,8 +21,8 @@
 
 Boolean Initializing = TRUE;
 static Boolean Exitflag;
-char *Thispath, *Cwd;
-char *ConfigDir = "/usr/share/zedit";
+char *Cwd;
+char *ConfigDir;
 int Cmask;
 unsigned Cmd;
 jmp_buf	zenv;
@@ -33,7 +33,6 @@ int Numbuffs;			/* number of buffers */
 
 #include <sys/stat.h>
 struct passwd *Me;
-char *Shell;
 
 static void edit(void);
 static void dotty(void);
@@ -114,7 +113,6 @@ static void dotty(void)
 static void setup(int argc, char **argv)
 {
 	char path[PATHMAX + 1];
-	char *progname;
 	int col = 0, arg, files = 0, textMode = 0;
 	struct buff *tbuff, *other = NULL;
 
@@ -128,28 +126,9 @@ static void setup(int argc, char **argv)
 	}
 	Dbgname();
 
-	Shell = getenv("SHELL");
-	if (!Shell)
-		Shell = "/bin/sh";
-
 	Cmask = umask(0);	/* get the current umask */
 	umask(Cmask);		/* set it back */
 	Cmask = ~Cmask & 0666;	/* make it usable */
-
-	/* see if ZPATH set */
-	Thispath = getenv("ZPATH");
-	if (Thispath)
-		progname = lastpart(argv[0]);
-	/* convert argv[0] to directory name */
-	else {
-		Thispath = argv[0];
-		progname = lastpart(Thispath);
-		if (progname != Thispath)
-			*(progname - 1) = '\0';
-		/* use current dir */
-		else
-			Thispath = ".";
-	}
 
 	Cwd = getcwd(NULL, PATHMAX);
 	if (!Cwd) {
@@ -166,7 +145,7 @@ static void setup(int argc, char **argv)
 			ConfigDir = optarg;
 			break;
 		case 'h':
-			usage(progname);
+			usage(lastpart(argv[0]));
 		case 'l':
 			Argp = Arg = atoi(optarg);
 			break;
@@ -183,6 +162,13 @@ static void setup(int argc, char **argv)
 			Exitflag = TRUE;
 			break;
 		}
+
+	/* Deal with ConfigDir */
+	if (!ConfigDir) {
+		ConfigDir = getenv("ZPATH");
+		if (!ConfigDir)
+			ConfigDir = CONFIGDIR;
+	}
 
 	readvfile();		/* Do this BEFORE tinit */
 

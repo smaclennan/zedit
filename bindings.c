@@ -179,35 +179,21 @@ void Zdispbinds(void)
 
 void loadbind(void)
 {
-	char fname[30], path[PATHMAX + 1];
-	int i;
+	char path[PATHMAX + 1];
 
-	bindfname(fname);
-	for (i = FINDPATHS; i && (i = findpath(path, fname, i, TRUE)); --i)
+	if (findpath(path, ZBFILE))
 		bindfile(path, READ_BINARY);
+
 	fcheck();
 }
 
 
-/* save a bindings file.
- * Use findpath starting at the $HOME directory to find where to
- * save the bindings file. If no bindings file exists, save in the
- * $HOME dir.
- */
+/* Save a bindings file in the HOME directory. */
 void Zsavebind(void)
 {
-	char fname[30], path[PATHMAX + 1];
-	int i, n;
+	char path[PATHMAX + 1];
 
-	bindfname(fname);
-	for (n = 0, i = 3; i && (i = findpath(path, fname, i, TRUE)); --i)
-		n = i;
-	if (n)
-		findpath(path, fname, n, TRUE);
-	else
-		sprintf(path, "%s/%s", Me->pw_dir, fname);
-	if (Argp && getfname("Bind File: ", path))
-		return;
+	snprintf(path, sizeof(path), "%s/%s", Me->pw_dir, ZBFILE);
 	if (bindfile(path, WRITE_MODE))
 		putpaw("%s written.", path);
 }

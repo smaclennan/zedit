@@ -41,6 +41,8 @@
 #define ANSI
 /* #define TERMINFO */
 
+#define CONFIGDIR "/usr/share/zedit"
+
 /* USER CONFIGURABLE - don't define any, see if I care */
 #define DBG		1		/* turn debugs on */
 #define MINCONFIG	0		/* Minimal configuration */

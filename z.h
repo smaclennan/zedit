@@ -72,12 +72,10 @@ extern struct passwd *Me;
 #define PSEP		'/'
 
 #define ZSHFILE		".zshXXXXXX"
+#define ZDBGFILE	"z.out"
+
 #define ZBFILE		".bindings.z"
 #define ZCFILE		".config.z"
-#define ZEFILE		".expand.z"
-#define ZSFILE		".save.z"
-#define ZCLIP		".zclip"
-#define ZDBGFILE	"z.out"
 #define ZHFILE		"help.z"
 
 /* the first three must follow:  (define + 1) % 4 = 0 */
@@ -95,8 +93,6 @@ extern struct passwd *Me;
 #define NUMASCII	256			/* number of ascii chars */
 #define ESIZE		256			/* reg exp buffer size */
 #define BOOKMARKS	10			/* number of book marks */
-
-#define FINDPATHS	4
 
 /*
  * BUFFER MODES
@@ -164,12 +160,6 @@ extern struct passwd *Me;
 
 /* GENERAL STRUCTURE DEFS */
 
-/* general linked list structure */
-struct llist {
-	char fname[STRMAX];
-	struct llist *prev, *next;
-};
-
 struct cnames {
 	char *name;
 	short fnum;
@@ -187,8 +177,6 @@ extern Byte tline[];
 extern char *Cwd;
 extern int Cmask;
 extern unsigned Cmd;
-extern char *Shell;
-extern char *Thispath;
 extern char *ConfigDir;
 
 extern struct cnames Cnames[];

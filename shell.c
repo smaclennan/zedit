@@ -29,6 +29,19 @@ static char Command[STRMAX + 1];
 static void printexit(int code);
 static int pipetobuff(struct buff *buff, char *instr);
 
+static char *get_shell(void)
+{
+	static char *sh;
+
+	if (!sh) {
+		sh = getenv("SHELL");
+		if (!sh)
+			sh = "/bin/sh";
+	}
+
+	return sh;
+}
+
 /* Do one shell command to the screen */
 #if !defined(BSD)
 void Zcmd(void)
@@ -38,7 +51,7 @@ void Zcmd(void)
 	Arg = 0;
 	if (getarg("! ", Command, STRMAX) == 0) {
 		tfini();
-		sprintf(tb, "%s -c \"%s\"", Shell, Command);
+		sprintf(tb, "%s -c \"%s\"", get_shell(), Command);
 		if (system(tb) == EOF)
 			echo("command failed");
 		else {
@@ -112,7 +125,7 @@ Boolean doshell(void)
 {
 	char *argv[3];
 
-	argv[0] = Shell;
+	argv[0] = get_shell();
 	argv[1] = "-i";
 	argv[2] = NULL;
 	return invoke(Curbuff, argv);
@@ -141,7 +154,7 @@ void Zshell(void)	/*for tags*/
 
 	Arg = 0;
 	tfini();
-	if (system(Shell) == EOF)
+	if (system(get_shell()) == EOF)
 		err = errno;
 	tinit();
 	if (err != EOF)

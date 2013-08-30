@@ -187,12 +187,6 @@ void tstyle(int style)
 	}
 	fflush(stdout);
 }
-
-char *bindfname(char *fname)
-{
-	sprintf(fname, ".zb.%s", Term);
-	return fname;
-}
 #else
 void terminfo_dummy(void) {} /* for pedantic */
 #endif

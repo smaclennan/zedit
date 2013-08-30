@@ -145,39 +145,17 @@ void message(struct buff *buff, char *str)
 	putpaw("%s", str);
 }
 
-/*
- * Find the correct path for the config files.
- * There are 4 config files: bindings, config, help, and save
- *	bindings	- $EXE  + $HOME + . + ConfigDir
- *	config		- $EXE  + $HOME + . + ConfigDir
- *	help		- $EXE  | $HOME | . | ConfigDir
- *	save		- $HOME	| . | ConfigDir
- *
- * returns:	4 for $EXE
- *		3 for $HOME
- *		2 for .
- *		1 for ConfigDir
- *		0 for not found, 'path' set to 'fname'
+/* Find the correct path for the config files.
+ * We check HOME and then CONFIGDIR.
  */
-int findpath(char *p, char *f, int s, Boolean m)
+int findpath(char *p, char *f)
 {
-	switch (s) {
-	case 4:
-		if (isfile(p, Thispath, f, m))
-			return 4;
-	case 3:
-		if (isfile(p, Me->pw_dir, f, m))
-			return 3;
-	case 2:
-		if (isfile(p, ".", f, m))
-			return 2;
-	case 1:
-		if (isfile(p, ConfigDir, f, m))
-			return 1;
-	default:
-		strcpy(p, f);
+	if (isfile(p, Me->pw_dir, f, TRUE))
+		return 2;
+	else if (isfile(p, ConfigDir, f, TRUE))
+		return 1;
+	else
 		return 0;
-	}
 }
 
 /* Get the word at the current buffer point and store in 'word'.

@@ -124,12 +124,12 @@ static void massage(char *buff)
 
 static FILE *findhelp(int code, Boolean func, char *buff)
 {
-	FILE *fp;
+	FILE *fp = NULL;
 	char *ptr;
 	int len;
 
-	findpath(buff, ZHFILE, FINDPATHS, TRUE);
-	fp = fopen(buff, "r");
+	if (findpath(buff, ZHFILE))
+		fp = fopen(buff, "r");
 	if (!fp) {
 		echo("Unable to Open Help File");
 		return NULL;

@@ -24,6 +24,12 @@
 #include <sys/dir.h>
 #endif
 
+/* general linked list structure */
+struct llist {
+	char fname[STRMAX];
+	struct llist *prev, *next;
+};
+
 static struct llist *Flist;
 static Boolean Didmatch;
 #define OBJEXT		".o"

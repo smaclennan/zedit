@@ -70,7 +70,6 @@ static void readconfigfile(char *fname);
 void readvfile(void)
 {
 	char fname[PATHMAX + 1];
-	int i;
 
 #if DBG
 	if (NUMVARS != VARNUM) {
@@ -94,12 +93,7 @@ void readvfile(void)
 		parsem(VARSTR(VTEXTS), TEXT);
 	}
 
-	/* If ConfigDir is really a file, read the file and set to 0. */
-	if (ConfigDir && !isdir(ConfigDir)) {
-		readconfigfile(ConfigDir);
-		ConfigDir = NULL;
-	}
-	for (i = FINDPATHS; i && (i = findpath(fname, ZCFILE, i, TRUE)); --i)
+	if (findpath(fname, ZCFILE))
 		readconfigfile(fname);
 }
 

@@ -125,9 +125,4 @@ void tstyle(int style)
 	}
 	fflush(stdout);
 }
-
-char *bindfname(char *fname)
-{
-	return strcpy(fname, ".zb.ansi");
-}
 #endif

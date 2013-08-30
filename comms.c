@@ -561,24 +561,6 @@ void Zsetmrk(void)
 	echo("Mark Set.");
 }
 
-/* This does the real work of quiting. */
-void quit(void)
-{
-#ifdef PIPESH
-	struct buff *tbuff;
-
-	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-		if (tbuff->child != EOF)
-			unvoke(tbuff, FALSE);
-	checkpipes(0);		/* make sure waited for ALL children */
-#endif
-
-	tfini();
-	cleanup();
-
-	exit(0);
-}
-
 /* Exit the editor.
  * Warn about makes in progress.
  * If a buffer is modified, ask to write it out.
@@ -605,17 +587,26 @@ void Zexit(void)
 	if (modf && ask("Modified buffers. quit anyway? ") != YES)
 		return;
 
-	quit();
+#ifdef PIPESH
+	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+		if (tbuff->child != EOF)
+			unvoke(tbuff, FALSE);
+	checkpipes(0);		/* make sure waited for ALL children */
+#endif
+
+	tfini();
+	cleanup();
+
+	exit(0);
 }
 
 /* Prompt to save buffer if the buffer has been modified.
  * Always saves if 'must' is TRUE or saveOnExit is set.
  * Returns FALSE if the user ABORTS the prompt.
  */
-static int save_all;
-
 static Boolean promptsave(struct buff *tbuff, Boolean must)
 {
+	static int save_all;
 	char str[BUFNAMMAX + 20];
 	int ok = YES;
 

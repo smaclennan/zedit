@@ -177,12 +177,6 @@ void Zdispbinds(void)
 	Arg = 0;
 }
 
-static char *bindfname(char *fname)
-{
-	sprintf(fname, ".zb.%s", Term);
-	return fname;
-}
-
 void loadbind(void)
 {
 	char fname[30], path[PATHMAX + 1];

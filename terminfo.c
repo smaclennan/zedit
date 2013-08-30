@@ -60,8 +60,9 @@ struct key_array Tkeys[] = { {
 };
 #define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
+static char *Term;
 
-void tlinit()
+int tlinit()
 {
 	int rc, i;
 
@@ -187,6 +188,11 @@ void tstyle(int style)
 	fflush(stdout);
 }
 
+char *bindfname(char *fname)
+{
+	sprintf(fname, ".zb.%s", Term);
+	return fname;
+}
 #else
 void terminfo_dummy(void) {} /* for pedantic */
 #endif

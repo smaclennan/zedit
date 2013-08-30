@@ -18,69 +18,25 @@
  */
 
 #include "z.h"
-
-#if DBG
 #include <stdarg.h>
-#include <sys/time.h>
 
-static char *dbgfname;
+static char dbgfname[PATHMAX];
+
+void Dbgname(void)
+{
+	snprintf(dbgfname, sizeof(dbgfname), "%s/%s", Me->pw_dir, ZDBGFILE);
+	unlink(dbgfname);
+}
 
 void Dbg(char *fmt, ...)
 {
-	FILE *fp;
-	va_list arg_ptr;
+	FILE *fp = fopen(dbgfname, "a");
+	if (fp) {
+		va_list arg_ptr;
 
-	if (dbgfname) {
-		fp = fopen(dbgfname, "a");
-		if (fp) {
-			va_start(arg_ptr, fmt);
-			vfprintf(fp, fmt, arg_ptr);
-			va_end(arg_ptr);
-			fclose(fp);
-		}
+		va_start(arg_ptr, fmt);
+		vfprintf(fp, fmt, arg_ptr);
+		va_end(arg_ptr);
+		fclose(fp);
 	}
 }
-
-void Dbgname(char *dir)
-{
-	if (dbgfname)
-		free(dbgfname);
-
-	if (dir) {
-		char path[PATHMAX];
-		snprintf(path, sizeof(path), "%s/%s", dir, ZDBGFILE);
-		unlink(path);
-		dbgfname = strdup(path);
-	}
-}
-
-static struct timeval stopwatch;
-
-void dbg_startwatch(void)
-{
-	gettimeofday(&stopwatch, NULL);
-}
-
-void dbg_stopwatch(char *str)
-{
-	struct timeval end;
-
-	gettimeofday(&end, NULL);
-
-	if (stopwatch.tv_usec > end.tv_usec) {
-		--end.tv_sec;
-		end.tv_usec += 1000000;
-	}
-
-	if (!str)
-		str = "stopwatch";
-
-	Dbg("%s: %ld.%06ld\n", str,
-	    end.tv_sec - stopwatch.tv_sec,
-	    end.tv_usec - stopwatch.tv_usec);
-}
-
-#else
-void Dbg(char *fmt, ...) {}
-void Dbgname(char *name) {}
-#endif

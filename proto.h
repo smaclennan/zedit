@@ -172,6 +172,7 @@ int ask2(char *, Boolean);
 void cleanup(void);
 void free_extensions(void);
 void bfini(void);
+char *bindfname(char *fname);
 int bcopyrgn(struct mark *, struct buff*);
 struct buff *bcreate(void);
 struct mark *bcremrk(void);
@@ -306,7 +307,6 @@ void wload(char *, int, int, unsigned long, int);
 void free_pwent(struct passwd *pw);
 void hangup(int);
 Boolean notdup_key(int k);
-void quit(void);
 
 /* Terminal driver specific routines */
 void tlinit(void);
@@ -333,9 +333,7 @@ void unvoke(struct buff *, Boolean);
 
 
 void Dbg(char *fmt, ...);
-void Dbgname(char *);
-void dbg_startwatch(void);
-void dbg_stopwatch(char *str);
+void Dbgname(void);
 void fcheck(void);
 
 

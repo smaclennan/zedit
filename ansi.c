@@ -73,8 +73,6 @@ void tlinit(void)
 {
 	int i;
 
-	Term = "ansi";
-
 #if DBG
 	if (N_KEYS != NUMKEYS - TC_UP) {
 		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
@@ -128,4 +126,8 @@ void tstyle(int style)
 	fflush(stdout);
 }
 
+char *bindfname(char *fname)
+{
+	return strcpy(fname, ".zb.ansi");
+}
 #endif

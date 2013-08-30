@@ -62,7 +62,6 @@ struct key_array {
 
 extern struct key_array Tkeys[];
 extern unsigned int Key_mask;
-extern char *Term;
 
 #define K_NODEF			0xffff
 #define SPECIAL_START		384

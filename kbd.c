@@ -30,7 +30,6 @@
 unsigned Cmdpushed, Cmdstack[10];	/* stack and vars for T[un]getcmd */
 
 unsigned Key_mask;
-char *Term;
 
 static void tungetkb(void);
 

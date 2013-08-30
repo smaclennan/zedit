@@ -126,7 +126,7 @@ static void setup(int argc, char **argv)
 			exit(1);
 		}
 	}
-	Dbgname(Me->pw_dir);
+	Dbgname();
 
 	Shell = getenv("SHELL");
 	if (!Shell)
@@ -280,7 +280,6 @@ void cleanup(void)
 	ufini(); /* must be after bfini */
 
 	free_pwent(Me);
-	Dbgname(NULL);
 	free(Cwd);
 }
 

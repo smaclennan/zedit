@@ -199,8 +199,12 @@ static void setup(int argc, char **argv)
 	if (!Curbuff->mtime && Curbuff->fname)
 		echo("New File");
 
-	bind();
-	loadbind();		/* Do this after tinit */
+	/* Do this after tinit */
+	if (findpath(path, ZBFILE))
+		bindfile(path, READ_MODE);
+	else
+		bind();
+	fcheck();
 
 	Curwdo->modeflags = INVALID;
 

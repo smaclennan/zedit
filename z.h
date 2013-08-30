@@ -65,7 +65,6 @@ extern struct passwd *Me;
 #define INVALID		-1
 
 #define READ_MODE	O_RDONLY
-#define READ_BINARY	O_RDONLY
 #define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC)
 #define UPDATE_MODE	(O_RDWR   | O_CREAT | O_TRUNC)
 

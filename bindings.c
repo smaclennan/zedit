@@ -22,7 +22,6 @@
 
 Byte CRdefault = ZNEWLINE;
 
-static Boolean bindfile(char *fname, int mode);
 static Boolean bindone(char *prompt, int first, int *key);
 
 void Zbind(void)
@@ -176,17 +175,6 @@ void Zdispbinds(void)
 	Arg = 0;
 }
 
-void loadbind(void)
-{
-	char path[PATHMAX + 1];
-
-	if (findpath(path, ZBFILE))
-		bindfile(path, READ_BINARY);
-
-	fcheck();
-}
-
-
 /* Save a bindings file in the HOME directory. */
 void Zsavebind(void)
 {
@@ -197,7 +185,7 @@ void Zsavebind(void)
 		putpaw("%s written.", path);
 }
 
-static Boolean bindfile(char *fname, int mode)
+Boolean bindfile(char *fname, int mode)
 {
 	char version[3];
 	int fd, modesave, rc = FALSE;

@@ -180,7 +180,7 @@ void Zsavebind(void)
 {
 	char path[PATHMAX + 1];
 
-	snprintf(path, sizeof(path), "%s/%s", Me->pw_dir, ZBFILE);
+	snprintf(path, sizeof(path), "%s/%s", Home, ZBFILE);
 	if (bindfile(path, WRITE_MODE))
 		putpaw("%s written.", path);
 }

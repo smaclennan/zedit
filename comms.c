@@ -568,7 +568,6 @@ static void cleanup(void)
 	bfini();
 	ufini(); /* must be after bfini */
 
-	free_pwent(Me);
 	free(Cwd);
 }
 

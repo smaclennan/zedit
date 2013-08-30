@@ -20,6 +20,7 @@
 #include "z.h"
 
 Boolean Initializing = TRUE;
+char *Home;
 char *Cwd;
 char *ConfigDir;
 int Cmask;
@@ -30,10 +31,9 @@ int Verbose;
 char **Bnames;			/* array of ptrs to buffer names */
 int Numbuffs;			/* number of buffers */
 
-struct passwd *Me;
-
 static void setup(int, char **);
 static void usage(char *prog);
+static char *dup_pwent(struct passwd *);
 
 int main(int argc, char **argv)
 {
@@ -100,12 +100,15 @@ static void setup(int argc, char **argv)
 	int arg, files = 0, textMode = 0, exitflag = 0;
 	struct buff *tbuff = NULL;
 
-	Me = dup_pwent(getpwuid(geteuid()));
-	if (!Me) {
-		Me = dup_pwent(getpwuid(getuid()));
-		if (!Me) {
-			puts("You don't exist!");
-			exit(1);
+	Home = getenv("HOME");
+	if (!Home) {
+		Home = dup_pwent(getpwuid(geteuid()));
+		if (!Home) {
+			Home = dup_pwent(getpwuid(getuid()));
+			if (!Home) {
+				puts("You don't exist!");
+				exit(1);
+			}
 		}
 	}
 	Dbgname();
@@ -358,36 +361,11 @@ void Zcwd(void)
 	}
 }
 
-/* Dup a passwd entry. Only saves: pw_name, pw_dir, pw_uid, pw_gid */
-struct passwd *dup_pwent(struct passwd *pw)
+/* Dup a passwd entry pw_dir. */
+static char *dup_pwent(struct passwd *pw)
 {
-	struct passwd *new;
-
 	if (pw == NULL)
 		return NULL;
 
-	new = malloc(sizeof(struct passwd));
-	if (new) {
-		memset(new, '\0', sizeof(struct passwd));
-		new->pw_name = strdup(pw->pw_name);
-		new->pw_dir = strdup(pw->pw_dir);
-		new->pw_uid = pw->pw_uid;
-		new->pw_gid = pw->pw_gid;
-
-		if (!new->pw_name || !new->pw_dir) {
-			if (new->pw_name)
-				free(new->pw_name);
-			free(new);
-			new = NULL;
-		}
-	}
-
-	return new;
-}
-
-void free_pwent(struct passwd *pw)
-{
-	free(pw->pw_name);
-	free(pw->pw_dir);
-	free(pw);
+	return strdup(pw->pw_dir);
 }

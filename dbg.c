@@ -24,7 +24,7 @@ static char dbgfname[PATHMAX];
 
 void Dbgname(void)
 {
-	snprintf(dbgfname, sizeof(dbgfname), "%s/%s", Me->pw_dir, ZDBGFILE);
+	snprintf(dbgfname, sizeof(dbgfname), "%s/%s", Home, ZDBGFILE);
 	unlink(dbgfname);
 }
 

@@ -41,7 +41,7 @@
 
 extern int Verbose;
 
-extern struct passwd *Me;
+extern char *Home;
 
 #ifdef SYSV4
 #include <string.h>

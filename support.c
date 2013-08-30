@@ -150,7 +150,7 @@ void message(struct buff *buff, char *str)
  */
 int findpath(char *p, char *f)
 {
-	if (isfile(p, Me->pw_dir, f, TRUE))
+	if (isfile(p, Home, f, TRUE))
 		return 2;
 	else if (isfile(p, ConfigDir, f, TRUE))
 		return 1;

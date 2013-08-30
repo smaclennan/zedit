@@ -165,7 +165,6 @@ void Zyank(void);
 #ifdef BSD
 int access(char *, int);
 #endif
-struct passwd *dup_pwent(struct passwd *);
 void initscrnmarks(void);
 int ask(char *);
 int ask2(char *, Boolean);
@@ -300,7 +299,6 @@ void vsetmrk(struct mark *);
 void vfini(void);
 int chwidth(Byte, int, Boolean);
 void wload(char *, int, int, unsigned long, int);
-void free_pwent(struct passwd *pw);
 void hangup(int);
 Boolean notdup_key(int k);
 

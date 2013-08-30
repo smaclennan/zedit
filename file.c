@@ -22,7 +22,7 @@
 
 static char Fname[PATHMAX + 1];
 
-static struct passwd *zgetpwnam(char *name);
+static Boolean zgetpwdir(char *name, char *to);
 
 static int get_findfile(char *prompt)
 {
@@ -300,13 +300,10 @@ int pathfixup(char *to, char *from)
 			*p = *from;
 		*p = '\0';
 		if (*dir) {
-			struct passwd *pwd = zgetpwnam(dir);
-			if (!pwd)
+			if (!zgetpwdir(dir, to))
 				return 2;
-			strcpy(to, pwd->pw_dir);
-			free_pwent(pwd);
 		} else
-			strcpy(to, Me->pw_dir);
+			strcpy(to, Home);
 		to += strlen(to);
 
 		if (*from && !Psep(*from) && !Psep(*(to - 1)))
@@ -397,10 +394,11 @@ Boolean isfile(char *path, char *dir, char *fname, Boolean must)
 	return !must || access(path, 0) == 0;
 }
 
-/* Same as getpwnam but handles partial matches. */
-static struct passwd *zgetpwnam(char *name)
+/* Get users directory - handles partial matches. */
+static Boolean zgetpwdir(char *name, char *to)
 {
-	struct passwd *pwd, *match = NULL;
+	struct passwd *pwd;
+	Boolean match = FALSE;
 	int len = strlen(name);
 
 	setpwent();
@@ -409,10 +407,13 @@ static struct passwd *zgetpwnam(char *name)
 			if (strcmp(pwd->pw_name, name) == 0) {
 				/* full match */
 				endpwent();
-				return dup_pwent(pwd);
-			} else if (!match)
+				strcpy(to, pwd->pw_dir);
+				return TRUE;
+			} else if (!match) {
 				/* partial match - return first match */
-				match = dup_pwent(pwd);
+				strcpy(to, pwd->pw_dir);
+				match = TRUE;
+			}
 		}
 	endpwent();
 	return match;

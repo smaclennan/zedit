@@ -187,6 +187,17 @@ void tstyle(int style)
 	}
 	fflush(stdout);
 }
+
+/* for tputs this must be a function */
+#ifdef LINUX
+int _putchar(int ch)
+#else
+int _putchar(char ch)
+#endif
+{
+	putchar(ch);
+	return 0;	/*shutup*/
+}
 #else
 void terminfo_dummy(void) {} /* for pedantic */
 #endif

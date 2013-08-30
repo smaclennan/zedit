@@ -391,14 +391,3 @@ void tclrwind(void)
 	Prow = Pcol = 0;
 	tflush();
 }
-
-/* for tputs this must be a function */
-#ifdef LINUX
-int _putchar(int ch)
-#else
-int _putchar(char ch)
-#endif
-{
-	putchar(ch);
-	return 0;	/*shutup*/
-}

@@ -172,7 +172,8 @@ void fcheck(void)
 	if (Verbose) {
 		/* validate the Cnames array the best we can */
 		for (s1 = 1; s1 < NUMFUNCS; ++s1) {
-			if (strcasecmp(Cnames[s1].name, Cnames[s1 - 1].name) <= 0) {
+			if (strcasecmp(Cnames[s1].name,
+				       Cnames[s1 - 1].name) <= 0) {
 				++err;
 				Dbg("Problem: (%d) %s and %s\n",
 				    s1, Cnames[s1 - 1].name, Cnames[s1].name);

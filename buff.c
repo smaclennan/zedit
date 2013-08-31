@@ -204,9 +204,9 @@ void unmark(struct mark *mptr)
 		if (mptr == Mrklist)
 			Mrklist = mptr->prev;
 
-		if (!freemark) {
+		if (!freemark)
 			freemark = mptr;
-		} else
+		else
 			free((char *)mptr);
 		--NumMarks;
 	}

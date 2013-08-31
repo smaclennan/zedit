@@ -238,9 +238,8 @@ static void printexit(int code)
 		echo("Done.");
 	else if (code == -1)
 		echo("Unable to execute.");
-	else {
+	else
 		putpaw("Exit %d.", code);
-	}
 }
 #else
 void Zshell(void) { tbell(); }

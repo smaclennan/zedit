@@ -300,15 +300,17 @@ void Zshowconfig(void)
 	binstr("\n# Decimal variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
 		if (Vars[i].vtype == DECIMAL) {
-			snprintf(line, sizeof(line), "%-15s %d\n", Vars[i].vname, VAR(i));
+			snprintf(line, sizeof(line), "%-15s %d\n",
+				 Vars[i].vname, VAR(i));
 			binstr(line);
 		}
 
 	binstr("\n# Flag variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
 		if (Vars[i].vtype == FLAG) {
-			snprintf(line, sizeof(line), "%-15s %s\n", Vars[i].vname,
-				VAR(i) ? "True" : "False");
+			snprintf(line, sizeof(line), "%-15s %s\n",
+				 Vars[i].vname,
+				 VAR(i) ? "True" : "False");
 			binstr(line);
 		}
 

@@ -107,14 +107,11 @@ void tstyle(int style)
 		return;
 
 	switch (cur_style = style) {
-#if COMMENTBOLD
-	case T_NORMAL:
-		TPUTS("\033[0;30m"); break; /* black */
-	case T_COMMENT:
-		TPUTS("\033[31m"); break; /* red */
-#else
 	case T_NORMAL:
 		TPUTS("\033[0m"); break;
+#if COMMENTBOLD
+	case T_COMMENT:
+		TPUTS("\033[31m"); break; /* red */
 #endif
 	case T_STANDOUT:
 		TPUTS("\033[7m"); break;

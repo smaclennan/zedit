@@ -62,7 +62,7 @@ struct key_array Tkeys[] = { {
 
 static char *Term;
 
-int tlinit()
+void tlinit()
 {
 	int rc, i;
 
@@ -162,17 +162,12 @@ void tstyle(int style)
 
 	cur_style = style;
 	switch (cur_style) {
-#if COMMENTBOLD
 	case T_NORMAL:
 		TPUTS(exit_attribute_mode);
-		TPUTS(tparm(set_a_foreground, COLOR_BLACK));
 		break;
+#if COMMENTBOLD
 	case T_COMMENT:
 		TPUTS(tparm(set_a_foreground, COLOR_RED));
-		break;
-#else
-	case T_NORMAL:
-		TPUTS(exit_attribute_mode);
 		break;
 #endif
 	case T_STANDOUT:

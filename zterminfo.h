@@ -8,14 +8,12 @@
 #undef SYSV4
 #undef echo
 #define tgoto _n_tgoto
-#define refresh _n_refresh
 #define savetty _n_savetty
 
 #include <term.h>
 #include <curses.h>
 
 #undef tgoto
-#undef refresh
 #undef echo
 #undef savetty
 #undef hangup

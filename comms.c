@@ -689,7 +689,7 @@ static void mshow(unsigned ch)
 		if (cnt)
 			tbell();
 		else {
-			refresh();
+			zrefresh();
 			showcursor(TRUE);	/* show the match! */
 			delay();
 			showcursor(FALSE);

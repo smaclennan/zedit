@@ -61,7 +61,7 @@ static void sigwinch(int sig)
 		termsize();
 	else {
 		Zredisplay();		/* update the windows */
-		refresh();			/* force a screen update */
+		zrefresh();			/* force a screen update */
 	}
 
 #ifdef SYSV4

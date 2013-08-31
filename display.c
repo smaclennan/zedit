@@ -29,7 +29,7 @@ Boolean Sendp;			/* Screen end set */
 struct mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
 int Tlrow;			/* Last row displayed */
 
-static int NESTED;		/* refresh can go recursive... */
+static int NESTED;		/* zrefresh can go recursive... */
 Byte tline[COLMAX + 1];
 
 /* Mark screen invalid */
@@ -44,7 +44,7 @@ void redisplay(void)
 }
 
 /* Do the actual display update from the buffer */
-void refresh(void)
+void zrefresh(void)
 {
 	int pntrow, col, bcol;
 	struct mark *pmark;
@@ -88,7 +88,7 @@ void refresh(void)
 		bpnttomrk(pmark);
 		unmark(pmark);
 		reframe();
-		refresh();
+		zrefresh();
 		--NESTED;
 		return;
 	}
@@ -233,7 +233,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 		if (needpnt) {
 			/* the user has typed past the end of the screen */
 			reframe();
-			refresh();
+			zrefresh();
 		}
 	}
 

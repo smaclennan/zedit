@@ -77,7 +77,7 @@ void Zspell(void)
 	/* make the paw 3 lines */
 	bswitchto(was);
 	paw_resize(-2);
-	refresh();
+	zrefresh();
 	mclear();
 	echo("Checking...");
 	while (bisbeforemrk(emark)) {
@@ -121,7 +121,7 @@ void Zspell(void)
 
 			case '#':		/* no match */
 				echo(SPELLSTRING);
-				refresh();		/* update mark */
+				zrefresh();		/* update mark */
 				cmd = tgetcmd();
 				switch (cmd) {
 				case ' ':		/* skip it */

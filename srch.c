@@ -47,7 +47,7 @@ static void doincsrch(char *prompt, Boolean forward)
 	strcpy(str, nocase(prompt));
 	p = str + strlen(str);
 	while (go) {
-		refresh();
+		zrefresh();
 		putpaw(str);
 		cmd = tgetcmd();
 		if (isprint(cmd) && i < STRMAX) {
@@ -264,7 +264,7 @@ static Boolean replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
 		if (*query) {
 replace:
 			echo("Replace? ");
-			refresh();
+			zrefresh();
 input:
 			switch (tchar = tgetcmd()) {
 			case ' ':
@@ -344,7 +344,7 @@ input:
 			binstr(new);
 		}
 		if (*query && tchar == ',') {
-			refresh();
+			zrefresh();
 			if (ask("Confirm? ") != YES) {
 				/* change it back */
 				if (type == REGEXP) {

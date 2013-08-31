@@ -70,7 +70,7 @@ void execute(void)
 #ifdef PIPESH
 	fd_set fds = SelectFDs;
 
-	refresh();
+	zrefresh();
 
 	if (cpushed)
 		dotty();
@@ -80,7 +80,7 @@ void execute(void)
 		while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
 #ifdef SYSV4
 			checkpipes(1);
-			refresh();
+			zrefresh();
 #endif
 			fds = SelectFDs;
 		}
@@ -89,7 +89,7 @@ void execute(void)
 			dotty();
 	}
 #else
-	refresh();
+	zrefresh();
 	dotty();
 #endif
 }

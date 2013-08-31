@@ -261,7 +261,7 @@ void error(char *);
 void readvfile(void);
 void redisplay(void);
 void reframe(void);
-void refresh(void);
+void zrefresh(void);
 void regerr(int);
 Boolean paw_resize(int);
 void save(struct buff *);

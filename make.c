@@ -75,7 +75,7 @@ void Zmake(void)
 void Zgrep(void)
 {
 	struct buff *mbuff;
-	char cmd[STRMAX * 2];
+	char cmd[STRMAX * 3], input[STRMAX + 1], files[STRMAX + 1];
 
 	if (!VARSTR(VGREP))
 		VARSTR(VGREP) = strdup(GREP_CMD);
@@ -85,10 +85,23 @@ void Zgrep(void)
 	if (Argp)
 		if (!set_cmd(VGREP, "grep: "))
 			return;
-	sprintf(cmd, "sh -c '%s ", VARSTR(VGREP));
-	if (getarg("grep: ", cmd + strlen(cmd), STRMAX))
+
+	getbword(input, STRMAX, bistoken);
+	if (getarg("Regex: ", input, STRMAX))
 		return;
-	strcat(cmd, "'");
+
+	if (Curbuff->bmode & CMODE)
+		strcpy(files, "*.[ch]");
+	else if (Curbuff->bmode & SHMODE)
+		strcpy(files, "*.sh");
+	else
+		strcpy(files, "*");
+	if (getarg("File(s): ", files, STRMAX))
+		return;
+
+	snprintf(cmd, sizeof(cmd), "sh -c '%s \"%s\" %s'",
+		 VARSTR(VGREP), input, files);
+
 	saveall(TRUE);
 #ifdef PIPESH
 	mbuff = cfindbuff(MAKEBUFF);

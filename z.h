@@ -134,7 +134,7 @@ extern char *Home;
 #define CONFBUFF	"*config*"
 
 #define MAKE_CMD	"make "
-#define GREP_CMD	"grep -n "
+#define GREP_CMD	"grep -n"
 
 /* ask return values */
 #define BANG		2

@@ -367,3 +367,5 @@ void undo_clear(struct buff *buff);
 void ufini(void);
 
 void findtag_part(void);
+
+void terminfo_dummy(void);

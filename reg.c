@@ -25,7 +25,7 @@ static void getrnge(Byte *);
 
 #define	NBRA	9
 
-#define PLACE(c)	ep[c >> 3] |= bittab[c & 07]
+#define PLACE(c)	(ep[c >> 3] |= bittab[c & 07])
 #define ISTHERE(c)	(ep[c >> 3] & bittab[c & 07])
 #define GETC()		(*sp++)
 #define PEEKC()		(*sp)
@@ -258,7 +258,7 @@ static Boolean ecmp(struct mark *start, int cnt)
 /* Compile the match string.
  * Returns 0 if ok, else errnum.
  */
-#define EOFCH	'\0'
+#define EOFCH	('\0')
 
 int compile(Byte *instring, Byte *ep, Byte *endbuf)
 {

@@ -57,7 +57,7 @@ void Zcapword(void)
 void Zlowword(void)
 {
 	if (Findstart()) {
-		for ( ; !bisend() && bistoken(); bmove1()) {
+		for (; !bisend() && bistoken(); bmove1()) {
 			Curbuff->bmodf = Curmodf = MODIFIED;
 			*Curcptr = tolower(*Curcptr);
 		}
@@ -69,7 +69,7 @@ void Zlowword(void)
 void Zupword(void)
 {
 	if (Findstart()) {
-		for ( ; !bisend() && bistoken(); bmove1()) {
+		for (; !bisend() && bistoken(); bmove1()) {
 			Curbuff->bmodf = Curmodf = MODIFIED;
 			*Curcptr = toupper(*Curcptr);
 		}
@@ -886,7 +886,8 @@ void Ztab(void)
 
 	if (VAR(VSPACETAB)) {
 		tcol = Tabsize - (bgetcol(FALSE, 0) % Tabsize);
-		sindent(tcol);
+		while (tcol-- > 0)
+			binsert(' ');
 	} else
 		binsert('\t');
 }

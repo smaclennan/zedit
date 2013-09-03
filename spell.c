@@ -94,80 +94,80 @@ void Zspell(void)
 
 		/* process the word */
 		n = ispell(in, out, send + 1, buff);
-		if (n > 0) {
-			m = -1;
-			switch (*buff) {
-			case '*':		/* ok */
-			case '+':		/* ok with suffix removed */
-				break;
+		if (n <= 0)
+			continue;
+		m = -1;
+		switch (*buff) {
+		case '*':		/* ok */
+		case '+':		/* ok with suffix removed */
+			break;
 
-			case '&':		/* close matches */
-				pset(tmaxrow(), 0, PNUMCOLS);
-				for (m = 0, p = buff + 2; m < 6; ++m) {
-					e = strchr(p, ' ');
-					if (!e)
-						e = strchr(p, '\n');
-					if (!e || e == p)
-						break;
-					*e++ = '\0';
-					word[m][0] = m + '0';
-					word[m][1] = ' ';
-					strcpy(&word[m][2], p);
-					pout(word[m], FALSE);
-					p = e;
-				}
-				/* 'm' is now the number of matches -
-				 * drop thru */
-
-			case '#':		/* no match */
-				echo(SPELLSTRING);
-				zrefresh();		/* update mark */
-				cmd = tgetcmd();
-				switch (cmd) {
-				case ' ':		/* skip it */
+		case '&':		/* close matches */
+			pset(tmaxrow(), 0, PNUMCOLS);
+			for (m = 0, p = buff + 2; m < 6; ++m) {
+				e = strchr(p, ' ');
+				if (!e)
+					e = strchr(p, '\n');
+				if (!e || e == p)
 					break;
-
-				case 'A':		/* accept */
-				case 'a':
-					*send = '@';
-					ispell(in, out, send, buff);
-					break;
-
-				case 'I':	/* insert in dictionary */
-				case 'i':
-					*send = '*';
-					ispell(in, out, send, buff);
-					break;
-
-				case 'R':		/* replace */
-				case 'r':
-					*word[0] = '\0';
-					rc = getarg(PROMPT, word[0], STRMAX);
-					if (rc == ABORT) {
-						bswappnt(Curbuff->mark);
-						continue;
-					}
-					sreplace(word[0]);
-					break;
-
-				default:
-					if (isdigit(cmd)) {
-						n = cmd - '0';
-						if (n < m)
-							sreplace(word[n] + 2);
-					} else {
-						tbell();
-						if (Keys[cmd] == ZABORT)
-							goto abort;
-					}
-					break;
-				}
-				break;
-
-			default:		/* invalid */
-				error("Unable to start ispell");
-				goto abort;
+				*e++ = '\0';
+				word[m][0] = m + '0';
+				word[m][1] = ' ';
+				strcpy(&word[m][2], p);
+				pout(word[m], FALSE);
+				p = e;
 			}
+			/* 'm' is now the number of matches -
+			 * drop thru */
+
+		case '#':		/* no match */
+			echo(SPELLSTRING);
+			zrefresh();		/* update mark */
+			cmd = tgetcmd();
+			switch (cmd) {
+			case ' ':		/* skip it */
+				break;
+
+			case 'A':		/* accept */
+			case 'a':
+				*send = '@';
+				ispell(in, out, send, buff);
+				break;
+
+			case 'I':	/* insert in dictionary */
+			case 'i':
+				*send = '*';
+				ispell(in, out, send, buff);
+				break;
+
+			case 'R':		/* replace */
+			case 'r':
+				*word[0] = '\0';
+				rc = getarg(PROMPT, word[0], STRMAX);
+				if (rc == ABORT) {
+					bswappnt(Curbuff->mark);
+					continue;
+				}
+				sreplace(word[0]);
+				break;
+
+			default:
+				if (isdigit(cmd)) {
+					n = cmd - '0';
+					if (n < m)
+						sreplace(word[n] + 2);
+				} else {
+					tbell();
+					if (Keys[cmd] == ZABORT)
+						goto abort;
+				}
+				break;
+			}
+			break;
+
+		default:		/* invalid */
+			error("Unable to start ispell");
+			goto abort;
 		}
 	}
 abort:

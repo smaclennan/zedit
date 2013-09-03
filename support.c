@@ -233,7 +233,8 @@ void tindent(int arg)
 	if (VAR(VSPACETAB) == 0)
 		for (; arg >= Tabsize; arg -= Tabsize)
 			binsert('\t');
-	sindent(arg);
+	while (arg-- > 0)
+		binsert(' ');
 }
 
 int bisspace(void)

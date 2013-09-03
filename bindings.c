@@ -149,25 +149,24 @@ void Zdispbinds(void)
 	}
 	echo("Please Wait...");
 	out("COMMAND                            PERMS     BINDING\n", fp);
-	for (f = 0; f < NUMFUNCS; ++f)
-		if (Cnames[f].fnum != ZNOTIMPL && Cnames[f].fnum != ZINSERT) {
-			sprintf(line, "%-35s %c       ", Cnames[f].name,
-				Cmds[Cnames[f].fnum][1] == Znotimpl ? '-' : 'p'
-				);
-			out(line, fp);
-			found = FALSE;
-			for (k = 0; k < NUMKEYS; ++k)
-				if (Keys[k] == Cnames[f].fnum)
-					if (notdup_key(k)) {
-						if (found)
-							outto(fp, 45);
-						out(dispkey(k, line), fp);
-						out("\n", fp);
-						found = TRUE;
-					}
-			if (!found)
-				out("Unbound\n", fp);
-		}
+	for (f = 0; f < NUMFUNCS; ++f) {
+		if (Cnames[f].fnum == ZNOTIMPL || Cnames[f].fnum == ZINSERT)
+			continue;
+		sprintf(line, "%-35s %c       ", Cnames[f].name,
+			Cmds[Cnames[f].fnum][1] == Znotimpl ? '-' : 'p');
+		out(line, fp);
+		found = FALSE;
+		for (k = 0; k < NUMKEYS; ++k)
+			if (Keys[k] == Cnames[f].fnum && notdup_key(k)) {
+				if (found)
+					outto(fp, 45);
+				out(dispkey(k, line), fp);
+				out("\n", fp);
+				found = TRUE;
+			}
+		if (!found)
+			out("Unbound\n", fp);
+	}
 	btostart();
 	if (!fp)
 		Curbuff->bmodf = FALSE;

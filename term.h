@@ -25,10 +25,10 @@
 
 #define PREFLINE			10
 
-#define	CR	'\r'
-#define	NL	'\n'
-#define	ESC	'\33'
-#define DEL	'\177'
+#define	CR	('\r')
+#define	NL	('\n')
+#define	ESC	('\33')
+#define DEL	('\177')
 
 /* attributes - offesets into cm array in termcaps */
 #define T_STANDOUT			3
@@ -57,7 +57,6 @@ int _putchar(char);
 extern int Tabsize;
 #define twidth(ch)		chwidth(ch, Pcol - Tstart, FALSE)
 #define bwidth(ch, col)		chwidth(ch, col, TRUE)
-#define sindent(arg)		while (arg-- > 0) binsert(' ')
 
 #define showcursor(x)
 #define showmark(x)
@@ -66,7 +65,7 @@ extern int Tabsize;
 
 extern unsigned Cmdpushed, Cmdstack[];
 #define POPCMD()		Cmdstack[--Cmdpushed]
-#define PUSHCMD(cmd)		Cmdstack[Cmdpushed++] = cmd
+#define PUSHCMD(cmd)		(Cmdstack[Cmdpushed++] = cmd)
 
 #define wheight()		(Curwdo->last - Curwdo->first)
 

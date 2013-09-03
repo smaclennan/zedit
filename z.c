@@ -180,7 +180,7 @@ static void setup(int argc, char **argv)
 	Send	= bcremrk();
 	Sendp	= FALSE;
 
-	for ( ; optind < argc; ++optind, ++files)
+	for (; optind < argc; ++optind, ++files)
 		if (pathfixup(path, argv[optind]) == 0)
 			if (findfile(path) && !tbuff)
 				tbuff = Curbuff;

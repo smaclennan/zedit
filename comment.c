@@ -136,14 +136,14 @@ again:
 				newcpp(&start);
 
 				/* find comment end */
-				if (bstrsearch("*/", FORWARD)) {
-					bmrktopnt(&start);
-					if (bcsearch('\n')) {
-						bmove(-2);
-						if (Buff() == '\\')
-							goto again;
-					}
-				}
+				if (!bstrsearch("*/", FORWARD))
+					return;
+				bmrktopnt(&start);
+				if (!bcsearch('\n'))
+					return;
+				bmove(-2);
+				if (Buff() == '\\')
+					goto again;
 				return;
 			} else if (Buff() == '/') {
 				/* found c++ comment start */
@@ -295,7 +295,7 @@ void checkcomment(void)
 		Curbuff->comstate = 1;
 		start = Curbuff->comments;
 	}
-	for ( ; start; start = start->next)
+	for (; start; start = start->next)
 		if (bisbeforemrk(start->start))
 			break;
 		else if (bisbeforemrk(start->end) || bisatmrk(start->end)) {

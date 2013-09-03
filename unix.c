@@ -71,6 +71,24 @@ int readpipes(fd_set *fds)
 	return did_something;
 }
 
+static void exit_status(struct buff *tbuff, int status)
+{
+	if (status & 0xff)
+		message(tbuff, "Died.");
+	else {
+		status = status >> 8 & 0xff;
+		if (status == 0)
+			message(tbuff, "Done.");
+		else {
+			sprintf(PawStr,
+				"Exit %d.",
+				status);
+			message(tbuff, PawStr);
+		}
+	}
+	tbell();
+}
+
 /* Wait for dead children and cleanup.
  *		type == 0 on exit
  *		type == 1 on normal
@@ -104,22 +122,8 @@ int checkpipes(int type)
 					fclose(tbuff->out_pipe);
 				tbuff->out_pipe = NULL;
 				tbuff->child = EOF;
-				if (type == 1) {
-					if (status & 0xff)
-						message(tbuff, "Died.");
-					else {
-						status = status >> 8 & 0xff;
-						if (status == 0)
-							message(tbuff, "Done.");
-						else {
-							sprintf(PawStr,
-								"Exit %d.",
-								status);
-							message(tbuff, PawStr);
-						}
-					}
-					tbell();
-				}
+				if (type)
+					exit_status(tbuff, status);
 				break;
 			}
 	}

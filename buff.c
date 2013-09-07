@@ -355,7 +355,6 @@ void bdelete(unsigned quantity)
 	vsetmod(TRUE);
 }
 
-
 /* Delete from the point to the Mark. */
 void bdeltomrk(struct mark *tmark)
 {
@@ -388,7 +387,7 @@ int bgetcol(Boolean flag, int col)
 /* Insert a character in the current buffer. */
 void binsert(Byte new)
 {
-	register struct mark *btmark;
+	struct mark *btmark;
 
 	if (Curplen == PSIZE && !pagesplit())
 		return;
@@ -405,7 +404,6 @@ void binsert(Byte new)
 		if (btmark->mpage == Curpage && btmark->moffset >= Curchar)
 			++(btmark->moffset);
 	vsetmod(FALSE);
-
 }
 
 
@@ -435,7 +433,7 @@ Boolean bisaftermrk(struct mark *tmark)
 /* True if the point precedes the mark. */
 Boolean bisbeforemrk(struct mark *tmark)
 {
-	register struct page *tp;
+	struct page *tp;
 
 	if (!tmark->mpage || tmark->mbuff != Curbuff)
 		return FALSE;
@@ -450,9 +448,8 @@ Boolean bisbeforemrk(struct mark *tmark)
 /* Returns the length of the buffer. */
 long blength(struct buff *tbuff)
 {
-	register struct page *tpage;
-	struct page *spage;
-	register long len;
+	struct page *tpage, *spage;
+	long len;
 
 	Curpage->plen = Curplen;
 	spage = Curpage;
@@ -624,7 +621,7 @@ void bpnttomrk(struct mark *tmark)
 
 void bempty(void)
 {
-	register struct mark *btmark;
+	struct mark *btmark;
 
 	makecur(Curbuff->firstp);
 	while (Curpage->nextp)

@@ -27,7 +27,6 @@ The program is called Zedit, but the executable was always z. I liked
 the fact that if you say z the British/Canadian way (zed not zee) it
 has the word ed in it but only needs one letter.
 
-So why does the Makefile produce ze? When I worked at Toolsmiths other
-developers used Zedit. When making changes, I would create ze (z
-experimental) and when it was stable copy it over z. This way I didn't
-affect other users. That has just stuck over the years.
+So why does the Makefile produce ze? Zedit was my main editor. So z
+was the stable version and ze was the experimentatl version. If I
+broke ze, I still had z to edit with.

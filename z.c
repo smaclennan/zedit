@@ -18,6 +18,7 @@
  */
 
 #include "z.h"
+#include <stdarg.h>
 
 Boolean Initializing = TRUE;
 char *Home;

@@ -1,8 +1,8 @@
 .PHONY: all install install-help clean
 
 ZEXE = ze
-#CC = gcc
-CC = clang
+CC = gcc
+#CC = clang
 CFLAGS += -Wall -g
 CFLAGS += -pedantic
 MAKEFLAGS += --no-print-directory

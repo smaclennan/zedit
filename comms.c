@@ -903,3 +903,20 @@ void toendline(void)
 	if (bcsearch(NL))
 		bmove(-1);
 }
+
+void Zcwd(void)
+{
+	char path[PATHMAX], *p;
+
+	strcpy(path, Cwd);
+	if (getdname("CWD: ", path) == 0) {
+		p = strdup(path);
+		if (!p)
+			error("Not enough memory");
+		else if (chdir(p) == 0) {
+			free(Cwd);
+			Cwd = p;
+		} else
+			error("chdir failed.");
+	}
+}

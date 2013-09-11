@@ -31,9 +31,10 @@ int Verbose;
 char **Bnames;			/* array of ptrs to buffer names */
 int Numbuffs;			/* number of buffers */
 
+static char dbgfname[PATHMAX];
+
 static void setup(int, char **);
 static void usage(char *prog);
-static char *dup_pwent(struct passwd *);
 
 int main(int argc, char **argv)
 {
@@ -102,16 +103,17 @@ static void setup(int argc, char **argv)
 
 	Home = getenv("HOME");
 	if (!Home) {
-		Home = dup_pwent(getpwuid(geteuid()));
+		struct passwd *pw = getpwuid(getuid());
+		if (pw)
+			Home = strdup(pw->pw_dir);
 		if (!Home) {
-			Home = dup_pwent(getpwuid(getuid()));
-			if (!Home) {
-				puts("You don't exist!");
-				exit(1);
-			}
+			puts("You don't exist!");
+			exit(1);
 		}
 	}
-	Dbgname();
+
+	snprintf(dbgfname, sizeof(dbgfname), "%s/%s", Home, ZDBGFILE);
+	unlink(dbgfname);
 
 	Cmask = umask(0);	/* get the current umask */
 	umask(Cmask);		/* set it back */
@@ -224,6 +226,19 @@ static void setup(int argc, char **argv)
 
 	if (exitflag)
 		Zexit();
+}
+
+void Dbg(char *fmt, ...)
+{
+	FILE *fp = fopen(dbgfname, "a");
+	if (fp) {
+		va_list arg_ptr;
+
+		va_start(arg_ptr, fmt);
+		vfprintf(fp, fmt, arg_ptr);
+		va_end(arg_ptr);
+		fclose(fp);
+	}
 }
 
 /* Add the new bname to the Bname array.
@@ -342,30 +357,4 @@ static void usage(char *prog)
 		, prog);
 
 	exit(1);
-}
-
-void Zcwd(void)
-{
-	char path[PATHMAX], *p;
-
-	strcpy(path, Cwd);
-	if (getdname("CWD: ", path) == 0) {
-		p = strdup(path);
-		if (!p)
-			error("Not enough memory");
-		else if (chdir(p) == 0) {
-			free(Cwd);
-			Cwd = p;
-		} else
-			error("chdir failed.");
-	}
-}
-
-/* Dup a passwd entry pw_dir. */
-static char *dup_pwent(struct passwd *pw)
-{
-	if (pw == NULL)
-		return NULL;
-
-	return strdup(pw->pw_dir);
 }

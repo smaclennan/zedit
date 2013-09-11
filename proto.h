@@ -298,7 +298,6 @@ void vsetmod(Boolean);
 void vsetmrk(struct mark *);
 void vfini(void);
 int chwidth(Byte, int, Boolean);
-void wload(char *, int, int, unsigned long, int);
 void hangup(int);
 Boolean notdup_key(int k);
 
@@ -327,7 +326,6 @@ void unvoke(struct buff *, Boolean);
 
 
 void Dbg(char *fmt, ...);
-void Dbgname(void);
 void fcheck(void);
 
 

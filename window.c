@@ -23,14 +23,6 @@ struct wdo *Whead, *Curwdo;
 
 #define MINWDO		5		/* minimum window size */
 
-/* called at startup when out of memory */
-static void nomem(void)
-{
-	error("Out of memory.");
-	exit(1);
-}
-
-
 /* Create a new window pointer - screen info invalid */
 static struct wdo *wcreate(int first, int last)
 {
@@ -239,7 +231,7 @@ static Boolean sizewindow(int size)
 
 static int nopaw_resize;
 
-static inline void do_wsize(int orow)
+static void do_wsize(int orow)
 {
 	struct wdo *wdo;
 	Boolean changed = TRUE;
@@ -509,23 +501,11 @@ void bgoto(struct buff *buff)
 		cswitchto(buff);
 }
 
-/* These routines are ONLY callable at startup. */
-
-static struct wdo *Wstart;	/* Set in wload */
-
 void winit(void)
 {
-	if (Wstart == NULL) {
-		/* Create first window over entire screen. */
-		Whead = wcreate(Tstart, Rowmax - 2);
-		wswitchto(Whead);
-	} else {
-		/* We created the window[s] with wload[s]. */
-		while (Whead->prev)
-			Whead = Whead->prev;
-		wswitchto(Wstart);
-		wsize();
-	}
+	/* Create first window over entire screen. */
+	Whead = wcreate(Tstart, Rowmax - 2);
+	wswitchto(Whead);
 }
 
 void wfini(void)
@@ -535,41 +515,4 @@ void wfini(void)
 		wfree(Whead);
 		Whead = next;
 	}
-}
-
-void wload(char *bname, int first, int last, unsigned long sloc, int iscurrent)
-{
-	struct wdo *new;
-	struct buff *buff;
-
-#if SHELL
-	if (strcmp(bname, SHELLBUFF) == 0) {
-		/* invoke the shell */
-		buff = cmakebuff(SHELLBUFF, NULL);
-		if (buff == NULL)
-			nomem();
-		doshell();
-	}
-#endif
-	buff = cfindbuff(bname);
-	if (buff == NULL)
-		buff = cfindbuff(MAINBUFF);
-	bswitchto(buff);
-	new = wcreate(first, last);
-	if (new == NULL)
-		nomem();
-	mrktomrk(buff->mark, new->wmrk);
-	boffset(sloc);
-	bmrktopnt(new->wstart);
-	bpnttomrk(new->wpnt);	/* return it */
-	new->first = first;
-	new->last  = last;
-	if (Whead) {
-		Whead->next = new;
-		new->prev = Whead;
-	}
-	Whead = new;
-	if (iscurrent)
-		Wstart = new;
-	Rowmax = new->last + 2;
 }

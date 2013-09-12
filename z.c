@@ -200,7 +200,6 @@ static void setup(int argc, char **argv)
 	winit();
 
 	reframe();
-	setmodes(Curbuff);		/* start it off right! */
 
 	if (!Curbuff->mtime && Curbuff->fname)
 		echo("New File");

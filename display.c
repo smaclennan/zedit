@@ -21,6 +21,8 @@
 #include "assert.h"
 
 static int innerdsp(int from, int to, struct mark *pmark);
+static void modeflags(struct wdo *wdo);
+static char *setmodes(struct buff *);
 static void pawdisplay(struct mark *, struct mark *);
 
 struct mark *Sstart, *Psstart;	/* Screen start and 'prestart' */
@@ -263,6 +265,125 @@ void reframe(void)
 	Sendp = FALSE;
 	bpnttomrk(pmark);
 	unmark(pmark);
+}
+
+/* Redraw the modeline except for flags. */
+static void modeline(struct wdo *wdo)
+{
+	char str[COLMAX + 1]; /* can't use PawStr because of setmodes */
+	int len;
+
+	tsetpoint(wdo->last, 0);
+	tstyle(T_STANDOUT);
+	sprintf(str, ZFMT, ZSTR, VERSION, setmodes(wdo->wbuff),
+		wdo->wbuff->bname);
+	tprntstr(str);
+	if (wdo->wbuff->fname) {
+		len = (VAR(VLINES) ? 13 : 3) + strlen(str);
+		tprntstr(limit(wdo->wbuff->fname, len));
+	}
+	wdo->modecol = tgetcol();
+
+	/* space pad the line */
+	for (len = tmaxcol() - tgetcol(); len > 0; --len)
+		tprntchar(' ');
+	tstyle(T_NORMAL);
+}
+
+/* This routine will call modeline if wdo->modeflags == INVALID */
+static void modeflags(struct wdo *wdo)
+{
+	unsigned trow, tcol, line, col, mask;
+
+	trow = tgetrow();
+	tcol = tgetcol();
+
+	if (wdo->modeflags == INVALID)
+		modeline(wdo);
+
+	tstyle(T_STANDOUT);
+
+	if (VAR(VLINES)) {
+		struct buff *was = Curbuff;
+		bswitchto(wdo->wbuff);
+		blocation(&line);
+		col = bgetcol(FALSE, 0) + 1;
+		if (col > 999)
+			sprintf(PawStr, "%5u:???", line);
+		else
+			sprintf(PawStr, "%5u:%-3u", line, col);
+		PawStr[9] = '\0';
+		tsetpoint(wdo->last, tmaxcol() - 9);
+		tprntstr(PawStr);
+		bswitchto(was);
+	}
+
+	mask = delcmd() | (wdo->wbuff->bmodf ? 2 : 0);
+	if (!InPaw && wdo->modeflags != mask) {
+		tsetpoint(wdo->last, wdo->modecol);
+		tprntchar(mask & 2 ? '*' : ' ');
+		tprntchar(mask & 1 ? '+' : ' ');
+		wdo->modeflags = mask;
+	}
+
+	tstyle(T_NORMAL);
+	tgoto(trow, tcol);
+}
+
+/* local routine to set PawStr to the correct mode */
+static char *setmodes(struct buff *buff)
+{
+	if (!InPaw)	/* we should never be in the Paw but .... */
+		Curcmds = 0;
+
+	/* set all keys back to default */
+	Keys[CR] = CRdefault;
+	Keys[' '] = Keys['\175'] = Keys['#'] = Keys[':'] = ZINSERT;
+#if COMMENTBOLD
+	Keys['/'] = ZINSERT;
+#endif
+
+	/* Set PawStr to majour mode */
+	switch (buff->bmode & MAJORMODE) {
+	case CMODE:
+		strcpy(PawStr, "C");		break;
+	case SHMODE:
+		strcpy(PawStr, "sh");		break;
+	case TEXT:
+		strcpy(PawStr, "Text");		break;
+	default:
+		strcpy(PawStr, "Normal");	break;
+	}
+
+	/* Now setup any special keys */
+	if (buff->bmode & VIEW) {
+		/* view preempts the other modes */
+		Keys[CR] = ZNEXTLINE;
+		strcat(PawStr, " RO");
+	} else
+		switch (buff->bmode & MAJORMODE) {
+		case CMODE:
+			Keys[CR] = ZCINDENT;
+			Keys['\175'] = ZCINSERT; /* end brace */
+			Keys['#'] = ZCINSERT;
+			Keys[':'] = ZCINSERT;
+#if COMMENTBOLD
+			Keys['/'] = ZCINSERT;
+#endif
+			break;
+		case SHMODE:
+			Keys[CR] = ZCINDENT;
+			break;
+		case TEXT:
+			Keys[' '] = ZFILLCHK;
+			Keys[CR] = ZFILLCHK;
+			break;
+		}
+
+	if (buff->bmode & OVERWRITE)
+		strcat(PawStr, " OVWRT");
+	settabsize(buff->bmode);
+	return PawStr;
 }
 
 /* Set one windows modified flags. */

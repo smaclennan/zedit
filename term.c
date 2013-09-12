@@ -70,6 +70,22 @@ static void sigwinch(int sig)
 }
 #endif
 
+/* This is called before the windows are created */
+static void initline(void)
+{
+	int i;
+
+	sprintf(PawStr, "%s %s  Initializing", ZSTR, VERSION);
+	tclrwind();
+	tgoto(Rowmax - 2, 0);
+	tstyle(T_STANDOUT);
+	tprntstr(PawStr);
+	for (i = strlen(PawStr) + 1; i < Colmax; ++i)
+		tprntchar(' ');
+	tstyle(T_NORMAL);
+	tflush();
+}
+
 /* Initalize the terminal. */
 void tinit(void)
 {

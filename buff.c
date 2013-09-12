@@ -554,9 +554,11 @@ void bmove1(void)
 		makecur(Curpage->nextp);
 		Curchar = 0;
 		Curcptr = Cpstart;
-	} else
+	} else {
 		/* At EOB */
-		makeoffset(Curplen);
+		Curchar = Curplen;
+		Curcptr = Cpstart + Curplen;
+	}
 }
 
 Boolean bmove(int dist)

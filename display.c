@@ -145,15 +145,7 @@ void zrefresh(void)
 	--NESTED;
 }
 
-/* Test and clear modified flag on screen mark. */
-static inline Boolean btstmrk(struct mark *tmark)
-{
-	Boolean temp = tmark->modf;
-	tmark->modf  = FALSE;
-	return temp;
-}
-
-static inline int buff_col(void)
+static int buff_col(void)
 {	/* Current column after current buffer char */
 	return tgetcol() + twidth(Buff());
 }
@@ -176,7 +168,8 @@ static int innerdsp(int from, int to, struct mark *pmark)
 #ifdef HSCROLL
 		bmove(Hshift);
 #endif
-		if (btstmrk(&Scrnmarks[trow]) || !bisatmrk(&Scrnmarks[trow])) {
+		if (Scrnmarks[trow].modf || !bisatmrk(&Scrnmarks[trow])) {
+			Scrnmarks[trow].modf = FALSE;
 			bmrktopnt(&Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
 			col = Tstart;

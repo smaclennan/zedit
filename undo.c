@@ -73,10 +73,7 @@ static void recycle_undo(struct buff *buff)
 
 static inline int no_undo(struct buff *buff)
 {
-	if (buff == Paw || buff == Killbuff)
-		return TRUE;
-
-	return FALSE;
+	return buff == Paw || buff == Killbuff;
 }
 
 /* Exports */

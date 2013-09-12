@@ -120,7 +120,7 @@ Byte bpeek(void);
 int batoi(void);
 
 Boolean bmove(int);
-Boolean bmove1(void);
+void bmove1(void);
 #ifdef INT_IS_16BITS
 #define MAXMOVE		(0x7fff - 1024)
 

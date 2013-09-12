@@ -544,25 +544,19 @@ int bmakecol(int col, Boolean must)
  *
  * Since bmove(1) is used the most, a special call has been made.
  */
-Boolean bmove1(void)
+void bmove1(void)
 {
-	if (++Curchar < Curplen) {
+	if (++Curchar < Curplen)
 		/* within current page */
 		++Curcptr;
-		return TRUE;
-	}
-
-	if (Curpage->nextp) {
+	else if (Curpage->nextp) {
 		/* goto start of next page */
 		makecur(Curpage->nextp);
 		Curchar = 0;
 		Curcptr = Cpstart;
-		return TRUE;
-	}
-
-	/* At EOB */
-	makeoffset(Curplen);
-	return FALSE;
+	} else
+		/* At EOB */
+		makeoffset(Curplen);
 }
 
 Boolean bmove(int dist)

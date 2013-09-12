@@ -1,8 +1,8 @@
 #!/bin/sh
 
-OPTS="--suppressions=valgrind.supp"
-OPTS="$OPTS --leak-check=full"
+OPTS="--leak-check=full"
 OPTS="$OPTS --show-reachable=yes"
 OPTS="$OPTS -v"
+#OPTS="$OPTS --suppressions=valgrind.supp"
 
 valgrind $OPTS ./ze $* 2>valgrind.out

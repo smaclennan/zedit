@@ -3,7 +3,7 @@
 ZEXE = ze
 #CC = gcc
 CC = clang -fno-color-diagnostics
-CFLAGS += -Wall -g
+CFLAGS += -Wall -g -O3
 CFLAGS += -pedantic
 MAKEFLAGS += --no-print-directory
 

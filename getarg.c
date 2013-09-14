@@ -238,15 +238,23 @@ void pinsert(void)
 /* Use instead of Znewline when in PAW */
 void pnewline(void)
 {
-	char cmdstr[STRMAX + 1], **ptr;
-
 	if (Cnum) {
+		char cmdstr[STRMAX + 1], **ptr;
+		int i, found = 0, len;
+
 		getbtxt(cmdstr, STRMAX);
-		for (Cret = 0, ptr = Carray;
-		     Cret < Cnum && strcasecmp(cmdstr, *ptr);
-		     ++Cret, ptr += Csize)
-			;
-		if (Cret == Cnum) {
+		len = strlen(cmdstr);
+		for (i = 0, ptr = Carray; i < Cnum; ++i, ptr += Csize)
+			if (strncasecmp(cmdstr, *ptr, len) == 0) {
+				Cret = i;
+				if (strcasecmp(cmdstr, *ptr) == 0) {
+					/* Exact match */
+					InPaw = FALSE;
+					return;
+				} else
+					++found;
+			}
+		if (found != 1) {
 			tbell();
 			return;
 		}

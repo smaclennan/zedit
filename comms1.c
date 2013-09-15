@@ -66,9 +66,7 @@ static struct _amode
 	{ "Normal",	NORMAL	},
 	{ "SH",		SHMODE	},
 	{ "Text",	TEXT	},
-	{ "View",	VIEW	},
-#define TEXTMODE	4
-#define VIEWMODE	5
+#define TEXTMODE	3
 };
 #define AMODESIZE	sizeof(struct _amode)
 #define NUMMODES	(sizeof(modes) / AMODESIZE)
@@ -78,18 +76,11 @@ void Zmode(void)
 	int i, rc;
 
 	/* find the current mode for default */
-	for (i = 0; i < NUMMODES && !(modes[i].mode & Curbuff->bmode); ++i)
+	for (i = 0; i < (NUMMODES - 1) && !(modes[i].mode & Curbuff->bmode); ++i)
 		;
-	if (Curbuff->bmode & VIEW)
-		i = VIEWMODE;
-	else if (i == NUMMODES)
-		i = TEXTMODE;
 	rc = getplete("Mode: ", modes[i].str, (char **)modes,
 		      AMODESIZE, NUMMODES);
-	if (rc == VIEWMODE) {
-		Curbuff->bmode ^= VIEW;
-		Curwdo->modeflags = INVALID;
-	} else if (rc != -1)
+	if (rc != -1)
 		toggle_mode(modes[rc].mode);
 }
 
@@ -201,7 +192,7 @@ void toggle_mode(int mode)
 		Curbuff->comchar = 0;
 #endif
 
-	Curbuff->bmode = (Curbuff->bmode & MODEMASK) | new;
+	Curbuff->bmode = (Curbuff->bmode & ~MAJORMODE) | new;
 	if (mode) {
 		Curwdo->modeflags = INVALID;
 		tsave = Tabsize;

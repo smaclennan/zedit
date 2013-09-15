@@ -348,33 +348,31 @@ static char *setmodes(struct buff *buff)
 		strcpy(PawStr, "Normal");	break;
 	}
 
-	/* Now setup any special keys */
-	if (buff->bmode & VIEW) {
-		/* view preempts the other modes */
-		Keys[CR] = ZNEXTLINE;
+	if (buff->bmode & VIEW)
 		strcat(PawStr, " RO");
-	} else
-		switch (buff->bmode & MAJORMODE) {
-		case CMODE:
-			Keys[CR] = ZCINDENT;
-			Keys['\175'] = ZCINSERT; /* end brace */
-			Keys['#'] = ZCINSERT;
-			Keys[':'] = ZCINSERT;
-#if COMMENTBOLD
-			Keys['/'] = ZCINSERT;
-#endif
-			break;
-		case SHMODE:
-			Keys[CR] = ZCINDENT;
-			break;
-		case TEXT:
-			Keys[' '] = ZFILLCHK;
-			Keys[CR] = ZFILLCHK;
-			break;
-		}
-
 	if (buff->bmode & OVERWRITE)
 		strcat(PawStr, " OVWRT");
+
+	/* Now setup any special keys */
+	switch (buff->bmode & MAJORMODE) {
+	case CMODE:
+		Keys[CR] = ZCINDENT;
+		Keys['\175'] = ZCINSERT; /* end brace */
+		Keys['#'] = ZCINSERT;
+		Keys[':'] = ZCINSERT;
+#if COMMENTBOLD
+		Keys['/'] = ZCINSERT;
+#endif
+		break;
+	case SHMODE:
+		Keys[CR] = ZCINDENT;
+		break;
+	case TEXT:
+		Keys[' '] = ZFILLCHK;
+		Keys[CR] = ZFILLCHK;
+		break;
+	}
+
 	settabsize(buff->bmode);
 	return PawStr;
 }

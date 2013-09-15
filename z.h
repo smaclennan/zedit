@@ -66,7 +66,6 @@ extern char *Home;
 
 #define READ_MODE	O_RDONLY
 #define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC)
-#define UPDATE_MODE	(O_RDWR   | O_CREAT | O_TRUNC)
 
 #define Psep(c)		(c == '/')
 #define PSEP		'/'
@@ -89,35 +88,27 @@ extern char *Home;
 #define QUERY		3			/* query replace */
 #define SGLOBAL		3			/* global search */
 #define AGAIN		-1			/* go again */
-#define ALLFILES	"*.*"
 #define NUMASCII	256			/* number of ascii chars */
 #define ESIZE		256			/* reg exp buffer size */
 #define BOOKMARKS	10			/* number of book marks */
 
 /*
  * BUFFER MODES
- *
- * CCxSMMMm
- *	m minor  mode
- *	M majour mode
- *	S super  mode
- *	C comment char
  */
 /* minor modes - 0 to all allowed */
 #define OVERWRITE			0x001
 #define EXACT				0x002
+#define VIEW				0x004
 /* majour modes - only one allowed */
 #define NORMAL				0x010
 #define CMODE				0x020
 #define TEXT				0x040
 #define SHMODE				0x080
 /* super modes - 0 to all allowed */
-#define VIEW				0x40000
-#define SYSBUFF				0x80000
+#define SYSBUFF				0x1000
 /* some handy macro for buffer modes */
-#define MAJORMODE			(0xfff0)
+#define MAJORMODE			(0xff0)
 #define PROGMODE			(CMODE | SHMODE)
-#define MODEMASK			(~(NORMAL | TEXT | PROGMODE))
 
 /* System buffer names */
 #define UNTITLED	"NoFile"	/* for buffers with no fname */

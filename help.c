@@ -206,10 +206,9 @@ void Zhelp(void)
 		if (fp == NULL)
 			return;
 		was = Curbuff;
-		if (wuseother(HELPBUFF)) {
+		if (wuseother(HELPBUFF))
 			strcpy(Lbufname, was->bname);
-			Curbuff->bmode |= VIEW;
-		} else {
+		else {
 			fclose(fp);
 			break;
 		}

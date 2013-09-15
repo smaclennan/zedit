@@ -12,10 +12,9 @@ EXE=./zhsort
 # we need the version for the title page
 if [ x$1 = x ]
 then
-	echo -n "Version? "; read version
-	[ "$version" ] || exit
+    version=`awk -F\" '/#define VERSION/ { print $2 }' $ZSRC/z.h`
 else
-	version=$1
+    version=$1
 fi
 
 make clean all

@@ -51,7 +51,7 @@
 #define COMMENTBOLD	1		/* bold C comments */
 #define WANT_CPPS       0		/* also bold C preprocessor lines */
 #define UNDO            1		/* EXPERIMENTAL undo code */
-#define HELP		1		/* Help */
+#define HELP		0		/* Help */
 
 #define SHELL		1		/* shell interface */
 #define SPELL		1		/* ispell interface */

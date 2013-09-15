@@ -148,12 +148,12 @@ void Zdispbinds(void)
 		wuseother(LISTBUFF);
 	}
 	echo("Please Wait...");
-	out("COMMAND                            PERMS     BINDING\n", fp);
+	out("COMMAND                            PAW    BINDING\n", fp);
 	for (f = 0; f < NUMFUNCS; ++f) {
 		if (Cnames[f].fnum == ZNOTIMPL || Cnames[f].fnum == ZINSERT)
 			continue;
-		sprintf(line, "%-35s %c       ", Cnames[f].name,
-			Cmds[Cnames[f].fnum][1] == Znotimpl ? '-' : 'p');
+		sprintf(line, "%-35s %c     ", Cnames[f].name,
+			Cmds[Cnames[f].fnum][1] == Znotimpl ? 'n' : 'y');
 		out(line, fp);
 		found = FALSE;
 		for (k = 0; k < NUMKEYS; ++k)

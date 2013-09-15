@@ -880,9 +880,11 @@ int bwritefile(char *fname)
 	}
 
 	/* cleanup */
-	if (status)
+	if (status) {
 		clrecho();
-	else if (bak) {
+		/* If we saved the file... it isn't read-only */
+		Curbuff->bmode &= ~VIEW;
+	} else if (bak) {
 		if (sbuf.st_nlink) {
 			cp(bakname, fname);
 			unlink(bakname);

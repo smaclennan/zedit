@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<title>Zedit</title>
+<style type="text/css">
+<!--
+body {
+background-color: #C0C0C0;
+margin: 1em 8% 0 8%;
+/* ie9 defaults to small */
+font-size: medium;
+}
+-->
+</style>
+</head>
+<body bgcolor="#C0C0C0">
+<h1>Appendix C: Unix Version</h1>
+
+<h2>Files</h2>
+<p>Files are an important part of any editor, therefore, Zedit tries to
+make file name entry as easy as possible. The Zedit file commands all
+support file name completion. If you are typing in a file name and hit
+&lt;tab&gt;, Zedit will try to complete the file name much like
+Command Completion. A &lt;space&gt; will display all possible matches.
+<p>Zedit also understands:
+<table border=1>
+<tr><td>.<td>The current directory.
+<tr><td>..<td>The previous directory.
+<tr><td>~<td>Your home directory.
+<tr><td>~&lt;loginname&gt;<td>The home directory for loginname.
+</table>
+<p>Zedit limits a full path name to 128 characters.
+<p>For backups, Zedit appends a ~ to the filename. On SYS5 machines, it
+will place the ~ at the 14th character.
+
+<h2>Shell Commands</h2>
+<p>Zedit supports piped shells and makes on Unix machines. This allows you
+to have a shell running at the same time as you are editing. It also
+allows a make and editing at the same time or makes without leaving the
+editor. It also allows you to perform Next Error commands while the make
+is still in progress.
+
+<h2>Terminal Interfaces</h2>
+<p>Zedit supports two standard Unix terminal interface definitions:
+terminfo, and ANSI.
+
+<p>Terminfo is a second standard terminal database (after termcaps) that
+is compiled for faster database access. It also supports a wider range
+of keys and terminal characteristics.
+<p>The ANSI terminal interface emulates a basic vt100.
+
+<h3>Terminfo</h3>
+
+<p>This section will describe what Zedit requires from terminfo. It is
+assumed the user knows what terminfo is and how to configure it. A
+description of the terminfo database is in the Unix manual.
+<p>To correctly display the text on the screen, Zedit needs some of the
+terminfo display variables. Zedit will not run if the terminfo entry
+cannot be found for your specified TERM variable. It also requires, at a
+minimum, the clear_screen, clr_eol, and cursor_address variables. With
+these basic strings Zedit will operate. There are, however, some other
+variables which may need to be set for correct operation.
+<p>The first important optional variables are columns and lines. If they
+are non-existent, Zedit will default to 80 columns and 24 lines. Zedit
+also has a maximum of 132 columns and 40 lines.
+<p>Zedit will send init_1string thru init_3string if found at startup. It
+sends the reset_1string at exit.
+<p>If reverse is defined, Zedit will display the mode line in reverse
+video, compensating for magic_cookie_glitch if necessary. If
+magic_cookie_glitch is not set and reverse is, Zedit will display the
+mark in reverse video. If bold is set and magic_cookie_glitch is not,
+Zedit will display the line continuation character (>) and control
+characters in bold.
+<p>Zedit will also use all the key definitions in the file. Use the Display
+Bindings command to find the default bindings for these keys.
+
+<h3>ANSI</h3>
+<p>The ANSI version supports an ANSI terminal, which is basically a
+vt100. No external files are required for ANSI. ANSI supports all
+Zedit screen features. This is the default.
+</body>
+</html>

@@ -4,3 +4,4 @@ all:	zhack zhsort doc2html
 
 clean:
 	rm -f zhack zhsort doc2html
+	rm -f app-[ab].html

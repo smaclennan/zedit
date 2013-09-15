@@ -76,9 +76,8 @@ octal/decimal/hexadecimal numbers. If a number begins with a '0x' it is
 assumed to be hexadecimal, if it begins with a '0' it is assumed to be
 octal, all others are assumed to be decimal. The output is displayed in
 decimal with hexadecimal in brackets "()". Spaces and tabs are allowed
-but are not necessary between the numbers and their operators. The
-calculator does not follow order of operations. A Universal Argument is
-ignored.
+but are not necessary between the numbers and their operators. A Universal
+Argument is ignored.
 .sp 0
 :Capitalize Word
 
@@ -201,17 +200,8 @@ repeat.
 
 Inserts a list of the commands and their current bindings into the .list
 buffer. It deletes the contents of the .list buffer. Keys bound to NULL
-or Insert are not displayed. The PERMS column displays which buffers the
-command is available in. The following table explains the characters in
-the perms column.
-.(l
-Letter		Buffer
-------		----------------
-r		All readable
-w		All writable
-p		PAW
--		Not allowed
-.)l
+or Insert are not displayed. The PAW column displays if the command is allowed in the PAW.
+
 A Universal Argument prompts for an output file to put the list in.
 .sp 0
 :Empty Buffer
@@ -516,7 +506,7 @@ causes the command to repeat.
 :NULL
 
 Used to unbind a key. This is bound to all the unbound keys. A Universal
-Argument is ignored.
+Argument does nothing Arg times.
 .sp 0
 :One Window
 

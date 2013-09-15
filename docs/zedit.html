@@ -136,9 +136,9 @@ variable.
 
 <h3>Major Modes</h3>
 
-<p>Every buffer has one major mode and possibly one or two minor
+<p>Every buffer has one major mode and optionally one or more minor
 modes. The major modes affect operations in the buffer and are mutually
-exclusive. The major modes are: Normal, C, Text, and View. Normal is the
+exclusive. The major modes are: Normal, C, Shell, and Text. Normal is the
 regular editing mode for the editor. Other modes are used to change the
 normal operation of the editor.
 
@@ -163,6 +163,10 @@ If there is no match, Zedit will beep.
 <p>If Match is 2, Zedit will insert a ')' or ']' for every '(' or '['
 typed.
 
+<h4>Shell Mode</h4>
+
+<p>Shell mode is a lot like C mode, except it expects shell type
+comments.
 
 <h4>Text Mode</h4>
 
@@ -183,38 +187,30 @@ default if the variable Normal is turned off. It also gets turned on by
 file names ending in ".doc".
 
 
-<h4>View Mode</h4>
-
-<p>View mode is automatically set for read only files. In View mode,
-commands that modify the buffer are not allowed. The Newline character
-is changed to perform a Next Line command. Commands available in a View
-buffer are marked by an 'r' in the perms column of Appendix A and the
-output from the Display Bindings command.
-
-
 <h3>Minor Modes</h3>
 
-<p>Along with the major modes, the editor has two minor modes, overwrite
-and Exact. All or none of the minor modes can be active in a given
-buffer.
+<p>Along with the major modes, the editor has three minor modes: view,
+overwrite and exact. All or none of the minor modes can be active in a
+given buffer.
 
+
+<h4>View Mode</h4>
+
+<p>View mode is set automatically for read only files. It is just a
+hint that you cannot write the current file.
+
+<p>Hint: You can use Write File to write the file to another file name.
 
 <h4>Overwrite Mode</h4>
 
- The editor is usually in insert mode. This means characters are
+<p>The editor is usually in insert mode. This means characters are
 inserted at the Point, moving all the characters after the Point over
 one character. The Point is left on the character it was originally on.
 In overwrite mode, characters are placed over top of the character the
 Point is on and the Point is moved forward one space. Overwrite mode is
-set with the Insert/Overwrite command. On PCs, insert mode is signified
-by a blinking underline cursor, and overwrite by a blinking block
-cursor. On Unix systems, the word "Ovwrt" is displayed in the status
-line after the major mode. The status line in the above example was in
-insert mode, in overwrite mode it would display:
+set with the Insert/Overwrite command.
 
-.ce
-Zedit 3.0  (Text Ovwrt)  zedit.doc: /home/zedit/doc/zedit.doc *+
-
+<p>In overwrite mode the word "Ovwrt" is displayed in the status line.
 
 <h4>Exact Mode</h4>
 
@@ -226,7 +222,6 @@ insensitivity is set with the Toggle Case command. In Exact mode,
 prompts that are case insensitive are displayed in uppercase. For
 example, the prompt for a search string is usually "Search". If Exact is
 off, it would be "SEARCH:".
-
 
 <h2>Kill Buffer</h2>
 
@@ -357,32 +352,33 @@ Variable, and Switch Buffer.
 All of these files are optional, however, help commands are unavailable
 without the help file. These files are used to customize the editor.
 
-<p>The file names for the configuration files are in the appendix for your
-specific machines.
+<p>To find configuration files, Zedit first looks in the users home
+directory. If it is not there, the configuration directory is checked.
 
+<p>Zedit checks the following for the configuration directory:
+	<ol>
+	  <li>The -c option on the command line
+	  <li>The environment variable ZPATH
+	  <li>The hardcoded path /usr/share/zedit
+	</ol>
 
 <h2>Bindings File</h2>
 
-<p>The bindings file is used to store user key bindings. Zedit comes with
-a default set of key bindings built in, it does not need a bindings
-file. This file is created with the Save Bindings command. It first
-tries to save the file in the directory pointed to by the HOME
-environment variable. If HOME is not set, it saves the file in the
-current directory. At startup, Zedit tries to load the bindings file
-from the directory that the Zedit executable is in, then in the
-directory pointed to by the HOME environment variable, then in the
-current directory. Each file found overwrites the previous.
+<p>The bindings file (.bindings.z) is used to store user defined key
+bindings. Zedit comes with a default set of key bindings built in, it
+does not need a bindings file. This file is created with the Save
+Bindings command.
 
-<p>The bindings file is a binary memory image.
+<p>Note: The bindings file is a binary memory image.
 
 
 <h2>Configuration File</h2>
 
-<p>The config file is used to save the configuration variables which allow
-customization of the editor. These variables are given defaults by
-Zedit, can be assigned values in the config file, or can be modified
-at run time. Since they are given built in defaults, the config file
-is optional.
+<p>The config file (.config.z) is used to save the configuration
+variables which allow customization of the editor. These variables are
+given defaults by Zedit, can be assigned values in the config file, or
+can be modified at run time. Since they are given built in defaults,
+the config file is optional.
 
 <p>The format for specifying a variable in the config file is:
 &lt;variable_name&gt; &lt;variable&gt;
@@ -394,16 +390,10 @@ space or tab. The variable is a number for DECIMAL or FLAG variables and
 a string for STRING variables. STRING variables can contain spaces. Each
 variable must be on a separate line. The variables are case insensitive.
 
-<p>Zedit looks for the config first in the directory that the Zedit
-executable was in, then the directory pointed to by the environment
-variable HOME, then the current directory. All files found are loaded,
-with later files taking precedence.
-
-
 <h2>Help File</h2>
 
-<p>The help file contains the text for Zedits on-line help command. This
-file must exist for these commands to work.
+<p>The help file (help.z) contains the text for Zedits builtin help
+command. This file must exist for these commands to work.
 
 <p>While a help file is supplied with the editor, you might want to
 customize it. The help file MUST be in alphabetical order by command
@@ -657,7 +647,13 @@ and hit Newline.
 
 <p>To differentiate between the different bases, hexadecimal numbers begin
 with 0x or 0X, octal numbers begin with 0, and decimal numbers begin
-with 1 through 9. The bases can be mixed within a given command string.
+with 1 through 9. The bases can be mixed within a given command
+string.
+
+<hr>
+<h2><a href="app-a.html">Appendix A: Commands</a></h2>
+<h2><a href="app-b.html">Appendix B: Variables</a></h2>
+<h2><a href="unix.html">Appendix C: Unix</a></h2>
 
   </body>
   </html>

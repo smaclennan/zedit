@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <errno.h>
 
+int verbose;
 
 static void header(FILE *out)
 {
@@ -59,7 +60,8 @@ static void help(FILE *in, FILE *out)
 	while (fgets(line, sizeof(line), in))
 	       if (strcmp(line, ".sp 0\n") == 0)
 		       break;
-	       else printf("Skipping: %s", line);
+	       else if (verbose)
+		       fprintf(stderr, "Skipping: %s", line);
 
 	/* SAM Need doc about help in the manual proper */
 	fputs("<p>Enters the help subsytem if help is enabled.\n"
@@ -73,70 +75,46 @@ int main(int argc, char *argv[])
 	int c;
 	char *heading = NULL;
 
-	while ((c = getopt(argc, argv, "H:")) != EOF)
+	while ((c = getopt(argc, argv, "H:v")) != EOF)
 		if (c == 'H')
 			heading = optarg;
+		else if (c == 'v')
+			++verbose;
 		else {
 			puts("Sorry!");
 			exit(1);
 		}
 
-	if (optind == argc) {
-		puts("I need a file.");
-		exit(1);
-	}
-
-	FILE *in = fopen(argv[optind], "r");
-	if (!in) {
-		perror(argv[optind]);
-		exit(1);
-	}
-
-	char outname[255], *p;
-	snprintf(outname, sizeof(outname) - 4, "%s", argv[optind]);
-	p = strrchr(outname, '.');
-	if (!p)
-		exit(1);
-	strcpy(p, ".html");
-	FILE *out = fopen(outname, "w");
-	if (!out) {
-		perror(outname);
-		exit(1);
-	}
-
-	header(out);
+	header(stdout);
 
 	if (heading)
-		fprintf(out, "<h1>%s</h1>\n\n", heading);
+		fprintf(stdout, "<h1>%s</h1>\n\n", heading);
 
-	char line[128];
+	char line[128], *p;
 	int need_para = 0;
-	while (fgets(line, sizeof(line), in)) {
+	while (fgets(line, sizeof(line), stdin)) {
 		if ((p = strrchr(line, '\n'))) *p = '\0';
 		if (*line == ':')
-			fprintf(out, "<p><h3>%s</h3>\n", line + 1);
+			fprintf(stdout, "<p><h3>%s</h3>\n", line + 1);
 		else if (*line == '\0')
 			need_para = 1;
 		else if (strcmp(line, ".sp 0") == 0)
-			fputs("\n", out);
+			fputs("\n", stdout);
 		else if (strcmp(line, ".(l") == 0) {
-			do_list(in, out);
+			do_list(stdin, stdout);
 			need_para = 1;
 		} else if (strcmp(line, ".(b C") == 0)
-			help(in, out);
+			help(stdin, stdout);
 		else {
 			if (need_para) {
-				fputs("<p>", out);
+				fputs("<p>", stdout);
 				need_para = 0;
 			}
-			fprintf(out, "%s\n", line);
+			fprintf(stdout, "%s\n", line);
 		}
 	}
 
-	footer(out);
-
-	fclose(in);
-	fclose(out);
+	footer(stdout);
 
 	return 0;
 }

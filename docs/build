@@ -5,33 +5,28 @@ CC=cc
 CFLAGS=-O
 EXE=./zhsort
 
+# So docs/build works
+cd `dirname $0`
+
 # parse the arguments
-[ x$1 = x-h ] && { echo "usage: $0 [-a] [version]"; exit; }
-[ x$1 = x-a ] && { all=1; shift; }
+[ x$1 = x-h ] && { echo "usage: $0 [version]"; exit; }
 
 # we need the version for the title page
-if [ x$1 = x ]
-then
+if [ x$1 = x ]; then
     version=`awk -F\" '/#define VERSION/ { print $2 }' $ZSRC/z.h`
 else
     version=$1
 fi
 
-make clean all
-
-# if these don't exist, rebuild all
-#[ -f help.z -a -f appab.doc ] || all=1
-# Computers are much faster now. Always rebuild all.
-all=1
+make clean all || exit 1
 
 echo "Checking commands..."
-$EXE c command.doc >cmd.tmp
-[ $? -eq 0 ] || { echo "Errors: aborted"; rm -f cmd.tmp; exit; }
+$EXE c command.doc >cmd.tmp || { echo "Errors: aborted"; rm -f cmd.tmp; exit; }
 mv cmd.tmp command.doc
 echo "Checking variables..."
-$EXE v variable.doc >var.tmp
-[ $? -eq 0 ] || { echo "Errors: aborted"; rm -f var.tmp; exit; }
+$EXE v variable.doc >var.tmp || { echo "Errors: aborted"; rm -f var.tmp; exit; }
 mv var.tmp variable.doc
+
 echo "Updating help.z"
 # SAM no top or bottom margins, long lines
 echo ".ll 78"	> help.head
@@ -43,71 +38,7 @@ echo ":ZEDIT" | nroff -me help.head command.doc variable.doc - |
    ./zhack >help.z
 rm help.head
 
-# create appendix A and B if necessary
-[ -z "$all" ] && { echo -n "Create appendicies A and B? "; read go; }
-if [ -n "$all" -o "$go" = y ]
-then
-	[ "$go" = y ] || echo "Creating appendix A and appendix B"
-	cat >appab.doc <<END_APPA
-.bp
-.ce
-Appendix A: Command Descriptions
-.(x t
-Appendix A: Command Descriptions
-.)x \\n%
-.sp 2
-END_APPA
-	sed -e 's/^://' -e 's/sp 0/sp 2/' command.doc >>appab.doc
-	cat >>appab.doc <<END_APPB
-.bp
-.ce
-Appendix B: Variable Descriptions
-.(x t
-Appendix B: Variable Descriptions
-.)x \\n%
-.sp 2
-END_APPB
-	sed -e 's/^://' -e 's/sp 0/sp 2/' variable.doc >>appab.doc
-fi
-
-echo "Creating manual for version $version"
-# zhead contains nroff setup stuff
-#laser .ll 72
-#laser .pl 76
-cat >zhead <<END_TITLE
-.pl 75
-.po 12
-.fo ''- Zedit $version -'%
-.de \$0
-.(x t
-\\\\\$2 \\\\\$1
-.)x \\\\n%
-..
-END_TITLE
-# ztail contains title page and toc
-cat >ztail <<END_TAIL
-.fo ''- Zedit $version -
-.bp
-.sp 24
-.(b C
-Z E D I T   $version
-.sp 3
-Copyright 1991 Sean MacLennan
-.)b
-.bp
-.ce
-Table of Contents
-
-.xp t
-END_TAIL
-
-# create it
-[ -f zhead ] || { echo zhead; exit; }
-[ -f intro.doc ] || { echo intro.doc; exit; }
-[ -f cmds.doc ] || { echo cmds.doc; exit; }
-[ -f appab.doc ] || { echo appab.doc; exit; }
-[ -f unix.doc ] || { echo unix.doc; exit; }
-[ -f ztail ] || { echo ztail; exit; }
-nroff -me zhead intro.doc cmds.doc appab.doc unix.doc \
-	ztail | ./zhack >zedit.doc
-rm zhead ztail
+echo "Create Appendix A"
+./doc2html -H "Appendix A: Commands" < command.doc > app-a.html
+echo "Create Appendix B"
+./doc2html -H "Appendix B: Variables" < variable.doc > app-b.html

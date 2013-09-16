@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#ifdef TERMINFO
+#if TERMINFO
 #include "zterminfo.h"
 #endif
 
@@ -180,12 +180,12 @@ void tfini(void)
 void tbell(void)
 {
 	if (VAR(VVISBELL)) {
-#ifdef __linux__
+#if ANSI
 		fputs("\033[?5h", stdout);
 		fflush(stdout);
 		usleep(100000);
 		fputs("\033[?5l", stdout);
-#elif defined(TERMINFO)
+#elif TERMINFO
 		TPUTS(flash_screen);
 #endif
 	} else if (VAR(VSILENT) == 0)
@@ -373,7 +373,7 @@ int prefline(void)
 void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
-#ifdef TERMINFO
+#if TERMINFO
 		TPUTS(tparm(cursor_address, Prow, Pcol));
 #else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
@@ -387,9 +387,9 @@ void tcleol(void)
 {
 	if (Pcol < Clrcol[Prow]) {
 		tforce();
-#ifdef TERMINFO
+#if TERMINFO
 		TPUTS(clr_eol);
-#else
+#elif ANSI
 		TPUTS("\033[K");
 #endif
 		Clrcol[Prow] = Pcol;
@@ -398,9 +398,9 @@ void tcleol(void)
 
 void tclrwind(void)
 {
-#ifdef TERMINFO
+#if TERMINFO
 	TPUTS(clear_screen);
-#else
+#elif ANSI
 	TPUTS("\033[2J");
 #endif
 	memset(Clrcol, 0, ROWMAX);

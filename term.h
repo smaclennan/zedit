@@ -37,7 +37,7 @@
 #define T_BOLD				6
 #define T_COMMENT			10	/* COMMENTBOLD only */
 
-#ifdef TERMINFO
+#if TERMINFO
 #  ifdef LINUX
 int _putchar(int);
 #  else
@@ -45,7 +45,7 @@ int _putchar(char);
 #  endif
 
 #define TPUTS(s)		tputs(s, 1, _putchar)
-#elif defined(ANSI)
+#elif ANSI
 #define TPUTS(s)		fputs(s, stdout)
 #endif
 

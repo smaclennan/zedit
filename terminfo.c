@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#ifdef TERMINFO
+#if TERMINFO
 #include "zterminfo.h"
 #include "z.h"
 #include "keys.h"

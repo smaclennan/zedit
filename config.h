@@ -17,6 +17,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
+
 /* OPERATING SYSTEM - We attempt to autodetect.
  * I have not tested anything other than Linux in a decade, you have
  * been warned!
@@ -38,16 +41,16 @@
  * Unless you are running on an ancient dumb terminal, you probably want ANSI.
  * Linux wants ANSI, trust me on this ;)
  */
-#define ANSI
-/* #define TERMINFO */
+#define ANSI		1
+#define TERMINFO	0
 
 #define CONFIGDIR "/usr/share/zedit"
 
 /* USER CONFIGURABLE - don't define any, see if I care */
-#define DBG		1		/* turn debugs on */
 #define MINCONFIG	0		/* Minimal configuration */
 
 #if !MINCONFIG
+#define DBG		1		/* turn debugs on */
 #define COMMENTBOLD	1		/* bold C comments */
 #define WANT_CPPS       0		/* also bold C preprocessor lines */
 #define UNDO            1		/* EXPERIMENTAL undo code */
@@ -55,17 +58,25 @@
 
 #define SHELL		1		/* shell interface */
 #define SPELL		1		/* ispell interface */
-#define MAKE		1		/* make command */
+#define MAKE		1		/* make/grep command */
 #define TAGS		1		/* tag file support */
+#endif
+
+#if defined(LINUX) && ANSI
+/* Try defining this if you find the F6 and up keys are messed up. */
+#define ANSI_KEY_HACK
 #endif
 
 #include "configure.h"
 
 /* DON'T TOUCH THESE */
-#if SHELL || SPELL || TAGS || MAKE
-#define PIPESH
+#if SHELL || MAKE || TAGS || SPELL
+#undef  SHELL
+#define SHELL 1
+#define PIPESH 1
 #endif
-#if defined(LINUX) && defined(ANSI)
-/* Try defining this if you find the F6 and up keys are messed up. */
-#define ANSI_KEY_HACK
+#if ANSI && TERMINFO
+#error You can't set both
 #endif
+
+#endif /* _CONFIG_H_ */

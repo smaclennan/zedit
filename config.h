@@ -1,5 +1,5 @@
 /* config.h - Zedit user configurable defines
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -27,6 +27,7 @@
 #ifdef __linux__
 # define LINUX
 # define SYSV4
+# define HAVE_POLL
 #elif defined(__BSD__)
 # define BSD
 #elif defined(__unix__)

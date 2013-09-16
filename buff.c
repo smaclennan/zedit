@@ -1,5 +1,5 @@
 /* buff.c - low level buffer commands for Zedit
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -705,8 +705,7 @@ int breadfile(char *fname)
 
 		switch (errno) {
 		case EACCES:
-			sprintf(buf, "No read access: %s", fname);
-			error(buf);
+			error("No read access: %s", fname);
 			return -EACCES;
 		case EMFILE:
 			error("Out of File Descriptors.");

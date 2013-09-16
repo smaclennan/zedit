@@ -1,5 +1,5 @@
 /* kbd.c - keyboard input routines
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -23,9 +23,7 @@
 #include <sys/time.h>
 #include "keys.h"
 
-/* This file contains the keyboard input routines.  The only routines
- * accessed outside of this routine are tgetcmd and the macro PUSHCMD.
- */
+/* This file contains the keyboard input routines. */
 
 unsigned Cmdpushed, Cmdstack[10];	/* stack and vars for T[un]getcmd */
 
@@ -104,17 +102,16 @@ static void tungetkb(void)
 	++cpushed;
 }
 
+#ifdef HAVE_POLL
+static struct pollfd stdin_fd = { .fd = 1, .events = POLLIN };
+#endif
 
 int tkbrdy(void)
 {
-#ifdef LINUX
-	struct pollfd stdin_fd;
-
+#ifdef HAVE_POLL
 	if (cpushed || Pending)
 		return TRUE;
 
-	stdin_fd.fd = 1;
-	stdin_fd.events = POLLIN;
 	return Pending = poll(&stdin_fd, 1, 0) == 1;
 #else
 	static struct timeval poll = { 0, 0 };
@@ -126,3 +123,16 @@ int tkbrdy(void)
 	return Pending = select(1, (fd_set *)&fds, NULL, NULL, &poll);
 #endif
 }
+
+Boolean delay(void)
+{
+#ifdef HAVE_POLL
+	if (InPaw || tkbrdy())
+		return FALSE;
+
+	return poll(&stdin_fd, 1, 1000) != 1;
+#else
+#error No-poll
+#endif
+}
+

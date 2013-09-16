@@ -1,5 +1,5 @@
 /* z.h - Main Zedit include file
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -210,6 +210,7 @@ extern int Terminfo_dummy;
 
 #define echo(s)		putpaw(s)
 #define clrecho(void)	putpaw("")
+#define error(...)	do { tbell(); putpaw(__VA_ARGS__); } while (0)
 
 #include "proto.h"
 

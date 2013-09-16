@@ -1,5 +1,5 @@
 /* file.c - Zedit file commands
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -263,10 +263,8 @@ void Zfileread(void)
 {
 	if (get_findfile("Read File: "))
 		return;
-	if (fileread(Fname) > 0) {
-		sprintf(PawStr, "Unable to read %s", Fname);
-		error(PawStr);
-	}
+	if (fileread(Fname) > 0)
+		error("Unable to read %s", Fname);
 }
 
 /*

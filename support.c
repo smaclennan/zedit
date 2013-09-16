@@ -1,5 +1,5 @@
 /* support.c - Zedit support routines
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -66,24 +66,10 @@ int ask(char *msg)
 
 Boolean delayprompt(char *msg)
 {
-	int rc;
-
-	rc = delay();
+	int rc = delay();
 	if (rc)
 		putpaw(msg);
 	return rc;
-}
-
-Boolean delay(void)
-{
-	struct pollfd ufd;
-
-	if (InPaw || tkbrdy())
-		return FALSE;
-
-	ufd.fd = 1;
-	ufd.events = POLLIN;
-	return poll(&ufd, 1, 1000) != 1;
 }
 
 /* Was the last command a delete to kill buffer command? */
@@ -123,12 +109,6 @@ void putpaw(const char *fmt, ...)
 	tsetpoint(trow, tcol);
 	tforce();
 	tflush();
-}
-
-void error(char *str)
-{
-	tbell();
-	putpaw("%s", str);
 }
 
 /* echo 'str' to the paw and as the filename for 'buff' */

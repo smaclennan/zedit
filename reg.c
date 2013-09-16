@@ -473,5 +473,5 @@ void regerr(int errnum)
 		/*51*/	"\"digit\" out of range.",
 	};
 
-	error(errs[errnum-40]);
+	error(errs[errnum - 40]);
 }

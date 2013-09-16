@@ -17,11 +17,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#include "z.h"
 
 #if TERMINFO
 #include "zterminfo.h"
-#include "z.h"
 #include "keys.h"
 
 
@@ -66,13 +65,11 @@ void tlinit()
 {
 	int rc, i;
 
-#if DBG
 	if (N_KEYS != NUMKEYS - TC_UP) {
 		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
 		       N_KEYS, NUMKEYS - TC_UP);
 		exit(1);
 	}
-#endif
 
 	Term = getenv("TERM");
 	if (Term == NULL) {
@@ -193,6 +190,4 @@ int _putchar(char ch)
 	putchar(ch);
 	return 0;	/*shutup*/
 }
-#else
-void terminfo_dummy(void) {} /* for pedantic */
 #endif

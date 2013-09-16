@@ -49,7 +49,7 @@ static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 int Clrcol[ROWMAX + 1];		/* Clear if past this */
 
 int Prow, Pcol;			/* Point row and column */
-int Srow, Scol;			/* saved row and column */
+int Srow, Scol;			/* Saved row and column */
 int Colmax = EOF, Rowmax;	/* Row and column maximums */
 int Tstart;			/* Start column and row */
 

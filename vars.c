@@ -71,14 +71,6 @@ void readvfile(void)
 {
 	char fname[PATHMAX + 1];
 
-#if DBG
-	if (NUMVARS != VARNUM) {
-		/* haven't setup term stuff yet */
-		printf("\7Mismatch in NUMVARS and VARNUM %d:%d\n",
-		       NUMVARS, VARNUM);
-		getchar();
-	}
-#endif
 	if (!VARSTR(VCEXTS)) {
 		VARSTR(VCEXTS) =
 			strdup(".c:.h:.cpp:.cc:.cxx:.y:.l:.m:.m4");

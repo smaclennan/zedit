@@ -202,6 +202,8 @@ extern Byte CRdefault;
 
 extern int circf;
 
+extern int Terminfo_dummy;
+
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
 

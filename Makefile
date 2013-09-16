@@ -9,7 +9,11 @@ MAKEFLAGS += --no-print-directory
 
 #LIBS=-lncurses
 
-CFILES = $(wildcard *.c)
+CFILES = ansi.c bcmds.c bind.c bindings.c buff.c calc.c \
+	comment.c comms.c comms1.c cursor.c delete.c display.c \
+	file.c funcs.c getarg.c getfname.c help.c kbd.c make.c \
+	reg.c shell.c spell.c srch.c support.c tags.c term.c \
+	terminfo.c undo.c unix.c vars.c window.c z.c
 
 #################
 
@@ -26,7 +30,7 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 
 #################
 
-all:	configure.h $(ZEXE)
+all:	configure.h fcheck $(ZEXE)
 
 $(ZEXE): $(CFILES:.c=.o)
 	$(QUIET_LINK)$(CC) -o $@ $+ $(LIBS)
@@ -34,6 +38,10 @@ $(ZEXE): $(CFILES:.c=.o)
 
 configure.h:
 	@touch configure.h
+
+fcheck: fcheck.c *.h
+	$(QUIET_LINK)$(CC) -o $@ fcheck.c
+	@./fcheck
 
 # We don't have that many .h files...
 # Make all c files depend on all .h files
@@ -47,6 +55,5 @@ install-help:
 	install -D -m 644 docs/help.z $(DESTDIR)/usr/share/zedit/help.z
 
 clean:
-	rm -f configure.h *.o ze core* TAGS valgrind.out
+	rm -f configure.h *.o ze fcheck core* TAGS valgrind.out
 	@make -C docs clean
-

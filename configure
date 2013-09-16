@@ -3,7 +3,6 @@
 do_help() {
 	echo "Optional features:"
 	echo "  --enable-termcap	enable termcap and disable ansi"
-	echo "  --enable-dbg		debugging and runtime error checking"
 	echo "  --enable-comment-bold	bold comments for C code"
 	echo "  --enable-help		enable builtin help"
 	echo "  --enable-shell	enable shell commands"
@@ -32,7 +31,6 @@ while [ -n "$1" ]; do
 
 	case "$1" in
 	*-termcap) termcap=$enable;;
-	*-dbg) dbg=$enable;;
 	*-minconfig) minconfig=$enable;;
 	*-maxconfig) maxconfig=$enable;;
 	*-comment-bold) comment=$enable;;
@@ -79,7 +77,6 @@ elif [ "$maxconfig" = 1 ]; then
 	comment=1; undo=1; help=1; shell=1; spell=1; tags=1
 fi
 
-set_one DBG $dbg
 set_one COMMENTBOLD $comment
 set_one UNDO $undo
 set_one HELP $help

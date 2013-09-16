@@ -155,43 +155,10 @@ void (*Cmds[][2])() = {
 };
 int Curcmds;
 
-
-#if DBG
 void fcheck(void)
 {
-	int err = 0;
-
-	/* check sizes of various stuff */
 	int s1 = sizeof(Cnames) / sizeof(struct cnames);
 	int s2 = (sizeof(Cmds) / sizeof(void *) / 2) - 1;
-	if (s1 != NUMFUNCS || s2 != NUMFUNCS) {
-		++err;
+	if (s1 != NUMFUNCS || s2 != NUMFUNCS)
 		Dbg("Cnames: %d Cmds: %d NUMFUNCS: %d\n", s1, s2, NUMFUNCS);
-	}
-
-	if (Verbose) {
-		/* validate the Cnames array the best we can */
-		for (s1 = 1; s1 < NUMFUNCS; ++s1) {
-			if (strcasecmp(Cnames[s1].name,
-				       Cnames[s1 - 1].name) <= 0) {
-				++err;
-				Dbg("Problem: (%d) %s and %s\n",
-				    s1, Cnames[s1 - 1].name, Cnames[s1].name);
-			}
-			if (strlen(Cnames[s1].name) > (size_t)30) {
-				++err;
-				Dbg("%s too long\n", Cnames[s1].name);
-			}
-			if (strncmp(Cnames[s1].name, "Top", 3) == 0) {
-				++err;
-				Dbg("Zhelp() Top: %s\n", Cnames[s1].name);
-			}
-		}
-	}
-
-	if (err)
-		error("INTERNAL ERRORS: check z.out file");
 }
-#else
-void fcheck(void) {}
-#endif

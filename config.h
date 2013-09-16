@@ -50,7 +50,6 @@
 #define MINCONFIG	0		/* Minimal configuration */
 
 #if !MINCONFIG
-#define DBG		1		/* turn debugs on */
 #define COMMENTBOLD	1		/* bold C comments */
 #define WANT_CPPS       0		/* also bold C preprocessor lines */
 #define UNDO            1		/* EXPERIMENTAL undo code */
@@ -76,7 +75,7 @@
 #define PIPESH 1
 #endif
 #if ANSI && TERMINFO
-#error You can't set both
+#error "You can't set both"
 #endif
 
 #endif /* _CONFIG_H_ */

@@ -3,7 +3,9 @@
 checkpatch=/lib/modules/`uname -r`/source/scripts/checkpatch.pl
 
 echo "Running sparse..."
-sparse -D__linux__ *.[ch]
+for f in *.[ch]; do
+    sparse -D__linux__ $f
+done
 
 echo "Running checkpatch..."
 for f in *.[ch]; do

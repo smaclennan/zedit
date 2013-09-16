@@ -73,13 +73,11 @@ void tlinit(void)
 {
 	int i;
 
-#if DBG
 	if (N_KEYS != NUMKEYS - TC_UP) {
 		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
 		       N_KEYS, NUMKEYS - TC_UP);
 		exit(1);
 	}
-#endif
 
 	for (i = 0; i < N_KEYS; ++i)
 		if (Tkeys[i].key)

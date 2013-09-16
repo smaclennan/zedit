@@ -39,73 +39,92 @@ static struct mark *Gmark;	/* used by global search routines */
 static void doincsrch(char *prompt, Boolean forward)
 {
 	Boolean go = TRUE;
-	char str[STRMAX + 1], *p;
-	int cmd, i = 0, first = 1;
+	char str[STRMAX + 1], promptstr[40];
+	int cmd, i = 0, count = 0;
 	struct mark marks[STRMAX];
 
-	memset(str, '\0', STRMAX);
-	strcpy(str, nocase(prompt));
-	p = str + strlen(str);
+	memset(str, '\0', sizeof(str));
+	strcpy(promptstr, nocase(prompt));
 	while (go) {
 		zrefresh();
-		putpaw(str);
+		putpaw("%s: %s", promptstr, str);
 		cmd = tgetcmd();
-		if (isprint(cmd) && i < STRMAX) {
-			bmrktopnt(&marks[i]);
-			p[i++] = cmd;
-			bmove(-i);
-			if (bstrsearch(p, forward)) {
-				bmove(i);
-			} else {
-				bpnttomrk(&marks[--i]);
-				p[i] = '\0';
-				tbell();
-			}
-		} else if (cmd == 19) { /* CTRL-S */
+
+		if (cmd == 0x13) { /* CTRL-S */
 			struct mark tmark;
 
-			if (first) {
+			if (*str == '\0') {
 				/* use last search */
 				int n = strlen(old);
-				strcat(p, old);
+				if (n == 0)
+					continue;
+				strcpy(str, old);
 				for (i = 0; i < n; ++i)
 					bmrktopnt(&marks[i]);
 			}
 
 			bmrktopnt(&tmark); /* save in case search fails */
-			if (bstrsearch(p, forward))
+		again:
+			if (bstrsearch(str, forward))
 				bmove(i);
-			else {
+			else if (++count == 2) {
+				if (strstr(promptstr, "Wrap") == NULL)
+					strcat(promptstr, " (Wrapped)");
+				count = 0;
+				btostart();
+				goto again;
+			} else {
 				bpnttomrk(&tmark);
 				tbell();
 			}
-		} else if (Keys[cmd] == ZRDELCHAR && i > 0) {
-			bpnttomrk(&marks[--i]);
-			p[i] = '\0';
+
+			continue;
+		}
+
+		if (isprint(cmd)) {
+			if (i < STRMAX) {
+				bmrktopnt(&marks[i]);
+				str[i++] = cmd;
+				bmove(-i);
+				if (bstrsearch(str, forward)) {
+					bmove(i);
+				} else {
+					bpnttomrk(&marks[--i]);
+					str[i] = '\0';
+					tbell();
+				}
+			} else
+				tbell();
+		} else if (Keys[cmd] == ZRDELCHAR) {
+			if (i > 0) {
+				bpnttomrk(&marks[--i]);
+				str[i] = '\0';
+			} else
+				tbell();
 		} else if (Keys[cmd] != ZNOTIMPL) {
 			if (cmd != CR)
 				PUSHCMD(cmd);
 			go = FALSE;
 		}
-		first = 0;
+		count = 0;
 	}
 	clrecho();
 	if (Keys[cmd] == ZABORT)
 		bpnttomrk(&marks[0]);
 	else
-		strcpy(old, p);
+		strcpy(old, str);
 	searchdir[0] = forward;
 	searchdir[1] = 0;
 }
 
 void Zincsrch(void)
 {
-	doincsrch("I-search: ", FORWARD);
+	doincsrch("I-search", FORWARD);
 }
 
 void Zrincsrch(void)
 {
-	doincsrch("Reverse I-search: ", BACKWARD);
+	doincsrch("Reverse I-search", BACKWARD);
 }
 
 void Zsearch(void)

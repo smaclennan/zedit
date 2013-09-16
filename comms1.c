@@ -76,8 +76,9 @@ void Zmode(void)
 	int i, rc;
 
 	/* find the current mode for default */
-	for (i = 0; i < (NUMMODES - 1) && !(modes[i].mode & Curbuff->bmode); ++i)
-		;
+	for (i = 0; i < NUMMODES - 1; ++i)
+		if (modes[i].mode & Curbuff->bmode)
+			break;
 	rc = getplete("Mode: ", modes[i].str, (char **)modes,
 		      AMODESIZE, NUMMODES);
 	if (rc != -1)

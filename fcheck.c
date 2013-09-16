@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	int s1 = sizeof(Cnames) / sizeof(struct cnames);
 	if (s1 != NUMFUNCS) {
 		printf("Cnames: %d NUMFUNCS: %d\n", s1, NUMFUNCS);
-		exit(1); /* don't continue since the loop below might segfault */
+		exit(1); /* stop since the loop below might segfault */
 	}
 
 	/* validate the Cnames array the best we can */

@@ -1,8 +1,8 @@
 .PHONY: all install install-help clean
 
 ZEXE = ze
-#CC = gcc
-CC = clang -fno-color-diagnostics
+CC = gcc
+#CC = clang -fno-color-diagnostics
 CFLAGS += -Wall -g -O3
 #CFLAGS += -pedantic
 MAKEFLAGS += --no-print-directory

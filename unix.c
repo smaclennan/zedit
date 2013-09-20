@@ -213,7 +213,7 @@ Boolean invoke(struct buff *tbuff, char *argv[])
 				dup2(from[1], 1);
 				dup2(from[1], 2);
 				execvp(argv[0], argv);
-				write(from[1], "Unable to exec shell", 20);
+				fputs("Unable to exec shell\n", stderr);
 				pause();	/* wait to die */
 			}
 

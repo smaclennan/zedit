@@ -21,15 +21,31 @@
 #include "cnames.h"
 #include "vars-array.h"
 
+unsigned Key_mask;
+
+#if ANSI
+#include "ansi.c"
+#elif TERMINFO
+#include "terminfo.c"
+#else
+#error No-screen-driver
+#endif
+
 
 int main(int argc, char *argv[])
 {
-	int err = 0;
+	int i, err = 0;
 
 	if (NUMVARS != VARNUM) {
 		/* haven't setup term stuff yet */
 		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",
 		       NUMVARS, VARNUM);
+		err = 1;
+	}
+
+	if (N_KEYS != NUMKEYS - SPECIAL_START) {
+		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
+		       N_KEYS, NUMKEYS - SPECIAL_START);
 		err = 1;
 	}
 

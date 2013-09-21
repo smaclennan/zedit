@@ -18,10 +18,8 @@
  */
 
 #include "z.h"
-#include <poll.h>
-#include <sys/ioctl.h>
-#include <sys/time.h>
 #include "keys.h"
+#include <poll.h>
 
 
 unsigned Key_mask;

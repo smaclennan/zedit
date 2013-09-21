@@ -39,8 +39,8 @@ $(ZEXE): $(CFILES:.c=.o)
 configure.h:
 	@touch configure.h
 
-fcheck: fcheck.c *.h
-	$(QUIET_LINK)$(CC) -o $@ fcheck.c
+fcheck: fcheck.c *.h ansi.c terminfo.c
+	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
 	@./fcheck
 
 # We don't have that many .h files...

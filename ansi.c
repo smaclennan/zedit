@@ -55,28 +55,19 @@ struct key_array Tkeys[] = {
 	{ "\033[7^",	"C-home" },
 	{ "\033[8^",	"C-end" },
 
-	{ NULL,		"back" },
+	{ NULL,		"back" }
 };
 #define N_KEYS ((int)(sizeof(Tkeys) / sizeof(struct key_array)))
 
 
-void tlinit(void)
-{
-	if (N_KEYS != NUMKEYS - SPECIAL_START) {
-		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
-		       N_KEYS, NUMKEYS - SPECIAL_START);
-		exit(1);
-	}
+void tlinit(void) { Key_mask = 0xfffffff; }
 
-	Key_mask = 0xfffffff;
-}
+void tlfini(void) {}
 
 void tsize(int *rows, int *cols)
 {	/* Let termsize default it */
 	*rows = *cols = 0;
 }
-
-void tlfini(void) {}
 
 void tstyle(int style)
 {
@@ -88,14 +79,13 @@ void tstyle(int style)
 	switch (cur_style = style) {
 	case T_NORMAL:
 		TPUTS("\033[0m"); break;
-	case T_COMMENT:
-		TPUTS("\033[31m"); break; /* red */
 	case T_STANDOUT:
-		TPUTS("\033[7m"); break;
 	case T_REVERSE:
 		TPUTS("\033[7m"); break;
 	case T_BOLD:
 		TPUTS("\033[1m"); break;
+	case T_COMMENT:
+		TPUTS("\033[31m"); break; /* red */
 	}
 	fflush(stdout);
 }

@@ -58,7 +58,7 @@ struct key_array Tkeys[] = {
 	{ "\033[7^",	"C-home" },
 	{ "\033[8^",	"C-end" },
 
-	{ NULL,		"kbs" },
+	{ NULL,		"kbs" }
 };
 #define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
@@ -67,12 +67,6 @@ static char *Term;
 void tlinit()
 {
 	int rc, i;
-
-	if (N_KEYS != NUMKEYS - TC_UP) {
-		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
-		       N_KEYS, NUMKEYS - TC_UP);
-		exit(1);
-	}
 
 	Term = getenv("TERM");
 	if (Term == NULL) {

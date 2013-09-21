@@ -190,67 +190,48 @@ window.
 Exits from the editor. It asks to save all modified buffers. A bang (!)  saves
 all  remaining buffers. A Universal Argument causes all modified buffers to be
 saved without prompting.
-:Expression Replace
-
-Works like the Query Replace command except that the search string is a  regu-
-lar  expression.  The  replacement string is a literal with two exceptions. An
-'&' character causes the matched string to be placed in the buffer. The escape
-
-
-character  ''  can  be used to turn off this special meaning of '&'. Note that
-"\" is required to put a real " the buffer. For each match, a prompt  is  made
-for  the  action to perform.  See Query Replace for a list of valid actions. A
-Universal Argument causes the replacement to be done globally in all the  buf-
-fers.
-:Expression Search
-
-Asks  for  a regular expression search string and searches from the Point for-
-ward for a match in the buffer. If a match is found, the Point is moved to the
-start  of the match. If the string is not found, then "Not Found" is displayed
-in the echo window and the Point is left where it was. The  search  string  is
-saved  and subsequent search and replace commands will default to this string.
-If the mode Exact is set, the search will be case sensitive. A Universal Argu-
-ment causes the search to look for exactly Arg matches of the string.
 :Extended Command
 
-Prompts  for  a  command  to execute. Unbound commands may be executed in this
+Prompts for a command to execute. Unbound commands may  be  executed  in  this
 manner. Supports command completion. A "?" will show all the possible matches.
 A Universal Argument is passed on to the selected command.
+
+
 :Fill Check
 
 Checks if the current column is past the FillWidth column. If it is, the words
-past or on the FillWidth column are wrapped. This gives some  word  processing
-capability  to the editor. Normally bound to the space bar and Newline only in
+past  or  on the FillWidth column are wrapped. This gives some word processing
+capability to the editor. Normally bound to the space bar and Newline only  in
 Text Mode. A Universal Argument has no meaning.
 :Fill Paragraph
 
-Uses the FillWidth to reformat the paragraph the Point is in. This  is  useful
-if  editing has messed up the right margin. A Universal Argument reformats the
-next Arg paragraphs. A Universal Argument of 0 reformats  the  entire  buffer.
+Uses  the  FillWidth to reformat the paragraph the Point is in. This is useful
+if editing has messed up the right margin. A Universal Argument reformats  the
+next  Arg  paragraphs.  A Universal Argument of 0 reformats the entire buffer.
 When reformatting the entire buffer, hitting a character will abort the refor-
 mat. Not allowed in program mode buffers.
 :Find File
 
-Prompts for a path name. If a buffer already exists with this path name,  that
-buffer  is  switched  to. If no buffer is matched, a new buffer is created and
-the file read into it. Supports file name  completion.  A  Universal  Argument
+Prompts  for a path name. If a buffer already exists with this path name, that
+buffer is switched to. If no buffer is matched, a new buffer  is  created  and
+the  file  read  into  it. Supports file name completion. A Universal Argument
 causes the command to repeat.
 :Find Tag
 
 Prompts for a string argument, with the current buffer word as the default. It
 looks through a tagfile and if the tag is found, a bookmark is set at the cur-
-rent  Point,  a Find File is performed on the matched file name, and the Point
+rent Point, a Find File is performed on the matched file name, and  the  Point
 is positioned appropriately. If the tag is not found but a substring match is,
-the  command  will  reprompt for the tag with the first substring match as the
-default. To see the next substring match use the Again command. The  tag  file
-is  the file defined in the variable "Tagfile", or the file "tags" in the cur-
+the command will reprompt for the tag with the first substring  match  as  the
+default.  To  see the next substring match use the Again command. The tag file
+is the file defined in the variable "Tagfile", or the file "tags" in the  cur-
 rent directory.  Universal Arguments are ignored.
 :Global RE Search
 
-This command is used to search for a regular expression in  all  the  buffers.
-It  prompts  for a search string and then starts searching at the start of the
+This  command  is  used to search for a regular expression in all the buffers.
+It prompts for a search string and then starts searching at the start  of  the
 first buffer. If a match is found, it stops and leaves the point at the match.
-If  Again  is  executed,  it starts at the current Point and searches forwards
+If Again is executed, it starts at the current  Point  and  searches  forwards
 through the buffers. At the last buffer it stops and puts the Point back where
 it started. A Universal Argument is ignored.
 :Global Search
@@ -258,27 +239,29 @@ it started. A Universal Argument is ignored.
 This command is used to search for a string in all the buffers. It prompts for
 a search string and then starts searching at the start of the first buffer. If
 a match is found, it stops and leaves the point at the match. If Again is exe-
-cuted, it starts at the current Point and searches forwards through  the  buf-
-fers.  At the last buffer it stops and puts the Point back where it started. A
+cuted,  it  starts at the current Point and searches forwards through the buf-
+fers. At the last buffer it stops and puts the Point back where it started.  A
 Universal Argument is ignored.
-
-
 :Goto Line
 
-Moves the point to the start of a given line. If there is  a  Universal  Argu-
+Moves  the  point  to the start of a given line. If there is a Universal Argu-
 ment, uses the argument, else prompts for the line number. If the line is past
 the end of the buffer, moves the Point is left at the end of the buffer.
 :Grep
 
-Prompts for the completion of a grep command and then performs the  grep  com-
+Prompts  for  the completion of a grep command and then performs the grep com-
 mand in the *grep* buffer.
 :Grow Window
 
 Makes the active window one line bigger, and therefore the inactive window one
-line smaller. A window cannot be less than three (3) lines.  If there is  only
-one  window,  this command has no effect. A Universal Argument causes the com-
+line  smaller. A window cannot be less than three (3) lines.  If there is only
+one window, this command has no effect. A Universal Argument causes  the  com-
 mand to grow the window by that number of lines.
 :Help
+
+
+
+
 
                                 - Zedit Help -
 
@@ -300,123 +283,123 @@ mand to grow the window by that number of lines.
 
 :Hex Output
 
-Displays the character at the Point as a hexadecimal number  in  the  PAW.   A
-Universal  Argument  displays  the  next characters up to a maximum of 25. The
+Displays  the  character  at  the Point as a hexadecimal number in the PAW.  A
+Universal Argument displays the next characters up to a  maximum  of  25.  The
 Point is moved forward by the argument characters.
 :Incremental Search
 
-Searches for the string after every character  is  entered  in  the  PAW.  The
-Delete  Previous Character command can be used to delete a character and "back
+Searches  for  the  string  after  every  character is entered in the PAW. The
+Delete Previous Character command can be used to delete a character and  "back
 up" the search. The Newline character terminates the search. The Abort command
-terminates  the  search and places the Point back where it was. Any other com-
-mands terminates the search and performs that command.  A  Universal  Argument
+terminates the search and places the Point back where it was. Any  other  com-
+mands  terminates  the search and performs that command.  A Universal Argument
 causes the command to repeat.
 :Indent
 
 Indents the marked region Universal Argument tab stops.
 :Insert Character
 
-Normally  bound  to  the  printable  characters,  causes  the  character to be
+Normally bound to  the  printable  characters,  causes  the  character  to  be
 inserted in the buffer. A Universal Argument causes the command to repeat.
 :Insert/Overwrite
 
-Toggles the current buffers minor mode between Insert, the default, and  over-
-write  modes. On the PC the cursor shape reflects the mode. Insert mode has an
+Toggles  the current buffers minor mode between Insert, the default, and over-
+write modes. On the PC the cursor shape reflects the mode. Insert mode has  an
 underline cursor while overwrite mode has a block cursor. A Universal Argument
 is ignored.
 :Join
 
 Joins two lines. Performs the following Zedit commands:
-
-
          End of Line, Delete Newline, Trim Whitespace, Insert space.
 :Key Binding
 
-Prompts  for  a  key  and displays the current command bound to the key in the
+Prompts for a key and displays the current command bound to  the  key  in  the
 PAW. Handles C-X and M- prefixes. A Universal Argument is ignored.
 :Kill
 
-Kills the current make. The command must wait for the make to  die  before  it
+Kills  the  current  make. The command must wait for the make to die before it
 can continue. Unix only.
 :List Buffers
 
 Displays a list of the current buffers on the display.
 :Lowercase Region
 
-Converts  the Region to lowercase. Not allowed in program mode buffers. A Uni-
+Converts the Region to lowercase. Not allowed in program mode buffers. A  Uni-
 versal Argument is ignored.
 :Lowercase Word
 
-Converts the current word starting at the Point to lowercase.  It  leaves  the
-Point  at  the  end  of  the  word. A Universal Argument causes the command to
+
+Converts  the  current  word starting at the Point to lowercase. It leaves the
+Point at the end of the word. A  Universal  Argument  causes  the  command  to
 repeat.
 :Make
 
-This command performs the command specified in the Make variable and puts  the
-output  in  the  ".make"  buffer. The command is usually "make" and is used in
-conjunction with the Next Error command. A Universal Argument prompts for  the
+This  command performs the command specified in the Make variable and puts the
+output in the ".make" buffer. The command is usually "make"  and  is  used  in
+conjunction  with the Next Error command. A Universal Argument prompts for the
 command to execute.
 :Mark Paragraph
 
 Sets the Mark to the start of the current paragraph and moves the Point to the
-start of the next paragraph.  A  Universal  Argument  causes  the  command  to
+start  of  the  next  paragraph.  A  Universal  Argument causes the command to
 repeat.
 :Meta
 
 Command prefix.
 :Mode
 
-Change  the  mode of the current buffer. Prompts (with command completion) for
+Change the mode of the current buffer. Prompts (with command  completion)  for
 the mode to change to.  A Universal Argument causes multiple toggles.
 :Newline
 
-The command normally bound to the Enter or Return key.  A  Universal  Argument
+The  command  normally  bound to the Enter or Return key. A Universal Argument
 causes the command to repeat.
 :Next Bookmark
 
-Moves  the  Point  to the last bookmark set in the bookmark ring. The bookmark
-moved to is displayed in the echo window. A Universal Argument in the range  1
+Moves the Point to the last bookmark set in the bookmark  ring.  The  bookmark
+moved  to is displayed in the echo window. A Universal Argument in the range 1
 to 10 corresponding to a set bookmark will go to the bookmark.
 :Next Buffer
 
-Switches  to  the  next  buffer in the buffer list. At the end of the list, it
-switches to the first buffer in the list, i.e. treats the list like a ring.  A
+Switches to the next buffer in the buffer list. At the end  of  the  list,  it
+switches  to the first buffer in the list, i.e. treats the list like a ring. A
 Universal Argument causes the command to repeat.
 :Next Character
 
-Moves  the  Point forward one character. If the Point is at the end of a line,
-it is moved to the start of the next line. A  Universal  Argument  causes  the
+Moves the Point forward one character. If the Point is at the end of  a  line,
+it  is  moved  to  the start of the next line. A Universal Argument causes the
 command to repeat.
 :Next Error
 
-Used  after a Make command to search for error messages in the ".make" buffer.
+Used after a Make command to search for error messages in the ".make"  buffer.
 If an error is found, the Mark in the ".make" buffer is placed at the start of
 the error message. The file containing the error is loaded into a buffer using
 the Find File command and the Point is placed at the error line.
 
-
 If a Universal Argument is specified, Next Error tries to ignore warnings.
 :Next Line
 
-Moves the Point up one line in the buffer. It tries to maintain the same  col-
+Moves  the Point up one line in the buffer. It tries to maintain the same col-
 umn position. If the line is to short the, Point will be the placed at the end
-of the line. Consecutive Previous/Next Line or Page commands try  to  maintain
-the  original  column  position.  A  Universal  Argument causes the command to
+of  the  line. Consecutive Previous/Next Line or Page commands try to maintain
+the original column position. A  Universal  Argument  causes  the  command  to
 repeat.
 :Next Page
 
-Moves the Point down one page and tries to center the Point line in  the  dis-
-play.  It  tries to maintain the same column position. If the line is to short
-the, Point will be the placed at the end  of  the  line.   Consecutive  Previ-
+Moves  the  Point down one page and tries to center the Point line in the dis-
+play. It tries to maintain the same column position. If the line is  to  short
+the,  Point  will  be  the  placed at the end of the line.  Consecutive Previ-
 ous/Next Line or Page commands try to maintain the original column position. A
 Universal Argument causes the command to repeat.
 :Next Paragraph
 
-Moves the Point to the start of  the  next  paragraph.  A  Universal  Argument
+
+
+Moves  the  Point  to  the  start  of the next paragraph. A Universal Argument
 causes the command to repeat.
 :Next Window
 
-Goes  to  the next window on the screen. The windows are treated as a circular
+Goes to the next window on the screen. The windows are treated as  a  circular
 list. A Universal Argument goes to the Nth next window.
 :Next Word
 
@@ -428,58 +411,59 @@ Used to unbind a key. This is bound to all the unbound keys. A Universal Argu-
 ment does nothing Arg times.
 :One Window
 
-Makes the active window a full screen window. If there  is  only  one  window,
+Makes  the  active  window  a full screen window. If there is only one window,
 this command has no effect. A Universal Argument is ignored.
 :Open Line
 
-Inserts  a  Newline at the Point but leaves the Point in front of the Newline.
-It is the same as typing a Newline and then a Previous  Character  command.  A
+Inserts a Newline at the Point but leaves the Point in front of  the  Newline.
+It  is  the  same as typing a Newline and then a Previous Character command. A
 Universal Argument causes the command to repeat.
 :Other Next Page
 
 Performs a Next Page command in the bottom window or the top window if you are
 in the bottom window. It leaves the Point where it is in the active window. If
-there  is  only  one window, this command has no effect.  A Universal Argument
+there is only one window, this command has no effect.   A  Universal  Argument
 causes the command to page the Nth window.
 :Other Previous Page
 
 Performs a Previous Page command in the bottom window or the top window if you
-are  in  the bottom window. It leaves the Point where it is in the active win-
-dow. If there is only one window, this command has  no  effect.   A  Universal
+are in the bottom window. It leaves the Point where it is in the  active  win-
+dow.  If  there  is  only one window, this command has no effect.  A Universal
 Argument pages the Nth window.
 :Out To
 
-This  command  moves  the Point to an absolute column position. If the line is
-shorter than the specified column, it is padded with tabs and  spaces  to  the
+This command moves the Point to an absolute column position. If  the  line  is
+shorter  than  the  specified column, it is padded with tabs and spaces to the
 specified column. The command takes either a Universal Argument or prompts for
 the column to go to.
 :Position
 
-Displays the current Point position as a line, column, and byte offset in  the
-echo  window.  Also displays the length of the buffer. A Universal Argument is
+Displays  the current Point position as a line, column, and byte offset in the
+echo window. Also displays the length of the buffer. A Universal  Argument  is
 ignored.
 :Previous Character
 
-
-Moves the Point back one character. If the Point is at the start of the  line,
-it  is  moved to the end of the previous line. A Universal Argument causes the
+Moves  the Point back one character. If the Point is at the start of the line,
+it is moved to the end of the previous line. A Universal Argument  causes  the
 command to repeat.
 :Previous Line
 
-Moves the Point up one line in the buffer. It tries to maintain the same  col-
-umn  position. If the line is to short, the Point will be placed at the end of
-the line. Consecutive Previous/Next Line or Page commands try to maintain  the
+Moves  the Point up one line in the buffer. It tries to maintain the same col-
+umn position. If the line is to short, the Point will be placed at the end  of
+the  line. Consecutive Previous/Next Line or Page commands try to maintain the
 original column position. A Universal Argument causes the command to repeat.
 :Previous Page
 
 Moves the Point up one page and tries to center the Point line in the display.
-It tries to maintain the same column position. If the line is  to  short,  the
+It  tries  to  maintain the same column position. If the line is to short, the
 Point will be placed at the end of the line. Consecutive Previous/Next Line or
-Page commands try to maintain the original column position. A Universal  Argu-
+Page  commands try to maintain the original column position. A Universal Argu-
 ment causes the command to repeat.
+
+
 :Previous Paragraph
 
-Moves  the Point to the start of the paragraph or to the start of the previous
+Moves the Point to the start of the paragraph or to the start of the  previous
 paragraph. A Universal Argument causes the command to repeat.
 :Previous Window
 
@@ -487,12 +471,12 @@ Goes to the previous window on the screen. The windows are treated as a circu-
 lar list. A Universal Argument goes to the Nth previous window.
 :Previous Word
 
-Moves  the  Point  back to the start of a word or to the start of the previous
+Moves the Point back to the start of a word or to the start  of  the  previous
 word. A Universal Argument causes the command to repeat.
 :Query Replace
 
-Prompts for a search string and a replacement string  and  searches  from  the
-current  Point  looking for matches of the search string. If it finds a match,
+Prompts  for  a  search  string and a replacement string and searches from the
+current Point looking for matches of the search string. If it finds  a  match,
 it moves the Point to the match and waits for one of the following input char-
 acters:
 
@@ -504,28 +488,48 @@ acters:
     Abort          Exit without replacing current match.
     Others         Continue without replacing current match.
 
-The  Point  is left at the position it was in before the Query Replace. If the
-mode Exact is set, the search will be case  sensitive.  A  Universal  Argument
+The Point is left at the position it was in before the Query Replace.  If  the
+mode  Exact  is  set,  the search will be case sensitive. A Universal Argument
 causes the replacement to be done globally in all the buffers.
 :Quote
 
-The  Quote command is used to insert a character into a buffer or String Argu-
+The Quote command is used to insert a character into a buffer or String  Argu-
 ment that would normally be a command. The next character after the Quote com-
-mand  is  taken literally, unless the key is a valid hexadecimal digit. If the
-key is a valid hexadecimal digit, it and the next key are taken together as  a
-hexadecimal  number  and  the  ASCII  character  equivalent  of this number is
+mand is taken literally, unless the key is a valid hexadecimal digit.  If  the
+key  is a valid hexadecimal digit, it and the next key are taken together as a
+hexadecimal number and the  ASCII  character  equivalent  of  this  number  is
 inserted into the buffer. If a key is not hit within approximately one second,
-"Quote:"  is  displayed  in  the  echo window. The Quote command does not work
+"Quote:" is displayed in the echo window. The  Quote  command  does  not  work
 within a Universal Argument. A Universal Argument inserts Arg characters.
+:RE Replace
+
+Works  like the Query Replace command except that the search string is a regu-
+lar expression. The replacement string is a literal with  two  exceptions.  An
+'&' character causes the matched string to be placed in the buffer. The escape
+character '' can be used to turn off this special meaning of  '&'.  Note  that
+"\"  is  required to put a real " the buffer. For each match, a prompt is made
+for the action to perform.  See Query Replace for a list of valid  actions.  A
+Universal  Argument causes the replacement to be done globally in all the buf-
+fers.
+:RE Search
+
+Asks for a regular expression search string and searches from the  Point  for-
+ward for a match in the buffer. If a match is found, the Point is moved to the
+start of the match. If the string is not found, then "Not Found" is  displayed
+in  the  echo  window and the Point is left where it was. The search string is
+saved and subsequent search and replace commands will default to this  string.
+If the mode Exact is set, the search will be case sensitive. A Universal Argu-
+ment causes the search to look for exactly Arg matches of the string.
 :Read File
 
 Prompts for a path name, with file name completion,  and inserts the file into
 the  current  buffer  before  the Point. If there is a Universal Argument, the
 current buffer is deleted, first asking to save the file if  it  is  modified,
+
+
 before  reading  in  the  new  file. The buffers file name is not changed, any
 writes will be to the old file name.
 :Redisplay
-
 
 Repaints the entire screen. A Universal Argument causes the command to repeat.
 :Reference
@@ -587,12 +591,12 @@ scroll multiple lines.
 
 Prompts for a search string and searches from the Point forward for a match in
 the buffer. If a match is found, the Point is moved to the start of the match.
+
+
 If  the  string is not found, then "Not Found" is displayed in the echo window
 and the Point is not moved. The search string is saved and  subsequent  search
 or  replace commands will default to the last search string. If the mode Exact
 is set, the search will be case sensitive. A  Universal  Argument  causes  the
-
-
 search to look for exactly Arg matches.
 :Set Bookmark
 
@@ -654,10 +658,9 @@ between two buffers. The Again command can be used to scroll through the  buf-
 fer list. A Universal Argument is ignored.
 :Tab
 
+
 Handles the tab key. A Universal Argument causes the command to repeat.
 :Toggle Case
-
-
 
 Switches the current buffers minor mode between case sensitive and case insen-
 sitive for searches and replacements. Ignores the Universal Argument.
@@ -721,10 +724,9 @@ Makes the Point line the top line in the window. A Universal  Argument  causes
 the command to repeat.
 :Write File
 
+
 Prompts  for  a path name and writes out the current buffer to this file name.
 Supports file name completion. It changes the path name of the current  buffer
-
-
 to  the new path name. A Universal Argument causes only the Region to be writ-
 ten and does not change the name of the buffer.
 :Yank
@@ -786,25 +788,22 @@ Lines feature can cause a lot of cursor movement and  is  irritating  on  some
 slow terminals. The default is on.
 :Make Cmd
 
-This  is a string variable which contains the default string for the Make com-
-mand. The default is "make".
-:Margin
+This  is  a  string  variable  which  contains the default string for the Make
 
+
+command. The default is "make".
+:Margin
 
 This is a decimal variable that defines the left margin for Text mode and  the
 Format  Paragraph command. It does not affect the first line of the paragraph.
 The default is 0.
 :Match
 
-This variable controls the C Mode "matching" function.
+This variable controls the C and Shell Mode "matching" function.
 
-0 No matching occurs.
-
-1 Zedit will "match" all ')' and ']' with their matching '(' or '[' by  moving
+Zedit will "match" all ')' and ']' with their matching '(' or  '['  by  moving
 the  cursor to the matching character temporarily. If there is no match, Zedit
 will beep. Default.
-
-2 Zedit will insert a ')' or ']' for every '(' or '[' typed.
 :Normal
 
 If on, sets the default buffer mode to Normal. If off, sets the default buffer
@@ -854,5 +853,6 @@ tends, ShExtends.
 If  this variable is set, the bell will flash the screen rather than producing
 an audible tone. The default is on if flashing the screen is supported.
 :ZEDIT
+
 
 

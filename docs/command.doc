@@ -230,28 +230,6 @@ Exits from the editor. It asks to save all modified buffers. A bang
 (!) saves all remaining buffers. A Universal Argument causes all
 modified buffers to be saved without prompting.
 .sp 0
-:Expression Replace
-
-Works like the Query Replace command except that the search string is a
-regular expression. The replacement string is a literal with two
-exceptions. An '&' character causes the matched string to be placed in
-the buffer. The escape character '\' can be used to turn off this
-special meaning of '&'. Note that "\\" is required to put a real "\" in
-the buffer. For each match, a prompt is made for the action to perform.
-See Query Replace for a list of valid actions. A Universal
-Argument causes the replacement to be done globally in all the buffers.
-.sp 0
-:Expression Search
-
-Asks for a regular expression search string and searches from the Point
-forward for a match in the buffer. If a match is found, the Point is
-moved to the start of the match. If the string is not found, then "Not
-Found" is displayed in the echo window and the Point is left where it
-was. The search string is saved and subsequent search and replace
-commands will default to this string. If the mode Exact is set, the
-search will be case sensitive. A Universal Argument causes the search
-to look for exactly Arg matches of the string.
-.sp 0
 :Extended Command
 
 Prompts for a command to execute. Unbound commands may be executed in
@@ -614,6 +592,28 @@ equivalent of this number is inserted into the buffer. If a key is not
 hit within approximately one second, "Quote:" is displayed in the echo
 window. The Quote command does not work within a Universal Argument. A
 Universal Argument inserts Arg characters.
+.sp 0
+:RE Replace
+
+Works like the Query Replace command except that the search string is a
+regular expression. The replacement string is a literal with two
+exceptions. An '&' character causes the matched string to be placed in
+the buffer. The escape character '\' can be used to turn off this
+special meaning of '&'. Note that "\\" is required to put a real "\" in
+the buffer. For each match, a prompt is made for the action to perform.
+See Query Replace for a list of valid actions. A Universal
+Argument causes the replacement to be done globally in all the buffers.
+.sp 0
+:RE Search
+
+Asks for a regular expression search string and searches from the Point
+forward for a match in the buffer. If a match is found, the Point is
+moved to the start of the match. If the string is not found, then "Not
+Found" is displayed in the echo window and the Point is left where it
+was. The search string is saved and subsequent search and replace
+commands will default to this string. If the mode Exact is set, the
+search will be case sensitive. A Universal Argument causes the search
+to look for exactly Arg matches of the string.
 .sp 0
 :Read File
 

@@ -62,11 +62,6 @@
 #define TAGS		1		/* tag file support */
 #endif
 
-#if defined(LINUX) && ANSI
-/* Try defining this if you find the F6 and up keys are messed up. */
-#define ANSI_KEY_HACK
-#endif
-
 #include "configure.h"
 
 /* DON'T TOUCH THESE */

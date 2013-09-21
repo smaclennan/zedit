@@ -27,16 +27,19 @@ struct key_array Tkeys[] = {
 	{ "\033[B",	"down" },
 	{ "\033[C",	"right" },
 	{ "\033[D",	"left" },
+
+	{ "\033[2~",	"insert" },
+	{ "\033[3~",	"delete" },
+	{ "\033[5~",	"page up" },
+	{ "\033[6~",	"page down" },
 	{ "\033[7~",	"home" },
-	{ NULL,		"back" },
+	{ "\033[8~",	"end" },
+
 	{ "\033[11~",	"f1" },
 	{ "\033[12~",	"f2" },
 	{ "\033[13~",	"f3" },
 	{ "\033[14~",	"f4" },
 	{ "\033[15~",	"f5" },
-#ifdef ANSI_KEY_HACK
-	/* I do not know if this is a Linux bug or we are supposed to
-	 * skip 16 and 22 */
 	{ "\033[17~",	"f6" },
 	{ "\033[18~",	"f7" },
 	{ "\033[19~",	"f8" },
@@ -44,20 +47,6 @@ struct key_array Tkeys[] = {
 	{ "\033[21~",	"f10" },
 	{ "\033[23~",	"f11" },
 	{ "\033[24~",	"f12" },
-#else
-	{ "\033[16~",	"f6" },
-	{ "\033[17~",	"f7" },
-	{ "\033[18~",	"f8" },
-	{ "\033[19~",	"f9" },
-	{ "\033[20~",	"f10" },
-	{ "\033[21~",	"f11" },
-	{ "\033[22~",	"f12" },
-#endif
-	{ "\033[8~",	"end" },
-	{ "\033[6~",	"page down" },
-	{ "\033[5~",	"page up" },
-	{ "\033[2~",	"insert" },
-	{ "\033[3~",	"delete" },
 
 	{ "\033Oa",	"C-up" },
 	{ "\033Ob",	"C-down" },
@@ -65,23 +54,21 @@ struct key_array Tkeys[] = {
 	{ "\033Od",	"C-left" },
 	{ "\033[7^",	"C-home" },
 	{ "\033[8^",	"C-end" },
+
+	{ NULL,		"back" },
 };
 #define N_KEYS ((int)(sizeof(Tkeys) / sizeof(struct key_array)))
 
 
 void tlinit(void)
 {
-	int i;
-
-	if (N_KEYS != NUMKEYS - TC_UP) {
+	if (N_KEYS != NUMKEYS - SPECIAL_START) {
 		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
-		       N_KEYS, NUMKEYS - TC_UP);
+		       N_KEYS, NUMKEYS - SPECIAL_START);
 		exit(1);
 	}
 
-	for (i = 0; i < N_KEYS; ++i)
-		if (Tkeys[i].key)
-			Key_mask |= 1 << i;
+	Key_mask = 0xfffffff;
 }
 
 void tsize(int *rows, int *cols)

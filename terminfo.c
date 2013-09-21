@@ -24,38 +24,41 @@
 #include "keys.h"
 
 
-struct key_array Tkeys[] = { {
-	 NULL,		"kcuu1" }, {
-	 NULL,		"kcud1" }, {
-	 NULL,		"kcub1" }, {
-	 NULL,		"kcuf1" }, {
-	 NULL,		"khome" }, {
-	 NULL,		"kbs" }, {
-	 NULL,		"kf0" }, {
-	 NULL,		"kf1" }, {
-	 NULL,		"kf2" }, {
-	 NULL,		"kf3" }, {
-	 NULL,		"kf4" }, {
-	 NULL,		"kf5" }, {
-	 NULL,		"kf6" }, {
-	 NULL,		"kf7" }, {
-	 NULL,		"kf8" }, {
-	 NULL,		"kf9" }, {
-	 NULL,		"kf10" }, {
-	 NULL,		"kf11" }, {
-	 NULL,		"kend" }, {
-	 NULL,		"knp" }, {
-	 NULL,		"kpp" }, {
-	 NULL,		"kich1" }, {
-	 NULL,		"kdch1" },
+struct key_array Tkeys[] = {
+	{ NULL,		"kcuu1" },
+	{ NULL,		"kcud1" },
+	{ NULL,		"kcub1" },
+	{ NULL,		"kcuf1" },
 
-	/* Hack the ctrl versions since they are not in the terminfo */ {
-	 "\033Oa",	"C-up" }, {
-	 "\033Ob",	"C-down" }, {
-	 "\033Oc",	"C-right" }, {
-	 "\033Od",	"C-left" }, {
-	 "\033[7^",	"C-home" }, {
-	 "\033[8^",	"C-end" },
+	{ NULL,		"kich1" },
+	{ NULL,		"kdch1" },
+	{ NULL,		"kpp" },
+	{ NULL,		"knp" },
+	{ NULL,		"khome" },
+	{ NULL,		"kend" },
+
+	{ NULL,		"kf0" },
+	{ NULL,		"kf1" },
+	{ NULL,		"kf2" },
+	{ NULL,		"kf3" },
+	{ NULL,		"kf4" },
+	{ NULL,		"kf5" },
+	{ NULL,		"kf6" },
+	{ NULL,		"kf7" },
+	{ NULL,		"kf8" },
+	{ NULL,		"kf9" },
+	{ NULL,		"kf10" },
+	{ NULL,		"kf11" },
+
+	/* Hack the ctrl versions since they are not in the terminfo */
+	{ "\033Oa",	"C-up" },
+	{ "\033Ob",	"C-down" },
+	{ "\033Oc",	"C-right" },
+	{ "\033Od",	"C-left" },
+	{ "\033[7^",	"C-home" },
+	{ "\033[8^",	"C-end" },
+
+	{ NULL,		"kbs" },
 };
 #define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
@@ -76,12 +79,6 @@ void tlinit()
 		printf("FATAL ERROR: environment variable TERM not set.\n");
 		exit(1);
 	}
-
-#ifdef __linux__
-	/* The key bindings are broken for the Linux xterm entry. */
-	if (strcmp(Term, "xterm") == 0)
-		Term = "linux";
-#endif
 
 	setupterm(Term, 1, &rc);
 	if (rc != 1) {
@@ -110,27 +107,30 @@ void tlinit()
 	Tkeys[1].key = key_down;
 	Tkeys[2].key = key_right;
 	Tkeys[3].key = key_left;
-	Tkeys[4].key = key_home;
-	Tkeys[5].key = key_backspace;
-	Tkeys[6].key = key_f0;
-	Tkeys[7].key = key_f1;
-	Tkeys[8].key = key_f2;
-	Tkeys[9].key = key_f3;
-	Tkeys[10].key = key_f4;
-	Tkeys[11].key = key_f5;
-	Tkeys[12].key = key_f6;
-	Tkeys[13].key = key_f7;
-	Tkeys[14].key = key_f8;
-	Tkeys[15].key = key_f9;
-	Tkeys[16].key = key_f10;
-	Tkeys[17].key = key_f11;
-	Tkeys[18].key = key_end;
-	Tkeys[19].key = key_npage;
-	Tkeys[20].key = key_ppage;
-	Tkeys[21].key = key_ic;
-	Tkeys[22].key = key_dc;
 
-	for (i = 0; i <= 24; ++i)
+	Tkeys[4].key = key_ic;
+	Tkeys[5].key = key_dc;
+	Tkeys[6].key = key_ppage;
+	Tkeys[7].key = key_npage;
+	Tkeys[8].key = key_home;
+	Tkeys[9].key = key_end;
+
+	Tkeys[10].key = key_f0;
+	Tkeys[11].key = key_f1;
+	Tkeys[12].key = key_f2;
+	Tkeys[13].key = key_f3;
+	Tkeys[14].key = key_f4;
+	Tkeys[15].key = key_f5;
+	Tkeys[16].key = key_f6;
+	Tkeys[17].key = key_f7;
+	Tkeys[18].key = key_f8;
+	Tkeys[19].key = key_f9;
+	Tkeys[20].key = key_f10;
+	Tkeys[21].key = key_f11;
+
+	Tkeys[28].key = key_backspace;
+
+	for (i = 0; i < N_KEYS; ++i)
 		if (Tkeys[i].key && *Tkeys[i].key)
 			Key_mask |= 1 << i;
 }

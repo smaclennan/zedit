@@ -38,6 +38,7 @@ int tgetcmd(void)
 
 	if (Cmdpushed)
 		return POPCMD();
+
 	do { /* try to match one of the termcap key entries */
 		mask = Key_mask;
 		for (j = 0; mask; ++j) {

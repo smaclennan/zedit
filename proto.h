@@ -209,7 +209,7 @@ struct buff *cmdtobuff(char *, char *);
 int cntlines(int);
 int compile(Byte*, Byte*, Byte*);
 void cswitchto(struct buff *);
-Boolean delay(void);
+Boolean delay(int ms);
 Boolean delayprompt(char *);
 Boolean delbname(char *);
 void delbuff(struct buff *);

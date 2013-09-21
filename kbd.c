@@ -35,40 +35,47 @@ void tpushcmd(int cmd)
 
 static void tungetkb(void);
 
+static int check_specials(void)
+{
+	int i, j, bit, mask = Key_mask;
+
+	for (j = 0; mask; ++j) {
+		int cmd = tgetkb() & 0x7f;
+		for (bit = 1, i = 0; i < NUMKEYS - SPECIAL_START; ++i, bit <<= 1)
+			if ((mask & bit) && cmd == Tkeys[i].key[j]) {
+				if (Tkeys[i].key[j + 1] == '\0')
+					return i + SPECIAL_START;
+			} else
+				mask &= ~bit;
+	}
+
+	/* No match - push back the chars and try to handle
+	 * the first one. */
+	while (j-- > 0)
+		tungetkb();
+
+	return tgetkb() & 0x7f;
+}
+
 int tgetcmd(void)
 {
-	int i, j, mask;
-	int cmd;
-
 	if (Cmdpushed)
 		return Cmdstack[--Cmdpushed];
 
-	do { /* try to match one of the termcap key entries */
-		mask = Key_mask;
-		for (j = 0; mask; ++j) {
-			cmd = tgetkb() & 0x7f;
-			for (i = 0; i < NUMKEYS - SPECIAL_START; ++i)
-				if ((mask & (1 << i)) &&
-				    cmd == Tkeys[i].key[j]) {
-					if (Tkeys[i].key[j + 1] == '\0')
-						return i + SPECIAL_START;
-				} else
-					mask &= ~(1 << i);
-		}
+#if ANSI
+	int cmd = tgetkb() & 0x7f;
 
-		/* No match - push back the chars and try to handle
-		 * the first one. */
-		while (j-- > 0)
+	/* All ansi special keys start with ESC */
+	if (cmd == '\033')
+		if (tkbrdy()) {
 			tungetkb();
-
-		cmd = tgetkb() & 0x7f;
-		if (cmd > NUMKEYS) { /* Ignore the key */
-			cmd = K_NODEF;
-			tbell();
+			return check_specials();
 		}
-	} while (cmd == K_NODEF);
 
 	return cmd;
+#else
+	return check_specials();
+#endif
 }
 
 
@@ -129,13 +136,13 @@ int tkbrdy(void)
 #endif
 }
 
-Boolean delay(void)
+Boolean delay(int ms)
 {
 #ifdef HAVE_POLL
 	if (InPaw || tkbrdy())
 		return FALSE;
 
-	return poll(&stdin_fd, 1, 1000) != 1;
+	return poll(&stdin_fd, 1, ms) != 1;
 #else
 #error No-poll
 #endif

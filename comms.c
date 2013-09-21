@@ -690,7 +690,7 @@ static void mshow(unsigned ch)
 			tbell();
 		else { /* show the match! */
 			zrefresh();
-			delay();
+			delay(1000);
 		}
 		bpnttomrk(&save);
 	}

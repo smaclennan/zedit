@@ -66,7 +66,7 @@ int ask(char *msg)
 
 Boolean delayprompt(char *msg)
 {
-	int rc = delay();
+	int rc = delay(500);
 	if (rc)
 		putpaw(msg);
 	return rc;

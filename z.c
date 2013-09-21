@@ -34,73 +34,32 @@ int Numbuffs;			/* number of buffers */
 
 static char dbgfname[PATHMAX];
 
-static void setup(int, char **);
-static void usage(char *prog);
+
+static void usage(char *prog)
+{
+	printf(
+		"usage: %s [-ht] [-c config_dir] [-l line] [fname ...]\n"
+		"where:\t-h  displays this message.\n"
+		"\t-t  default to text mode.\n"
+		"\t-c  specifies a config dir.\n"
+		"\t-l  goto specified line number. (First file only)\n"
+		, prog);
+
+	exit(1);
+}
 
 int main(int argc, char **argv)
 {
+	char path[PATHMAX + 1];
+	int arg, files = 0, textMode = 0, exitflag = 0;
+	struct buff *tbuff = NULL;
+
 	/* A longjmp is called if bcremrk runs out of memory */
 	if (setjmp(zenv) != 0) {
 		error("FATAL ERROR: Out of memory");
 		Argp = FALSE;	/* so Zexit will not default to save */
 		Zexit();
 	}
-
-	setup(argc, argv);
-
-	while (1)
-		execute();
-}
-
-/* NOTE: Dotty blocks */
-static void dotty(void)
-{
-	Cmd = tgetcmd();
-	Arg = 1;
-	Argp = FALSE;
-	while (Arg > 0) {
-		CMD(Keys[Cmd]);
-		--Arg;
-	}
-	Lfunc = Keys[Cmd];
-	First = FALSE;				/* used by pinsert when InPaw */
-}
-
-
-void execute(void)
-{
-#ifdef PIPESH
-	fd_set fds = SelectFDs;
-
-	zrefresh();
-
-	if (cpushed)
-		dotty();
-	else {
-		/* select returns -1 if a child dies (SIGPIPE) -
-		 * sigchild handles it */
-		while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
-#ifdef SYSV4
-			checkpipes(1);
-			zrefresh();
-#endif
-			fds = SelectFDs;
-		}
-		readpipes(&fds);
-		if (FD_ISSET(1, &fds))
-			dotty();
-	}
-#else
-	zrefresh();
-	dotty();
-#endif
-}
-
-static void setup(int argc, char **argv)
-{
-	char path[PATHMAX + 1];
-	int arg, files = 0, textMode = 0, exitflag = 0;
-	struct buff *tbuff = NULL;
 
 	Home = getenv("HOME");
 	if (!Home) {
@@ -225,6 +184,53 @@ static void setup(int argc, char **argv)
 
 	if (exitflag)
 		Zexit();
+
+	while (1)
+		execute();
+}
+
+/* NOTE: Dotty blocks */
+static void dotty(void)
+{
+	Cmd = tgetcmd();
+	Arg = 1;
+	Argp = FALSE;
+	while (Arg > 0) {
+		CMD(Keys[Cmd]);
+		--Arg;
+	}
+	Lfunc = Keys[Cmd];
+	First = FALSE;				/* used by pinsert when InPaw */
+}
+
+
+void execute(void)
+{
+#ifdef PIPESH
+	fd_set fds = SelectFDs;
+
+	zrefresh();
+
+	if (cpushed)
+		dotty();
+	else {
+		/* select returns -1 if a child dies (SIGPIPE) -
+		 * sigchild handles it */
+		while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
+#ifdef SYSV4
+			checkpipes(1);
+			zrefresh();
+#endif
+			fds = SelectFDs;
+		}
+		readpipes(&fds);
+		if (FD_ISSET(1, &fds))
+			dotty();
+	}
+#else
+	zrefresh();
+	dotty();
+#endif
 }
 
 void Dbg(char *fmt, ...)
@@ -343,17 +349,4 @@ char *lastpart(char *fname)
 		return p + 1;
 	else
 		return fname;
-}
-
-static void usage(char *prog)
-{
-	printf(
-		"usage: %s [-ht] [-c config_dir] [-l line] [fname ...]\n"
-		"where:\t-h  displays this message.\n"
-		"\t-t  default to text mode.\n"
-		"\t-c  specifies a config dir.\n"
-		"\t-l  goto specified line number. (First file only)\n"
-		, prog);
-
-	exit(1);
 }

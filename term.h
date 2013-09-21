@@ -58,8 +58,6 @@ extern int Tabsize;
 #define twidth(ch)		chwidth(ch, Pcol - Tstart, FALSE)
 #define bwidth(ch, col)		chwidth(ch, col, TRUE)
 
-#define showcursor(x)
-#define showmark(x)
 #define tputchar(c)		putchar(c)
 #define tflush()		fflush(stdout)
 

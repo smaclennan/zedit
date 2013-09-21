@@ -75,15 +75,11 @@ the paragraph. The default is 0.
 .sp 0
 :Match
 
-This variable controls the C Mode "matching" function.
+This variable controls the C and Shell Mode "matching" function.
 
-0 No matching occurs.
-
-1 Zedit will "match" all ')' and ']' with their matching '(' or '[' by
+Zedit will "match" all ')' and ']' with their matching '(' or '[' by
 moving the cursor to the matching character temporarily. If there is no
 match, Zedit will beep. Default.
-
-2 Zedit will insert a ')' or ']' for every '(' or '[' typed.
 .sp 0
 :Normal
 

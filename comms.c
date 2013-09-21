@@ -688,26 +688,11 @@ static void mshow(unsigned ch)
 		} while (cnt && !bisstart());
 		if (cnt)
 			tbell();
-		else {
+		else { /* show the match! */
 			zrefresh();
-			showcursor(TRUE);	/* show the match! */
 			delay();
-			showcursor(FALSE);
 		}
 		bpnttomrk(&save);
-	} else if (VAR(VMATCH) & 2) {
-		switch (ch) {
-		case '(':
-			match = ')'; break;
-		case '[':
-			match = ']'; break;
-		case '{':
-			match = '}'; break;
-		default:
-			return;
-		}
-		binsert(match);
-		bmove(-1);
 	}
 }
 

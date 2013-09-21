@@ -33,7 +33,7 @@ void tpushcmd(int cmd)
 	Cmdstack[Cmdpushed++] = cmd;
 }
 
-static void tungetkb(void);
+static void tungetkb(int j);
 
 static int check_specials(void)
 {
@@ -51,8 +51,7 @@ static int check_specials(void)
 
 	/* No match - push back the chars and try to handle
 	 * the first one. */
-	while (j-- > 0)
-		tungetkb();
+	tungetkb(j);
 
 	return tgetkb() & 0x7f;
 }
@@ -68,7 +67,7 @@ int tgetcmd(void)
 	/* All ansi special keys start with ESC */
 	if (cmd == '\033')
 		if (tkbrdy()) {
-			tungetkb();
+			tungetkb(1);
 			return check_specials();
 		}
 
@@ -80,38 +79,37 @@ int tgetcmd(void)
 
 
 /* stack and vars for t[un]getkb / tkbrdy */
-#define CSTACK		20
+#define CSTACK 16 /* must be power of 2 */
 static Byte cstack[CSTACK];
 static int cptr = -1;
 int cpushed;	/* needed in z.c */
 static int Pending = FALSE;
 
-
 Byte tgetkb(void)
 {
-	cptr = (cptr + 1) % CSTACK;
+	cptr = (cptr + 1) & (CSTACK - 1);
 	if (cpushed)
 		--cpushed;
 	else {
-		Byte buff[CSTACK >> 1];
-		int i, p;
+		Byte buff[CSTACK];
+		int i, p = cptr;
 
-		cpushed = read(0, (char *)buff, CSTACK >> 1) - 1;
+		cpushed = read(0, (char *)buff, CSTACK) - 1;
 		if (cpushed < 0)
 			hangup(1);	/* we lost connection */
-		for (i = 0, p = cptr; i <= cpushed; ++i, p = (p + 1) % CSTACK)
+		for (i = 0; i <= cpushed; ++i) {
 			cstack[p] = buff[i];
+			p = (p + 1) & (CSTACK - 1);
+		}
 	}
 	Pending = FALSE;
 	return cstack[cptr];
 }
 
-
-static void tungetkb(void)
+static void tungetkb(int j)
 {
-	if (--cptr < 0)
-		cptr = CSTACK - 1;
-	++cpushed;
+	cptr = (cptr - j) & (CSTACK - 1);
+	cpushed += j;
 }
 
 #ifdef HAVE_POLL

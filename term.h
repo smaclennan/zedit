@@ -63,10 +63,6 @@ extern int Tabsize;
 #define tputchar(c)		putchar(c)
 #define tflush()		fflush(stdout)
 
-extern unsigned Cmdpushed, Cmdstack[];
-#define POPCMD()		Cmdstack[--Cmdpushed]
-#define PUSHCMD(cmd)		(Cmdstack[Cmdpushed++] = cmd)
-
 #define wheight()		(Curwdo->last - Curwdo->first)
 
 /* this is MUCH faster than an isascii isprint pair */

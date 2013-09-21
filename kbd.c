@@ -23,11 +23,15 @@
 #include <sys/time.h>
 #include "keys.h"
 
-/* This file contains the keyboard input routines. */
-
-unsigned Cmdpushed, Cmdstack[10];	/* stack and vars for T[un]getcmd */
 
 unsigned Key_mask;
+
+static unsigned Cmdpushed, Cmdstack[10];	/* stack and vars for T[un]getcmd */
+
+void tpushcmd(int cmd)
+{
+	Cmdstack[Cmdpushed++] = cmd;
+}
 
 static void tungetkb(void);
 
@@ -37,7 +41,7 @@ int tgetcmd(void)
 	int cmd;
 
 	if (Cmdpushed)
-		return POPCMD();
+		return Cmdstack[--Cmdpushed];
 
 	do { /* try to match one of the termcap key entries */
 		mask = Key_mask;

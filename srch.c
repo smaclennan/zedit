@@ -103,7 +103,7 @@ static void doincsrch(char *prompt, Boolean forward)
 				tbell();
 		} else if (Keys[cmd] != ZNOTIMPL) {
 			if (cmd != CR)
-				PUSHCMD(cmd);
+				tpushcmd(cmd);
 			go = FALSE;
 		}
 		count = 0;

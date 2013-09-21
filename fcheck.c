@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#define FCHECK
 #include "z.h"
-#include "cnames.h"
 #include "vars-array.h"
 
 unsigned Key_mask;
@@ -30,6 +30,8 @@ unsigned Key_mask;
 #else
 #error No-screen-driver
 #endif
+
+#include "funcs.c"
 
 
 int main(int argc, char *argv[])
@@ -51,15 +53,15 @@ int main(int argc, char *argv[])
 
 	/* check sizes of various stuff */
 	int s1 = sizeof(Cnames) / sizeof(struct cnames);
-	if (s1 != NUMFUNCS) {
-		printf("Cnames: %d NUMFUNCS: %d\n", s1, NUMFUNCS);
+	int s2 = (sizeof(Cmds) / sizeof(void *) / 2) - 1;
+	if (s1 != NUMFUNCS || s2 != NUMFUNCS) {
+		printf("Cnames: %d Cmds: %d NUMFUNCS: %d\n", s1, s2, NUMFUNCS);
 		exit(1); /* stop since the loop below might segfault */
 	}
 
 	/* validate the Cnames array the best we can */
 	for (s1 = 1; s1 < NUMFUNCS; ++s1) {
-		if (strcasecmp(Cnames[s1].name,
-			       Cnames[s1 - 1].name) <= 0) {
+		if (strcasecmp(Cnames[s1].name, Cnames[s1 - 1].name) <= 0) {
 			printf("Problem: (%d) %s and %s\n",
 			    s1, Cnames[s1 - 1].name, Cnames[s1].name);
 			err = 1;

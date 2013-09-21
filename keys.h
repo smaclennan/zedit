@@ -1,5 +1,5 @@
 /* keys.h - Zedit key code defines
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -24,6 +24,10 @@
 		- assumes numbers contiguous and start at SPECIAL_START
 	Max 32 keys (415)
 */
+
+#ifndef _KEYS_H_
+#define _KEYS_H_
+
 #define SPECIAL_START		384
 #define TC_UP			(SPECIAL_START + 0)
 #define TC_DOWN			(SPECIAL_START + 1)
@@ -63,3 +67,5 @@ struct key_array {
 
 extern struct key_array Tkeys[];
 extern unsigned int Key_mask;
+
+#endif

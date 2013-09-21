@@ -1,5 +1,5 @@
 /* funcs.c - func lists
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -154,11 +154,3 @@ void (*Cmds[][2])() = {
 	{ Znotimpl,		Zfname },
 };
 int Curcmds;
-
-void fcheck(void)
-{
-	int s1 = sizeof(Cnames) / sizeof(struct cnames);
-	int s2 = (sizeof(Cmds) / sizeof(void *) / 2) - 1;
-	if (s1 != NUMFUNCS || s2 != NUMFUNCS)
-		Dbg("Cnames: %d Cmds: %d NUMFUNCS: %d\n", s1, s2, NUMFUNCS);
-}

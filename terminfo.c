@@ -143,9 +143,6 @@ void tsize(int *rows, int *cols)
 
 void tlfini()
 {
-#if COMMENTBOLD
-	tstyle(T_NORMAL);
-#endif
 	TPUTS(reset_1string);
 	resetterm();
 }
@@ -162,11 +159,9 @@ void tstyle(int style)
 	case T_NORMAL:
 		TPUTS(exit_attribute_mode);
 		break;
-#if COMMENTBOLD
 	case T_COMMENT:
 		TPUTS(tparm(set_a_foreground, COLOR_RED));
 		break;
-#endif
 	case T_STANDOUT:
 		TPUTS(enter_standout_mode);
 		break;
@@ -178,6 +173,14 @@ void tstyle(int style)
 		break;
 	}
 	fflush(stdout);
+}
+
+void tbell(void)
+{
+	if (VAR(VVISBELL))
+		TPUTS(flash_screen);
+	else if (VAR(VSILENT) == 0)
+		putchar('\7');
 }
 
 /* for tputs this must be a function */

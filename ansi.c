@@ -89,13 +89,7 @@ void tsize(int *rows, int *cols)
 	*rows = *cols = 0;
 }
 
-void tlfini(void)
-{
-#if COMMENTBOLD
-	tstyle(T_NORMAL);
-#endif
-}
-
+void tlfini(void) {}
 
 void tstyle(int style)
 {
@@ -107,10 +101,8 @@ void tstyle(int style)
 	switch (cur_style = style) {
 	case T_NORMAL:
 		TPUTS("\033[0m"); break;
-#if COMMENTBOLD
 	case T_COMMENT:
 		TPUTS("\033[31m"); break; /* red */
-#endif
 	case T_STANDOUT:
 		TPUTS("\033[7m"); break;
 	case T_REVERSE:
@@ -119,5 +111,16 @@ void tstyle(int style)
 		TPUTS("\033[1m"); break;
 	}
 	fflush(stdout);
+}
+
+void tbell(void)
+{
+	if (VAR(VVISBELL)) {
+		fputs("\033[?5h", stdout);
+		fflush(stdout);
+		usleep(100000);
+		fputs("\033[?5l", stdout);
+	} else if (VAR(VSILENT) == 0)
+		putchar('\7');
 }
 #endif

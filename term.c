@@ -173,23 +173,11 @@ void tfini(void)
 
 	clrecho();
 	tgoto(Rowmax - 1, 0);
+#if COMMENTBOLD
+	tstyle(T_NORMAL);
+#endif
 	tflush();
 	tlfini();
-}
-
-void tbell(void)
-{
-	if (VAR(VVISBELL)) {
-#if ANSI
-		fputs("\033[?5h", stdout);
-		fflush(stdout);
-		usleep(100000);
-		fputs("\033[?5l", stdout);
-#elif TERMINFO
-		TPUTS(flash_screen);
-#endif
-	} else if (VAR(VSILENT) == 0)
-		putchar('\7');
 }
 
 void setmark(Boolean prntchar)

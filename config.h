@@ -24,14 +24,13 @@
  * I have not tested anything other than Linux in a decade, you have
  * been warned!
  */
-#ifdef __linux__
-# define LINUX
+#if defined(__linux__) || defined(__unix__)
 # define SYSV4
 # define HAVE_POLL
+# define HAVE_TERMIOS
 #elif defined(__BSD__)
+/* This really means old Sun BSD */
 # define BSD
-#elif defined(__unix__)
-# define SYSV4
 #else
 # error OS not detected.
 #endif

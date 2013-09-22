@@ -178,7 +178,7 @@ void tbell(void)
 }
 
 /* for tputs this must be a function */
-#ifdef LINUX
+#ifdef TERMIOS
 int _putchar(int ch)
 #else
 int _putchar(char ch)

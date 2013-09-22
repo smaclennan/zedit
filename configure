@@ -83,3 +83,10 @@ set_one SHELL $shell
 set_one SPELL $spell
 set_one MAKE  $make
 set_one TAGS  $tags
+
+[ -f /usr/include/sys/poll.h ] && set_one HAVE_POLL 1
+if [ -f /usr/include/termios.h ]; then
+    set_one HAVE_TERMIOS 1
+else
+    set_one HAVE_TERMIOS 0
+fi

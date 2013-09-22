@@ -28,7 +28,7 @@
 #include <signal.h>
 #include <sys/wait.h>	/* need for WNOWAIT */
 
-#if defined(LINUX)
+#ifdef HAVE_TERMIOS
 #include <termios.h>
 static struct termios savetty;
 static struct termios settty;
@@ -44,6 +44,8 @@ static struct tchars savechars;
 static struct tchars setchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 static struct ltchars savelchars;
 static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+#else
+#error No-term
 #endif
 
 int Clrcol[ROWMAX + 1];		/* Clear if past this */
@@ -93,7 +95,7 @@ void tinit(void)
 
 	termsize();
 
-#ifdef LINUX
+#ifdef HAVE_TERMIOS
 	tcgetattr(fileno(stdin), &savetty);
 	tcgetattr(fileno(stdin), &settty);
 	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
@@ -159,7 +161,7 @@ void tinit(void)
 
 void tfini(void)
 {
-#if defined(LINUX)
+#ifdef HAVE_TERMIOS
 	tcsetattr(fileno(stdin), TCSAFLUSH, &savetty);
 #elif defined(SYSV4)
 	ioctl(fileno(stdin), TCSETAF, &savetty);

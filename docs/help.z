@@ -618,75 +618,70 @@ Performs a 'setenv' command on an environment variable. The variable will keep
 the setting during the the Zedit session.
 :Shell
 
-On  PCs,  exits  to the shell pointed to by the environment variable SHELL. If
-SHELL is not set, it will use COMSPEC. Type "exit" to get back to Zedit.
-
-On Unix machines, forks an interactive shell in a special ".shell" window.
+Forks an interactive shell in a special ".shell" window.
 :Show Config
 
-Show the current settings of all the Zedit variables in a buffer.  The  buffer
+Show  the  current settings of all the Zedit variables in a buffer. The buffer
 is suitable for use as a .config.z file and can be saved to a file using Write
 File.
 :Shrink Window
 
-Shrinks the current window one line. A Universal Argument shrinks  the  window
+Shrinks  the  current window one line. A Universal Argument shrinks the window
 Arg lines.
 :Size Window
 
 Sets the window to Universal Argument lines.
 :Spell
 
-This  command  is  an interactive interface to the "ispell" program. It allows
+This command is an interactive interface to the "ispell"  program.  It  allows
 you to perform spell checking on the current buffer. A Universal Argument lim-
 its the spell check to the Region. The default is to check the entire buffer.
-
-The "ispell" program is bundled with the Zedit. Unix only.
 :Swap Mark and Point
 
-The  Point  goes to the current position of the Mark and the Mark is set where
+The Point goes to the current position of the Mark and the Mark is  set  where
 the Point was. A Universal Argument is ignored.
 :Switch to Buffer
 
-Prompts for a buffer name to switch to with command completion.  The  previous
-buffer  is  stored  and  displayed  as  a default. This allows quick switching
-between two buffers. The Again command can be used to scroll through the  buf-
+Prompts  for a buffer name to switch to with command completion.  The previous
+buffer is stored and displayed as  a  default.  This  allows  quick  switching
+between  two buffers. The Again command can be used to scroll through the buf-
 fer list. A Universal Argument is ignored.
 :Tab
 
 Handles the tab key. A Universal Argument causes the command to repeat.
 :Toggle Case
 
-Switches  the  current  buffers  minor  mode  between  case sensitive and case
-
-
-insensitive for searches and replacements. Ignores the Universal Argument.
+Switches the current buffers minor mode between case sensitive and case insen-
+sitive for searches and replacements. Ignores the Universal Argument.
 :Transpose Characters
 
-Transposes the character before the Point with the character at the Point.  It
-leaves  the  Point after the second character. Successive commands will "drag"
-the character that was before the Point towards the end of the  line.  If  the
+Transposes  the character before the Point with the character at the Point. It
+leaves the Point after the second character. Successive commands  will  "drag"
+
+
+the  character  that  was before the Point towards the end of the line. If the
 Point was at the end of a line, the two characters before the Point are trans-
-posed. If the Point is at the beginning of the buffer, the  character  at  the
-Point  and  the character after the Point are transposed. A Universal Argument
+posed.  If  the  Point is at the beginning of the buffer, the character at the
+Point and the character after the Point are transposed. A  Universal  Argument
 causes the command to repeat.
 :Transpose Words
 
-Transposes the words before and after the Point. The Point is left  after  the
+Transposes  the  words before and after the Point. The Point is left after the
 second word. Successive commands will "drag" the word before the Point towards
-the end of the line. If the Point is at the end of a line, the  last  word  on
-the  line is transposed with the first word on the next line. The command does
+the  end  of  the line. If the Point is at the end of a line, the last word on
+the line is transposed with the first word on the next line. The command  does
 nothing at the end of the buffer. If the Point is in the middle of a word, the
 two halves of the word are transposed. A Universal Argument causes the command
 to repeat.
 :Trim White Space
 
-Removes all spaces and tabs on both sides of the Point. The Point is  left  on
+Removes  all  spaces and tabs on both sides of the Point. The Point is left on
 the character that is to the right of the deleted text. The deleted characters
 are not put in the Kill Buffer. A Universal Argument is ignored.
 :Two Windows
 
-Splits the current window into two windows. The same buffer  is  displayed  in
-both  windows and the bottom window is made active. A Universal Argument keeps
+Splits  the  current  window into two windows. The same buffer is displayed in
+both windows and the bottom window is made active. A Universal Argument  keeps
 splitting the current window.
 :Undent
 
@@ -696,10 +691,10 @@ Removes Universal Argument tabs from the start of every line in the region.
 Undo the previous edit. There is a list of undos.
 :Universal Argument
 
-Many of the commands accept a Universal  Argument  to  cause  the  command  to
-repeat  or  to modify the meaning of the command in some way. It reads decimal
-digits and displays them in the PAW. The first non-digit  is  processed  as  a
-command.  The  digits  cannot  be deleted since Delete is a valid command that
+Many  of  the  commands  accept  a  Universal Argument to cause the command to
+repeat or to modify the meaning of the command in some way. It  reads  decimal
+digits  and  displays  them  in the PAW. The first non-digit is processed as a
+command. The digits cannot be deleted since Delete is  a  valid  command  that
 accepts a Universal Argument. If a mistake is made, use the Abort Command.
 :Unmodify
 
@@ -707,33 +702,33 @@ Turns off the modified flag for the current buffer. Does not change the buffer
 itself. A Universal Argument is ignored.
 :Uppercase Region
 
-Convert  the  Region to uppercase. Not allowed in program mode buffers. A Uni-
+Convert the Region to uppercase. Not allowed in program mode buffers.  A  Uni-
 versal Argument is ignored.
 :Uppercase Word
 
-Converts the current word starting at the Point to uppercase.  It  leaves  the
-Point  at  the  end  of  the  word. A Universal Argument causes the command to
+Converts  the  current  word starting at the Point to uppercase. It leaves the
+Point at the end of the word. A  Universal  Argument  causes  the  command  to
 repeat.
 :View Line
 
-Makes the Point line the top line in the window. A Universal  Argument  causes
+Makes  the  Point line the top line in the window. A Universal Argument causes
 the command to repeat.
 :Write File
 
-Prompts  for  a path name and writes out the current buffer to this file name.
-Supports file name completion. It changes the path name of the current  buffer
-to  the  new  path  name.  A  Universal  Argument causes only the Region to be
-
-
-written and does not change the name of the buffer.
+Prompts for a path name and writes out the current buffer to this  file  name.
+Supports  file name completion. It changes the path name of the current buffer
+to the new path name. A Universal Argument causes only the Region to be  writ-
+ten and does not change the name of the buffer.
 :Yank
 
-Inserts the characters from the Kill Buffer before the Point.  The  characters
-are  inserted, even in overwrite mode. A Universal Argument causes the command
+Inserts  the  characters from the Kill Buffer before the Point. The characters
+are inserted, even in overwrite mode. A Universal Argument causes the  command
+
+
 to repeat.
 :Add NL
 
-If this flag variable is set, the editor will insure that all saved files  end
+If  this flag variable is set, the editor will insure that all saved files end
 in a Newline. The default is on.
 :Backup
 
@@ -741,65 +736,65 @@ If this flag variable is set, a backup file is created when a file is written.
 The default is off.
 :C Extends
 
-This variable defines the extensions that turn on C Mode. The  extensions  are
+This  variable  defines the extensions that turn on C Mode. The extensions are
 seperated with the colon (:). There is a maximum of eight extensions. See also
 AExtends, TExtends.
 :C Tabs
 
-A tab is a single character that is displayed as one or  more  spaces  on  the
+A  tab  is  a  single character that is displayed as one or more spaces on the
 screen. This variable defines the number of spaces displayed per tab in C mode
 buffers, even if the buffer is in View mode. The default is 4 spaces. See also
 Tabs.
 :Exact
 
 If Exact is set, all searches and replaces are case sensitive. This means that
-the search  string  "string"  will  only  match  "string",  not  "STRING",  or
+the  search  string  "string"  will  only  match  "string",  not  "STRING", or
 "String". The default is on.
 :Expand Paths
 
-If  ExpandPaths  is set, all file names are expanded to a full path. For exam-
-ple, the file name "../file.c" might be expanded to "/home/sam/dir/file.c".  ~
+If ExpandPaths is set, all file names are expanded to a full path.  For  exam-
+ple,  the file name "../file.c" might be expanded to "/home/sam/dir/file.c". ~
 and $ prefixed paths are always expanded. The default is on.
 :Fill Ch Width
 
-This  is  the column at which the Text mode commands wrap the right margin. It
+This is the column at which the Text mode commands wrap the right  margin.  It
 is also used by the Center Line command. The default is 72.
 :Flow Control
 
-On SYS3 and SYS5 machines, the flow control is user definable. If  FlowControl
-is  set, ^S and ^Q stop and start the terminal. However, the ^S cannot be used
-as the Search command. If FlowControl is off, ^S can be used. The  default  is
+On  SYS3 and SYS5 machines, the flow control is user definable. If FlowControl
+is set, ^S and ^Q stop and start the terminal. However, the ^S cannot be  used
+as  the  Search command. If FlowControl is off, ^S can be used. The default is
 off.
 :Grep
 
 The command to use for the Zedit grep command. The default is `grep -n'.
 :Kill Line
 
-If  this  variable is set, the 'Delete to End of Line' command will delete the
-entire line. If at the start of line, it will delete the  line  including  the
+If this variable is set, the 'Delete to End of Line' command will  delete  the
+entire  line.  If  at the start of line, it will delete the line including the
 NL. The default is on.
 :Lines
 
-This  flag  variable  turns  on a line:column indicator on the mode line.  The
-Lines feature can cause a lot of cursor movement and  is  irritating  on  some
+This flag variable turns on a line:column indicator on  the  mode  line.   The
+Lines  feature  can  cause  a lot of cursor movement and is irritating on some
 slow terminals. The default is on.
 :Make Cmd
 
-This  is a string variable which contains the default string for the Make com-
+This is a string variable which contains the default string for the Make  com-
 mand. The default is "make".
 :Margin
 
-
-
-This is a decimal variable that defines the left margin for Text mode and  the
-Format  Paragraph command. It does not affect the first line of the paragraph.
+This  is a decimal variable that defines the left margin for Text mode and the
+Format Paragraph command. It does not affect the first line of the  paragraph.
 The default is 0.
 :Match
 
+
+
 This variable controls the C and Shell Mode "matching" function.
 
-Zedit will "match" all ')' and ']' with their matching '(' or  '['  by  moving
-the  cursor to the matching character temporarily. If there is no match, Zedit
+Zedit  will  "match"  all ')' and ']' with their matching '(' or '[' by moving
+the cursor to the matching character temporarily. If there is no match,  Zedit
 will beep. Default.
 :Normal
 
@@ -807,49 +802,54 @@ If on, sets the default buffer mode to Normal. If off, sets the default buffer
 mode to Text. Some file extensions override this variable. The default is on.
 :Overwrite
 
-If  overwrite  is set, newly created buffers default to overwrite mode instead
+If overwrite is set, newly created buffers default to overwrite  mode  instead
 of insert mode. Default is off.
 :SH Extends
 
-This variable defines the extensions that turn on Shell Mode.  The  extensions
-are  seperated  with the colon (:). Note that CExtends takes precedence. There
+This  variable  defines the extensions that turn on Shell Mode. The extensions
+are seperated with the colon (:). Note that CExtends takes  precedence.  There
 is a maximum of eight extensions. See also CExtends, TExtends.
 :Silent
 
 If set, turns the bell off. Default is off (bell on).
 :Single Scroll
 
-If SingleScroll is set, a Next Line command at the bottom of the  screen  will
-scroll  one  line.  If  not  set,  the Next Line will scroll a few lines.  The
+If  SingleScroll  is set, a Next Line command at the bottom of the screen will
+scroll one line. If not set, the Next Line  will  scroll  a  few  lines.   The
 default is set. It would be turned off only on very slow terminals.
 :Space Tabs
 
-The tab character is normally inserted into the buffer as  a  single  ASCII  9
-character.  If the SpaceTabs variable is set, then a tab is inserted as spaces
-in the buffer. This flag does not affect tabs already in the  buffer  or  tabs
+The  tab  character  is  normally inserted into the buffer as a single ASCII 9
+character. If the SpaceTabs variable is set, then a tab is inserted as  spaces
+in  the  buffer.  This flag does not affect tabs already in the buffer or tabs
 inserted in the PAW. The default is off.
 :Tabs
 
-A  tab  is  a  single character that is displayed as one or more spaces on the
+A tab is a single character that is displayed as one or  more  spaces  on  the
 screen. This variable defines the number of space characters displayed per tab
-in  buffers  that  are not in a program mode. The default is 8 spaces per tab.
+in buffers that are not in a program mode. The default is 8  spaces  per  tab.
 See also AdaTabs and CTabs.
 :Tagfile
 
-This specifies the tag file name used by the Find Tag command. It  is  a  full
+This  specifies  the  tag file name used by the Find Tag command. It is a full
 path name to the tag file. The default is "NONE".
 :T Extends
 
-This  variable  defines  the extensions that turn on Text Mode. The extensions
-are seperated with the colon (:). An extension of  "."  matches  no  extension
-(i.e.  no  "." in file name). Note that the CExtends then AExtends take prece-
-dence over TExtends. There is a maximum of eight  extensions.  See  also  CEx-
+This variable defines the extensions that turn on Text  Mode.  The  extensions
+are  seperated  with  the  colon (:). An extension of "." matches no extension
+(i.e. no "." in file name). Note that the CExtends then AExtends  take  prece-
+dence  over  TExtends.  There  is a maximum of eight extensions. See also CEx-
 tends, ShExtends.
 :Visible Bell
 
-If  this variable is set, the bell will flash the screen rather than producing
+If this variable is set, the bell will flash the screen rather than  producing
 an audible tone. The default is on if flashing the screen is supported.
 :ZEDIT
+
+
+
+
+
 
 
 

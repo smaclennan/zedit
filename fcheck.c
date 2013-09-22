@@ -17,11 +17,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#define FCHECK
+/* Setting FCHECK to static makes cc, sparse, and checkpatch happy. */
+#define FCHECK static
 #include "z.h"
 #include "vars-array.h"
 
-unsigned Key_mask;
+static unsigned Key_mask;
 
 #if ANSI
 #include "ansi.c"

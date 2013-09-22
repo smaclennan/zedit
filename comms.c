@@ -496,6 +496,15 @@ void Zfillpara(void)
 	unmark(tmark);
 }
 
+static Boolean Ispara(char pc, char ch)
+{
+	/* We consider a FF, VT, or two NLs in a row to mark a paragraph.
+	 * A '.' at the start of a line also marks a paragraph (for nroff)
+	 */
+	return ch == '\f' || ch == '\13' ||
+		(pc == NL && (ch == NL || ch == '.'));
+}
+
 void Zfpara(void)
 {
 	char pc = '\0';
@@ -521,16 +530,6 @@ void Zbpara(void)
 	}
 	movepast(bisspace, FORWARD);
 }
-
-Boolean Ispara(char pc, char ch)
-{
-	/* We consider a FF, VT, or two NLs in a row to mark a paragraph.
-	 * A '.' at the start of a line also marks a paragraph (for nroff)
-	 */
-	return ch == '\f' || ch == '\13' ||
-		(pc == NL && (ch == NL || ch == '.'));
-}
-
 
 /* MISC COMMANDS */
 

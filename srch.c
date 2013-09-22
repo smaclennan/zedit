@@ -64,7 +64,7 @@ static void doincsrch(char *prompt, Boolean forward)
 			}
 
 			bmrktopnt(&tmark); /* save in case search fails */
-		again:
+again:
 			if (bstrsearch(str, forward))
 				bmove(i);
 			else if (++count == 2) {
@@ -438,10 +438,9 @@ static Boolean dosearch(void)
 	}
 	if (!found) {
 		bpnttomrk(tmark);
-		if (fcnt) {
-			echo("Found ");
-			titot(fcnt);
-		} else
+		if (fcnt)
+			putpaw("Found %d", fcnt);
+		else
 			echo("Not Found");
 	} else
 		clrecho();

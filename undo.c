@@ -176,8 +176,6 @@ void Zundo(void)
 }
 #else
 void Zundo(void) { tbell(); }
-void undo_add(int size) {}
-void undo_del(int size) {}
 void undo_clear(struct buff *buff) {}
 void ufini(void) {}
 #endif

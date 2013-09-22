@@ -73,14 +73,12 @@ static void sigwinch(int sig)
 /* This is called before the windows are created */
 static void initline(void)
 {
-	int i;
-
-	sprintf(PawStr, "%s %s  Initializing", ZSTR, VERSION);
+	int i = sprintf(PawStr, "%s %s  Initializing", ZSTR, VERSION);
 	tclrwind();
 	tgoto(Rowmax - 2, 0);
 	tstyle(T_STANDOUT);
 	tprntstr(PawStr);
-	for (i = strlen(PawStr) + 1; i < Colmax; ++i)
+	for (++i; i < Colmax; ++i)
 		tprntchar(' ');
 	tstyle(T_NORMAL);
 	tflush();
@@ -339,14 +337,6 @@ void tgoto(int row, int col)
 {
 	tsetpoint(row, col);
 	tforce();
-}
-
-/* Print a decimal number. */
-void titot(unsigned cntr)
-{
-	if (cntr > 9)
-		titot(cntr / 10);
-	tprntchar(cntr % 10 + '0');
 }
 
 int prefline(void)

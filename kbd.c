@@ -24,7 +24,7 @@
 
 unsigned Key_mask;
 
-static unsigned Cmdpushed, Cmdstack[10];	/* stack and vars for T[un]getcmd */
+static unsigned Cmdpushed, Cmdstack[10]; /* stack and vars for T[un]getcmd */
 
 void tpushcmd(int cmd)
 {
@@ -35,11 +35,11 @@ static void tungetkb(int j);
 
 static int check_specials(void)
 {
-	int i, j, bit, mask = Key_mask;
+	int i, j, bit = 1, mask = Key_mask;
 
 	for (j = 0; mask; ++j) {
 		int cmd = tgetkb() & 0x7f;
-		for (bit = 1, i = 0; i < NUMKEYS - SPECIAL_START; ++i, bit <<= 1)
+		for (i = 0; i < NUMKEYS - SPECIAL_START; ++i, bit <<= 1)
 			if ((mask & bit) && cmd == Tkeys[i].key[j]) {
 				if (Tkeys[i].key[j + 1] == '\0')
 					return i + SPECIAL_START;

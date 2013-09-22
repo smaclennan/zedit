@@ -21,7 +21,7 @@
 #include "typedefs.h"
 
 #ifdef FCHECK
-#define Z(f) void f(void) {}
+#define Z(f) FCHECK void f(void) {}
 #else
 #define Z(f) void f(void)
 #endif
@@ -237,7 +237,6 @@ int getdname(char *prompt, char *path);
 int getplete(char *, char *, char **, int, int);
 Boolean isdir(char *);
 Boolean isfile(char *, char *, char *, Boolean);
-Boolean Ispara(char, char);
 int bisspace(void);
 int bistoken(void);
 int biswhite(void);
@@ -285,7 +284,6 @@ void tpushcmd(int cmd);
 void tgoto(int, int);
 void tindent(int);
 void tinit(void);
-void titot(unsigned);
 int tkbrdy(void);
 void tobegline(void);
 void toendline(void);
@@ -356,11 +354,14 @@ static inline void recomment(void) {}
 static inline void uncomment(struct buff *buff, int need_update) {}
 #endif
 
+#if UNDO
 void undo_add(int size);
 void undo_del(int size);
+#else
+static inline void undo_add(int size) {}
+static inline void undo_del(int size) {}
+#endif
 void undo_clear(struct buff *buff);
 void ufini(void);
 
 void findtag_part(void);
-
-void terminfo_dummy(void);

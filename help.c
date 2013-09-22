@@ -273,6 +273,6 @@ void Zhelp(void)
 }
 
 #else
-void Zhelp(void) { echo("Online help: http://seanm.ca/zedit/zedit.html"); }
+void Zhelp(void) { tbell(); }
 #endif
 

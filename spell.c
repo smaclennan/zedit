@@ -1,5 +1,5 @@
 /* spell.c - spell command
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -31,6 +31,13 @@ static int ispell(FILE *, FILE *, char *, char *);
 static int bisalpha(void)
 {
 	return isalpha(Buff());
+}
+
+/* replace with new, assumes Region contains old word */
+static void sreplace(char *new)
+{
+	bdeltomrk(Curbuff->mark);
+	binstr(new);
 }
 
 void Zspell(void)
@@ -198,13 +205,6 @@ static int ispell(FILE *in, FILE *out, char *send, char *receive)
 	fputs(send, out);
 	fflush(out);
 	return fgets(receive, 1024, in) ? strlen(receive) : 0;
-}
-
-/* replace with new, assumes Region contains old word */
-void sreplace(char *new)
-{
-	bdeltomrk(Curbuff->mark);
-	binstr(new);
 }
 #else
 void Zspell(void) { tbell(); }

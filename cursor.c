@@ -1,5 +1,5 @@
 /* cursor.c - Zedit cursor commands
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -219,6 +219,7 @@ void Zcgoto(void)
 	bmakecol(--col, TRUE);
 }
 
+#define BOOKMARKS	10			/* number of book marks */
 static struct mark *Bookmrks[BOOKMARKS];	/* stack of book marks */
 static char *Bookname[BOOKMARKS];		/* stack of book names */
 static int  Bookmark = -1;			/* current book mark */

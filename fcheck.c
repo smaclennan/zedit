@@ -17,8 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/* Setting FCHECK to static makes cc, sparse, and checkpatch happy. */
-#define FCHECK static
+#define FCHECK
 #include "z.h"
 #include "vars-array.h"
 

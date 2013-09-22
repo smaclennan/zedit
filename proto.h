@@ -17,11 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h>
-#include "typedefs.h"
-
 #ifdef FCHECK
-#define Z(f) FCHECK void f(void) {}
+#define Z(f) static void f(void) {}
 #else
 #define Z(f) void f(void)
 #endif
@@ -330,10 +327,6 @@ void Dbg(char *fmt, ...);
 int getfname(char *, char *);
 int nmatch(char *, char *);
 
-
-#if SPELL
-void sreplace(char *);
-#endif
 
 void wswitchto(struct wdo *wdo);
 void wsize(void);

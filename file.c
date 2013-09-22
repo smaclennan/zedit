@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include <assert.h>
 
 static char Fname[PATHMAX + 1];
 

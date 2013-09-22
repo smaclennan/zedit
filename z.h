@@ -23,12 +23,11 @@
 #include "config.h"
 
 #include <stdio.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <string.h>
-#include <memory.h>
-#include <fcntl.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <pwd.h>
 #include <sys/stat.h>
@@ -43,20 +42,9 @@ extern int Verbose;
 
 extern char *Home;
 
-#ifdef SYSV4
-#include <string.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <time.h>
-#endif
-
 #define ZSTR	"Zedit"
 #define VERSION	"5.0"
 #define ZFMT	"%s %s  (%s)  %s: "
-
-/* These are portable across different Unix's */
-#define TOLOWER(c)		(isupper(c) ? tolower(c) : c)
-#define TOUPPER(c)		(islower(c) ? toupper(c) : c)
 
 #ifndef TRUE
 #define FALSE		0
@@ -90,7 +78,6 @@ extern char *Home;
 #define AGAIN		-1			/* go again */
 #define NUMASCII	256			/* number of ascii chars */
 #define ESIZE		256			/* reg exp buffer size */
-#define BOOKMARKS	10			/* number of book marks */
 
 /*
  * BUFFER MODES
@@ -133,23 +120,6 @@ extern char *Home;
 #define NO		0
 #define ABORT		-1
 #define BADCHAR		-2
-
-/* Help Types */
-#define H_NONE				0
-#define H_MISC				1
-#define H_VAR				2
-#define H_CURSOR			3
-#define H_DELETE			4
-#define H_SEARCH			5
-#define H_FILE				6
-#define H_BUFF				7
-#define H_DISP				8
-#define H_MODE				9
-#define H_HELP				10
-#define H_BIND				11
-#define H_SHELL				12
-
-/* GENERAL STRUCTURE DEFS */
 
 struct cnames {
 	char *name;
@@ -202,7 +172,6 @@ extern int circf;
 
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
-
 
 #define echo(s)		putpaw(s)
 #define clrecho(void)	putpaw("")

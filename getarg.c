@@ -28,7 +28,7 @@ struct buff *Paw, *Buff_save;
 /* globals for getplete */
 static char **Carray;
 static int Csize, Cnum = 0, Cret;
-unsigned Nextpart = ZNOTIMPL;
+void (*Nextpart)(void);
 
 /* General purpose string argument input routine which recursively calls the
  * editor through the PAW buffer.
@@ -264,26 +264,9 @@ void pnewline(void)
 
 void Zpart(void)
 {
-	char word[STRMAX + 1];
-	struct buff *tbuff;
-
-#if TAGS
-	if (Nextpart == ZFINDTAG) {
-		findtag_part();
-		return;
-	}
-#endif
-	if (Nextpart == ZSWITCHTO) {
-			getbtxt(word, STRMAX);
-		tbuff = cfindbuff(word);
-		if (!tbuff)
-			tbuff = Curbuff;
-		if (tbuff->next)
-			tbuff = tbuff->next;
-		else
-			tbuff = Bufflist;
-		makepaw(tbuff->bname, TRUE);
-	} else
+	if (Nextpart)
+		Nextpart();
+	else
 		tbell();
 }
 

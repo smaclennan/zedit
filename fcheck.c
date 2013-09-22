@@ -51,6 +51,11 @@ int main(int argc, char *argv[])
 		       N_KEYS, NUMKEYS - SPECIAL_START);
 		err = 1;
 	}
+	if (N_KEYS != NUM_SPECIAL) {
+		printf("Mismatch N_KEYS %d NUM_SPECIAL %d\n",
+		       N_KEYS, NUM_SPECIAL);
+		err = 1;
+	}
 
 	/* check sizes of various stuff */
 	int s1 = sizeof(Cnames) / sizeof(struct cnames);

@@ -60,6 +60,8 @@
 #define TC_BACK			(SPECIAL_START + 28)
 #define NUMKEYS			(SPECIAL_START + 29)
 
+#define NUM_SPECIAL		(NUMKEYS - SPECIAL_START)
+
 struct key_array {
 	char *key;
 	char *label;

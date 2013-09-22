@@ -101,14 +101,14 @@ void Zfindtag(void)
 
 			if (found) {
 				strcpy(savetag, tag);
-				Nextpart = ZFINDTAG;
+				Nextpart = findtag_part;
 				bpnttomrk(&tmark);
 				getbword(tag, STRMAX, bistoken);
 			} else
 				echo("Not Found");
 		}
 	} while (found);
-	Nextpart = ZNOTIMPL;
+	Nextpart = NULL;
 	bswitchto(Bsave);			/* go back to original buffer */
 	Curwdo->modeflags = INVALID;
 }
@@ -140,7 +140,7 @@ static void gotomatch(struct mark *smark)
 	bpnttomrk(smark);
 	Zsetbookmrk();
 	bpnttomrk(&tmark);
-	Nextpart = ZNOTIMPL;
+	Nextpart = NULL;
 }
 
 /* Parse the line in the tag file and find the correct file and position. */

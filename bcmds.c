@@ -26,16 +26,31 @@ static int Numbuffs;			/* number of buffers */
 static int maxbuffs;			/* max buffers Bnames can hold */
 
 
+static void switchto_part(void)
+{
+	char word[STRMAX + 1];
+	struct buff *tbuff;
+
+	getbtxt(word, STRMAX);
+	tbuff = cfindbuff(word);
+	if (!tbuff)
+		tbuff = Curbuff;
+	if (tbuff->next)
+		tbuff = tbuff->next;
+	else
+		tbuff = Bufflist;
+	makepaw(tbuff->bname, TRUE);
+}
+
 void Zswitchto(void)
 {
-	char *was;
 	int rc;
+	char *was = Curbuff->bname;
 
 	Arg = 0;
-	was = Curbuff->bname;
-	Nextpart = ZSWITCHTO;
+	Nextpart = switchto_part;
 	rc = getplete("Buffer: ", Lbufname, Bnames, sizeof(char *), Numbuffs);
-	Nextpart = ZNOTIMPL;
+	Nextpart = NULL;
 	if (rc == -1)
 		return;
 	strcpy(Lbufname, was);

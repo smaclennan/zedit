@@ -194,7 +194,7 @@ extern struct mark Scrnmarks[];
 extern Boolean Initializing;
 extern Boolean Insearch;
 
-extern unsigned Nextpart;
+extern void (*Nextpart)(void);
 
 extern Byte CRdefault;
 

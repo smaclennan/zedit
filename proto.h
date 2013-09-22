@@ -363,5 +363,3 @@ static inline void undo_del(int size) {}
 #endif
 void undo_clear(struct buff *buff);
 void ufini(void);
-
-void findtag_part(void);

@@ -42,6 +42,22 @@ static char *stristr(char *str1, char *str2)
 	return NULL;
 }
 
+static void findtag_part(void)
+{
+	char word[STRMAX + 1];
+
+	bswitchto(cfindbuff(TAGBUFNAME));
+	for (bcsearch(NL); !bisend(); bcsearch(NL)) {
+		getbword(word, STRMAX, bistoken);
+		if (stristr(word, savetag)) {
+			makepaw(word, TRUE);
+			return;
+		}
+	}
+	bswitchto(Paw);
+	tbell();
+}
+
 /* Routines to handle tag files. Zfindtag looks through the tagfile and if
  * the tag is found, goes to the appropriate file and position.
  * If a file called "TAGS" exists in the current directory, it is used, else
@@ -111,22 +127,6 @@ void Zfindtag(void)
 	Nextpart = NULL;
 	bswitchto(Bsave);			/* go back to original buffer */
 	Curwdo->modeflags = INVALID;
-}
-
-void findtag_part(void)
-{
-	char word[STRMAX + 1];
-
-	bswitchto(cfindbuff(TAGBUFNAME));
-	for (bcsearch(NL); !bisend(); bcsearch(NL)) {
-		getbword(word, STRMAX, bistoken);
-		if (stristr(word, savetag)) {
-			makepaw(word, TRUE);
-			return;
-		}
-	}
-	bswitchto(Paw);
-	tbell();
 }
 
 static void gotomatch(struct mark *smark)

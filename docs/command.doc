@@ -732,11 +732,7 @@ keep the setting during the the Zedit session.
 .sp 0
 :Shell
 
-On PCs, exits to the shell pointed to by the environment variable
-SHELL. If SHELL is not set, it will use COMSPEC. Type "exit" to
-get back to Zedit.
-
-On Unix machines, forks an interactive shell in a special ".shell" window.
+Forks an interactive shell in a special ".shell" window.
 .sp 0
 :Show Config
 
@@ -759,14 +755,6 @@ This command is an interactive interface to the "ispell" program. It
 allows you to perform spell checking on the current buffer. A Universal
 Argument limits the spell check to the Region. The default is to check
 the entire buffer.
-
-The "ispell" program is bundled with the Zedit. Unix only.
-.sp 0
-:Stats
-
-Displays Zedit memory statistics in the PAW. A Universal Argument on PCs
-machines will display how much memory is available and which type of
-memory you are using: expanded, extended, or virtual.
 .sp 0
 :Swap Mark and Point
 

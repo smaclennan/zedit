@@ -263,17 +263,12 @@ char *limit(char *fname, int num)
 	return off > 0 ? fname + off : fname;
 }
 
-/* Find first occurance in str1 of str2. NULL if not found.
- * Case insensitive!
- */
-char *stristr(char *str1, char *str2)
+/* Return a pointer to the start of the last part of fname */
+char *lastpart(char *fname)
 {
-	int i, len, max;
-
-	len = strlen(str2);
-	max = strlen(str1) - len;
-	for (i = 0; i <= max; ++i)
-		if (strncasecmp(&str1[i], str2, len) == 0)
-			return &str1[i];
-	return NULL;
+	char *p = strrchr(fname, '/');
+	if (p)
+		return p + 1;
+	else
+		return fname;
 }

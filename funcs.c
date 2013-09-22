@@ -87,7 +87,6 @@ void (*Cmds[][2])() = {
 	{ Zsetbookmrk,		Znotimpl },
 	{ Zsetmrk,		Zsetmrk },
 	{ Zshell,		Znotimpl },
-	{ Zstat,		Znotimpl },
 	{ Zswapchar,		Zswapchar },
 	{ Zswapmrk,		Zswapmrk },
 	{ Znextwind,		Znotimpl },

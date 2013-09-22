@@ -21,6 +21,11 @@
 
 char Lbufname[BUFNAMMAX + 1];
 
+static char **Bnames;			/* array of ptrs to buffer names */
+static int Numbuffs;			/* number of buffers */
+static int maxbuffs;			/* max buffers Bnames can hold */
+
+
 void Zswitchto(void)
 {
 	char *was;
@@ -87,6 +92,10 @@ void delbuff(struct buff *buff)
 	strcpy(bname, buff->bname);	/* save it for delbname */
 	if (strcmp(Lbufname, bname) == 0)
 		*Lbufname = '\0';
+	if (buff->fname) {
+		free(buff->fname);
+		buff->fname = NULL;
+	}
 	if (bdelbuff(buff)) {
 		delbname(bname);
 		if (wascur && *Lbufname) {
@@ -147,4 +156,106 @@ void Zlstbuff(void)
 void Zunmodf(void)
 {
 	Curbuff->bmodf = Argp;
+}
+
+/* Add the new bname to the Bname array.
+ * If we hit maxbuffs, try to enlarge the Bnames array.
+ * Note that the compare MUST be insensitive for the getplete!
+ */
+static char *addbname(char *bname)
+{
+	int i;
+
+	if (Numbuffs == maxbuffs) {
+		/* increase Bnames array */
+		char **ptr = realloc(Bnames, (maxbuffs + 10) * sizeof(char *));
+		if (!ptr)
+			return NULL;
+
+		Bnames = ptr;
+		maxbuffs += 10;
+	}
+
+	for (i = Numbuffs; i > 0 && strcasecmp(bname, Bnames[i - 1]) < 0; --i)
+		Bnames[i] = Bnames[i - 1];
+	Bnames[i] = strdup(bname);
+	if (strlen(Bnames[i]) > BUFNAMMAX)
+		Bnames[i][BUFNAMMAX] = '\0';
+	++Numbuffs;
+
+	return Bnames[i];
+}
+
+Boolean delbname(char *bname)
+{
+	int i, rc;
+
+	for (i = rc = 0; i <= Numbuffs && (rc = strcmp(bname, Bnames[i])); ++i)
+		;
+	if (rc)
+		return FALSE;
+
+	--Numbuffs;
+	free(Bnames[i]);
+	Bnames[i] = NULL;
+
+	if (Numbuffs == 0) {
+		maxbuffs = 0;
+		free(Bnames);
+	} else
+		for (; i <= Numbuffs; ++i)
+			Bnames[i] = Bnames[i + 1];
+
+	return TRUE;
+}
+
+/* Create a buffer. */
+struct buff *cmakebuff(char *bname, char *fname)
+{
+	struct buff *bptr, *save = Curbuff;
+
+	bptr = cfindbuff(bname);
+	if (bptr) {
+		bswitchto(bptr);
+		return bptr;
+	}
+
+	bptr = bcreate();
+	if (!bptr) {
+		error("Unable to create buffer");
+		return NULL;
+	}
+
+	bptr->bname = addbname(bname);
+	if (!bptr->bname) {
+		error("Out of buffers");
+		bdelbuff(bptr);
+		bswitchto(save);
+		return NULL;
+	}
+
+	if (*bname == '*')
+		bptr->bmode |= SYSBUFF;
+
+	bswitchto(bptr);
+	if (fname)
+		bptr->fname = strdup(fname);
+	/* add the buffer to the head of the list */
+	if (Bufflist)
+		Bufflist->prev = bptr;
+	bptr->next = Bufflist;
+	Bufflist = bptr;
+
+	return bptr;
+}
+
+/* Locate a given buffer */
+struct buff *cfindbuff(char *bname)
+{
+	struct buff *tbuff;
+
+	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+		if (strncasecmp(tbuff->bname, bname, BUFNAMMAX) == 0)
+			return tbuff;
+	return NULL;
 }

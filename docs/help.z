@@ -641,11 +641,6 @@ you to perform spell checking on the current buffer. A Universal Argument lim-
 its the spell check to the Region. The default is to check the entire buffer.
 
 The "ispell" program is bundled with the Zedit. Unix only.
-:Stats
-
-Displays  Zedit  memory  statistics  in  the  PAW. A Universal Argument on PCs
-machines will display how much memory is available and which  type  of  memory
-you are using: expanded, extended, or virtual.
 :Swap Mark and Point
 
 The  Point  goes to the current position of the Mark and the Mark is set where
@@ -658,12 +653,13 @@ between two buffers. The Again command can be used to scroll through the  buf-
 fer list. A Universal Argument is ignored.
 :Tab
 
-
 Handles the tab key. A Universal Argument causes the command to repeat.
 :Toggle Case
 
-Switches the current buffers minor mode between case sensitive and case insen-
-sitive for searches and replacements. Ignores the Universal Argument.
+Switches  the  current  buffers  minor  mode  between  case sensitive and case
+
+
+insensitive for searches and replacements. Ignores the Universal Argument.
 :Transpose Characters
 
 Transposes the character before the Point with the character at the Point.  It
@@ -724,11 +720,12 @@ Makes the Point line the top line in the window. A Universal  Argument  causes
 the command to repeat.
 :Write File
 
-
 Prompts  for  a path name and writes out the current buffer to this file name.
 Supports file name completion. It changes the path name of the current  buffer
-to  the new path name. A Universal Argument causes only the Region to be writ-
-ten and does not change the name of the buffer.
+to  the  new  path  name.  A  Universal  Argument causes only the Region to be
+
+
+written and does not change the name of the buffer.
 :Yank
 
 Inserts the characters from the Kill Buffer before the Point.  The  characters
@@ -788,11 +785,11 @@ Lines feature can cause a lot of cursor movement and  is  irritating  on  some
 slow terminals. The default is on.
 :Make Cmd
 
-This  is  a  string  variable  which  contains the default string for the Make
-
-
-command. The default is "make".
+This  is a string variable which contains the default string for the Make com-
+mand. The default is "make".
 :Margin
+
+
 
 This is a decimal variable that defines the left margin for Text mode and  the
 Format  Paragraph command. It does not affect the first line of the paragraph.
@@ -853,6 +850,9 @@ tends, ShExtends.
 If  this variable is set, the bell will flash the screen rather than producing
 an audible tone. The default is on if flashing the screen is supported.
 :ZEDIT
+
+
+
 
 
 

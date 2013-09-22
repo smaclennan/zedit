@@ -112,7 +112,6 @@ struct cnames Cnames[] = {
 	{"shrink-window",		ZSHRINKWIND,	H_BUFF},
 	{"size-window",			ZSIZEWIND,	H_BUFF},
 	{"spell",			ZSPELL,		H_SHELL},
-	{"stats",			ZSTAT,		H_HELP},
 	{"swap-mark-and-point",		ZSWAPMRK,	H_CURSOR},
 	{"switch-to-buffer",		ZSWITCHTO,	H_BUFF},
 	{"tab",				ZTAB,		H_NONE},

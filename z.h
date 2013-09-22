@@ -194,15 +194,11 @@ extern struct mark Scrnmarks[];
 extern Boolean Initializing;
 extern Boolean Insearch;
 
-extern char **Bnames;
-extern int Numbuffs;
 extern unsigned Nextpart;
 
 extern Byte CRdefault;
 
 extern int circf;
-
-extern int Terminfo_dummy;
 
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)

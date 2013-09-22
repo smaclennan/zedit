@@ -56,11 +56,10 @@ void bfini(void)
 		if (Bufflist->fname)
 			free(Bufflist->fname);
 		if (Bufflist->bname)
-			free(Bufflist->bname);
+			delbname(Bufflist->bname);
 		/* bdelbuff will update Bufflist */
 		bdelbuff(Bufflist);
 	}
-	free(Bnames);
 
 	/* Do not unmark the Scrnmarks */
 	while (Mrklist && Mrklist != mhead)
@@ -1062,10 +1061,4 @@ int batoi(void)
 	for (num = 0; isdigit(Buff()); bmove1())
 		num = num * 10 + Buff() - '0';
 	return num;
-}
-
-void Zstat(void)
-{
-	putpaw("Buffers: %d   Pages: %d  Marks: %d",
-	       Numbuffs, NumPages, NumMarks);
 }

@@ -39,7 +39,7 @@ $(ZEXE): $(CFILES:.c=.o)
 configure.h:
 	@touch configure.h
 
-fcheck: fcheck.c *.h ansi.c terminfo.c
+fcheck: fcheck.c *.h ansi.c terminfo.c funcs.c
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
 	@./fcheck
 

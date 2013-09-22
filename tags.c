@@ -27,6 +27,21 @@ static void gotomatch(struct mark *smark);
 static Boolean tagfparse(struct buff *);
 static Boolean gettagsfile(void);
 
+/* Find first occurance in str1 of str2. NULL if not found.
+ * Case insensitive!
+ */
+static char *stristr(char *str1, char *str2)
+{
+	int i, len, max;
+
+	len = strlen(str2);
+	max = strlen(str1) - len;
+	for (i = 0; i <= max; ++i)
+		if (strncasecmp(&str1[i], str2, len) == 0)
+			return &str1[i];
+	return NULL;
+}
+
 /* Routines to handle tag files. Zfindtag looks through the tagfile and if
  * the tag is found, goes to the appropriate file and position.
  * If a file called "TAGS" exists in the current directory, it is used, else

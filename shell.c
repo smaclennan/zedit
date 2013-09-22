@@ -1,5 +1,5 @@
 /* shell.c - shell commands and routines
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -20,9 +20,7 @@
 #include "z.h"
 
 #if SHELL
-#ifdef BSD
 #include <signal.h>
-#endif
 
 static char Command[STRMAX + 1];
 
@@ -101,7 +99,7 @@ void Zshell()	/*for tags*/
 #endif
 {
 	tfini();
-	kill(getpid(), SIGTSTP);
+	Kill(getpid(), SIGTSTP);
 }
 #endif
 

@@ -87,6 +87,12 @@ set_one TAGS  $tags
 [ -f /usr/include/sys/poll.h ] && set_one HAVE_POLL 1
 if [ -f /usr/include/termios.h ]; then
     set_one HAVE_TERMIOS 1
+elif [ -f /usr/include/termio.h ]; then
+    echo "#undef HAVE_TERMIOS" >> configure.h
+    set_one HAVE_TERMIO 1
+elif [ -f /usr/include/sgtty.h ]; then
+    echo "#undef HAVE_TERMIOS" >> configure.h
+    set_one HAVE_SGTTY 1
 else
-    set_one HAVE_TERMIOS 0
+    echo "WARNING: No terminal setup found."
 fi

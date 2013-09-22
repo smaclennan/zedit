@@ -20,26 +20,25 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-/* OPERATING SYSTEM - We attempt to autodetect.
- * I have not tested anything other than Linux in a decade, you have
- * been warned!
- */
-#if defined(__linux__) || defined(__unix__)
+/* OPERATING SYSTEM */
+#if defined(__unix__)
 # define SYSV4
 # define HAVE_POLL
 # define HAVE_TERMIOS
 #elif defined(__BSD__)
 /* This really means old Sun BSD */
 # define BSD
+# define HAVE_SGTTY
 #else
 # error OS not detected.
 #endif
+
 /* Define this if you have 16bit ints */
 /* #define INT_IS_16BITS */
 
 /* SCREEN DRIVER - define only one.
- * Unless you are running on an ancient dumb terminal, you probably want ANSI.
- * Linux wants ANSI, trust me on this ;)
+ * Unless you are running on an ancient dumb terminal, you probably
+ * want ANSI. Trust me on this ;)
  */
 #define ANSI		1
 #define TERMINFO	0

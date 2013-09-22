@@ -1,5 +1,5 @@
 /* term.c - generic terminal commands
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -32,11 +32,11 @@
 #include <termios.h>
 static struct termios savetty;
 static struct termios settty;
-#elif defined(SYSV4)
+#elif defined(HAVE_TERMIO)
 #include <termio.h>
 static struct termio savetty;
 static struct termio settty;
-#elif defined(BSD)
+#elif defined(HAVE_SGTTY)
 #include <sgtty.h>
 static struct sgttyb savetty;
 static struct sgttyb settty;
@@ -104,7 +104,7 @@ void tinit(void)
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(fileno(stdin), TCSANOW, &settty);
-#elif defined(SYSV4)
+#elif defined(HAVE_TERMIO)
 	ioctl(fileno(stdin), TCGETA, &savetty);
 	ioctl(fileno(stdin), TCGETA, &settty);
 	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
@@ -113,7 +113,7 @@ void tinit(void)
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	ioctl(fileno(stdin), TCSETAW, &settty);
-#elif defined(BSD)
+#elif defined(HAVE_SGTTY)
 	gtty(fileno(stdin), &savetty);
 	gtty(fileno(stdin), &settty);
 
@@ -163,9 +163,9 @@ void tfini(void)
 {
 #ifdef HAVE_TERMIOS
 	tcsetattr(fileno(stdin), TCSAFLUSH, &savetty);
-#elif defined(SYSV4)
+#elif defined(HAVE_TERMIO)
 	ioctl(fileno(stdin), TCSETAF, &savetty);
-#elif defined(BSD)
+#elif defined(HAVE_SGTTY)
 	stty(fileno(stdin), &savetty);
 	ioctl(fileno(stdin), TIOCSETC, &savechars);
 	ioctl(fileno(stdin), TIOCSLTC, &savelchars);

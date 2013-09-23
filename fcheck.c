@@ -33,6 +33,7 @@ static unsigned Key_mask;
 
 #include "funcs.c"
 
+void Dbg(char *fmt, ...) {}
 
 int main(int argc, char *argv[])
 {

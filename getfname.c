@@ -262,10 +262,10 @@ void Zfname(void)
 	p = dir + strlen(dir);
 	*p++ = PSEP;
 	Didmatch = TRUE;
-	tgoto(Tstart, 0);
+	tgoto(0, 0);
 	tprntstr("Choose one of:");
 	tcleol();
-	row = Tstart + 1; col = 0;
+	row = 1; col = 0;
 	for (; list; list = list->next)
 		if (len == 0 || strncmp(fname, list->fname, len) == 0) {
 			tgoto(row, col);

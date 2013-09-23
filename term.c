@@ -51,9 +51,8 @@ static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 int Clrcol[ROWMAX + 1];		/* Clear if past this */
 
 int Prow, Pcol;			/* Point row and column */
-int Srow, Scol;			/* Saved row and column */
+static int Srow, Scol;		/* Saved row and column */
 int Colmax = EOF, Rowmax;	/* Row and column maximums */
-int Tstart;			/* Start column and row */
 
 #ifdef SIGWINCH
 /* This is called if the window has changed size. */
@@ -290,7 +289,7 @@ int chwidth(Byte ch, int col, Boolean adjust)
 		else
 			wid = Tabsize - (col % Tabsize);
 		if (col + wid >= tmaxcol())
-			wid = tmaxcol() - col + Tabsize - 1 - Tstart;
+			wid = tmaxcol() - col + Tabsize - 1;
 		if (!adjust)
 			wid = MIN(wid, Tabsize);
 	} else {
@@ -298,9 +297,9 @@ int chwidth(Byte ch, int col, Boolean adjust)
 
 		wid = ((ch & 0x80) && !isprint(ch & 0x7f)) ? 3 : 2;
 		if (adjust) {
-			delta = col + wid - tmaxcol() - Tstart;
+			delta = col + wid - tmaxcol();
 			if (delta >= 0)
-				wid += delta + 1 - Tstart;
+				wid += delta + 1;
 		}
 	}
 	return wid;
@@ -347,7 +346,7 @@ void tcleol(void)
 #if TERMINFO
 		TPUTS(clr_eol);
 #elif ANSI
-		TPUTS("\033[K");
+		fputs("\033[K", stdout);
 #endif
 		Clrcol[Prow] = Pcol;
 	}
@@ -358,7 +357,7 @@ void tclrwind(void)
 #if TERMINFO
 	TPUTS(clear_screen);
 #elif ANSI
-	TPUTS("\033[2J");
+	fputs("\033[2J", stdout);
 #endif
 	memset(Clrcol, 0, ROWMAX);
 	Prow = Pcol = 0;

@@ -59,7 +59,7 @@ static void winvalidate(struct wdo *wdo)
 {
 	int i;
 
-	if (wdo->first > Tstart)
+	if (wdo->first > 0)
 		Scrnmarks[wdo->first - 1].modf = TRUE;
 	for (i = wdo->first; i <= wdo->last; ++i)
 		Scrnmarks[i].modf = TRUE;
@@ -374,7 +374,7 @@ void Z1wind(void)
 			wfree(wdo);
 	}
 
-	Curwdo->first = Tstart;
+	Curwdo->first = 0;
 	Curwdo->last = tmaxrow() - 2;
 	Curwdo->modeflags = INVALID;
 	Curwdo->prev = Curwdo->next = NULL;
@@ -504,7 +504,7 @@ void bgoto(struct buff *buff)
 void winit(void)
 {
 	/* Create first window over entire screen. */
-	Whead = wcreate(Tstart, Rowmax - 2);
+	Whead = wcreate(0, Rowmax - 2);
 	wswitchto(Whead);
 }
 

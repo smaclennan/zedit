@@ -97,14 +97,14 @@ void tstyle(int style)
 
 	switch (cur_style = style) {
 	case T_NORMAL:
-		TPUTS("\033[0m"); break;
+		fputs("\033[0m", stdout); break;
 	case T_STANDOUT:
 	case T_REVERSE:
-		TPUTS("\033[7m"); break;
+		fputs("\033[7m", stdout); break;
 	case T_BOLD:
-		TPUTS("\033[1m"); break;
+		fputs("\033[1m", stdout); break;
 	case T_COMMENT:
-		TPUTS("\033[31m"); break; /* red */
+		fputs("\033[31m", stdout); break; /* red */
 	}
 	fflush(stdout);
 }

@@ -83,7 +83,6 @@ int main(int argc, char **argv)
 	}
 
 	Colmax = EOF;
-	Tstart = 0;
 
 	while ((arg = getopt(argc, argv, "c:hl:tvE")) != EOF)
 		switch (arg) {

@@ -116,13 +116,13 @@ void zrefresh(void)
 	unmark(pmark);
 	bcol = bgetcol(TRUE, 0);
 	/* position the cursor */
-	col = bcol % (tmaxcol() - 1 - Tstart);
+	col = bcol % (tmaxcol() - 1);
 	/* special case for NL or bisend at column 80 */
 	if (col == 0 && bcol && (ISNL(Buff()) || bisend()))
-		col = tmaxcol() - 1 - Tstart;
+		col = tmaxcol() - 1;
 	else if (!bisend() && (col + chwidth(Buff(), col, FALSE) >= tmaxcol()))
 		col = 0;
-	tgoto(pntrow, col + Tstart);
+	tgoto(pntrow, col);
 
 	/*
 	 * If we display the cursor on the mark, they both disappear.
@@ -133,7 +133,7 @@ void zrefresh(void)
 	if (bisatmrk(Curbuff->mark)) {
 		tstyle(T_NORMAL);
 		tprntchar((bisend() || ISNL(Buff())) ? ' ' : Buff());
-		tgoto(pntrow, col + Tstart);
+		tgoto(pntrow, col);
 		was->moffset = PSIZE + 1; /* Invalidate it */
 	}
 
@@ -172,7 +172,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			Scrnmarks[trow].modf = FALSE;
 			bmrktopnt(&Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
-			col = Tstart;
+			col = 0;
 			tsetpoint(trow, col);
 			while (!bisend() && !ISNL(Buff()) &&
 			       (col = buff_col()) < tmaxcol()) {

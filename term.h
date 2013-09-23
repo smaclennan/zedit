@@ -38,15 +38,8 @@
 #define T_COMMENT			10	/* COMMENTBOLD only */
 
 #if TERMINFO
-#  ifdef HAVE_TERMIOS
 int _putchar(int);
-#  else
-int _putchar(char);
-#  endif
-
 #define TPUTS(s)		tputs(s, 1, _putchar)
-#elif ANSI
-#define TPUTS(s)		fputs(s, stdout)
 #endif
 
 #define tsetpoint(r, c)		(Prow = r, Pcol = c)
@@ -55,7 +48,7 @@ int _putchar(char);
 #define tmaxrow()		Rowmax
 #define tmaxcol()		Colmax
 extern int Tabsize;
-#define twidth(ch)		chwidth(ch, Pcol - Tstart, FALSE)
+#define twidth(ch)		chwidth(ch, Pcol, FALSE)
 #define bwidth(ch, col)		chwidth(ch, col, TRUE)
 
 #define tputchar(c)		putchar(c)
@@ -70,9 +63,7 @@ extern int Tabsize;
 /* terminal variables */
 extern int Clrcol[ROWMAX + 1];		/* Clear if past this - must be Byte */
 extern int Prow, Pcol;			/* Point row and column */
-extern int Srow, Scol;			/* saved row and column */
 extern int Colmax, Rowmax;		/* Row and column maximums */
-extern int Tstart;			/* Start column and row */
 extern int Tlrow;			/* Last row displayed (-1 for none) */
 
 #define PNUMCOLS		3	/* default columns for pout */

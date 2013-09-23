@@ -20,6 +20,7 @@
 #include "z.h"
 
 #if ANSI
+#include <termios.h>
 #include "keys.h"
 
 struct key_array Tkeys[] = {
@@ -65,8 +66,26 @@ void tlinit(void) { Key_mask = 0xfffffff; }
 void tlfini(void) {}
 
 void tsize(int *rows, int *cols)
-{	/* Let termsize default it */
+{
+	char buf[12];
+	int n;
+
 	*rows = *cols = 0;
+
+	/* Save cursor position */
+	write(0, "\033[s", 3);
+	/* Send the cursor to the extreme right corner */
+	write(0, "\033[999;999H", 10);
+	/* Ask where we really ended up */
+	write(0, "\033[6n", 4);
+	n = read(0, buf, sizeof(buf) - 1);
+	/* Restore cursor */
+	write(0, "\033[u", 3);
+
+	if (n > 0) {
+		buf[n] = '\0';
+		sscanf(buf, "\033[%d;%dR", rows, cols);
+	}
 }
 
 void tstyle(int style)

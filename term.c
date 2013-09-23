@@ -93,8 +93,6 @@ void tinit(void)
 	 * Do this first - it may exit */
 	tlinit();
 
-	termsize();
-
 #ifdef HAVE_TERMIOS
 	tcgetattr(fileno(stdin), &savetty);
 	tcgetattr(fileno(stdin), &settty);
@@ -145,6 +143,9 @@ void tinit(void)
 #ifdef SIGWINCH
 	signal(SIGWINCH, sigwinch); /* window has changed size - update */
 #endif
+
+	/* Must be after setting up tty */
+	termsize();
 
 	if (Rowmax < 3) {
 		/* screen too small */
@@ -197,33 +198,9 @@ void setmark(Boolean prntchar)
 void termsize(void)
 {
 	int rows, cols;
-	FILE *fp;
 
 	/* Get the defaults from the low level interface */
 	tsize(&rows, &cols);
-
-	/* If we have resize, trust it */
-	fp = popen("resize -u", "r");
-	if (fp) {
-		char buf[1024], name[STRMAX + 1];
-		int n;
-
-		while (fgets(buf, sizeof(buf), fp))
-			if (sscanf(buf, "%[^=]=%d;\n", name, &n) == 2) {
-				if (strcmp(name, "COLUMNS") == 0)
-					cols = n;
-				else if (strcmp(name, "LINES") == 0)
-					rows = n;
-			}
-		pclose(fp);
-	} else { /* Check the environment */
-		char *p = getenv("LINES");
-		if (p)
-			rows = atoi(p);
-		p = getenv("COLUMNS");
-		if (p)
-			cols = atoi(p);
-	}
 
 	Rowmax = rows <= 0 ? 24 : rows;
 	if (Rowmax > ROWMAX)

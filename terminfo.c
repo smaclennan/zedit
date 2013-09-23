@@ -130,9 +130,35 @@ void tlinit()
 }
 
 void tsize(int *rows, int *cols)
-{	/* default to values in terminfo file */
+{
+	FILE *fp;
+
+	/* default to values in terminfo file */
 	*rows = lines;
 	*cols = columns;
+
+	/* If we have resize, trust it */
+	fp = popen("resize -u", "r");
+	if (fp) {
+		char buf[1024], name[STRMAX + 1];
+		int n;
+
+		while (fgets(buf, sizeof(buf), fp))
+			if (sscanf(buf, "%[^=]=%d;\n", name, &n) == 2) {
+				if (strcmp(name, "COLUMNS") == 0)
+					*cols = n;
+				else if (strcmp(name, "LINES") == 0)
+					*rows = n;
+			}
+		pclose(fp);
+	} else { /* Check the environment */
+		char *p = getenv("LINES");
+		if (p)
+			*rows = atoi(p);
+		p = getenv("COLUMNS");
+		if (p)
+			*cols = atoi(p);
+	}
 }
 
 void tlfini()

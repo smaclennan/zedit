@@ -22,7 +22,6 @@
 
 /* OPERATING SYSTEM */
 #if defined(__unix__)
-# define SYSV4
 # define HAVE_POLL
 # define HAVE_TERMIOS
 #elif defined(__BSD__)
@@ -32,6 +31,9 @@
 #else
 # error OS not detected.
 #endif
+
+/* Set SYSV4 if you need signal handlers to reset themselves. */
+/* #define SYSV4 */
 
 /* Define this if you have 16bit ints */
 /* #define INT_IS_16BITS */

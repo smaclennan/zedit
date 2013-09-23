@@ -20,9 +20,7 @@
 #include "z.h"
 
 #include <signal.h>
-#ifdef SYSV4
 #include <sys/wait.h>
-#endif
 
 /* Come here on SIGHUP or SIGTERM */
 void hangup(int signal)

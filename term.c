@@ -133,7 +133,7 @@ void tinit(void)
 	signal(SIGHUP,  hangup);
 	signal(SIGTERM, hangup);
 #ifdef PIPESH
-#if !defined(SYSV4) || !defined(WNOWAIT)
+#if !defined(WNOWAIT)
 	signal(SIGCLD,  sigchild);
 #endif
 	signal(SIGPIPE, sigchild);

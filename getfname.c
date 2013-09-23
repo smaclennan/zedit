@@ -18,10 +18,10 @@
  */
 
 #include "z.h"
-#ifdef SYSV4
-#include <dirent.h>
-#else
+#ifdef HAVE_DIRECT
 #include <sys/dir.h>
+#else
+#include <dirent.h>
 #endif
 
 /* general linked list structure */
@@ -95,10 +95,10 @@ static struct llist *fill_list(char *dir)
 {
 	static char savedir[PATHMAX + 1];
 	DIR *dp;
-#ifdef SYSV4
-	struct dirent *dirp;
-#else
+#ifdef HAVE_DIRECT
 	struct direct *dirp;
+#else
+	struct dirent *dirp;
 #endif
 
 	if (Flist && strcmp(dir, savedir) == 0)

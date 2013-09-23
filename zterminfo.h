@@ -5,7 +5,6 @@
 
 #undef TRUE
 #undef FALSE
-#undef SYSV4
 #undef echo
 #define tgoto _n_tgoto
 #define savetty _n_savetty

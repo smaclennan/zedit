@@ -96,3 +96,5 @@ elif [ -f /usr/include/sgtty.h ]; then
 else
     echo "WARNING: No terminal setup found."
 fi
+
+[ -f /usr/include/dirent.h ] || echo "#define HAVE_DIRECT 1" >> configure.h

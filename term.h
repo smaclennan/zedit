@@ -38,7 +38,7 @@
 #define T_COMMENT			10	/* COMMENTBOLD only */
 
 #if TERMINFO
-#  ifdef TERMIOS
+#  ifdef HAVE_TERMIOS
 int _putchar(int);
 #  else
 int _putchar(char);

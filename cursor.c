@@ -37,27 +37,29 @@ static int forcecol(void)
 	static int fcol;
 
 	if (Lfunc != ZPREVLINE && Lfunc != ZNEXTLINE &&
-	    Lfunc != ZPREVPAGE && Lfunc != ZNEXTPAGE)
-		fcol = bgetcol(TRUE, 0);
+	    Lfunc != ZPREVPAGE && Lfunc != ZNEXTPAGE) {
+		if (Buff() == NL)
+			fcol = COLMAX + 1;
+		else
+			fcol = bgetcol(TRUE, 0);
+	}
 
 	return fcol;
 }
 
-static void ScrollLine(Boolean forward)
+static void ScrollLine(Boolean (*search)(Byte what))
 {
-	if (VAR(VSINGLE)) {
-		struct mark save;
+	struct mark save;
 
-		bmrktopnt(&save);
-		bpnttomrk(Sstart);
-		forward ? bcsearch(NL) : bcrsearch(NL);
-		tobegline();
-		bmrktopnt(Sstart);
-		bmove(-1);
-		bmrktopnt(Psstart);
-		bpnttomrk(&save);
-		Sendp = FALSE;
-	}
+	bmrktopnt(&save);
+	bpnttomrk(Sstart);
+	search(NL);
+	tobegline();
+	bmrktopnt(Sstart);
+	bmove(-1);
+	bmrktopnt(Psstart);
+	bpnttomrk(&save);
+	Sendp = FALSE;
 }
 
 void Zprevline(void)
@@ -67,8 +69,9 @@ void Zprevline(void)
 	while (Arg-- > 0)
 		bcrsearch(NL);
 
-	if (bisbeforemrk(Sstart))
-		ScrollLine(FALSE);
+	if (VAR(VSINGLE))
+		if (bisbeforemrk(Sstart))
+			ScrollLine(bcrsearch);
 
 	bmakecol(col, FALSE);
 }
@@ -80,8 +83,9 @@ void Znextline(void)
 	while (Arg-- > 0)
 		bcsearch(NL);
 
-	if (Sendp && !bisbeforemrk(Send))
-		ScrollLine(TRUE);
+	if (VAR(VSINGLE))
+		if (Sendp && !bisbeforemrk(Send))
+			ScrollLine(bcsearch);
 
 	bmakecol(col, FALSE);
 }
@@ -321,17 +325,13 @@ void Zendwind(void)
 		;
 }
 
-static void scroll(Boolean forward)
+static void scroll(Boolean (*search)(Byte what))
 {
 	struct mark *pmark = bcremrk();
 
 	bpnttomrk(Sstart);
-	if (forward)
-		while (Arg-- > 0 && bcsearch(NL))
-			;
-	else
-		while (Arg-- > 0 && bcrsearch(NL))
-			;
+	while (Arg-- > 0 && search(NL))
+		;
 	tobegline();
 	bmrktopnt(Sstart);
 	bmove(-1);
@@ -348,10 +348,10 @@ static void scroll(Boolean forward)
 
 void Zscrollup(void)
 {
-	scroll(FALSE);
+	scroll(bcrsearch);
 }
 
 void Zscrolldown(void)
 {
-	scroll(TRUE);
+	scroll(bcsearch);
 }

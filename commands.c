@@ -138,22 +138,6 @@ static void handle_close_bracket(struct mark *tmark, int crfound)
 	int cnt;
 
 	tobegline();
-	if (VAR(VMATCH) & 0x100) {
-		/* show the rest of the line in the PAW */
-		struct mark t;
-		int i, col;
-
-		bmrktopnt(&t);
-		for (i = col = 0;
-		     !bisend() && !ISNL(*Curcptr) && col < Colmax;
-		     ++i, bmove1()) {
-			col += chwidth(*Curcptr, col, FALSE);
-			PawStr[i] = *Curcptr;
-		}
-		PawStr[i] = '\0';
-		putpaw("%s", PawStr);
-		bpnttomrk(&t);
-	}
 	movepast(biswhite, FORWARD);
 	cnt = bgetcol(TRUE, 0);
 	bpnttomrk(tmark);

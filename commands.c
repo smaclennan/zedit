@@ -133,22 +133,6 @@ void Zcenter(void)
 
 /* C MODE COMMANDS */
 
-static void handle_close_bracket(struct mark *tmark, int crfound)
-{
-	int cnt;
-
-	tobegline();
-	movepast(biswhite, FORWARD);
-	cnt = bgetcol(TRUE, 0);
-	bpnttomrk(tmark);
-	if (crfound) {
-		Zdelwhite();
-		tindent(cnt);
-	}
-	binsert(Cmd);
-}
-
-
 /* This code must handle any char so that expansion will work */
 void Zcinsert(void)
 {
@@ -164,7 +148,15 @@ void Zcinsert(void)
 				if (cnt)
 					--cnt;
 				else {  /* matched */
-					handle_close_bracket(&tmark, crfound);
+					tobegline();
+					movepast(biswhite, FORWARD);
+					cnt = bgetcol(TRUE, 0);
+					bpnttomrk(&tmark);
+					if (crfound) {
+						Zdelwhite();
+						tindent(cnt);
+					}
+					binsert(Cmd);
 					return;
 				}
 			} else if (STRIP(*Curcptr) == '}')

@@ -10,7 +10,7 @@ ETAGS=`which etags || echo true`
 
 #LIBS=-lncurses
 
-CFILES = ansi.c bcmds.c bind.c bindings.c buff.c calc.c \
+CFILES = ansi.c bcmds.c bind.c buff.c calc.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c make.c \
 	reg.c shell.c spell.c srch.c support.c tags.c term.c \

@@ -144,7 +144,8 @@ Boolean findfile(char *path)
 	if (!Initializing) {
 		cswitchto(Curbuff);
 		reframe();
-	}
+	} else if (!*Fname)
+		strcpy(Fname, path);
 
 	return rc;
 }

@@ -125,6 +125,17 @@ void message(struct buff *buff, char *str)
 	putpaw("%s", str);
 }
 
+static Boolean isfile(char *path, char *dir, char *fname, Boolean must)
+{
+	if (!dir || !fname)
+		return FALSE;
+	strcpy(path, dir);
+	if (!Psep(*(path + strlen(path) - 1)))
+		strcat(path, "/");
+	strcat(path, fname);
+	return !must || access(path, 0) == 0;
+}
+
 /* Find the correct path for the config files.
  * We check HOME and then CONFIGDIR.
  */

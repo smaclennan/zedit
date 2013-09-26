@@ -232,8 +232,6 @@ char *getbtxt(char *, int);
 Boolean getbword(char *, int, int (*)());
 int getdname(char *prompt, char *path);
 int getplete(char *, char *, char **, int, int);
-Boolean isdir(char *);
-Boolean isfile(char *, char *, char *, Boolean);
 int bisspace(void);
 int bistoken(void);
 int biswhite(void);

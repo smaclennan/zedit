@@ -20,6 +20,7 @@
 #include "z.h"
 #ifdef HAVE_DIRECT
 #include <sys/dir.h>
+#define dirent direct
 #else
 #include <dirent.h>
 #endif
@@ -95,11 +96,7 @@ static struct llist *fill_list(char *dir)
 {
 	static char savedir[PATHMAX + 1];
 	DIR *dp;
-#ifdef HAVE_DIRECT
-	struct direct *dirp;
-#else
 	struct dirent *dirp;
-#endif
 
 	if (Flist && strcmp(dir, savedir) == 0)
 		return Flist;

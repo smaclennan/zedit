@@ -57,6 +57,7 @@ void (*Cmds[][2])() = {
 	{ Zhexout,		Znotimpl },
 	{ Zinsert,		pinsert },
 	{ Zkillbuff,		Znotimpl },
+	{ Zlife,		Znotimpl },
 	{ Zlgoto,		Znotimpl },
 	{ Zlowword,		Zlowword },
 	{ Zlstbuff,		Znotimpl },

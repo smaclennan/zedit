@@ -56,6 +56,7 @@
 #define WANT_CPPS       0		/* also bold C preprocessor lines */
 #define UNDO            0		/* EXPERIMENTAL undo code */
 #define HELP		0		/* Help */
+#define LIFE		1		/* Game of life */
 
 #define SHELL		1		/* shell interface */
 #define SPELL		1		/* ispell interface */

@@ -53,7 +53,8 @@
 #define ZHEXOUT		(ZGROWWINDOW + 1)
 #define ZINSERT		(ZHEXOUT + 1) /* Also used for pinsert */
 #define ZKILLBUFF	(ZINSERT + 1)
-#define ZLGOTO		(ZKILLBUFF + 1)
+#define ZLIFE		(ZKILLBUFF + 1)
+#define ZLGOTO		(ZLIFE + 1)
 #define ZLOWWORD	(ZLGOTO + 1)
 #define ZLSTBUFF	(ZLOWWORD + 1)
 #define ZMAKEDEL	(ZLSTBUFF + 1)

@@ -15,7 +15,8 @@ CFILES = ansi.c bcmds.c bind.c buff.c calc.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c make.c \
 	reg.c shell.c spell.c srch.c support.c tags.c term.c \
-	termcap.c terminfo.c undo.c unix.c vars.c window.c z.c
+	termcap.c terminfo.c undo.c unix.c vars.c window.c z.c \
+	life.c
 
 O := $(CFILES:.c=.o)
 

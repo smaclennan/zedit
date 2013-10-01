@@ -589,7 +589,7 @@ void Zexit(void)
  * Always saves if 'must' is TRUE or saveOnExit is set.
  * Returns FALSE if the user ABORTS the prompt.
  */
-static Boolean promptsave(struct buff *tbuff, Boolean must)
+Boolean promptsave(struct buff *tbuff, Boolean must)
 {
 	static int save_all;
 	char str[BUFNAMMAX + 20];

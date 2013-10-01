@@ -26,7 +26,11 @@ static unsigned Key_mask;
 #if ANSI
 #include "ansi.c"
 #elif TERMINFO
+int _putchar(int ch) {}
 #include "terminfo.c"
+#elif TERMCAP
+int _putchar(int ch) {}
+#include "termcap.c"
 #else
 #error No-screen-driver
 #endif

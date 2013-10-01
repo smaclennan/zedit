@@ -10,6 +10,8 @@
 
 #if TERMCAP
 
+#include <termcap.h>
+
 char *Term;
 
 #define NUMCM	6
@@ -22,9 +24,14 @@ struct key_array Tkeys[] =
 	{ NULL,		"kd" },
 	{ NULL,		"kr" },
 	{ NULL,		"kl" },
+
+	{ NULL,		"kI" },
+	{ NULL,		"kD" },
+	{ NULL,		"kP" },
+	{ NULL,		"kN" },
 	{ NULL,		"kh" },
-	{ NULL,		"kb" },
-	{ NULL,		"k0" },
+	{ NULL,		"@7" },
+
 	{ NULL,		"k1" },
 	{ NULL,		"k2" },
 	{ NULL,		"k3" },
@@ -34,25 +41,26 @@ struct key_array Tkeys[] =
 	{ NULL,		"k7" },
 	{ NULL,		"k8" },
 	{ NULL,		"k9" },
-#ifndef TRADITIONAL_TERMCAP
 	{ NULL,		"k;" },
 	{ NULL,		"F1" },
 	{ NULL,		"F2" },
-	{ NULL,		"@7" },
-	{ NULL,		"kN" },
-	{ NULL,		"kP" },
-	{ NULL,		"kI" },
-	{ NULL,		"kD" },
-	{ NULL,		"%1" }
-#endif
+
+	{ NULL },
+	{ NULL },
+	{ NULL },
+	{ NULL },
+	{ NULL },
+	{ NULL },
+
+	{ NULL,		"kb" },
 };
+#define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
 static char bp[ 1024 ];
+static int SGnum; // SAM?
 
-void TCinit()
+void tlinit()
 {
-	extern char *getenv();
-	extern int SGnum;
 	/* NOTE: so and se must be last */
 	static char *names[] = { "cm", "ce", "cl", "so", "se", "so" };
 	static char area[ 1024 ];
@@ -96,36 +104,44 @@ void TCinit()
 	/* get the cursor and function key defines */
 	Key_mask = 0;
 	for( i = j = 0; i < NUMKEYS - SPECIAL_START; ++i )
-	{
-		Tkeys[i].key = end;
-		tgetstr( Tkeys[i].label, &end );
-		if( Tkeys[i].key != end )
-			Key_mask |= 1 << i;
-	}
+		if (Tkeys[i].label) {
+			Tkeys[i].key = end;
+			tgetstr( Tkeys[i].label, &end );
+			if( Tkeys[i].key != end )
+				Key_mask |= 1 << i;
+		}
 
 	/* look for an sg - if positive, no reverse allowed on mark */
 	if( (SGnum = tgetnum("sg")) == -1 ) SGnum = 0;
 	if( SGnum > 0 ) cm[ T_REVERSE ] = "";
 }
 
+void tlfini() {}
 
-void Tsize(rows, cols)
-int *rows, *cols;
+
+void tsize(int *rows, int *cols)
 {
 	tgetent(bp, Term);
 	*rows = tgetnum("li");
 	*cols = tgetnum("co");
 }
 
-
-
-void Tstyle( style )
-int style;
+void tstyle(int style)
 {
-	if(style < NUMCM)
-	{
-		Tforce();
+	static int cur_style = -1;
+
+	if (style == cur_style)
+		return;
+
+	if(style < NUMCM) {
+		cur_style = style;
 		TPUTS(cm[style]);
 	}
+}
+
+void tbell(void)
+{
+	if (VAR(VSILENT) == 0)
+		putchar('\7');
 }
 #endif

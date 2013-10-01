@@ -21,6 +21,9 @@
 #if TERMINFO
 #include "zterminfo.h"
 #endif
+#if TERMCAP
+#include <termcap.h>
+#endif
 
 #include "z.h"
 #include "keys.h"
@@ -76,7 +79,7 @@ static void initline(void)
 {
 	int i = sprintf(PawStr, "%s %s  Initializing", ZSTR, VERSION);
 	tclrwind();
-	tgoto(Rowmax - 2, 0);
+	t_goto(Rowmax - 2, 0);
 	tstyle(T_STANDOUT);
 	tprntstr(PawStr);
 	for (++i; i < Colmax; ++i)
@@ -172,7 +175,7 @@ void tfini(void)
 #endif
 
 	clrecho();
-	tgoto(Rowmax - 1, 0);
+	t_goto(Rowmax - 1, 0);
 #if COMMENTBOLD
 	tstyle(T_NORMAL);
 #endif
@@ -311,7 +314,7 @@ void tprntstr(char *str)
 		tprntchar(*str++);
 }
 
-void tgoto(int row, int col)
+void t_goto(int row, int col)
 {
 	tsetpoint(row, col);
 	tforce();
@@ -331,8 +334,12 @@ void tforce(void)
 	if (Scol != Pcol || Srow != Prow) {
 #if TERMINFO
 		TPUTS(tparm(cursor_address, Prow, Pcol));
-#else
+#elif TERMCAP
+		TPUTS(tgoto(cm[0], Pcol, Prow));
+#elif ANSI
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
+#else
+#error tforce
 #endif
 		Srow = Prow;
 		Scol = Pcol;
@@ -345,8 +352,12 @@ void tcleol(void)
 		tforce();
 #if TERMINFO
 		TPUTS(clr_eol);
+#elif TERMCAP
+		TPUTS(cm[1]);
 #elif ANSI
 		fputs("\033[K", stdout);
+#else
+#error tcleol
 #endif
 		Clrcol[Prow] = Pcol;
 	}
@@ -356,10 +367,27 @@ void tclrwind(void)
 {
 #if TERMINFO
 	TPUTS(clear_screen);
+#elif TERMCAP
+	TPUTS(cm[2]);
 #elif ANSI
 	fputs("\033[2J", stdout);
+#else
+#error tclrwind
 #endif
 	memset(Clrcol, 0, ROWMAX);
 	Prow = Pcol = 0;
 	tflush();
 }
+
+#if TERMINFO || TERMCAP
+/* for tputs this must be a function */
+#ifdef HAVE_TERMIOS
+int _putchar(int ch)
+#else
+int _putchar(char ch)
+#endif
+{
+	putchar(ch);
+	return 0;	/*shutup*/
+}
+#endif

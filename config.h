@@ -43,6 +43,7 @@
  * want ANSI. Trust me on this ;)
  */
 #define ANSI		1
+#define TERMCAP		0
 #define TERMINFO	0
 
 #define CONFIGDIR "/usr/share/zedit"
@@ -69,6 +70,12 @@
 #undef  SHELL
 #define SHELL 1
 #define PIPESH 1
+#endif
+#if TERMCAP
+#undef COMMENTBOLD
+#if ANSI || TERMINFO
+#error "You can't set both"
+#endif
 #endif
 #if ANSI && TERMINFO
 #error "You can't set both"

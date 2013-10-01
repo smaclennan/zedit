@@ -202,15 +202,4 @@ void tbell(void)
 	else if (VAR(VSILENT) == 0)
 		putchar('\7');
 }
-
-/* for tputs this must be a function */
-#ifdef TERMIOS
-int _putchar(int ch)
-#else
-int _putchar(char ch)
-#endif
-{
-	putchar(ch);
-	return 0;	/*shutup*/
-}
 #endif

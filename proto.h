@@ -276,7 +276,7 @@ void tforce(void);
 int tgetcmd(void);
 Byte tgetkb(void);
 void tpushcmd(int cmd);
-void tgoto(int, int);
+void t_goto(int, int);
 void tindent(int);
 void tinit(void);
 int tkbrdy(void);

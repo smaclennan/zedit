@@ -37,9 +37,12 @@
 #define T_BOLD				6
 #define T_COMMENT			10	/* COMMENTBOLD only */
 
-#if TERMINFO
+#if TERMINFO || TERMCAP
 int _putchar(int);
 #define TPUTS(s)		tputs(s, 1, _putchar)
+#endif
+#if TERMCAP
+extern char *cm[];
 #endif
 
 #define tsetpoint(r, c)		(Prow = r, Pcol = c)

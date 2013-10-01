@@ -6,13 +6,11 @@
 #undef TRUE
 #undef FALSE
 #undef echo
-#define tgoto _n_tgoto
 #define savetty _n_savetty
 
 #include <term.h>
 #include <curses.h>
 
-#undef tgoto
 #undef echo
 #undef savetty
 #undef hangup

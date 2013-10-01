@@ -122,7 +122,7 @@ void zrefresh(void)
 		col = tmaxcol() - 1;
 	else if (!bisend() && (col + chwidth(Buff(), col, FALSE) >= tmaxcol()))
 		col = 0;
-	tgoto(pntrow, col);
+	t_goto(pntrow, col);
 
 	/*
 	 * If we display the cursor on the mark, they both disappear.
@@ -133,7 +133,7 @@ void zrefresh(void)
 	if (bisatmrk(Curbuff->mark)) {
 		tstyle(T_NORMAL);
 		tprntchar((bisend() || ISNL(Buff())) ? ' ' : Buff());
-		tgoto(pntrow, col);
+		t_goto(pntrow, col);
 		was->moffset = PSIZE + 1; /* Invalidate it */
 	}
 
@@ -320,7 +320,7 @@ static void modeflags(struct wdo *wdo)
 	}
 
 	tstyle(T_NORMAL);
-	tgoto(trow, tcol);
+	t_goto(trow, tcol);
 }
 
 /* local routine to set PawStr to the correct mode */

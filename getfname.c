@@ -265,13 +265,13 @@ void Zfname(void)
 	p = dir + strlen(dir);
 	*p++ = PSEP;
 	Didmatch = TRUE;
-	tgoto(0, 0);
+	t_goto(0, 0);
 	tprntstr("Choose one of:");
 	tcleol();
 	row = 1; col = 0;
 	for (; list; list = list->next)
 		if (len == 0 || strncmp(fname, list->fname, len) == 0) {
-			tgoto(row, col);
+			t_goto(row, col);
 			strcpy(p, list->fname);
 			if (strlen(list->fname) > 23)
 				list->fname[23] = '\0';
@@ -290,7 +290,7 @@ void Zfname(void)
 	if (col)
 		row++;
 	while (row < Rowmax - 2) {
-		tgoto(row++, 0);
+		t_goto(row++, 0);
 		tcleol();
 	}
 }

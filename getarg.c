@@ -44,7 +44,7 @@ Boolean getarg(char *prompt, char *arg, int max)
 	int tcol, trow;
 
 	tcol = Pcol; trow = Prow;
-	tgoto(tmaxrow() - 1 , 0);			/* display the prompt */
+	t_goto(tmaxrow() - 1 , 0);			/* display the prompt */
 	tprntstr(prompt);
 	Pawcol = Pcol = strlen(prompt); /* prompts are always simple ascii */
 
@@ -75,7 +75,7 @@ Boolean getarg(char *prompt, char *arg, int max)
 	Arg = arg_save;
 	bswitchto(Buff_save);		/* go back */
 	Curbuff->bmode = Paw->bmode;	/* mainly for EXACT mode */
-	tgoto(trow, tcol);
+	t_goto(trow, tcol);
 	Curwdo->modeflags = INVALID;
 	Curcmds = 0;
 	clrecho();

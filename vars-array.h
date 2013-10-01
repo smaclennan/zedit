@@ -17,7 +17,6 @@ struct avar Vars[] = {
 	{ "margin",		DECIMAL },
 	{ "match",		DECIMAL,	{1} },
 	{ "normal",		FLAG,		{1} },
-	{ "overwrite",		FLAG },
 	{ "sh-extends",		STRING },
 	{ "silent",		FLAG },
 	{ "single-scroll",	FLAG },

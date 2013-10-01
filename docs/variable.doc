@@ -87,11 +87,6 @@ If on, sets the default buffer mode to Normal. If off, sets the default
 buffer mode to Text. Some file extensions override this variable. The
 default is on.
 .sp 0
-:Overwrite
-
-If overwrite is set, newly created buffers default to overwrite mode
-instead of insert mode. Default is off.
-.sp 0
 :SH Extends
 
 This variable defines the extensions that turn on Shell Mode. The

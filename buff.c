@@ -154,8 +154,7 @@ struct buff *bcreate(void)
 		new->mark->mbuff = new;
 		new->pnt_page = new->mark->mpage = fpage;
 		new->bmode = (VAR(VNORMAL) ? NORMAL : TEXT) |
-			(VAR(VEXACT) ? EXACT     : 0) |
-			(VAR(VOVWRT) ? OVERWRITE : 0);
+			(VAR(VEXACT) ? EXACT     : 0);
 #ifdef PIPESH
 		new->child = EOF;
 #endif

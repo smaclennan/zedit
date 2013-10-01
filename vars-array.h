@@ -1,4 +1,6 @@
 /* NOTE: Spaces not allowed in variable names!!! */
+#include "vars.h"
+
 struct avar Vars[] = {
 	{ "add-nl",		FLAG,		{1} },
 	{ "backup",		FLAG },

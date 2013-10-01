@@ -1,5 +1,5 @@
 /* typedefs.h - Zedit typedefs
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -24,10 +24,7 @@
  * typedef errors. Easier to put them in one file and ignore them :(
  */
 
-#ifndef _XtIntrinsic_h
 typedef int Boolean;
-#endif
-
 typedef unsigned char Byte;
 
 #endif

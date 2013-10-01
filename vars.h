@@ -17,6 +17,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#ifndef _VARS_H_
+#define _VARS_H_
+
 /* The variable structure. */
 struct avar {
 	char *vname;
@@ -62,3 +65,5 @@ extern struct avar Vars[];
 #define VTEXTS		(VTAG + 1)
 #define VVISBELL	(VTEXTS + 1)
 #define VARNUM		(VVISBELL + 1)
+
+#endif

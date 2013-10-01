@@ -50,15 +50,13 @@ struct key_array Tkeys[] = {
 	{ NULL,		"kf10" },
 	{ NULL,		"kf11" },
 
-	/* Hack the ctrl versions since they are not in the terminfo */
+	/* Hack the ctrl versions since they are not in terminfo */
 	{ "\033Oa",	"C-up" },
 	{ "\033Ob",	"C-down" },
 	{ "\033Oc",	"C-right" },
 	{ "\033Od",	"C-left" },
 	{ "\033[7^",	"C-home" },
 	{ "\033[8^",	"C-end" },
-
-	{ NULL,		"kbs" }
 };
 #define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
@@ -125,8 +123,11 @@ void tlinit()
 	Tkeys[28].key = key_backspace;
 
 	for (i = 0; i < N_KEYS; ++i)
-		if (Tkeys[i].key && *Tkeys[i].key)
+		if (Tkeys[i].key && *Tkeys[i].key) {
 			Key_mask |= 1 << i;
+			if (*Tkeys[i].key != '\033')
+				Key_shortcut = 0;
+		}
 }
 
 void tsize(int *rows, int *cols)

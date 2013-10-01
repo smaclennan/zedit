@@ -201,7 +201,6 @@ void bind(void)
 	Keys[TC_END]	= ZENDLINE;
 	Keys[TC_C_END]	= ZTOEND;
 
-	Keys[TC_BACK]	= ZRDELCHAR;
 	Keys[TC_NPAGE]	= ZNEXTPAGE;
 	Keys[TC_PPAGE]	= ZPREVPAGE;
 	Keys[TC_INSERT]	= ZOVERIN;

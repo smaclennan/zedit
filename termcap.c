@@ -25,8 +25,8 @@
 
 static char *Term;
 
-#define NUMCM	6
-#define MUST	3	/* all but so's and se */
+#define NUMCM	7
+#define MUST	3
 char *cm[NUMCM];
 
 struct key_array Tkeys[] = {
@@ -55,14 +55,13 @@ struct key_array Tkeys[] = {
 	{ NULL,		"F1" },
 	{ NULL,		"F2" },
 
-	{ NULL },
-	{ NULL },
-	{ NULL },
-	{ NULL },
-	{ NULL },
-	{ NULL },
-
-	{ NULL,		"kb" },
+	/* Hack the ctrl versions since they are not in termcap */
+	{ "\033Oa",	"C-up" },
+	{ "\033Ob",	"C-down" },
+	{ "\033Oc",	"C-right" },
+	{ "\033Od",	"C-left" },
+	{ "\033[7^",	"C-home" },
+	{ "\033[8^",	"C-end" },
 };
 #define N_KEYS (sizeof(Tkeys) / sizeof(struct key_array))
 
@@ -71,7 +70,7 @@ static char bp[1024];
 void tlinit()
 {
 	/* NOTE: so and se must be last */
-	static char *names[] = { "cm", "ce", "cl", "so", "se", "so" };
+	static char *names[] = { "cm", "ce", "cl", "so", "se", "so", "vb" };
 	static char area[1024];
 	char *end;
 	int i, j;
@@ -110,11 +109,16 @@ void tlinit()
 	/* get the cursor and function key defines */
 	Key_mask = 0;
 	for (i = j = 0; i < NUM_SPECIAL; ++i)
-		if (Tkeys[i].label) {
+		if (Tkeys[i].key)
+			Key_mask |= 1 << i;
+		else {
 			Tkeys[i].key = end;
 			tgetstr(Tkeys[i].label, &end);
-			if (Tkeys[i].key != end)
+			if (Tkeys[i].key != end) {
 				Key_mask |= 1 << i;
+				if (*Tkeys[i].key != '\033')
+					Key_shortcut = 0;
+			}
 		}
 
 	/* HACK */
@@ -154,7 +158,9 @@ void tstyle(int style)
 
 void tbell(void)
 {
-	if (VAR(VSILENT) == 0)
+	if (VAR(VVISBELL) && *cm[6])
+		TPUTS(cm[6]);
+	else if (VAR(VSILENT) == 0)
 		putchar('\7');
 }
 #endif

@@ -23,6 +23,7 @@
 
 
 unsigned Key_mask;
+int Key_shortcut = 1;
 
 static unsigned Cmdpushed, Cmdstack[10]; /* stack and vars for T[un]getcmd */
 
@@ -59,20 +60,19 @@ int tgetcmd(void)
 	if (Cmdpushed)
 		return Cmdstack[--Cmdpushed];
 
-#if ANSI
-	int cmd = tgetkb() & 0x7f;
+	if (Key_shortcut) {
+		int cmd = tgetkb() & 0x7f;
 
-	/* All ansi special keys start with ESC */
-	if (cmd == '\033')
-		if (tkbrdy()) {
-			tungetkb(1);
-			return check_specials();
-		}
+		/* All special keys start with ESC */
+		if (cmd == '\033')
+			if (tkbrdy()) {
+				tungetkb(1);
+				return check_specials();
+			}
 
-	return cmd;
-#else
-	return check_specials();
-#endif
+		return cmd;
+	} else
+		return check_specials();
 }
 
 

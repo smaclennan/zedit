@@ -378,16 +378,3 @@ void tclrwind(void)
 	Prow = Pcol = 0;
 	tflush();
 }
-
-#if TERMINFO || TERMCAP
-/* for tputs this must be a function */
-#ifdef HAVE_TERMIOS
-int _putchar(int ch)
-#else
-int _putchar(char ch)
-#endif
-{
-	putchar(ch);
-	return 0;	/*shutup*/
-}
-#endif

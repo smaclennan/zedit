@@ -38,8 +38,7 @@
 #define T_COMMENT			10	/* COMMENTBOLD only */
 
 #if TERMINFO || TERMCAP
-int _putchar(int);
-#define TPUTS(s)		tputs(s, 1, _putchar)
+#define TPUTS(s)		tputs(s, 1, putchar)
 #endif
 #if TERMCAP
 extern char *cm[];

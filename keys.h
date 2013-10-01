@@ -61,8 +61,7 @@
 #define TC_C_HOME		(SPECIAL_START + 26)
 #define TC_C_END		(SPECIAL_START + 27)
 
-#define TC_BACK			(SPECIAL_START + 28)
-#define NUMKEYS			(SPECIAL_START + 29)
+#define NUMKEYS			(SPECIAL_START + 28)
 
 #define NUM_SPECIAL		(NUMKEYS - SPECIAL_START)
 
@@ -73,5 +72,6 @@ struct key_array {
 
 extern struct key_array Tkeys[];
 extern unsigned int Key_mask;
+extern int Key_shortcut;
 
 #endif

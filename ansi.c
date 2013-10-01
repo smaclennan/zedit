@@ -55,8 +55,6 @@ struct key_array Tkeys[] = {
 	{ "\033Od",	"C-left" },
 	{ "\033[7^",	"C-home" },
 	{ "\033[8^",	"C-end" },
-
-	{ NULL,		"back" }
 };
 #define N_KEYS ((int)(sizeof(Tkeys) / sizeof(struct key_array)))
 

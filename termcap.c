@@ -116,6 +116,17 @@ void tlinit()
 			if (Tkeys[i].key != end)
 				Key_mask |= 1 << i;
 		}
+
+	/* HACK */
+	i = TC_F10 - SPECIAL_START;
+	if ((Key_mask & (1 << i)) == 0) {
+		Tkeys[i].key = end;
+		tgetstr("k0", &end);
+		if (Tkeys[i].key != end) {
+			Key_mask |= 1 << i;
+			Tkeys[i].label = "k0";
+		}
+	}
 }
 
 void tlfini() {}

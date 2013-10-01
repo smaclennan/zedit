@@ -21,7 +21,7 @@
 #define _CONFIG_H_
 
 /* OPERATING SYSTEM */
-#if defined(__unix__)
+#if defined(__unix__) || defined(__linux__)
 # define HAVE_POLL
 # define HAVE_TERMIOS
 #elif defined(__BSD__)
@@ -74,11 +74,11 @@
 #if TERMCAP
 #undef COMMENTBOLD
 #if ANSI || TERMINFO
-#error "You can't set both"
+#error "You can't more than one"
 #endif
 #endif
 #if ANSI && TERMINFO
-#error "You can't set both"
+#error "You can't set more than one"
 #endif
 
 #endif /* _CONFIG_H_ */

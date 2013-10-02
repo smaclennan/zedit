@@ -25,7 +25,7 @@
 
 static char *Term;
 
-#define NUMCM	7
+#define NUMCM	6
 #define MUST	3
 char *cm[NUMCM];
 
@@ -70,7 +70,7 @@ static char bp[1024];
 void tlinit()
 {
 	/* NOTE: so and se must be last */
-	static char *names[] = { "cm", "ce", "cl", "so", "se", "so", "vb" };
+	static char *names[] = { "cm", "ce", "cl", "se", "so", "vb" };
 	static char area[1024];
 	char *end;
 	int i, j;
@@ -150,16 +150,19 @@ void tstyle(int style)
 	if (style == cur_style)
 		return;
 
-	if (style < NUMCM) {
-		cur_style = style;
-		TPUTS(cm[style]);
+	switch (cur_style = style) {
+	case T_NORMAL:
+		TPUTS(cm[3]); break;
+	case T_STANDOUT:
+	case T_REVERSE:
+		TPUTS(cm[4]); break;
 	}
 }
 
 void tbell(void)
 {
-	if (VAR(VVISBELL) && *cm[6])
-		TPUTS(cm[6]);
+	if (VAR(VVISBELL) && *cm[5])
+		TPUTS(cm[5]);
 	else if (VAR(VSILENT) == 0)
 		putchar('\7');
 }

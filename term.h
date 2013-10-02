@@ -30,12 +30,12 @@
 #define	ESC	('\33')
 #define DEL	('\177')
 
-/* attributes - offesets into cm array in termcaps */
-#define T_STANDOUT			3
-#define T_NORMAL			4
-#define T_REVERSE			5
-#define T_BOLD				6
-#define T_COMMENT			10	/* COMMENTBOLD only */
+/* attributes */
+#define T_NORMAL			0
+#define T_STANDOUT			1
+#define T_REVERSE			2
+#define T_BOLD				3
+#define T_COMMENT			4	/* COMMENTBOLD only */
 
 #if TERMINFO || TERMCAP
 #define TPUTS(s)		tputs(s, 1, putchar)

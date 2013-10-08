@@ -213,6 +213,18 @@ void termsize(void)
 		Colmax = COLMAX;
 }
 
+static int tabsize(int col)
+{	/* optimize for most used tab sizes */
+	switch (Tabsize) {
+	case 2:
+	case 4:
+	case 8:
+		return Tabsize - (col & (Tabsize - 1));
+	default:
+		return Tabsize - (col % Tabsize);
+	}
+}
+
 /* Print a char. */
 void tprntchar(Byte ichar)
 {
@@ -230,15 +242,9 @@ void tprntchar(Byte ichar)
 		case '\t':
 			if (InPaw)
 				tprntstr("^I");
-			else {
-				/* optimize for most used tab sizes */
-				if (Tabsize == 4 || Tabsize == 8)
-					tcol = Tabsize - (Pcol & (Tabsize - 1));
-				else
-					tcol = Tabsize - (Pcol % Tabsize);
-				for (; tcol > 0; --tcol)
+			else
+				for (tcol = tabsize(Pcol); tcol > 0; --tcol)
 					tprntchar(' ');
-			}
 			break;
 
 		case 0x89:
@@ -270,31 +276,25 @@ int chwidth(Byte ch, int col, bool adjust)
 
 	if (ZISPRINT(ch))
 		return 1;
-	if (InPaw && (ch == '\n' || ch == '\t'))
-		return 2;
-	if (ch == '\n')
-		return 0;
-
-	if (ch == '\t') {
-		if (Tabsize == 4 || Tabsize == 8)
-			wid = Tabsize - (col & (Tabsize - 1));
-		else
-			wid = Tabsize - (col % Tabsize);
+	switch (ch) {
+	case '\n':
+		return InPaw ? 2 : 0;
+	case '\t':
+		wid = tabsize(col);
 		if (col + wid >= tmaxcol())
 			wid = tmaxcol() - col + Tabsize - 1;
 		if (!adjust)
 			wid = MIN(wid, Tabsize);
-	} else {
-		int delta;
-
+		return InPaw ? 2 : wid;
+	default:
 		wid = ((ch & 0x80) && !isprint(ch & 0x7f)) ? 3 : 2;
 		if (adjust) {
-			delta = col + wid - tmaxcol();
+			int delta = col + wid - tmaxcol();
 			if (delta >= 0)
 				wid += delta + 1;
 		}
+		return wid;
 	}
-	return wid;
 }
 
 void tprntstr(char *str)

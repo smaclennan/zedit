@@ -22,7 +22,7 @@
 #include <setjmp.h>
 extern jmp_buf zenv;
 
-#include "typedefs.h"
+#define Byte unsigned char
 
 
 /* THE BUFFER STRUCTURES */

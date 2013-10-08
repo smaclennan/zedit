@@ -3,13 +3,13 @@
 checkpatch=/lib/modules/`uname -r`/source/scripts/checkpatch.pl
 
 echo "Running sparse..."
-for f in *.[ch]; do
-    sparse -D__unix__ -D__linux__ $f
-done
+CFILES=`find -name "*.c" -maxdepth 1 | fgrep -v fcheck.c`
+
+sparse -D__linux__ $CFILES
+sparse -D__linux__ fcheck.c
 
 echo "Running checkpatch..."
 for f in *.[ch]; do
-    [ $f = typedefs.h ] && continue
     [ $f = proto.h ] && continue
     [ -s $f ] || continue
     $checkpatch --file $f | fgrep -q "no obvious style problems" || echo "$f"

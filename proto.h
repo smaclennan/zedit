@@ -17,8 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "typedefs.h"
-
 #ifdef FCHECK
 #define Z(f) static void f(void) {}
 #else

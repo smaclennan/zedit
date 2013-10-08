@@ -105,7 +105,7 @@ extern struct buff *Curbuff;
 extern struct page *Curpage;
 extern struct mark *Mrklist;
 extern struct wdo *Curwdo, *Whead;
-extern int Curmodf;
+extern Boolean Curmodf;
 
 #define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
 

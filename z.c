@@ -92,7 +92,8 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(argv[0]);
 		case 'l':
-			Argp = Arg = atoi(optarg);
+			Arg = atoi(optarg);
+			Argp = TRUE;
 			break;
 		case 't':
 			textMode = 1;

@@ -251,7 +251,7 @@ Boolean mrkaftermrk(struct mark *, struct mark *);
 Boolean mrkatmrk(struct mark *, struct mark *);
 Boolean mrkbeforemrk(struct mark *, struct mark *);
 char *nocase(char *);
-void parsem(char *, Boolean);
+void parsem(char *, int);
 int pathfixup(char *, char *);
 Boolean promptsave(struct buff *tbuff, Boolean must);
 void pntmove(int, int);
@@ -307,7 +307,7 @@ void tlfini(void);
 /* compile switched routines */
 void message(struct buff *, char *);
 
-int dopipe(struct buff *, char *);
+Boolean dopipe(struct buff *, char *);
 void winit(void);
 void wfini(void);
 

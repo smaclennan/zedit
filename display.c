@@ -378,7 +378,7 @@ static char *setmodes(struct buff *buff)
 }
 
 /* Set one windows modified flags. */
-static void subset(int from, int to, int flag)
+static void subset(int from, int to, Boolean flag)
 {
 	struct mark *btmark, *ltmark;
 
@@ -414,7 +414,7 @@ static void subset(int from, int to, int flag)
 }
 
 /* Insert the correct modified flags. */
-void vsetmod(int flag)
+void vsetmod(Boolean flag)
 {
 	struct wdo *wdo;
 

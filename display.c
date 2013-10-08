@@ -150,6 +150,17 @@ static int buff_col(void)
 	return tgetcol() + twidth(Buff());
 }
 
+static void extendedlinemarker(void)
+{
+	int col;
+
+	for (col = tgetcol(); col < tmaxcol() - 1; ++col)
+		tprntchar(' ');
+	tstyle(T_BOLD);
+	tprntchar('>');
+	tstyle(T_NORMAL);
+}
+
 /*
  * Do the acutal screen update.
  * Curwdo is not valid.
@@ -165,9 +176,6 @@ static int innerdsp(int from, int to, struct mark *pmark)
 
 	resetcomments();
 	for (trow = from; trow < to; ++trow) {
-#ifdef HSCROLL
-		bmove(Hshift);
-#endif
 		if (Scrnmarks[trow].modf || !bisatmrk(&Scrnmarks[trow])) {
 			Scrnmarks[trow].modf = false;
 			bmrktopnt(&Scrnmarks[trow]); /* Do this before tkbrdy */
@@ -199,13 +207,8 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			if (bisatmrk(Curbuff->mark) &&
 				(ISNL(Buff()) || bisstart() || bisend()))
 					setmark(false);
-#ifdef HSCROLL
-			if (!ISNL(Buff()))
-				bcsearch(NL);
-#else
 			if (col >= tmaxcol())
 				extendedlinemarker();
-#endif
 			memset(lptr, '\376', Colmax - (lptr - tline));
 			Tlrow = trow;
 			if (tgetcol() < tmaxcol()) {

@@ -213,17 +213,6 @@ void termsize(void)
 		Colmax = COLMAX;
 }
 
-void extendedlinemarker(void)
-{
-	int col;
-
-	for (col = tgetcol(); col < tmaxcol() - 1; ++col)
-		tprntchar(' ');
-	tstyle(T_BOLD);
-	tprntchar('>');
-	tstyle(T_NORMAL);
-}
-
 /* Print a char. */
 void tprntchar(Byte ichar)
 {

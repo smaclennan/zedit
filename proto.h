@@ -223,7 +223,6 @@ bool delcmd(void);
 bool delcmdall(void);
 char *dispkey(unsigned, char *);
 void execute(void);
-void extendedlinemarker(void);
 bool filesave(void);
 bool findfile(char *);
 int findpath(char *, char *);

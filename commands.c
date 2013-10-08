@@ -21,7 +21,7 @@
 #include "keys.h"
 
 int Arg;
-Boolean Argp;
+bool Argp;
 
 /* Word COMMANDS */
 
@@ -29,7 +29,7 @@ Boolean Argp;
  * start of a word if we are in the middle. In program mode, if we are
  * in a word, we do not move.
  */
-static Boolean Findstart(void)
+static bool Findstart(void)
 {
 	if ((Curbuff->bmode & PROGMODE))
 		moveto(bistoken, FORWARD);
@@ -49,7 +49,7 @@ void Zcapword(void)
 		Curbuff->bmodf = Curmodf = MODIFIED;
 		for (bmove1(); !bisend() && bistoken(); bmove1())
 			*Curcptr = tolower(*Curcptr);
-		vsetmod(FALSE);
+		vsetmod(false);
 	}
 }
 
@@ -61,7 +61,7 @@ void Zlowword(void)
 			Curbuff->bmodf = Curmodf = MODIFIED;
 			*Curcptr = tolower(*Curcptr);
 		}
-		vsetmod(FALSE);
+		vsetmod(false);
 	}
 }
 
@@ -73,7 +73,7 @@ void Zupword(void)
 			Curbuff->bmodf = Curmodf = MODIFIED;
 			*Curcptr = toupper(*Curcptr);
 		}
-		vsetmod(FALSE);
+		vsetmod(false);
 	}
 }
 
@@ -122,7 +122,7 @@ void Zcenter(void)
 	tobegline();
 	Zdelwhite();
 	toendline();
-	tmp = bgetcol(TRUE, 0);
+	tmp = bgetcol(true, 0);
 	if (tmp <= VAR(VFILLWIDTH)) {
 		tobegline();
 		tindent((VAR(VFILLWIDTH) - tmp) / 2);
@@ -136,7 +136,7 @@ void Zcenter(void)
 /* This code must handle any char so that expansion will work */
 void Zcinsert(void)
 {
-	int cnt, crfound = FALSE;
+	int cnt, crfound = false;
 	struct mark tmark;
 
 	if (STRIP(Cmd) == '}') {
@@ -150,7 +150,7 @@ void Zcinsert(void)
 				else {  /* matched */
 					tobegline();
 					movepast(biswhite, FORWARD);
-					cnt = bgetcol(TRUE, 0);
+					cnt = bgetcol(true, 0);
 					bpnttomrk(&tmark);
 					if (crfound) {
 						Zdelwhite();
@@ -162,7 +162,7 @@ void Zcinsert(void)
 			} else if (STRIP(*Curcptr) == '}')
 				++cnt;
 			else if (ISNL(*Curcptr))
-				crfound = TRUE;
+				crfound = true;
 		bpnttomrk(&tmark);	/* no match - go back */
 		tbell();				/* and warn user */
 	} else if (STRIP(Cmd) == '#') {
@@ -200,7 +200,7 @@ void Zcinsert(void)
 #if COMMENTBOLD
 	if (STRIP(Cmd) == '/') {
 		/* SAM What about overwrite mode? */
-		Boolean comment;
+		bool comment;
 
 		bmove(-2);
 		comment = *Curcptr == '*';
@@ -215,7 +215,7 @@ void Zcinsert(void)
 			bmove1();
 			addcpp();
 		} else {
-			Boolean cpp = ISNL(*Curcptr);
+			bool cpp = ISNL(*Curcptr);
 			bmove(2);
 			if (cpp)
 				addcpp();
@@ -246,7 +246,7 @@ void Zcindent(void)
 		movepast(biswhite, FORWARD);
 		if (bisaftermrk(&tmark))
 			bpnttomrk(&tmark);
-		for (width = bgetcol(TRUE, 0); bisbeforemrk(&tmark); bmove1())
+		for (width = bgetcol(true, 0); bisbeforemrk(&tmark); bmove1())
 			if (STRIP(*Curcptr) == '{') {
 				width += Tabsize;
 				++sawstart;
@@ -287,17 +287,17 @@ static void Zfillcomment(void)
 	bmrktopnt(&tmark);
 
 	/* find start of comment */
-	if (!bstrsearch("/*", FALSE)) {
+	if (!bstrsearch("/*", false)) {
 		bpnttomrk(&tmark);
 		error("Unable to find start of comment.");
 		return;
 	}
-	col = bgetcol(TRUE, 0) + 1;
+	col = bgetcol(true, 0) + 1;
 	bcsearch(NL);
 	start = bcremrk();
 
 	/* find end of comment */
-	if (!bstrsearch("*/", TRUE)) {
+	if (!bstrsearch("*/", true)) {
 		unmark(start);
 		bpnttomrk(&tmark);
 		error("Unable to find end of comment.");
@@ -334,7 +334,7 @@ static void Zfillcomment(void)
 		/* main loop */
 		while (bisbeforemrk(tmp)) {
 			moveto(bisspace, FORWARD);
-			if (bgetcol(TRUE, 0) > VAR(VFILLWIDTH)) {
+			if (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
 				moveto(bisspace, BACKWARD);
 				Zdelwhite();
 				binsert(NL);
@@ -369,16 +369,16 @@ static void Zfillcomment(void)
 
 void Zfillchk(void)
 {
-	Boolean tmp;
+	bool tmp;
 	struct mark *tmark;
 
 	if (Cmd == CR)
 		Cmd = NL;
-	if (bgetcol(TRUE, 0) < VAR(VFILLWIDTH) || InPaw)
+	if (bgetcol(true, 0) < VAR(VFILLWIDTH) || InPaw)
 		CMD(Cmd == NL ? ZNEWLINE : ZINSERT);
 	else {
 		tmark = bcremrk();
-		while (bgetcol(TRUE, 0) > VAR(VFILLWIDTH)) {
+		while (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
 			moveto(bisspace, BACKWARD);
 			movepast(bisspace, BACKWARD);
 		}
@@ -412,7 +412,7 @@ void Zdelwhite(void)
 /* Not reentrant - must iterate for arg */
 void Zfillpara(void)
 {
-	Boolean all;
+	bool all;
 	struct mark *tmark, *tmp;
 
 	if (Curbuff->bmode & CMODE) {
@@ -426,7 +426,7 @@ void Zfillpara(void)
 	}
 	tmark = bcremrk();		/* save the current point */
 	all = Arg == 0;
-	if (all == TRUE)
+	if (all == true)
 		btostart();
 	echo("Reformatting...");
 	do {
@@ -442,7 +442,7 @@ void Zfillpara(void)
 		/* main loop */
 		while (bisbeforemrk(tmp)) {
 			moveto(bisspace, FORWARD);
-			if (bgetcol(TRUE, 0) > VAR(VFILLWIDTH)) {
+			if (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
 				moveto(bisspace, BACKWARD);
 				Zdelwhite();
 				binsert(NL);
@@ -472,7 +472,7 @@ void Zfillpara(void)
 	unmark(tmark);
 }
 
-static Boolean Ispara(char pc, char ch)
+static bool Ispara(char pc, char ch)
 {
 	/* We consider a FF, VT, or two NLs in a row to mark a paragraph.
 	 * A '.' at the start of a line also marks a paragraph (for nroff)
@@ -519,7 +519,7 @@ void Zprintpos(void)
 	bswappnt(Curbuff->mark);
 	point = blocation(&line);
 	putpaw("Line: %u  Column: %u  Point: %lu  Mark: %lu  Length: %lu",
-	       line, bgetcol(FALSE, 0) + 1, point, mark, blength(Curbuff));
+	       line, bgetcol(false, 0) + 1, point, mark, blength(Curbuff));
 }
 
 
@@ -554,7 +554,7 @@ static void cleanup(void)
 void Zexit(void)
 {
 	struct buff *tbuff;
-	Boolean modf = FALSE;
+	bool modf = false;
 #ifdef PIPESH
 	struct buff *make = cfindbuff(MAKEBUFF);
 
@@ -568,14 +568,14 @@ void Zexit(void)
 
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF))
-			modf = TRUE;
+			modf = true;
 	if (modf && ask("Modified buffers. quit anyway? ") != YES)
 		return;
 
 #ifdef PIPESH
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (tbuff->child != EOF)
-			unvoke(tbuff, FALSE);
+			unvoke(tbuff, false);
 	checkpipes(0);		/* make sure waited for ALL children */
 #endif
 
@@ -586,10 +586,10 @@ void Zexit(void)
 }
 
 /* Prompt to save buffer if the buffer has been modified.
- * Always saves if 'must' is TRUE or saveOnExit is set.
- * Returns FALSE if the user ABORTS the prompt.
+ * Always saves if 'must' is true or saveOnExit is set.
+ * Returns false if the user ABORTS the prompt.
  */
-Boolean promptsave(struct buff *tbuff, Boolean must)
+bool promptsave(struct buff *tbuff, bool must)
 {
 	static int save_all;
 	char str[BUFNAMMAX + 20];
@@ -598,20 +598,20 @@ Boolean promptsave(struct buff *tbuff, Boolean must)
 	if (tbuff->bmodf) {
 		if (!must && !save_all) {
 			sprintf(str, "save buffer %s? ", tbuff->bname);
-			ok = ask2(str, TRUE);
+			ok = ask2(str, true);
 			if (ok == BANG)
 				save_all = 1;
 			else if (ok == ABORT)
-				return FALSE;
+				return false;
 		}
 
 		if (ok == YES || save_all) {
 			bswitchto(tbuff);
-			if (filesave() != TRUE)
-				return FALSE;
+			if (filesave() != true)
+				return false;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 /* Prompt to save ALL modified non-system buffers.
@@ -620,7 +620,7 @@ Boolean promptsave(struct buff *tbuff, Boolean must)
  * and the routine returns false.
  * Else the user returns to the buffer he started in.
 */
-Boolean saveall(Boolean must)
+bool saveall(bool must)
 {
 	struct buff *tbuff, *bsave;
 
@@ -628,10 +628,10 @@ Boolean saveall(Boolean must)
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (!(tbuff->bmode & SYSBUFF) && !promptsave(tbuff, must)) {
 			Curwdo->modeflags = INVALID;
-			return FALSE;
+			return false;
 		}
 	bswitchto(bsave);
-	return TRUE;
+	return true;
 }
 
 static void mshow(unsigned ch)
@@ -724,7 +724,7 @@ void Zarg(void)
 {
 	char str[STRMAX], *p;
 
-	Argp = TRUE;
+	Argp = true;
 	Arg = 0;
 	strcpy(str, "Arg: 0");
 	p = str + 5;	/* point to first digit */
@@ -748,7 +748,7 @@ void Zarg(void)
  * left in for when we add a timeout to the read in tgetkb. */
 void Zmeta(void)
 {
-	Boolean tmp;
+	bool tmp;
 
 	tmp = delayprompt("Meta: ");
 	Cmd = tgetkb() | 128;
@@ -760,7 +760,7 @@ void Zmeta(void)
 /* Process ^X commands. */
 void Zctrlx(void)
 {
-	Boolean tmp;
+	bool tmp;
 
 	tmp = delayprompt("C-X: ");
 	Cmd = tgetcmd() | 256;
@@ -791,7 +791,7 @@ void Zabort(void)
 
 void Zquote(void)
 {
-	Boolean tmp;
+	bool tmp;
 	char n[3];
 
 	tmp = delayprompt("Quote: ");
@@ -845,7 +845,7 @@ void Ztab(void)
 	int tcol;
 
 	if (VAR(VSPACETAB)) {
-		tcol = Tabsize - (bgetcol(FALSE, 0) % Tabsize);
+		tcol = Tabsize - (bgetcol(false, 0) % Tabsize);
 		while (tcol-- > 0)
 			binsert(' ');
 	} else
@@ -883,7 +883,7 @@ void Zcwd(void)
 
 void Zcount(void)
 {
-	Boolean word, swapped = FALSE;
+	bool word, swapped = false;
 	unsigned l, w, c;
 	struct mark *tmark;
 
@@ -899,15 +899,15 @@ void Zcount(void)
 	}
 	l = w = c = 0;
 	echo("Counting...");
-	word = FALSE;
+	word = false;
 	for (; Argp ? !bisend() : bisbeforemrk(Curbuff->mark); bmove1(), ++c) {
 		if (ISNL(*Curcptr))
 			++l;
 		if (!bistoken())
-			word = FALSE;
+			word = false;
 		else if (!word) {
 			++w;
-			word = TRUE;
+			word = true;
 		}
 	}
 	putpaw("Lines: %u   Words: %u   Characters: %u", l, w, c);
@@ -1005,13 +1005,13 @@ void parsem(char *in, int mode)
 	}
 }
 
-static Boolean extmatch(char *str, Boolean mode)
+static bool extmatch(char *str, bool mode)
 {
 	char **o;
 	int i;
 
 	if (!str)
-		return FALSE;
+		return false;
 
 	mode = get_mode(mode, &o);
 	str = strrchr(str, '.');
@@ -1020,8 +1020,8 @@ static Boolean extmatch(char *str, Boolean mode)
 	else
 		for (i = 0; o[i]; ++i)
 			if (strcmp(o[i], str) == 0)
-				return TRUE;
-	return FALSE;
+				return true;
+	return false;
 }
 
 
@@ -1076,7 +1076,7 @@ void Zmrkpara(void)
 
 static void setregion(int (*convert)(int))
 {
-	Boolean swapped;
+	bool swapped;
 	struct mark tmark;
 
 	if (Curbuff->bmode & PROGMODE) {
@@ -1111,7 +1111,7 @@ void Zlowregion(void)
 	setregion(tolower);
 }
 
-static void indent(Boolean flag)
+static void indent(bool flag)
 {
 	struct mark *psave, *msave = NULL;
 	int i;
@@ -1143,12 +1143,12 @@ static void indent(Boolean flag)
 
 void Zindent(void)
 {
-	indent(TRUE);
+	indent(true);
 }
 
 void Zundent(void)
 {
-	indent(FALSE);
+	indent(false);
 }
 
 void Zsetenv(void)

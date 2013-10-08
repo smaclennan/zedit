@@ -1,5 +1,5 @@
 /* undo.c - Zedit undo commands
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -172,7 +172,7 @@ void Zundo(void)
 
 	if (!Curbuff->undo_tail)
 		/* Last undo */
-		Curbuff->bmodf = FALSE;
+		Curbuff->bmodf = false;
 }
 #else
 void Zundo(void) { tbell(); }

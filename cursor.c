@@ -41,13 +41,13 @@ static int forcecol(void)
 		if (Buff() == NL)
 			fcol = COLMAX + 1;
 		else
-			fcol = bgetcol(TRUE, 0);
+			fcol = bgetcol(true, 0);
 	}
 
 	return fcol;
 }
 
-static void ScrollLine(Boolean (*search)(Byte what))
+static void ScrollLine(bool (*search)(Byte what))
 {
 	struct mark save;
 
@@ -59,7 +59,7 @@ static void ScrollLine(Boolean (*search)(Byte what))
 	bmove(-1);
 	bmrktopnt(Psstart);
 	bpnttomrk(&save);
-	Sendp = FALSE;
+	Sendp = false;
 }
 
 void Zprevline(void)
@@ -73,7 +73,7 @@ void Zprevline(void)
 		if (bisbeforemrk(Sstart))
 			ScrollLine(bcrsearch);
 
-	bmakecol(col, FALSE);
+	bmakecol(col, false);
 }
 
 void Znextline(void)
@@ -87,7 +87,7 @@ void Znextline(void)
 		if (Sendp && !bisbeforemrk(Send))
 			ScrollLine(bcsearch);
 
-	bmakecol(col, FALSE);
+	bmakecol(col, false);
 }
 
 void Zprevchar(void)
@@ -108,8 +108,8 @@ void Zprevpage(void)
 
 	bpnttomrk(Sstart);
 	for (i = wheight() - prefline() - 2; i > 0 && bcrsearch(NL); --i)
-		i -= bgetcol(TRUE, 0) / tmaxcol();
-	bmakecol(col, FALSE);
+		i -= bgetcol(true, 0) / tmaxcol();
+	bmakecol(col, false);
 	reframe();
 }
 
@@ -120,10 +120,10 @@ void Znextpage(void)
 	bpnttomrk(Sstart);
 	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(NL); --i) {
 		bmove(-1);
-		i -= bgetcol(TRUE, 0) / tmaxcol();
+		i -= bgetcol(true, 0) / tmaxcol();
 		bmove1();
 	}
-	bmakecol(col, FALSE);
+	bmakecol(col, false);
 	reframe();
 }
 
@@ -220,7 +220,7 @@ void Zcgoto(void)
 	int col = (int)getnum("Column: ");
 	if (col == -1)
 		return;
-	bmakecol(--col, TRUE);
+	bmakecol(--col, true);
 }
 
 #define BOOKMARKS	10			/* number of book marks */
@@ -296,7 +296,7 @@ void Zviewline(void)
 	bmrktopnt(Sstart);
 	bmove(-1);
 	bmrktopnt(Psstart);
-	Sendp = FALSE;
+	Sendp = false;
 	bpnttomrk(&pmark);
 }
 
@@ -325,7 +325,7 @@ void Zendwind(void)
 		;
 }
 
-static void scroll(Boolean (*search)(Byte what))
+static void scroll(bool (*search)(Byte what))
 {
 	struct mark *pmark = bcremrk();
 
@@ -336,7 +336,7 @@ static void scroll(Boolean (*search)(Byte what))
 	bmrktopnt(Sstart);
 	bmove(-1);
 	bmrktopnt(Psstart);
-	Sendp = FALSE;
+	Sendp = false;
 
 	if (mrkaftermrk(Sstart, pmark))
 		bmove1();

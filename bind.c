@@ -220,28 +220,28 @@ void bind(void)
 	Keys[TC_F12]	= ZREVERTFILE;
 }
 
-static Boolean bindone(char *prompt, int first, int *key)
+static bool bindone(char *prompt, int first, int *key)
 {
 	putpaw("%s", prompt);
 	*key = tgetcmd();
 	if (Keys[*key] == ZABORT)
-		return FALSE;
+		return false;
 	else if (Keys[*key] == ZQUOTE) {
 		Arg = 0;
 		Zquote();
 		*key = Cmd;
 	} else if (first && Keys[*key] == ZMETA)
-		if (bindone("Key: M-", FALSE, key))
+		if (bindone("Key: M-", false, key))
 			*key += 128;
 		else
-			return FALSE;
+			return false;
 	else if (first && Keys[*key] == ZCTRLX) {
-		if (bindone("Key: C-X ", FALSE, key))
+		if (bindone("Key: C-X ", false, key))
 			*key += 256;
 		else
-			return FALSE;
+			return false;
 	}
-	return TRUE;
+	return true;
 }
 
 void Zbind(void)
@@ -256,7 +256,7 @@ void Zbind(void)
 	f = getplete("Bind: ", (char *)NULL, (char **)Cnames,
 		     CNAMESIZE, NUMFUNCS);
 	if (f != -1) {
-		if (bindone("Key: ", TRUE, &key)) {
+		if (bindone("Key: ", true, &key)) {
 			Keys[key] = Cnames[f].fnum;
 			if (key == CR)
 				CRdefault = Keys[key];
@@ -297,7 +297,7 @@ void Zkeybind(void)
 }
 
 /* Don't display both C-X A and C-X a if bound to same Ditto for Meta */
-Boolean notdup_key(int k)
+bool notdup_key(int k)
 {
 	return ((k < (256 + 'a') || k > (256 + 'z')) &&
 		(k < (128 + 'a') || k > (128 + 'z'))) ||
@@ -321,7 +321,7 @@ void Zcmdbind(void)
 					strcat(PawStr, dispkey(k, line));
 					if (strlen(PawStr) > Colmax)
 						break;
-					found = TRUE;
+					found = true;
 				}
 		if (found)
 			putpaw(PawStr);
@@ -342,13 +342,13 @@ static void outto(FILE *fp, int col)
 {
 	int i;
 
-	for (i = bgetcol(FALSE, 0); i < col; ++i)
+	for (i = bgetcol(false, 0); i < col; ++i)
 		out(" ", fp);
 }
 
 void Zdispbinds(void)
 {
-	Boolean found;
+	bool found;
 	FILE *fp;
 	char line[STRMAX];
 	int f;
@@ -375,21 +375,21 @@ void Zdispbinds(void)
 		sprintf(line, "%-35s %c     ", Cnames[f].name,
 			Cmds[Cnames[f].fnum][1] == Znotimpl ? 'n' : 'y');
 		out(line, fp);
-		found = FALSE;
+		found = false;
 		for (k = 0; k < NUMKEYS; ++k)
 			if (Keys[k] == Cnames[f].fnum && notdup_key(k)) {
 				if (found)
 					outto(fp, 45);
 				out(dispkey(k, line), fp);
 				out("\n", fp);
-				found = TRUE;
+				found = true;
 			}
 		if (!found)
 			out("Unbound\n", fp);
 	}
 	btostart();
 	if (!fp)
-		Curbuff->bmodf = FALSE;
+		Curbuff->bmodf = false;
 	clrecho();
 	Arg = 0;
 }
@@ -404,16 +404,16 @@ void Zsavebind(void)
 		putpaw("%s written.", path);
 }
 
-Boolean bindfile(char *fname, int mode)
+bool bindfile(char *fname, int mode)
 {
 	char version[3];
-	int fd, modesave, rc = FALSE;
+	int fd, modesave, rc = false;
 
 	fd = open(fname, mode, Cmask);
 	if (fd == EOF) {
 		if (mode == WRITE_MODE)
 			error("Unable to Create Bindings File");
-		return FALSE;
+		return false;
 	}
 
 	modesave = Curbuff->bmode;		/* set mode to normal !!! */
@@ -424,7 +424,7 @@ Boolean bindfile(char *fname, int mode)
 		    write(fd, (char *)Keys, 510) != 510)
 			error("Unable to Write Bindings File");
 		else
-			rc = TRUE;
+			rc = true;
 	} else {
 		if (read(fd, version, 2) != 2 || *version != '0')
 			error("Incompatible Bindings File");
@@ -432,7 +432,7 @@ Boolean bindfile(char *fname, int mode)
 			error("Unable to Read Bindings File");
 		else {
 			CRdefault = Keys[CR];
-			rc = TRUE;
+			rc = true;
 		}
 	}
 

@@ -21,7 +21,7 @@
 #include <setjmp.h>
 #include <time.h>
 
-Boolean Curmodf;		/* page modified?? */
+bool Curmodf;		/* page modified?? */
 Byte *Cpstart;			/* pim data start */
 Byte *Curcptr;			/* current character */
 int Curchar;			/* current offset in Cpstart */
@@ -41,7 +41,7 @@ static int NumMarks;
 static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage);
 static void freepage(struct buff *tbuff, struct page *page);
-static Boolean pagesplit();
+static bool pagesplit();
 
 void bfini(void)
 {
@@ -75,7 +75,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 {
 	struct buff *sbuff;
 	struct mark *ltmrk, *btmrk;
-	Boolean flip;
+	bool flip;
 	int  srclen, dstlen;
 	Byte *spnt;
 	int copied = 0;
@@ -94,7 +94,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 			srclen = tmark->moffset - Curchar;
 		else
 			srclen = Curplen - Curchar;
-		Curmodf = TRUE;
+		Curmodf = true;
 		spnt = Curcptr;
 
 		bswitchto(tbuff);
@@ -119,8 +119,8 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 			if (btmrk->mpage == Curpage && btmrk->moffset > Curchar)
 					btmrk->moffset += dstlen;
 		makeoffset(Curchar + dstlen);
-		vsetmod(FALSE);
-		Curmodf = TRUE;
+		vsetmod(false);
+		Curmodf = true;
 		Curbuff->bmodf = MODIFIED;
 		bswitchto(sbuff);
 		bmove(dstlen);
@@ -211,12 +211,12 @@ void unmark(struct mark *mptr)
 }
 
 
-Boolean bcrsearch(Byte what)
+bool bcrsearch(Byte what)
 {
 	while (1) {
 		if (Curchar <= 0)
 			if (Curpage == Curbuff->firstp)
-				return FALSE;
+				return false;
 			else {
 				makecur(Curpage->prevp);
 				makeoffset(Curplen - 1);
@@ -224,21 +224,21 @@ Boolean bcrsearch(Byte what)
 		else
 			makeoffset(Curchar - 1);
 		if (*Curcptr == what)
-			return TRUE;
+			return true;
 	}
 }
 
-Boolean bcsearch(Byte what)
+bool bcsearch(Byte what)
 {
 	Byte *n;
 
 	if (bisend())
-		return FALSE;
+		return false;
 
 	while ((n = (Byte *)memchr(Curcptr, what, Curplen - Curchar)) == NULL)
 		if (Curpage == Curbuff->lastp) {
 			makeoffset(Curplen);
-			return FALSE;
+			return false;
 		} else {
 			makecur(Curpage->nextp);
 			makeoffset(0);
@@ -246,14 +246,14 @@ Boolean bcsearch(Byte what)
 
 	makeoffset(n - Cpstart);
 	bmove1();
-	return TRUE;
+	return true;
 }
 
 /* Delete the buffer and its pages. */
-Boolean bdelbuff(struct buff *tbuff)
+bool bdelbuff(struct buff *tbuff)
 {
 	if (!tbuff)
-		return TRUE;
+		return true;
 
 	if (tbuff == Curbuff) { /* switch to a safe buffer */
 		if (tbuff->next)
@@ -262,16 +262,16 @@ Boolean bdelbuff(struct buff *tbuff)
 			bswitchto(tbuff->prev);
 		else {
 			error("Last Buffer.");
-			return FALSE;
+			return false;
 		}
 	}
 
 #ifdef PIPESH
 	if (tbuff->child != EOF)
-		unvoke(tbuff, TRUE);
+		unvoke(tbuff, true);
 #endif
 
-	uncomment(tbuff, FALSE);
+	uncomment(tbuff, false);
 	undo_clear(tbuff);
 
 	while (tbuff->firstp)	/* delete the pages */
@@ -285,7 +285,7 @@ Boolean bdelbuff(struct buff *tbuff)
 		tbuff->next->prev = tbuff->prev;
 	free((char *)tbuff);	/* free the buffer proper */
 
-	return TRUE;
+	return true;
 }
 
 /* Delete quantity characters. */
@@ -313,7 +313,7 @@ void bdelete(unsigned quantity)
 		else
 			quantity -= quan;
 		Curbuff->bmodf = MODIFIED;
-		Curmodf = TRUE;
+		Curmodf = true;
 		if (Curplen == 0 && (Curpage->nextp || Curpage->prevp)) {
 			/* We deleted entire page. */
 			tpage = Curpage->nextp;
@@ -350,7 +350,7 @@ void bdelete(unsigned quantity)
 		makecur(tpage);
 		makeoffset(noffset);
 	}
-	vsetmod(TRUE);
+	vsetmod(true);
 }
 
 /* Delete from the point to the Mark. */
@@ -367,7 +367,7 @@ void bdeltomrk(struct mark *tmark)
 
 
 /* Return current screen col of point. */
-int bgetcol(Boolean flag, int col)
+int bgetcol(bool flag, int col)
 {
 	struct mark pmark;
 
@@ -394,14 +394,14 @@ void binsert(Byte new)
 	++Curplen;
 	++Curchar;
 	Curbuff->bmodf = MODIFIED;
-	Curmodf = TRUE;
+	Curmodf = true;
 
 	undo_add(1);
 
 	for (btmark = Mrklist; btmark; btmark = btmark->prev)
 		if (btmark->mpage == Curpage && btmark->moffset >= Curchar)
 			++(btmark->moffset);
-	vsetmod(FALSE);
+	vsetmod(false);
 }
 
 
@@ -413,13 +413,13 @@ void binstr(char *str)
 }
 
 
-/* Returns TRUE if point is after the mark. */
-Boolean bisaftermrk(struct mark *tmark)
+/* Returns true if point is after the mark. */
+bool bisaftermrk(struct mark *tmark)
 {
 	struct page *tp;
 
 	if (!tmark->mpage || tmark->mbuff != Curbuff)
-		return FALSE;
+		return false;
 	if (tmark->mpage == Curpage)
 		return Curchar > tmark->moffset;
 	for (tp = Curpage->prevp; tp && tp != tmark->mpage; tp = tp->prevp)
@@ -429,12 +429,12 @@ Boolean bisaftermrk(struct mark *tmark)
 
 
 /* True if the point precedes the mark. */
-Boolean bisbeforemrk(struct mark *tmark)
+bool bisbeforemrk(struct mark *tmark)
 {
 	struct page *tp;
 
 	if (!tmark->mpage || tmark->mbuff != Curbuff)
-		return FALSE;
+		return false;
 	if (tmark->mpage == Curpage)
 		return Curchar < tmark->moffset;
 	for (tp = Curpage->nextp; tp && tp != tmark->mpage; tp = tp->nextp)
@@ -514,7 +514,7 @@ long blines(struct buff *buff)
 /* Try to put Point in a specific column.
  * Returns actual Point column.
  */
-int bmakecol(int col, Boolean must)
+int bmakecol(int col, bool must)
 {
 	int tcol = 0;
 
@@ -559,7 +559,7 @@ void bmove1(void)
 	}
 }
 
-Boolean bmove(int dist)
+bool bmove(int dist)
 {
 	while (dist) {
 		dist += Curchar;
@@ -567,13 +567,13 @@ Boolean bmove(int dist)
 			/* within current page makeoffset dist */
 			Curchar = dist;
 			Curcptr = Cpstart + dist;
-			return TRUE;
+			return true;
 		}
 		if (dist < 0) { /* goto previous page */
 			if (Curpage == Curbuff->firstp) {
 				/* past start of buffer */
 				makeoffset(0);
-				return FALSE;
+				return false;
 			}
 			makecur(Curpage->prevp);
 			Curchar = Curplen; /* makeoffset Curplen */
@@ -582,7 +582,7 @@ Boolean bmove(int dist)
 			if (Curpage == Curbuff->lastp) {
 				/* past end of buffer */
 				makeoffset(Curplen);
-				return FALSE;
+				return false;
 			}
 			dist -= Curplen; /* must use this Curplen */
 			makecur(Curpage->nextp);
@@ -590,7 +590,7 @@ Boolean bmove(int dist)
 			Curcptr = Cpstart;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 /* Put the mark where the point is. */
@@ -624,11 +624,11 @@ void bempty(void)
 		if (btmark->mpage && btmark->mbuff == Curbuff) {
 			btmark->mpage = Curpage;
 			btmark->moffset = 0;
-			btmark->modf = TRUE;
+			btmark->modf = true;
 		}
 	Curplen = Curchar = 0;		/* reset to start of page */
 	Curcptr = Cpstart;
-	Curmodf = TRUE;
+	Curmodf = true;
 
 	undo_clear(Curbuff);
 }
@@ -719,7 +719,7 @@ int breadfile(char *fname)
 	bempty();
 
 	while ((len = read(fd, buf, PSIZE)) > 0) {
-		Curmodf = TRUE;
+		Curmodf = true;
 		if (Curplen) {
 			if (!newpage(Curbuff, Curpage, NULL)) {
 				bempty();
@@ -734,7 +734,7 @@ int breadfile(char *fname)
 	(void)close(fd);
 
 	btostart();
-	Curbuff->bmodf = FALSE;
+	Curbuff->bmodf = false;
 	clrecho();
 
 	return 0;
@@ -742,13 +742,13 @@ int breadfile(char *fname)
 
 
 /*	Write the current buffer to an open file descriptor.
- *	Returns:	TRUE	if write successful
- *			FALSE	if write failed
+ *	Returns:	true	if write successful
+ *			false	if write failed
  */
 int bwritefd(int fd)
 {
 	struct page *tpage;
-	int n, status = TRUE;
+	int n, status = true;
 	Byte lastch = '\n'; /* don't add NL to zero byte file */
 
 	Curpage->plen = Curplen;
@@ -771,7 +771,7 @@ int bwritefd(int fd)
 		struct stat sbuf;
 		fstat(fd, &sbuf);
 		Curbuff->mtime = sbuf.st_mtime;
-		Curbuff->bmodf = FALSE;
+		Curbuff->bmodf = false;
 	} else
 		error("Unable to write file.");
 
@@ -787,22 +787,22 @@ static char *make_bakname(char *bakname, char *fname)
 	return bakname;
 }
 
-static Boolean cp(char *from, char *to)
+static bool cp(char *from, char *to)
 {
 	FILE *in, *out;
 	char buf[1024];
-	int n, rc = TRUE;
+	int n, rc = true;
 
 	in = fopen(from, "r");
 	out = fopen(to, "w");
 	if (!in || !out) {
 		if (!in)
 			fclose(in);
-		return FALSE;
+		return false;
 	}
 	while ((n = fread(buf, 1, 1024, in)) > 0)
 		if (fwrite(buf, 1, n, out) != n) {
-			rc = FALSE;
+			rc = false;
 			break;
 		}
 	fclose(in);
@@ -812,19 +812,19 @@ static Boolean cp(char *from, char *to)
 
 /*	Write the current buffer to the file 'fname'.
  *	Handles the backup scheme according to VAR(VBACKUP).
- *	Returns:	TRUE	if write successfull
- *				FALSE	if write failed
+ *	Returns:	true	if write successfull
+ *				false	if write failed
  *				ABORT	if user didn't want to overwrite
  */
 int bwritefile(char *fname)
 {
 	char bakname[PATHMAX + 1];
-	int fd, mode, status = TRUE, bak = FALSE;
+	int fd, mode, status = true, bak = false;
 	struct stat sbuf;
 	int nlink;
 
 	if (!fname)
-		return TRUE;
+		return true;
 
 	/* If the file existed, check to see if it has been modified. */
 	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
@@ -873,7 +873,7 @@ int bwritefile(char *fname)
 			error("File is read only.");
 		else
 			error("Unable to open file.");
-		status = FALSE;
+		status = false;
 	}
 
 	/* cleanup */
@@ -915,12 +915,12 @@ void makeoffset(int dist)
 }
 
 /* True if mark1 follows mark2 */
-Boolean mrkaftermrk(struct mark *mark1, struct mark *mark2)
+bool mrkaftermrk(struct mark *mark1, struct mark *mark2)
 {
 	struct page *tpage;
 
 	if (!mark1->mpage || !mark2->mpage || mark1->mbuff != mark2->mbuff)
-		return FALSE;        /* marks in different buffers */
+		return false;        /* marks in different buffers */
 	if (mark1->mpage == mark2->mpage)
 		return mark1->moffset > mark2->moffset;
 	for (tpage = mark1->mpage->prevp;
@@ -932,7 +932,7 @@ Boolean mrkaftermrk(struct mark *mark1, struct mark *mark2)
 }
 
 /* True if mark1 is at mark2 */
-Boolean mrkatmrk(struct mark *mark1, struct mark *mark2)
+bool mrkatmrk(struct mark *mark1, struct mark *mark2)
 {
 	return  mark1->mbuff == mark2->mbuff &&
 		mark1->mpage == mark2->mpage &&
@@ -940,12 +940,12 @@ Boolean mrkatmrk(struct mark *mark1, struct mark *mark2)
 }
 
 /* True if mark1 precedes mark2 */
-Boolean mrkbeforemrk(struct mark *mark1, struct mark *mark2)
+bool mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 {
 	struct page *tpage;
 
 	if (!mark1->mpage || !mark2->mpage || mark1->mbuff != mark2->mbuff)
-		return FALSE;        /* Marks not in same buffer */
+		return false;        /* Marks not in same buffer */
 	if (mark1->mpage == mark2->mpage)
 		return mark1->moffset < mark2->moffset;
 	for (tpage = mark1->mpage->nextp;
@@ -1003,22 +1003,22 @@ void makecur(struct page *page)
 	}
 	Curpage = page;
 	Cpstart = page->pdata;
-	Curmodf = FALSE;
+	Curmodf = false;
 	Curplen = Curpage->plen;
 }
 
 /* Split the current (full) page. */
-static Boolean pagesplit(void)
+static bool pagesplit(void)
 {
 	struct page *new;
 	struct mark *btmark;
 
 	new = newpage(Curbuff, Curpage, Curpage->nextp);
 	if (new == NULL)
-		return FALSE;
+		return false;
 
 	memmove(new->pdata, Cpstart + HALFP, HALFP);
-	Curmodf = TRUE;
+	Curmodf = true;
 	Curplen = HALFP;
 	new->plen = HALFP;
 	for (btmark = Mrklist; btmark; btmark = btmark->prev)
@@ -1031,7 +1031,7 @@ static Boolean pagesplit(void)
 		makecur(new);
 		makeoffset(Curchar - HALFP);
 	}
-	return TRUE;
+	return true;
 }
 
 /* Peek the previous byte */

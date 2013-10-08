@@ -20,13 +20,12 @@
 #ifndef ZEDIT_TYPEDEFS_H
 #define ZEDIT_TYPEDEFS_H
 
-#include <stdbool.h>
-
 /* Ok, I admit it.... this is a hack to get around the checkpatch
  * typedef errors. Easier to put them in one file and ignore them :(
  */
 
-typedef bool Boolean;
+#include <stdbool.h>
+
 typedef unsigned char Byte;
 
 #endif

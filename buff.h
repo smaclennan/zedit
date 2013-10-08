@@ -1,5 +1,5 @@
 /* buff.h - low level buffer defines
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -49,7 +49,7 @@ struct mark {
 	struct page *mpage;		/* page in the buffer */
 	struct buff *mbuff;		/* buffer the mark is in */
 	int moffset;			/* offset in the page */
-	Boolean modf;			/* screen mark modified flags */
+	bool modf;			/* screen mark modified flags */
 	struct mark *prev, *next;	/* list of marks */
 };
 
@@ -62,7 +62,7 @@ struct comment {
 #endif
 
 struct buff {
-	Boolean bmodf;			/* buffer modified? */
+	bool bmodf;			/* buffer modified? */
 	struct page *firstp, *lastp;	/* describe the pages */
 	struct page *pnt_page;		/* the position of the point */
 	unsigned pnt_offset;
@@ -105,7 +105,7 @@ extern struct buff *Curbuff;
 extern struct page *Curpage;
 extern struct mark *Mrklist;
 extern struct wdo *Curwdo, *Whead;
-extern Boolean Curmodf;
+extern bool Curmodf;
 
 #define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
 
@@ -119,7 +119,7 @@ extern Boolean Curmodf;
 Byte bpeek(void);
 int batoi(void);
 
-Boolean bmove(int);
+bool bmove(int);
 void bmove1(void);
 #ifdef INT_IS_16BITS
 #define MAXMOVE		(0x7fff - 1024)

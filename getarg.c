@@ -1,5 +1,5 @@
 /* getarg.c - paw commands
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -21,7 +21,7 @@
 #include "keys.h"
 
 /* globals for getarg */
-Boolean InPaw, First;
+bool InPaw, First;
 int Pawcol, Pawlen, Pshift;
 struct buff *Paw, *Buff_save;
 
@@ -37,7 +37,7 @@ void (*Nextpart)(void);
  * Only allow max chars.
  * Arg is NOT overwritten if the user aborts, or returns a null string.
  */
-Boolean getarg(char *prompt, char *arg, int max)
+bool getarg(char *prompt, char *arg, int max)
 {
 	char *ptr;
 	int argp_save, arg_save, rc;
@@ -52,13 +52,13 @@ Boolean getarg(char *prompt, char *arg, int max)
 	arg_save = Arg;
 	Buff_save = Curbuff;
 	Paw->bmode = Curbuff->bmode;
-	InPaw = TRUE;
+	InPaw = true;
 	Curcmds = 1;
 	Pshift = 0;
 	Pawlen = max;
-	makepaw(arg, FALSE);
-	First = TRUE;
-	while (InPaw == TRUE)
+	makepaw(arg, false);
+	First = true;
+	while (InPaw == true)
 		execute();
 	if (InPaw != ABORT) {
 		/* get the argument */
@@ -69,8 +69,8 @@ Boolean getarg(char *prompt, char *arg, int max)
 		rc = ptr == arg;	/* set to 1 if string empty */
 	} else
 		rc = ABORT;
-	InPaw = FALSE;
-	Insearch = FALSE; /* used by Zcase when in search command */
+	InPaw = false;
+	Insearch = false; /* used by Zcase when in search command */
 	Argp = argp_save;
 	Arg = arg_save;
 	bswitchto(Buff_save);		/* go back */
@@ -114,7 +114,7 @@ static void pclear(void)
 	for (i = 0; i < Rowmax - 2; ++i) {
 		tsetpoint(i, 0);
 		tcleol();
-		Scrnmarks[i].modf = TRUE;
+		Scrnmarks[i].modf = true;
 		if (wdo->last == i) {
 			wdo->modeflags = INVALID;
 			if (wdo->next)
@@ -131,10 +131,10 @@ void pset(int row, int col, int ncols)
 	p_ncols = ncols;
 }
 
-void pout(char *str, Boolean check)
+void pout(char *str, bool check)
 {
 	tsetpoint(p_row, p_col * PCOLSIZE);
-	Scrnmarks[p_row].modf = TRUE;
+	Scrnmarks[p_row].modf = true;
 	if (!check || p_row < tmaxrow() - 2) {
 		tprntstr(str);
 		tcleol();
@@ -151,13 +151,13 @@ static void dline(int trow)
 
 	if (trow < tmaxrow() - 2) {
 		tsetpoint(trow, 0);
-		Scrnmarks[trow].modf = TRUE;
+		Scrnmarks[trow].modf = true;
 		for (i = 0; i < tmaxcol(); ++i)
 			tprntchar('-');
 	}
 }
 
-static void pcmdplete(Boolean show)
+static void pcmdplete(bool show)
 {
 	char cmd[STRMAX + 1], **cca, *mstr = NULL;
 	int i = 0, len, len1 = 0, rc;
@@ -168,13 +168,13 @@ static void pcmdplete(Boolean show)
 	cca = Carray;
 	if (show && !len)
 		for (; i < Cnum; ++i, cca += Csize)
-			pout(*cca, TRUE);
+			pout(*cca, true);
 	else
 		for (; i < Cnum && (rc = strncasecmp(*cca, cmd, len)) <= 0;
 				++i, cca += Csize)
 			if (rc == 0) {
 				if (show)
-					pout(*cca, TRUE);
+					pout(*cca, true);
 				else if (mstr) {
 					Cret = -1;
 					len1 = nmatch(mstr, *cca);
@@ -191,13 +191,13 @@ static void pcmdplete(Boolean show)
 		if (len == len1) {
 			/* Help!!!!*/
 			pclear();
-			pcmdplete(TRUE);
+			pcmdplete(true);
 			dline(p_col ? ++p_row : p_row);
 			return;
 		}
 		strncpy(cmd, mstr, len1);
 		cmd[len1] = '\0';
-		makepaw(cmd, FALSE);
+		makepaw(cmd, false);
 	} else
 		tbell();
 }
@@ -209,23 +209,23 @@ void pinsert(void)
 	int width;
 
 	if (Cmd == '\t' && Cnum) {
-		pcmdplete(FALSE);
+		pcmdplete(false);
 		return;
 	}
 
 	if (First) {
 		bdelete(Curplen);
-		First = FALSE;
+		First = false;
 		Tlrow = -1;
 	}
 
 	width = twidth(Cmd);
-	if (bgetcol(FALSE, 0) + width <= Pawlen) {
+	if (bgetcol(false, 0) + width <= Pawlen) {
 		Zinsert();
 
 		bmrktopnt(&tmark);
 		btoend();
-		if (bgetcol(FALSE, 0) > Pawlen) {
+		if (bgetcol(false, 0) > Pawlen) {
 			/* Insert in middle pushed text past end */
 			bmove(-width);
 			bdelete(width);
@@ -249,7 +249,7 @@ void pnewline(void)
 				Cret = i;
 				if (strcasecmp(cmdstr, *ptr) == 0) {
 					/* Exact match */
-					InPaw = FALSE;
+					InPaw = false;
 					return;
 				} else
 					++found;
@@ -259,7 +259,7 @@ void pnewline(void)
 			return;
 		}
 	}
-	InPaw = FALSE;
+	InPaw = false;
 }
 
 void Zpart(void)
@@ -270,7 +270,7 @@ void Zpart(void)
 		tbell();
 }
 
-void makepaw(char *word, Boolean start)
+void makepaw(char *word, bool start)
 {
 	bswitchto(Paw);
 	btostart();

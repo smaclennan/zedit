@@ -65,15 +65,15 @@ void Zrevertfile(void)
 }
 
 /* Read one file, creating the buffer is necessary.
- * Returns FALSE if unable to create buffer only.
- * FALSE means that there is no use continuing.
+ * Returns false if unable to create buffer only.
+ * false means that there is no use continuing.
  */
-static Boolean readone(char *bname, char *path)
+static bool readone(char *bname, char *path)
 {
 	struct buff *was = Curbuff;
 
 	if (cfindbuff(bname))
-		return TRUE;
+		return true;
 
 	if (cmakebuff(bname, path)) {
 		int rc = breadfile(path);
@@ -89,18 +89,18 @@ static Boolean readone(char *bname, char *path)
 			bdelbuff(Curbuff);
 			bswitchto(was);
 		}
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 
-Boolean findfile(char *path)
+bool findfile(char *path)
 {
 	char tbname[BUFNAMMAX + 1];
 	char *was;
 	struct buff *tbuff;
-	int rc = TRUE;
+	int rc = true;
 
 	Arg = 0;
 	was = Curbuff->bname;
@@ -116,7 +116,7 @@ Boolean findfile(char *path)
 		if (tbuff->fname && strcmp(path, tbuff->fname) == 0) {
 			bswitchto(tbuff);
 			if (Initializing)
-				return TRUE;
+				return true;
 			strcpy(Lbufname, was);
 			break;
 		}
@@ -157,18 +157,18 @@ void Zsaveall(void)
 			if (!(tbuff->bmode & SYSBUFF) && tbuff->fname)
 				tbuff->bmodf = MODIFIED;
 	}
-	saveall(TRUE);
+	saveall(true);
 }
 
 void Zfilesave(void)
 {
 	if (Argp)
-		saveall(FALSE);
+		saveall(false);
 	else
 		filesave();
 }
 
-Boolean filesave(void)
+bool filesave(void)
 {
 	char path[PATHMAX + 1];
 
@@ -178,7 +178,7 @@ Boolean filesave(void)
 		if (getfname("File Name: ", path) == 0)
 			Curbuff->fname = strdup(path);
 		else
-			return FALSE;
+			return false;
 		Curwdo->modeflags = INVALID;
 	}
 	putpaw("Writing %s", lastpart(Curbuff->fname));
@@ -187,12 +187,12 @@ Boolean filesave(void)
 
 /*
  * Write the region to 'path'. Assumes 'path' correct.
- * Returns: TRUE, FALSE, ABORT
+ * Returns: true, false, ABORT
  */
 static int write_rgn(char *path)
 {
 	struct buff *tbuff, *save;
-	int rc = FALSE;
+	int rc = false;
 
 	save = Curbuff;
 	tbuff = cmakebuff("___tmp___", (char *)NULL);

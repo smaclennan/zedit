@@ -7,8 +7,8 @@
  *		locs is set externally by ed and sed - removed!
  */
 
-static Boolean advance(Byte *);
-static Boolean ecmp(struct mark *, int);
+static bool advance(Byte *);
+static bool ecmp(struct mark *, int);
 static void getrnge(Byte *);
 
 #define	CBRA	2
@@ -46,11 +46,11 @@ static Byte bittab[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
 
 
 /* Step thru the buffer trying to match the compiled expression.
- * Returns TRUE if matched, else FALSE.
+ * Returns true if matched, else false.
  * The point is left at the end of the matched string or the buffer end and
  * REstart points to the start of the match.
  */
-Boolean step(Byte *ep)
+bool step(Byte *ep)
 {
 	/* ^ must match from start */
 	if (circf) {
@@ -69,7 +69,7 @@ Boolean step(Byte *ep)
 	while (!bisend()) {
 		bmrktopnt(REstart);
 		if (advance(ep))
-			return TRUE;
+			return true;
 		if (circf)
 			bcsearch(NL);	/* goto next line */
 		else {
@@ -77,11 +77,11 @@ Boolean step(Byte *ep)
 			bmove1();
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 /* Called by step to try to match at current position. */
-static Boolean advance(Byte *ep)
+static bool advance(Byte *ep)
 {
 	int c, ct;
 	struct mark *bbeg, curlp, tmark;
@@ -91,27 +91,27 @@ static Boolean advance(Byte *ep)
 		case CCHR:
 			if (*ep++ == STRIP(Buff()))
 				break;
-			return FALSE;
+			return false;
 
 		case CDOT:
 			if (ISNL(Buff()))
-				return FALSE;
+				return false;
 			break;
 
 		case CDOL:
 			if (ISNL(Buff()))
 				continue;
-			return FALSE;
+			return false;
 
 		case CCEOF:
-			return TRUE;
+			return true;
 
 		case CCL:
 			if (ISTHERE(((Byte)STRIP(Buff())))) {
 				ep += 16;
 				break;
 			}
-			return FALSE;
+			return false;
 
 		case CBRA:
 			bmrktopnt(&braslist[*ep++]);
@@ -127,7 +127,7 @@ static Boolean advance(Byte *ep)
 			getrnge(ep);
 			while (low--)
 				if (STRIP(Buff()) != c)
-					return FALSE;
+					return false;
 				else
 					bmove1();
 			bmrktopnt(&curlp);
@@ -142,7 +142,7 @@ static Boolean advance(Byte *ep)
 			getrnge(ep);
 			while (low--)
 				if (ISNL(Buff()))
-					return FALSE;
+					return false;
 				else
 					bmove1();
 			bmrktopnt(&curlp);
@@ -159,7 +159,7 @@ static Boolean advance(Byte *ep)
 				c = Buff() & 0177;
 				bmove1();
 				if (!ISTHERE(c))
-					return FALSE;
+					return false;
 			}
 			bmrktopnt(&curlp);
 			while (size--) {
@@ -178,7 +178,7 @@ static Boolean advance(Byte *ep)
 			ct = &braelist[*ep++] - bbeg; /* length */
 			if (ecmp(bbeg, ct)) /* same?? */
 				continue;
-			return FALSE;
+			return false;
 
 		case CBACK | STAR:
 			bbeg = &braslist[*ep];
@@ -188,10 +188,10 @@ static Boolean advance(Byte *ep)
 				;
 			while (bisaftermrk(&curlp) || bisatmrk(&curlp)) {
 				if (advance(ep))
-					return TRUE;
+					return true;
 				bmove(-ct);
 			}
-			return FALSE;
+			return false;
 
 		case CDOT | STAR:
 			bmrktopnt(&curlp); /* save the current position */
@@ -215,12 +215,12 @@ star:
 			do {
 				bmrktopnt(&tmark);
 				if (advance(ep)) /* try to match */
-					return TRUE;
+					return true;
 				bpnttomrk(&tmark);
 				bmove(-1); /* go back and try again */
 			} while (bisaftermrk(&curlp)); /* till back to start */
 			bpnttomrk(&curlp); /* Don't slip backwards */
-			return FALSE;
+			return false;
 		}
 		bmove1();
 	}
@@ -236,10 +236,10 @@ static void getrnge(Byte *str)
 
 /* Compare the string at buffer mrk start to the string at the current point.
  * Match cnt chars.
- * Returns TRUE if matched.
+ * Returns true if matched.
  * Moves the buffer point and start mrk.
  */
-static Boolean ecmp(struct mark *start, int cnt)
+static bool ecmp(struct mark *start, int cnt)
 {
 	Byte c;
 
@@ -249,10 +249,10 @@ static Boolean ecmp(struct mark *start, int cnt)
 		bmove1();
 		bswappnt(start);
 		if (STRIP(Buff()) != c)
-			return FALSE;
+			return false;
 		bmove1();
 	}
-	return TRUE;
+	return true;
 }
 
 /* Compile the match string.

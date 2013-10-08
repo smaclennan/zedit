@@ -1,5 +1,5 @@
 /* vars.c - commands for Zedit variables
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -20,7 +20,7 @@
 #include "z.h"
 #include "vars-array.h"
 
-static void setavar(char *vin, Boolean display);
+static void setavar(char *vin, bool display);
 
 static char *readstr(char *str, FILE *fp)
 {
@@ -58,9 +58,9 @@ void Zsetavar(void)
 		if (getarg(pstr, arg, STRMAX))
 			return;
 		sprintf(pstr, "%s %s", Vars[rc].vname, arg);
-		setavar(pstr, TRUE);
+		setavar(pstr, true);
 	} else
-		setavar(Vars[rc].vname, TRUE);
+		setavar(Vars[rc].vname, true);
 }
 
 /* If there is a config.z file, read it! */
@@ -108,11 +108,11 @@ static void readconfigfile(char *fname)
 				return;
 			}
 			while (readstr(buff, fp))
-				setavar(buff, FALSE);
+				setavar(buff, false);
 			pclose(fp);
 		} else {
 			do
-				setavar(buff, FALSE);
+				setavar(buff, false);
 			while (readstr(buff, fp));
 			fclose(fp);
 		}
@@ -175,7 +175,7 @@ static void do_var_match(int i, char *vin)
 		parsem(VARSTR(i), TEXT);
 }
 
-static void setavar(char *vin, Boolean display)
+static void setavar(char *vin, bool display)
 {
 	char *ptr, msg[STRMAX + 1];
 	int i = 0;
@@ -306,7 +306,7 @@ void Zshowconfig(void)
 			binstr(line);
 		}
 
-	tbuff->bmodf = FALSE;
+	tbuff->bmodf = false;
 	btostart();
 	cswitchto(tbuff);
 }

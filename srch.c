@@ -1,5 +1,5 @@
 /* srch.c - Zedit search functions
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -20,25 +20,25 @@
 #include "z.h"
 
 
-static Boolean promptsearch(char *prompt, int type);
+static bool promptsearch(char *prompt, int type);
 static void promptreplace(int type);
-static Boolean dosearch(void);
-static Boolean replaceone(int, Boolean *, Boolean *, Byte *, Boolean);
+static bool dosearch(void);
+static bool replaceone(int, bool *, bool *, Byte *, bool);
 
 
-Boolean Insearch;	/* set by nocase, reset by getarg */
+bool Insearch;	/* set by nocase, reset by getarg */
 
 static char old[STRMAX + 1];	/* Search string */
 static char new[STRMAX + 1];	/* Replace string */
-static Boolean searchdir[2];	/* Current direction for Again. */
+static bool searchdir[2];	/* Current direction for Again. */
 static struct mark *Gmark;	/* used by global search routines */
 
 #define QHELP	\
 "Options: ' ' 'y'=change; 'n'=don't; '.'=change & quit; 'u'=undo; '^G'=quit"
 
-static void doincsrch(char *prompt, Boolean forward)
+static void doincsrch(char *prompt, bool forward)
 {
-	Boolean go = TRUE;
+	bool go = true;
 	char str[STRMAX + 1], promptstr[40];
 	int cmd, i = 0, count = 0;
 	struct mark marks[STRMAX];
@@ -104,7 +104,7 @@ again:
 		} else if (Keys[cmd] != ZNOTIMPL) {
 			if (cmd != CR)
 				tpushcmd(cmd);
-			go = FALSE;
+			go = false;
 		}
 		count = 0;
 	}
@@ -205,7 +205,7 @@ void Zrereplace(void)
 
 static void doreplace(int type)
 {
-	Boolean exit = FALSE, crgone, query;
+	bool exit = false, crgone, query;
 	Byte ebuf[ESIZE];
 	struct mark *pmark, tmark;
 	struct buff *tbuff;
@@ -213,7 +213,7 @@ static void doreplace(int type)
 
 	Arg = 0;
 
-	query = type == FORWARD ? FALSE : TRUE;
+	query = type == FORWARD ? false : true;
 
 	crgone = *old && *(old + strlen(old) - 1) == '\n';
 	pmark = bcremrk();
@@ -267,10 +267,10 @@ static void promptreplace(int type)
 	doreplace(type);
 }
 
-static Boolean replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
-			  Boolean crgone)
+static bool replaceone(int type, bool *query, bool *exit, Byte *ebuf,
+			  bool crgone)
 {
-	Boolean found = FALSE;
+	bool found = false;
 	char tchar = ',', *ptr;
 	int dist, changeprev = 0;
 	struct mark *prevmatch;
@@ -279,7 +279,7 @@ static Boolean replaceone(int type, Boolean *query, Boolean *exit, Byte *ebuf,
 	echo("Searching...");
 	while (!*exit &&
 	       (type == REGEXP ? step(ebuf) : bstrsearch(old, FORWARD))) {
-		found = TRUE;
+		found = true;
 		if (*query) {
 replace:
 			echo("Replace? ");
@@ -293,11 +293,11 @@ input:
 				break;	/* do the change */
 
 			case '.':
-				*exit = TRUE; /* change, then abort */
+				*exit = true; /* change, then abort */
 				break;
 
 			case '!':
-				*query = FALSE; /* global change */
+				*query = false; /* global change */
 				echo("Replacing...");
 				break;
 
@@ -322,16 +322,16 @@ input:
 			case 'S': /* skip file */
 			case 's':
 				unmark(prevmatch);
-				return FALSE;
+				return false;
 
 			case 'q': /* abort */
 			case 'Q':
-				*exit = TRUE;
+				*exit = true;
 				continue;
 
 			default:
 				if (Keys[(int)tchar] == ZABORT)
-					*exit = TRUE;
+					*exit = true;
 				else {
 					bmrktopnt(prevmatch);
 					changeprev = 0;
@@ -386,13 +386,13 @@ input:
 		if (*query)
 			echo("Searching...");
 		else if (tkbrdy())
-			*exit = TRUE;
+			*exit = true;
 	}
 	unmark(prevmatch);
 	return found;
 }
 
-static Boolean promptsearch(char *prompt, int type)
+static bool promptsearch(char *prompt, int type)
 {
 	if (*old == '\0' || type != AGAIN) {
 		if (getarg(nocase(prompt), old, STRMAX)) {
@@ -405,9 +405,9 @@ static Boolean promptsearch(char *prompt, int type)
 	return dosearch();
 }
 
-static Boolean dosearch(void)
+static bool dosearch(void)
 {
-	Boolean found = TRUE;
+	bool found = true;
 	Byte ebuf[ESIZE];
 	int fcnt = 0, rc;
 	struct mark *tmark;
@@ -453,12 +453,12 @@ static Boolean dosearch(void)
 /* This is an implementation of the Boyer-Moore Search.
  * It uses the delta1 only with the fast/slow loops.
  * It searchs for the string 'str' starting at the current buffer location. If
- * forward is TRUE, it searches forward, else it searches backwards.
+ * forward is true, it searches forward, else it searches backwards.
  * The search will be case insensitive if the buffers current mode is so set.
  */
-Boolean bstrsearch(char *str, Boolean forward)
+bool bstrsearch(char *str, bool forward)
 {
-	Boolean exact;
+	bool exact;
 	int delta[NUMASCII], len, i, shift;
 
 	exact = Curbuff->bmode & EXACT;
@@ -495,7 +495,7 @@ Boolean bstrsearch(char *str, Boolean forward)
 				 (!exact && tolower(STRIP(Buff())) == str[i]);
 				 bmove(-1), --i)
 					if (i == 0)
-						return TRUE;
+						return true;
 			/* compute shift. shift must be forward! */
 			if (i + delta[Buff()] > len)
 				shift = delta[Buff()];
@@ -534,13 +534,13 @@ Boolean bstrsearch(char *str, Boolean forward)
 			if (i > len) {
 				/* we matched! */
 				bmove(-len - 1);
-				return TRUE;
+				return true;
 			}
 			/* compute shift. shift must be backward! */
 			bmove(delta[Buff()] + i < 0 ? delta[Buff()] : -i - 1);
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 char *nocase(char *prompt)
@@ -551,7 +551,7 @@ char *nocase(char *prompt)
 		strcpy(is, prompt);
 		strcpy(upper, prompt);
 		strup(upper);
-		Insearch = TRUE;
+		Insearch = true;
 	}
 	return (Curbuff->bmode & EXACT) ? is : upper;
 }

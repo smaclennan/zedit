@@ -3,8 +3,6 @@
  * this. See termcap.c for how to include this.
  */
 
-#undef TRUE
-#undef FALSE
 #undef echo
 #define savetty _n_savetty
 

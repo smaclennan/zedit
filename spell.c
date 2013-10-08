@@ -121,7 +121,7 @@ void Zspell(void)
 				word[m][0] = m + '0';
 				word[m][1] = ' ';
 				strcpy(&word[m][2], p);
-				pout(word[m], FALSE);
+				pout(word[m], false);
 				p = e;
 			}
 			/* 'm' is now the number of matches -

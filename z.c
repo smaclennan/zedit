@@ -20,7 +20,7 @@
 #include "z.h"
 #include <stdarg.h>
 
-Boolean Initializing = TRUE;
+bool Initializing = true;
 char *Home;
 char *Cwd;
 char *ConfigDir;
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 	/* A longjmp is called if bcremrk runs out of memory */
 	if (setjmp(zenv) != 0) {
 		error("FATAL ERROR: Out of memory");
-		Argp = FALSE;	/* so Zexit will not default to save */
+		Argp = false;	/* so Zexit will not default to save */
 		Zexit();
 	}
 
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 			usage(argv[0]);
 		case 'l':
 			Arg = atoi(optarg);
-			Argp = TRUE;
+			Argp = true;
 			break;
 		case 't':
 			textMode = 1;
@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 			++Verbose;
 			break;
 		case 'E':
-			exitflag = TRUE;
+			exitflag = true;
 			break;
 		}
 
@@ -129,7 +129,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	Paw->bname = PAWBUFNAME;
-	InPaw = FALSE;
+	InPaw = false;
 
 	tinit();
 
@@ -137,7 +137,7 @@ int main(int argc, char **argv)
 	Sstart	= bcremrk();
 	Psstart	= bcremrk();
 	Send	= bcremrk();
-	Sendp	= FALSE;
+	Sendp	= false;
 
 	for (; optind < argc; ++optind, ++files)
 		if (pathfixup(path, argv[optind]) == 0)
@@ -177,7 +177,7 @@ int main(int argc, char **argv)
 	NumFDs = 2;
 #endif
 
-	Initializing = FALSE;
+	Initializing = false;
 
 	if (exitflag)
 		Zexit();
@@ -191,13 +191,13 @@ static void dotty(void)
 {
 	Cmd = tgetcmd();
 	Arg = 1;
-	Argp = FALSE;
+	Argp = false;
 	while (Arg > 0) {
 		CMD(Keys[Cmd]);
 		--Arg;
 	}
 	Lfunc = Keys[Cmd];
-	First = FALSE;				/* used by pinsert when InPaw */
+	First = false;				/* used by pinsert when InPaw */
 }
 
 

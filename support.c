@@ -25,7 +25,7 @@
 /* ask Yes/No question.
  * Returns YES, NO, BANG, or ABORT
  */
-int ask2(char *msg, Boolean allow_bang)
+int ask2(char *msg, bool allow_bang)
 {
 	int rc = BADCHAR;
 	unsigned cmd;
@@ -61,10 +61,10 @@ int ask2(char *msg, Boolean allow_bang)
  */
 int ask(char *msg)
 {
-	return ask2(msg, FALSE);
+	return ask2(msg, false);
 }
 
-Boolean delayprompt(char *msg)
+bool delayprompt(char *msg)
 {
 	int rc = delay(500);
 	if (rc)
@@ -73,7 +73,7 @@ Boolean delayprompt(char *msg)
 }
 
 /* Was the last command a delete to kill buffer command? */
-Boolean delcmd(void)
+bool delcmd(void)
 {
 	return	Lfunc == ZDELEOL  || Lfunc == ZDELLINE  || Lfunc == ZDELRGN   ||
 		Lfunc == ZCOPYRGN || Lfunc == ZDELWORD  || Lfunc == ZRDELWORD ||
@@ -81,7 +81,7 @@ Boolean delcmd(void)
 }
 
 /* Was the last command a delete of any type? */
-Boolean delcmdall(void)
+bool delcmdall(void)
 {
 	return delcmd() || Lfunc == ZDELCHAR || Lfunc == ZRDELCHAR;
 }
@@ -125,10 +125,10 @@ void message(struct buff *buff, char *str)
 	putpaw("%s", str);
 }
 
-static Boolean isfile(char *path, char *dir, char *fname, Boolean must)
+static bool isfile(char *path, char *dir, char *fname, bool must)
 {
 	if (!dir || !fname)
-		return FALSE;
+		return false;
 	strcpy(path, dir);
 	if (!Psep(*(path + strlen(path) - 1)))
 		strcat(path, "/");
@@ -141,9 +141,9 @@ static Boolean isfile(char *path, char *dir, char *fname, Boolean must)
  */
 int findpath(char *p, char *f)
 {
-	if (isfile(p, Home, f, TRUE))
+	if (isfile(p, Home, f, true))
 		return 2;
-	else if (isfile(p, ConfigDir, f, TRUE))
+	else if (isfile(p, ConfigDir, f, true))
 		return 1;
 	else
 		return 0;
@@ -153,7 +153,7 @@ int findpath(char *p, char *f)
  *  Get at the most 'max' characters.
  * Leaves the point alone.
  */
-Boolean getbword(char word[], int max, int (*valid)())
+bool getbword(char word[], int max, int (*valid)())
 {
 	int i;
 	struct mark tmark;
@@ -188,7 +188,7 @@ char *getbtxt(char txt[], int max)
 }
 
 /* Go forward or back past a thingy */
-void movepast(int (*pred)(), Boolean forward)
+void movepast(int (*pred)(), bool forward)
 {
 	if (!forward)
 		bmove(-1);
@@ -199,7 +199,7 @@ void movepast(int (*pred)(), Boolean forward)
 }
 
 /* Go forward or back to a thingy */
-void moveto(int (*pred)(), Boolean forward)
+void moveto(int (*pred)(), bool forward)
 {
 	if (!forward)
 		bmove(-1);

@@ -1,5 +1,5 @@
 /* comment.c - Zedit commentbold functions
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -277,11 +277,11 @@ void resetcomments(void)
 	if (delcmdall()) {
 		for (start = Curbuff->comments; start; start = start->next)
 			if (markch(start->end) != '/') {
-				uncomment(Curbuff, TRUE);
+				uncomment(Curbuff, true);
 				break;
 			}
 	} else if (Lfunc == ZYANK)
-		uncomment(Curbuff, TRUE);
+		uncomment(Curbuff, true);
 	start = Curbuff->comments;
 }
 
@@ -318,6 +318,6 @@ void recomment(void)
 	struct buff *buff;
 
 	for (buff = Bufflist; buff; buff = buff->next)
-		uncomment(buff, TRUE);
+		uncomment(buff, true);
 }
 #endif

@@ -1,5 +1,5 @@
 /* window.c - Zedit windowing commands and functions
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -60,19 +60,19 @@ static void winvalidate(struct wdo *wdo)
 	int i;
 
 	if (wdo->first > 0)
-		Scrnmarks[wdo->first - 1].modf = TRUE;
+		Scrnmarks[wdo->first - 1].modf = true;
 	for (i = wdo->first; i <= wdo->last; ++i)
-		Scrnmarks[i].modf = TRUE;
+		Scrnmarks[i].modf = true;
 	wdo->modeflags = INVALID;
 }
 
-static Boolean wdelete(struct wdo *wdo)
+static bool wdelete(struct wdo *wdo)
 {
 	struct wdo *new;
 
 	/* can't delete last window */
 	if (!Whead->next)
-		return FALSE;
+		return false;
 
 	/* give more space to the smaller of the 2 windows (favour next) */
 	if ((wdo->next ? wdo->next->last - wdo->next->first : ROWMAX + 1) <=
@@ -94,7 +94,7 @@ static Boolean wdelete(struct wdo *wdo)
 			wdo->next->prev = new;
 		new->modeflags = INVALID;
 	} else
-		return FALSE;
+		return false;
 
 	winvalidate(wdo);
 
@@ -103,27 +103,27 @@ static Boolean wdelete(struct wdo *wdo)
 		reframe();	/*SAM*/
 	}
 	wfree(wdo);
-	return TRUE;
+	return true;
 }
 
 /*
  * Split the current window in 2, putting the same buffer in both windows.
  * Leaves the user in the new window.
  */
-static Boolean wsplit(void)
+static bool wsplit(void)
 {
 	struct wdo *new;
 	int first, last;
 
 	if (wheight() < MINWDO)
-		return FALSE;
+		return false;
 
 	/* Create the new window. */
 	first = Curwdo->first + (wheight() / 2) + 1;
 	last = Curwdo->last;
 	new = wcreate(first, last);
 	if (!new)
-		return FALSE;
+		return false;
 
 	/* resize the old window */
 	Curwdo->last = first - 1;
@@ -144,7 +144,7 @@ static Boolean wsplit(void)
 	wswitchto(new);
 	reframe();
 	mrktomrk(Curwdo->wstart, Sstart);
-	return TRUE;
+	return true;
 }
 
 /* Find the window associated with buffer */
@@ -174,7 +174,7 @@ void wswitchto(struct wdo *wdo)
 		bpnttomrk(wdo->wpnt);
 		mrktomrk(Curbuff->mark, wdo->wmrk);
 		mrktomrk(Sstart, wdo->wstart);
-		Sendp = FALSE;
+		Sendp = false;
 	}
 	Curwdo->modeflags = INVALID;
 }
@@ -203,12 +203,12 @@ void cswitchto(struct buff *buff)
 }
 
 /* Local routine to change the current window by 'size' lines */
-static Boolean sizewindow(int size)
+static bool sizewindow(int size)
 {
 	struct wdo *other;
 
 	if (wheight() + size < MINWDO)
-		return FALSE;
+		return false;
 	other = Curwdo->next;
 	if (other && other->last - other->first - size > MINWDO) {
 		Curwdo->last += size;
@@ -219,14 +219,14 @@ static Boolean sizewindow(int size)
 			Curwdo->first -= size;
 			other->last   -= size;
 		} else
-			return FALSE;
+			return false;
 	}
 
 	/* invalidate the windows */
 	winvalidate(Curwdo);
 	winvalidate(other);
 
-	return TRUE;
+	return true;
 }
 
 static int nopaw_resize;
@@ -234,7 +234,7 @@ static int nopaw_resize;
 static void do_wsize(int orow)
 {
 	struct wdo *wdo;
-	Boolean changed = TRUE;
+	bool changed = true;
 	int i, d = Rowmax - orow;
 
 	if (d > 0) {
@@ -251,7 +251,7 @@ static void do_wsize(int orow)
 		/* make the windows smaller starting at the bottom */
 		d = -d;
 		while (d > 0 && changed) {
-			changed = FALSE;
+			changed = false;
 			for (i = 1, wdo = Whead; wdo; wdo = wdo->next) {
 				if (wdo->last - wdo->first - 1 > 3 && d > 0) {
 					wdo->last -= i;
@@ -259,7 +259,7 @@ static void do_wsize(int orow)
 						wdo->next->first -= i;
 					if (d-- > 0)
 						++i;
-					changed = TRUE;
+					changed = true;
 				} else {
 					wdo->last -= i - 1;
 					if (wdo->next)
@@ -293,7 +293,7 @@ void wsize(void)
 }
 
 /* paw_resize PAW by moving bottom window by 'diff' lines, if possible. */
-Boolean paw_resize(int diff)
+bool paw_resize(int diff)
 {
 	struct wdo *last;
 	int i;
@@ -303,15 +303,15 @@ Boolean paw_resize(int diff)
 		;
 
 	if (last->last - last->first + diff < 1)
-		return FALSE;
+		return false;
 	if (diff > 0)
 		for (i = 0; i < diff; ++i)
-			Scrnmarks[i + last->last].modf = TRUE;
+			Scrnmarks[i + last->last].modf = true;
 	last->last += diff;
 	Rowmax += diff;
 	last->modeflags = INVALID;
 	clrecho();
-	return TRUE;
+	return true;
 }
 
 /*
@@ -323,7 +323,7 @@ Boolean paw_resize(int diff)
  * Makes new window and buffer current.
  * NOTE: Blows away previous buffer.
  */
-Boolean wuseother(char *bname)
+bool wuseother(char *bname)
 {
 	struct wdo *wdo, *last;
 	struct buff *buff;
@@ -348,10 +348,10 @@ Boolean wuseother(char *bname)
 	winvalidate(Curwdo);
 	buff = cmakebuff(bname, NULL);
 	if (buff == NULL)
-		return FALSE;
+		return false;
 	cswitchto(buff);
 	bempty();
-	return TRUE;
+	return true;
 }
 
 /* Split the current window and enter new (bottom) window */
@@ -381,7 +381,7 @@ void Z1wind(void)
 	Whead = Curwdo;
 
 	for (i = 0; i < Curwdo->last; ++i)
-		Scrnmarks[i].modf = TRUE;
+		Scrnmarks[i].modf = true;
 
 	tclrwind();
 }

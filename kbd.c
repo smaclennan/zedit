@@ -81,7 +81,7 @@ int tgetcmd(void)
 static Byte cstack[CSTACK];
 static int cptr = -1;
 int cpushed;	/* needed in z.c */
-static int Pending = FALSE;
+static int Pending = false;
 
 Byte tgetkb(void)
 {
@@ -100,7 +100,7 @@ Byte tgetkb(void)
 			p = (p + 1) & (CSTACK - 1);
 		}
 	}
-	Pending = FALSE;
+	Pending = false;
 	return cstack[cptr];
 }
 
@@ -118,7 +118,7 @@ int tkbrdy(void)
 {
 #ifdef HAVE_POLL
 	if (cpushed || Pending)
-		return TRUE;
+		return true;
 
 	return Pending = poll(&stdin_fd, 1, 0) == 1;
 #else
@@ -126,17 +126,17 @@ int tkbrdy(void)
 	int fds = 1;
 
 	if (cpushed || Pending)
-		return TRUE;
+		return true;
 
 	return Pending = select(1, (fd_set *)&fds, NULL, NULL, &poll);
 #endif
 }
 
-Boolean delay(int ms)
+bool delay(int ms)
 {
 #ifdef HAVE_POLL
 	if (InPaw || tkbrdy())
-		return FALSE;
+		return false;
 
 	return poll(&stdin_fd, 1, ms) != 1;
 #else

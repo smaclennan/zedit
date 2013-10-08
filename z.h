@@ -46,10 +46,6 @@ extern char *Home;
 #define VERSION	"5.1"
 #define ZFMT	"%s %s  (%s)  %s: "
 
-#ifndef TRUE
-#define FALSE		0
-#define TRUE		1
-#endif
 #define INVALID		-1
 
 #define READ_MODE	O_RDONLY
@@ -128,9 +124,9 @@ struct cnames {
 };
 #define CNAMESIZE sizeof(struct cnames)
 
-extern Boolean Argp;
+extern bool Argp;
 extern int Arg;				/* must be signed */
-extern Boolean InPaw;		/* Are we in the Paw window? */
+extern bool InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
 extern int Pawcol, Pawlen, Pshift;
 extern Byte tline[];
@@ -144,7 +140,7 @@ extern struct cnames Cnames[];
 extern void (*Cmds[][2])();
 extern int Curcmds;
 extern Byte Keys[], Lfunc;
-extern Boolean First;
+extern bool First;
 
 #define CMD(n) (*Cmds[n][Curcmds])()
 
@@ -152,7 +148,7 @@ extern int cpushed;
 extern fd_set SelectFDs;
 extern int NumFDs;
 
-extern Boolean Sendp;
+extern bool Sendp;
 extern struct buff *Killbuff;
 extern char Lbufname[];
 extern struct avar Vars[];
@@ -161,8 +157,8 @@ extern struct buff *Buff_save;
 extern struct mark *Sstart, *Psstart, *Send, *REstart;
 extern struct mark Scrnmarks[];
 
-extern Boolean Initializing;
-extern Boolean Insearch;
+extern bool Initializing;
+extern bool Insearch;
 
 extern void (*Nextpart)(void);
 

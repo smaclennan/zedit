@@ -183,7 +183,7 @@ void tfini(void)
 	tlfini();
 }
 
-void setmark(Boolean prntchar)
+void setmark(bool prntchar)
 {
 	tstyle(T_REVERSE);
 	tprntchar(prntchar ? Buff() : ' ');
@@ -275,7 +275,7 @@ void tprntchar(Byte ichar)
 /* Calculate the width of a character.
  * The 'adjust' parameter adjusts for the end of line.
 */
-int chwidth(Byte ch, int col, Boolean adjust)
+int chwidth(Byte ch, int col, bool adjust)
 {
 	int wid;
 

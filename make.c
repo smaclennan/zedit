@@ -1,5 +1,5 @@
 /* make.c - Zedit make commands
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -32,7 +32,7 @@ static int set_cmd(int which, char *prompt)
 {
 	char cmd[STRMAX + 1];
 
-	Argp = FALSE;
+	Argp = false;
 	strcpy(cmd, VARSTR(which));
 	if (getarg(prompt, cmd, STRMAX))
 		return 0;
@@ -55,12 +55,12 @@ void Zmake(void)
 	if (Argp)
 		if (!set_cmd(VMAKE, "Make: "))
 			return;
-	saveall(TRUE);
+	saveall(true);
 #ifdef PIPESH
 	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
 		echo("Killing current make.");
-		unvoke(mbuff, TRUE);
+		unvoke(mbuff, true);
 		clrecho();
 	}
 #endif
@@ -102,7 +102,7 @@ void Zgrep(void)
 	snprintf(cmd, sizeof(cmd), "sh -c '%s \"%s\" %s'",
 		 VARSTR(VGREP), input, files);
 
-	saveall(TRUE);
+	saveall(true);
 #ifdef PIPESH
 	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
@@ -148,7 +148,7 @@ void Znexterr(void)
 			mrktomrk(wdo->wstart, Curbuff->mark);
 		pathfixup(path, fname);
 		findfile(path);
-		Argp = TRUE;
+		Argp = true;
 		Arg = line;
 		Zlgoto();
 		tobegline();
@@ -158,7 +158,7 @@ void Znexterr(void)
 		bswitchto(save);
 		echo("No more errors");
 	}
-	Argp = FALSE;
+	Argp = false;
 	Arg = 0;
 }
 
@@ -166,7 +166,7 @@ void Znexterr(void)
 /* kill the make */
 void Zkill(void)
 {
-	unvoke(cfindbuff(MAKEBUFF), FALSE);
+	unvoke(cfindbuff(MAKEBUFF), false);
 }
 #else
 void Zkill(void) { tbell(); }
@@ -175,18 +175,18 @@ void Zkill(void) { tbell(); }
 /* Check if it is a warning or an error.
  * Currently works for GCC, g++, MIPs.
  */
-static Boolean IsWarning;
+static bool IsWarning;
 
 static int isnotws(void)
 {
 	return Buff() != '\n' && Buff() != '\t' && Buff() != ' ';
 }
 
-static Boolean warning(void)
+static bool warning(void)
 {
 	if (Argp) {
 		if (IsWarning)
-			return TRUE;
+			return true;
 
 		if (Buff() == ':') {
 			char word[10], *p;

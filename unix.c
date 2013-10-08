@@ -1,5 +1,5 @@
 /* unix.c - Zedit Unix specific routines
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -27,7 +27,7 @@ void hangup(int signal)
 {
 	struct buff *tbuff;
 
-	InPaw = TRUE;	/* Kludge to turn off error */
+	InPaw = true;	/* Kludge to turn off error */
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next) {
 		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF)) {
 			bswitchto(tbuff);
@@ -36,7 +36,7 @@ void hangup(int signal)
 		}
 #ifdef PIPESH
 		if (tbuff->child != EOF)
-			unvoke(tbuff, FALSE);
+			unvoke(tbuff, false);
 #endif
 	}
 #ifdef PIPESH
@@ -192,13 +192,13 @@ void sendtopipe(void)
 Invoke a shell on the other end of a two way pipe.
 Returns true if the invocation succeeded.
 */
-Boolean invoke(struct buff *tbuff, char *argv[])
+bool invoke(struct buff *tbuff, char *argv[])
 {
 	int from[2], to[2];
 
 	/* Zshell may call with tbuff->child not EOF */
 	if (tbuff->child != EOF)
-		return FALSE;
+		return false;
 
 	if (pipe(from) == 0) {
 		if (pipe(to) == 0) {
@@ -224,7 +224,7 @@ Boolean invoke(struct buff *tbuff, char *argv[])
 				FD_SET(from[0], &SelectFDs);
 				if (from[0] >= NumFDs)
 					NumFDs = from[0] + 1;
-				return TRUE;
+				return true;
 			} else {
 				/* fork failed - clean up */
 				(void)close(from[0]);
@@ -237,7 +237,7 @@ Boolean invoke(struct buff *tbuff, char *argv[])
 		}
 	}
 	error("Unable to open pipes");
-	return FALSE;
+	return false;
 }
 
 /* Split a string up into words.
@@ -267,13 +267,13 @@ static char *wordit(char **str)
 /* Invoke 'cmd' on a pipe.
  * Returns true if the invocation succeeded.
 */
-Boolean dopipe(struct buff *tbuff, char *icmd)
+bool dopipe(struct buff *tbuff, char *icmd)
 {
 	char cmd[STRMAX + 1], *p, *argv[11];
 	int from[2], arg;
 
 	if (tbuff->child != EOF)
-		return FALSE;
+		return false;
 
 	strcpy(p = cmd, icmd);
 	for (arg = 0; arg < 10 && (argv[arg] = wordit(&p)); ++arg)
@@ -297,7 +297,7 @@ Boolean dopipe(struct buff *tbuff, char *icmd)
 			FD_SET(from[0], &SelectFDs);
 			if (from[0] >= NumFDs)
 				NumFDs = from[0] + 1;
-			return TRUE;
+			return true;
 		} else {
 			/* fork failed - clean up */
 			(void)close(from[0]);
@@ -305,11 +305,11 @@ Boolean dopipe(struct buff *tbuff, char *icmd)
 		}
 	} else
 		error("Unable to open pipes");
-	return FALSE;
+	return false;
 }
 
 /* Try to kill a child process */
-void unvoke(struct buff *child, Boolean check)
+void unvoke(struct buff *child, bool check)
 {
 	if (child && child->child != EOF) {
 		kill(child->child, SIGKILL);

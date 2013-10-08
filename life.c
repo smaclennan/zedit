@@ -165,11 +165,11 @@ static void generation(void)
 		if (*p2 == 3) {	/* Birth */
 			*p1 += 100;
 			Buff() = LIFECH;
-			Scrnmarks[row].modf = TRUE;
+			Scrnmarks[row].modf = true;
 		} else if (*p2 >= 100 && *p2 != 102 && *p2 != 103) { /* Death */
 			*p1 -= 100;
 			Buff() = EMPTY;
-			Scrnmarks[row].modf = TRUE;
+			Scrnmarks[row].modf = true;
 		}
 		bmove1();
 		if (Buff() == NL) {
@@ -233,16 +233,16 @@ static void init_matrix1(char *p1)
 */
 static void fill_matrix1(char *p1)
 {
-	Boolean eol;
+	bool eol;
 	int row = 0, col = 0;
 
 	btostart();
 	for (row = 0; row < SROWS; ++row) {
-		for (eol = FALSE, col = 0; col < SCOLS; ++col, ++p1)
+		for (eol = false, col = 0; col < SCOLS; ++col, ++p1)
 			if (eol || bisend() || Buff() == NL) {
 				/* at end of buffer line */
 				binsert(EMPTY);
-				eol = TRUE;
+				eol = true;
 			} else {
 				if (isspace(Buff()))
 					Buff() = EMPTY;
@@ -258,16 +258,16 @@ static void fill_matrix1(char *p1)
 		else
 			binsert(NL);
 
-		Scrnmarks[row].modf = TRUE;
+		Scrnmarks[row].modf = true;
 	}
 }
 
 void Zlife(void)
 {
-	Boolean go = TRUE, step = TRUE;
+	bool go = true, step = true;
 	unsigned cmd;
 
-	if (!promptsave(Curbuff, FALSE))
+	if (!promptsave(Curbuff, false))
 		return;
 
 	matrix1 = malloc(MATRIX);
@@ -292,11 +292,11 @@ void Zlife(void)
 		if (step || tkbrdy()) {
 			cmd = tgetcmd();
 			if (cmd == CR)
-				step = FALSE;
+				step = false;
 			else if (Keys[cmd] == ZABORT)
-				go = FALSE;
+				go = false;
 			else
-				step = TRUE;
+				step = true;
 		} else
 			usleep(100000);
 		if (go)

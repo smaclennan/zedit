@@ -1,5 +1,5 @@
 /* display.c - Zedit main display update
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -27,7 +27,7 @@ static void pawdisplay(struct mark *, struct mark *);
 
 struct mark *Sstart, *Psstart;	/* Screen start and 'prestart' */
 struct mark *Send;		/* Screen end */
-Boolean Sendp;			/* Screen end set */
+bool Sendp;			/* Screen end set */
 struct mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
 int Tlrow;			/* Last row displayed */
 
@@ -41,7 +41,7 @@ void redisplay(void)
 
 	tclrwind();
 	for (i = 0; i < tmaxrow() - 2; ++i)
-		Scrnmarks[i].modf = TRUE;
+		Scrnmarks[i].modf = true;
 	Tlrow = -1;
 }
 
@@ -114,13 +114,13 @@ void zrefresh(void)
 
 	bpnttomrk(pmark);
 	unmark(pmark);
-	bcol = bgetcol(TRUE, 0);
+	bcol = bgetcol(true, 0);
 	/* position the cursor */
 	col = bcol % (tmaxcol() - 1);
 	/* special case for NL or bisend at column 80 */
 	if (col == 0 && bcol && (ISNL(Buff()) || bisend()))
 		col = tmaxcol() - 1;
-	else if (!bisend() && (col + chwidth(Buff(), col, FALSE) >= tmaxcol()))
+	else if (!bisend() && (col + chwidth(Buff(), col, false) >= tmaxcol()))
 		col = 0;
 	t_goto(pntrow, col);
 
@@ -161,7 +161,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 
 
 	static int pntrow;
-	int needpnt = TRUE, col;
+	int needpnt = true, col;
 
 	resetcomments();
 	for (trow = from; trow < to; ++trow) {
@@ -169,7 +169,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 		bmove(Hshift);
 #endif
 		if (Scrnmarks[trow].modf || !bisatmrk(&Scrnmarks[trow])) {
-			Scrnmarks[trow].modf = FALSE;
+			Scrnmarks[trow].modf = false;
 			bmrktopnt(&Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
 			col = 0;
@@ -182,7 +182,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 					tgetcol() = col;
 				else {
 					if (bisatmrk(Curbuff->mark))
-						setmark(TRUE);
+						setmark(true);
 					else {
 						checkcomment();
 						tprntchar(Buff());
@@ -198,7 +198,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			tcleol();
 			if (bisatmrk(Curbuff->mark) &&
 				(ISNL(Buff()) || bisstart() || bisend()))
-					setmark(FALSE);
+					setmark(false);
 #ifdef HSCROLL
 			if (!ISNL(Buff()))
 				bcsearch(NL);
@@ -218,13 +218,13 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			bpnttomrk(&Scrnmarks[trow + 1]);
 		if (pmark && bisaftermrk(pmark) && needpnt) {
 			pntrow = trow;
-			needpnt = FALSE;
+			needpnt = false;
 		}
 	}
 	bmrktopnt(&Scrnmarks[trow]);
 	if (pmark) {
 		bmrktopnt(Send);
-		Sendp = TRUE;
+		Sendp = true;
 		if (needpnt) {
 			/* the user has typed past the end of the screen */
 			reframe();
@@ -247,15 +247,15 @@ void reframe(void)
 
 	pmark = bcremrk();
 	for (cnt = prefline(); cnt > 0 && bcrsearch(NL); --cnt)
-			cnt -= bgetcol(TRUE, 0) / tmaxcol();
+			cnt -= bgetcol(true, 0) / tmaxcol();
 	if (cnt < 0)
-		bmakecol((-cnt) * tmaxcol(), FALSE);
+		bmakecol((-cnt) * tmaxcol(), false);
 	else
 		tobegline();
 	bmrktopnt(Sstart);
 	bmove(-1);
 	bmrktopnt(Psstart);
-	Sendp = FALSE;
+	Sendp = false;
 	bpnttomrk(pmark);
 	unmark(pmark);
 }
@@ -300,7 +300,7 @@ static void modeflags(struct wdo *wdo)
 		struct buff *was = Curbuff;
 		bswitchto(wdo->wbuff);
 		blocation(&line);
-		col = bgetcol(FALSE, 0) + 1;
+		col = bgetcol(false, 0) + 1;
 		if (col > 999)
 			sprintf(PawStr, "%5u:???", line);
 		else
@@ -378,7 +378,7 @@ static char *setmodes(struct buff *buff)
 }
 
 /* Set one windows modified flags. */
-static void subset(int from, int to, Boolean flag)
+static void subset(int from, int to, bool flag)
 {
 	struct mark *btmark, *ltmark;
 
@@ -397,24 +397,24 @@ static void subset(int from, int to, Boolean flag)
 		if (btmark > &Scrnmarks[from]) {
 			while ((--btmark)->mbuff != Curbuff)
 				;
-			btmark->modf = TRUE;
+			btmark->modf = true;
 		}
 	} else {
 		while (btmark->mpage == Curpage && btmark->moffset <= Curchar &&
 			   btmark <= ltmark)
 			++btmark;
 		if (--btmark >= &Scrnmarks[from])
-			btmark->modf = TRUE;
+			btmark->modf = true;
 		if (flag)
 			while (btmark > &Scrnmarks[from] &&
 			       btmark->mpage == Curpage &&
 			       btmark->moffset == Curchar)
-				(--btmark)->modf = TRUE;
+				(--btmark)->modf = true;
 	}
 }
 
 /* Insert the correct modified flags. */
-void vsetmod(Boolean flag)
+void vsetmod(bool flag)
 {
 	struct wdo *wdo;
 
@@ -430,7 +430,7 @@ void vsetmrk(struct mark *mrk)
 	for (row = 0; row < tmaxrow() - 1; ++row)
 		if (mrkaftermrk(&Scrnmarks[row], mrk)) {
 			if (row > 0)
-				Scrnmarks[row - 1].modf = TRUE;
+				Scrnmarks[row - 1].modf = true;
 			return;
 		}
 }
@@ -440,7 +440,7 @@ void vsetmrk(struct mark *mrk)
 static void pawdisplay(struct mark *pmark, struct mark *was)
 {
 	int bcol = 0, i, nested = 0;
-	Boolean mrkmoved = !mrkatmrk(was, Curbuff->mark);
+	bool mrkmoved = !mrkatmrk(was, Curbuff->mark);
 
 	Prow = Rowmax - 1;
 pawshift:
@@ -468,7 +468,7 @@ pawshift:
 
 	if (bisend()) {
 		if (bisatmrk(Curbuff->mark)) {
-			setmark(FALSE);
+			setmark(false);
 			--Pcol;		/* space always 1 character! */
 		} else if (bisatmrk(pmark))
 			bcol = Pcol;

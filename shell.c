@@ -79,7 +79,7 @@ void Zcmdtobuff(void)
 				message(Curbuff, Command);
 				btostart();
 			}
-			Curbuff->bmodf = FALSE;
+			Curbuff->bmodf = false;
 			printexit(rc);
 			wswitchto(save);
 		}
@@ -119,7 +119,7 @@ void Zshell(void)
 		tbell();
 }
 
-Boolean doshell(void)
+bool doshell(void)
 {
 	char *argv[3];
 
@@ -191,7 +191,7 @@ struct buff *cmdtobuff(char *bname, char *cmd)
 		wuseother(bname);
 		breadfile(fname);
 		unlink(fname);
-		Curbuff->bmodf = FALSE;
+		Curbuff->bmodf = false;
 		clrecho();
 	}
 	return err ? NULL : tbuff;

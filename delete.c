@@ -1,5 +1,5 @@
 /* delete.c - Zedit delete commands
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -62,7 +62,7 @@ void Zdeleol(void)
 	if (!bisend() && Buff() == NL)
 		bmove1();
 	else if (VAR(VKILLLINE)) {
-		Boolean atstart;
+		bool atstart;
 
 		tobegline();
 		atstart = bisatmrk(tmark);
@@ -109,7 +109,7 @@ void Zyank(void)
 
 	if (InPaw && First) {
 		bdelete(Curplen);
-		First = FALSE;
+		First = false;
 	}
 
 	mrktomrk(&save, Send);

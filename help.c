@@ -1,5 +1,5 @@
 /* help.c - Zedit help command
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -51,7 +51,7 @@ static int issentence(void)
 
 static void dispit(char *name, int *col)
 {
-	bmakecol(*col, TRUE);
+	bmakecol(*col, true);
 	binstr(name);
 	if (*col == 45)
 		binsert('\n');
@@ -85,7 +85,7 @@ static void helpit(int type)
 		binsert('\n');
 	binstr("\n     Top Level Help Menu");
 	btostart();
-	Curbuff->bmodf = FALSE;
+	Curbuff->bmodf = false;
 	clrecho();
 }
 
@@ -101,7 +101,7 @@ static void dump_bindings(char *buff, int fnum)
 				if (found)
 					binstr(",  ");
 				else
-					found = TRUE;
+					found = true;
 				binstr(dispkey(k, buff));
 			}
 
@@ -122,7 +122,7 @@ static void massage(char *buff)
 	}
 }
 
-static FILE *findhelp(int code, Boolean func, char *buff)
+static FILE *findhelp(int code, bool func, char *buff)
 {
 	FILE *fp = NULL;
 	char *ptr;
@@ -150,7 +150,7 @@ static FILE *findhelp(int code, Boolean func, char *buff)
 	return NULL;
 }
 
-static void help(int code, Boolean func)
+static void help(int code, bool func)
 {
 	FILE *fp;
 	char buff[BUFSIZ], *p;
@@ -202,7 +202,7 @@ void Zhelp(void)
 		/* create the window */
 		for (z = 0; z < NUMFUNCS && Cnames[z].fnum != ZHELP; ++z)
 			;
-		fp = findhelp(z, TRUE, str);
+		fp = findhelp(z, true, str);
 		if (fp == NULL)
 			return;
 		was = Curbuff;
@@ -217,7 +217,7 @@ void Zhelp(void)
 	case 1:
 		/* read in the top level */
 		if (!fp) {
-			fp = findhelp(z, TRUE, str);
+			fp = findhelp(z, true, str);
 			if (!fp)
 				break;
 		}
@@ -227,7 +227,7 @@ void Zhelp(void)
 		fclose(fp);
 		btostart();
 		bcsearch('n');
-		Curbuff->bmodf = FALSE;
+		Curbuff->bmodf = false;
 		level = 2;
 		break;
 
@@ -243,7 +243,7 @@ void Zhelp(void)
 
 	case 3:
 		/* accept input from secondary level and display help */
-		bmakecol(bgetcol(FALSE, 0) < 40 ? 5 : 45, FALSE);
+		bmakecol(bgetcol(false, 0) < 40 ? 5 : 45, false);
 		getbword(str, 30, issentence);
 		if (strncmp(str, "Top", 3) == 0) {
 			level = 1;
@@ -252,13 +252,13 @@ void Zhelp(void)
 			for (i = 0; i < NUMFUNCS; ++i)
 				if (strcmp(str, Cnames[i].name) == 0) {
 					level = 4;
-					help(i, TRUE);
+					help(i, true);
 					return;
 				}
 			for (i = 0; i < VARNUM; ++i)
 				if (strcmp(str, Vars[i].vname) == 0) {
 					level = 4;
-					help(i, FALSE);
+					help(i, false);
 					return;
 				}
 		}

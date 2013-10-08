@@ -24,8 +24,8 @@ static char savetag[STRMAX + 1];
 static struct buff *Bsave;
 
 static void gotomatch(struct mark *smark);
-static Boolean tagfparse(struct buff *);
-static Boolean gettagsfile(void);
+static bool tagfparse(struct buff *);
+static bool gettagsfile(void);
 
 /* Find first occurance in str1 of str2. NULL if not found.
  * Case insensitive!
@@ -50,7 +50,7 @@ static void findtag_part(void)
 	for (bcsearch(NL); !bisend(); bcsearch(NL)) {
 		getbword(word, STRMAX, bistoken);
 		if (stristr(word, savetag)) {
-			makepaw(word, TRUE);
+			makepaw(word, true);
 			return;
 		}
 	}
@@ -74,7 +74,7 @@ static void findtag_part(void)
 void Zfindtag(void)
 {
 	char tag[STRMAX + 1], word[PATHMAX + 1];
-	Boolean best, found;
+	bool best, found;
 	struct mark tmark, smark;
 
 	/* do BEFORE switching buffer! */
@@ -88,7 +88,7 @@ void Zfindtag(void)
 	Argp = 0;
 
 	do {
-		best = found = FALSE;
+		best = found = false;
 		if (getarg("Tag: ", tag, STRMAX) == 0) {
 			echo("Looking...");
 			for (btostart(); !bisend(); bcsearch(NL)) {
@@ -98,12 +98,12 @@ void Zfindtag(void)
 						gotomatch(&smark);
 						return;
 					} else if (!best) {
-						best  = TRUE;
-						found = TRUE;
+						best  = true;
+						found = true;
 						bmrktopnt(&tmark);
 					} else if (!found &&
 						   stristr(word, tag)) {
-						found = TRUE;
+						found = true;
 						bmrktopnt(&tmark);
 					}
 				}
@@ -144,9 +144,9 @@ static void gotomatch(struct mark *smark)
 }
 
 /* Parse the line in the tag file and find the correct file and position. */
-static Boolean tagfparse(struct buff *bsave)
+static bool tagfparse(struct buff *bsave)
 {
-	Boolean byte = 0, smatch = 0, ematch = 0, found;	/*shutup*/
+	bool byte = 0, smatch = 0, ematch = 0, found;	/*shutup*/
 	Byte mch;
 	struct mark tmark;
 	char fname[PATHMAX + 1], path[PATHMAX + 1], str[STRMAX], *ptr;
@@ -208,8 +208,8 @@ static Boolean tagfparse(struct buff *bsave)
 				while (--num > 0 && bcsearch(NL))
 					;
 		else
-			for (found = FALSE; bstrsearch(str, FORWARD);) {
-				found = TRUE;
+			for (found = false; bstrsearch(str, FORWARD);) {
+				found = true;
 				bmrktopnt(&tmark);
 				if (smatch) {
 					bmove(-1);
@@ -222,21 +222,21 @@ static Boolean tagfparse(struct buff *bsave)
 					bpnttomrk(&tmark);
 				}
 				if (found)
-					return TRUE;
+					return true;
 				if (smatch)
 					bcsearch(NL);
 				else
 					bmove1();
 			}
-		return TRUE;
+		return true;
 	}
 	error("Bad Tag File");
-	return FALSE;
+	return false;
 }
 
 
 /* Load the tags file into a buffer. */
-static Boolean gettagsfile(void)
+static bool gettagsfile(void)
 {
 	struct buff *tbuff;
 	char fname[PATHMAX + 1], *tagfname;
@@ -250,7 +250,7 @@ static Boolean gettagsfile(void)
 			/* ask user for file to use. */
 			strcpy(fname, tbuff->fname);
 			if (getfname("Tag File: ", fname))
-				return FALSE;
+				return false;
 
 			breadfile(fname);
 			if (Curbuff->fname)
@@ -262,7 +262,7 @@ static Boolean gettagsfile(void)
 			echo("Reloading tags file.");
 			breadfile(tbuff->fname);
 		}
-		return  TRUE;
+		return  true;
 	}
 
 	/*  No tags buffer - try to create and read in the file.
@@ -273,10 +273,10 @@ static Boolean gettagsfile(void)
 		/* ask user for file to use. */
 		strcpy(fname, "TAGS");
 		if (getfname("Tag File: ", fname))
-			return FALSE;
+			return false;
 		if (access(fname, 0)) {
 			error("%s not found.", fname);
-			return FALSE;
+			return false;
 		}
 	} else {
 		if (access("tags", 0) == 0)
@@ -287,21 +287,21 @@ static Boolean gettagsfile(void)
 			tagfname = VARSTR(VTAG);
 			if (!tagfname  || access(tagfname, 0)) {
 				error("No tags file found.");
-				return FALSE;
+				return false;
 			}
 		}
 		if (pathfixup(fname, tagfname))
-			return FALSE;
+			return false;
 	}
 
 	tbuff = cmakebuff(TAGBUFNAME, fname);
 	if (!tbuff) {
 		error("Can't create tag buffer.");
-		return FALSE;
+		return false;
 	}
 
 	breadfile(fname);
-	return TRUE;
+	return true;
 }
 
 void Zref(void)

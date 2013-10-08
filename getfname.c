@@ -1,5 +1,5 @@
 /* getfname.c - get a file name with completion
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -32,7 +32,7 @@ struct llist {
 };
 
 static struct llist *Flist;
-static Boolean Didmatch;
+static bool Didmatch;
 #define OBJEXT		".o"
 
 static struct llist *add(struct llist **list, char *fname);
@@ -43,7 +43,7 @@ static void freelist(struct llist **list);
  *		ABORT(-1) for abort
  *		> 0 for error
  */
-static int getname(char *prompt, char *path, Boolean isdir)
+static int getname(char *prompt, char *path, bool isdir)
 {
 	const char mod[3] = { '\t', '/', '~' };
 	char tmp[PATHMAX + 1];
@@ -64,14 +64,14 @@ static int getname(char *prompt, char *path, Boolean isdir)
 	freelist(&Flist);
 	if (Didmatch) {
 		Zredisplay();
-		Didmatch = FALSE;
+		Didmatch = false;
 	}
 	return rc;
 }
 
 int getfname(char *prompt, char *path)
 {
-	int rc = getname(prompt, path, FALSE);
+	int rc = getname(prompt, path, false);
 	if (rc > 0)
 		error("Invalid path.");
 	return rc;
@@ -79,13 +79,13 @@ int getfname(char *prompt, char *path)
 
 int getdname(char *prompt, char *path)
 {
-	int rc = getname(prompt, path, TRUE);
+	int rc = getname(prompt, path, true);
 	if (rc > 0)
 		error("Invalid dir.");
 	return rc;
 }
 
-static Boolean isext(char *fname, char *ext)
+static bool isext(char *fname, char *ext)
 {
 	char *ptr;
 
@@ -116,20 +116,20 @@ static struct llist *fill_list(char *dir)
 	return Flist;
 }
 
-static struct llist *getfill(char *dir, char **fname, int *len, Boolean *update)
+static struct llist *getfill(char *dir, char **fname, int *len, bool *update)
 {
 	char txt[PATHMAX + 1];
 
 	if (First) {
 		bdelete(Curplen);
-		First = FALSE;
+		First = false;
 	}
 	getbtxt(txt, PATHMAX);
 	if (pathfixup(dir, txt) > 0)
 		return NULL;
 	*update = strcmp(dir, txt);
 	if (*update)
-		makepaw(dir, FALSE);
+		makepaw(dir, false);
 	*fname = lastpart(dir);
 	*len = strlen(*fname);
 
@@ -196,7 +196,7 @@ static void freelist(struct llist **list)
 	}
 }
 
-static Boolean isdir(char *path)
+static bool isdir(char *path)
 {
 	struct stat sbuf;
 	return path && stat(path, &sbuf) == 0 && (sbuf.st_mode & S_IFDIR);
@@ -204,7 +204,7 @@ static Boolean isdir(char *path)
 
 void Zfname(void)
 {
-	Boolean update;
+	bool update;
 	struct llist *head, *list;
 	char txt[PATHMAX + 1], *fname, *match = NULL;
 	char dir[PATHMAX + 1], *p;
@@ -262,7 +262,7 @@ void Zfname(void)
 	list = head; /* reset */
 	p = dir + strlen(dir);
 	*p++ = PSEP;
-	Didmatch = TRUE;
+	Didmatch = true;
 	t_goto(0, 0);
 	tprntstr("Choose one of:");
 	tcleol();
@@ -294,10 +294,10 @@ void Zfname(void)
 }
 
 /* Get users directory - handles partial matches. */
-static Boolean zgetpwdir(char *name, char *to)
+static bool zgetpwdir(char *name, char *to)
 {
 	struct passwd *pwd;
-	Boolean match = FALSE;
+	bool match = false;
 	int len = strlen(name);
 
 	setpwent();
@@ -307,11 +307,11 @@ static Boolean zgetpwdir(char *name, char *to)
 				/* full match */
 				endpwent();
 				strcpy(to, pwd->pw_dir);
-				return TRUE;
+				return true;
 			} else if (!match) {
 				/* partial match - return first match */
 				strcpy(to, pwd->pw_dir);
-				match = TRUE;
+				match = true;
 			}
 		}
 	endpwent();

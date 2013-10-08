@@ -1,5 +1,5 @@
 /* term.h - terminal defines
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -50,8 +50,8 @@ extern char *cm[];
 #define tmaxrow()		Rowmax
 #define tmaxcol()		Colmax
 extern int Tabsize;
-#define twidth(ch)		chwidth(ch, Pcol, FALSE)
-#define bwidth(ch, col)		chwidth(ch, col, TRUE)
+#define twidth(ch)		chwidth(ch, Pcol, false)
+#define bwidth(ch, col)		chwidth(ch, col, true)
 
 #define tputchar(c)		putchar(c)
 #define tflush()		fflush(stdout)

@@ -1,5 +1,5 @@
 /* bcmds.c - buffer oriented commands
- * Copyright (C) 1988-2010 Sean MacLennan
+ * Copyright (C) 1988-2013 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -39,7 +39,7 @@ static void switchto_part(void)
 		tbuff = tbuff->next;
 	else
 		tbuff = Bufflist;
-	makepaw(tbuff->bname, TRUE);
+	makepaw(tbuff->bname, true);
 }
 
 void Zswitchto(void)
@@ -161,7 +161,7 @@ void Zlstbuff(void)
 				binstr(PawStr);
 			}
 		}
-		Curbuff->bmodf = FALSE;
+		Curbuff->bmodf = false;
 		wswitchto(was);
 	} else
 		tbell();
@@ -201,14 +201,14 @@ static char *addbname(char *bname)
 	return Bnames[i];
 }
 
-Boolean delbname(char *bname)
+bool delbname(char *bname)
 {
 	int i, rc;
 
 	for (i = rc = 0; i <= Numbuffs && (rc = strcmp(bname, Bnames[i])); ++i)
 		;
 	if (rc)
-		return FALSE;
+		return false;
 
 	--Numbuffs;
 	free(Bnames[i]);
@@ -221,7 +221,7 @@ Boolean delbname(char *bname)
 		for (; i <= Numbuffs; ++i)
 			Bnames[i] = Bnames[i + 1];
 
-	return TRUE;
+	return true;
 }
 
 /* Create a buffer. */

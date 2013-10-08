@@ -121,7 +121,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		makeoffset(Curchar + dstlen);
 		vsetmod(false);
 		Curmodf = true;
-		Curbuff->bmodf = MODIFIED;
+		Curbuff->bmodf = true;
 		bswitchto(sbuff);
 		bmove(dstlen);
 	}
@@ -312,7 +312,7 @@ void bdelete(unsigned quantity)
 			quantity = 0;
 		else
 			quantity -= quan;
-		Curbuff->bmodf = MODIFIED;
+		Curbuff->bmodf = true;
 		Curmodf = true;
 		if (Curplen == 0 && (Curpage->nextp || Curpage->prevp)) {
 			/* We deleted entire page. */
@@ -393,7 +393,7 @@ void binsert(Byte new)
 	*Curcptr++ = new;
 	++Curplen;
 	++Curchar;
-	Curbuff->bmodf = MODIFIED;
+	Curbuff->bmodf = true;
 	Curmodf = true;
 
 	undo_add(1);

@@ -46,7 +46,7 @@ void Zcapword(void)
 {
 	if (Findstart()) {
 		*Curcptr = toupper(*Curcptr);
-		Curbuff->bmodf = Curmodf = MODIFIED;
+		Curbuff->bmodf = Curmodf = true;
 		for (bmove1(); !bisend() && bistoken(); bmove1())
 			*Curcptr = tolower(*Curcptr);
 		vsetmod(false);
@@ -58,7 +58,7 @@ void Zlowword(void)
 {
 	if (Findstart()) {
 		for (; !bisend() && bistoken(); bmove1()) {
-			Curbuff->bmodf = Curmodf = MODIFIED;
+			Curbuff->bmodf = Curmodf = true;
 			*Curcptr = tolower(*Curcptr);
 		}
 		vsetmod(false);
@@ -70,7 +70,7 @@ void Zupword(void)
 {
 	if (Findstart()) {
 		for (; !bisend() && bistoken(); bmove1()) {
-			Curbuff->bmodf = Curmodf = MODIFIED;
+			Curbuff->bmodf = Curmodf = true;
 			*Curcptr = toupper(*Curcptr);
 		}
 		vsetmod(false);
@@ -1005,7 +1005,7 @@ void parsem(char *in, int mode)
 	}
 }
 
-static bool extmatch(char *str, bool mode)
+static bool extmatch(char *str, int mode)
 {
 	char **o;
 	int i;
@@ -1097,7 +1097,7 @@ static void setregion(int (*convert)(int))
 		mrktomrk(Curbuff->mark, &tmark);
 	else
 		bpnttomrk(&tmark);
-	Curbuff->bmodf = MODIFIED;
+	Curbuff->bmodf = true;
 	Zredisplay();
 }
 

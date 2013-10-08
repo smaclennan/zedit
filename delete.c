@@ -216,5 +216,5 @@ void Zempty(void)
 	if (ask("Empty buffer? ") != YES)
 		return;
 	bempty();
-	Curbuff->bmodf = MODIFIED;
+	Curbuff->bmodf = true;
 }

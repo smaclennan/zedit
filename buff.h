@@ -33,10 +33,6 @@ extern jmp_buf zenv;
 #define PSIZE		4096		/* size of page */
 #define HALFP		(PSIZE / 2)	/* half the page size */
 
-#define BMODF		1		/* Buffer modified */
-#define BMODF_HINT	2		/* Modified since last display */
-#define MODIFIED	(BMODF | BMODF_HINT)
-
 struct page {
 	Byte pdata[PSIZE];		/* the page data */
 	int plen;			/* current length of the page */

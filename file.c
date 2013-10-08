@@ -155,7 +155,7 @@ void Zsaveall(void)
 
 		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 			if (!(tbuff->bmode & SYSBUFF) && tbuff->fname)
-				tbuff->bmodf = MODIFIED;
+				tbuff->bmodf = true;
 	}
 	saveall(true);
 }

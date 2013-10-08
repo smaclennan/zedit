@@ -81,7 +81,7 @@ int tgetcmd(void)
 static Byte cstack[CSTACK];
 static int cptr = -1;
 int cpushed;	/* needed in z.c */
-static int Pending = false;
+static bool Pending;
 
 Byte tgetkb(void)
 {

@@ -20,7 +20,7 @@
 #include "z.h"
 
 
-static bool promptsearch(char *prompt, int type);
+static int promptsearch(char *prompt, int type);
 static void promptreplace(int type);
 static bool dosearch(void);
 static bool replaceone(int, bool *, bool *, Byte *, bool);
@@ -30,7 +30,7 @@ bool Insearch;	/* set by nocase, reset by getarg */
 
 static char old[STRMAX + 1];	/* Search string */
 static char new[STRMAX + 1];	/* Replace string */
-static bool searchdir[2];	/* Current direction for Again. */
+static int searchdir[2];	/* Current direction for Again. */
 static struct mark *Gmark;	/* used by global search routines */
 
 #define QHELP	\
@@ -392,7 +392,7 @@ input:
 	return found;
 }
 
-static bool promptsearch(char *prompt, int type)
+static int promptsearch(char *prompt, int type)
 {
 	if (*old == '\0' || type != AGAIN) {
 		if (getarg(nocase(prompt), old, STRMAX)) {

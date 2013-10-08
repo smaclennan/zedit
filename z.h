@@ -126,7 +126,7 @@ struct cnames {
 
 extern bool Argp;
 extern int Arg;				/* must be signed */
-extern bool InPaw;		/* Are we in the Paw window? */
+extern int InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
 extern int Pawcol, Pawlen, Pshift;
 extern Byte tline[];

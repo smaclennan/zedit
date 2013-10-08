@@ -21,7 +21,8 @@
 #include "keys.h"
 
 /* globals for getarg */
-bool InPaw, First;
+int InPaw;
+bool First;
 int Pawcol, Pawlen, Pshift;
 struct buff *Paw, *Buff_save;
 

@@ -210,9 +210,7 @@ void Zfname(void)
 	char dir[PATHMAX + 1], *p;
 	int row, col;
 	int len, n = 0, f = 0, rc;
-	int did_something
-
-		= 0;
+	int did_something = 0;
 
 	if (Cmd == '/') {
 		if (bpeek() == '/')

@@ -1,16 +1,28 @@
 #!/bin/sh
 
-checkpatch=/lib/modules/`uname -r`/source/scripts/checkpatch.pl
+if which sparse > /dev/null; then
+    echo "Running sparse..."
+    CFILES=`ls *.c | fgrep -v fcheck.c`
 
-echo "Running sparse..."
-CFILES=`find -name "*.c" -maxdepth 1 | fgrep -v fcheck.c`
+    sparse -D__linux__ $CFILES
+    sparse -D__linux__ fcheck.c
+else
+    echo "ERROR: sparse not found"
+fi
 
-sparse -D__linux__ $CFILES
-sparse -D__linux__ fcheck.c
+K=`uname -r`
+checkpatch=`readlink -f /lib/modules/${K}/source/scripts/checkpatch.pl`
+if [ ! -f "$checkpatch" ]; then
+    checkpatch=`readlink -f /lib/modules/${K}/build/scripts/checkpatch.pl`
+    if [ ! -f "$checkpatch" ]; then
+	echo "ERROR: checkpatch not found"
+	exit 1
+    fi
+fi
 
 echo "Running checkpatch..."
 for f in *.[ch]; do
     [ $f = proto.h ] && continue
     [ -s $f ] || continue
-    $checkpatch --file $f | fgrep -q "no obvious style problems" || echo "$f"
+    $checkpatch --no-tree --file $f | fgrep -q "no obvious style problems" || echo "$f"
 done

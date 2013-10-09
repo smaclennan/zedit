@@ -10,7 +10,6 @@ do_help() {
 	echo "  --enable-help		enable builtin help"
 	echo "  --enable-shell	enable shell commands"
 	echo "  --enable-spell	enable spell checking"
-	echo "  --enable-make	enable make command"
 	echo "  --enable-tags		ctags/etags support"
 	echo "  --enable-undo		EXPERIMNETAL undo"
 	echo
@@ -42,7 +41,6 @@ while [ -n "$1" ]; do
 	*-help) help=$enable;;
 	*-shell) shell=$enable;;
 	*-spell) spell=$enable;;
-	*-make) make=$enable;;
 	*-tags) tags=$enable;;
 	*) echo "Unknown arg '$1' ignored";;
 	esac
@@ -51,9 +49,9 @@ while [ -n "$1" ]; do
 done
 
 if [ "$minconfig" = 1 ]; then
-	comment=0; undo=0; help=0; shell=0; spell=0; make=0; tags=0
+	comment=0; undo=0; help=0; shell=0; spell=0; tags=0
 elif [ "$maxconfig" = 1 ]; then
-	comment=1; undo=1; help=1; shell=1; spell=1; make=1; tags=1
+	comment=1; undo=1; help=1; shell=1; spell=1; tags=1
 fi
 
 if [ -n "$terminfo" ]; then
@@ -81,7 +79,6 @@ set_one HELP $help
 
 set_one SHELL $shell
 set_one SPELL $spell
-set_one MAKE  $make
 set_one TAGS  $tags
 
 [ -f /usr/include/sys/poll.h ] && set_one HAVE_POLL 1

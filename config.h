@@ -60,14 +60,13 @@
 
 #define SHELL		1		/* shell interface */
 #define SPELL		1		/* ispell interface */
-#define MAKE		1		/* make/grep command */
 #define TAGS		1		/* tag file support */
 #endif
 
 #include "configure.h"
 
 /* DON'T TOUCH THESE */
-#if SHELL || MAKE || TAGS || SPELL
+#if SHELL || TAGS || SPELL
 #undef  SHELL
 #define SHELL 1
 #define PIPESH 1

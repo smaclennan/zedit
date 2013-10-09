@@ -70,7 +70,7 @@
 #if TERMCAP
 #undef COMMENTBOLD
 #if ANSI || TERMINFO
-#error "You can't more than one"
+#error "You can't set more than one"
 #endif
 #endif
 #if ANSI && TERMINFO

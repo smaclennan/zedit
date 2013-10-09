@@ -4,8 +4,8 @@ if which sparse > /dev/null; then
     echo "Running sparse..."
     CFILES=`ls *.c | fgrep -v fcheck.c`
 
-    sparse -D__linux__ $CFILES
-    sparse -D__linux__ fcheck.c
+    sparse -D__unix__ $CFILES
+    sparse -D__unix__ fcheck.c
 else
     echo "ERROR: sparse not found"
 fi

@@ -138,10 +138,6 @@ void tinit(void)
 #endif
 	signal(SIGPIPE, sigchild);
 #endif
-#ifdef BSD
-	signal(SIGTSTP, SIG_DFL);		/* set signals so that we can */
-	signal(SIGCONT, tinit);		/* suspend & restart Zedit */
-#endif
 #ifdef SIGWINCH
 	signal(SIGWINCH, sigwinch); /* window has changed size - update */
 #endif

@@ -41,7 +41,6 @@ static char *get_shell(void)
 }
 
 /* Do one shell command to the screen */
-#if !defined(BSD)
 void Zcmd(void)
 {
 	char tb[STRMAX * 2];
@@ -60,7 +59,6 @@ void Zcmd(void)
 		tinit();
 	}
 }
-#endif
 
 /* Do one shell command to the .shell buffer */
 void Zcmdtobuff(void)
@@ -90,18 +88,6 @@ void Zcmdtobuff(void)
 		cmdtobuff(SHELLBUFF, Command);
 #endif
 }
-
-#ifdef BSD
-#ifdef PIPESH
-void Zcmd(void)
-#else
-void Zshell()	/*for tags*/
-#endif
-{
-	tfini();
-	Kill(getpid(), SIGTSTP);
-}
-#endif
 
 #ifdef PIPESH
 void Zshell(void)

@@ -168,9 +168,6 @@ Z(pnewline);
 
 /* General routines */
 
-#ifdef BSD
-int access(char *, int);
-#endif
 void initscrnmarks(void);
 int ask(char *);
 int ask2(char *, bool);

@@ -21,13 +21,9 @@
 #define _CONFIG_H_
 
 /* OPERATING SYSTEM */
-#if defined(__unix__) || defined(__linux__)
+#ifdef __unix__
 # define HAVE_POLL
 # define HAVE_TERMIOS
-#elif defined(__BSD__)
-/* This really means old Sun BSD */
-# define BSD
-# define HAVE_SGTTY
 #else
 # error OS not detected.
 #endif

@@ -7,7 +7,7 @@ long Locs[ NUMFUNCS ];
 #define COMMANDS	1
 #define VARIABLES	2
 
-static int process(FILE *fp, int type);
+static bool process(FILE *fp, int type);
 
 int main(int argc, char *argv[])
 {
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 		err = process(fp, COMMANDS);
 		for( i = 0; i < NUMFUNCS; ++i )
 			if( Locs[i] == -1 ) {
-				err = TRUE;
+				err = true;
 				fprintf( stderr, "%s: %s not found\n", argv[2], Cnames[i].name);
 			} else if(fseek(fp, Locs[i], 0) == 0) {
 				fgets( buff, BUFSIZ, fp );
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 		err = process(fp, VARIABLES);
 		for( i = 0; i < NUMVARS; ++i )
 			if( Locs[i] == -1 ) {
-				err = TRUE;
+				err = true;
 				fprintf(stderr, "%s: %s not found\n", argv[2], Vars[i].vname);
 			} else if( fseek(fp, Locs[i], 0) == 0 ) {
 				fgets( buff, BUFSIZ, fp );
@@ -77,7 +77,7 @@ static void massage(char *buff)
 	}
 }
 
-static int process(FILE *fp, int type)
+static bool process(FILE *fp, int type)
 {
 	char buff[BUFSIZ];
 	int err = 0, i;
@@ -101,7 +101,7 @@ static int process(FILE *fp, int type)
 				if(i == NUMFUNCS)
 				{
 					fprintf(stderr, "unknown command: '%s'\n", &buff[1]);
-					err = TRUE;
+					err = true;
 				}
 				break;
 
@@ -115,7 +115,7 @@ static int process(FILE *fp, int type)
 				if(i == NUMVARS)
 				{
 					fprintf(stderr, "unknown variable: '%s'\n", &buff[1]);
-					err = TRUE;
+					err = true;
 				}
 				break;
 			}

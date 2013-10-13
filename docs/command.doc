@@ -377,6 +377,10 @@ PAW. Handles C-X and M- prefixes. A Universal Argument is ignored.
 Kills the current make. The command must wait for the make to die before
 it can continue. Unix only.
 .sp 0
+:Life
+
+Plays the game of Life on the current buffer.
+.sp 0
 :List Buffers
 
 Displays a list of the current buffers on the display.

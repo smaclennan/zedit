@@ -41,13 +41,32 @@ editor. It also allows you to perform Next Error commands while the make
 is still in progress.
 
 <h2>Terminal Interfaces</h2>
-<p>Zedit supports two standard Unix terminal interface definitions:
-terminfo, and ANSI.
+<p>Zedit supports termcap, terminfo, and "ANSI" terminal interface definitions.
 
+<p>Termcap is the first standard terminal database.
 <p>Terminfo is a second standard terminal database (after termcaps) that
 is compiled for faster database access. It also supports a wider range
 of keys and terminal characteristics.
 <p>The ANSI terminal interface emulates a basic vt100.
+
+<h3>Termcap</h3>
+
+<p>I actually dropped termcap support, but brought it back. I find
+both termcap and terminfo database interfaces tend to be broken almost
+everywhere. The big advantage that termcap has is that it is much
+easier to create termcap entries. They can be a simple environment
+variable. You need no root access.
+
+<p>Zedit requires at minimum the cm, ce, and cl entries. It will also
+use the se/so entries for reverse video.
+
+<p>The big loser in termcap is visible bell. Termcap has a vb entry,
+but since you cannot delay in an entry most terminals will not have
+visual bell.
+
+<p>Keyboard hack: If k; does not contain an entry, Zedit will use k0
+as k;. It seems many people consider k0 to be F10 since most keyboards
+don't have an F0.
 
 <h3>Terminfo</h3>
 
@@ -78,5 +97,24 @@ Bindings command to find the default bindings for these keys.
 <p>The ANSI version supports an ANSI terminal, which is basically a
 vt100. No external files are required for ANSI. ANSI supports all
 Zedit screen features. This is the default.
+
+<h2>Keys</h2>
+
+<p>Zedit does not support as many keys as emacs. Aside from the normal
+control keys and meta key, Zedit supports the following keys:
+
+    <ul>
+      <li>Function keys F1 to F12 inclusive
+      <li>The arrow keys
+      <li>The navigation keys: Page Up/Down, Home/End, Insert/Delete
+      <li>The Ctrl arrow keys
+      <li>Ctrl Home and Ctrl End
+    </ul>
+
+<p>Note: For termcap and terminfo only keys that have entries in the database
+are supported. ANSI supports all keys
+
+<p>Hint: For termcap and terminfo it helps if all the special keys
+start with the ESCAPE character. Zedit can then optimize key lookup.
 </body>
 </html>

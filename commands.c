@@ -137,12 +137,18 @@ void Zcenter(void)
 void Zcinsert(void)
 {
 	int cnt, crfound = false;
-	struct mark tmark;
+	struct mark *tmark;
+	char word[16];
 
-	if (STRIP(Cmd) == '}') {
+	switch (Cmd) {
+	case '\t':
+		return;
+
+	case '}':
 		/* line it up with last unmatched '{' */
 		Arg = 0;
-		bmrktopnt(&tmark);	/* save current position */
+		tmark = bcremrk();
+		bmrktopnt(tmark);	/* save current position */
 		for (cnt = 0, bmove(-1); !bisstart(); bmove(-1))
 			if (STRIP(*Curcptr) == '{') {
 				if (cnt)
@@ -151,22 +157,26 @@ void Zcinsert(void)
 					tobegline();
 					movepast(biswhite, FORWARD);
 					cnt = bgetcol(true, 0);
-					bpnttomrk(&tmark);
+					bpnttomrk(tmark);
 					if (crfound) {
 						Zdelwhite();
 						tindent(cnt);
 					}
 					binsert(Cmd);
+					unmark(tmark);
 					return;
 				}
 			} else if (STRIP(*Curcptr) == '}')
 				++cnt;
 			else if (ISNL(*Curcptr))
 				crfound = true;
-		bpnttomrk(&tmark);	/* no match - go back */
-		tbell();				/* and warn user */
-	} else if (STRIP(Cmd) == '#') {
-		struct mark *tmark = bcremrk();
+		bpnttomrk(tmark);	/* no match - go back */
+		unmark(tmark);
+		tbell();		/* and warn user */
+		break;
+
+	case '#':
+		tmark = bcremrk();
 
 		do
 			bmove(-1);
@@ -178,10 +188,26 @@ void Zcinsert(void)
 		} else
 			bpnttomrk(tmark);
 		unmark(tmark);
-	} else if (STRIP(Cmd) == ':') {
-		/* for c++ look for public/protected */
-		char word[16];
 
+#if COMMENT_BOLD && WANT_CPPS
+		binsert(Cmd);
+
+		if (bmove(-2) == 0) {
+			/* # is first character in buffer */
+			bmove1();
+			addcpp();
+		} else {
+			bool cpp = ISNL(*Curcptr);
+			bmove(2);
+			if (cpp)
+				addcpp();
+		}
+		return;
+#endif
+		break;
+
+	case ':':
+		/* for c++ look for public/protected */
 		getbword(word, 15, bisword);
 		if (strcmp(word, "public")    == 0 ||
 		   strcmp(word, "private")   == 0 ||
@@ -193,36 +219,20 @@ void Zcinsert(void)
 			bpnttomrk(tmark);
 			unmark(tmark);
 		}
+		break;
+
+#if COMMENTBOLD
+	case '/':
+		if (bpeek() == '*') {
+			binsert(Cmd);
+			addcomment();
+			return;
+		}
+		break;
+#endif
 	}
 
 	binsert(Cmd);
-
-#if COMMENTBOLD
-	if (STRIP(Cmd) == '/') {
-		/* SAM What about overwrite mode? */
-		bool comment;
-
-		bmove(-2);
-		comment = *Curcptr == '*';
-		bmove(2);
-		if (comment)
-			addcomment();
-	}
-#if WANT_CPPS
-	else if (STRIP(Cmd) == '#') {
-		if (bmove(-2) == 0) {
-			/* # is first character in buffer */
-			bmove1();
-			addcpp();
-		} else {
-			bool cpp = ISNL(*Curcptr);
-			bmove(2);
-			if (cpp)
-				addcpp();
-		}
-	}
-#endif
-#endif
 }
 
 

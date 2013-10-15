@@ -363,6 +363,7 @@ static char *setmodes(struct buff *buff)
 		Keys['\175'] = ZCINSERT; /* end brace */
 		Keys['#'] = ZCINSERT;
 		Keys[':'] = ZCINSERT;
+		Keys['\t'] = ZCINSERT;
 #if COMMENTBOLD
 		Keys['/'] = ZCINSERT;
 #endif

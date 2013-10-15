@@ -102,7 +102,7 @@ void bind(void)
 	Keys[128 + 'F'] = Keys[128 + 'f'] = ZFWORD;
 	Keys[128 + 'G'] = Keys[128 + 'g'] = ZLGOTO;
 	Keys[128 + 'H'] = Keys[128 + 'h'] = ZRDELWORD;
-	Keys[128 + 'I'] = Keys[128 + 'i'] = ZCASE;
+	Keys[128 + 'I'] = Keys[128 + 'i'] = ZTAB;
 	Keys[128 + 'J'] = Keys[128 + 'j'] = ZJOIN;
 	Keys[128 + 'K'] = Keys[128 + 'k'] = ZKILL;
 	Keys[128 + 'L'] = Keys[128 + 'l'] = ZLOWWORD;

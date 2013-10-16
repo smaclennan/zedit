@@ -1034,6 +1034,19 @@ static bool extmatch(char *str, int mode)
 	return false;
 }
 
+static bool shell_mode(void)
+{
+	bool issh = extmatch(bfname(), SHMODE);
+	if (!issh) {
+		struct mark *tmark = bcremrk();
+		btostart();
+		if (Curplen > 3)
+			issh = strncmp((char *)Curcptr, "#!/", 3) == 0;
+		bpnttomrk(tmark);
+		unmark(tmark);
+	}
+	return issh;
+}
 
 /* Toggle from/to 'mode'. Passed 0 to set for readone */
 void toggle_mode(int mode)
@@ -1044,7 +1057,7 @@ void toggle_mode(int mode)
 		/* Toggle out of 'mode' - decide which to switch to */
 		if (mode != CMODE && extmatch(bfname(), CMODE))
 			new = CMODE;
-		else if (mode != SHMODE && extmatch(bfname(), SHMODE))
+		else if (mode != SHMODE && shell_mode())
 			new = SHMODE;
 		else if (mode != TEXT &&
 			 (!VAR(VNORMAL) || extmatch(bfname(), TEXT)))

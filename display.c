@@ -339,26 +339,10 @@ static char *setmodes(struct buff *buff)
 	Keys['/'] = ZINSERT;
 #endif
 
-	/* Set PawStr to majour mode */
+	/* Set PawStr to majour mode and setup any special keys */
 	switch (buff->bmode & MAJORMODE) {
 	case CMODE:
-		strcpy(PawStr, "C");		break;
-	case SHMODE:
-		strcpy(PawStr, "sh");		break;
-	case TEXT:
-		strcpy(PawStr, "Text");		break;
-	default:
-		strcpy(PawStr, "Normal");	break;
-	}
-
-	if (buff->bmode & VIEW)
-		strcat(PawStr, " RO");
-	if (buff->bmode & OVERWRITE)
-		strcat(PawStr, " OVWRT");
-
-	/* Now setup any special keys */
-	switch (buff->bmode & MAJORMODE) {
-	case CMODE:
+		strcpy(PawStr, "C");
 		Keys[CR] = ZCINDENT;
 		Keys['\175'] = ZCINSERT; /* end brace */
 		Keys['#'] = ZCINSERT;
@@ -369,13 +353,23 @@ static char *setmodes(struct buff *buff)
 #endif
 		break;
 	case SHMODE:
+		strcpy(PawStr, "sh");
 		Keys[CR] = ZCINDENT;
+		Keys['\t'] = ZCINSERT;
 		break;
 	case TEXT:
+		strcpy(PawStr, "Text");
 		Keys[' '] = ZFILLCHK;
 		Keys[CR] = ZFILLCHK;
 		break;
+	default:
+		strcpy(PawStr, "Normal");
 	}
+
+	if (buff->bmode & VIEW)
+		strcat(PawStr, " RO");
+	if (buff->bmode & OVERWRITE)
+		strcat(PawStr, " OVWRT");
 
 	settabsize(buff->bmode);
 	return PawStr;

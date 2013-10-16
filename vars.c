@@ -22,17 +22,6 @@
 
 static void setavar(char *vin, bool display);
 
-static char *readstr(char *str, FILE *fp)
-{
-	if (fgets(str, STRMAX, fp)) {
-		char *ptr = strchr(str, '\n');
-		if (ptr)
-			*ptr = '\0';
-		return str;
-	}
-	return NULL;
-}
-
 void Zsetavar(void)
 {
 	char pstr[STRMAX], arg[STRMAX];
@@ -64,56 +53,29 @@ void Zsetavar(void)
 }
 
 /* If there is a config.z file, read it! */
-/* CExtends, AExtends, TExtends defaults set in comms1.c */
-static void readconfigfile(char *fname);
-
+/* CExtends, AExtends, TExtends defaults set in commands.c */
 void readvfile(void)
 {
-	char fname[PATHMAX + 1];
+	char fname[PATHMAX + 1], line[STRMAX + 1];
 
-	if (!VARSTR(VCEXTS)) {
-		VARSTR(VCEXTS) =
-			strdup(".c:.h:.cpp:.cc:.cxx:.y:.l:.m:.m4");
-		parsem(VARSTR(VCEXTS), CMODE);
-	}
-	if (!VARSTR(VSEXTS)) {
-		VARSTR(VSEXTS) = strdup(".sh:.csh:.el");
-		parsem(VARSTR(VSEXTS), SHMODE);
-	}
-	if (!VARSTR(VTEXTS)) {
-		VARSTR(VTEXTS) = strdup(".DOC:.doc:.tex:.txt:.d");
-		parsem(VARSTR(VTEXTS), TEXT);
-	}
+	VARSTR(VCEXTS) = strdup(".c:.h:.cpp:.cc:.cxx:.y:.l:.m:.m4");
+	parsem(VARSTR(VCEXTS), CMODE);
+	VARSTR(VSEXTS) = strdup(".sh:.csh:.el");
+	parsem(VARSTR(VSEXTS), SHMODE);
+	VARSTR(VTEXTS) = strdup(".DOC:.doc:.tex:.txt:.d");
+	parsem(VARSTR(VTEXTS), TEXT);
 
-	if (findpath(fname, ZCFILE))
-		readconfigfile(fname);
-}
-
-static void readconfigfile(char *fname)
-{
-	FILE *fp;
-	char buff[STRMAX + 1];
-
-	fp = fopen(fname, "r");
-	if (fp) {
-		if (Verbose)
-			Dbg("Config file %s\n", fname);
-		if (readstr(buff, fp) && strcmp(buff, "#!m4") == 0) {
-			fclose(fp);
-			sprintf(PawStr, "m4 %s", fname);
-			fp = popen(PawStr, "r");
-			if (fp == NULL) {
-				if (Verbose)
-					Dbg("%s failed.\n", PawStr);
-				return;
+	if (findpath(fname, ZCFILE)) {
+		FILE *fp = fopen(fname, "r");
+		if (fp) {
+			if (Verbose)
+				Dbg("Config file %s\n", fname);
+			while (fgets(line, sizeof(line), fp)) {
+				char *p = strchr(line, '\n');
+				if (p)
+					*p = '\0';
+				setavar(line, false);
 			}
-			while (readstr(buff, fp))
-				setavar(buff, false);
-			pclose(fp);
-		} else {
-			do
-				setavar(buff, false);
-			while (readstr(buff, fp));
 			fclose(fp);
 		}
 	}
@@ -316,9 +278,8 @@ void vfini(void)
 	int i;
 
 	for (i = 0; i < NUMVARS; ++i)
-		if (Vars[i].vtype == STRING)
-			if (VARSTR(i))
-				free(VARSTR(i));
+		if (Vars[i].vtype == STRING && VARSTR(i))
+			free(VARSTR(i));
 
 	free_extensions();
 }

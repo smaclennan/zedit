@@ -346,9 +346,11 @@ static inline void uncomment(struct buff *buff, int need_update) {}
 #if UNDO
 void undo_add(int size);
 void undo_del(int size);
+void undo_clear(struct buff *buff);
+void ufini(void);
 #else
 static inline void undo_add(int size) {}
 static inline void undo_del(int size) {}
+static inline void undo_clear(struct buff *buff) {}
+static inline void ufini(void) {}
 #endif
-void undo_clear(struct buff *buff);
-void ufini(void);

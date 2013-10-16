@@ -176,6 +176,4 @@ void Zundo(void)
 }
 #else
 void Zundo(void) { tbell(); }
-void undo_clear(struct buff *buff) {}
-void ufini(void) {}
 #endif

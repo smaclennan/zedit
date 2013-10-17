@@ -20,7 +20,8 @@
 #include "z.h"
 
 #if TERMINFO
-#include "zterminfo.h"
+#include <term.h>
+#include <curses.h>
 #include "keys.h"
 
 

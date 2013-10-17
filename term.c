@@ -19,7 +19,8 @@
 
 #include "config.h"
 #if TERMINFO
-#include "zterminfo.h"
+#include <term.h>
+#include <curses.h>
 #endif
 #if TERMCAP
 #include <termcap.h>

@@ -430,7 +430,7 @@ void Zfillpara(void)
 		return;
 	}
 	if (Curbuff->bmode & PROGMODE) {
-		echo("Not in program mode");
+		putpaw("Not in program mode");
 		tbell();
 		return;
 	}
@@ -438,7 +438,7 @@ void Zfillpara(void)
 	all = Arg == 0;
 	if (all == true)
 		btostart();
-	echo("Reformatting...");
+	putpaw("Reformatting...");
 	do {
 		/* mark the end of the paragraph and move the point to
 		 * the start */
@@ -474,7 +474,7 @@ void Zfillpara(void)
 
 	clrecho();
 	if (Arg > 0 || (all && !bisend())) {
-		echo("Aborted");
+		putpaw("Aborted");
 		tgetcmd();
 	}
 
@@ -543,7 +543,7 @@ void Znotimpl(void)
 void Zsetmrk(void)
 {
 	bmrktopnt(Curbuff->mark);
-	echo("Mark Set.");
+	putpaw("Mark Set.");
 }
 
 static void cleanup(void)
@@ -726,7 +726,7 @@ void Zcase(void)
 		tsetpoint(tmaxrow() - 1, 0);
 		tprntstr(nocase(NULL));
 	} else
-		echo(Curbuff->bmode & EXACT ? "Exact Set" : "Exact Reset");
+		putpaw(Curbuff->bmode & EXACT ? "Exact Set" : "Exact Reset");
 	Arg = 0;
 }
 
@@ -908,7 +908,7 @@ void Zcount(void)
 		tmark = bcremrk();
 	}
 	l = w = c = 0;
-	echo("Counting...");
+	putpaw("Counting...");
 	word = false;
 	for (; Argp ? !bisend() : bisbeforemrk(Curbuff->mark); bmove1(), ++c) {
 		if (ISNL(*Curcptr))
@@ -1105,7 +1105,7 @@ static void setregion(int (*convert)(int))
 	struct mark tmark;
 
 	if (Curbuff->bmode & PROGMODE) {
-		echo("Not in program mode");
+		putpaw("Not in program mode");
 		tbell();
 		return;
 	}

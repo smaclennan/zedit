@@ -59,7 +59,7 @@ void Zmake(void)
 #ifdef PIPESH
 	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
-		echo("Killing current make.");
+		putpaw("Killing current make.");
 		unvoke(mbuff, true);
 		clrecho();
 	}
@@ -156,7 +156,7 @@ void Znexterr(void)
 		btoend();
 		bmrktopnt(Curbuff->mark);
 		bswitchto(save);
-		echo("No more errors");
+		putpaw("No more errors");
 	}
 	Argp = false;
 	Arg = 0;

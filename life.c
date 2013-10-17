@@ -280,12 +280,12 @@ void Zlife(void)
 		error("Not enough memory.");
 		return;
 	}
-	echo("Setting up...");
+	putpaw("Setting up...");
 
 	init_matrix1(matrix1);
 	fill_matrix1(matrix1);
 
-	echo("The Game of Life");
+	putpaw("The Game of Life");
 	while (go) {
 		btostart();
 		zrefresh();

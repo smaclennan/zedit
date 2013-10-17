@@ -158,7 +158,7 @@ int main(int argc, char **argv)
 	reframe();
 
 	if (!Curbuff->mtime && Curbuff->fname)
-		echo("New File");
+		putpaw("New File");
 
 	/* Do this after tinit */
 	if (findpath(path, ZBFILE))

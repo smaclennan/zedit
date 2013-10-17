@@ -8,7 +8,7 @@ CFLAGS += -Wall -g -O3
 
 ETAGS=`which etags || echo true`
 
-LIBS=-lncurses
+#LIBS=-lncurses
 #LIBS=-ltermcap
 
 CFILES = ansi.c bcmds.c bind.c buff.c calc.c \

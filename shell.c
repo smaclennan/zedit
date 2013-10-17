@@ -50,7 +50,7 @@ void Zcmd(void)
 		tfini();
 		sprintf(tb, "%s -c \"%s\"", get_shell(), Command);
 		if (system(tb) == EOF)
-			echo("command failed");
+			putpaw("command failed");
 		else {
 			fputs("\n[Hit Return to continue]", stdout);
 			tgetcmd();
@@ -71,7 +71,7 @@ void Zcmdtobuff(void)
 	if (getarg("@ ", Command, STRMAX) == 0) {
 		save = Curwdo;
 		if (wuseother(SHELLBUFF)) {
-			echo("Please wait...");
+			putpaw("Please wait...");
 			rc = pipetobuff(Curbuff, Command);
 			if (rc == 0) {
 				message(Curbuff, Command);
@@ -168,7 +168,7 @@ struct buff *cmdtobuff(char *bname, char *cmd)
 	struct buff *sbuff, *tbuff;
 
 	Arg = Argp = 0;
-	echo("Working...");
+	putpaw("Working...");
 	mktemp(strcpy(fname, ZSHFILE));
 	err = dopipe(fname, cmd);
 	if (err)
@@ -219,9 +219,9 @@ static int pipetobuff(struct buff *buff, char *instr)
 static void printexit(int code)
 {
 	if (code == 0)
-		echo("Done.");
+		putpaw("Done.");
 	else if (code == -1)
-		echo("Unable to execute.");
+		putpaw("Unable to execute.");
 	else
 		putpaw("Exit %d.", code);
 }

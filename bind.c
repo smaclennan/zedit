@@ -274,15 +274,15 @@ void Zkeybind(void)
 	unsigned raw, key;
 
 	Arg = 0;
-	echo("Key: ");
+	putpaw("Key: ");
 	raw = tgetcmd();
 	key = Keys[raw];
 	if (key == ZCTRLX) {
-		echo("Key: C-X ");
+		putpaw("Key: C-X ");
 		raw = tgetcmd() + 256;
 		key = Keys[raw];
 	} else if (key == ZMETA) {
-		echo("Key: M-");
+		putpaw("Key: M-");
 		raw = tgetcmd() + 128;
 		key = Keys[raw];
 	}
@@ -326,7 +326,7 @@ void Zcmdbind(void)
 		if (found)
 			putpaw(PawStr);
 		else
-			echo("Unbound");
+			putpaw("Unbound");
 	}
 }
 
@@ -360,14 +360,14 @@ void Zdispbinds(void)
 			return;
 		fp = fopen(line, "w");
 		if (fp == NULL) {
-			echo("Unable to create");
+			putpaw("Unable to create");
 			return;
 		}
 	} else {
 		fp = NULL;
 		wuseother(LISTBUFF);
 	}
-	echo("Please Wait...");
+	putpaw("Please Wait...");
 	out("COMMAND                            PAW    BINDING\n", fp);
 	for (f = 0; f < NUMFUNCS; ++f) {
 		if (Cnames[f].fnum == ZNOTIMPL || Cnames[f].fnum == ZINSERT)

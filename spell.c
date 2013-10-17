@@ -86,7 +86,7 @@ void Zspell(void)
 	paw_resize(-2);
 	zrefresh();
 	mclear();
-	echo("Checking...");
+	putpaw("Checking...");
 	while (bisbeforemrk(emark)) {
 		/* get the next word */
 		moveto(bisalpha, FORWARD);
@@ -128,7 +128,7 @@ void Zspell(void)
 			 * drop thru */
 
 		case '#':		/* no match */
-			echo(SPELLSTRING);
+			putpaw(SPELLSTRING);
 			zrefresh();		/* update mark */
 			cmd = tgetcmd();
 			switch (cmd) {

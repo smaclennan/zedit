@@ -3,9 +3,5 @@
  * this. See termcap.c for how to include this.
  */
 
-#undef echo
-
 #include <term.h>
 #include <curses.h>
-
-#undef echo

@@ -90,7 +90,7 @@ void Zfindtag(void)
 	do {
 		best = found = false;
 		if (getarg("Tag: ", tag, STRMAX) == 0) {
-			echo("Looking...");
+			putpaw("Looking...");
 			for (btostart(); !bisend(); bcsearch(NL)) {
 				getbword(word, STRMAX, bistoken);
 				if (strcasecmp(tag, word) == 0) {
@@ -121,7 +121,7 @@ void Zfindtag(void)
 				bpnttomrk(&tmark);
 				getbword(tag, STRMAX, bistoken);
 			} else
-				echo("Not Found");
+				putpaw("Not Found");
 		}
 	} while (found);
 	Nextpart = NULL;
@@ -259,7 +259,7 @@ static bool gettagsfile(void)
 		} else if (stat(tbuff->fname, &sb) == 0 &&
 			   sb.st_mtime != tbuff->mtime) {
 			/* tags file has been updated */
-			echo("Reloading tags file.");
+			putpaw("Reloading tags file.");
 			breadfile(tbuff->fname);
 		}
 		return  true;

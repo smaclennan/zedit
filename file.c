@@ -80,7 +80,7 @@ static bool readone(char *bname, char *path)
 		if (rc >= 0) {
 			toggle_mode(0);
 			if (rc > 0)
-				echo("New File");
+				putpaw("New File");
 			else if (access(path, R_OK|W_OK) == EOF)
 				Curbuff->bmode |= VIEW;
 			strcpy(Lbufname, was->bname);

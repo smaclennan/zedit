@@ -262,7 +262,7 @@ void Zsetbookmrk(void)
 void Znxtbookmrk(void)
 {
 	if (Bookmark < 0) {
-		echo("No bookmarks set.");
+		putpaw("No bookmarks set.");
 		return;
 	}
 

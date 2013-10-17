@@ -8,8 +8,15 @@ CFLAGS += -Wall -g -O3
 
 ETAGS=`which etags || echo true`
 
-#LIBS=-lncurses
-#LIBS=-ltermcap
+TERMINFO=$(shell awk '/^\#define TERMINFO/ { print $$3 }' config.h)
+TERMCAP=$(shell awk '/^\#define TERMCAP/ { print $$3 }' config.h)
+
+ifeq ($(TERMINFO), 1)
+LIBS=-lncurses
+endif
+ifeq ($(TERMCAP), 1)
+LIBS=-ltermcap
+endif
 
 CFILES = ansi.c bcmds.c bind.c buff.c calc.c \
 	comment.c commands.c cursor.c delete.c display.c \

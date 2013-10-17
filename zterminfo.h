@@ -4,11 +4,8 @@
  */
 
 #undef echo
-#define savetty _n_savetty
 
 #include <term.h>
 #include <curses.h>
 
 #undef echo
-#undef savetty
-#undef hangup

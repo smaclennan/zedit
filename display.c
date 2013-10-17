@@ -62,7 +62,7 @@ void zrefresh(void)
 		return;
 	}
 	if (++NESTED > 10)
-		hangup(0);
+		hang_up(0);
 
 	setmodes(Curbuff);	/* SAM make sure OK */
 

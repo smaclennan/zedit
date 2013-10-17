@@ -291,7 +291,7 @@ void vsetmod(bool);
 void vsetmrk(struct mark *);
 void vfini(void);
 int chwidth(Byte, int, bool);
-void hangup(int);
+void hang_up(int);
 bool notdup_key(int k);
 
 /* Terminal driver specific routines */

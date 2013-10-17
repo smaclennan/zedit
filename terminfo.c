@@ -120,8 +120,6 @@ void tlinit()
 	Tkeys[20].key = key_f10;
 	Tkeys[21].key = key_f11;
 
-	Tkeys[28].key = key_backspace;
-
 	for (i = 0; i < N_KEYS; ++i)
 		if (Tkeys[i].key && *Tkeys[i].key) {
 			Key_mask |= 1 << i;

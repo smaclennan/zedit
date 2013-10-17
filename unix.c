@@ -23,7 +23,7 @@
 #include <sys/wait.h>
 
 /* Come here on SIGHUP or SIGTERM */
-void hangup(int signal)
+void hang_up(int signal)
 {
 	struct buff *tbuff;
 

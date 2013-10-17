@@ -33,15 +33,15 @@
 
 #ifdef HAVE_TERMIOS
 #include <termios.h>
-static struct termios savetty;
+static struct termios save_tty;
 static struct termios settty;
 #elif defined(HAVE_TERMIO)
 #include <termio.h>
-static struct termio savetty;
+static struct termio save_tty;
 static struct termio settty;
 #elif defined(HAVE_SGTTY)
 #include <sgtty.h>
-static struct sgttyb savetty;
+static struct sgttyb save_tty;
 static struct sgttyb settty;
 static struct tchars savechars;
 static struct tchars setchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
@@ -96,7 +96,7 @@ void tinit(void)
 	tlinit();
 
 #ifdef HAVE_TERMIOS
-	tcgetattr(fileno(stdin), &savetty);
+	tcgetattr(fileno(stdin), &save_tty);
 	tcgetattr(fileno(stdin), &settty);
 	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
 	settty.c_oflag = TAB3;
@@ -105,7 +105,7 @@ void tinit(void)
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(fileno(stdin), TCSANOW, &settty);
 #elif defined(HAVE_TERMIO)
-	ioctl(fileno(stdin), TCGETA, &savetty);
+	ioctl(fileno(stdin), TCGETA, &save_tty);
 	ioctl(fileno(stdin), TCGETA, &settty);
 	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
 	settty.c_oflag = TAB3;
@@ -114,7 +114,7 @@ void tinit(void)
 	settty.c_cc[VTIME] = (char) 1;
 	ioctl(fileno(stdin), TCSETAW, &settty);
 #elif defined(HAVE_SGTTY)
-	gtty(fileno(stdin), &savetty);
+	gtty(fileno(stdin), &save_tty);
 	gtty(fileno(stdin), &settty);
 
 	/* set CBREAK (raw) mode no ECHO, leave C-Ms alone so we can
@@ -130,8 +130,8 @@ void tinit(void)
 	ioctl(fileno(stdin), TIOCSLTC, &setlchars);
 #endif
 
-	signal(SIGHUP,  hangup);
-	signal(SIGTERM, hangup);
+	signal(SIGHUP,  hang_up);
+	signal(SIGTERM, hang_up);
 #ifdef PIPESH
 #if !defined(WNOWAIT)
 	signal(SIGCLD,  sigchild);
@@ -161,11 +161,11 @@ void tinit(void)
 void tfini(void)
 {
 #ifdef HAVE_TERMIOS
-	tcsetattr(fileno(stdin), TCSAFLUSH, &savetty);
+	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
 #elif defined(HAVE_TERMIO)
-	ioctl(fileno(stdin), TCSETAF, &savetty);
+	ioctl(fileno(stdin), TCSETAF, &save_tty);
 #elif defined(HAVE_SGTTY)
-	stty(fileno(stdin), &savetty);
+	stty(fileno(stdin), &save_tty);
 	ioctl(fileno(stdin), TIOCSETC, &savechars);
 	ioctl(fileno(stdin), TIOCSLTC, &savelchars);
 #endif

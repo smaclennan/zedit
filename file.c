@@ -219,7 +219,7 @@ void Zfilewrite(void)
 		if (Argp) {
 			putpaw("Writing %s", path);
 			write_rgn(path);
-			clrecho();
+			clrpaw();
 		} else {
 			if (Curbuff->fname)
 				free(Curbuff->fname);

@@ -108,7 +108,7 @@ again:
 		}
 		count = 0;
 	}
-	clrecho();
+	clrpaw();
 	if (Keys[cmd] == ZABORT)
 		bpnttomrk(&marks[0]);
 	else
@@ -232,12 +232,12 @@ static void doreplace(int type)
 				;
 			bpnttomrk(&tmark);
 		}
-		clrecho();
+		clrpaw();
 		cswitchto(pmark->mbuff);
 	} else if (!replaceone(type, &query, &exit, ebuf, crgone) && !exit)
 		putpaw("Not Found");
 	else
-		clrecho();
+		clrpaw();
 
 	bpnttomrk(pmark);
 	unmark(pmark);
@@ -443,7 +443,7 @@ static bool dosearch(void)
 		else
 			putpaw("Not Found");
 	} else
-		clrecho();
+		clrpaw();
 	unmark(tmark);
 	Arg = 0;
 	return found;

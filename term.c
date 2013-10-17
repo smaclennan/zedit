@@ -170,7 +170,7 @@ void tfini(void)
 	ioctl(fileno(stdin), TIOCSLTC, &savelchars);
 #endif
 
-	clrecho();
+	clrpaw();
 	t_goto(Rowmax - 1, 0);
 #if COMMENTBOLD
 	tstyle(T_NORMAL);

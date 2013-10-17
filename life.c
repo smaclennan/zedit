@@ -302,7 +302,7 @@ void Zlife(void)
 		if (go)
 			generation();
 	}
-	clrecho();
+	clrpaw();
 	free(matrix1);
 	free(matrix2);
 	Curbuff->bmodf = 0;

@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 		strcpy(Lbufname,
 		       Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
 
-		clrecho();
+		clrpaw();
 	}
 
 	winit();

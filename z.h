@@ -169,7 +169,7 @@ extern int circf;
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
 
-#define clrecho(void)	putpaw("")
+#define clrpaw(void)	putpaw("")
 #define error(...)	do { tbell(); putpaw(__VA_ARGS__); } while (0)
 
 #include "proto.h"

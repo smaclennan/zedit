@@ -65,7 +65,7 @@ static void helpit(int type)
 	char buff[STRMAX];
 	int col = 5, i;
 
-	echo("Please wait...");
+	putpaw("Please wait...");
 	bempty();
 	if (type == -1)
 		type = was;
@@ -86,7 +86,7 @@ static void helpit(int type)
 	binstr("\n     Top Level Help Menu");
 	btostart();
 	Curbuff->bmodf = false;
-	clrecho();
+	clrpaw();
 }
 
 static void dump_bindings(char *buff, int fnum)
@@ -131,22 +131,22 @@ static FILE *findhelp(int code, bool func, char *buff)
 	if (findpath(buff, ZHFILE))
 		fp = fopen(buff, "r");
 	if (!fp) {
-		echo("Unable to Open Help File");
+		putpaw("Unable to Open Help File");
 		return NULL;
 	}
 	ptr = func ? Cnames[code].name : Vars[code].vname;
 	len = strlen(ptr);
 
-	echo("Looking in help file...");
+	putpaw("Looking in help file...");
 	while (fgets(buff, STRMAX, fp)) {
 		massage(buff);
 		if (*buff == ':' && strncmp(ptr, &buff[1], len) == 0) {
-			clrecho();
+			clrpaw();
 			return fp;
 		}
 	}
 	fclose(fp);
-	echo("No Help");
+	putpaw("No Help");
 	return NULL;
 }
 

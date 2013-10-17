@@ -79,7 +79,7 @@ bool getarg(char *prompt, char *arg, int max)
 	t_goto(trow, tcol);
 	Curwdo->modeflags = INVALID;
 	Curcmds = 0;
-	clrecho();
+	clrpaw();
 	return rc;
 }
 

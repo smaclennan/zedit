@@ -263,7 +263,7 @@ void Zbind(void)
 		} else
 			tbell();
 	}
-	clrecho();
+	clrpaw();
 }
 
 
@@ -390,7 +390,7 @@ void Zdispbinds(void)
 	btostart();
 	if (!fp)
 		Curbuff->bmodf = false;
-	clrecho();
+	clrpaw();
 	Arg = 0;
 }
 

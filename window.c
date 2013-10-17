@@ -310,7 +310,7 @@ bool paw_resize(int diff)
 	last->last += diff;
 	Rowmax += diff;
 	last->modeflags = INVALID;
-	clrecho();
+	clrpaw();
 	return true;
 }
 

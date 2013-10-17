@@ -472,7 +472,7 @@ void Zfillpara(void)
 		movepast(bisspace, FORWARD); /* setup for next iteration */
 	} while ((all || --Arg > 0) && !bisend() && !tkbrdy());
 
-	clrecho();
+	clrpaw();
 	if (Arg > 0 || (all && !bisend())) {
 		putpaw("Aborted");
 		tgetcmd();
@@ -745,7 +745,7 @@ void Zarg(void)
 		*p = '\0';
 		putpaw(str);
 	}
-	clrecho();
+	clrpaw();
 	CMD(Keys[Cmd]);
 }
 
@@ -763,7 +763,7 @@ void Zmeta(void)
 	tmp = delayprompt("Meta: ");
 	Cmd = tgetkb() | 128;
 	if (tmp)
-		clrecho();
+		clrpaw();
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
@@ -775,7 +775,7 @@ void Zctrlx(void)
 	tmp = delayprompt("C-X: ");
 	Cmd = tgetcmd() | 256;
 	if (tmp)
-		clrecho();
+		clrpaw();
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
@@ -818,7 +818,7 @@ void Zquote(void)
 		else
 			binsert(Cmd);
 	if (tmp)
-		clrecho();
+		clrpaw();
 	Arg = 0;
 }
 

@@ -178,7 +178,7 @@ struct buff *cmdtobuff(char *bname, char *cmd)
 		breadfile(fname);
 		unlink(fname);
 		Curbuff->bmodf = false;
-		clrecho();
+		clrpaw();
 	}
 	return err ? NULL : tbuff;
 }

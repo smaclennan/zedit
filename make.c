@@ -61,7 +61,7 @@ void Zmake(void)
 	if (mbuff && mbuff->child != EOF) {
 		putpaw("Killing current make.");
 		unvoke(mbuff, true);
-		clrecho();
+		clrpaw();
 	}
 #endif
 	mbuff = cmdtobuff(MAKEBUFF, VARSTR(VMAKE));

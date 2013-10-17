@@ -735,7 +735,7 @@ int breadfile(char *fname)
 
 	btostart();
 	Curbuff->bmodf = false;
-	clrecho();
+	clrpaw();
 
 	return 0;
 }
@@ -878,7 +878,7 @@ int bwritefile(char *fname)
 
 	/* cleanup */
 	if (status) {
-		clrecho();
+		clrpaw();
 		/* If we saved the file... it isn't read-only */
 		Curbuff->bmode &= ~VIEW;
 	} else if (bak) {

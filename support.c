@@ -52,7 +52,7 @@ int ask2(char *msg, bool allow_bang)
 			if (Keys[cmd] == ZABORT)
 				rc = ABORT;
 		}
-	clrecho();
+	clrpaw();
 	return rc;
 }
 

@@ -43,19 +43,13 @@ int main(int argc, char *argv[])
 	int i, err = 0;
 
 	if (NUMVARS != VARNUM) {
-		/* haven't setup term stuff yet */
 		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",
 		       NUMVARS, VARNUM);
 		err = 1;
 	}
 
-	if (N_KEYS != NUMKEYS - SPECIAL_START) {
-		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
-		       N_KEYS, NUMKEYS - SPECIAL_START);
-		err = 1;
-	}
 	if (N_KEYS != NUM_SPECIAL) {
-		printf("Mismatch N_KEYS %d NUM_SPECIAL %d\n",
+		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
 		       N_KEYS, NUM_SPECIAL);
 		err = 1;
 	}

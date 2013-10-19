@@ -48,14 +48,11 @@
 #define SHELL 1
 #define PIPESH 1
 #endif
+#if ANSI + TERMCAP + TERMINFO > 1
+# error "You can't set more than one"
+#endif
 #if TERMCAP
 #undef COMMENTBOLD
-#if ANSI || TERMINFO
-#error "You can't set more than one"
-#endif
-#endif
-#if ANSI && TERMINFO
-#error "You can't set more than one"
 #endif
 
 #endif /* _CONFIG_H_ */

@@ -1,9 +1,10 @@
 .PHONY: all install install-help clean
 
 ZEXE = ze
+CONFIGDIR=/usr/share/zedit
 CC = gcc
 #CC = clang -fno-color-diagnostics
-CFLAGS += -Wall -g -O3
+CFLAGS += -Wall -g -O3 -DCONFIGDIR="\"$(CONFIGDIR)\""
 #CFLAGS += -pedantic
 
 ETAGS=`which etags || echo true`
@@ -53,11 +54,9 @@ fcheck: fcheck.c *.h ansi.c termcap.c terminfo.c funcs.c
 *.o: *.h
 
 install:
-	install -s ze $(DESTDIR)/bin/z
-
-# You only need this file if HELP is enabled
-install-help:
-	install -D -m 644 docs/help.z $(DESTDIR)/usr/share/zedit/help.z
+	install -D -s ze $(DESTDIR)/bin/z
+	docs/build
+	install -D -m 644 docs/help.z $(DESTDIR)$(CONFIGDIR)/help.z
 
 clean:
 	rm -f configure.h *.o ze fcheck core* TAGS valgrind.out

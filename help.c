@@ -18,9 +18,10 @@
  */
 
 #include "z.h"
-#include "keys.h"
 
 #if HELP
+#include "keys.h"
+
 static char *Htype[] = {
 	"Special",
 	"Other",

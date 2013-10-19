@@ -330,67 +330,36 @@ void Zcmdbind(void)
 	}
 }
 
-static void out(char *line, FILE *fp)
-{
-	if (fp)
-		fputs(line, fp);
-	else
-		binstr(line);
-}
-
-static void outto(FILE *fp, int col)
-{
-	int i;
-
-	for (i = bgetcol(false, 0); i < col; ++i)
-		out(" ", fp);
-}
-
 void Zdispbinds(void)
 {
 	bool found;
-	FILE *fp;
 	char line[STRMAX];
-	int f;
+	int f, i;
 	unsigned k;
 
-	if (Argp) {
-		*line = '\0';
-		if (getarg("Output file: ", line, STRMAX))
-			return;
-		fp = fopen(line, "w");
-		if (fp == NULL) {
-			putpaw("Unable to create");
-			return;
-		}
-	} else {
-		fp = NULL;
-		wuseother(LISTBUFF);
-	}
-	putpaw("Please Wait...");
-	out("COMMAND                            PAW    BINDING\n", fp);
+	wuseother(LISTBUFF);
+	binstr("COMMAND                            PAW    BINDING\n");
 	for (f = 0; f < NUMFUNCS; ++f) {
 		if (Cnames[f].fnum == ZNOTIMPL || Cnames[f].fnum == ZINSERT)
 			continue;
 		sprintf(line, "%-35s %c     ", Cnames[f].name,
 			Cmds[Cnames[f].fnum][1] == Znotimpl ? 'n' : 'y');
-		out(line, fp);
+		binstr(line);
 		found = false;
 		for (k = 0; k < NUMKEYS; ++k)
 			if (Keys[k] == Cnames[f].fnum && notdup_key(k)) {
 				if (found)
-					outto(fp, 45);
-				out(dispkey(k, line), fp);
-				out("\n", fp);
+					for (i = 0; i < 45; ++i)
+						binsert(' ');
+				binstr(dispkey(k, line));
+				binsert('\n');
 				found = true;
 			}
 		if (!found)
-			out("Unbound\n", fp);
+			binstr("Unbound\n");
 	}
 	btostart();
-	if (!fp)
-		Curbuff->bmodf = false;
-	clrpaw();
+	Curbuff->bmodf = false;
 	Arg = 0;
 }
 

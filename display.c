@@ -334,20 +334,15 @@ static char *setmodes(struct buff *buff)
 
 	/* set all keys back to default */
 	Keys[CR] = CRdefault;
-	Keys[' '] = Keys['\175'] = Keys['#'] = Keys[':'] = ZINSERT;
-#if COMMENTBOLD
-	Keys['/'] = ZINSERT;
-#endif
+	Keys[' '] = Keys['}'] = Keys['#'] = Keys[':'] = Keys['/'] = ZINSERT;
+	Keys['\t'] = ZTAB;
 
 	/* Set PawStr to majour mode and setup any special keys */
 	switch (buff->bmode & MAJORMODE) {
 	case CMODE:
 		strcpy(PawStr, "C");
 		Keys[CR] = ZCINDENT;
-		Keys['\175'] = ZCINSERT; /* end brace */
-		Keys['#'] = ZCINSERT;
-		Keys[':'] = ZCINSERT;
-		Keys['\t'] = ZCINSERT;
+		Keys['}'] = Keys['#'] = Keys[':'] = Keys['\t'] = ZCINSERT;
 #if COMMENTBOLD
 		Keys['/'] = ZCINSERT;
 #endif
@@ -359,8 +354,7 @@ static char *setmodes(struct buff *buff)
 		break;
 	case TEXT:
 		strcpy(PawStr, "Text");
-		Keys[' '] = ZFILLCHK;
-		Keys[CR] = ZFILLCHK;
+		Keys[' '] = Keys[CR] = ZFILLCHK;
 		break;
 	default:
 		strcpy(PawStr, "Normal");

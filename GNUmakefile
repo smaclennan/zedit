@@ -60,7 +60,7 @@ fcheck: fcheck.c *.h ansi.c termcap.c terminfo.c funcs.c
 *.o: *.h
 
 install:
-	install ze $(DESTDIR)/bin/z
+	install -s ze $(DESTDIR)/bin/z
 
 # You only need this file if HELP is enabled
 install-help:

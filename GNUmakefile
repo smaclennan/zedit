@@ -61,9 +61,11 @@ fcheck: fcheck.c *.h ansi.c termcap.c terminfo.c funcs.c
 *.o: *.h
 
 install:
-	install -D -s ze $(DESTDIR)/bin/z
+	mkdir -p $(DESTDIR)/bin
+	install -s ze $(DESTDIR)/bin/z
 	docs/build
-	install -D -m 644 docs/help.z $(DESTDIR)$(CONFIGDIR)/help.z
+	mkdir -p $(DESTDIR)/$(CONFIGDIR)
+	install -m 644 docs/help.z $(DESTDIR)$(CONFIGDIR)
 
 clean:
 	rm -f configure.h *.o ze fcheck core* TAGS valgrind.out

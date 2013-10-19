@@ -35,7 +35,7 @@
 
 #define SHELL		1		/* shell interface */
 #define SPELL		1		/* ispell interface */
-#define TAGS		1		/* tag file support */
+#define TAGS		0		/* tag file support */
 
 #define UNDO            0		/* EXPERIMENTAL undo code */
 #endif

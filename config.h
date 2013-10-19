@@ -46,8 +46,7 @@
 #define MINCONFIG	0		/* Minimal configuration */
 
 #if !MINCONFIG
-#define COMMENTBOLD	1		/* bold C comments */
-#define WANT_CPPS       0		/* also bold C preprocessor lines */
+#define COMMENTBOLD	1		/* bold C/shell comments */
 #define HELP		1		/* Help */
 #define LIFE		1		/* Game of life */
 

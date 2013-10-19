@@ -188,22 +188,6 @@ void Zcinsert(void)
 		} else
 			bpnttomrk(tmark);
 		unmark(tmark);
-
-#if COMMENT_BOLD && WANT_CPPS
-		binsert(Cmd);
-
-		if (bmove(-2) == 0) {
-			/* # is first character in buffer */
-			bmove1();
-			addcpp();
-		} else {
-			bool cpp = ISNL(*Curcptr);
-			bmove(2);
-			if (cpp)
-				addcpp();
-		}
-		return;
-#endif
 		break;
 
 	case ':':

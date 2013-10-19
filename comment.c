@@ -51,128 +51,6 @@ static void newcomment(struct mark *start)
 	COMtail = new;
 }
 
-#if WANT_CPPS
-static struct comment *CPPhead, *CPPtail;	/* list of CPP statements */
-
-static void newcpp(struct mark *start)
-{
-	struct comment *new = new_comment(start);
-	if (!new)
-		return;
-
-	if (!CPPhead)
-		CPPhead = new;
-	else
-		CPPtail->next = new;
-	CPPtail = new;
-}
-
-/* Merge the COMlist and the CPPlist into the buffer->comments */
-static void mergecomments(void)
-{
-	struct buff *buff = Curbuff;
-
-	if (!CPPhead) {
-		buff->comments = COMhead;
-		return;
-	}
-	if (!COMhead) {
-		buff->comments = CPPhead;
-		return;
-	}
-
-	while (COMhead && CPPhead)
-		if (mrkaftermrk(CPPhead->start, COMhead->start)) {
-			if (!buff->comments)
-				buff->comments = COMhead;
-			else
-				buff->ctail->next = COMhead;
-			buff->ctail = COMhead;
-			COMhead = COMhead->next;
-		} else {
-			if (!buff->comments)
-				buff->comments = CPPhead;
-			else
-				buff->ctail->next = CPPhead;
-			buff->ctail = CPPhead;
-			CPPhead = CPPhead->next;
-		}
-
-	while (COMhead) {
-		buff->ctail->next = COMhead;
-		buff->ctail = COMhead;
-		COMhead = COMhead->next;
-	}
-
-	while (CPPhead) {
-		buff->ctail->next = CPPhead;
-		buff->ctail = CPPhead;
-		CPPhead = CPPhead->next;
-	}
-}
-
-/* Highlight a CPP. */
-static void cppstatement(void)
-{
-	struct mark start;
-
-	bmrktopnt(&start);
-
-	/* Check for: if/elif/else/endif */
-	/* WARNING: getbword is too deadly to use here */
-	do {
-		bmove1();			/* skip '#' and whitespace */
-		if (bisend())
-			return;
-	} while (biswhite());
-
-again:
-	while (Buff() != '\n' && !bisend()) {
-		if (Buff() == '/') {
-			bmove1();
-			if (Buff() == '*') {
-				/* found comment start */
-				bmove(-2);
-				newcpp(&start);
-
-				/* find comment end */
-				if (!bstrsearch("*/", FORWARD))
-					return;
-				bmrktopnt(&start);
-				if (!bcsearch('\n'))
-					return;
-				bmove(-2);
-				if (Buff() == '\\')
-					goto again;
-				return;
-			} else if (Buff() == '/') {
-				/* found c++ comment start */
-				bmove(-2);
-				newcpp(&start);
-
-				/* find comment end */
-				bcsearch('\n');
-				return;
-			}
-		} else
-			bmove1();
-	}
-
-	if (ISNL(Buff())) {
-		/* check for continuation line */
-		bmove(-1);
-		if (Buff() == '\\') {
-			/* continuation line */
-			bmove(2);
-			goto again;
-		}
-		bmove1();
-
-	}
-	newcpp(&start);
-}
-#endif
-
 /* Remove all comments from buffer and mark unscanned */
 void uncomment(struct buff *buff, int need_update)
 {
@@ -249,20 +127,7 @@ static void scanbuffer(void)
 			}
 		}
 
-#if WANT_CPPS
-		CPPhead = CPPtail = NULL;
-
-		/* find CPP statements */
-		btostart();
-		do
-			if (Buff() == '#')
-				cppstatement();
-		while (bcsearch('\n') && !bisend());
-
-		mergecomments();
-#else
 		Curbuff->comments = COMhead;
-#endif
 	}
 
 	bpnttomrk(&tmark);

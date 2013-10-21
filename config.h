@@ -34,7 +34,7 @@
 #define LIFE		1		/* Game of life */
 
 #define SHELL		1		/* shell interface */
-#define SPELL		1		/* ispell interface */
+#define SPELL		0		/* ispell interface */
 #define TAGS		0		/* tag file support */
 
 #define UNDO            0		/* EXPERIMENTAL undo code */

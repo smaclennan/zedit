@@ -48,7 +48,7 @@
 #define SHELL 1
 #define PIPESH 1
 #endif
-#if ANSI + TERMCAP + TERMINFO > 1
+#if ANSI + TERMCAP + TERMINFO != 1
 # error "You can't set more than one"
 #endif
 #if TERMCAP

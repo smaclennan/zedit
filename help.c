@@ -184,7 +184,7 @@ static void help(int code, bool func)
 void Zhelp(void)
 {
 	static Byte level = 0, z;
-	struct buff *tbuff, *was;
+	struct buff *tbuff;
 	FILE *fp = NULL;
 	char str[STRMAX + 1];
 	int i;
@@ -206,13 +206,7 @@ void Zhelp(void)
 		fp = findhelp(z, true, str);
 		if (fp == NULL)
 			return;
-		was = Curbuff;
-		if (wuseother(HELPBUFF))
-			strcpy(Lbufname, was->bname);
-		else {
-			fclose(fp);
-			break;
-		}
+		cmakebuff(HELPBUFF, NULL);
 		/* fall thru to level 1 */
 
 	case 1:
@@ -223,8 +217,18 @@ void Zhelp(void)
 				break;
 		}
 		bempty();
+		while (fgets(str, STRMAX, fp) && *str != ':') {
+			char *p;
+
+			for (p = str; isspace(*p); ++p)
+				;
+			if (*p) {
+				binstr(str);
+				break;
+			}
+		}
 		while (fgets(str, STRMAX, fp) && *str != ':')
-			binstr(str);
+			binstr (str);
 		fclose(fp);
 		btostart();
 		bcsearch('n');

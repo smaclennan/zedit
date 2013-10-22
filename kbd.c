@@ -116,31 +116,43 @@ static struct pollfd stdin_fd = { .fd = 1, .events = POLLIN };
 
 int tkbrdy(void)
 {
-#ifdef HAVE_POLL
 	if (cpushed || Pending)
 		return true;
 
+#ifdef HAVE_POLL
 	return Pending = poll(&stdin_fd, 1, 0) == 1;
 #else
-	static struct timeval poll = { 0, 0 };
-	int fds = 1;
+	{
+		static struct timeval poll = { 0, 0 };
+		fd_set fds;
 
-	if (cpushed || Pending)
-		return true;
+		FD_ZERO(&fds);
+		FD_SET(0, &fds);
 
-	return Pending = select(1, (fd_set *)&fds, NULL, NULL, &poll);
+		return Pending = select(1, &fds, NULL, NULL, &poll);
+	}
 #endif
 }
 
 bool delay(int ms)
 {
-#ifdef HAVE_POLL
-	if (InPaw || tkbrdy())
+	if (InPaw || cpushed || Pending)
 		return false;
 
+#ifdef HAVE_POLL
 	return poll(&stdin_fd, 1, ms) != 1;
 #else
-#error No-poll
+	{
+		struct timeval timeout;
+		fd_set fds;
+
+		FD_ZERO(&fds);
+		FD_SET(0, &fds);
+
+		timeout.tv_sec = 0;
+		timeout.tv_usec = ms * 1000;
+
+		return select(1, &fds, NULL, NULL, &timeout) <= 0;
+	}
 #endif
 }
-

@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
 	FILE *fp;
 	char buff[ BUFSIZ ];
-	int err, i;
+	int err = 1, i;
 
 	if(argc < 3 || (*argv[1] != 'c' && *argv[1] != 'v')) {
 		puts("usage: zhsort {c | v} file");

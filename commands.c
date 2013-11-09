@@ -42,7 +42,14 @@ static bool Findstart(void)
 	return !bisend();
 }
 
-void Zcapword(void)
+/***
+ * In C mode, converts the character at the Point to uppercase and the rest
+ * of the word to lowercase. In other modes, converts the first letter of
+ * the current word to uppercase and the rest of the characters in the word
+ * to lowercase. The Point is left at the end of the word. A Universal
+ * Argument causes the command to repeat.
+ */
+void Zcapitalize_word(void)
 {
 	if (Findstart()) {
 		*Curcptr = toupper(*Curcptr);
@@ -54,7 +61,12 @@ void Zcapword(void)
 }
 
 
-void Zlowword(void)
+/***
+ * Converts the current word starting at the Point to lowercase. It leaves
+ * the Point at the end of the word. A Universal Argument causes the
+ * command to repeat.
+ */
+void Zlowercase_word(void)
 {
 	if (Findstart()) {
 		for (; !bisend() && bistoken(); bmove1()) {
@@ -65,8 +77,12 @@ void Zlowword(void)
 	}
 }
 
-
-void Zupword(void)
+/***
+ * Converts the current word starting at the Point to uppercase. It leaves
+ * the Point at the end of the word. A Universal Argument causes the
+ * command to repeat.
+ */
+void Zuppercase_word(void)
 {
 	if (Findstart()) {
 		for (; !bisend() && bistoken(); bmove1()) {

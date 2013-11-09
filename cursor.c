@@ -19,13 +19,21 @@
 
 #include "z.h"
 
-void Zbegline(void)
+/***
+ * Moves the Point to the beginning of the line or to the beginning of the
+ * previous line. A Universal Argument causes the command to repeat.
+ */
+void Zbeginning_of_line(void)
 {
 	bmove(-1);
 	tobegline();
 }
 
-void Zendline(void)
+/***
+ * Moves the Point to the end of the line or to the end of the next line. A
+ * Universal Argument causes the command to repeat.
+ */
+void Zend_of_line(void)
 {
 	bmove1();
 	toendline();
@@ -141,7 +149,11 @@ void Zfword(void)
 	moveto(ISWORD, FORWARD);
 }
 
-void Ztostart(void)
+/***
+ * Moves the Point to the beginning of the current buffer. A Universal
+ * Argument is ignored.
+ */
+void Zbeginning_of_buffer(void)
 {
 	btostart();
 }
@@ -151,7 +163,11 @@ void Ztoend(void)
 	btoend();
 }
 
-void Zswapmrk(void)
+/***
+ * The Mark goes to the current position of the Point and the Point is set
+ * where the Mark was. A Universal Argument is ignored.
+ */
+void Zswap_mark(void)
 {
 	struct mark tmark;
 
@@ -309,20 +325,6 @@ void Zredisplay(void)
 		wdo->modeflags = INVALID;
 	redisplay();
 	recomment();
-}
-
-void Zbegwind(void)
-{
-	bpnttomrk(Sstart);
-}
-
-void Zendwind(void)
-{
-	int i;
-
-	bpnttomrk(Sstart);
-	for (i = wheight() - 1; i && bcsearch(NL); --i)
-		;
 }
 
 static void scroll(bool (*search)(Byte what))

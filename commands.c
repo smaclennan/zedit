@@ -109,8 +109,16 @@ static void blockmove(struct mark *from, struct mark *to)
 	}
 }
 
-
-void Zswapword(void)
+/***
+ * Swaps the words before and after the Point. The Point is left after
+ * the second word. Successive commands will "drag" the word before the
+ * Point towards the end of the line. If the Point is at the end of a line,
+ * the last word on the line is transposed with the first word on the next
+ * line. The command does nothing at the end of the buffer. If the Point is
+ * in the middle of a word, the two halves of the word are transposed. A
+ * Universal Argument causes the command to repeat.
+ */
+void Zswap_words(void)
 {
 	struct mark *tmark, *tmp;
 
@@ -131,6 +139,11 @@ void Zswapword(void)
 }
 
 
+/***
+ * Centers the current line on the screen. It uses FillWidth to define the
+ * right margin. A Universal Argument causes the command to repeat on the
+ * next lines.
+ */
 void Zcenter(void)
 {
 	int tmp;
@@ -149,9 +162,17 @@ void Zcenter(void)
 
 /* C MODE COMMANDS */
 
-/* This code must handle any char so that expansion will work */
-void Zcinsert(void)
-{
+/***
+ * Tries to perform brace matching. When a close brace (}) is entered,
+ * searches for a previous unmatched open brace ({). If it finds one, tries
+ * to put the close brace in the same column as the column of the first
+ * non-whitespace character in the matched line. If no match is found,
+ * beeps. Bound to close brace in C mode. If bound to a character other than
+ * a close brace, performs a Character Insert. A Universal Argument is
+ * ignored.
+ */
+void Zc_insert(void)
+{	/* This code must handle any char so that expansion will work */
 	int cnt, crfound = false;
 	struct mark *tmark;
 	char word[16];
@@ -235,9 +256,13 @@ void Zcinsert(void)
 	binsert(Cmd);
 }
 
-
-/* 'C' indent. Called for NL. */
-void Zcindent(void)
+/***
+ * Causes Newline characters to auto-indent to the current tab level. If a
+ * Newline is hit after an open brace ({), the next line is indented an
+ * extra tab stop. Bound to Newline in C mode. A Universal Argument causes
+ * the command to repeat.
+ */
+void Zc_indent(void)
 {
 	int width;
 	struct mark tmark;
@@ -802,6 +827,11 @@ void Zmetax(void)
 	}
 }
 
+/***
+ * Aborts the current command. This is the only way to exit Universal
+ * Arguments and String Arguments. It will also abort C-X and Meta
+ * prefixes. Cannot abort the Quote command.
+ */
 void Zabort(void)
 {
 	tbell();
@@ -847,7 +877,17 @@ void Zhexout(void)
 	putpaw("%s", str);
 }
 
-void Zswapchar(void)
+/***
+ * Swaps the character before the Point with the character at the
+ * Point. It leaves the Point after the second character. Successive
+ * commands will "drag" the character that was before the Point towards the
+ * end of the line. If the Point was at the end of a line, the two
+ * characters before the Point are transposed. If the Point is at the
+ * beginning of the buffer, the character at the Point and the character
+ * after the Point are transposed. A Universal Argument causes the command
+ * to repeat.
+ */
+void Zswap_chars(void)
 {
 	int tmp;
 

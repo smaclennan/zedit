@@ -31,11 +31,11 @@ void bind(void)
 	memset(Keys, ZINSERT,  128);
 
 	Keys[0]  = ZSETMRK;		/* C-@ */
-	Keys[1]  = ZBEGLINE;		/* C-A */
+	Keys[1]  = ZBEGINNING_OF_LINE;		/* C-A */
 	Keys[2]  = ZPREVCHAR;		/* C-B */
 	Keys[3]  = ZGETBWORD;		/* C-C */ /**/
 	Keys[4]  = ZDELCHAR;		/* C-D */
-	Keys[5]  = ZENDLINE;		/* C-E */
+	Keys[5]  = ZEND_OF_LINE;		/* C-E */
 	Keys[6]  = ZNEXTCHAR;		/* C-F */
 	Keys[7]  = ZABORT;		/* C-G */
 	Keys[8]  = ZRDELCHAR;		/* C-H */
@@ -82,11 +82,11 @@ void bind(void)
 	Keys[128 + '#'] = Keys[128 + '3'] = ZCALC;
 /*	Keys[128 + '&'] = Keys[128 + '7'] = ; */
 	Keys[128 + '*'] = Keys[128 + '8'] = ZUNMODF;
-	Keys[128 + '('] = Keys[128 + '9'] = ZTOSTART;
+	Keys[128 + '('] = Keys[128 + '9'] = ZTO_START;
 	Keys[128 + ')'] = Keys[128 + '0'] = ZTOEND;
-	Keys[128 + ',']			  = ZBEGWIND;
+/*	Keys[128 + ',']			  = ; */
 	Keys[128 + '.']			  = ZFINDTAG;
-	Keys[128 + '<']			  = ZTOSTART;
+	Keys[128 + '<']			  = ZTO_START;
 	Keys[128 + '>']			  = ZTOEND;
 #if SPELL
 	Keys[128 + '/'] = Keys[128 + '?'] = ZSPELL;
@@ -195,10 +195,10 @@ void bind(void)
 	Keys[TC_RIGHT]	= ZNEXTCHAR;
 	Keys[TC_C_RIGHT] = ZFWORD;
 
-	Keys[TC_HOME]	= ZBEGLINE;
-	Keys[TC_C_HOME]	= ZTOSTART;
+	Keys[TC_HOME]	= ZBEGINNING_OF_LINE;
+	Keys[TC_C_HOME]	= ZTO_START;
 
-	Keys[TC_END]	= ZENDLINE;
+	Keys[TC_END]	= ZEND_OF_LINE;
 	Keys[TC_C_END]	= ZTOEND;
 
 	Keys[TC_NPAGE]	= ZNEXTPAGE;

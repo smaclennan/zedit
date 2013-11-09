@@ -1,37 +1,3 @@
-:abort
-
-Aborts the current command. This is the only way to exit Universal
-Arguments and String Arguments. It will also abort C-X and Meta
-prefixes. Cannot abort the Quote command.
-.sp 0
-:again
-
-Causes the last search to be executed again. If the mode Exact is set,
-the search will be case sensitive. A Universal Argument causes the
-search to look for an exact number matches of the string. If the number
-cannot be matched, it will display the number actually matched in the
-PAW and leave the Point where it was. If no search commands have been
-executed, a Forward Search is executed.
-.sp 0
-:append-kill
-
-Sets the delete flag. The next delete command will append to the kill
-buffer. A Universal Argument is ignored.
-.sp 0
-:beginning-of-buffer
-
-Moves the Point to the beginning of the current buffer. A Universal
-Argument is ignored.
-.sp 0
-:beginning-of-line
-
-Moves the Point to the beginning of the line or to the beginning of the
-previous line. A Universal Argument causes the command to repeat.
-.sp 0
-:beginning-of-window
-
-Moves the Point to the beginning of the current window.
-.sp 0
 :bind
 
 Binds a function to a key. It first prompts, with command completion,
@@ -47,23 +13,6 @@ causes the Bind command to reset all the default arguments.  Keys can be
 Prompts for a command with command complete and gives a list of the keys
 the command is bound to. A Universal Argument is ignored.
 .sp 0
-:c-indent
-
-Causes Newline characters to auto-indent to the current tab level. If a
-Newline is hit after an open brace ({), the next line is indented an
-extra tab stop. Bound to Newline in C mode. A Universal Argument causes
-the command to repeat.
-.sp 0
-:c-insert
-
-Tries to perform brace matching. When a close brace (}) is entered,
-searches for a previous unmatched open brace ({). If it finds one, tries
-to put the close brace in the same column as the column of the first
-non-whitespace character in the matched line. If no match is found,
-beeps. Bound to close brace in C mode. If bound to a character other than
-a close brace, performs a Character Insert. A Universal Argument is
-ignored.
-.sp 0
 :c-x
 
 Command prefix.
@@ -78,20 +27,6 @@ octal, all others are assumed to be decimal. The output is displayed in
 decimal with hexadecimal in brackets "()". Spaces and tabs are allowed
 but are not necessary between the numbers and their operators. A Universal
 Argument is ignored.
-.sp 0
-:capitalize-word
-
-In C mode, converts the character at the Point to uppercase and the rest
-of the word to lowercase. In other modes, converts the first letter of
-the current word to uppercase and the rest of the characters in the word
-to lowercase. The Point is left at the end of the word. A Universal
-Argument causes the command to repeat.
-.sp 0
-:center-line
-
-Centers the current line on the screen. It uses FillWidth to define the
-right margin. A Universal Argument causes the command to repeat on the
-next lines.
 .sp 0
 :cmd-to-buffer
 
@@ -213,16 +148,6 @@ is ignored.
 
 Moves the Point to the end of the buffer. A Universal Argument is
 ignored.
-.sp 0
-:end-of-line
-
-Moves the Point to the end of the line or to the end of the next line. A
-Universal Argument causes the command to repeat.
-.sp 0
-:end-of-window
-
-Moves the Point to the first column of the last line displayed in the
-current window.
 .sp 0
 :exit
 
@@ -390,12 +315,6 @@ Displays a list of the current buffers on the display.
 
 Converts the Region to lowercase. Not allowed in program mode buffers. A
 Universal Argument is ignored.
-.sp 0
-:lowercase-word
-
-Converts the current word starting at the Point to lowercase. It leaves
-the Point at the end of the word. A Universal Argument causes the
-command to repeat.
 .sp 0
 :make
 
@@ -679,12 +598,6 @@ command.
 Saves all modified buffers. A Universal Argument causes ALL files to be
 saved, modified or not.
 .sp 0
-:save-and-exit
-
-An attempt to mimic the vi ZZ command. Does a save file on the
-current buffer and then exits. A universal argument will save all
-files.
-.sp 0
 :save-bindings
 
 A key bound with the Bind command only stays in effect for the duration
@@ -767,11 +680,6 @@ allows you to perform spell checking on the current buffer. A Universal
 Argument limits the spell check to the Region. The default is to check
 the entire buffer.
 .sp 0
-:swap-mark-and-point
-
-The Point goes to the current position of the Mark and the Mark is set
-where the Point was. A Universal Argument is ignored.
-.sp 0
 :switch-to-buffer
 
 Prompts for a buffer name to switch to with command completion.
@@ -788,27 +696,6 @@ Handles the tab key. A Universal Argument causes the command to repeat.
 Switches the current buffers minor mode between case sensitive and case
 insensitive for searches and replacements. Ignores the Universal
 Argument.
-.sp 0
-:transpose-characters
-
-Transposes the character before the Point with the character at the
-Point. It leaves the Point after the second character. Successive
-commands will "drag" the character that was before the Point towards the
-end of the line. If the Point was at the end of a line, the two
-characters before the Point are transposed. If the Point is at the
-beginning of the buffer, the character at the Point and the character
-after the Point are transposed. A Universal Argument causes the command
-to repeat.
-.sp 0
-:transpose-words
-
-Transposes the words before and after the Point. The Point is left after
-the second word. Successive commands will "drag" the word before the
-Point towards the end of the line. If the Point is at the end of a line,
-the last word on the line is transposed with the first word on the next
-line. The command does nothing at the end of the buffer. If the Point is
-in the middle of a word, the two halves of the word are transposed. A
-Universal Argument causes the command to repeat.
 .sp 0
 :trim-white-space
 
@@ -850,12 +737,6 @@ buffer itself. A Universal Argument is ignored.
 
 Convert the Region to uppercase. Not allowed in program mode buffers. A
 Universal Argument is ignored.
-.sp 0
-:uppercase-word
-
-Converts the current word starting at the Point to uppercase. It leaves
-the Point at the end of the word. A Universal Argument causes the
-command to repeat.
 .sp 0
 :view-line
 

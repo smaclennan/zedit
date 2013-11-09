@@ -164,6 +164,14 @@ void Zgresrch(void)
 	Zagain();
 }
 
+/***
+ * Causes the last search to be executed again. If the mode Exact is set,
+ * the search will be case sensitive. A Universal Argument causes the
+ * search to look for an exact number matches of the string. If the number
+ * cannot be matched, it will display the number actually matched in the
+ * PAW and leave the Point where it was. If no search commands have been
+ * executed, a Forward Search is executed.
+ */
 void Zagain(void)
 {
 	if (searchdir[1] == SGLOBAL) {

@@ -40,7 +40,11 @@ void killtomrk(struct mark *tmark)
 	bdeltomrk(tmark);
 }
 
-void Zmakedel(void) {}
+/***
+ * Sets the delete flag. The next delete command will append to the kill
+ * buffer. A Universal Argument is ignored.
+ */
+void Zappend_kill(void) {}
 
 void Zdelchar(void)
 {

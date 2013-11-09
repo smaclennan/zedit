@@ -40,7 +40,7 @@ void bind(void)
 	Keys[7]  = ZABORT;		/* C-G */
 	Keys[8]  = ZDELETE_PREVIOUS_CHAR;		/* C-H */
 	Keys[9]  = ZTAB;		/* C-I */
-	Keys[10] = ZCINDENT;		/* C-J */
+	Keys[10] = ZC_INDENT;		/* C-J */
 	Keys[11] = ZDELETE_TO_EOL;		/* C-K */
 	Keys[12] = ZREDISPLAY;		/* C-L */
 	Keys[13] = ZNEWLINE;		/* C-M */
@@ -48,8 +48,8 @@ void bind(void)
 	Keys[15] = ZOPEN_LINE;		/* C-O */
 	Keys[16] = ZPREVIOUS_LINE;		/* C-P */
 	Keys[17] = ZNOTIMPL;		/* C-Q */ /**/
-	Keys[18] = ZRSEARCH;		/* C-R */
-	Keys[19] = ZINCSRCH;		/* C-S */
+	Keys[18] = ZREVERSE_SEARCH;		/* C-R */
+	Keys[19] = ZINCREMENTAL_SEARCH;		/* C-S */
 	Keys[20] = ZSWAPCHAR;		/* C-T */
 	Keys[21] = ZARG;		/* C-U */
 	Keys[22] = ZNEXT_PAGE;		/* C-V */
@@ -73,7 +73,7 @@ void bind(void)
 /*	Keys[128 + 13] = ;		 * M-C-M */
 	Keys[128 + 14] = ZSCROLL_DOWN;	/* M-C-N */
 	Keys[128 + 16] = ZSCROLL_UP;	/* M-C-P */
-	Keys[128 + 19] = ZINCSRCH;	/* M-C-S */
+	Keys[128 + 19] = ZINCREMENTAL_SEARCH;	/* M-C-S */
 	Keys[128 + 22] = ZVIEW_LINE;	/* M-C-V */
 	Keys[128 + 27] = ZABORT;	/* M-M */
 	Keys[128 + ' '] = ZSEARCH;
@@ -82,11 +82,11 @@ void bind(void)
 	Keys[128 + '#'] = Keys[128 + '3'] = ZCALC;
 /*	Keys[128 + '&'] = Keys[128 + '7'] = ; */
 	Keys[128 + '*'] = Keys[128 + '8'] = ZUNMODF;
-	Keys[128 + '('] = Keys[128 + '9'] = ZTO_START;
+	Keys[128 + '('] = Keys[128 + '9'] = ZBEGINNING_OF_BUFFER;
 	Keys[128 + ')'] = Keys[128 + '0'] = ZEND_OF_BUFFER;
 /*	Keys[128 + ',']			  = ; */
 	Keys[128 + '.']			  = ZFINDTAG;
-	Keys[128 + '<']			  = ZTO_START;
+	Keys[128 + '<']			  = ZBEGINNING_OF_BUFFER;
 	Keys[128 + '>']			  = ZEND_OF_BUFFER;
 #if SPELL
 	Keys[128 + '/'] = Keys[128 + '?'] = ZSPELL;
@@ -96,9 +96,9 @@ void bind(void)
 	Keys[128 + '+'] = Keys[128 + '='] = ZAPPEND_KILL;
 	Keys[128 + 'A'] = Keys[128 + 'a'] = ZAGAIN;
 	Keys[128 + 'B'] = Keys[128 + 'b'] = ZPREVIOUS_WORD;
-	Keys[128 + 'C'] = Keys[128 + 'c'] = ZCAPWORD;
+	Keys[128 + 'C'] = Keys[128 + 'c'] = ZCAPITALIZE_WORD;
 	Keys[128 + 'D'] = Keys[128 + 'd'] = ZDELETE_WORD;
-	Keys[128 + 'E'] = Keys[128 + 'e'] = ZRESRCH;
+	Keys[128 + 'E'] = Keys[128 + 'e'] = ZRE_SEARCH;
 	Keys[128 + 'F'] = Keys[128 + 'f'] = ZNEXT_WORD;
 	Keys[128 + 'G'] = Keys[128 + 'g'] = ZGOTO_LINE;
 	Keys[128 + 'H'] = Keys[128 + 'h'] = ZDELETE_PREVIOUS_WORD;
@@ -111,7 +111,7 @@ void bind(void)
 	Keys[128 + 'O'] = Keys[128 + 'o'] = ZREVERTFILE;
 	Keys[128 + 'P'] = Keys[128 + 'p'] = ZBPARA;
 	Keys[128 + 'Q'] = Keys[128 + 'q'] = ZQUOTE;
-	Keys[128 + 'R'] = Keys[128 + 'r'] = ZQUERY;
+	Keys[128 + 'R'] = Keys[128 + 'r'] = ZQUERY_REPLACE;
 	Keys[128 + 'S'] = Keys[128 + 's'] = ZSEARCH;
 	Keys[128 + 'T'] = Keys[128 + 't'] = ZSWAPWORD;
 	Keys[128 + 'U'] = Keys[128 + 'u'] = ZUPWORD;
@@ -155,11 +155,11 @@ void bind(void)
 	Keys[256 + '2'] = Z2WIND;		/* C-X 2 */
 /* C-X ( */
 /* C-X ) */
-	Keys[256 + 'A'] = Keys[256 + 'a'] = ZGSEARCH;		/* C-X A */
+	Keys[256 + 'A'] = Keys[256 + 'a'] = ZGLOBAL_SEARCH;		/* C-X A */
 	Keys[256 + 'B'] = Keys[256 + 'b'] = ZNEXT_BOOKMARK;	/* C-X B */
 	Keys[256 + 'C'] = Keys[256 + 'c'] = ZCOUNT;		/* C-X C */
 /* C-X D */
-	Keys[256 + 'E'] = Keys[256 + 'e'] = ZREREPLACE;		/* C-X E */
+	Keys[256 + 'E'] = Keys[256 + 'e'] = ZRE_REPLACE;		/* C-X E */
 /* C-X F */
 /* C-X G */
 	Keys[256 + 'H'] = Keys[256 + 'h'] = ZHELP;		/* C-X H */
@@ -196,7 +196,7 @@ void bind(void)
 	Keys[TC_C_RIGHT] = ZNEXT_WORD;
 
 	Keys[TC_HOME]	= ZBEGINNING_OF_LINE;
-	Keys[TC_C_HOME]	= ZTO_START;
+	Keys[TC_C_HOME]	= ZBEGINNING_OF_BUFFER;
 
 	Keys[TC_END]	= ZEND_OF_LINE;
 	Keys[TC_C_END]	= ZEND_OF_BUFFER;
@@ -210,7 +210,7 @@ void bind(void)
 	Keys[TC_F2]	= ZSEARCH;
 	Keys[TC_F3]	= ZAGAIN;
 	Keys[TC_F4]	= ZNEXTERR;
-	Keys[TC_F5]	= ZREREPLACE;
+	Keys[TC_F5]	= ZRE_REPLACE;
 	/* Keys[TC_F6]	= ; */
 	Keys[TC_F7]	= ZMAKE;
 	Keys[TC_F8]	= ZGREP;

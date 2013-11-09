@@ -70,24 +70,6 @@ match use the Again command. The tag file is the file defined in the
 variable "Tagfile", or the file "tags" in the current directory.
 Universal Arguments are ignored.
 .sp 0
-:global-re-search
-
-This command is used to search for a regular expression in all the buffers.
-It prompts for a search string and then starts searching at the start of
-the first buffer. If a match is found, it stops and leaves the point at
-the match. If Again is executed, it starts at the current Point and
-searches forwards through the buffers. At the last buffer it stops and
-puts the Point back where it started. A Universal Argument is ignored.
-.sp 0
-:global-search
-
-This command is used to search for a string in all the buffers. It
-prompts for a search string and then starts searching at the start of
-the first buffer. If a match is found, it stops and leaves the point at
-the match. If Again is executed, it starts at the current Point and
-searches forwards through the buffers. At the last buffer it stops and
-puts the Point back where it started. A Universal Argument is ignored.
-.sp 0
 :grep
 
 Prompts for the completion of a grep command and then performs the
@@ -127,15 +109,6 @@ Variables
 Displays the character at the Point as a hexadecimal number in the PAW.
 A Universal Argument displays the next characters up to a
 maximum of 25. The Point is moved forward by the argument characters.
-.sp 0
-:incremental-search
-
-Searches for the string after every character is entered in the PAW. The
-Delete Previous Character command can be used to delete a character and
-"back up" the search. The Newline character terminates the search. The
-Abort command terminates the search and places the Point back where it
-was. Any other commands terminates the search and performs that command.
-A Universal Argument causes the command to repeat.
 .sp 0
 :indent
 
@@ -271,26 +244,6 @@ previous paragraph. A Universal Argument causes the command to repeat.
 Goes to the previous window on the screen. The windows are treated as a
 circular list. A Universal Argument goes to the Nth previous window.
 .sp 0
-:query-replace
-
-Prompts for a search string and a replacement string and searches from the
-current Point looking for matches of the search string. If it finds a
-match, it moves the Point to the match and waits for one of the
-following input characters:
-.(l
-,              Replace current match and confirm.
-space          Replace current match and continue.
-y              Replace current match and continue.
-.              Replace and exit.
-!              Global replace.
-^              Goto previous match.
-Abort          Exit without replacing current match.
-Others         Continue without replacing current match.
-.)l
-The Point is left at the position it was in before the Query Replace. If
-the mode Exact is set, the search will be case sensitive. A Universal
-Argument causes the replacement to be done globally in all the buffers.
-.sp 0
 :quote
 
 The Quote command is used to insert a character into a buffer or String
@@ -302,28 +255,6 @@ equivalent of this number is inserted into the buffer. If a key is not
 hit within approximately one second, "Quote:" is displayed in the echo
 window. The Quote command does not work within a Universal Argument. A
 Universal Argument inserts Arg characters.
-.sp 0
-:re-replace
-
-Works like the Query Replace command except that the search string is a
-regular expression. The replacement string is a literal with two
-exceptions. An '&' character causes the matched string to be placed in
-the buffer. The escape character '\' can be used to turn off this
-special meaning of '&'. Note that "\\" is required to put a real "\" in
-the buffer. For each match, a prompt is made for the action to perform.
-See Query Replace for a list of valid actions. A Universal
-Argument causes the replacement to be done globally in all the buffers.
-.sp 0
-:re-search
-
-Asks for a regular expression search string and searches from the Point
-forward for a match in the buffer. If a match is found, the Point is
-moved to the start of the match. If the string is not found, then "Not
-Found" is displayed in the echo window and the Point is left where it
-was. The search string is saved and subsequent search and replace
-commands will default to this string. If the mode Exact is set, the
-search will be case sensitive. A Universal Argument causes the search
-to look for exactly Arg matches of the string.
 .sp 0
 :read-file
 
@@ -337,36 +268,6 @@ is not changed, any writes will be to the old file name.
 
 Prompts for a tag and then runs the 'ref' command on it. See the
 documentation for `elvis'.
-.sp 0
-:replace
-
-Prompts for a search string and a replacement string and searches from
-the current Point looking for matches of the search string. If it finds
-a match, it replaces the string and continues. The Point is left at the
-position it was in before the Query Replace. If the mode Exact is set,
-the search will be case sensitive. A Universal Argument causes the
-replacement to be done globally in all the buffers.
-.sp 0
-:reverse-inc-search
-
-Searches backwards for the string after every character is entered in
-the PAW. The Delete Previous Character command can be used to delete a
-character and "forward up" (???) the search. The Newline character
-terminates the search. The Abort command terminates the search and
-places the Point back where it was. Any other command terminates the
-search and performs the command. A Universal Argument causes the command
-to repeat.
-.sp 0
-:reverse-search
-
-Prompts for a search string and searches from the Point backward for a
-match in the buffer. If a match is found, the Point is moved to the
-start of the match. If the string is not found, then "Not Found" is
-displayed in the echo window and the Point is not moved. The search
-string is saved and subsequent search and replace commands will default
-to the last search string. If the mode Exact is set, the search will be
-case sensitive. A Universal Argument causes the search to look for
-exactly Arg matches of the String Argument.
 .sp 0
 :revert-file
 
@@ -391,17 +292,6 @@ causes Arg saves!
 Saves the current buffer to its file. If the current buffer has no path
 name, a path name is prompted for (with file name completion). A
 Universal Argument is ignored.
-.sp 0
-:search
-
-Prompts for a search string and searches from the Point forward for a
-match in the buffer. If a match is found, the Point is moved to the
-start of the match. If the string is not found, then "Not Found" is
-displayed in the echo window and the Point is not moved. The search
-string is saved and subsequent search or replace commands will default
-to the last search string. If the mode Exact is set, the search will be
-case sensitive. A Universal Argument causes the search to look for
-exactly Arg matches.
 .sp 0
 :set-mark
 

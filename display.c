@@ -341,16 +341,16 @@ static char *setmodes(struct buff *buff)
 	switch (buff->bmode & MAJORMODE) {
 	case CMODE:
 		strcpy(PawStr, "C");
-		Keys[CR] = ZCINDENT;
-		Keys['}'] = Keys['#'] = Keys[':'] = Keys['\t'] = ZCINSERT;
+		Keys[CR] = ZC_INDENT;
+		Keys['}'] = Keys['#'] = Keys[':'] = Keys['\t'] = ZC_INSERT;
 #if COMMENTBOLD
-		Keys['/'] = ZCINSERT;
+		Keys['/'] = ZC_INSERT;
 #endif
 		break;
 	case SHMODE:
 		strcpy(PawStr, "sh");
-		Keys[CR] = ZCINDENT;
-		Keys['\t'] = ZCINSERT;
+		Keys[CR] = ZC_INDENT;
+		Keys['\t'] = ZC_INSERT;
 		break;
 	case TEXT:
 		strcpy(PawStr, "Text");

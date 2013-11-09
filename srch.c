@@ -117,27 +117,72 @@ again:
 	searchdir[1] = 0;
 }
 
-void Zincsrch(void)
+/***
+ * Searches for the string after every character is entered in the PAW. The
+ * Delete Previous Character command can be used to delete a character and
+ * "back up" the search. The Newline character terminates the search. The
+ * Abort command terminates the search and places the Point back where it
+ * was. Any other commands terminates the search and performs that command.
+ * A Universal Argument causes the command to repeat.
+ */
+void Zincremental_search(void)
 {
 	doincsrch("I-search", FORWARD);
 }
 
-void Zrincsrch(void)
+/***
+ * Searches backwards for the string after every character is entered in
+ * the PAW. The Delete Previous Character command can be used to delete a
+ * character and "forward up" (???) the search. The Newline character
+ * terminates the search. The Abort command terminates the search and
+ * places the Point back where it was. Any other command terminates the
+ * search and performs the command. A Universal Argument causes the command
+ * to repeat.
+ */
+void Zreverse_inc_search(void)
 {
 	doincsrch("Reverse I-search", BACKWARD);
 }
 
+/***
+ * Prompts for a search string and searches from the Point forward for a
+ * match in the buffer. If a match is found, the Point is moved to the
+ * start of the match. If the string is not found, then "Not Found" is
+ * displayed in the echo window and the Point is not moved. The search
+ * string is saved and subsequent search or replace commands will default
+ * to the last search string. If the mode Exact is set, the search will be
+ * case sensitive. A Universal Argument causes the search to look for
+ * exactly Arg matches.
+ */
 void Zsearch(void)
 {
 	promptsearch("Search: ", FORWARD);
 }
 
-void Zrsearch(void)
+/***
+ * Prompts for a search string and searches from the Point backward for a
+ * match in the buffer. If a match is found, the Point is moved to the
+ * start of the match. If the string is not found, then "Not Found" is
+ * displayed in the echo window and the Point is not moved. The search
+ * string is saved and subsequent search and replace commands will default
+ * to the last search string. If the mode Exact is set, the search will be
+ * case sensitive. A Universal Argument causes the search to look for
+ * exactly Arg matches of the String Argument.
+ */
+void Zreverse_search(void)
 {
 	promptsearch("Reverse Search: ", BACKWARD);
 }
 
-void Zgsearch(void)
+/***
+ * This command is used to search for a string in all the buffers. It
+ * prompts for a search string and then starts searching at the start of
+ * the first buffer. If a match is found, it stops and leaves the point at
+ * the match. If Again is executed, it starts at the current Point and
+ * searches forwards through the buffers. At the last buffer it stops and
+ * puts the Point back where it started. A Universal Argument is ignored.
+ */
+void Zglobal_search(void)
 {
 	if (getarg(nocase("Global Search: "), old, STRMAX))
 		return;
@@ -148,12 +193,30 @@ void Zgsearch(void)
 	Zagain();
 }
 
-void Zresrch(void)
+/***
+ * Asks for a regular expression search string and searches from the Point
+ * forward for a match in the buffer. If a match is found, the Point is
+ * moved to the start of the match. If the string is not found, then "Not
+ * Found" is displayed in the echo window and the Point is left where it
+ * was. The search string is saved and subsequent search and replace
+ * commands will default to this string. If the mode Exact is set, the
+ * search will be case sensitive. A Universal Argument causes the search
+ * to look for exactly Arg matches of the string.
+ */
+void Zre_search(void)
 {
 	promptsearch("RE Search: ", REGEXP);
 }
 
-void Zgresrch(void)
+/***
+ * This command is used to search for a regular expression in all the buffers.
+ * It prompts for a search string and then starts searching at the start of
+ * the first buffer. If a match is found, it stops and leaves the point at
+ * the match. If Again is executed, it starts at the current Point and
+ * searches forwards through the buffers. At the last buffer it stops and
+ * puts the Point back where it started. A Universal Argument is ignored.
+ */
+void Zglobal_re_search(void)
 {
 	if (getarg(nocase("Global RE Search: "), old, STRMAX))
 		return;
@@ -196,17 +259,54 @@ void Zagain(void)
 		promptsearch("Search: ", AGAIN);
 }
 
+/***
+ * Prompts for a search string and a replacement string and searches from
+ * the current Point looking for matches of the search string. If it finds
+ * a match, it replaces the string and continues. The Point is left at the
+ * position it was in before the Query Replace. If the mode Exact is set,
+ * the search will be case sensitive. A Universal Argument causes the
+ * replacement to be done globally in all the buffers.
+ */
 void Zreplace(void)
 {
 	promptreplace(FORWARD);
 }
 
-void Zquery(void)
+/***
+ * Prompts for a search string and a replacement string and searches from the
+ * current Point looking for matches of the search string. If it finds a
+ * match, it moves the Point to the match and waits for one of the
+ * following input characters:
+ * .(l
+ * ,              Replace current match and confirm.
+ * space          Replace current match and continue.
+ * y              Replace current match and continue.
+ * .              Replace and exit.
+ * !              Global replace.
+ * ^              Goto previous match.
+ * Abort          Exit without replacing current match.
+ * Others         Continue without replacing current match.
+ * .)l
+ * The Point is left at the position it was in before the Query Replace. If
+ * the mode Exact is set, the search will be case sensitive. A Universal
+ * Argument causes the replacement to be done globally in all the buffers.
+ */
+void Zquery_replace(void)
 {
 	promptreplace(QUERY);
 }
 
-void Zrereplace(void)
+/***
+ * Works like the Query Replace command except that the search string is a
+ * regular expression. The replacement string is a literal with two
+ * exceptions. An '&' character causes the matched string to be placed in
+ * the buffer. The escape character '\' can be used to turn off this
+ * special meaning of '&'. Note that "\\" is required to put a real "\" in
+ * the buffer. For each match, a prompt is made for the action to perform.
+ * See Query Replace for a list of valid actions. A Universal
+ * Argument causes the replacement to be done globally in all the buffers.
+ */
+void Zre_replace(void)
 {
 	promptreplace(REGEXP);
 }

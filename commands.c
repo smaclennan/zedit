@@ -579,7 +579,12 @@ void Zexit(void)
 	exit(0);
 }
 
-void Zsaveexit(void)
+/***
+ * An attempt to mimic the vi ZZ command. Does a save file on the
+ * current buffer and then exits. A universal argument will save all
+ * files.
+ */
+void Zsave_and_exit(void)
 {
 	Zfilesave();
 	Zexit();

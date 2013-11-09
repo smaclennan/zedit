@@ -99,6 +99,7 @@ struct cnames Cnames[] = {
 	{"reverse-search",		ZRSEARCH,	H_SEARCH},
 	{"revert-file",			ZREVERTFILE,	H_FILE},
 	{"save-all-files",		ZSAVEALL,	H_FILE},
+	{"save-and-exit",		ZSAVEEXIT,	H_FILE},
 	{"save-bindings",		ZSAVEBIND,	H_BIND},
 	{"save-file",			ZFILESAVE,	H_FILE},
 	{"scroll-down",			ZSCROLLDOWN,	H_DISP},

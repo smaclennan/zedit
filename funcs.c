@@ -43,6 +43,7 @@ void (*Cmds[][2])() = {
 	{ Zdelword,		Zdelword },
 	{ Zendline,		Zendline },
 	{ Zexit,		Znotimpl },
+	{ Zsaveexit,		Znotimpl },
 	{ Zfileread,		Znotimpl },
 	{ Zfilesave,		Znotimpl },
 	{ Zfilewrite,		Znotimpl },

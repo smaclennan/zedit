@@ -579,6 +579,12 @@ void Zexit(void)
 	exit(0);
 }
 
+void Zsaveexit(void)
+{
+	Zfilesave();
+	Zexit();
+}
+
 /* Prompt to save buffer if the buffer has been modified.
  * Always saves if 'must' is true or saveOnExit is set.
  * Returns false if the user ABORTS the prompt.

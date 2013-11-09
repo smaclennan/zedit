@@ -119,7 +119,7 @@ void bind(void)
 	Keys[128 + 'W'] = Keys[128 + 'w'] = ZCOPYRGN;
 	Keys[128 + 'X'] = Keys[128 + 'x'] = ZMETAX;
 	Keys[128 + 'Y'] = Keys[128 + 'y'] = ZYANK;
-	Keys[128 + 'Z'] = Keys[128 + 'z'] = ZEXIT;
+	Keys[128 + 'Z'] = Keys[128 + 'z'] = ZSAVEEXIT;
 	Keys[128 + DEL] = ZRDELWORD;		/* M-DEL */
 
 	/* Init the CTRL-X functions */

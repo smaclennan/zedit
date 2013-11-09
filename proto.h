@@ -65,6 +65,7 @@ Z(Zempty);
 Z(Zendline);
 Z(Zendwind);
 Z(Zexit);
+Z(Zsaveexit);
 Z(Zfileread);
 Z(Zfilesave);
 Z(Zfilewrite);

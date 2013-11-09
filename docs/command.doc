@@ -1,49 +1,3 @@
-:bind
-
-Binds a function to a key. It first prompts, with command completion,
-for the command to bind. It then prompts for the key to bind the command
-to. The Meta and C-X prefix keys are entered, Bind prompts for another
-key. The Abort command exits any prompt. The Quote command can be used
-to rebind the Abort, Quote, C-X, and Meta commands. A Universal Argument
-causes the Bind command to reset all the default arguments.  Keys can be
-"unbound" by binding them to the NULL command.
-.sp 0
-:bound-to
-
-Prompts for a command with command complete and gives a list of the keys
-the command is bound to. A Universal Argument is ignored.
-.sp 0
-:c-x
-
-Command prefix.
-.sp 0
-:calculator
-
-This is a very simple integer calculator. It handles addition,
-subtraction, multiplication, and division between
-octal/decimal/hexadecimal numbers. If a number begins with a '0x' it is
-assumed to be hexadecimal, if it begins with a '0' it is assumed to be
-octal, all others are assumed to be decimal. The output is displayed in
-decimal with hexadecimal in brackets "()". Spaces and tabs are allowed
-but are not necessary between the numbers and their operators. A Universal
-Argument is ignored.
-.sp 0
-:cmd-to-buffer
-
-Prompts  for  a command and then executes the command in the shell. The
-output is put in the ".shell" buffer. Any previous contents of the
-".shell" buffer are deleted. A Universal Argument is ignored.
-.sp 0
-:cmd-to-screen
-
-Prompts for a command and then executes the command in the shell. When
-the command has finished executing, "[Hit any key to continue]" is
-displayed. A key should then be hit to reenter Zedit. The key hit is
-thrown away.
-
-On BSD machines, suspends Zedit and exits to shell. "fg" will go back to
-Zedit.
-.sp 0
 :copy-region
 
 Copies the region to the kill buffer. The kill buffer is overwritten
@@ -144,23 +98,11 @@ A Universal Argument prompts for an output file to put the list in.
 Deletes the entire contents of the current buffer. A Universal Arguments
 is ignored.
 .sp 0
-:end-of-buffer
-
-Moves the Point to the end of the buffer. A Universal Argument is
-ignored.
-.sp 0
 :exit
 
 Exits from the editor. It asks to save all modified buffers. A bang
 (!) saves all remaining buffers. A Universal Argument causes all
 modified buffers to be saved without prompting.
-.sp 0
-:extended-command
-
-Prompts for a command to execute. Unbound commands may be executed in
-this manner. Supports command completion. A "?" will show all the
-possible matches. A Universal Argument is passed on to the selected
-command.
 .sp 0
 :fill-check
 
@@ -213,13 +155,6 @@ the first buffer. If a match is found, it stops and leaves the point at
 the match. If Again is executed, it starts at the current Point and
 searches forwards through the buffers. At the last buffer it stops and
 puts the Point back where it started. A Universal Argument is ignored.
-.sp 0
-:goto-line
-
-Moves the point to the start of a given line. If there is a Universal
-Argument, uses the argument, else prompts for the line number. If the
-line is past the end of the buffer, moves the Point is left at the end
-of the buffer.
 .sp 0
 :grep
 
@@ -344,24 +279,11 @@ toggles.
 The command normally bound to the Enter or Return key. A Universal
 Argument causes the command to repeat.
 .sp 0
-:next-bookmark
-
-Moves the Point to the last bookmark set in the bookmark ring. The
-bookmark moved to is displayed in the echo window. A Universal Argument
-in the range 1 to 10 corresponding to a set bookmark will go to the
-bookmark.
-.sp 0
 :next-buffer
 
 Switches to the next buffer in the buffer list. At the end of the list,
 it switches to the first buffer in the list, i.e. treats the list like a
 ring. A Universal Argument causes the command to repeat.
-.sp 0
-:next-character
-
-Moves the Point forward one character. If the Point is at the end of a
-line, it is moved to the start of the next line. A Universal Argument
-causes the command to repeat.
 .sp 0
 :next-error
 
@@ -373,23 +295,6 @@ at the error line.
 
 If a Universal Argument is specified, Next Error tries to ignore warnings.
 .sp 0
-:next-line
-
-Moves the Point up one line in the buffer. It tries to maintain the same
-column position. If the line is to short the, Point will be the placed
-at the end of the line. Consecutive Previous/Next Line or Page commands
-try to maintain the original column position. A Universal Argument
-causes the command to repeat.
-.sp 0
-:next-page
-
-Moves the Point down one page and tries to center the Point line in the
-display. It tries to maintain the same column position. If the line is
-to short the, Point will be the placed at the end of the line.
-Consecutive Previous/Next Line or Page commands try to maintain the
-original column position. A Universal Argument causes the command to
-repeat.
-.sp 0
 :next-paragraph
 
 Moves the Point to the start of the next paragraph. A Universal Argument
@@ -400,11 +305,6 @@ causes the command to repeat.
 Goes to the next window on the screen. The windows are treated as a
 circular list. A Universal Argument goes to the Nth next window.
 .sp 0
-:next-word
-
-Moves the Point to the start of the next word. A Universal Argument
-causes the command to repeat.
-.sp 0
 :null
 
 Used to unbind a key. This is bound to all the unbound keys. A Universal
@@ -414,12 +314,6 @@ Argument does nothing Arg times.
 
 Makes the active window a full screen window. If there is only one
 window, this command has no effect. A Universal Argument is ignored.
-.sp 0
-:open-line
-
-Inserts a Newline at the Point but leaves the Point in front of the
-Newline. It is the same as typing a Newline and then a Previous
-Character command. A Universal Argument causes the command to repeat.
 .sp 0
 :other-next-page
 
@@ -435,40 +329,11 @@ if you are in the bottom window. It leaves the Point where it is in the
 active window. If there is only one window, this command has no effect.
 A Universal Argument pages the Nth window.
 .sp 0
-:out-to
-
-This command moves the Point to an absolute column position. If the line
-is shorter than the specified column, it is padded with tabs and spaces
-to the specified column. The command takes either a Universal Argument or
-prompts for the column to go to.
-.sp 0
 :position
 
 Displays the current Point position as a line, column, and byte offset
 in the echo window. Also displays the length of the buffer. A Universal
 Argument is ignored.
-.sp 0
-:previous-character
-
-Moves the Point back one character. If the Point is at the start of the
-line, it is moved to the end of the previous line. A Universal Argument
-causes the command to repeat.
-.sp 0
-:previous-line
-
-Moves the Point up one line in the buffer. It tries to maintain the same
-column position. If the line is to short, the Point will be placed at
-the end of the line. Consecutive Previous/Next Line or Page commands try
-to maintain the original column position. A Universal Argument causes
-the command to repeat.
-.sp 0
-:previous-page
-
-Moves the Point up one page and tries to center the Point line in the
-display. It tries to maintain the same column position. If the line is
-to short, the Point will be placed at the end of the line. Consecutive
-Previous/Next Line or Page commands try to maintain the original column
-position. A Universal Argument causes the command to repeat.
 .sp 0
 :previous-paragraph
 
@@ -479,11 +344,6 @@ previous paragraph. A Universal Argument causes the command to repeat.
 
 Goes to the previous window on the screen. The windows are treated as a
 circular list. A Universal Argument goes to the Nth previous window.
-.sp 0
-:previous-word
-
-Moves the Point back to the start of a word or to the start of the
-previous word. A Universal Argument causes the command to repeat.
 .sp 0
 :query-replace
 
@@ -547,11 +407,6 @@ Argument, the current buffer is deleted, first asking to save the file
 if it is modified, before reading in the new file. The buffers file name
 is not changed, any writes will be to the old file name.
 .sp 0
-:redisplay
-
-Repaints the entire screen. A Universal Argument causes the command to
-repeat.
-.sp 0
 :reference
 
 Prompts for a tag and then runs the 'ref' command on it. See the
@@ -611,16 +466,6 @@ Saves the current buffer to its file. If the current buffer has no path
 name, a path name is prompted for (with file name completion). A
 Universal Argument is ignored.
 .sp 0
-:scroll-down
-
-Scrolls the screen down one line. A Universal Argument causes the
-command to scroll multiple lines.
-.sp 0
-:scroll-up
-
-Scrolls the screen up one line. A Universal Argument causes the
-command to scroll multiple lines.
-.sp 0
 :search
 
 Prompts for a search string and searches from the Point forward for a
@@ -631,12 +476,6 @@ string is saved and subsequent search or replace commands will default
 to the last search string. If the mode Exact is set, the search will be
 case sensitive. A Universal Argument causes the search to look for
 exactly Arg matches.
-.sp 0
-:set-bookmark
-
-Places an invisible "bookmark" at the Point. There are 10
-bookmarks placed in a ring. The bookmark set is displayed in the PAW.
-A Universal Argument causes the command to repeat.
 .sp 0
 :set-mark
 
@@ -653,10 +492,6 @@ set to Arg, string variables ignore the Universal Argument.
 
 Performs a 'setenv' command on an environment variable. The variable will
 keep the setting during the the Zedit session.
-.sp 0
-:shell
-
-Forks an interactive shell in a special ".shell" window.
 .sp 0
 :show-config
 
@@ -738,21 +573,10 @@ buffer itself. A Universal Argument is ignored.
 Convert the Region to uppercase. Not allowed in program mode buffers. A
 Universal Argument is ignored.
 .sp 0
-:view-line
-
-Makes the Point line the top line in the window. A Universal Argument
-causes the command to repeat.
-.sp 0
 :write-file
 
 Prompts for a path name and writes out the current buffer to this file
 name. Supports file name completion. It changes the path name of the
 current buffer to the new path name. A Universal Argument causes only
 the Region to be written and does not change the name of the buffer.
-.sp 0
-:yank
-
-Inserts the characters from the Kill Buffer before the Point. The
-characters are inserted, even in overwrite mode. A Universal Argument
-causes the command to repeat.
 .sp 0

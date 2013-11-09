@@ -104,7 +104,11 @@ void Zcopyrgn(void)
 }
 
 
-/* Insert the delete buffer at the point */
+/***
+ * Inserts the characters from the Kill Buffer before the Point. The
+ * characters are inserted, even in overwrite mode. A Universal Argument
+ * causes the command to repeat.
+ */
 void Zyank(void)
 {
 	struct buff *tbuff;
@@ -147,7 +151,7 @@ void Zrdelword(void)
 	struct mark *tmark;
 
 	tmark = bcremrk();
-	Zbword();
+	Zprevious_word();
 	killtomrk(tmark);
 	unmark(tmark);
 }

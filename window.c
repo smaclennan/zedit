@@ -475,7 +475,7 @@ void Znxtothrwind(void)
 {
 	struct wdo *save = Curwdo;
 	otherwind();
-	Znextpage();
+	Znext_page();
 	wswitchto(save);
 }
 
@@ -483,7 +483,7 @@ void Zprevothrwind(void)
 {
 	struct wdo *save = Curwdo;
 	otherwind();
-	Zprevpage();
+	Zprevious_page();
 	wswitchto(save);
 }
 

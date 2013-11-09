@@ -803,8 +803,10 @@ void Zmeta(void)
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
-/* Process ^X commands. */
-void Zctrlx(void)
+/***
+ * Command prefix.
+ */
+void Zctrl_x(void)
 {
 	bool tmp;
 
@@ -815,13 +817,18 @@ void Zctrlx(void)
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
-/* Process the M-X command */
-void Zmetax(void)
+/***
+ * Prompts for a command to execute. Unbound commands may be executed in
+ * this manner. Supports command completion. A "?" will show all the
+ * possible matches. A Universal Argument is passed on to the selected
+ * command.
+ */
+void Zmeta_x(void)
 {
 	int rc = getplete("M-X: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
 	if (rc != -1) {
 		Cmd = Cnames[rc].fnum;
-		Lfunc = ZMETAX;
+		Lfunc = ZMETA_X;
 		for (Arg = Arg == 0 ? 1 : Arg; Arg > 0; --Arg)
 			CMD(Cnames[rc].fnum);
 	}

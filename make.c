@@ -150,7 +150,7 @@ void Znexterr(void)
 		findfile(path);
 		Argp = true;
 		Arg = line;
-		Zlgoto();
+		Zgoto_line();
 		tobegline();
 	} else {
 		btoend();

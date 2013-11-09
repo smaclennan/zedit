@@ -40,8 +40,13 @@ static char *get_shell(void)
 	return sh;
 }
 
-/* Do one shell command to the screen */
-void Zcmd(void)
+/***
+ * Prompts for a command and then executes the command in the shell. When
+ * the command has finished executing, "[Hit any key to continue]" is
+ * displayed. A key should then be hit to reenter Zedit. The key hit is
+ * thrown away.
+ */
+void Zcmd_to_screen(void)
 {
 	char tb[STRMAX * 2];
 
@@ -60,8 +65,12 @@ void Zcmd(void)
 	}
 }
 
-/* Do one shell command to the .shell buffer */
-void Zcmdtobuff(void)
+/***
+ * Prompts  for  a command and then executes the command in the shell. The
+ * output is put in the ".shell" buffer. Any previous contents of the
+ * ".shell" buffer are deleted. A Universal Argument is ignored.
+ */
+void Zcmd_to_buffer(void)
 {
 #ifdef PIPESH
 	struct wdo *save;
@@ -90,6 +99,9 @@ void Zcmdtobuff(void)
 }
 
 #ifdef PIPESH
+/***
+ * Forks an interactive shell in a special ".shell" window.
+ */
 void Zshell(void)
 {
 	char bname[BUFNAMMAX + 1];
@@ -227,6 +239,6 @@ static void printexit(int code)
 }
 #else
 void Zshell(void) { tbell(); }
-void Zcmd(void) { tbell(); }
-void Zcmdtobuff(void) { tbell(); }
+void Zcmd_to_screen(void) { tbell(); }
+void Zcmd_to_buffer(void) { tbell(); }
 #endif /* SHELL */

@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 	Curwdo->modeflags = INVALID;
 
 	if (Argp)
-		Zlgoto();
+		Zgoto_line();
 
 #ifdef PIPESH
 	FD_ZERO(&SelectFDs);

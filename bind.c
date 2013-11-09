@@ -32,11 +32,11 @@ void bind(void)
 
 	Keys[0]  = ZSETMRK;		/* C-@ */
 	Keys[1]  = ZBEGINNING_OF_LINE;		/* C-A */
-	Keys[2]  = ZPREVCHAR;		/* C-B */
+	Keys[2]  = ZPREVIOUS_CHAR;		/* C-B */
 	Keys[3]  = ZGETBWORD;		/* C-C */ /**/
 	Keys[4]  = ZDELCHAR;		/* C-D */
 	Keys[5]  = ZEND_OF_LINE;		/* C-E */
-	Keys[6]  = ZNEXTCHAR;		/* C-F */
+	Keys[6]  = ZNEXT_CHAR;		/* C-F */
 	Keys[7]  = ZABORT;		/* C-G */
 	Keys[8]  = ZRDELCHAR;		/* C-H */
 	Keys[9]  = ZTAB;		/* C-I */
@@ -44,19 +44,19 @@ void bind(void)
 	Keys[11] = ZDELEOL;		/* C-K */
 	Keys[12] = ZREDISPLAY;		/* C-L */
 	Keys[13] = ZNEWLINE;		/* C-M */
-	Keys[14] = ZNEXTLINE;		/* C-N */
-	Keys[15] = ZOPENLINE;		/* C-O */
-	Keys[16] = ZPREVLINE;		/* C-P */
+	Keys[14] = ZNEXT_LINE;		/* C-N */
+	Keys[15] = ZOPEN_LINE;		/* C-O */
+	Keys[16] = ZPREVIOUS_LINE;		/* C-P */
 	Keys[17] = ZNOTIMPL;		/* C-Q */ /**/
 	Keys[18] = ZRSEARCH;		/* C-R */
 	Keys[19] = ZINCSRCH;		/* C-S */
 	Keys[20] = ZSWAPCHAR;		/* C-T */
 	Keys[21] = ZARG;		/* C-U */
-	Keys[22] = ZNEXTPAGE;		/* C-V */
+	Keys[22] = ZNEXT_PAGE;		/* C-V */
 	Keys[23] = ZDELRGN;		/* C-W */
-	Keys[24] = ZCTRLX;		/* C-X */
+	Keys[24] = ZCTRL_X;		/* C-X */
 	Keys[25] = ZYANK;		/* C-Y */
-	Keys[26] = ZPREVPAGE;		/* C-Z */ /**/
+	Keys[26] = ZPREVIOUS_PAGE;		/* C-Z */ /**/
 	Keys[27] = ZMETA;		/* ESC */
 	Keys[28] = ZSETMRK;		/* C-\ */ /**/
 	Keys[29] = ZOVERIN;		/* C-] */ /**/
@@ -67,27 +67,27 @@ void bind(void)
 
 	/* Init the Meta functions */
 
-	Keys[128 + 2] = ZCMDBIND;	/* M-C-B */
+	Keys[128 + 2] = ZBOUND_TO;	/* M-C-B */
 	Keys[128 + 7] = ZABORT;		/* M-C-G */
 /* M-C-L */
 /*	Keys[128 + 13] = ;		 * M-C-M */
-	Keys[128 + 14] = ZSCROLLDOWN;	/* M-C-N */
-	Keys[128 + 16] = ZSCROLLUP;	/* M-C-P */
+	Keys[128 + 14] = ZSCROLL_DOWN;	/* M-C-N */
+	Keys[128 + 16] = ZSCROLL_UP;	/* M-C-P */
 	Keys[128 + 19] = ZINCSRCH;	/* M-C-S */
-	Keys[128 + 22] = ZVIEWLINE;	/* M-C-V */
+	Keys[128 + 22] = ZVIEW_LINE;	/* M-C-V */
 	Keys[128 + 27] = ZABORT;	/* M-M */
 	Keys[128 + ' '] = ZSEARCH;
-/* SAM	Keys[128 + '!'] = Keys[128 + '1'] = ZCMD; */
-	Keys[128 + '@'] = Keys[128 + '2'] = ZCMDTOBUFF;
+/* SAM	Keys[128 + '!'] = Keys[128 + '1'] = ZCMD-TO-SCREEN; */
+	Keys[128 + '@'] = Keys[128 + '2'] = ZCMD_TO_BUFFER;
 	Keys[128 + '#'] = Keys[128 + '3'] = ZCALC;
 /*	Keys[128 + '&'] = Keys[128 + '7'] = ; */
 	Keys[128 + '*'] = Keys[128 + '8'] = ZUNMODF;
 	Keys[128 + '('] = Keys[128 + '9'] = ZTO_START;
-	Keys[128 + ')'] = Keys[128 + '0'] = ZTOEND;
+	Keys[128 + ')'] = Keys[128 + '0'] = ZEND_OF_BUFFER;
 /*	Keys[128 + ',']			  = ; */
 	Keys[128 + '.']			  = ZFINDTAG;
 	Keys[128 + '<']			  = ZTO_START;
-	Keys[128 + '>']			  = ZTOEND;
+	Keys[128 + '>']			  = ZEND_OF_BUFFER;
 #if SPELL
 	Keys[128 + '/'] = Keys[128 + '?'] = ZSPELL;
 #endif
@@ -95,12 +95,12 @@ void bind(void)
 	Keys[128 + '-']			  = ZFINDTAG;
 	Keys[128 + '+'] = Keys[128 + '='] = ZMAKEDEL;
 	Keys[128 + 'A'] = Keys[128 + 'a'] = ZAGAIN;
-	Keys[128 + 'B'] = Keys[128 + 'b'] = ZBWORD;
+	Keys[128 + 'B'] = Keys[128 + 'b'] = ZPREVIOUS_WORD;
 	Keys[128 + 'C'] = Keys[128 + 'c'] = ZCAPWORD;
 	Keys[128 + 'D'] = Keys[128 + 'd'] = ZDELWORD;
 	Keys[128 + 'E'] = Keys[128 + 'e'] = ZRESRCH;
-	Keys[128 + 'F'] = Keys[128 + 'f'] = ZFWORD;
-	Keys[128 + 'G'] = Keys[128 + 'g'] = ZLGOTO;
+	Keys[128 + 'F'] = Keys[128 + 'f'] = ZNEXT_WORD;
+	Keys[128 + 'G'] = Keys[128 + 'g'] = ZGOTO_LINE;
 	Keys[128 + 'H'] = Keys[128 + 'h'] = ZRDELWORD;
 	Keys[128 + 'I'] = Keys[128 + 'i'] = ZTAB;
 	Keys[128 + 'J'] = Keys[128 + 'j'] = ZJOIN;
@@ -115,9 +115,9 @@ void bind(void)
 	Keys[128 + 'S'] = Keys[128 + 's'] = ZSEARCH;
 	Keys[128 + 'T'] = Keys[128 + 't'] = ZSWAPWORD;
 	Keys[128 + 'U'] = Keys[128 + 'u'] = ZUPWORD;
-	Keys[128 + 'V'] = Keys[128 + 'v'] = ZPREVPAGE;
+	Keys[128 + 'V'] = Keys[128 + 'v'] = ZPREVIOUS_PAGE;
 	Keys[128 + 'W'] = Keys[128 + 'w'] = ZCOPYRGN;
-	Keys[128 + 'X'] = Keys[128 + 'x'] = ZMETAX;
+	Keys[128 + 'X'] = Keys[128 + 'x'] = ZMETA_X;
 	Keys[128 + 'Y'] = Keys[128 + 'y'] = ZYANK;
 	Keys[128 + 'Z'] = Keys[128 + 'z'] = ZSAVEEXIT;
 	Keys[128 + DEL] = ZRDELWORD;		/* M-DEL */
@@ -138,7 +138,7 @@ void bind(void)
 	Keys[256 + 12]  = ZLOWREGION;		/* C-X C-L */
 	Keys[256 + 13]  = ZMAKE;		/* C-X C-M */
 	Keys[256 + 14]  = ZNEXTERR;		/* C-X C-N */
-	Keys[256 + 15]  = ZCGOTO;		/* C-X C-O */
+	Keys[256 + 15]  = ZOUT_TO;		/* C-X C-O */
 	Keys[256 + 16]  = ZMRKPARA;		/* C-X C-P */
 /* C-X C-Q */
 	Keys[256 + 18]  = ZFILEREAD;		/* C-X C-R */
@@ -156,7 +156,7 @@ void bind(void)
 /* C-X ( */
 /* C-X ) */
 	Keys[256 + 'A'] = Keys[256 + 'a'] = ZGSEARCH;		/* C-X A */
-	Keys[256 + 'B'] = Keys[256 + 'b'] = ZNXTBOOKMRK;	/* C-X B */
+	Keys[256 + 'B'] = Keys[256 + 'b'] = ZNEXT_BOOKMARK;	/* C-X B */
 	Keys[256 + 'C'] = Keys[256 + 'c'] = ZCOUNT;		/* C-X C */
 /* C-X D */
 	Keys[256 + 'E'] = Keys[256 + 'e'] = ZREREPLACE;		/* C-X E */
@@ -167,7 +167,7 @@ void bind(void)
 /* C-X J */
 	Keys[256 + 'K'] = Keys[256 + 'k'] = ZKILLBUFF;		/* C-X K */
 	Keys[256 + 'L'] = Keys[256 + 'l'] = ZLSTBUFF;		/* C-X L */
-	Keys[256 + 'M'] = Keys[256 + 'm'] = ZSETBOOKMRK;	/* C-X M */
+	Keys[256 + 'M'] = Keys[256 + 'm'] = ZSET_BOOKMARK;	/* C-X M */
 	Keys[256 + 'N'] = Keys[256 + 'n'] = ZNEXTWIND;		/* C-X N */
 	Keys[256 + 'O'] = Keys[256 + 'o'] = ZNEXTWIND;		/* C-X O */
 	Keys[256 + 'P'] = Keys[256 + 'p'] = ZPREVWIND;		/* C-X P */
@@ -183,26 +183,26 @@ void bind(void)
 	Keys[256 + 'Z'] = Keys[256 + 'z'] = ZEXIT;		/* C-X Z */
 	Keys[256 + '^'] = ZGROWWINDOW;				/* C-X ^ */
 
-	Keys[TC_UP]	= ZPREVLINE;
-	Keys[TC_C_UP]	= ZPREVPAGE;
+	Keys[TC_UP]	= ZPREVIOUS_LINE;
+	Keys[TC_C_UP]	= ZPREVIOUS_PAGE;
 
-	Keys[TC_DOWN]	= ZNEXTLINE;
-	Keys[TC_C_DOWN]	= ZNEXTPAGE;
+	Keys[TC_DOWN]	= ZNEXT_LINE;
+	Keys[TC_C_DOWN]	= ZNEXT_PAGE;
 
-	Keys[TC_LEFT]	= ZPREVCHAR;
-	Keys[TC_C_LEFT]	= ZBWORD;
+	Keys[TC_LEFT]	= ZPREVIOUS_CHAR;
+	Keys[TC_C_LEFT]	= ZPREVIOUS_WORD;
 
-	Keys[TC_RIGHT]	= ZNEXTCHAR;
-	Keys[TC_C_RIGHT] = ZFWORD;
+	Keys[TC_RIGHT]	= ZNEXT_CHAR;
+	Keys[TC_C_RIGHT] = ZNEXT_WORD;
 
 	Keys[TC_HOME]	= ZBEGINNING_OF_LINE;
 	Keys[TC_C_HOME]	= ZTO_START;
 
 	Keys[TC_END]	= ZEND_OF_LINE;
-	Keys[TC_C_END]	= ZTOEND;
+	Keys[TC_C_END]	= ZEND_OF_BUFFER;
 
-	Keys[TC_NPAGE]	= ZNEXTPAGE;
-	Keys[TC_PPAGE]	= ZPREVPAGE;
+	Keys[TC_NPAGE]	= ZNEXT_PAGE;
+	Keys[TC_PPAGE]	= ZPREVIOUS_PAGE;
 	Keys[TC_INSERT]	= ZOVERIN;
 	Keys[TC_DELETE]	= ZDELCHAR;
 
@@ -214,8 +214,8 @@ void bind(void)
 	/* Keys[TC_F6]	= ; */
 	Keys[TC_F7]	= ZMAKE;
 	Keys[TC_F8]	= ZGREP;
-	Keys[TC_F9]	= ZSETBOOKMRK;
-	Keys[TC_F10]	= ZNXTBOOKMRK;
+	Keys[TC_F9]	= ZSET_BOOKMARK;
+	Keys[TC_F10]	= ZNEXT_BOOKMARK;
 	/* Keys[TC_F11] = ; */
 	Keys[TC_F12]	= ZREVERTFILE;
 }
@@ -235,7 +235,7 @@ static bool bindone(char *prompt, int first, int *key)
 			*key += 128;
 		else
 			return false;
-	else if (first && Keys[*key] == ZCTRLX) {
+	else if (first && Keys[*key] == ZCTRL_X) {
 		if (bindone("Key: C-X ", false, key))
 			*key += 256;
 		else
@@ -244,6 +244,15 @@ static bool bindone(char *prompt, int first, int *key)
 	return true;
 }
 
+/***
+ * Binds a function to a key. It first prompts, with command completion,
+ * for the command to bind. It then prompts for the key to bind the command
+ * to. The Meta and C-X prefix keys are entered, Bind prompts for another
+ * key. The Abort command exits any prompt. The Quote command can be used
+ * to rebind the Abort, Quote, C-X, and Meta commands. A Universal Argument
+ * causes the Bind command to reset all the default arguments.  Keys can be
+ * "unbound" by binding them to the NULL command.
+ */
 void Zbind(void)
 {
 	int f, key;
@@ -277,7 +286,7 @@ void Zkeybind(void)
 	putpaw("Key: ");
 	raw = tgetcmd();
 	key = Keys[raw];
-	if (key == ZCTRLX) {
+	if (key == ZCTRL_X) {
 		putpaw("Key: C-X ");
 		raw = tgetcmd() + 256;
 		key = Keys[raw];
@@ -304,7 +313,11 @@ bool notdup_key(int k)
 		Keys[k] != Keys[k - ('a' - 'A')];
 }
 
-void Zcmdbind(void)
+/***
+ * Prompts for a command with command complete and gives a list of the keys
+ * the command is bound to. A Universal Argument is ignored.
+ */
+void Zbound_to(void)
 {
 	char line[STRMAX];
 	int f, k, found = 0;

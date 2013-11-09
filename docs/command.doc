@@ -17,11 +17,6 @@ always be at least one buffer. If the buffer has been modified, Zedit
 asks to save it before deleting it. A Universal Argument prompts for the
 buffer to delete.
 .sp 0
-:delete-window
-
-Deletes the current window and places you in the other window. You
-cannot delete the last window. A Universal Argument is ignored.
-.sp 0
 :display-bindings
 
 Inserts a list of the commands and their current bindings into the .list
@@ -74,13 +69,6 @@ Universal Arguments are ignored.
 
 Prompts for the completion of a grep command and then performs the
 grep command in the *grep* buffer.
-.sp 0
-:grow-window
-
-Makes the active window one line bigger, and therefore the inactive
-window one line smaller. A window cannot be less than three (3) lines.
-If there is only one window, this command has no effect. A Universal
-Argument causes the command to grow the window by that number of lines.
 .sp 0
 :help
 
@@ -199,34 +187,10 @@ If a Universal Argument is specified, Next Error tries to ignore warnings.
 Moves the Point to the start of the next paragraph. A Universal Argument
 causes the command to repeat.
 .sp 0
-:next-window
-
-Goes to the next window on the screen. The windows are treated as a
-circular list. A Universal Argument goes to the Nth next window.
-.sp 0
 :null
 
 Used to unbind a key. This is bound to all the unbound keys. A Universal
 Argument does nothing Arg times.
-.sp 0
-:one-window
-
-Makes the active window a full screen window. If there is only one
-window, this command has no effect. A Universal Argument is ignored.
-.sp 0
-:other-next-page
-
-Performs a Next Page command in the bottom window or the top window if
-you are in the bottom window. It leaves the Point where it is in the
-active window. If there is only one window, this command has no effect.
-A Universal Argument causes the command to page the Nth window.
-.sp 0
-:other-previous-page
-
-Performs a Previous Page command in the bottom window or the top window
-if you are in the bottom window. It leaves the Point where it is in the
-active window. If there is only one window, this command has no effect.
-A Universal Argument pages the Nth window.
 .sp 0
 :position
 
@@ -238,11 +202,6 @@ Argument is ignored.
 
 Moves the Point to the start of the paragraph or to the start of the
 previous paragraph. A Universal Argument causes the command to repeat.
-.sp 0
-:previous-window
-
-Goes to the previous window on the screen. The windows are treated as a
-circular list. A Universal Argument goes to the Nth previous window.
 .sp 0
 :quote
 
@@ -315,15 +274,6 @@ Show the current settings of all the Zedit variables in a buffer. The buffer
 is suitable for use as a .config.z file and can be saved to a file using Write
 File.
 .sp 0
-:shrink-window
-
-Shrinks the current window one line. A Universal Argument shrinks the
-window Arg lines.
-.sp 0
-:size-window
-
-Sets the window to Universal Argument lines.
-.sp 0
 :spell
 
 This command is an interactive interface to the "ispell" program. It
@@ -354,12 +304,6 @@ Removes all spaces and tabs on both sides of the Point. The Point is
 left on the character that is to the right of the deleted text. The
 deleted characters are not put in the Kill Buffer. A Universal Argument
 is ignored.
-.sp 0
-:two-windows
-
-Splits the current window into two windows. The same buffer is displayed in
-both windows and the bottom window is made active. A Universal Argument
-keeps splitting the current window.
 .sp 0
 :undent
 

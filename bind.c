@@ -145,14 +145,14 @@ void bind(void)
 	Keys[256 + 19]  = ZFILESAVE;		/* C-X C-S */
 /* C-X C-T */
 	Keys[256 + 21]  = ZUPREGION;		/* C-X C-U */
-	Keys[256 + 22]  = ZNXTOTHRWIND;		/* C-X C-V */
+	Keys[256 + 22]  = ZOTHER_NEXT_PAGE;		/* C-X C-V */
 	Keys[256 + 23]  = ZFILEWRITE;		/* C-X C-W */
 	Keys[256 + 24]  = ZSWAPMRK;		/* C-X C-X */
 /* C-X C-Y */
-	Keys[256 + 26]  = ZPREVOTHRWIND;	/* C-X C-Z */
+	Keys[256 + 26]  = ZOTHER_PREVIOUS_PAGE;	/* C-X C-Z */
 	Keys[256 + '='] = ZPRINTPOS;		/* C-X = */
-	Keys[256 + '1'] = Z1WIND;		/* C-X 1 */
-	Keys[256 + '2'] = Z2WIND;		/* C-X 2 */
+	Keys[256 + '1'] = ZONE_WINDOW;		/* C-X 1 */
+	Keys[256 + '2'] = ZSPLIT_WINDOW;		/* C-X 2 */
 /* C-X ( */
 /* C-X ) */
 	Keys[256 + 'A'] = Keys[256 + 'a'] = ZGLOBAL_SEARCH;		/* C-X A */
@@ -168,9 +168,9 @@ void bind(void)
 	Keys[256 + 'K'] = Keys[256 + 'k'] = ZKILLBUFF;		/* C-X K */
 	Keys[256 + 'L'] = Keys[256 + 'l'] = ZLSTBUFF;		/* C-X L */
 	Keys[256 + 'M'] = Keys[256 + 'm'] = ZSET_BOOKMARK;	/* C-X M */
-	Keys[256 + 'N'] = Keys[256 + 'n'] = ZNEXTWIND;		/* C-X N */
-	Keys[256 + 'O'] = Keys[256 + 'o'] = ZNEXTWIND;		/* C-X O */
-	Keys[256 + 'P'] = Keys[256 + 'p'] = ZPREVWIND;		/* C-X P */
+	Keys[256 + 'N'] = Keys[256 + 'n'] = ZNEXT_WINDOW;		/* C-X N */
+	Keys[256 + 'O'] = Keys[256 + 'o'] = ZNEXT_WINDOW;		/* C-X O */
+	Keys[256 + 'P'] = Keys[256 + 'p'] = ZPREVIOUS_WINDOW;		/* C-X P */
 /* C-X Q */
 /* C-X R */
 	Keys[256 + 'S'] = Keys[256 + 's'] = ZSAVEALL;		/* C-X S */
@@ -181,7 +181,7 @@ void bind(void)
 	Keys[256 + 'X'] = Keys[256 + 'x'] = ZNEXTBUFF;		/* C-X X */
 /* C-X Y */
 	Keys[256 + 'Z'] = Keys[256 + 'z'] = ZEXIT;		/* C-X Z */
-	Keys[256 + '^'] = ZGROWWINDOW;				/* C-X ^ */
+	Keys[256 + '^'] = ZGROW_WINDOWOW;				/* C-X ^ */
 
 	Keys[TC_UP]	= ZPREVIOUS_LINE;
 	Keys[TC_C_UP]	= ZPREVIOUS_PAGE;

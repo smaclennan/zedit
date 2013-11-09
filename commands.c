@@ -317,7 +317,7 @@ static void Zfillcomment(void)
 		return;
 
 	if (Curbuff->bmodf)
-		Zfilesave();
+		Zsave_file();
 
 	bmrktopnt(&tmark);
 
@@ -627,7 +627,7 @@ void Zexit(void)
  */
 void Zsave_and_exit(void)
 {
-	Zfilesave();
+	Zsave_file();
 	Zexit();
 }
 

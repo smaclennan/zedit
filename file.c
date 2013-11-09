@@ -38,13 +38,24 @@ static int get_findfile(char *prompt)
 	return getfname(prompt, Fname);
 }
 
-void Zfindfile(void)
+/***
+ * Prompts for a path name. If a buffer already exists with this path name,
+ * that buffer is switched to. If no buffer is matched, a new buffer is
+ * created and the file read into it. Supports file name completion. A
+ * Universal Argument causes the command to repeat.
+ */
+void Zfind_file(void)
 {
 	if (get_findfile("Find File: ") == 0)
 		findfile(Fname);
 }
 
-void Zrevertfile(void)
+/***
+ * Rereads the current file. If the file has changed, asks to overwrite
+ * changes. A Universal Argument causes multiple rereads. Mimics the vi "e"
+ * command.
+ */
+void Zrevert_file(void)
 {
 	unsigned long offset;
 
@@ -148,7 +159,11 @@ bool findfile(char *path)
 	return rc;
 }
 
-void Zsaveall(void)
+/***
+ * Saves all modified buffers. A Universal Argument causes ALL files to be
+ * saved, modified or not.
+ */
+void Zsave_all_files(void)
 {
 	if (Argp) {
 		struct buff *tbuff;
@@ -160,7 +175,12 @@ void Zsaveall(void)
 	saveall(true);
 }
 
-void Zfilesave(void)
+/***
+ * Saves the current buffer to its file. If the current buffer has no path
+ * name, a path name is prompted for (with file name completion). A
+ * Universal Argument is ignored.
+ */
+void Zsave_file(void)
 {
 	if (Argp)
 		saveall(false);
@@ -208,7 +228,13 @@ static int write_rgn(char *path)
 	return rc;
 }
 
-void Zfilewrite(void)
+/***
+ * Prompts for a path name and writes out the current buffer to this file
+ * name. Supports file name completion. It changes the path name of the
+ * current buffer to the new path name. A Universal Argument causes only
+ * the Region to be written and does not change the name of the buffer.
+ */
+void Zwrite_file(void)
 {
 	char path[PATHMAX + 1], *prompt;
 
@@ -225,7 +251,7 @@ void Zfilewrite(void)
 				free(Curbuff->fname);
 			Curbuff->fname = strdup(path);
 			Curbuff->mtime = 0;	/* this is no longer valid */
-			Zfilesave();
+			Zsave_file();
 			Curwdo->modeflags = INVALID;
 		}
 	}
@@ -257,7 +283,14 @@ static int fileread(char *fname)
 	return rc;
 }
 
-void Zfileread(void)
+/***
+ * Prompts for a path name, with file name completion,  and inserts the
+ * file into the current buffer before the Point. If there is a Universal
+ * Argument, the current buffer is deleted, first asking to save the file
+ * if it is modified, before reading in the new file. The buffers file name
+ * is not changed, any writes will be to the old file name.
+ */
+void Zread_file(void)
 {
 	if (get_findfile("Read File: "))
 		return;

@@ -108,7 +108,7 @@ void bind(void)
 	Keys[128 + 'L'] = Keys[128 + 'l'] = ZLOWWORD;
 	Keys[128 + 'M'] = Keys[128 + 'm'] = ZFILLPARA;
 	Keys[128 + 'N'] = Keys[128 + 'n'] = ZFPARA;
-	Keys[128 + 'O'] = Keys[128 + 'o'] = ZREVERTFILE;
+	Keys[128 + 'O'] = Keys[128 + 'o'] = ZREVERT_FILE;
 	Keys[128 + 'P'] = Keys[128 + 'p'] = ZBPARA;
 	Keys[128 + 'Q'] = Keys[128 + 'q'] = ZQUOTE;
 	Keys[128 + 'R'] = Keys[128 + 'r'] = ZQUERY_REPLACE;
@@ -124,12 +124,12 @@ void bind(void)
 
 	/* Init the CTRL-X functions */
 
-	Keys[256 +  1]  = ZSAVEALL;		/* C-X C-A */
+	Keys[256 +  1]  = ZSAVE_ALL_FILES;		/* C-X C-A */
 	Keys[256 +  2]  = ZSWITCHTO;		/* C-X C-B */
 	Keys[256 +  3]  = ZEXIT;		/* C-X C-C */
 	Keys[256 +  4]  = ZKILLBUFF;		/* C-X C-D */
 /* C-X C-E */
-	Keys[256 +  6]  = ZFINDFILE;		/* C-X C-F */
+	Keys[256 +  6]  = ZFIND_FILE;		/* C-X C-F */
 	Keys[256 +  7]  = ZABORT;		/* C-X C-G */
 	Keys[256 +  8]  = ZHEXOUT;		/* C-X C-H */
 /* C-X C-I */
@@ -141,12 +141,12 @@ void bind(void)
 	Keys[256 + 15]  = ZOUT_TO;		/* C-X C-O */
 	Keys[256 + 16]  = ZMRKPARA;		/* C-X C-P */
 /* C-X C-Q */
-	Keys[256 + 18]  = ZFILEREAD;		/* C-X C-R */
-	Keys[256 + 19]  = ZFILESAVE;		/* C-X C-S */
+	Keys[256 + 18]  = ZREAD_FILE;		/* C-X C-R */
+	Keys[256 + 19]  = ZSAVE_FILE;		/* C-X C-S */
 /* C-X C-T */
 	Keys[256 + 21]  = ZUPREGION;		/* C-X C-U */
 	Keys[256 + 22]  = ZOTHER_NEXT_PAGE;		/* C-X C-V */
-	Keys[256 + 23]  = ZFILEWRITE;		/* C-X C-W */
+	Keys[256 + 23]  = ZWRITE_FILE;		/* C-X C-W */
 	Keys[256 + 24]  = ZSWAPMRK;		/* C-X C-X */
 /* C-X C-Y */
 	Keys[256 + 26]  = ZOTHER_PREVIOUS_PAGE;	/* C-X C-Z */
@@ -173,11 +173,11 @@ void bind(void)
 	Keys[256 + 'P'] = Keys[256 + 'p'] = ZPREVIOUS_WINDOW;		/* C-X P */
 /* C-X Q */
 /* C-X R */
-	Keys[256 + 'S'] = Keys[256 + 's'] = ZSAVEALL;		/* C-X S */
+	Keys[256 + 'S'] = Keys[256 + 's'] = ZSAVE_ALL_FILES;		/* C-X S */
 	Keys[256 + 'T'] = Keys[256 + 't'] = ZDELWHITE;		/* C-X T */
 	Keys[256 + 'U'] = Keys[256 + 'u'] = ZUNDENT;		/* C-X U */
 	Keys[256 + 'V'] = Keys[256 + 'v'] = ZSETAVAR;		/* C-X V */
-	Keys[256 + 'W'] = Keys[256 + 'w'] = ZFILEWRITE;		/* C-X W */
+	Keys[256 + 'W'] = Keys[256 + 'w'] = ZWRITE_FILE;		/* C-X W */
 	Keys[256 + 'X'] = Keys[256 + 'x'] = ZNEXTBUFF;		/* C-X X */
 /* C-X Y */
 	Keys[256 + 'Z'] = Keys[256 + 'z'] = ZEXIT;		/* C-X Z */
@@ -206,7 +206,7 @@ void bind(void)
 	Keys[TC_INSERT]	= ZOVERIN;
 	Keys[TC_DELETE]	= ZDELETE_CHAR;
 
-	Keys[TC_F1]	= ZFINDFILE;
+	Keys[TC_F1]	= ZFIND_FILE;
 	Keys[TC_F2]	= ZSEARCH;
 	Keys[TC_F3]	= ZAGAIN;
 	Keys[TC_F4]	= ZNEXTERR;
@@ -217,7 +217,7 @@ void bind(void)
 	Keys[TC_F9]	= ZSET_BOOKMARK;
 	Keys[TC_F10]	= ZNEXT_BOOKMARK;
 	/* Keys[TC_F11] = ; */
-	Keys[TC_F12]	= ZREVERTFILE;
+	Keys[TC_F12]	= ZREVERT_FILE;
 }
 
 static bool bindone(char *prompt, int first, int *key)

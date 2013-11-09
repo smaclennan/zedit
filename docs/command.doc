@@ -46,13 +46,6 @@ reformats the next Arg paragraphs. A Universal Argument of 0 reformats
 the entire buffer. When reformatting the entire buffer, hitting a
 character will abort the reformat. Not allowed in program mode buffers.
 .sp 0
-:find-file
-
-Prompts for a path name. If a buffer already exists with this path name,
-that buffer is switched to. If no buffer is matched, a new buffer is
-created and the file read into it. Supports file name completion. A
-Universal Argument causes the command to repeat.
-.sp 0
 :find-tag
 
 Prompts for a string argument, with the current buffer word as the
@@ -215,29 +208,10 @@ hit within approximately one second, "Quote:" is displayed in the echo
 window. The Quote command does not work within a Universal Argument. A
 Universal Argument inserts Arg characters.
 .sp 0
-:read-file
-
-Prompts for a path name, with file name completion,  and inserts the
-file into the current buffer before the Point. If there is a Universal
-Argument, the current buffer is deleted, first asking to save the file
-if it is modified, before reading in the new file. The buffers file name
-is not changed, any writes will be to the old file name.
-.sp 0
 :reference
 
 Prompts for a tag and then runs the 'ref' command on it. See the
 documentation for `elvis'.
-.sp 0
-:revert-file
-
-Rereads the current file. If the file has changed, asks to overwrite
-changes. A Universal Argument causes multiple rereads. Mimics the vi "e"
-command.
-.sp 0
-:save-all-files
-
-Saves all modified buffers. A Universal Argument causes ALL files to be
-saved, modified or not.
 .sp 0
 :save-bindings
 
@@ -245,12 +219,6 @@ A key bound with the Bind command only stays in effect for the duration
 of the edit session. The Save Bindings command is used to permanently
 save any new bindings in the bindings file. A Universal Argument
 causes Arg saves!
-.sp 0
-:save-file
-
-Saves the current buffer to its file. If the current buffer has no path
-name, a path name is prompted for (with file name completion). A
-Universal Argument is ignored.
 .sp 0
 :set-mark
 
@@ -332,11 +300,4 @@ buffer itself. A Universal Argument is ignored.
 
 Convert the Region to uppercase. Not allowed in program mode buffers. A
 Universal Argument is ignored.
-.sp 0
-:write-file
-
-Prompts for a path name and writes out the current buffer to this file
-name. Supports file name completion. It changes the path name of the
-current buffer to the new path name. A Universal Argument causes only
-the Region to be written and does not change the name of the buffer.
 .sp 0

@@ -91,7 +91,7 @@ void Zkillbuff(void)
 		case ABORT:
 			return;
 		case YES:
-			Zfilesave();
+			Zsave_file();
 		}
 	delbuff(Curbuff);
 }

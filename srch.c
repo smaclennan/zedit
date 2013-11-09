@@ -95,7 +95,7 @@ again:
 				}
 			} else
 				tbell();
-		} else if (Keys[cmd] == ZRDELCHAR) {
+		} else if (Keys[cmd] == ZDELETE_PREVIOUS_CHAR) {
 			if (i > 0) {
 				bpnttomrk(&marks[--i]);
 				str[i] = '\0';

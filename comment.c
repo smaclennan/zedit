@@ -136,6 +136,13 @@ static void scanbuffer(void)
 /* The following are called by the innerdsp routine. */
 static struct comment *start;
 
+/* Was the last command a delete of any type? */
+static bool delcmdall(void)
+{
+	return delcmd() || Lfunc == ZDELETE_CHAR || Lfunc == ZDELETE_PREVIOUS_CHAR;
+}
+
+
 /* Called from innerdsp before display loop */
 void resetcomments(void)
 {

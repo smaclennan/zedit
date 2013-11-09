@@ -1,15 +1,3 @@
-:copy-region
-
-Copies the region to the kill buffer. The kill buffer is overwritten
-unless the the delete flag is set. See Append Kill command.
-.sp 0
-:copy-word
-
-Copies the word the Point is on to the kill buffer. The kill buffer is
-overwritten unless the the delete flag is set.In the PAW, the Copy Word
-command takes the word the Point was on in the previously active window
-and inserts it into the PAW.
-.sp 0
 :count
 
 Count the number of lines, words, and characters in the region. A
@@ -22,12 +10,6 @@ files will be relative to the new working directory. The default is the
 directory the editor was started in. A Universal Argument causes the
 command to repeat.
 .sp 0
-:delete-blanks
-
-Delete all the blank lines around the Point. The lines are not put in
-the Kill Buffer. A Universal Argument causes the command to repeat,
-which accomplishes nothing.
-.sp 0
 :delete-buffer
 
 Deletes the current buffer and goes to a previous buffer. There must
@@ -35,55 +17,10 @@ always be at least one buffer. If the buffer has been modified, Zedit
 asks to save it before deleting it. A Universal Argument prompts for the
 buffer to delete.
 .sp 0
-:delete-character
-
-Deletes the character at the Point and leaves the Point on the next
-character in the buffer. The character is not put in the Kill Buffer. A
-Universal Argument causes the command to repeat.
-.sp 0
-:delete-line
-
-Deletes the entire line, including the Newline, no matter where the
-Point is in the line. The Point is left at the start of the next line.
-The deleted line is put in the Kill Buffer. A Universal Argument causes
-the command to repeat.
-.sp 0
-:delete-previous-character
-
-Deletes the character before the Point and leaves the Point in the same
-place. The character is not put in the Kill Buffer. A Universal Argument
-causes the command to repeat.
-.sp 0
-:delete-previous-word
-
-Deletes the word to the left of the Point. The character the Point is on
-is not deleted. The word is put in the Kill Buffer. A Universal Argument
-causes the command to repeat.
-.sp 0
-:delete-region
-
-Deletes the characters in the region. The deleted characters are put in
-the Kill Buffer based on the delete flag. A Universal Argument is
-ignored.
-.sp 0
-:delete-to-eol
-
-Deletes the characters from the Point to the end of the line. If the
-Point is at the end of a line, the Newline character is deleted and the
-next line is joined to the end of the current line. The characters
-deleted are put in the Kill Buffer. A Universal Argument causes the
-command to repeat.
-.sp 0
 :delete-window
 
 Deletes the current window and places you in the other window. You
 cannot delete the last window. A Universal Argument is ignored.
-.sp 0
-:delete-word
-
-Deletes the word to the right of and including the Point. The word is
-put in the Kill Buffer. A Universal Argument causes the command to
-repeat.
 .sp 0
 :display-bindings
 
@@ -92,11 +29,6 @@ buffer. It deletes the contents of the .list buffer. Keys bound to NULL
 or Insert are not displayed. The PAW column displays if the command is allowed in the PAW.
 
 A Universal Argument prompts for an output file to put the list in.
-.sp 0
-:empty-buffer
-
-Deletes the entire contents of the current buffer. A Universal Arguments
-is ignored.
 .sp 0
 :exit
 
@@ -221,12 +153,6 @@ Toggles the current buffers minor mode between Insert, the default, and
 overwrite modes. On the PC the cursor shape reflects the mode. Insert
 mode has an underline cursor while overwrite mode has a block cursor. A
 Universal Argument is ignored.
-.sp 0
-:join
-
-Joins two lines. Performs the following Zedit commands:
-.ce
-End of Line, Delete Newline, Trim Whitespace, Insert space.
 .sp 0
 :key-binding
 

@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
 	FILE *fp;
 	char buff[ BUFSIZ ];
-	int err = 1, i;
+	int err = 1, i, n, maxlen = 0;
 
 	if(argc < 3 || (*argv[1] != 'c' && *argv[1] != 'v')) {
 		puts("usage: zhsort {c | v} file");
@@ -41,9 +41,14 @@ int main(int argc, char *argv[])
 				fprintf( stderr, "%s: %s not found\n", argv[2], Cnames[i].name);
 			} else {
 				printf(":%s\n", Cnames[i].name);
+				fputc('\n', stdout);
 				fputs(cmd_docs[i], stdout);
+				fputs(".sp 0\n", stdout);
+				n = strlen(cmd_docs[i]); // SAM DBG
+				if (n > maxlen) maxlen = i; // SAM DBG
 			}
-			break;
+		fprintf(stderr, "Max length %d\n", maxlen); // SAM DBG
+		break;
 
 	case 'v':
 		err = process(fp, VARIABLES);
@@ -85,12 +90,16 @@ static bool process(FILE *fp, int type)
 	int err = 0, i, func = -1;
 	long loc = 0;
 
+	*doc_buffer = '\0';
+
 	while( fgets(buff, BUFSIZ, fp) )
 	{
 		if( *buff == ':' )
 		{
-			if (func != -1)
+			if (func != -1) {
 				cmd_docs[func] = strdup(doc_buffer);
+				*doc_buffer = '\0';
+			}
 			func = -1;
 
 			massage(buff);
@@ -100,7 +109,10 @@ static bool process(FILE *fp, int type)
 				for( i = 0; i < NUMFUNCS; ++i ) {
 					if( strcmp(Cnames[i].name, &buff[1]) == 0 )
 					{	/* found it! */
-						func = i;
+						if (cmd_docs[i])
+							fprintf(stderr, "DUP %s\n", Cnames[i].name);
+						else
+							func = i;
 						break;
 					}
 				}
@@ -108,7 +120,13 @@ static bool process(FILE *fp, int type)
 				{
 					fprintf(stderr, "unknown command: '%s'\n", &buff[1]);
 					err = true;
-				}
+				} else if (fgets(buff, BUFSIZ, fp))
+					if (*buff != '\n') {
+						fprintf(stderr,
+							"Empty line missing for %s\n",
+							Cnames[i].name);
+						exit(1);
+					}
 				break;
 
 			case VARIABLES:
@@ -125,7 +143,7 @@ static bool process(FILE *fp, int type)
 				}
 				break;
 			}
-		} else if (func != -1)
+		} else if (strncmp(buff, ".sp 0", 4) && func != -1)
 			strcat(doc_buffer, buff);
 		loc = ftell( fp );
 	}
@@ -186,7 +204,7 @@ static void process_one_file(char *fname)
 
 	char line[128], *p;
 	while (fgets(line, sizeof(line), fp))
-		if (strncmp(line, "/**", 3) == 0) {
+		if (strncmp(line, "/***", 4) == 0) {
 			*doc_buffer = '\0';
 			while (fgets(line, sizeof(line), fp))
 				if (strncmp(line, " */", 3) == 0)

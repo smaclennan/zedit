@@ -354,7 +354,7 @@ static char *setmodes(struct buff *buff)
 		break;
 	case TEXT:
 		strcpy(PawStr, "Text");
-		Keys[' '] = Keys[CR] = ZFILLCHK;
+		Keys[' '] = Keys[CR] = ZFILL_CHECK;
 		break;
 	default:
 		strcpy(PawStr, "Normal");

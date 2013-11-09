@@ -230,7 +230,7 @@ void Zswap_mark(void)
 
 	Arg = 0;
 	mrktomrk(&tmark, Curbuff->mark);
-	Zsetmrk();
+	Zset_mark();
 	bpnttomrk(&tmark);
 }
 

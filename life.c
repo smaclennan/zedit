@@ -262,6 +262,9 @@ static void fill_matrix1(char *p1)
 	}
 }
 
+/***
+ * Destructively plays the game of Life on the current buffer.
+ */
 void Zlife(void)
 {
 	bool go = true, step = true;

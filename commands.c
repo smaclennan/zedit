@@ -149,7 +149,7 @@ void Zcenter(void)
 	int tmp;
 
 	tobegline();
-	Zdelwhite();
+	Ztrim_white_space();
 	toendline();
 	tmp = bgetcol(true, 0);
 	if (tmp <= VAR(VFILLWIDTH)) {
@@ -196,7 +196,7 @@ void Zc_insert(void)
 					cnt = bgetcol(true, 0);
 					bpnttomrk(tmark);
 					if (crfound) {
-						Zdelwhite();
+						Ztrim_white_space();
 						tindent(cnt);
 					}
 					binsert(Cmd);
@@ -308,7 +308,7 @@ void Zc_indent(void)
  *			...
  *		[<ws>] [*] <end_comment> [<text>]
  */
-static void Zfillcomment(void)
+static void zfillcomment(void)
 {
 	struct mark *start, *end, *tmp, tmark;
 	int col;
@@ -338,17 +338,17 @@ static void Zfillcomment(void)
 		error("Unable to find end of comment.");
 		return;
 	}
-	Zdelwhite();
+	Ztrim_white_space();
 	tindent(col);
 	bcrsearch(NL);
 	end = bcremrk();
 
 	/* Remove leading ws and '*'s */
 	for (bpnttomrk(start); bisbeforemrk(end); bcsearch(NL)) {
-		Zdelwhite();
+		Ztrim_white_space();
 		if (*Curcptr == '*') {
 			bdelete(1);
-			Zdelwhite();
+			Ztrim_white_space();
 		}
 	}
 
@@ -356,12 +356,12 @@ static void Zfillcomment(void)
 	bpnttomrk(start);
 	do {	/* mark the end of the paragraph and move the point to
 		 * the start */
-		Zfpara();
+		Znext_paragraph();
 		movepast(bisspace, BACKWARD);
 		tmp = bcremrk();
 		if (mrkaftermrk(tmp, end))
 			mrktomrk(tmp, end);
-		Zbpara();
+		Zprevious_paragraph();
 		if (bisbeforemrk(start))
 			bpnttomrk(start);
 		tindent(col); binstr("* ");
@@ -371,7 +371,7 @@ static void Zfillcomment(void)
 			moveto(bisspace, FORWARD);
 			if (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
 				moveto(bisspace, BACKWARD);
-				Zdelwhite();
+				Ztrim_white_space();
 				binsert(NL);
 				tindent(col); binstr("* ");
 			}
@@ -379,7 +379,7 @@ static void Zfillcomment(void)
 			if (*Curcptr == NL && bisbeforemrk(tmp)) {
 				/* convert NL to space */
 				bdelete(1);
-				Zdelwhite();
+				Ztrim_white_space();
 				binsert(' ');
 			}
 		}
@@ -402,7 +402,13 @@ static void Zfillcomment(void)
 
 /* FILL MODE COMMANDS */
 
-void Zfillchk(void)
+/***
+ * Checks if the current column is past the FillWidth column. If it is, the
+ * words past or on the FillWidth column are wrapped. This gives some word
+ * processing capability to the editor. Normally bound to the space bar and
+ * Newline only in Text Mode. A Universal Argument has no meaning.
+ */
+void Zfill_check(void)
 {
 	bool tmp;
 	struct mark *tmark;
@@ -417,7 +423,7 @@ void Zfillchk(void)
 			moveto(bisspace, BACKWARD);
 			movepast(bisspace, BACKWARD);
 		}
-		Zdelwhite();
+		Ztrim_white_space();
 		tmp = !bisatmrk(tmark);
 		binsert(NL);
 		tindent(VAR(VMARGIN));
@@ -429,7 +435,13 @@ void Zfillchk(void)
 	}
 }
 
-void Zdelwhite(void)
+/***
+ * Removes all spaces and tabs on both sides of the Point. The Point is
+ * left on the character that is to the right of the deleted text. The
+ * deleted characters are not put in the Kill Buffer. A Universal Argument
+ * is ignored.
+ */
+void Ztrim_white_space(void)
 {
 	while (!bisend() && biswhite())
 		bdelete(1);
@@ -444,14 +456,20 @@ void Zdelwhite(void)
 	}
 }
 
-/* Not reentrant - must iterate for arg */
-void Zfillpara(void)
-{
+/***
+ * Uses the FillWidth to reformat the paragraph the Point is in. This is
+ * useful if editing has messed up the right margin. A Universal Argument
+ * reformats the next Arg paragraphs. A Universal Argument of 0 reformats
+ * the entire buffer. When reformatting the entire buffer, hitting a
+ * character will abort the reformat. Not allowed in program mode buffers.
+ */
+void Zfill_paragraph(void)
+{	/* Not reentrant - must iterate for arg */
 	bool all;
 	struct mark *tmark, *tmp;
 
 	if (Curbuff->bmode & CMODE) {
-		Zfillcomment();
+		zfillcomment();
 		return;
 	}
 	if (Curbuff->bmode & PROGMODE) {
@@ -467,10 +485,10 @@ void Zfillpara(void)
 	do {
 		/* mark the end of the paragraph and move the point to
 		 * the start */
-		Zfpara();
+		Znext_paragraph();
 		movepast(bisspace, BACKWARD);
 		tmp = bcremrk();
-		Zbpara();
+		Zprevious_paragraph();
 		if (*Curcptr == '.')
 			bcsearch('\n');	/* for nroff */
 
@@ -479,7 +497,7 @@ void Zfillpara(void)
 			moveto(bisspace, FORWARD);
 			if (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
 				moveto(bisspace, BACKWARD);
-				Zdelwhite();
+				Ztrim_white_space();
 				binsert(NL);
 				if (VAR(VMARGIN))
 					tindent(VAR(VMARGIN));
@@ -488,7 +506,7 @@ void Zfillpara(void)
 			movepast(biswhite, FORWARD);
 			if (*Curcptr == NL && bisbeforemrk(tmp)) {
 				bdelete(1);
-				Zdelwhite();
+				Ztrim_white_space();
 				binsert(' ');
 			}
 		}
@@ -507,7 +525,7 @@ void Zfillpara(void)
 	unmark(tmark);
 }
 
-static bool Ispara(char pc, char ch)
+static bool ispara(char pc, char ch)
 {
 	/* We consider a FF, VT, or two NLs in a row to mark a paragraph.
 	 * A '.' at the start of a line also marks a paragraph (for nroff)
@@ -516,26 +534,34 @@ static bool Ispara(char pc, char ch)
 		(pc == NL && (ch == NL || ch == '.'));
 }
 
-void Zfpara(void)
+/***
+ * Moves the Point to the start of the next paragraph. A Universal Argument
+ * causes the command to repeat.
+ */
+void Znext_paragraph(void)
 {
 	char pc = '\0';
 
 	/* Only go back if between paras */
 	if (bisspace())
 		movepast(bisspace, BACKWARD);
-	while (!bisend() && !Ispara(pc, *Curcptr)) {
+	while (!bisend() && !ispara(pc, *Curcptr)) {
 		pc = *Curcptr;
 		bmove1();
 	}
 	movepast(bisspace, FORWARD);
 }
 
-void Zbpara(void)
+/***
+ * Moves the Point to the start of the paragraph or to the start of the
+ * previous paragraph. A Universal Argument causes the command to repeat.
+ */
+void Zprevious_paragraph(void)
 {
 	char pc = '\0';
 
 	movepast(bisspace, BACKWARD);
-	while (!bisstart() && !Ispara(*Curcptr, pc)) {
+	while (!bisstart() && !ispara(*Curcptr, pc)) {
 		pc = *Curcptr;
 		bmove(-1);
 	}
@@ -544,7 +570,12 @@ void Zbpara(void)
 
 /* MISC COMMANDS */
 
-void Zprintpos(void)
+/***
+ * Displays the current Point position as a line, column, and byte offset
+ * in the echo window. Also displays the length of the buffer. A Universal
+ * Argument is ignored.
+ */
+void Zposition(void)
 {
 	unsigned long mark, point;
 	unsigned line;
@@ -557,15 +588,20 @@ void Zprintpos(void)
 	       line, bgetcol(false, 0) + 1, point, mark, blength(Curbuff));
 }
 
-
-/* Key has no binding */
+/***
+ * Used to unbind a key. This is bound to all the unbound keys. A Universal
+ * Argument does nothing Arg times.
+ */
 void Znotimpl(void)
 {
 	tbell();
 }
 
 
-void Zsetmrk(void)
+/***
+ * Sets the Mark at the Point. A Universal Argument is ignored.
+ */
+void Zset_mark(void)
 {
 	bmrktopnt(Curbuff->mark);
 	putpaw("Mark Set.");
@@ -717,7 +753,11 @@ static void mshow(unsigned ch)
 	}
 }
 
-/* Self inserting commands */
+/***
+ * Normally bound to the printable characters, causes the character to be
+ * inserted in the buffer. A Universal Argument causes the command to
+ * repeat.
+ */
 void Zinsert(void)
 {
 	if (Curbuff->bmode & OVERWRITE) {
@@ -729,11 +769,11 @@ void Zinsert(void)
 	mshow(Cmd);
 }
 
-/*
- * Handle the CR or NL keys.
+/***
+ * The command normally bound to the Enter or Return key.
  * In overwrite mode, a NL goes to start of next line.
  * In insert mode, its just inserted.
- * This also causes the current line of text to be sent to the down the pipe.
+ * A Universal Argument causes the command to repeat.
  */
 void Znewline(void)
 {
@@ -1153,10 +1193,10 @@ void toggle_mode(int mode)
 void Zmrkpara(void)
 {
 	bmove1();	/* make sure we are not at the start of a paragraph */
-	Zbpara();
+	Zprevious_paragraph();
 	bmrktopnt(Curbuff->mark);
 	while (Arg-- > 0)
-		Zfpara();
+		Znext_paragraph();
 	Arg = 0;
 }
 

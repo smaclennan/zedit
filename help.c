@@ -181,6 +181,27 @@ static void help(int code, bool func)
 	}
 }
 
+/***
+ * .(b C
+ * - Zedit Help -
+ *
+ *
+ * Bindings
+ * Buffer/Window
+ * Copy/Delete
+ * Cursor
+ * Display
+ * File
+ * Help/Status
+ * Macro
+ * Mode
+ * Search/Replace
+ * Shell
+ * Other
+ *
+ * Variables
+ * .)b
+ */
 void Zhelp(void)
 {
 	static Byte level = 0, z;

@@ -31,21 +31,6 @@ Exits from the editor. It asks to save all modified buffers. A bang
 (!) saves all remaining buffers. A Universal Argument causes all
 modified buffers to be saved without prompting.
 .sp 0
-:fill-check
-
-Checks if the current column is past the FillWidth column. If it is, the
-words past or on the FillWidth column are wrapped. This gives some word
-processing capability to the editor. Normally bound to the space bar and
-Newline only in Text Mode. A Universal Argument has no meaning.
-.sp 0
-:fill-paragraph
-
-Uses the FillWidth to reformat the paragraph the Point is in. This is
-useful if editing has messed up the right margin. A Universal Argument
-reformats the next Arg paragraphs. A Universal Argument of 0 reformats
-the entire buffer. When reformatting the entire buffer, hitting a
-character will abort the reformat. Not allowed in program mode buffers.
-.sp 0
 :find-tag
 
 Prompts for a string argument, with the current buffer word as the
@@ -63,28 +48,6 @@ Universal Arguments are ignored.
 Prompts for the completion of a grep command and then performs the
 grep command in the *grep* buffer.
 .sp 0
-:help
-
-.(b C
-- Zedit Help -
-
-
-Bindings
-Buffer/Window
-Copy/Delete
-Cursor
-Display
-File
-Help/Status
-Macro
-Mode
-Search/Replace
-Shell
-Other
-
-Variables
-.)b
-.sp 0
 :hex-output
 
 Displays the character at the Point as a hexadecimal number in the PAW.
@@ -94,12 +57,6 @@ maximum of 25. The Point is moved forward by the argument characters.
 :indent
 
 Indents the marked region Universal Argument tab stops.
-.sp 0
-:insert-character
-
-Normally bound to the printable characters, causes the character to be
-inserted in the buffer. A Universal Argument causes the command to
-repeat.
 .sp 0
 :insert-overwrite
 
@@ -117,10 +74,6 @@ PAW. Handles C-X and M- prefixes. A Universal Argument is ignored.
 
 Kills the current make. The command must wait for the make to die before
 it can continue. Unix only.
-.sp 0
-:life
-
-Plays the game of Life on the current buffer.
 .sp 0
 :list-buffers
 
@@ -154,11 +107,6 @@ Change the mode of the current buffer. Prompts (with command completion)
 for the mode to change to.  A Universal Argument causes multiple
 toggles.
 .sp 0
-:newline
-
-The command normally bound to the Enter or Return key. A Universal
-Argument causes the command to repeat.
-.sp 0
 :next-buffer
 
 Switches to the next buffer in the buffer list. At the end of the list,
@@ -174,27 +122,6 @@ loaded into a buffer using the Find File command and the Point is placed
 at the error line.
 
 If a Universal Argument is specified, Next Error tries to ignore warnings.
-.sp 0
-:next-paragraph
-
-Moves the Point to the start of the next paragraph. A Universal Argument
-causes the command to repeat.
-.sp 0
-:null
-
-Used to unbind a key. This is bound to all the unbound keys. A Universal
-Argument does nothing Arg times.
-.sp 0
-:position
-
-Displays the current Point position as a line, column, and byte offset
-in the echo window. Also displays the length of the buffer. A Universal
-Argument is ignored.
-.sp 0
-:previous-paragraph
-
-Moves the Point to the start of the paragraph or to the start of the
-previous paragraph. A Universal Argument causes the command to repeat.
 .sp 0
 :quote
 
@@ -219,10 +146,6 @@ A key bound with the Bind command only stays in effect for the duration
 of the edit session. The Save Bindings command is used to permanently
 save any new bindings in the bindings file. A Universal Argument
 causes Arg saves!
-.sp 0
-:set-mark
-
-Sets the Mark at the Point. A Universal Argument is ignored.
 .sp 0
 :set-variable
 
@@ -265,13 +188,6 @@ Handles the tab key. A Universal Argument causes the command to repeat.
 Switches the current buffers minor mode between case sensitive and case
 insensitive for searches and replacements. Ignores the Universal
 Argument.
-.sp 0
-:trim-white-space
-
-Removes all spaces and tabs on both sides of the Point. The Point is
-left on the character that is to the right of the deleted text. The
-deleted characters are not put in the Kill Buffer. A Universal Argument
-is ignored.
 .sp 0
 :undent
 

@@ -263,14 +263,13 @@ void Zdelete_blanks(void)
 
 /***
  * Joins two lines. Performs the following Zedit commands:
- * .ce
  * End of Line, Delete Newline, Trim Whitespace, Insert space.
  */
 void Zjoin(void)
 {
 	toendline();
 	bdelete(1);
-	Zdelwhite();
+	Ztrim_white_space();
 	binsert(' ');
 }
 

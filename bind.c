@@ -30,7 +30,7 @@ void bind(void)
 	memset(Keys, ZNOTIMPL, NUMKEYS);
 	memset(Keys, ZINSERT,  128);
 
-	Keys[0]  = ZSETMRK;		/* C-@ */
+	Keys[0]  = ZSET_MARK;		/* C-@ */
 	Keys[1]  = ZBEGINNING_OF_LINE;		/* C-A */
 	Keys[2]  = ZPREVIOUS_CHAR;		/* C-B */
 	Keys[3]  = ZCOPY_WORD;		/* C-C */ /**/
@@ -58,7 +58,7 @@ void bind(void)
 	Keys[25] = ZYANK;		/* C-Y */
 	Keys[26] = ZPREVIOUS_PAGE;		/* C-Z */ /**/
 	Keys[27] = ZMETA;		/* ESC */
-	Keys[28] = ZSETMRK;		/* C-\ */ /**/
+	Keys[28] = ZSET_MARK;		/* C-\ */ /**/
 	Keys[29] = ZOVERIN;		/* C-] */ /**/
 	Keys[30] = ZDELETE_BLANKS;		/* C-^ */ /**/
 	Keys[31] = ZUNDO;		/* C-_ */ /**/
@@ -106,10 +106,10 @@ void bind(void)
 	Keys[128 + 'J'] = Keys[128 + 'j'] = ZJOIN;
 	Keys[128 + 'K'] = Keys[128 + 'k'] = ZKILL;
 	Keys[128 + 'L'] = Keys[128 + 'l'] = ZLOWWORD;
-	Keys[128 + 'M'] = Keys[128 + 'm'] = ZFILLPARA;
-	Keys[128 + 'N'] = Keys[128 + 'n'] = ZFPARA;
+	Keys[128 + 'M'] = Keys[128 + 'm'] = ZFILL_PARAGRAPH;
+	Keys[128 + 'N'] = Keys[128 + 'n'] = ZNEXT_PARAGRAPH;
 	Keys[128 + 'O'] = Keys[128 + 'o'] = ZREVERT_FILE;
-	Keys[128 + 'P'] = Keys[128 + 'p'] = ZBPARA;
+	Keys[128 + 'P'] = Keys[128 + 'p'] = ZPREVIOUS_PARAGRAPH;
 	Keys[128 + 'Q'] = Keys[128 + 'q'] = ZQUOTE;
 	Keys[128 + 'R'] = Keys[128 + 'r'] = ZQUERY_REPLACE;
 	Keys[128 + 'S'] = Keys[128 + 's'] = ZSEARCH;
@@ -150,7 +150,7 @@ void bind(void)
 	Keys[256 + 24]  = ZSWAPMRK;		/* C-X C-X */
 /* C-X C-Y */
 	Keys[256 + 26]  = ZOTHER_PREVIOUS_PAGE;	/* C-X C-Z */
-	Keys[256 + '='] = ZPRINTPOS;		/* C-X = */
+	Keys[256 + '='] = ZPOSITION;		/* C-X = */
 	Keys[256 + '1'] = ZONE_WINDOW;		/* C-X 1 */
 	Keys[256 + '2'] = ZSPLIT_WINDOW;		/* C-X 2 */
 /* C-X ( */
@@ -174,7 +174,7 @@ void bind(void)
 /* C-X Q */
 /* C-X R */
 	Keys[256 + 'S'] = Keys[256 + 's'] = ZSAVE_ALL_FILES;		/* C-X S */
-	Keys[256 + 'T'] = Keys[256 + 't'] = ZDELWHITE;		/* C-X T */
+	Keys[256 + 'T'] = Keys[256 + 't'] = ZTRIM_WHITE_SPACE;		/* C-X T */
 	Keys[256 + 'U'] = Keys[256 + 'u'] = ZUNDENT;		/* C-X U */
 	Keys[256 + 'V'] = Keys[256 + 'v'] = ZSETAVAR;		/* C-X V */
 	Keys[256 + 'W'] = Keys[256 + 'w'] = ZWRITE_FILE;		/* C-X W */

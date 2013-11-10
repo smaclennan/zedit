@@ -28,4 +28,4 @@ echo "Create Appendix A"
 echo "Create Appendix B"
 ./doc2html -H "Appendix B: Variables" < var.tmp > app-b.html
 
-#rm help.head cmd.tmp var.tmp
+rm cmd.tmp var.tmp

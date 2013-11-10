@@ -39,13 +39,6 @@ default is on.
 This is the column at which the Text mode commands wrap the right
 margin. It is also used by the Center Line command. The default is 72.
 .sp 0
-:Flow Control
-
-On SYS3 and SYS5 machines, the flow control is user definable. If
-FlowControl is set, ^S and ^Q stop and start the terminal. However, the
-^S cannot be used as the Search command. If FlowControl is off, ^S can
-be used. The default is off.
-.sp 0
 :Grep
 
 The command to use for the Zedit grep command. The default is `grep -n'.

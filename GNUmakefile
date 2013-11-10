@@ -64,11 +64,6 @@ install:
 	mkdir -p $(DESTDIR)/bin
 	install -s ze $(DESTDIR)/bin/z
 
-install-docs:
-	docs/build
-	mkdir -p $(DESTDIR)/$(CONFIGDIR)
-	install -m 644 docs/help.z $(DESTDIR)$(CONFIGDIR)
-
 clean:
 	rm -f configure.h *.o ze fcheck core* TAGS valgrind.out func-docs.h
 	@make -C docs clean

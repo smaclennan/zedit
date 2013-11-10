@@ -4,5 +4,4 @@ fcheck
 TAGS
 configure.h
 valgrind.out
-help.z
 func-docs.h

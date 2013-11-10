@@ -25,16 +25,6 @@ $EXE c >cmd.tmp || { echo "Errors: aborted"; rm -f cmd.tmp; exit; }
 echo "Checking variables..."
 $EXE v variable.doc >var.tmp || { echo "Errors: aborted"; rm -f var.tmp; exit; }
 
-echo "Updating help.z"
-# SAM no top or bottom margins, long lines
-echo ".ll 78"	> help.head
-echo ".m1 0"	>>help.head
-echo ".m2 0"	>>help.head
-echo ".m3 0"	>>help.head
-echo ".m4 0"	>>help.head
-echo ":ZEDIT" | nroff -me help.head cmd.tmp var.tmp - |
-   ./zhack >help.z
-
 echo "Create Appendix A"
 ./doc2html -H "Appendix A: Commands" < cmd.tmp > app-a.html
 echo "Create Appendix B"

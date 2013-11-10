@@ -617,10 +617,10 @@ static void cleanup(void)
 	free(Cwd);
 }
 
-/* Exit the editor.
- * Warn about makes in progress.
- * If a buffer is modified, ask to write it out.
- * Dosen't save the system buffers.
+/***
+ * Exits from the editor. It asks to save all modified buffers. A bang
+ * (!) saves all remaining buffers. A Universal Argument causes all
+ * modified buffers to be saved without prompting.
  */
 void Zexit(void)
 {
@@ -787,7 +787,26 @@ void Znewline(void)
 #endif
 }
 
-void Zoverin(void)
+/***
+ * Handles the tab key. A Universal Argument causes the command to repeat.
+ */
+void Ztab(void)
+{
+	if (VAR(VSPACETAB)) {
+		int tcol = Tabsize - (bgetcol(false, 0) % Tabsize);
+		while (tcol-- > 0)
+			binsert(' ');
+	} else
+		binsert('\t');
+}
+
+/***
+ * Toggles the current buffers minor mode between Insert, the default, and
+ * overwrite modes. On the PC the cursor shape reflects the mode. Insert
+ * mode has an underline cursor while overwrite mode has a block cursor. A
+ * Universal Argument is ignored.
+ */
+void Zinsert_overwrite(void)
 {
 	Curbuff->bmode ^= OVERWRITE;
 	if (!InPaw)
@@ -795,7 +814,12 @@ void Zoverin(void)
 	Arg = 0;
 }
 
-void Zcase(void)
+/***
+ * Switches the current buffers minor mode between case sensitive and case
+ * insensitive for searches and replacements. Ignores the Universal
+ * Argument.
+ */
+void Ztoggle_case(void)
 {
 	Curbuff->bmode ^= EXACT;
 	if (InPaw && Insearch) {
@@ -806,6 +830,14 @@ void Zcase(void)
 	Arg = 0;
 }
 
+/***
+ * Many of the commands accept a Universal Argument to cause the command to
+ * repeat or to modify the meaning of the command in some way. It reads
+ * decimal digits and displays them in the PAW. The first non-digit is
+ * processed as a command. The digits cannot be deleted since Delete is a
+ * valid command that accepts a Universal Argument. If a mistake is made,
+ * use the Abort Command.
+ */
 void Zarg(void)
 {
 	char str[STRMAX], *p;
@@ -825,13 +857,9 @@ void Zarg(void)
 	CMD(Keys[Cmd]);
 }
 
-
-/* Process Meta (ESC) commands. */
-/* Note: The delayprompt for Zmeta doesn't work. The tgetkb in Tgetcmd
- * reads the ESC, but matches it in the term entries. It then waits
- * for a second key. This means we do not get to the Zmeta without a
- * key waiting and therefore the delayprompt exits immediately. It is
- * left in for when we add a timeout to the read in tgetkb. */
+/***
+ * Command prefix.
+ */
 void Zmeta(void)
 {
 	bool tmp;
@@ -887,6 +915,17 @@ void Zabort(void)
 		InPaw = ABORT;
 }
 
+/***
+ * The Quote command is used to insert a character into a buffer or String
+ * Argument that would normally be a command. The next character after the
+ * Quote command is taken literally, unless the key is a valid hexadecimal
+ * digit. If the key is a valid hexadecimal digit, it and the next key are
+ * taken together as a hexadecimal number and the ASCII character
+ * equivalent of this number is inserted into the buffer. If a key is not
+ * hit within approximately one second, "Quote:" is displayed in the echo
+ * window. The Quote command does not work within a Universal Argument. A
+ * Universal Argument inserts Arg characters.
+ */
 void Zquote(void)
 {
 	bool tmp;
@@ -910,7 +949,12 @@ void Zquote(void)
 	Arg = 0;
 }
 
-void Zhexout(void)
+/***
+ * Displays the character at the Point as a hexadecimal number in the PAW.
+ * A Universal Argument displays the next characters up to a
+ * maximum of 25. The Point is moved forward by the argument characters.
+ */
+void Zhex_output(void)
 {
 	char str[STRMAX], *p;
 
@@ -948,18 +992,6 @@ void Zswap_chars(void)
 	binsert(tmp);
 }
 
-void Ztab(void)
-{
-	int tcol;
-
-	if (VAR(VSPACETAB)) {
-		tcol = Tabsize - (bgetcol(false, 0) % Tabsize);
-		while (tcol-- > 0)
-			binsert(' ');
-	} else
-		binsert('\t');
-}
-
 void tobegline(void)
 {
 	if (bcrsearch(NL))
@@ -972,6 +1004,12 @@ void toendline(void)
 		bmove(-1);
 }
 
+/***
+ * This command allows you to change Zedit's current working directory. All
+ * files will be relative to the new working directory. The default is the
+ * directory the editor was started in. A Universal Argument causes the
+ * command to repeat.
+ */
 void Zcwd(void)
 {
 	char path[PATHMAX], *p;
@@ -989,6 +1027,10 @@ void Zcwd(void)
 	}
 }
 
+/***
+ * Count the number of lines, words, and characters in the region. A
+ * Universal Argument counts the entire buffer.
+ */
 void Zcount(void)
 {
 	bool word, swapped = false;
@@ -1041,6 +1083,11 @@ static struct _amode
 #define AMODESIZE	sizeof(struct _amode)
 #define NUMMODES	(sizeof(modes) / AMODESIZE)
 
+/***
+ * Change the mode of the current buffer. Prompts (with command completion)
+ * for the mode to change to.  A Universal Argument causes multiple
+ * toggles.
+ */
 void Zmode(void)
 {
 	int i, rc;
@@ -1190,7 +1237,12 @@ void toggle_mode(int mode)
 	}
 }
 
-void Zmrkpara(void)
+/***
+ * Sets the Mark to the start of the current paragraph and moves the Point
+ * to the start of the next paragraph. A Universal Argument causes the
+ * command to repeat.
+ */
+void Zmark_paragraph(void)
 {
 	bmove1();	/* make sure we are not at the start of a paragraph */
 	Zprevious_paragraph();
@@ -1227,12 +1279,20 @@ static void setregion(int (*convert)(int))
 	Zredisplay();
 }
 
-void Zupregion(void)
+/***
+ * Convert the Region to uppercase. Not allowed in program mode buffers. A
+ * Universal Argument is ignored.
+ */
+void Zuppercase_region(void)
 {
 	setregion(toupper);
 }
 
-void Zlowregion(void)
+/***
+ * Converts the Region to lowercase. Not allowed in program mode buffers. A
+ * Universal Argument is ignored.
+ */
+void Zlowercase_region(void)
 {
 	setregion(tolower);
 }
@@ -1267,16 +1327,27 @@ static void indent(bool flag)
 	}
 }
 
+/***
+ * Indents the marked region Universal Argument tab stops.
+ */
 void Zindent(void)
 {
 	indent(true);
 }
 
+/***
+ * Removes Universal Argument tabs from the start of every line in the
+ * region.
+ */
 void Zundent(void)
 {
 	indent(false);
 }
 
+/***
+ * Performs a 'setenv' command on an environment variable. The variable will
+ * keep the setting during the the Zedit session.
+ */
 void Zsetenv(void)
 {
 	char env[STRMAX + 2], set[STRMAX + 1], *p;

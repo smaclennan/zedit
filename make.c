@@ -42,7 +42,12 @@ static int set_cmd(int which, char *prompt)
 	return 1;
 }
 
-/* Do a "make" command - basically a shell command in the ".make" buffer */
+/***
+ * This command performs the command specified in the Make variable and
+ * puts the output in the ".make" buffer. The command is usually "make" and
+ * is used in conjunction with the Next Error command. A Universal Argument
+ * prompts for the command to execute.
+ */
 void Zmake(void)
 {
 	struct buff *mbuff;
@@ -71,7 +76,10 @@ void Zmake(void)
 		error("Unable to execute make.");
 }
 
-/* Do a "make" command - basically a shell command in the ".make" buffer */
+/***
+ * Prompts for the completion of a grep command and then performs the
+ * grep command in the *grep* buffer.
+ */
 void Zgrep(void)
 {
 	struct buff *mbuff;
@@ -117,7 +125,16 @@ void Zgrep(void)
 		error("Unable to execute grep.");
 }
 
-void Znexterr(void)
+/***
+ * Used after a Make command to search for error messages in the ".make"
+ * buffer. If an error is found, the Mark in the ".make" buffer is placed
+ * at the start of the error message. The file containing the error is
+ * loaded into a buffer using the Find File command and the Point is placed
+ * at the error line.
+ *
+ * If a Universal Argument is specified, Next Error tries to ignore warnings.
+ */
+void Znext_error(void)
 {
 	struct wdo *wdo;
 	struct buff *save, *mbuff;
@@ -163,7 +180,10 @@ void Znexterr(void)
 }
 
 #ifdef PIPESH
-/* kill the make */
+/***
+ * Kills the current make. The command must wait for the make to die before
+ * it can continue. Unix only.
+ */
 void Zkill(void)
 {
 	unvoke(cfindbuff(MAKEBUFF), false);

@@ -50,7 +50,7 @@ void bind(void)
 	Keys[17] = ZNOTIMPL;		/* C-Q */ /**/
 	Keys[18] = ZREVERSE_SEARCH;		/* C-R */
 	Keys[19] = ZINCREMENTAL_SEARCH;		/* C-S */
-	Keys[20] = ZSWAPCHAR;		/* C-T */
+	Keys[20] = ZSWAP_CHARS;		/* C-T */
 	Keys[21] = ZARG;		/* C-U */
 	Keys[22] = ZNEXT_PAGE;		/* C-V */
 	Keys[23] = ZDELETE_REGION;		/* C-W */
@@ -59,7 +59,7 @@ void bind(void)
 	Keys[26] = ZPREVIOUS_PAGE;		/* C-Z */ /**/
 	Keys[27] = ZMETA;		/* ESC */
 	Keys[28] = ZSET_MARK;		/* C-\ */ /**/
-	Keys[29] = ZOVERIN;		/* C-] */ /**/
+	Keys[29] = ZINSERT_OVERWRITE;		/* C-] */ /**/
 	Keys[30] = ZDELETE_BLANKS;		/* C-^ */ /**/
 	Keys[31] = ZUNDO;		/* C-_ */ /**/
 	/* 32 - 126 are ZINSERT */
@@ -81,18 +81,18 @@ void bind(void)
 	Keys[128 + '@'] = Keys[128 + '2'] = ZCMD_TO_BUFFER;
 	Keys[128 + '#'] = Keys[128 + '3'] = ZCALC;
 /*	Keys[128 + '&'] = Keys[128 + '7'] = ; */
-	Keys[128 + '*'] = Keys[128 + '8'] = ZUNMODF;
+	Keys[128 + '*'] = Keys[128 + '8'] = ZUNMODIFY;
 	Keys[128 + '('] = Keys[128 + '9'] = ZBEGINNING_OF_BUFFER;
 	Keys[128 + ')'] = Keys[128 + '0'] = ZEND_OF_BUFFER;
 /*	Keys[128 + ',']			  = ; */
-	Keys[128 + '.']			  = ZFINDTAG;
+	Keys[128 + '.']			  = ZFIND_TAG;
 	Keys[128 + '<']			  = ZBEGINNING_OF_BUFFER;
 	Keys[128 + '>']			  = ZEND_OF_BUFFER;
 #if SPELL
 	Keys[128 + '/'] = Keys[128 + '?'] = ZSPELL;
 #endif
-	Keys[128 + '_']			  = ZREF;
-	Keys[128 + '-']			  = ZFINDTAG;
+	Keys[128 + '_']			  = ZREFERENCE;
+	Keys[128 + '-']			  = ZFIND_TAG;
 	Keys[128 + '+'] = Keys[128 + '='] = ZAPPEND_KILL;
 	Keys[128 + 'A'] = Keys[128 + 'a'] = ZAGAIN;
 	Keys[128 + 'B'] = Keys[128 + 'b'] = ZPREVIOUS_WORD;
@@ -105,7 +105,7 @@ void bind(void)
 	Keys[128 + 'I'] = Keys[128 + 'i'] = ZTAB;
 	Keys[128 + 'J'] = Keys[128 + 'j'] = ZJOIN;
 	Keys[128 + 'K'] = Keys[128 + 'k'] = ZKILL;
-	Keys[128 + 'L'] = Keys[128 + 'l'] = ZLOWWORD;
+	Keys[128 + 'L'] = Keys[128 + 'l'] = ZLOWERCASE_WORD;
 	Keys[128 + 'M'] = Keys[128 + 'm'] = ZFILL_PARAGRAPH;
 	Keys[128 + 'N'] = Keys[128 + 'n'] = ZNEXT_PARAGRAPH;
 	Keys[128 + 'O'] = Keys[128 + 'o'] = ZREVERT_FILE;
@@ -113,41 +113,41 @@ void bind(void)
 	Keys[128 + 'Q'] = Keys[128 + 'q'] = ZQUOTE;
 	Keys[128 + 'R'] = Keys[128 + 'r'] = ZQUERY_REPLACE;
 	Keys[128 + 'S'] = Keys[128 + 's'] = ZSEARCH;
-	Keys[128 + 'T'] = Keys[128 + 't'] = ZSWAPWORD;
-	Keys[128 + 'U'] = Keys[128 + 'u'] = ZUPWORD;
+	Keys[128 + 'T'] = Keys[128 + 't'] = ZSWAP_WORDS;
+	Keys[128 + 'U'] = Keys[128 + 'u'] = ZUPPERCASE_WORD;
 	Keys[128 + 'V'] = Keys[128 + 'v'] = ZPREVIOUS_PAGE;
 	Keys[128 + 'W'] = Keys[128 + 'w'] = ZCOPY_REGION;
 	Keys[128 + 'X'] = Keys[128 + 'x'] = ZMETA_X;
 	Keys[128 + 'Y'] = Keys[128 + 'y'] = ZYANK;
-	Keys[128 + 'Z'] = Keys[128 + 'z'] = ZSAVEEXIT;
+	Keys[128 + 'Z'] = Keys[128 + 'z'] = ZSAVE_AND_EXIT;
 	Keys[128 + DEL] = ZDELETE_PREVIOUS_WORD;		/* M-DEL */
 
 	/* Init the CTRL-X functions */
 
 	Keys[256 +  1]  = ZSAVE_ALL_FILES;		/* C-X C-A */
-	Keys[256 +  2]  = ZSWITCHTO;		/* C-X C-B */
+	Keys[256 +  2]  = ZSWITCH_TO_BUFFER;		/* C-X C-B */
 	Keys[256 +  3]  = ZEXIT;		/* C-X C-C */
-	Keys[256 +  4]  = ZKILLBUFF;		/* C-X C-D */
+	Keys[256 +  4]  = ZDELETE_BUFFER;		/* C-X C-D */
 /* C-X C-E */
 	Keys[256 +  6]  = ZFIND_FILE;		/* C-X C-F */
 	Keys[256 +  7]  = ZABORT;		/* C-X C-G */
-	Keys[256 +  8]  = ZHEXOUT;		/* C-X C-H */
+	Keys[256 +  8]  = ZHEX_OUTPUT;		/* C-X C-H */
 /* C-X C-I */
 /* C-X C-J */
 	Keys[256 + 11]  = ZDELETE_LINE;		/* C-X C-K */
-	Keys[256 + 12]  = ZLOWREGION;		/* C-X C-L */
+	Keys[256 + 12]  = ZLOWERCASE_REGION;		/* C-X C-L */
 	Keys[256 + 13]  = ZMAKE;		/* C-X C-M */
-	Keys[256 + 14]  = ZNEXTERR;		/* C-X C-N */
+	Keys[256 + 14]  = ZNEXT_ERROR;		/* C-X C-N */
 	Keys[256 + 15]  = ZOUT_TO;		/* C-X C-O */
-	Keys[256 + 16]  = ZMRKPARA;		/* C-X C-P */
+	Keys[256 + 16]  = ZMARK_PARAGRAPH;		/* C-X C-P */
 /* C-X C-Q */
 	Keys[256 + 18]  = ZREAD_FILE;		/* C-X C-R */
 	Keys[256 + 19]  = ZSAVE_FILE;		/* C-X C-S */
 /* C-X C-T */
-	Keys[256 + 21]  = ZUPREGION;		/* C-X C-U */
+	Keys[256 + 21]  = ZUPPERCASE_REGION;		/* C-X C-U */
 	Keys[256 + 22]  = ZOTHER_NEXT_PAGE;		/* C-X C-V */
 	Keys[256 + 23]  = ZWRITE_FILE;		/* C-X C-W */
-	Keys[256 + 24]  = ZSWAPMRK;		/* C-X C-X */
+	Keys[256 + 24]  = ZSWAP_MARK;		/* C-X C-X */
 /* C-X C-Y */
 	Keys[256 + 26]  = ZOTHER_PREVIOUS_PAGE;	/* C-X C-Z */
 	Keys[256 + '='] = ZPOSITION;		/* C-X = */
@@ -165,8 +165,8 @@ void bind(void)
 	Keys[256 + 'H'] = Keys[256 + 'h'] = ZHELP;		/* C-X H */
 	Keys[256 + 'I'] = Keys[256 + 'i'] = ZINDENT;		/* C-X I */
 /* C-X J */
-	Keys[256 + 'K'] = Keys[256 + 'k'] = ZKILLBUFF;		/* C-X K */
-	Keys[256 + 'L'] = Keys[256 + 'l'] = ZLSTBUFF;		/* C-X L */
+	Keys[256 + 'K'] = Keys[256 + 'k'] = ZDELETE_BUFFER;		/* C-X K */
+	Keys[256 + 'L'] = Keys[256 + 'l'] = ZLIST_BUFFERS;		/* C-X L */
 	Keys[256 + 'M'] = Keys[256 + 'm'] = ZSET_BOOKMARK;	/* C-X M */
 	Keys[256 + 'N'] = Keys[256 + 'n'] = ZNEXT_WINDOW;		/* C-X N */
 	Keys[256 + 'O'] = Keys[256 + 'o'] = ZNEXT_WINDOW;		/* C-X O */
@@ -176,12 +176,12 @@ void bind(void)
 	Keys[256 + 'S'] = Keys[256 + 's'] = ZSAVE_ALL_FILES;		/* C-X S */
 	Keys[256 + 'T'] = Keys[256 + 't'] = ZTRIM_WHITE_SPACE;		/* C-X T */
 	Keys[256 + 'U'] = Keys[256 + 'u'] = ZUNDENT;		/* C-X U */
-	Keys[256 + 'V'] = Keys[256 + 'v'] = ZSETAVAR;		/* C-X V */
+	Keys[256 + 'V'] = Keys[256 + 'v'] = ZSET_VARIABLE;		/* C-X V */
 	Keys[256 + 'W'] = Keys[256 + 'w'] = ZWRITE_FILE;		/* C-X W */
-	Keys[256 + 'X'] = Keys[256 + 'x'] = ZNEXTBUFF;		/* C-X X */
+	Keys[256 + 'X'] = Keys[256 + 'x'] = ZNEXT_BUFFER;		/* C-X X */
 /* C-X Y */
 	Keys[256 + 'Z'] = Keys[256 + 'z'] = ZEXIT;		/* C-X Z */
-	Keys[256 + '^'] = ZGROW_WINDOWOW;				/* C-X ^ */
+	Keys[256 + '^'] = ZGROW_WINDOW;				/* C-X ^ */
 
 	Keys[TC_UP]	= ZPREVIOUS_LINE;
 	Keys[TC_C_UP]	= ZPREVIOUS_PAGE;
@@ -203,13 +203,13 @@ void bind(void)
 
 	Keys[TC_NPAGE]	= ZNEXT_PAGE;
 	Keys[TC_PPAGE]	= ZPREVIOUS_PAGE;
-	Keys[TC_INSERT]	= ZOVERIN;
+	Keys[TC_INSERT]	= ZINSERT_OVERWRITE;
 	Keys[TC_DELETE]	= ZDELETE_CHAR;
 
 	Keys[TC_F1]	= ZFIND_FILE;
 	Keys[TC_F2]	= ZSEARCH;
 	Keys[TC_F3]	= ZAGAIN;
-	Keys[TC_F4]	= ZNEXTERR;
+	Keys[TC_F4]	= ZNEXT_ERROR;
 	Keys[TC_F5]	= ZRE_REPLACE;
 	/* Keys[TC_F6]	= ; */
 	Keys[TC_F7]	= ZMAKE;
@@ -275,8 +275,11 @@ void Zbind(void)
 	clrpaw();
 }
 
-
-void Zkeybind(void)
+/***
+ * Prompts for a key and displays the current command bound to the key in the
+ * PAW. Handles C-X and M- prefixes. A Universal Argument is ignored.
+ */
+void Zkey_binding(void)
 {
 	char kstr[12];
 	int rc;
@@ -343,7 +346,14 @@ void Zbound_to(void)
 	}
 }
 
-void Zdispbinds(void)
+/***
+ * Inserts a list of the commands and their current bindings into the .list
+ * buffer. It deletes the contents of the .list buffer. Keys bound to NULL
+ * or Insert are not displayed. The PAW column displays if the command is allowed in the PAW.
+ *
+ * A Universal Argument prompts for an output file to put the list in.
+ */
+void Zdisplay_bindings(void)
 {
 	bool found;
 	char line[STRMAX];
@@ -376,8 +386,14 @@ void Zdispbinds(void)
 	Arg = 0;
 }
 
-/* Save a bindings file in the HOME directory. */
-void Zsavebind(void)
+/***
+ * A key bound with the Bind command only stays in effect for the
+ * duration of the edit session. The Save Bindings command is used to
+ * permanently save any new bindings in the bindings file. The file is
+ * saved in the users home directory. A Universal Argument causes Arg
+ * saves!
+ */
+void Zsave_bindings(void)
 {
 	char path[PATHMAX + 1];
 

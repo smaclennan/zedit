@@ -21,7 +21,7 @@ fi
 make clean all || exit 1
 
 echo "Checking commands..."
-$EXE c command.doc >cmd.tmp || { echo "Errors: aborted"; rm -f cmd.tmp; exit; }
+$EXE c >cmd.tmp || { echo "Errors: aborted"; rm -f cmd.tmp; exit; }
 echo "Checking variables..."
 $EXE v variable.doc >var.tmp || { echo "Errors: aborted"; rm -f var.tmp; exit; }
 

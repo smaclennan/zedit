@@ -9,66 +9,83 @@ static char *cmd_docs[NUMFUNCS];
 
 static char doc_buffer[4096];
 
-#define COMMANDS	1
-#define VARIABLES	2
+static int process(FILE *fp);
+static int process_c_files(void);
 
-static bool process(FILE *fp, int type);
-static bool process_c_files(void);
+static int usage(void)
+{
+	puts("usage: zhsort {c | v} file");
+	exit(2);
+}
 
-int main(int argc, char *argv[])
+static int do_commands(void)
+{
+	int i, maxlen = 0;
+	int err = process_c_files();
+	for( i = 0; i < NUMFUNCS; ++i )
+		if( cmd_docs[i] == NULL) {
+			err = 1;
+			fprintf( stderr, "%s not found\n", Cnames[i].name);
+		} else {
+			printf(":%s\n", Cnames[i].name);
+			fputc('\n', stdout);
+			fputs(cmd_docs[i], stdout);
+			fputs(".sp 0\n", stdout);
+			int n = strlen(cmd_docs[i]); // SAM DBG
+			if (n > maxlen) maxlen = n; // SAM DBG
+		}
+
+	fprintf(stderr, "Max length %d\n", maxlen); // SAM DBG
+	return err;
+}
+
+static int do_variables(char *fname)
 {
 	FILE *fp;
 	char buff[ BUFSIZ ];
-	int err = 1, i, n, maxlen = 0;
+	int err = 1, i;
 
-	if(argc < 3 || (*argv[1] != 'c' && *argv[1] != 'v')) {
-		puts("usage: zhsort {c | v} file");
-		exit(2);
-	}
-	if(!(fp = fopen(argv[2], "r"))) {
+	if(!(fp = fopen(fname, "r"))) {
 		puts("unable to open file");
 		exit(2);
 	}
 
 	memset(Locs,  0xff, sizeof(long) * NUMFUNCS);
-	switch(*argv[1]) {
-	case 'c':
-		err = process_c_files();
-		err = process(fp, COMMANDS);
-		for( i = 0; i < NUMFUNCS; ++i )
-			if( cmd_docs[i] == NULL) {
-				err = true;
-				fprintf( stderr, "%s: %s not found\n", argv[2], Cnames[i].name);
-			} else {
-				printf(":%s\n", Cnames[i].name);
-				fputc('\n', stdout);
-				fputs(cmd_docs[i], stdout);
-				fputs(".sp 0\n", stdout);
-				n = strlen(cmd_docs[i]); // SAM DBG
-				if (n > maxlen) maxlen = i; // SAM DBG
-			}
-		fprintf(stderr, "Max length %d\n", maxlen); // SAM DBG
-		break;
 
-	case 'v':
-		err = process(fp, VARIABLES);
-		for( i = 0; i < NUMVARS; ++i )
-			if( Locs[i] == -1 ) {
-				err = true;
-				fprintf(stderr, "%s: %s not found\n", argv[2], Vars[i].vname);
-			} else if( fseek(fp, Locs[i], 0) == 0 ) {
-				fgets( buff, BUFSIZ, fp );
-				do
-					printf( "%s", buff );
-				while( fgets(buff, BUFSIZ, fp) && *buff != ':' );
-			} else {
-				fprintf( stderr, "Bad seek to %ld\n", Locs[i] );
-				exit( 1 );
-			}
-		break;
-	}
+	err = process(fp);
+	for( i = 0; i < NUMVARS; ++i )
+		if( Locs[i] == -1 ) {
+			err = true;
+			fprintf(stderr, "%s: %s not found\n", fname, Vars[i].vname);
+		} else if( fseek(fp, Locs[i], 0) == 0 ) {
+			fgets( buff, BUFSIZ, fp );
+			do
+				printf( "%s", buff );
+			while( fgets(buff, BUFSIZ, fp) && *buff != ':' );
+		} else {
+			fprintf( stderr, "Bad seek to %ld\n", Locs[i] );
+			exit( 1 );
+		}
+
 	fclose(fp);
-	exit( err );
+	return err;
+}
+
+int main(int argc, char *argv[])
+{
+	if (argc == 1)
+		usage();
+
+	switch (*argv[1]) {
+	case 'c':
+		return do_commands();
+	case 'v':
+		if (argc == 2)
+			usage();
+		return do_variables(argv[2]);
+	default:
+		return usage();
+	}
 }
 
 static void massage(char *buff)
@@ -84,74 +101,34 @@ static void massage(char *buff)
 	}
 }
 
-static bool process(FILE *fp, int type)
+static int process(FILE *fp)
 {
 	char buff[BUFSIZ];
-	int err = 0, i, func = -1;
+	int err = 0, i;
 	long loc = 0;
-
-	*doc_buffer = '\0';
 
 	while( fgets(buff, BUFSIZ, fp) )
 	{
 		if( *buff == ':' )
 		{
-			if (func != -1) {
-				cmd_docs[func] = strdup(doc_buffer);
-				*doc_buffer = '\0';
-			}
-			func = -1;
-
 			massage(buff);
-			switch(type)
-			{
-			case COMMANDS:
-				for( i = 0; i < NUMFUNCS; ++i ) {
-					if( strcmp(Cnames[i].name, &buff[1]) == 0 )
-					{	/* found it! */
-						if (cmd_docs[i])
-							fprintf(stderr, "DUP %s\n", Cnames[i].name);
-						else
-							func = i;
-						break;
-					}
-				}
-				if(i == NUMFUNCS)
-				{
-					fprintf(stderr, "unknown command: '%s'\n", &buff[1]);
-					err = true;
-				} else if (fgets(buff, BUFSIZ, fp))
-					if (*buff != '\n') {
-						fprintf(stderr,
-							"Empty line missing for %s\n",
-							Cnames[i].name);
-						exit(1);
-					}
-				break;
 
-			case VARIABLES:
-				for( i = 0; i < NUMVARS; ++i )
-					if( strcmp(Vars[i].vname, &buff[1]) == 0 )
-					{
-						Locs[ i ] = loc;
-						break;
-					}
-				if(i == NUMVARS)
+			for( i = 0; i < NUMVARS; ++i )
+				if( strcmp(Vars[i].vname, &buff[1]) == 0 )
 				{
-					fprintf(stderr, "unknown variable: '%s'\n", &buff[1]);
-					err = true;
+					Locs[ i ] = loc;
+					break;
 				}
-				break;
+			if(i == NUMVARS)
+			{
+				fprintf(stderr, "unknown variable: '%s'\n", &buff[1]);
+				err = true;
 			}
-		} else if (strncmp(buff, ".sp 0", 4) && func != -1)
-			strcat(doc_buffer, buff);
+		}
 		loc = ftell( fp );
 	}
 
-	if (func != -1)
-		cmd_docs[func] = strdup(doc_buffer);
-
-	return( err );
+	return err;
 }
 
 static int c_filter(const struct dirent *ent)
@@ -225,7 +202,7 @@ static void process_one_file(char *fname)
 	fclose(fp);
 }
 
-static bool process_c_files(void)
+static int process_c_files(void)
 {
 	struct dirent **namelist;
 	int n = scandir("..", &namelist, c_filter, alphasort);
@@ -240,5 +217,5 @@ static bool process_c_files(void)
 	}
 	free(namelist);
 
-	return true;
+	return 0;
 }

@@ -145,6 +145,9 @@ void ufini(void)
 	}
 }
 
+/***
+ * EXPERIMENTAL: Undo the previous edit. There is a list of undos.
+ */
 void Zundo(void)
 {
 	struct undo *undo = Curbuff->undo_tail;

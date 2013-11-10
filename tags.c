@@ -71,17 +71,6 @@ static void findtag_part(void)
  * line offset. In the ctags format, the ^ and $ are optional and are stripped
  * out if at the begining and end of line respectively.
  */
-/***
- * Prompts for a string argument, with the current buffer word as the
- * default. It looks through a tagfile and if the tag is found, a bookmark
- * is set at the current Point, a Find File is performed on the matched
- * file name, and the Point is positioned appropriately. If the tag is not
- * found but a substring match is, the command will reprompt for the tag
- * with the first substring match as the default. To see the next substring
- * match use the Again command. The tag file is the file defined in the
- * variable "Tagfile", or the file "tags" in the current directory.
- * Universal Arguments are ignored.
- */
 void Zfind_tag(void)
 {
 	char tag[STRMAX + 1], word[PATHMAX + 1];
@@ -315,10 +304,6 @@ static bool gettagsfile(void)
 	return true;
 }
 
-/***
- * Prompts for a tag and then runs the 'ref' command on it. See the
- * documentation for `elvis'.
- */
 void Zreference(void)
 {
 	struct buff *mbuff;

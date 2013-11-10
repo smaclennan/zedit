@@ -57,10 +57,6 @@ static void dump_bindings(int fnum)
 		binstr("Unbound");
 }
 
-/***
- * Displays help on any of the Zedit functions.
- * Prompts for the function with full completion.
- */
 void Zhelp_function(void)
 {
 	int rc = getplete("Function: ", NULL, (char **)Cnames,
@@ -82,10 +78,6 @@ void Zhelp_function(void)
 	btostart();
 }
 
-/***
- * The Zedit functions are grouped into categories. This command lets
- * you see the grouped functions.
- */
 void Zhelp_group(void)
 {
 	char line[80];

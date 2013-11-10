@@ -40,12 +40,6 @@ static void sreplace(char *new)
 	binstr(new);
 }
 
-/***
- * This command is an interactive interface to the "ispell" program. It
- * allows you to perform spell checking on the current buffer. A Universal
- * Argument limits the spell check to the Region. The default is to check
- * the entire buffer.
- */
 void Zspell(void)
 {
 	static char *argv[] = { "ispell", "-a", NULL };

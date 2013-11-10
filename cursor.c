@@ -19,20 +19,12 @@
 
 #include "z.h"
 
-/***
- * Moves the Point to the beginning of the line or to the beginning of the
- * previous line. A Universal Argument causes the command to repeat.
- */
 void Zbeginning_of_line(void)
 {
 	bmove(-1);
 	tobegline();
 }
 
-/***
- * Moves the Point to the end of the line or to the end of the next line. A
- * Universal Argument causes the command to repeat.
- */
 void Zend_of_line(void)
 {
 	bmove1();
@@ -76,13 +68,6 @@ static void ScrollLine(bool (*search)(Byte what))
 	Sendp = false;
 }
 
-/***
- * Moves the Point up one line in the buffer. It tries to maintain the same
- * column position. If the line is to short, the Point will be placed at
- * the end of the line. Consecutive Previous/Next Line or Page commands try
- * to maintain the original column position. A Universal Argument causes
- * the command to repeat.
- */
 void Zprevious_line(void)
 {
 	int col = forcecol();
@@ -97,13 +82,6 @@ void Zprevious_line(void)
 	bmakecol(col, false);
 }
 
-/***
- * Moves the Point up one line in the buffer. It tries to maintain the same
- * column position. If the line is to short the, Point will be the placed
- * at the end of the line. Consecutive Previous/Next Line or Page commands
- * try to maintain the original column position. A Universal Argument
- * causes the command to repeat.
- */
 void Znext_line(void)
 {
 	int col = forcecol();
@@ -118,35 +96,18 @@ void Znext_line(void)
 	bmakecol(col, false);
 }
 
-/***
- * Moves the Point back one character. If the Point is at the start of the
- * line, it is moved to the end of the previous line. A Universal Argument
- * causes the command to repeat.
- */
 void Zprevious_char(void)
 {
 	bmove(-Arg);
 	Arg = 0;
 }
 
-/***
- * Moves the Point forward one character. If the Point is at the end of a
- * line, it is moved to the start of the next line. A Universal Argument
- * causes the command to repeat.
- */
 void Znext_char(void)
 {
 	bmove(Arg);
 	Arg = 0;
 }
 
-/***
- * Moves the Point up one page and tries to center the Point line in the
- * display. It tries to maintain the same column position. If the line is
- * to short, the Point will be placed at the end of the line. Consecutive
- * Previous/Next Line or Page commands try to maintain the original column
- * position. A Universal Argument causes the command to repeat.
- */
 void Zprevious_page(void)
 {
 	int i, col = forcecol();
@@ -158,14 +119,6 @@ void Zprevious_page(void)
 	reframe();
 }
 
-/***
- * Moves the Point down one page and tries to center the Point line in the
- * display. It tries to maintain the same column position. If the line is
- * to short the, Point will be the placed at the end of the line.
- * Consecutive Previous/Next Line or Page commands try to maintain the
- * original column position. A Universal Argument causes the command to
- * repeat.
- */
 void Znext_page(void)
 {
 	int i, col = forcecol();
@@ -182,48 +135,28 @@ void Znext_page(void)
 
 #define ISWORD	bistoken
 
-/***
- * Moves the Point back to the start of a word or to the start of the
- * previous word. A Universal Argument causes the command to repeat.
- */
 void Zprevious_word(void)
 {
 	moveto(ISWORD, BACKWARD);
 	movepast(ISWORD, BACKWARD);
 }
 
-/***
- * Moves the Point to the start of the next word. A Universal Argument
- * causes the command to repeat.
- */
 void Znext_word(void)
 {
 	movepast(ISWORD, FORWARD);
 	moveto(ISWORD, FORWARD);
 }
 
-/***
- * Moves the Point to the beginning of the current buffer. A Universal
- * Argument is ignored.
- */
 void Zbeginning_of_buffer(void)
 {
 	btostart();
 }
 
-/***
- * Moves the Point to the end of the buffer. A Universal Argument is
- * ignored.
- */
 void Zend_of_buffer(void)
 {
 	btoend();
 }
 
-/***
- * The Mark goes to the current position of the Point and the Point is set
- * where the Mark was. A Universal Argument is ignored.
- */
 void Zswap_mark(void)
 {
 	struct mark tmark;
@@ -234,11 +167,6 @@ void Zswap_mark(void)
 	bpnttomrk(&tmark);
 }
 
-/***
- * Inserts a Newline at the Point but leaves the Point in front of the
- * Newline. It is the same as typing a Newline and then a Previous
- * Character command. A Universal Argument causes the command to repeat.
- */
 void Zopen_line(void)
 {
 	binsert(NL);
@@ -260,12 +188,6 @@ static long getnum(char *prompt)
 	return num;
 }
 
-/***
- * Moves the point to the start of a given line. If there is a Universal
- * Argument, uses the argument, else prompts for the line number. If the
- * line is past the end of the buffer, moves the Point is left at the end
- * of the buffer.
- */
 void Zgoto_line(void)
 {
 	long line, cnt = 0;
@@ -299,12 +221,6 @@ void Zgoto_line(void)
 		bcsearch(NL);
 }
 
-/***
- * This command moves the Point to an absolute column position. If the line
- * is shorter than the specified column, it is padded with tabs and spaces
- * to the specified column. The command takes either a Universal Argument or
- * prompts for the column to go to.
- */
 void Zout_to(void)
 {
 	int col = (int)getnum("Column: ");
@@ -319,11 +235,6 @@ static char *Bookname[BOOKMARKS];		/* stack of book names */
 static int  Bookmark = -1;			/* current book mark */
 static int  Lastbook = -1;			/* last bookmark */
 
-/***
- * Places an invisible "bookmark" at the Point. There are 10
- * bookmarks placed in a ring. The bookmark set is displayed in the PAW.
- * A Universal Argument causes the command to repeat.
- */
 void Zset_bookmark(void)
 {
 	if (Argp) {
@@ -352,12 +263,6 @@ void Zset_bookmark(void)
 		putpaw("Book Mark %d Set", Bookmark + 1);
 }
 
-/***
- * Moves the Point to the last bookmark set in the bookmark ring. The
- * bookmark moved to is displayed in the echo window. A Universal Argument
- * in the range 1 to 10 corresponding to a set bookmark will go to the
- * bookmark.
- */
 void Znext_bookmark(void)
 {
 	if (Bookmark < 0) {
@@ -386,10 +291,6 @@ void Znext_bookmark(void)
 		Bookmark = Lastbook;
 }
 
-/***
- * Makes the Point line the top line in the window. A Universal Argument
- * causes the command to repeat.
- */
 void Zview_line(void)
 {
 	struct mark pmark;
@@ -403,10 +304,6 @@ void Zview_line(void)
 	bpnttomrk(&pmark);
 }
 
-/***
- * Repaints the entire screen. A Universal Argument causes the command to
- * repeat.
- */
 void Zredisplay(void)
 {
 	struct wdo *wdo;
@@ -439,19 +336,11 @@ static void scroll(bool (*search)(Byte what))
 	unmark(pmark);
 }
 
-/***
- * Scrolls the screen up one line. A Universal Argument causes the
- * command to scroll multiple lines.
- */
 void Zscroll_up(void)
 {
 	scroll(bcrsearch);
 }
 
-/***
- * Scrolls the screen down one line. A Universal Argument causes the
- * command to scroll multiple lines.
- */
 void Zscroll_down(void)
 {
 	scroll(bcsearch);

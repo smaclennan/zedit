@@ -244,15 +244,6 @@ static bool bindone(char *prompt, int first, int *key)
 	return true;
 }
 
-/***
- * Binds a function to a key. It first prompts, with command completion,
- * for the command to bind. It then prompts for the key to bind the command
- * to. The Meta and C-X prefix keys are entered, Bind prompts for another
- * key. The Abort command exits any prompt. The Quote command can be used
- * to rebind the Abort, Quote, C-X, and Meta commands. A Universal Argument
- * causes the Bind command to reset all the default arguments.  Keys can be
- * "unbound" by binding them to the NULL command.
- */
 void Zbind(void)
 {
 	int f, key;
@@ -275,10 +266,6 @@ void Zbind(void)
 	clrpaw();
 }
 
-/***
- * Prompts for a key and displays the current command bound to the key in the
- * PAW. Handles C-X and M- prefixes. A Universal Argument is ignored.
- */
 void Zkey_binding(void)
 {
 	char kstr[12];
@@ -316,10 +303,6 @@ bool notdup_key(int k)
 		Keys[k] != Keys[k - ('a' - 'A')];
 }
 
-/***
- * Prompts for a command with command complete and gives a list of the keys
- * the command is bound to. A Universal Argument is ignored.
- */
 void Zbound_to(void)
 {
 	char line[STRMAX];
@@ -346,14 +329,6 @@ void Zbound_to(void)
 	}
 }
 
-/***
- * Inserts a list of the commands and their current bindings into the
- * .list buffer. It deletes the contents of the .list buffer. Keys
- * bound to NULL or Insert are not displayed. The PAW column displays
- * if the command is allowed in the PAW.
- *
- * A Universal Argument prompts for an output file to put the list in.
- */
 void Zdisplay_bindings(void)
 {
 	bool found;
@@ -387,13 +362,6 @@ void Zdisplay_bindings(void)
 	Arg = 0;
 }
 
-/***
- * A key bound with the Bind command only stays in effect for the
- * duration of the edit session. The Save Bindings command is used to
- * permanently save any new bindings in the bindings file. The file is
- * saved in the users home directory. A Universal Argument causes Arg
- * saves!
- */
 void Zsave_bindings(void)
 {
 	char path[PATHMAX + 1];

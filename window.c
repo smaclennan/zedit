@@ -354,21 +354,12 @@ bool wuseother(char *bname)
 	return true;
 }
 
-/***
- * Splits the current window into two windows. The same buffer is displayed in
- * both windows and the bottom window is made active. A Universal Argument
- * keeps splitting the current window.
- */
 void Zsplit_window(void)
 {
 	if (!wsplit())
 		tbell();
 }
 
-/***
- * Makes the active window a full screen window. If there is only one
- * window, this command has no effect. A Universal Argument is ignored.
- */
 void Zone_window(void)
 {
 	struct wdo *wdo;
@@ -393,20 +384,12 @@ void Zone_window(void)
 	tclrwind();
 }
 
-/***
- * Deletes the current window and places you in the other window. You
- * cannot delete the last window. A Universal Argument is ignored.
- */
 void Zdelete_window(void)
 {
 	if (!wdelete(Curwdo))
 		tbell();
 }
 
-/***
- * Goes to the previous window on the screen. The windows are treated as a
- * circular list. A Universal Argument goes to the Nth previous window.
- */
 void Zprevious_window(void)
 {
 	struct wdo *wdo;
@@ -423,10 +406,6 @@ void Zprevious_window(void)
 	}
 }
 
-/***
- * Goes to the next window on the screen. The windows are treated as a
- * circular list. A Universal Argument goes to the Nth next window.
- */
 void Znext_window(void)
 {
 	if (Curwdo->next)
@@ -437,31 +416,18 @@ void Znext_window(void)
 		tbell();
 }
 
-/***
- * Makes the active window one line bigger, and therefore the inactive
- * window one line smaller. A window cannot be less than three (3) lines.
- * If there is only one window, this command has no effect. A Universal
- * Argument causes the command to grow the window by that number of lines.
- */
 void Zgrow_window(void)
 {
 	sizewindow(Arg);
 	Arg = 0;
 }
 
-/***
- * Shrinks the current window one line. A Universal Argument shrinks the
- * window Arg lines.
- */
 void Zshrink_window(void)
 {
 	sizewindow(-Arg);
 	Arg = 0;
 }
 
-/***
- * Sets the window to Universal Argument lines.
- */
 void Zsize_window(void)
 {
 	if (!sizewindow(Arg - wheight() + 1))
@@ -497,12 +463,6 @@ static struct wdo *otherwind(void)
 	return wdo;
 }
 
-/***
- * Performs a Next Page command in the bottom window or the top window if
- * you are in the bottom window. It leaves the Point where it is in the
- * active window. If there is only one window, this command has no effect.
- * A Universal Argument causes the command to page the Nth window.
- */
 void Zother_next_page(void)
 {
 	struct wdo *save = Curwdo;
@@ -511,12 +471,6 @@ void Zother_next_page(void)
 	wswitchto(save);
 }
 
-/***
- * Performs a Previous Page command in the bottom window or the top window
- * if you are in the bottom window. It leaves the Point where it is in the
- * active window. If there is only one window, this command has no effect.
- * A Universal Argument pages the Nth window.
- */
 void Zother_previous_page(void)
 {
 	struct wdo *save = Curwdo;

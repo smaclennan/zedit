@@ -40,28 +40,14 @@ void killtomrk(struct mark *tmark)
 	bdeltomrk(tmark);
 }
 
-/***
- * Sets the delete flag. The next delete command will append to the kill
- * buffer. A Universal Argument is ignored.
- */
 void Zappend_kill(void) {}
 
-/***
- * Deletes the character at the Point and leaves the Point on the next
- * character in the buffer. The character is not put in the Kill Buffer. A
- * Universal Argument causes the command to repeat.
- */
 void Zdelete_char(void)
 {
 	bdelete(Arg);
 	Arg = 0;
 }
 
-/***
- * Deletes the character before the Point and leaves the Point in the same
- * place. The character is not put in the Kill Buffer. A Universal Argument
- * causes the command to repeat.
- */
 void Zdelete_previous_char(void)
 {
 	bmove(-Arg);
@@ -69,13 +55,6 @@ void Zdelete_previous_char(void)
 	Arg = 0;
 }
 
-/***
- * Deletes the characters from the Point to the end of the line. If the
- * Point is at the end of a line, the Newline character is deleted and the
- * next line is joined to the end of the current line. The characters
- * deleted are put in the Kill Buffer. A Universal Argument causes the
- * command to repeat.
- */
 void Zdelete_to_eol(void)
 {
 	struct mark *tmark = bcremrk();
@@ -96,12 +75,6 @@ void Zdelete_to_eol(void)
 	unmark(tmark);
 }
 
-/***
- * Deletes the entire line, including the Newline, no matter where the
- * Point is in the line. The Point is left at the start of the next line.
- * The deleted line is put in the Kill Buffer. A Universal Argument causes
- * the command to repeat.
- */
 void Zdelete_line(void)
 {
 	struct mark *tmark;
@@ -113,31 +86,17 @@ void Zdelete_line(void)
 	unmark(tmark);
 }
 
-/***
- * Deletes the characters in the region. The deleted characters are put in
- * the Kill Buffer based on the delete flag. A Universal Argument is
- * ignored.
- */
 void Zdelete_region(void)
 {
 	killtomrk(Curbuff->mark);
 }
 
-/***
- * Copies the region to the kill buffer. The kill buffer is overwritten
- * unless the the delete flag is set. See Append Kill command.
- */
 void Zcopy_region(void)
 {
 	copytomrk(Curbuff->mark);
 }
 
 
-/***
- * Inserts the characters from the Kill Buffer before the Point. The
- * characters are inserted, even in overwrite mode. A Universal Argument
- * causes the command to repeat.
- */
 void Zyank(void)
 {
 	struct buff *tbuff;
@@ -164,11 +123,6 @@ void Zyank(void)
 		reframe();
 }
 
-/***
- * Deletes the word to the right of and including the Point. The word is
- * put in the Kill Buffer. A Universal Argument causes the command to
- * repeat.
- */
 void Zdelete_word(void)
 {
 	struct mark *tmark;
@@ -180,11 +134,6 @@ void Zdelete_word(void)
 	unmark(tmark);
 }
 
-/***
- * Deletes the word to the left of the Point. The character the Point is on
- * is not deleted. The word is put in the Kill Buffer. A Universal Argument
- * causes the command to repeat.
- */
 void Zdelete_previous_word(void)
 {
 	struct mark *tmark;
@@ -195,12 +144,6 @@ void Zdelete_previous_word(void)
 	unmark(tmark);
 }
 
-/***
- * Copies the word the Point is on to the kill buffer. The kill buffer is
- * overwritten unless the the delete flag is set.In the PAW, the Copy Word
- * command takes the word the Point was on in the previously active window
- * and inserts it into the PAW.
- */
 void Zcopy_word(void)
 {
 	char word[STRMAX], *ptr;
@@ -228,11 +171,6 @@ void Zcopy_word(void)
 	Arg = 0;
 }
 
-/***
- * Delete all the blank lines around the Point. The lines are not put in
- * the Kill Buffer. A Universal Argument causes the command to repeat,
- * which accomplishes nothing.
- */
 void Zdelete_blanks(void)
 {
 	struct mark *tmark, *pmark;
@@ -261,10 +199,6 @@ void Zdelete_blanks(void)
 	unmark(pmark);
 }
 
-/***
- * Joins two lines. Performs the following Zedit commands:
- * End of Line, Delete Newline, Trim Whitespace, Insert space.
- */
 void Zjoin(void)
 {
 	toendline();
@@ -273,10 +207,6 @@ void Zjoin(void)
 	binsert(' ');
 }
 
-/***
- * Deletes the entire contents of the current buffer. A Universal Arguments
- * is ignored.
- */
 void Zempty_buffer(void)
 {
 	if (ask("Empty buffer? ") != YES)

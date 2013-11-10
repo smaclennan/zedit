@@ -193,16 +193,6 @@ static int calc_g(char op)
 			push_num(one.i op two.i);      \
 	} while (0)
 
-/***
- * This is a very simple integer calculator. It handles addition,
- * subtraction, multiplication, and division between
- * octal/decimal/hexadecimal numbers. If a number begins with a '0x' it is
- * assumed to be hexadecimal, if it begins with a '0' it is assumed to be
- * octal, all others are assumed to be decimal. The output is displayed in
- * decimal with hexadecimal in brackets "()". Spaces and tabs are allowed
- * but are not necessary between the numbers and their operators. A Universal
- * Argument is ignored.
- */
 void Zcalc(void)
 {
 	int f_val, g_val, n;

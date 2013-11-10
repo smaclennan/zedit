@@ -42,13 +42,6 @@ static bool Findstart(void)
 	return !bisend();
 }
 
-/***
- * In C mode, converts the character at the Point to uppercase and the rest
- * of the word to lowercase. In other modes, converts the first letter of
- * the current word to uppercase and the rest of the characters in the word
- * to lowercase. The Point is left at the end of the word. A Universal
- * Argument causes the command to repeat.
- */
 void Zcapitalize_word(void)
 {
 	if (Findstart()) {
@@ -61,11 +54,6 @@ void Zcapitalize_word(void)
 }
 
 
-/***
- * Converts the current word starting at the Point to lowercase. It leaves
- * the Point at the end of the word. A Universal Argument causes the
- * command to repeat.
- */
 void Zlowercase_word(void)
 {
 	if (Findstart()) {
@@ -77,11 +65,6 @@ void Zlowercase_word(void)
 	}
 }
 
-/***
- * Converts the current word starting at the Point to uppercase. It leaves
- * the Point at the end of the word. A Universal Argument causes the
- * command to repeat.
- */
 void Zuppercase_word(void)
 {
 	if (Findstart()) {
@@ -109,15 +92,6 @@ static void blockmove(struct mark *from, struct mark *to)
 	}
 }
 
-/***
- * Swaps the words before and after the Point. The Point is left after
- * the second word. Successive commands will "drag" the word before the
- * Point towards the end of the line. If the Point is at the end of a line,
- * the last word on the line is transposed with the first word on the next
- * line. The command does nothing at the end of the buffer. If the Point is
- * in the middle of a word, the two halves of the word are transposed. A
- * Universal Argument causes the command to repeat.
- */
 void Zswap_words(void)
 {
 	struct mark *tmark, *tmp;
@@ -139,11 +113,6 @@ void Zswap_words(void)
 }
 
 
-/***
- * Centers the current line on the screen. It uses FillWidth to define the
- * right margin. A Universal Argument causes the command to repeat on the
- * next lines.
- */
 void Zcenter(void)
 {
 	int tmp;
@@ -162,15 +131,6 @@ void Zcenter(void)
 
 /* C MODE COMMANDS */
 
-/***
- * Tries to perform brace matching. When a close brace (}) is entered,
- * searches for a previous unmatched open brace ({). If it finds one, tries
- * to put the close brace in the same column as the column of the first
- * non-whitespace character in the matched line. If no match is found,
- * beeps. Bound to close brace in C mode. If bound to a character other than
- * a close brace, performs a Character Insert. A Universal Argument is
- * ignored.
- */
 void Zc_insert(void)
 {	/* This code must handle any char so that expansion will work */
 	int cnt, crfound = false;
@@ -256,12 +216,6 @@ void Zc_insert(void)
 	binsert(Cmd);
 }
 
-/***
- * Causes Newline characters to auto-indent to the current tab level. If a
- * Newline is hit after an open brace ({), the next line is indented an
- * extra tab stop. Bound to Newline in C mode. A Universal Argument causes
- * the command to repeat.
- */
 void Zc_indent(void)
 {
 	int width;
@@ -402,12 +356,6 @@ static void zfillcomment(void)
 
 /* FILL MODE COMMANDS */
 
-/***
- * Checks if the current column is past the FillWidth column. If it is, the
- * words past or on the FillWidth column are wrapped. This gives some word
- * processing capability to the editor. Normally bound to the space bar and
- * Newline only in Text Mode. A Universal Argument has no meaning.
- */
 void Zfill_check(void)
 {
 	bool tmp;
@@ -435,12 +383,6 @@ void Zfill_check(void)
 	}
 }
 
-/***
- * Removes all spaces and tabs on both sides of the Point. The Point is
- * left on the character that is to the right of the deleted text. The
- * deleted characters are not put in the Kill Buffer. A Universal Argument
- * is ignored.
- */
 void Ztrim_white_space(void)
 {
 	while (!bisend() && biswhite())
@@ -456,13 +398,6 @@ void Ztrim_white_space(void)
 	}
 }
 
-/***
- * Uses the FillWidth to reformat the paragraph the Point is in. This is
- * useful if editing has messed up the right margin. A Universal Argument
- * reformats the next Arg paragraphs. A Universal Argument of 0 reformats
- * the entire buffer. When reformatting the entire buffer, hitting a
- * character will abort the reformat. Not allowed in program mode buffers.
- */
 void Zfill_paragraph(void)
 {	/* Not reentrant - must iterate for arg */
 	bool all;
@@ -534,10 +469,6 @@ static bool ispara(char pc, char ch)
 		(pc == NL && (ch == NL || ch == '.'));
 }
 
-/***
- * Moves the Point to the start of the next paragraph. A Universal Argument
- * causes the command to repeat.
- */
 void Znext_paragraph(void)
 {
 	char pc = '\0';
@@ -552,10 +483,6 @@ void Znext_paragraph(void)
 	movepast(bisspace, FORWARD);
 }
 
-/***
- * Moves the Point to the start of the paragraph or to the start of the
- * previous paragraph. A Universal Argument causes the command to repeat.
- */
 void Zprevious_paragraph(void)
 {
 	char pc = '\0';
@@ -570,11 +497,6 @@ void Zprevious_paragraph(void)
 
 /* MISC COMMANDS */
 
-/***
- * Displays the current Point position as a line, column, and byte offset
- * in the echo window. Also displays the length of the buffer. A Universal
- * Argument is ignored.
- */
 void Zposition(void)
 {
 	unsigned long mark, point;
@@ -588,19 +510,12 @@ void Zposition(void)
 	       line, bgetcol(false, 0) + 1, point, mark, blength(Curbuff));
 }
 
-/***
- * Used to unbind a key. This is bound to all the unbound keys. A Universal
- * Argument does nothing Arg times.
- */
 void Znotimpl(void)
 {
 	tbell();
 }
 
 
-/***
- * Sets the Mark at the Point. A Universal Argument is ignored.
- */
 void Zset_mark(void)
 {
 	bmrktopnt(Curbuff->mark);
@@ -617,11 +532,6 @@ static void cleanup(void)
 	free(Cwd);
 }
 
-/***
- * Exits from the editor. It asks to save all modified buffers. A bang
- * (!) saves all remaining buffers. A Universal Argument causes all
- * modified buffers to be saved without prompting.
- */
 void Zexit(void)
 {
 	struct buff *tbuff;
@@ -656,11 +566,6 @@ void Zexit(void)
 	exit(0);
 }
 
-/***
- * An attempt to mimic the vi ZZ command. Does a save file on the
- * current buffer and then exits. A universal argument will save all
- * files.
- */
 void Zsave_and_exit(void)
 {
 	Zsave_file();
@@ -753,11 +658,6 @@ static void mshow(unsigned ch)
 	}
 }
 
-/***
- * Normally bound to the printable characters, causes the character to be
- * inserted in the buffer. A Universal Argument causes the command to
- * repeat.
- */
 void Zinsert(void)
 {
 	if (Curbuff->bmode & OVERWRITE) {
@@ -769,12 +669,6 @@ void Zinsert(void)
 	mshow(Cmd);
 }
 
-/***
- * The command normally bound to the Enter or Return key.
- * In overwrite mode, a NL goes to start of next line.
- * In insert mode, its just inserted.
- * A Universal Argument causes the command to repeat.
- */
 void Znewline(void)
 {
 	if (Curbuff->bmode & OVERWRITE)
@@ -787,9 +681,6 @@ void Znewline(void)
 #endif
 }
 
-/***
- * Handles the tab key. A Universal Argument causes the command to repeat.
- */
 void Ztab(void)
 {
 	if (VAR(VSPACETAB)) {
@@ -800,12 +691,6 @@ void Ztab(void)
 		binsert('\t');
 }
 
-/***
- * Toggles the current buffers minor mode between Insert, the default, and
- * overwrite modes. On the PC the cursor shape reflects the mode. Insert
- * mode has an underline cursor while overwrite mode has a block cursor. A
- * Universal Argument is ignored.
- */
 void Zinsert_overwrite(void)
 {
 	Curbuff->bmode ^= OVERWRITE;
@@ -814,11 +699,6 @@ void Zinsert_overwrite(void)
 	Arg = 0;
 }
 
-/***
- * Switches the current buffers minor mode between case sensitive and case
- * insensitive for searches and replacements. Ignores the Universal
- * Argument.
- */
 void Ztoggle_case(void)
 {
 	Curbuff->bmode ^= EXACT;
@@ -830,14 +710,6 @@ void Ztoggle_case(void)
 	Arg = 0;
 }
 
-/***
- * Many of the commands accept a Universal Argument to cause the command to
- * repeat or to modify the meaning of the command in some way. It reads
- * decimal digits and displays them in the PAW. The first non-digit is
- * processed as a command. The digits cannot be deleted since Delete is a
- * valid command that accepts a Universal Argument. If a mistake is made,
- * use the Abort Command.
- */
 void Zarg(void)
 {
 	char str[STRMAX], *p;
@@ -857,9 +729,6 @@ void Zarg(void)
 	CMD(Keys[Cmd]);
 }
 
-/***
- * Command prefix.
- */
 void Zmeta(void)
 {
 	bool tmp;
@@ -871,9 +740,6 @@ void Zmeta(void)
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
-/***
- * Command prefix.
- */
 void Zctrl_x(void)
 {
 	bool tmp;
@@ -885,12 +751,6 @@ void Zctrl_x(void)
 	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
 }
 
-/***
- * Prompts for a command to execute. Unbound commands may be executed in
- * this manner. Supports command completion. A "?" will show all the
- * possible matches. A Universal Argument is passed on to the selected
- * command.
- */
 void Zmeta_x(void)
 {
 	int rc = getplete("M-X: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
@@ -902,11 +762,6 @@ void Zmeta_x(void)
 	}
 }
 
-/***
- * Aborts the current command. This is the only way to exit Universal
- * Arguments and String Arguments. It will also abort C-X and Meta
- * prefixes. Cannot abort the Quote command.
- */
 void Zabort(void)
 {
 	tbell();
@@ -915,17 +770,6 @@ void Zabort(void)
 		InPaw = ABORT;
 }
 
-/***
- * The Quote command is used to insert a character into a buffer or String
- * Argument that would normally be a command. The next character after the
- * Quote command is taken literally, unless the key is a valid hexadecimal
- * digit. If the key is a valid hexadecimal digit, it and the next key are
- * taken together as a hexadecimal number and the ASCII character
- * equivalent of this number is inserted into the buffer. If a key is not
- * hit within approximately one second, "Quote:" is displayed in the echo
- * window. The Quote command does not work within a Universal Argument. A
- * Universal Argument inserts Arg characters.
- */
 void Zquote(void)
 {
 	bool tmp;
@@ -949,11 +793,6 @@ void Zquote(void)
 	Arg = 0;
 }
 
-/***
- * Displays the character at the Point as a hexadecimal number in the PAW.
- * A Universal Argument displays the next characters up to a
- * maximum of 25. The Point is moved forward by the argument characters.
- */
 void Zhex_output(void)
 {
 	char str[STRMAX], *p;
@@ -968,16 +807,6 @@ void Zhex_output(void)
 	putpaw("%s", str);
 }
 
-/***
- * Swaps the character before the Point with the character at the
- * Point. It leaves the Point after the second character. Successive
- * commands will "drag" the character that was before the Point towards the
- * end of the line. If the Point was at the end of a line, the two
- * characters before the Point are transposed. If the Point is at the
- * beginning of the buffer, the character at the Point and the character
- * after the Point are transposed. A Universal Argument causes the command
- * to repeat.
- */
 void Zswap_chars(void)
 {
 	int tmp;
@@ -1004,12 +833,6 @@ void toendline(void)
 		bmove(-1);
 }
 
-/***
- * This command allows you to change Zedit's current working directory. All
- * files will be relative to the new working directory. The default is the
- * directory the editor was started in. A Universal Argument causes the
- * command to repeat.
- */
 void Zcwd(void)
 {
 	char path[PATHMAX], *p;
@@ -1027,10 +850,6 @@ void Zcwd(void)
 	}
 }
 
-/***
- * Count the number of lines, words, and characters in the region. A
- * Universal Argument counts the entire buffer.
- */
 void Zcount(void)
 {
 	bool word, swapped = false;
@@ -1083,11 +902,6 @@ static struct _amode
 #define AMODESIZE	sizeof(struct _amode)
 #define NUMMODES	(sizeof(modes) / AMODESIZE)
 
-/***
- * Change the mode of the current buffer. Prompts (with command completion)
- * for the mode to change to.  A Universal Argument causes multiple
- * toggles.
- */
 void Zmode(void)
 {
 	int i, rc;
@@ -1237,11 +1051,6 @@ void toggle_mode(int mode)
 	}
 }
 
-/***
- * Sets the Mark to the start of the current paragraph and moves the Point
- * to the start of the next paragraph. A Universal Argument causes the
- * command to repeat.
- */
 void Zmark_paragraph(void)
 {
 	bmove1();	/* make sure we are not at the start of a paragraph */
@@ -1279,19 +1088,11 @@ static void setregion(int (*convert)(int))
 	Zredisplay();
 }
 
-/***
- * Convert the Region to uppercase. Not allowed in program mode buffers. A
- * Universal Argument is ignored.
- */
 void Zuppercase_region(void)
 {
 	setregion(toupper);
 }
 
-/***
- * Converts the Region to lowercase. Not allowed in program mode buffers. A
- * Universal Argument is ignored.
- */
 void Zlowercase_region(void)
 {
 	setregion(tolower);
@@ -1327,27 +1128,16 @@ static void indent(bool flag)
 	}
 }
 
-/***
- * Indents the marked region Universal Argument tab stops.
- */
 void Zindent(void)
 {
 	indent(true);
 }
 
-/***
- * Removes Universal Argument tabs from the start of every line in the
- * region.
- */
 void Zundent(void)
 {
 	indent(false);
 }
 
-/***
- * Performs a 'setenv' command on an environment variable. The variable will
- * keep the setting during the the Zedit session.
- */
 void Zsetenv(void)
 {
 	char env[STRMAX + 2], set[STRMAX + 1], *p;

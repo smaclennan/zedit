@@ -22,12 +22,6 @@
 
 static void setavar(char *vin, bool display);
 
-/***
- * Allows any of the configurable variables to be set. Command completion
- * is supported. Prompts for the variable, then prompts for the new
- * setting. A Universal Argument causes numeric or flag variables to be
- * set to Arg, string variables ignore the Universal Argument.
- */
 void Zset_variable(void)
 {
 	char pstr[STRMAX], arg[STRMAX];
@@ -58,10 +52,6 @@ void Zset_variable(void)
 		setavar(Vars[rc].vname, true);
 }
 
-/***
- * Displays help on any of the configurable variables.
- * Prompts for the variable with full completion.
- */
 void Zhelp_variable(void)
 {
 	int rc;
@@ -266,11 +256,6 @@ void varval(int code)
 	}
 }
 
-/***
- * Show the current settings of all the Zedit variables in a
- * buffer. The buffer is suitable for use as a .config.z file and can
- * be saved to a file using Write File.
- */
 void Zshow_config(void)
 {
 	int i;

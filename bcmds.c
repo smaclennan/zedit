@@ -42,12 +42,6 @@ static void switchto_part(void)
 	makepaw(tbuff->bname, true);
 }
 
-/***
- * Prompts for a buffer name to switch to with command completion.
- * The previous buffer is stored and displayed as a default. This allows
- * quick switching between two buffers. The Again command can be used to
- * scroll through the buffer list. A Universal Argument is ignored.
- */
 void Zswitch_to_buffer(void)
 {
 	int rc;
@@ -63,11 +57,6 @@ void Zswitch_to_buffer(void)
 	cswitchto(cfindbuff(Bnames[rc]));
 }
 
-/***
- * Switches to the next buffer in the buffer list. At the end of the list,
- * it switches to the first buffer in the list, i.e. treats the list like a
- * ring. A Universal Argument causes the command to repeat.
- */
 void Znext_buffer(void)
 {
 	struct buff *next = Curbuff->prev;
@@ -84,12 +73,6 @@ void Znext_buffer(void)
 		tbell();
 }
 
-/***
- * Deletes the current buffer and goes to a previous buffer. There must
- * always be at least one buffer. If the buffer has been modified, Zedit
- * asks to save it before deleting it. A Universal Argument prompts for the
- * buffer to delete.
- */
 void Zdelete_buffer(void)
 {
 	struct buff *tbuff;
@@ -162,9 +145,6 @@ static void lstbuff(struct buff *tbuff)
 	binsert('\n');
 }
 
-/***
- * Displays a list of the current buffers on the display.
- */
 void Zlist_buffers(void)
 {
 	struct wdo *was = Curwdo;
@@ -188,10 +168,6 @@ void Zlist_buffers(void)
 	Arg = 0;
 }
 
-/***
- * Turns off the modified flag for the current buffer. Does not change the
- * buffer itself. A Universal Argument is ignored.
- */
 void Zunmodify(void)
 {
 	Curbuff->bmodf = Argp;

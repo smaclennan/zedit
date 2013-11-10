@@ -1,0 +1,32 @@
+#!/bin/sh -e
+
+do_make () {
+	make clean > /dev/null
+	./configure $*
+	make -j8 all > /dev/null
+}
+
+echo "Termcap"
+do_make --enable-termcap
+
+echo "Terminfo"
+do_make --enable-terminfo
+
+echo "Disable comment-bold"
+do_make --disable-comment-bold
+
+echo "Disable shell"
+do_make --disable-shell
+
+echo "Enable spell"
+do_make --enable-spell
+
+echo "Enable tags"
+do_make --enable-tags
+
+echo "Enable undo"
+do_make --enable-undo
+
+echo "Stock make"
+do_make
+

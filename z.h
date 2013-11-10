@@ -121,19 +121,19 @@ struct cnames {
 	char *name;
 	short fnum;
 	short htype;
-#define H_NONE				0
-#define H_MISC				1
-#define H_VAR				2
+#define H_BIND				0
+#define H_BUFF				1
+#define H_DELETE			2
 #define H_CURSOR			3
-#define H_DELETE			4
-#define H_SEARCH			5
-#define H_FILE				6
-#define H_BUFF				7
-#define H_DISP				8
-#define H_MODE				9
-#define H_HELP				10
-#define H_BIND				11
-#define H_SHELL				12
+#define H_DISP				4
+#define H_FILE				5
+#define H_HELP				6
+#define H_MODE				7
+#define H_OTHER				8
+#define H_SEARCH			9
+#define H_SHELL				10
+#define H_SPECIAL			11
+#define H_VAR				12
 };
 #define CNAMESIZE sizeof(struct cnames)
 
@@ -154,6 +154,8 @@ extern void (*Cmds[][2])();
 extern int Curcmds;
 extern Byte Keys[], Lfunc;
 extern bool First;
+
+extern char *func_docs[];
 
 #define CMD(n) (*Cmds[n][Curcmds])()
 

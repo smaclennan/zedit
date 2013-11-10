@@ -146,7 +146,9 @@
 #define ZGREP		(ZGLOBAL_RE_SEARCH + 1)
 #define ZUNDO		(ZGREP + 1)
 #define ZHELP_VARIABLE	(ZUNDO + 1)
-#define NUMFUNCS	(ZHELP_VARIABLE + 1)
+#define ZHELP_FUNCTION	(ZHELP_VARIABLE + 1)
+#define ZHELP_GROUP	(ZHELP_FUNCTION + 1)
+#define NUMFUNCS	(ZHELP_GROUP + 1)
 
 /* this is used by the getfname command in the PAW for command completion */
 #define ZFNAME		NUMFUNCS

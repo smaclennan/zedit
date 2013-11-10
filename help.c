@@ -18,27 +18,115 @@
  */
 
 #include "z.h"
-
-#if HELP
 #include "keys.h"
 
+#if HELP || BUILTIN_DOCS
 static char *Htype[] = {
-	"Special",
-	"Other",
-	"Variables",
-	"Cursor",
-	"Copy/Delete",
-	"Search/Replace",
-	"File",
-	"Buffer/Window",
-	"Display",
-	"Mode",
-	"Help/Status",
 	"Bindings",
+	"Buffer/Window",
+	"Copy/Delete",
+	"Cursor",
+	"Display",
+	"File",
+	"Help/Status",
+	"Mode",
+	"Other",
+	"Search/Replace",
 	"Shell",
+	"Special",
+#if HELP
+	"Variables",
+#endif
 };
 #define HTYPES	(sizeof(Htype) / sizeof(char *))
 
+static void dump_bindings(int fnum)
+{
+	int k, found = 0;
+	char buff[BUFSIZ];
+
+	binstr("\nBinding(s): ");
+
+	for (k = 0; k < NUMKEYS; ++k)
+		if (Keys[k] == fnum)
+			if (notdup_key(k)) {
+				if (found)
+					binstr(",  ");
+				else
+					found = true;
+				binstr(dispkey(k, buff));
+			}
+
+	if (!found)
+		binstr("Unbound");
+}
+#endif
+
+#if BUILTIN_DOCS
+#include "func-docs.h"
+
+/***
+ * Displays help on any of the Zedit functions.
+ * Prompts for the function with full completion.
+ */
+void Zhelp_function(void)
+{
+	int rc = getplete("Function: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
+	if (rc == -1)
+		return;
+
+	wuseother(HELPBUFF);
+
+	binstr(Cnames[rc].name);
+	binstr("\n\n");
+
+	binstr(func_docs[rc]);
+
+	if (Cnames[rc].fnum != ZNOTIMPL &&
+	    Cnames[rc].fnum != ZINSERT)
+		dump_bindings(Cnames[rc].fnum);
+
+	btostart();
+}
+
+/***
+ * The Zedit functions are grouped into categories. This command lets
+ * you see the grouped functions.
+ */
+void Zhelp_group(void)
+{
+	char line[80];
+	int i, j, n;
+	int rc = getplete("Category: ", NULL, (char **)Htype, sizeof(char *), HTYPES);
+	if (rc == -1)
+		return;
+
+	wuseother(HELPBUFF);
+
+	binstr(Htype[rc]);
+	binstr("\n\n");
+
+	for (i = j = n = 0; i < NUMFUNCS; ++i)
+		if (Cnames[i].htype == rc) {
+			n += sprintf(line + n, "%-24s", Cnames[i].name);
+			if (++j == 3) {
+				binstr(line);
+				binsert('\n');
+				j = n = 0;
+			}
+		}
+
+	if (j)
+		binstr(line);
+	binsert('\n');
+
+	btostart();
+}
+#else
+void Zhelp_function(void) { tbell(); }
+#endif
+
+#if HELP
 /* a "sentence" ends in a tab, NL, or two consecutive spaces */
 static int issentence(void)
 {
@@ -88,26 +176,6 @@ static void helpit(int type)
 	btostart();
 	Curbuff->bmodf = false;
 	clrpaw();
-}
-
-static void dump_bindings(char *buff, int fnum)
-{
-	int k, found = 0;
-
-	binstr("\nBinding(s): ");
-
-	for (k = 0; k < NUMKEYS; ++k)
-		if (Keys[k] == fnum)
-			if (notdup_key(k)) {
-				if (found)
-					binstr(",  ");
-				else
-					found = true;
-				binstr(dispkey(k, buff));
-			}
-
-	if (!found)
-		binstr("Unbound");
 }
 
 static void massage(char *buff)
@@ -172,7 +240,7 @@ static void help(int code, bool func)
 		if (func) {
 			if (Cnames[code].fnum != ZNOTIMPL &&
 			    Cnames[code].fnum != ZINSERT)
-				dump_bindings(buff, Cnames[code].fnum);
+				dump_bindings(Cnames[code].fnum);
 		} else {
 			binstr("\nCurrent value: ");
 			varval(code);
@@ -297,7 +365,6 @@ void Zhelp(void)
 		break;
 	}
 }
-
 #else
 void Zhelp(void) { tbell(); }
 #endif

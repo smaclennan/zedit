@@ -162,6 +162,8 @@ Z(Zview_line);
 Z(Zvmode);
 Z(Zyank);
 Z(Zhelp_variable);
+Z(Zhelp_function);
+Z(Zhelp_group);
 
 Z(pinsert);
 Z(pnewline);

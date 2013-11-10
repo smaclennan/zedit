@@ -45,7 +45,7 @@ $(ZEXE): $O
 configure.h:
 	@touch configure.h
 
-fcheck: fcheck.c *.h ansi.c termcap.c terminfo.c funcs.c
+fcheck: fcheck.c *.h $(CFILES)
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
 	@./fcheck
 
@@ -56,10 +56,12 @@ fcheck: fcheck.c *.h ansi.c termcap.c terminfo.c funcs.c
 install:
 	mkdir -p $(DESTDIR)/bin
 	install -s ze $(DESTDIR)/bin/z
+
+install_docs:
 	docs/build
 	mkdir -p $(DESTDIR)/$(CONFIGDIR)
 	install -m 644 docs/help.z $(DESTDIR)$(CONFIGDIR)
 
 clean:
-	rm -f configure.h *.o ze fcheck core* TAGS valgrind.out
+	rm -f configure.h *.o ze fcheck core* TAGS valgrind.out func-docs.h
 	@make -C docs clean

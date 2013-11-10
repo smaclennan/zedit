@@ -60,8 +60,8 @@ void Zset_variable(void)
 
 #if BUILTIN_DOCS
 /***
- * Displays help on any of the configurable variables to be
- * set. Prompts for the variable with full completion.
+ * Displays help on any of the configurable variables.
+ * Prompts for the variable with full completion.
  */
 void Zhelp_variable(void)
 {

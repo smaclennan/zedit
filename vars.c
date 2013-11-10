@@ -58,7 +58,6 @@ void Zset_variable(void)
 		setavar(Vars[rc].vname, true);
 }
 
-#if BUILTIN_DOCS
 /***
  * Displays help on any of the configurable variables.
  * Prompts for the variable with full completion.
@@ -89,9 +88,6 @@ void Zhelp_variable(void)
 
 	btostart();
 }
-#else
-void Zhelp_variable(void) { tbell(); }
-#endif
 
 /* If there is a config.z file, read it! */
 /* CExtends, AExtends, TExtends defaults set in commands.c */

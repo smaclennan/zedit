@@ -38,7 +38,7 @@ static int Key_shortcut;
 
 void Dbg(char *fmt, ...) {}
 
-#if BUILTIN_DOCS
+#if HELP
 #include <dirent.h>
 
 static char *cmd_docs[NUMFUNCS];
@@ -175,7 +175,7 @@ static int build_func_help(void)
 
 	return err;
 }
-#endif /* BUILTIN_DOCS */
+#endif /* HELP */
 
 int main(int argc, char *argv[])
 {
@@ -212,13 +212,9 @@ int main(int argc, char *argv[])
 			printf("%s too long\n", Cnames[s1].name);
 			err = 1;
 		}
-		if (strncmp(Cnames[s1].name, "Top", 3) == 0) {
-			printf("Zhelp() Top: %s\n", Cnames[s1].name);
-			err = 1;
-		}
 	}
 
-#if BUILTIN_DOCS
+#if HELP
 	if (build_func_help())
 		err = 1;
 #endif

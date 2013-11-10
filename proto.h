@@ -81,7 +81,6 @@ Z(Zcopy_word);
 Z(Zgrep);
 Z(Zglobal_search);
 Z(Zgrow_window);
-Z(Zhelp);
 Z(Zhex_output);
 Z(Zincremental_search);
 Z(Zindent);

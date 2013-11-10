@@ -127,7 +127,6 @@ void (*Cmds[][2])() = {
 	{ Zcmd_to_buffer,	Znotimpl },
 	{ Zkill,		Znotimpl },
 	{ Zprevious_window,		Znotimpl },
-	{ Zhelp,		Znotimpl },
 	{ Zglobal_search,		Znotimpl },
 	{ Zindent,		Znotimpl },
 	{ Zundent,		Znotimpl },

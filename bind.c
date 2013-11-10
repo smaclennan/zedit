@@ -162,7 +162,7 @@ void bind(void)
 	Keys[256 + 'E'] = Keys[256 + 'e'] = ZRE_REPLACE;		/* C-X E */
 /* C-X F */
 /* C-X G */
-	Keys[256 + 'H'] = Keys[256 + 'h'] = ZHELP;		/* C-X H */
+	Keys[256 + 'H'] = Keys[256 + 'h'] = ZHELP_FUNCTION;		/* C-X H */
 	Keys[256 + 'I'] = Keys[256 + 'i'] = ZINDENT;		/* C-X I */
 /* C-X J */
 	Keys[256 + 'K'] = Keys[256 + 'k'] = ZDELETE_BUFFER;		/* C-X K */

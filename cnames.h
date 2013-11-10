@@ -45,7 +45,6 @@ struct cnames Cnames[] = {
 	{"goto-line",			ZGOTO_LINE,		H_CURSOR},
 	{"grep",			ZGREP,		H_SHELL},
 	{"grow-window",			ZGROW_WINDOW,	H_BUFF},
-	{"help",			ZHELP,		H_HELP},
 	{"help-function",		ZHELP_FUNCTION,	H_HELP},
 	{"help-group",			ZHELP_GROUP,	H_HELP},
 	{"help-variable",		ZHELP_VARIABLE, H_HELP},

@@ -1,8 +1,6 @@
 #!/bin/sh
 
 ZSRC=..
-CC=cc
-CFLAGS=-O
 EXE=./zhsort
 
 # So docs/build works
@@ -23,7 +21,7 @@ make clean all || exit 1
 echo "Checking commands..."
 $EXE c >cmd.tmp || { echo "Errors: aborted"; rm -f cmd.tmp; exit; }
 echo "Checking variables..."
-$EXE v variable.doc >var.tmp || { echo "Errors: aborted"; rm -f var.tmp; exit; }
+$EXE v >var.tmp || { echo "Errors: aborted"; rm -f var.tmp; exit; }
 
 echo "Create Appendix A"
 ./doc2html -H "Appendix A: Commands" < cmd.tmp > app-a.html

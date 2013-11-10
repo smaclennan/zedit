@@ -38,33 +38,6 @@ static int Key_shortcut;
 
 void Dbg(char *fmt, ...) {}
 
-static int check_cnames(void)
-{
-	int rc = 0;
-	FILE *fp = fopen("cnames.h", "r");
-	if (!fp) {
-		perror("cnames.h");
-		return -1;
-	}
-
-	char line[128], name[40], def[40], *p;
-	while (fgets(line, sizeof(line), fp))
-		if (sscanf(line, " {\"%[^\"]\", %[^,]", name, def) == 2) {
-			for (p = def; *p; ++p)
-				if (*p == '_')
-					*p = '-';
-				else
-					*p = tolower(*p);
-			if (strcmp(name, def + 1)) {
-				printf("PROBLEM: %s\n", name);
-				rc = 1;
-			}
-		}
-
-	fclose(fp);
-	return 0; // SAM HACK FOR NOW
-}
-
 int main(int argc, char *argv[])
 {
 	int i, err = 0;
@@ -105,9 +78,6 @@ int main(int argc, char *argv[])
 			err = 1;
 		}
 	}
-
-	if (check_cnames())
-		err = 1;
 
 	return err;
 }

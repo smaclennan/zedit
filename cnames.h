@@ -310,6 +310,9 @@ struct cnames Cnames[] = {
 	},
 	{"life",			ZLIFE,			H_SPECIAL,
 	 "Destructively plays the game of Life on the current buffer.\n"
+	 "  A space does the next iteration.\n"
+	 "  A Return causes continuous iterations (with a slight delay).\n"
+	 "  An Abort stops the game.\n"
 	},
 	{"list-buffers",		ZLIST_BUFFERS,		H_BUFF,
 	 "Displays a list of the current buffers on the display.\n"

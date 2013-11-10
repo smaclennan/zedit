@@ -139,7 +139,8 @@ static struct comment *start;
 /* Was the last command a delete of any type? */
 static bool delcmdall(void)
 {
-	return delcmd() || Lfunc == ZDELETE_CHAR || Lfunc == ZDELETE_PREVIOUS_CHAR;
+	return delcmd() || Lfunc == ZDELETE_CHAR ||
+		Lfunc == ZDELETE_PREVIOUS_CHAR;
 }
 
 

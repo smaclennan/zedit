@@ -155,30 +155,30 @@ void bind(void)
 	Keys[256 + '2'] = ZSPLIT_WINDOW;		/* C-X 2 */
 /* C-X ( */
 /* C-X ) */
-	Keys[256 + 'A'] = Keys[256 + 'a'] = ZGLOBAL_SEARCH;		/* C-X A */
+	Keys[256 + 'A'] = Keys[256 + 'a'] = ZGLOBAL_SEARCH;	/* C-X A */
 	Keys[256 + 'B'] = Keys[256 + 'b'] = ZNEXT_BOOKMARK;	/* C-X B */
 	Keys[256 + 'C'] = Keys[256 + 'c'] = ZCOUNT;		/* C-X C */
 /* C-X D */
-	Keys[256 + 'E'] = Keys[256 + 'e'] = ZRE_REPLACE;		/* C-X E */
+	Keys[256 + 'E'] = Keys[256 + 'e'] = ZRE_REPLACE;	/* C-X E */
 /* C-X F */
 /* C-X G */
-	Keys[256 + 'H'] = Keys[256 + 'h'] = ZHELP_FUNCTION;		/* C-X H */
+	Keys[256 + 'H'] = Keys[256 + 'h'] = ZHELP_FUNCTION;	/* C-X H */
 	Keys[256 + 'I'] = Keys[256 + 'i'] = ZINDENT;		/* C-X I */
 /* C-X J */
-	Keys[256 + 'K'] = Keys[256 + 'k'] = ZDELETE_BUFFER;		/* C-X K */
-	Keys[256 + 'L'] = Keys[256 + 'l'] = ZLIST_BUFFERS;		/* C-X L */
+	Keys[256 + 'K'] = Keys[256 + 'k'] = ZDELETE_BUFFER;	/* C-X K */
+	Keys[256 + 'L'] = Keys[256 + 'l'] = ZLIST_BUFFERS;	/* C-X L */
 	Keys[256 + 'M'] = Keys[256 + 'm'] = ZSET_BOOKMARK;	/* C-X M */
-	Keys[256 + 'N'] = Keys[256 + 'n'] = ZNEXT_WINDOW;		/* C-X N */
-	Keys[256 + 'O'] = Keys[256 + 'o'] = ZNEXT_WINDOW;		/* C-X O */
-	Keys[256 + 'P'] = Keys[256 + 'p'] = ZPREVIOUS_WINDOW;		/* C-X P */
+	Keys[256 + 'N'] = Keys[256 + 'n'] = ZNEXT_WINDOW;	/* C-X N */
+	Keys[256 + 'O'] = Keys[256 + 'o'] = ZNEXT_WINDOW;	/* C-X O */
+	Keys[256 + 'P'] = Keys[256 + 'p'] = ZPREVIOUS_WINDOW;	/* C-X P */
 /* C-X Q */
 /* C-X R */
-	Keys[256 + 'S'] = Keys[256 + 's'] = ZSAVE_ALL_FILES;		/* C-X S */
-	Keys[256 + 'T'] = Keys[256 + 't'] = ZTRIM_WHITE_SPACE;		/* C-X T */
+	Keys[256 + 'S'] = Keys[256 + 's'] = ZSAVE_ALL_FILES;	/* C-X S */
+	Keys[256 + 'T'] = Keys[256 + 't'] = ZTRIM_WHITE_SPACE;	/* C-X T */
 	Keys[256 + 'U'] = Keys[256 + 'u'] = ZUNDENT;		/* C-X U */
-	Keys[256 + 'V'] = Keys[256 + 'v'] = ZSET_VARIABLE;		/* C-X V */
-	Keys[256 + 'W'] = Keys[256 + 'w'] = ZWRITE_FILE;		/* C-X W */
-	Keys[256 + 'X'] = Keys[256 + 'x'] = ZNEXT_BUFFER;		/* C-X X */
+	Keys[256 + 'V'] = Keys[256 + 'v'] = ZSET_VARIABLE;	/* C-X V */
+	Keys[256 + 'W'] = Keys[256 + 'w'] = ZWRITE_FILE;	/* C-X W */
+	Keys[256 + 'X'] = Keys[256 + 'x'] = ZNEXT_BUFFER;	/* C-X X */
 /* C-X Y */
 	Keys[256 + 'Z'] = Keys[256 + 'z'] = ZEXIT;		/* C-X Z */
 	Keys[256 + '^'] = ZGROW_WINDOW;				/* C-X ^ */
@@ -347,9 +347,10 @@ void Zbound_to(void)
 }
 
 /***
- * Inserts a list of the commands and their current bindings into the .list
- * buffer. It deletes the contents of the .list buffer. Keys bound to NULL
- * or Insert are not displayed. The PAW column displays if the command is allowed in the PAW.
+ * Inserts a list of the commands and their current bindings into the
+ * .list buffer. It deletes the contents of the .list buffer. Keys
+ * bound to NULL or Insert are not displayed. The PAW column displays
+ * if the command is allowed in the PAW.
  *
  * A Universal Argument prompts for an output file to put the list in.
  */

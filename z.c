@@ -31,6 +31,10 @@ int Verbose;
 
 static char dbgfname[PATHMAX];
 
+#ifndef CONFIGDIR
+#define CONFIGDIR "/usr/share/zedit"
+#endif
+
 
 static void usage(char *prog)
 {

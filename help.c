@@ -66,7 +66,8 @@ static void dump_bindings(int fnum)
  */
 void Zhelp_function(void)
 {
-	int rc = getplete("Function: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
+	int rc = getplete("Function: ", NULL, (char **)Cnames,
+			  CNAMESIZE, NUMFUNCS);
 	if (rc == -1)
 		return;
 
@@ -92,7 +93,8 @@ void Zhelp_group(void)
 {
 	char line[80];
 	int i, j, n;
-	int rc = getplete("Group: ", NULL, (char **)Htype, sizeof(char *), HTYPES);
+	int rc = getplete("Group: ", NULL, (char **)Htype,
+			  sizeof(char *), HTYPES);
 	if (rc == -1)
 		return;
 

@@ -267,9 +267,9 @@ void varval(int code)
 }
 
 /***
- * Show the current settings of all the Zedit variables in a buffer. The buffer
- * is suitable for use as a .config.z file and can be saved to a file using Write
- * File.
+ * Show the current settings of all the Zedit variables in a
+ * buffer. The buffer is suitable for use as a .config.z file and can
+ * be saved to a file using Write File.
  */
 void Zshow_config(void)
 {

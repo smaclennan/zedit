@@ -536,7 +536,7 @@ void Zexit(void)
 {
 	struct buff *tbuff;
 	bool modf = false;
-#ifdef PIPESH
+#if SHELL
 	struct buff *make = cfindbuff(MAKEBUFF);
 
 	if (make && make->child != EOF)
@@ -553,7 +553,7 @@ void Zexit(void)
 	if (modf && ask("Modified buffers. quit anyway? ") != YES)
 		return;
 
-#ifdef PIPESH
+#if SHELL
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (tbuff->child != EOF)
 			unvoke(tbuff, false);
@@ -675,7 +675,7 @@ void Znewline(void)
 		bcsearch(NL);
 	else
 		binsert(NL);
-#ifdef PIPESH
+#if SHELL
 	if (Curbuff->out_pipe)
 		sendtopipe();
 #endif

@@ -175,7 +175,7 @@ int main(int argc, char **argv)
 	if (Argp)
 		Zgoto_line();
 
-#ifdef PIPESH
+#if SHELL
 	FD_ZERO(&SelectFDs);
 	FD_SET(1, &SelectFDs);
 	NumFDs = 2;
@@ -207,7 +207,7 @@ static void dotty(void)
 
 void execute(void)
 {
-#ifdef PIPESH
+#if SHELL
 	fd_set fds = SelectFDs;
 
 	zrefresh();

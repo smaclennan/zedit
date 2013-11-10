@@ -9,8 +9,14 @@ CFLAGS += -Wall -g -O3 -DCONFIGDIR="\"$(CONFIGDIR)\""
 
 ETAGS=`which etags || echo true`
 
+TERMINFO=$(shell awk '/^\#define TERMINFO/ { print $$3 }' configure.h)
+ifeq ($(TERMINFO),)
 TERMINFO=$(shell awk '/^\#define TERMINFO/ { print $$3 }' config.h)
+endif
+TERMCAP=$(shell awk '/^\#define TERMCAP/ { print $$3 }' configure.h)
+ifeq ($(TERMCAP),)
 TERMCAP=$(shell awk '/^\#define TERMCAP/ { print $$3 }' config.h)
+endif
 
 ifeq ($(TERMINFO), 1)
 LIBS=-lncurses
@@ -67,3 +73,5 @@ install:
 clean:
 	rm -f configure.h *.o ze fcheck core* TAGS valgrind.out
 	@make -C docs clean
+	@touch configure.h
+

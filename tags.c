@@ -138,7 +138,7 @@ static void gotomatch(struct mark *smark)
 			strcpy(Lbufname, Bsave->bname);
 	bmrktopnt(&tmark);
 	bpnttomrk(smark);
-	Zsetbookmrk();
+	Zset_bookmark();
 	bpnttomrk(&tmark);
 	Nextpart = NULL;
 }

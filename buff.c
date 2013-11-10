@@ -155,7 +155,7 @@ struct buff *bcreate(void)
 		new->pnt_page = new->mark->mpage = fpage;
 		new->bmode = (VAR(VNORMAL) ? NORMAL : TEXT) |
 			(VAR(VEXACT) ? EXACT     : 0);
-#ifdef PIPESH
+#if SHELL
 		new->child = EOF;
 #endif
 	}
@@ -266,7 +266,7 @@ bool bdelbuff(struct buff *tbuff)
 		}
 	}
 
-#ifdef PIPESH
+#if SHELL
 	if (tbuff->child != EOF)
 		unvoke(tbuff, true);
 #endif

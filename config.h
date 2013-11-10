@@ -42,10 +42,9 @@
 #include "configure.h"
 
 /* DON'T TOUCH THESE */
-#if SHELL || TAGS || SPELL
+#if TAGS || SPELL
 #undef  SHELL
 #define SHELL 1
-#define PIPESH 1
 #endif
 #if ANSI + TERMCAP + TERMINFO != 1
 # error "You can't set more than one"

@@ -24,6 +24,9 @@ do_help() {
 	exit 0
 }
 
+rm -f configure.h
+touch configure.h
+
 while [ -n "$1" ]; do
 	case "$1" in
 	--enable-*) enable=1;;
@@ -68,8 +71,8 @@ fi
 # FreeBSD does not support sed -i
 set_one() {
     [ -n "$2" ] || return
-    sed "s/^#define $1.*$/#define $1 $2/" config.h > config.h.tmp
-    mv config.h.tmp config.h
+    echo "#undef $1" >> configure.h
+    echo "#define $1 $2" >> configure.h
 }
 
 if [ -n "$confdir" ]; then

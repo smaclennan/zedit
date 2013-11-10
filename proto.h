@@ -298,7 +298,7 @@ bool dopipe(struct buff *, char *);
 void winit(void);
 void wfini(void);
 
-#ifdef PIPESH
+#if SHELL
 int checkpipes(int);
 bool doshell(void);
 bool invoke(struct buff *, char **);

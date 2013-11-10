@@ -55,7 +55,7 @@ void Zmake(void)
 		if (!set_cmd(VMAKE, "Make: "))
 			return;
 	saveall(true);
-#ifdef PIPESH
+#if SHELL
 	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
 		putpaw("Killing current make.");
@@ -101,7 +101,7 @@ void Zgrep(void)
 		 VARSTR(VGREP), input, files);
 
 	saveall(true);
-#ifdef PIPESH
+#if SHELL
 	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
 		error("Make buffer in use...");
@@ -160,7 +160,7 @@ void Znext_error(void)
 	Arg = 0;
 }
 
-#ifdef PIPESH
+#if SHELL
 void Zkill(void)
 {
 	unvoke(cfindbuff(MAKEBUFF), false);
@@ -269,7 +269,7 @@ static int parse(char *fname)
 }
 #else
 void Zmake(void) { tbell(); }
-void Znexterr(void) { tbell(); }
+void Znext_error(void) { tbell(); }
 void Zkill(void) { tbell(); }
 void Zgrep(void) { tbell(); }
 #endif /* SHELL */

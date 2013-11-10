@@ -61,7 +61,6 @@ void Zcmd_to_screen(void)
 
 void Zcmd_to_buffer(void)
 {
-#ifdef PIPESH
 	struct wdo *save;
 	int rc;
 
@@ -80,14 +79,8 @@ void Zcmd_to_buffer(void)
 			wswitchto(save);
 		}
 	}
-#else
-	Arg = 0;
-	if (getarg("@ ", Command, STRMAX) == 0)
-		cmdtobuff(SHELLBUFF, Command);
-#endif
 }
 
-#ifdef PIPESH
 void Zshell(void)
 {
 	char bname[BUFNAMMAX + 1];
@@ -112,39 +105,7 @@ bool doshell(void)
 	argv[2] = NULL;
 	return invoke(Curbuff, argv);
 }
-#else
-static void syerr(int err)
-{
-	switch (err) {
-	case E2BIG:
-	case ENOMEM:
-		error("Not enough memory");
-		break;
 
-	case ENOENT:
-		error("Command not found");
-		break;
-
-	default:
-		error("Unable to execute");
-	}
-}
-
-void Zshell(void)	/*for tags*/
-{
-	int err = EOF;
-
-	Arg = 0;
-	tfini();
-	if (system(get_shell()) == EOF)
-		err = errno;
-	tinit();
-	if (err != EOF)
-		syerr(err);
-}
-#endif
-
-#ifdef PIPESH
 struct buff *cmdtobuff(char *bname, char *cmd)
 {
 	struct buff *tbuff = NULL;
@@ -158,41 +119,6 @@ struct buff *cmdtobuff(char *bname, char *cmd)
 	}
 	return tbuff;
 }
-#else
-struct buff *cmdtobuff(char *bname, char *cmd)
-{
-	char fname[20];
-	int err, one;
-	struct buff *sbuff, *tbuff;
-
-	Arg = Argp = 0;
-	putpaw("Working...");
-	mktemp(strcpy(fname, ZSHFILE));
-	err = dopipe(fname, cmd);
-	if (err)
-		syerr(err);
-	else {
-		wuseother(bname);
-		breadfile(fname);
-		unlink(fname);
-		Curbuff->bmodf = false;
-		clrpaw();
-	}
-	return err ? NULL : tbuff;
-}
-#endif
-
-#ifndef PIPESH
-int dopipe(char *fname, char *cmd)
-{
-	char command[STRMAX + 1];
-
-	sprintf(command, "%s >%s 2>&1", cmd, fname);
-	if (system(command) == EOF)
-		return errno;
-	return 0;
-}
-#endif
 
 /* Returns -1 if popen failed, else exit code.
  * Leaves Point at end of new text.

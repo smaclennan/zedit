@@ -133,7 +133,7 @@ void tinit(void)
 
 	signal(SIGHUP,  hang_up);
 	signal(SIGTERM, hang_up);
-#ifdef PIPESH
+#if SHELL
 #if !defined(WNOWAIT)
 	signal(SIGCLD,  sigchild);
 #endif

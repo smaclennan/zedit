@@ -34,19 +34,19 @@ void hang_up(int signal)
 			bwritefile(strcmp(bfname(),
 					  MAINBUFF) ? bfname() : "MAIN.HUP");
 		}
-#ifdef PIPESH
+#if SHELL
 		if (tbuff->child != EOF)
 			unvoke(tbuff, false);
 #endif
 	}
-#ifdef PIPESH
+#if SHELL
 	checkpipes(0);
 #endif
 	tfini();
 	exit(1);
 }
 
-#ifdef PIPESH
+#if SHELL
 static int readapipe(struct buff *);
 
 static int Waiting;

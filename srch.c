@@ -131,13 +131,13 @@ void Zincremental_search(void)
 }
 
 /***
- * Searches backwards for the string after every character is entered in
- * the PAW. The Delete Previous Character command can be used to delete a
- * character and "forward up" (???) the search. The Newline character
- * terminates the search. The Abort command terminates the search and
- * places the Point back where it was. Any other command terminates the
- * search and performs the command. A Universal Argument causes the command
- * to repeat.
+ * Searches backwards for the string after every character is entered
+ * in the PAW. The Delete Previous Character command can be used to
+ * delete a character and "forward up" the search. The Newline
+ * character terminates the search. The Abort command terminates the
+ * search and places the Point back where it was. Any other command
+ * terminates the search and performs the command. A Universal
+ * Argument causes the command to repeat.
  */
 void Zreverse_inc_search(void)
 {

@@ -38,6 +38,147 @@ static int Key_shortcut;
 
 void Dbg(char *fmt, ...) {}
 
+#if BUILTIN_DOCS
+#include <dirent.h>
+
+static char *cmd_docs[NUMFUNCS];
+static char doc_buffer[4096];
+
+
+static int c_filter(const struct dirent *ent)
+{
+	char *p = strrchr(ent->d_name, '.');
+	if (p)
+		return strcmp(p, ".c") == 0;
+	return 0;
+}
+
+static void add_one(char *func, char *doc)
+{
+	char *p;
+	int i;
+
+	for (p = func; *p; ++p)
+		if (*p == '_')
+			*p = '-';
+
+	for( i = 0; i < NUMFUNCS; ++i ) {
+		if( strcmp(Cnames[i].name, func) == 0 )
+		{	/* found it! */
+			if (cmd_docs[i]) {
+				fprintf(stderr, "Already has doc!");
+				exit(1);
+			}
+
+			cmd_docs[i] = strdup(doc);
+			if (!cmd_docs[i]) {
+				fputs("Out of memory!\n", stderr);
+			}
+			return;
+		}
+	}
+
+	fprintf(stderr, "%s not found in cnames\n", func);
+	exit(1);
+}
+
+static void process_one_file(char *fname)
+{
+	FILE *fp = fopen(fname, "r");
+	if (!fp) {
+		perror(fname);
+		exit(1);
+	}
+
+	char line[128], *p;
+	while (fgets(line, sizeof(line), fp))
+		if (strncmp(line, "/***", 4) == 0) {
+			*doc_buffer = '\0';
+			while (fgets(line, sizeof(line), fp))
+				if (strncmp(line, " */", 3) == 0)
+					break;
+				else
+					strcat(doc_buffer, line + 3);
+			if (fgets(line, sizeof(line), fp)) {
+				if (strncmp(line, "void Z", 6)) {
+					fprintf(stderr, "Doc with no func in %s", fname);
+					exit(1);
+				}
+				for (p = line + 6; *p && *p != '('; ++p) ;
+				*p = '\0';
+				add_one(line + 6, doc_buffer);
+			}
+		}
+
+	fclose(fp);
+}
+
+static int process_c_files(void)
+{
+	struct dirent **namelist;
+	int n = scandir(".", &namelist, c_filter, alphasort);
+	if (n < 0) {
+		perror("scandir");
+		exit(1);
+	}
+
+	while (n--) {
+		process_one_file(namelist[n]->d_name);
+		free(namelist[n]);
+	}
+	free(namelist);
+
+	return 0;
+}
+
+static int build_func_help(void)
+{
+	char func[40], *p, *p1;
+	int i, need_quote = 1;
+	int err = process_c_files();
+
+	FILE *fp = fopen("func-help.c", "w");
+	if (!fp) {
+		perror("func-help.c");
+		return -1;
+	}
+
+	for( i = 0; i < NUMFUNCS; ++i )
+		if( cmd_docs[i] == NULL) {
+			err = 1;
+			fprintf( stderr, "%s not found\n", Cnames[i].name);
+		} else {
+			for (p = Cnames[i].name, p1 = func; *p; ++p, ++p1)
+				if (*p == '-')
+					*p1 = '_';
+				else
+					*p1 = *p;
+			*p1 = '\0';
+
+			fprintf(fp, "const char *h_%s =", func);
+			for (p = cmd_docs[i]; *p; ++p)
+				if (*p == '\n') {
+					fprintf(fp, "\\n\"");
+					need_quote = 1;
+				} else {
+					if (need_quote) {
+						fputs("\n\"", fp);
+						need_quote = 0;
+					}
+					if (*p == '"')
+						fputc('\'', fp);
+					else
+						fputc(*p, fp);
+				}
+			fprintf(fp, ";\n\n");
+		}
+
+	fclose(fp);
+
+	return err;
+}
+#endif /* BUILTIN_DOCS */
+
 int main(int argc, char *argv[])
 {
 	int i, err = 0;
@@ -78,6 +219,11 @@ int main(int argc, char *argv[])
 			err = 1;
 		}
 	}
+
+#if BUILTIN_DOCS
+	if (build_func_help())
+		err = 1;
+#endif
 
 	return err;
 }

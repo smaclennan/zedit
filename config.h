@@ -31,6 +31,7 @@
 #if !MINCONFIG
 #define COMMENTBOLD	1		/* bold C/shell comments */
 #define HELP		1		/* Help */
+#define BUILTIN_DOCS	1
 #define LIFE		1		/* Game of life */
 
 #define SHELL		1		/* shell interface */

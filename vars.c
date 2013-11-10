@@ -58,6 +58,42 @@ void Zset_variable(void)
 		setavar(Vars[rc].vname, true);
 }
 
+
+#if BUILTIN_DOCS
+/***
+ * Displays help on any any of the configurable variables to be
+ * set. Prompts for the variable with full completion.
+ */
+void Zhelp_variable(void)
+{
+	int rc;
+	char *p;
+
+	rc = getplete("Variable: ", NULL, (char **)Vars, VARSIZE, NUMVARS);
+	if (rc == -1)
+		return;
+
+	wuseother(HELPBUFF);
+
+	binstr(Vars[rc].vname);
+	binstr(": ");
+	varval(rc);
+	binstr("\n\n");
+
+	for (p = Vars[rc].doc; *p; ++p)
+		if (*p == ' ') {
+			Cmd = *p;
+			Zfill_check();
+		} else
+			binsert(*p);
+	binsert('\n');
+
+	btostart();
+}
+#else
+void Zhelp_variable(void) { tbell(); }
+#endif
+
 /* If there is a config.z file, read it! */
 /* CExtends, AExtends, TExtends defaults set in commands.c */
 void readvfile(void)

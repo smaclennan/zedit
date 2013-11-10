@@ -20,7 +20,7 @@ static int usage(void)
 
 static int do_commands(void)
 {
-	int i, maxlen = 0;
+	int i, maxlen = 0, total = 0;
 	int err = process_c_files();
 	for( i = 0; i < NUMFUNCS; ++i )
 		if( cmd_docs[i] == NULL) {
@@ -32,10 +32,11 @@ static int do_commands(void)
 			fputs(cmd_docs[i], stdout);
 			fputs(".sp 0\n", stdout);
 			int n = strlen(cmd_docs[i]); // SAM DBG
+			total += n; // SAM DBG
 			if (n > maxlen) maxlen = n; // SAM DBG
 		}
 
-	fprintf(stderr, "Max length %d\n", maxlen); // SAM DBG
+	fprintf(stderr, "Max length %d total %d\n", maxlen, total); // SAM DBG
 	return err;
 }
 

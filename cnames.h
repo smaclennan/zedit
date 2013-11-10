@@ -46,6 +46,7 @@ struct cnames Cnames[] = {
 	{"grep",			ZGREP,		H_SHELL},
 	{"grow-window",			ZGROW_WINDOW,	H_BUFF},
 	{"help",			ZHELP,		H_HELP},
+	{"help-variable",		ZHELP_VARIABLE, H_HELP},
 	{"hex-output",			ZHEX_OUTPUT,	H_HELP},
 	{"incremental-search",		ZINCREMENTAL_SEARCH,	H_SEARCH},
 	{"indent",			ZINDENT,	H_DISP},

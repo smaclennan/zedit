@@ -99,7 +99,7 @@ void tinit(void)
 #ifdef HAVE_TERMIOS
 	tcgetattr(fileno(stdin), &save_tty);
 	tcgetattr(fileno(stdin), &settty);
-	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
+	settty.c_iflag = 0;
 	settty.c_oflag = TAB3;
 	settty.c_lflag = ECHOE | ECHOK;
 	settty.c_cc[VMIN] = (char) 1;
@@ -108,7 +108,7 @@ void tinit(void)
 #elif defined(HAVE_TERMIO)
 	ioctl(fileno(stdin), TCGETA, &save_tty);
 	ioctl(fileno(stdin), TCGETA, &settty);
-	settty.c_iflag = VAR(VFLOW) ? (IXON | IXOFF) : 0;
+	settty.c_iflag = 0;
 	settty.c_oflag = TAB3;
 	settty.c_lflag = ECHOE | ECHOK;
 	settty.c_cc[VMIN] = (char) 1;

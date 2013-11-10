@@ -161,6 +161,7 @@ Z(Zuppercase_word);
 Z(Zview_line);
 Z(Zvmode);
 Z(Zyank);
+Z(Zhelp_variable);
 
 Z(pinsert);
 Z(pnewline);

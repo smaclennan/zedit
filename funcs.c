@@ -149,6 +149,7 @@ void (*Cmds[][2])() = {
 	{ Zglobal_re_search,		Znotimpl },
 	{ Zgrep,		Znotimpl },
 	{ Zundo,		Znotimpl },
+	{ Zhelp_variable,	Znotimpl },
 	/* only in the PAW you say? pity... */
 	{ Znotimpl,		Zfname },
 };

@@ -32,12 +32,21 @@ struct avar {
 		unsigned val;
 		char *str;
 	} u;
+#if BUILTIN_DOCS
+	char *doc;
+#endif
 };
 extern struct avar Vars[];
 
 /* Handy macros */
 #define VAR(n)		Vars[n].u.val
 #define VARSTR(n)	Vars[n].u.str
+
+#if BUILTIN_DOCS
+#define DOCSTR(str) , str
+#else
+#define DOCSTR(str)
+#endif
 
 /* var defines */
 #define VADDNL		0
@@ -47,8 +56,7 @@ extern struct avar Vars[];
 #define VEXACT		(VCTABS + 1)
 #define VEXPAND		(VEXACT + 1)
 #define VFILLWIDTH	(VEXPAND + 1)
-#define VFLOW		(VFILLWIDTH + 1)
-#define VGREP		(VFLOW + 1)
+#define VGREP		(VFILLWIDTH + 1)
 #define VKILLLINE	(VGREP + 1)
 #define VLINES		(VKILLLINE + 1)
 #define VMAKE		(VLINES + 1)

@@ -18,9 +18,6 @@
  */
 
 #include "z.h"
-
-#if HELP
-#include "func-docs.h"
 #include "keys.h"
 
 static char *Htype[] = {
@@ -76,7 +73,7 @@ void Zhelp_function(void)
 	binstr(Cnames[rc].name);
 	binstr("\n\n");
 
-	binstr(func_docs[rc]);
+	binstr(Cnames[rc].doc);
 
 	if (Cnames[rc].fnum != ZNOTIMPL &&
 	    Cnames[rc].fnum != ZINSERT)
@@ -119,7 +116,3 @@ void Zhelp_group(void)
 
 	btostart();
 }
-#else
-void Zhelp_function(void) { tbell(); }
-void Zhelp_group(void) { tbell(); }
-#endif

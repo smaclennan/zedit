@@ -9,7 +9,6 @@ do_help() {
 	echo "  --enable-termcap	enable termcap"
 	echo "  --enable-terminfo	enable terminfo"
 	echo "  --enable-comment-bold	bold comments for C code"
-	echo "  --enable-help		enable builtin help"
 	echo "  --enable-shell	enable shell commands"
 	echo "  --enable-spell	enable spell checking"
 	echo "  --enable-tags		ctags/etags support"
@@ -42,7 +41,6 @@ while [ -n "$1" ]; do
 	*-maxconfig) maxconfig=$enable;;
 	*-comment-bold) comment=$enable;;
 	*-undo) undo=$enable;;
-	*-help) help=$enable;;
 	*-shell) shell=$enable;;
 	*-spell) spell=$enable;;
 	*-tags) tags=$enable;;
@@ -54,9 +52,9 @@ while [ -n "$1" ]; do
 done
 
 if [ "$minconfig" = 1 ]; then
-	comment=0; undo=0; help=0; shell=0; spell=0; tags=0
+	comment=0; undo=0; shell=0; spell=0; tags=0
 elif [ "$maxconfig" = 1 ]; then
-	comment=1; undo=1; help=1; shell=1; spell=1; tags=1
+	comment=1; undo=1; shell=1; spell=1; tags=1
 fi
 
 if [ "$ansi" = 1 ]; then
@@ -87,7 +85,6 @@ set_one TERMINFO $terminfo
 
 set_one COMMENTBOLD $comment
 set_one UNDO $undo
-set_one HELP $help
 
 set_one SHELL $shell
 set_one SPELL $spell

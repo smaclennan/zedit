@@ -133,6 +133,7 @@ struct cnames {
 #define H_SEARCH			9
 #define H_SHELL				10
 #define H_SPECIAL			11
+	char *doc;
 };
 #define CNAMESIZE sizeof(struct cnames)
 

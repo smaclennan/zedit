@@ -65,5 +65,5 @@ install:
 	install -s ze $(DESTDIR)/bin/z
 
 clean:
-	rm -f configure.h *.o ze fcheck core* TAGS valgrind.out func-docs.h
+	rm -f configure.h *.o ze fcheck core* TAGS valgrind.out
 	@make -C docs clean

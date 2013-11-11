@@ -257,7 +257,6 @@ bool saveall(bool);
 int settabsize(unsigned);
 bool step(Byte *);
 void setmark(bool);
-char *strup(char *);
 void tbell(void);
 void tcleol(void);
 void tclrwind(void);

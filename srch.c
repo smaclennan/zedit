@@ -548,9 +548,11 @@ char *nocase(char *prompt)
 	static char is[20], upper[20];
 
 	if (prompt) {
+		char *p, *u;
+
 		strcpy(is, prompt);
-		strcpy(upper, prompt);
-		strup(upper);
+		for (p = prompt, u = upper; *p; ++p, ++u)
+			*u = toupper(*p);
 		Insearch = true;
 	}
 	return (Curbuff->bmode & EXACT) ? is : upper;

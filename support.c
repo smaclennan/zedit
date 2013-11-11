@@ -213,15 +213,6 @@ void moveto(int (*pred)(), bool forward)
 		bmove1();
 }
 
-char *strup(char *str)
-{
-	char *ptr;
-	for (ptr = str; *ptr; ++ptr)
-		*ptr = toupper(*ptr);
-	return str;
-}
-
-
 /* Put in the right number of tabs and spaces */
 void tindent(int arg)
 {

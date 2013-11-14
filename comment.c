@@ -160,28 +160,28 @@ void resetcomments(void)
 
 static inline void checkcomment(void)
 {
-	if (!Curbuff->comstate) {
-		if (!(Curbuff->bmode & (CMODE | SHMODE)))
-			return;
-		scanbuffer();
-		Curbuff->comstate = 1;
-		start = Curbuff->comments;
-	}
-	for (; start; start = start->next)
-		if (bisbeforemrk(start->start))
-			break;
-		else if (bisbeforemrk(start->end) || bisatmrk(start->end)) {
-			tstyle(T_COMMENT);
-			return;
-		}
-
-	tstyle(T_NORMAL);
 }
 
 /* Called from innerdsp for each char displayed. */
 void cprntchar(Byte ch)
 {
-	checkcomment();
+	int style = T_NORMAL;
+
+	if (!Curbuff->comstate) {
+		scanbuffer();
+		Curbuff->comstate = 1;
+		start = Curbuff->comments;
+	}
+
+	for (; start; start = start->next)
+		if (bisbeforemrk(start->start))
+			break;
+		else if (bisbeforemrk(start->end) || bisatmrk(start->end)) {
+			style = T_COMMENT;
+			break;
+		}
+
+	tstyle(style);
 	tprntchar(ch);
 }
 

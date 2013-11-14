@@ -34,6 +34,13 @@ int Tlrow;			/* Last row displayed */
 static int NESTED;		/* zrefresh can go recursive... */
 Byte tline[COLMAX + 1];
 
+#if COMMENTBOLD
+void (*printchar)(Byte ichar) = cprntchar;
+#else
+#define printchar tprntchar
+#endif
+
+
 /* Mark screen invalid */
 void redisplay(void)
 {
@@ -167,11 +174,9 @@ static void extendedlinemarker(void)
  */
 static int innerdsp(int from, int to, struct mark *pmark)
 {
-	int trow;
-	 Byte *lptr;
-
-
 	static int pntrow;
+	int trow;
+	Byte *lptr;
 	int needpnt = true, col;
 
 	resetcomments();
@@ -191,10 +196,9 @@ static int innerdsp(int from, int to, struct mark *pmark)
 				else {
 					if (bisatmrk(Curbuff->mark))
 						setmark(true);
-					else {
-						checkcomment();
-						tprntchar(Buff());
-					}
+					else
+						/* usually tprntchar */
+						printchar(Buff());
 					if (trow == Tlrow &&
 					    (!ZISPRINT(*lptr) ||
 					     !ZISPRINT(Buff())))

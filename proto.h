@@ -324,7 +324,7 @@ bool wuseother(char *);
 void addcomment(void);
 #define addcpp addcomment
 void resetcomments(void);
-void checkcomment(void);
+void cprntchar(Byte ch);
 void recomment(void);
 void uncomment(struct buff *buff, int need_update);
 #else

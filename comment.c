@@ -158,8 +158,7 @@ void resetcomments(void)
 	start = Curbuff->comments;
 }
 
-/* Called from innerdsp before each char displayed. */
-void checkcomment(void)
+static inline void checkcomment(void)
 {
 	if (!Curbuff->comstate) {
 		if (!(Curbuff->bmode & (CMODE | SHMODE)))
@@ -177,6 +176,13 @@ void checkcomment(void)
 		}
 
 	tstyle(T_NORMAL);
+}
+
+/* Called from innerdsp for each char displayed. */
+void cprntchar(Byte ch)
+{
+	checkcomment();
+	tprntchar(ch);
 }
 
 /* Called from Zcinsert when end comment entered */

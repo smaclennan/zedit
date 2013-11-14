@@ -1,10 +1,9 @@
 .PHONY: all install install-help clean
 
 ZEXE = ze
-CONFIGDIR=/usr/share/zedit
 CC = gcc
 #CC = clang -fno-color-diagnostics
-CFLAGS += -Wall -g -O3 -DCONFIGDIR="\"$(CONFIGDIR)\""
+CFLAGS += -Wall -g -O3
 #CFLAGS += -pedantic
 
 ETAGS=`which etags || echo true`

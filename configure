@@ -75,12 +75,7 @@ set_one() {
     echo "#define $1 $2" >> configure.h
 }
 
-if [ -n "$confdir" ]; then
-    sed "s:^CONFIGDIR=.*$:CONFIGDIR=$confdir:" GNUmakefile > GNUmakefile.tmp
-    sed "s:^CONFIGDIR=.*$:CONFIGDIR=$confdir:" Makefile > Makefile.tmp
-    mv GNUmakefile.tmp GNUmakefile
-    mv Makefile.tmp Makefile
-fi
+[ -n "$confdir" ] && echo "#define CONFIGDIR \"$confdir\"" >> configure.h
 
 set_one ANSI $ansi
 set_one TERMCAP $termcap

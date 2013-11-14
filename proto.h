@@ -321,16 +321,12 @@ void wsize(void);
 bool wuseother(char *);
 
 #if COMMENTBOLD
-void addcomment(void);
-#define addcpp addcomment
 void resetcomments(void);
-void cprntchar(Byte ch);
 void recomment(void);
 void uncomment(struct buff *buff, int need_update);
+void cprntchar(Byte ch);
 #else
-static inline void addcomment(void) {}
 static inline void resetcomments(void) {}
-static inline void checkcomment(void) {}
 static inline void recomment(void) {}
 static inline void uncomment(struct buff *buff, int need_update) {}
 #endif

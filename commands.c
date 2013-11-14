@@ -204,11 +204,8 @@ void Zc_insert(void)
 
 #if COMMENTBOLD
 	case '/':
-		if (bpeek() == '*') {
-			binsert(Cmd);
-			addcomment();
-			return;
-		}
+		if (bpeek() == '*')
+			Curbuff->comstate = 0;
 		break;
 #endif
 	}

@@ -21,34 +21,22 @@
 
 #if COMMENTBOLD
 
-static struct comment *COMhead, *COMtail;	/* list of Comments */
-
-static struct comment *new_comment(struct mark *start)
-{
-	struct comment *new = calloc(sizeof(struct comment), 1);
-	if (!new)
-		return NULL;
-	new->start = bcremrk();
-	new->end   = bcremrk();
-
-	if (start)
-		mrktomrk(new->start, start);
-
-	return new;
-}
-
 /* Mark a new comment from start to Point. */
 static void newcomment(struct mark *start)
 {
-	struct comment *new = new_comment(start);
+	struct comment *new = calloc(sizeof(struct comment), 1);
 	if (!new)
 		return;
+	new->start = bcremrk();
+	new->end   = bcremrk();
 
-	if (!COMhead)
-		COMhead = new;
+	mrktomrk(new->start, start);
+
+	if (!Curbuff->comments)
+		Curbuff->comments = new;
 	else
-		COMtail->next = new;
-	COMtail = new;
+		Curbuff->ctail->next = new;
+	Curbuff->ctail = new;
 }
 
 /* Remove all comments from buffer and mark unscanned */
@@ -77,16 +65,7 @@ static void scanbuffer(void)
 	struct mark tmark;
 	struct mark start;
 
-	COMhead = COMtail = NULL;
-
-	/* free existings comments */
-	while (Curbuff->comments) {
-		struct comment *com = Curbuff->comments;
-		Curbuff->comments = Curbuff->comments->next;
-		unmark(com->start);
-		unmark(com->end);
-		free(com);
-	}
+	uncomment(Curbuff, true);
 
 	bmrktopnt(&tmark);
 
@@ -108,7 +87,6 @@ static void scanbuffer(void)
 			bmove(-1);
 			newcomment(&start);
 		}
-		Curbuff->comments = COMhead;
 	} else {
 		/* Look for both C and C++ comments. */
 		while (bcsearch('/') && !bisend()) {
@@ -126,40 +104,33 @@ static void scanbuffer(void)
 				newcomment(&start);
 			}
 		}
-
-		Curbuff->comments = COMhead;
 	}
 
 	bpnttomrk(&tmark);
+	Curbuff->comstate = 1;
 }
 
 /* The following are called by the innerdsp routine. */
 static struct comment *start;
 
-/* Was the last command a delete of any type? */
-static bool delcmdall(void)
-{
-	return delcmd() || Lfunc == ZDELETE_CHAR ||
-		Lfunc == ZDELETE_PREVIOUS_CHAR;
-}
-
-
 /* Called from innerdsp before display loop */
 void resetcomments(void)
 {
-	if (delcmdall()) {
-		for (start = Curbuff->comments; start; start = start->next)
-			if (markch(start->end) != '/') {
-				uncomment(Curbuff, true);
-				break;
-			}
-	} else if (Lfunc == ZYANK)
-		uncomment(Curbuff, true);
-	start = Curbuff->comments;
-}
+	if (Lfunc == ZYANK)
+		Curbuff->comstate = 0;
+	else if (Curbuff->bmode & CMODE) {
+		/* Was the last command a delete of any type? */
+		if (delcmd() || Lfunc == ZDELETE_CHAR ||
+		    Lfunc == ZDELETE_PREVIOUS_CHAR) {
+			for (start = Curbuff->comments; start; start = start->next)
+				if (markch(start->end) != '/') {
+					Curbuff->comstate = 0;
+					break;
+				}
+		}
+	}
 
-static inline void checkcomment(void)
-{
+	start = Curbuff->comments;
 }
 
 /* Called from innerdsp for each char displayed. */
@@ -169,7 +140,6 @@ void cprntchar(Byte ch)
 
 	if (!Curbuff->comstate) {
 		scanbuffer();
-		Curbuff->comstate = 1;
 		start = Curbuff->comments;
 	}
 
@@ -183,12 +153,6 @@ void cprntchar(Byte ch)
 
 	tstyle(style);
 	tprntchar(ch);
-}
-
-/* Called from Zcinsert when end comment entered */
-void addcomment(void)
-{
-	scanbuffer();
 }
 
 /* Called from Zredisplay */

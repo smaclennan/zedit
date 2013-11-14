@@ -154,7 +154,7 @@ void zrefresh(void)
 
 static int buff_col(void)
 {	/* Current column after current buffer char */
-	return tgetcol() + twidth(Buff());
+	return Pcol + chwidth(Buff(), Pcol, false);
 }
 
 static void extendedlinemarker(void)

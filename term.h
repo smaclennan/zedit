@@ -50,8 +50,6 @@ extern char *cm[];
 #define tmaxrow()		Rowmax
 #define tmaxcol()		Colmax
 extern int Tabsize;
-#define twidth(ch)		chwidth(ch, Pcol, false)
-#define bwidth(ch, col)		chwidth(ch, col, true)
 
 #define tputchar(c)		putchar(c)
 #define tflush()		fflush(stdout)

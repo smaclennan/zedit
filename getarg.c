@@ -220,7 +220,7 @@ void pinsert(void)
 		Tlrow = -1;
 	}
 
-	width = twidth(Cmd);
+	width = chwidth(Cmd, Pcol, false);
 	if (bgetcol(false, 0) + width <= Pawlen) {
 		Zinsert();
 

@@ -525,7 +525,7 @@ int bmakecol(int col, bool must)
 		bmove1();
 	}
 	if (must && tcol < col) {
-		int wid = bwidth('\t', tcol);
+		int wid = chwidth('\t', tcol, true);
 		if (tcol + wid < col)
 			tcol -= Tabsize - wid;
 		tindent(col - tcol);

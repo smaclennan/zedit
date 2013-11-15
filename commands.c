@@ -746,8 +746,11 @@ void Zctrl_x(void)
 
 void Zmeta_x(void)
 {
-	int rc = getplete("M-X: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
+	static char cmd[40];
+
+	int rc = getplete("M-X: ", cmd, (char **)Cnames, CNAMESIZE, NUMFUNCS);
 	if (rc != -1) {
+		strcpy(cmd, Cnames[rc].name);
 		Cmd = Cnames[rc].fnum;
 		Lfunc = ZMETA_X;
 		for (Arg = Arg == 0 ? 1 : Arg; Arg > 0; --Arg)

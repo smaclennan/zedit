@@ -85,6 +85,9 @@ struct cnames Cnames[] = {
 	 "next lines.\n"
 	},
 	{"cmd-to-buffer",		ZCMD_TO_BUFFER,		H_SHELL,
+#if !SHELL
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "Prompts  for  a command and then executes the command in the shell. The\n"
 	 "output is put in the '.shell' buffer. Any previous contents of the\n"
 	 "'.shell' buffer are deleted. A Universal Argument is ignored.\n"
@@ -209,6 +212,9 @@ struct cnames Cnames[] = {
 	 "Universal Argument causes the command to repeat.\n"
 	},
 	{"find-tag",			ZFIND_TAG,		H_FILE,
+#if !TAGS
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "Prompts for a string argument, with the current buffer word as the\n"
 	 "default. It looks through a tagfile and if the tag is found, a bookmark\n"
 	 "is set at the current Point, a Find File is performed on the matched\n"
@@ -242,6 +248,9 @@ struct cnames Cnames[] = {
 	 "of the buffer.\n"
 	},
 	{"grep",			ZGREP,			H_SHELL,
+#if !SHELL
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "Prompts for the completion of a grep command and then performs the\n"
 	 "grep command in the *grep* buffer.\n"
 	},
@@ -299,10 +308,16 @@ struct cnames Cnames[] = {
 	 "PAW. Handles C-X and M- prefixes. A Universal Argument is ignored.\n"
 	},
 	{"kill",			ZKILL,			H_SHELL,
+#if !SHELL
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "Kills the current make. The command must wait for the make to die before\n"
 	 "it can continue. Unix only.\n"
 	},
 	{"life",			ZLIFE,			H_SPECIAL,
+#if !LIFE
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "Destructively plays the game of Life on the current buffer.\n"
 	 "  A space does the next iteration.\n"
 	 "  A Return causes continuous iterations (with a slight delay).\n"
@@ -321,6 +336,9 @@ struct cnames Cnames[] = {
 	 "command to repeat.\n"
 	},
 	{"make",			ZMAKE,			H_SHELL,
+#if !SHELL
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "This command performs the command specified in the Make variable and\n"
 	 "puts the output in the '.make' buffer. The command is usually 'make' and\n"
 	 "is used in conjunction with the Next Error command. A Universal Argument\n"
@@ -368,6 +386,9 @@ struct cnames Cnames[] = {
 	 "causes the command to repeat.\n"
 	},
 	{"next-error",			ZNEXT_ERROR,		H_SHELL,
+#if !SHELL
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "Used after a Make command to search for error messages in the '.make'\n"
 	 "buffer. If an error is found, the Mark in the '.make' buffer is placed\n"
 	 "at the start of the error message. The file containing the error is\n"
@@ -684,6 +705,9 @@ struct cnames Cnames[] = {
 	 "region.\n"
 	},
 	{"undo",			ZUNDO,			H_OTHER,
+#if !UNDO
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "EXPERIMENTAL: Undo the previous edit. There is a list of undos.\n"
 	},
 	{"unmodify",			ZUNMODIFY,		H_DELETE,

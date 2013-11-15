@@ -1,7 +1,5 @@
 #include "z.h"
 
-#if LIFE
-
 #define SROWS	(tmaxrow() - 2)	/* Screen rows */
 #define SCOLS	(tmaxcol() - 1)	/* Screen columns */
 #define MATRIX	(SROWS * SCOLS)	/* Matrix buffer size */
@@ -307,6 +305,3 @@ void Zlife(void)
 	free(matrix2);
 	Curbuff->bmodf = 0;
 }
-#else
-void Zlife(void) { tbell(); }
-#endif

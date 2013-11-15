@@ -300,10 +300,7 @@ struct cnames Cnames[] = {
 	 "Kills the current make. The command must wait for the make to die before\n"
 	 "it can continue. Unix only.\n"
 	},
-	{"life",			ZLIFE,			H_SPECIAL,
-#if !LIFE
-	 "Note: Disabled in this version of Zedit.\n\n"
-#endif
+	{"life",			ZLIFE,			H_SHELL,
 	 "Destructively plays the game of Life on the current buffer.\n"
 	 "  A space does the next iteration.\n"
 	 "  A Return causes continuous iterations (with a slight delay).\n"

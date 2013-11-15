@@ -30,7 +30,6 @@
 
 #if !MINCONFIG
 #define COMMENTBOLD	1		/* bold C/shell comments */
-#define LIFE		1		/* Game of life */
 #define SHELL		1		/* shell interface */
 #define UNDO            0		/* EXPERIMENTAL undo code */
 #endif

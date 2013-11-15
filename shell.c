@@ -81,31 +81,6 @@ void Zcmd_to_buffer(void)
 	}
 }
 
-static bool doshell(void)
-{
-	char *argv[3];
-
-	argv[0] = get_shell();
-	argv[1] = "-i";
-	argv[2] = NULL;
-	return invoke(Curbuff, argv);
-}
-
-void Zshell(void)
-{
-	char bname[BUFNAMMAX + 1];
-	int i = 0;
-
-	/* create a unique buffer name */
-	if (cfindbuff(strcpy(bname, SHELLBUFF)))
-		do
-			sprintf(bname, "%s%d", SHELLBUFF, ++i);
-		while (cfindbuff(bname));
-
-	if (!wuseother(bname) || !doshell())
-		tbell();
-}
-
 struct buff *cmdtobuff(char *bname, char *cmd)
 {
 	struct buff *tbuff = NULL;
@@ -150,7 +125,6 @@ static void printexit(int code)
 		putpaw("Exit %d.", code);
 }
 #else
-void Zshell(void) { tbell(); }
 void Zcmd_to_screen(void) { tbell(); }
 void Zcmd_to_buffer(void) { tbell(); }
 #endif /* SHELL */

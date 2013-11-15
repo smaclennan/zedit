@@ -629,9 +629,6 @@ struct cnames Cnames[] = {
 	 "Performs a 'setenv' command on an environment variable. The variable will\n"
 	 "keep the setting during the the Zedit session.\n"
 	},
-	{"shell",			ZSHELL,			H_SHELL,
-	 "Forks an interactive shell in a special '.shell' window.\n"
-	},
 	{"show-config",			ZSHOW_CONFIG,		H_HELP,
 	 "Show the current settings of all the Zedit variables in a\n"
 	 "buffer. The buffer is suitable for use as a .config.z file and can\n"

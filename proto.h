@@ -135,7 +135,6 @@ Z(Zset_variable);
 Z(Zset_bookmark);
 Z(Zsetenv);
 Z(Zset_mark);
-Z(Zshell);
 Z(Zshrink_window);
 Z(Zsize_window);
 Z(Zswap_chars);
@@ -298,7 +297,6 @@ void wfini(void);
 
 #if SHELL
 int checkpipes(int);
-bool invoke(struct buff *, char **);
 int readpipes(fd_set *);
 void sendtopipe(void);
 void sigchild(int);

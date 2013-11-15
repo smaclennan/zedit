@@ -88,7 +88,6 @@ void (*Cmds[][2])() = {
 	{ Zset_variable,		Znotimpl },
 	{ Zset_bookmark,		Znotimpl },
 	{ Zset_mark,			Zset_mark },
-	{ Zshell,			Znotimpl },
 	{ Zswap_chars,			Zswap_chars },
 	{ Zswap_mark,			Zswap_mark },
 	{ Znext_window,			Znotimpl },

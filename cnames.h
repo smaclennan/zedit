@@ -530,10 +530,6 @@ struct cnames Cnames[] = {
 	 "Repaints the entire screen. A Universal Argument causes the command to\n"
 	 "repeat.\n"
 	},
-	{"reference",			ZREFERENCE,		H_FILE,
-	 "Prompts for a tag and then runs the 'ref' command on it. See the\n"
-	 "documentation for `elvis'.\n"
-	},
 	{"replace",			ZREPLACE,		H_SEARCH,
 	 "Prompts for a search string and a replacement string and searches from\n"
 	 "the current Point looking for matches of the search string. If it finds\n"

@@ -141,7 +141,6 @@ void (*Cmds[][2])() = {
 	{ Zbound_to,			Znotimpl },
 	{ Zshow_config,			Znotimpl },
 	{ Zsetenv,			Znotimpl },
-	{ Zreference,			Znotimpl },
 	{ Zglobal_re_search,		Znotimpl },
 	{ Zgrep,			Znotimpl },
 	{ Zundo,			Znotimpl },

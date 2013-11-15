@@ -303,26 +303,6 @@ static bool gettagsfile(void)
 	breadfile(fname);
 	return true;
 }
-
-void Zreference(void)
-{
-	struct buff *mbuff;
-	char tag[STRMAX + 40], *p;
-
-	strcpy(tag, "ref ");
-	p = tag + strlen(tag);
-	getbword(p, STRMAX, bistoken);
-	if (getarg("Ref tag: ", p, STRMAX))
-		return;
-
-	mbuff = cmdtobuff(REFBUFF, tag);
-	if (mbuff == NULL)
-		error("Unable to execute ref.");
-	else
-		message(mbuff, tag);
-}
-
 #else
 void Zfind_tag(void) { tbell(); }
-void Zreference(void) { tbell(); }
-#endif /* TAGS */
+#endif

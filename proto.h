@@ -117,7 +117,6 @@ Z(Zquote);
 Z(Zdelete_previous_char);
 Z(Zdelete_previous_word);
 Z(Zredisplay);
-Z(Zreference);
 Z(Zreplace);
 Z(Zre_replace);
 Z(Zre_search);

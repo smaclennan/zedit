@@ -335,16 +335,8 @@ bool wuseother(char *bname)
 		wswitchto(wdo);
 	else if (last != Whead)
 		wswitchto(last);
-	else {
+	else
 		wsplit();
-		if ((strcmp(bname, MAKEBUFF) == 0 ||
-		     strcmp(bname, REFBUFF) == 0)
-			&& wheight() > 8) {
-			/* .make/.ref buffers are smaller */
-			Curwdo->first = Curwdo->last - 8;
-			Curwdo->prev->last = Curwdo->first - 1;
-		}
-	}
 	winvalidate(Curwdo);
 	buff = cmakebuff(bname, NULL);
 	if (buff == NULL)

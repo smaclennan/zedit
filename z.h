@@ -99,11 +99,8 @@ extern char *Home;
 #define PAWBUFNAME	"*PAW*"		/* Paw - should never be display */
 #define HELPBUFF	"*help*"
 #define MAKEBUFF	"*compile*"
-#define MANBUFF		"*man*"
 #define SHELLBUFF	"*shell*"
-#define TAGBUFNAME	"*tags*"
 #define LISTBUFF	"*list*"
-#define REFBUFF		"*ref*"
 #define CONFBUFF	"*config*"
 
 #define MAKE_CMD	"make "

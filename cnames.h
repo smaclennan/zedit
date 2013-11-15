@@ -644,12 +644,6 @@ struct cnames Cnames[] = {
 	{"size-window",			ZSIZE_WINDOW,		H_BUFF,
 	 "Sets the window to Universal Argument lines.\n"
 	},
-	{"spell",			ZSPELL,			H_SHELL,
-	 "This command is an interactive interface to the 'ispell' program. It\n"
-	 "allows you to perform spell checking on the current buffer. A Universal\n"
-	 "Argument limits the spell check to the Region. The default is to check\n"
-	 "the entire buffer.\n"
-	},
 	{"split-window",		ZSPLIT_WINDOW,		H_BUFF,
 	 "Splits the current window into two windows. The same buffer is displayed in\n"
 	 "both windows and the bottom window is made active. A Universal Argument\n"

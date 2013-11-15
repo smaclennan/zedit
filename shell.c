@@ -81,6 +81,16 @@ void Zcmd_to_buffer(void)
 	}
 }
 
+static bool doshell(void)
+{
+	char *argv[3];
+
+	argv[0] = get_shell();
+	argv[1] = "-i";
+	argv[2] = NULL;
+	return invoke(Curbuff, argv);
+}
+
 void Zshell(void)
 {
 	char bname[BUFNAMMAX + 1];
@@ -94,16 +104,6 @@ void Zshell(void)
 
 	if (!wuseother(bname) || !doshell())
 		tbell();
-}
-
-bool doshell(void)
-{
-	char *argv[3];
-
-	argv[0] = get_shell();
-	argv[1] = "-i";
-	argv[2] = NULL;
-	return invoke(Curbuff, argv);
 }
 
 struct buff *cmdtobuff(char *bname, char *cmd)

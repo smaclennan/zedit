@@ -102,7 +102,6 @@ extern char *Home;
 #define MANBUFF		"*man*"
 #define SHELLBUFF	"*shell*"
 #define TAGBUFNAME	"*tags*"
-#define SPELLBUFF	"*spell*"
 #define LISTBUFF	"*list*"
 #define REFBUFF		"*ref*"
 #define CONFBUFF	"*config*"

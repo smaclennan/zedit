@@ -138,7 +138,6 @@ Z(Zset_mark);
 Z(Zshell);
 Z(Zshrink_window);
 Z(Zsize_window);
-Z(Zspell);
 Z(Zswap_chars);
 Z(Zswap_mark);
 Z(Zswap_words);
@@ -299,7 +298,6 @@ void wfini(void);
 
 #if SHELL
 int checkpipes(int);
-bool doshell(void);
 bool invoke(struct buff *, char **);
 int readpipes(fd_set *);
 void sendtopipe(void);

@@ -136,7 +136,6 @@ void (*Cmds[][2])() = {
 	{ Zdelete_window,		Znotimpl },
 	{ Zshrink_window,		Znotimpl },
 	{ Zsize_window,			Znotimpl },
-	{ Zspell,			Znotimpl },
 	{ Zrevert_file,			Znotimpl },
 	{ Zscroll_down,			Znotimpl },
 	{ Zscroll_up,			Znotimpl },

@@ -88,9 +88,7 @@ void bind(void)
 	Keys[128 + '.']			  = ZFIND_TAG;
 	Keys[128 + '<']			  = ZBEGINNING_OF_BUFFER;
 	Keys[128 + '>']			  = ZEND_OF_BUFFER;
-#if SPELL
-	Keys[128 + '/'] = Keys[128 + '?'] = ZSPELL;
-#endif
+/*	Keys[128 + '/'] = Keys[128 + '?'] = ; */
 	Keys[128 + '_']			  = ZREFERENCE;
 	Keys[128 + '-']			  = ZFIND_TAG;
 	Keys[128 + '+'] = Keys[128 + '='] = ZAPPEND_KILL;

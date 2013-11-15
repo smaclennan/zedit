@@ -33,7 +33,6 @@
 #define LIFE		1		/* Game of life */
 
 #define SHELL		1		/* shell interface */
-#define SPELL		0		/* ispell interface */
 #define TAGS		0		/* tag file support */
 
 #define UNDO            0		/* EXPERIMENTAL undo code */
@@ -42,7 +41,7 @@
 #include "configure.h"
 
 /* DON'T TOUCH THESE */
-#if TAGS || SPELL
+#if TAGS
 #undef  SHELL
 #define SHELL 1
 #endif

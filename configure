@@ -45,7 +45,6 @@ while [ -n "$1" ]; do
 	*-comment-bold) comment=$enable;;
 	*-undo) undo=$enable;;
 	*-shell) shell=$enable;;
-	*-spell) spell=$enable;;
 	*-tags) tags=$enable;;
 	--config-dir) shift; confdir=$1;;
 	*) echo "Unknown arg '$1' ignored";;
@@ -85,7 +84,6 @@ set_one COMMENTBOLD $comment
 set_one UNDO $undo
 
 set_one SHELL $shell
-set_one SPELL $spell
 set_one TAGS  $tags
 
 auto_detect() {

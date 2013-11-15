@@ -66,7 +66,6 @@ Z(Zwrite_file);
 Z(Zfill_check);
 Z(Zfill_paragraph);
 Z(Zfind_file);
-Z(Zfind_tag);
 Z(Zfname);
 Z(Znext_paragraph);
 Z(Znext_word);
@@ -195,10 +194,8 @@ void btoend(void);
 void btostart(void);
 int bwritefd(int);
 int bwritefile(char *);
-int checkpipes(int type);
 struct buff *cfindbuff(char *);
 struct buff *cmakebuff(char *, char *);
-struct buff *cmdtobuff(char *, char *);
 int cntlines(int);
 int compile(Byte*, Byte*, Byte*);
 void cswitchto(struct buff *);
@@ -289,17 +286,16 @@ void tlfini(void);
 /* compile switched routines */
 void message(struct buff *, char *);
 
-bool dopipe(struct buff *, char *);
 void winit(void);
 void wfini(void);
 
 #if SHELL
-int checkpipes(int);
+int checkpipes(int type);
 int readpipes(fd_set *);
 void sigchild(int);
-#endif
-
+bool dopipe(struct buff *, char *);
 void unvoke(struct buff *, bool);
+#endif
 
 void Dbg(char *fmt, ...);
 

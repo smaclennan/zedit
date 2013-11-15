@@ -27,9 +27,8 @@ endif
 CFILES = ansi.c bcmds.c bind.c buff.c calc.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
-	reg.c shell.c srch.c support.c tags.c term.c \
-	termcap.c terminfo.c undo.c unix.c vars.c window.c z.c \
-	life.c
+	life.c reg.c shell.c srch.c support.c term.c \
+	termcap.c terminfo.c undo.c unix.c vars.c window.c z.c
 
 O := $(CFILES:.c=.o)
 

@@ -18,9 +18,6 @@ do_make --disable-comment-bold
 echo "Disable shell"
 do_make --disable-shell
 
-echo "Enable tags"
-do_make --enable-tags
-
 echo "Enable undo"
 do_make --enable-undo
 

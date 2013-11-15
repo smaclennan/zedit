@@ -211,20 +211,6 @@ struct cnames Cnames[] = {
 	 "created and the file read into it. Supports file name completion. A\n"
 	 "Universal Argument causes the command to repeat.\n"
 	},
-	{"find-tag",			ZFIND_TAG,		H_FILE,
-#if !TAGS
-	 "Note: Disabled in this version of Zedit.\n\n"
-#endif
-	 "Prompts for a string argument, with the current buffer word as the\n"
-	 "default. It looks through a tagfile and if the tag is found, a bookmark\n"
-	 "is set at the current Point, a Find File is performed on the matched\n"
-	 "file name, and the Point is positioned appropriately. If the tag is not\n"
-	 "found but a substring match is, the command will reprompt for the tag\n"
-	 "with the first substring match as the default. To see the next substring\n"
-	 "match use the Again command. The tag file is the file defined in the\n"
-	 "variable 'Tagfile', or the file 'tags' in the current directory.\n"
-	 "Universal Arguments are ignored.\n"
-	},
 	{"global-re-search",		ZGLOBAL_RE_SEARCH,	H_SEARCH,
 	 "This command is used to search for a regular expression in all the buffers.\n"
 	 "It prompts for a search string and then starts searching at the start of\n"

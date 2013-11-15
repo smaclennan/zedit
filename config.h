@@ -31,20 +31,13 @@
 #if !MINCONFIG
 #define COMMENTBOLD	1		/* bold C/shell comments */
 #define LIFE		1		/* Game of life */
-
 #define SHELL		1		/* shell interface */
-#define TAGS		0		/* tag file support */
-
 #define UNDO            0		/* EXPERIMENTAL undo code */
 #endif
 
 #include "configure.h"
 
 /* DON'T TOUCH THESE */
-#if TAGS
-#undef  SHELL
-#define SHELL 1
-#endif
 #if ANSI + TERMCAP + TERMINFO != 1
 # error "You can't set more than one"
 #endif

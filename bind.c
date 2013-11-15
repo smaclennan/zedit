@@ -85,12 +85,12 @@ void bind(void)
 	Keys[128 + '('] = Keys[128 + '9'] = ZBEGINNING_OF_BUFFER;
 	Keys[128 + ')'] = Keys[128 + '0'] = ZEND_OF_BUFFER;
 /*	Keys[128 + ',']			  = ; */
-	Keys[128 + '.']			  = ZFIND_TAG;
+/*	Keys[128 + '.']			  = ; */
 	Keys[128 + '<']			  = ZBEGINNING_OF_BUFFER;
 	Keys[128 + '>']			  = ZEND_OF_BUFFER;
 /*	Keys[128 + '/'] = Keys[128 + '?'] = ; */
 /*	Keys[128 + '_']			  = ; */
-	Keys[128 + '-']			  = ZFIND_TAG;
+/*	Keys[128 + '-']			  = ; */
 	Keys[128 + '+'] = Keys[128 + '='] = ZAPPEND_KILL;
 	Keys[128 + 'A'] = Keys[128 + 'a'] = ZAGAIN;
 	Keys[128 + 'B'] = Keys[128 + 'b'] = ZPREVIOUS_WORD;

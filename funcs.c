@@ -50,7 +50,6 @@ void (*Cmds[][2])() = {
 	{ Zmode,			Znotimpl },
 	{ Zfill_paragraph,		Znotimpl },
 	{ Zfind_file,			Znotimpl },
-	{ Zfind_tag,			Znotimpl },
 	{ Znext_paragraph,		Znext_paragraph },
 	{ Znext_word,			Znext_word },
 	{ Zcopy_word,			Zcopy_word },

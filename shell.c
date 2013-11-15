@@ -27,7 +27,7 @@
 static int NexterrorCalled;
 
 
-struct buff *cmdtobuff(char *bname, char *cmd)
+static struct buff *cmdtobuff(char *bname, char *cmd)
 {
 	struct buff *tbuff = NULL;
 	struct wdo *save;

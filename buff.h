@@ -70,8 +70,7 @@ struct buff {
 	struct buff *prev, *next;	/* list of buffers */
 #if SHELL
 	int child;			/* PID of shell or EOF */
-	int in_pipe;			/* the pipes */
-	FILE *out_pipe;
+	int in_pipe;			/* the pipe */
 #endif
 #if COMMENTBOLD
 	struct comment *comments;	/* list of comments in file */

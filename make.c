@@ -55,14 +55,12 @@ void Zmake(void)
 		if (!set_cmd(VMAKE, "Make: "))
 			return;
 	saveall(true);
-#if SHELL
 	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
 		putpaw("Killing current make.");
 		unvoke(mbuff, true);
 		clrpaw();
 	}
-#endif
 	mbuff = cmdtobuff(MAKEBUFF, VARSTR(VMAKE));
 	if (mbuff)
 		message(mbuff, VARSTR(VMAKE));
@@ -101,13 +99,11 @@ void Zgrep(void)
 		 VARSTR(VGREP), input, files);
 
 	saveall(true);
-#if SHELL
 	mbuff = cfindbuff(MAKEBUFF);
 	if (mbuff && mbuff->child != EOF) {
 		error("Make buffer in use...");
 		return;
 	}
-#endif
 	mbuff = cmdtobuff(MAKEBUFF, cmd);
 	if (mbuff)
 		message(mbuff, cmd);
@@ -160,14 +156,10 @@ void Znext_error(void)
 	Arg = 0;
 }
 
-#if SHELL
 void Zkill(void)
 {
 	unvoke(cfindbuff(MAKEBUFF), false);
 }
-#else
-void Zkill(void) { tbell(); }
-#endif
 
 /* Check if it is a warning or an error.
  * Currently works for GCC, g++, MIPs.

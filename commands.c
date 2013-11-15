@@ -672,10 +672,6 @@ void Znewline(void)
 		bcsearch(NL);
 	else
 		binsert(NL);
-#if SHELL
-	if (Curbuff->out_pipe)
-		sendtopipe();
-#endif
 }
 
 void Ztab(void)

@@ -298,7 +298,6 @@ void wfini(void);
 #if SHELL
 int checkpipes(int);
 int readpipes(fd_set *);
-void sendtopipe(void);
 void sigchild(int);
 #endif
 

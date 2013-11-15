@@ -27,38 +27,6 @@ static char Command[STRMAX + 1];
 static void printexit(int code);
 static int pipetobuff(struct buff *buff, char *instr);
 
-static char *get_shell(void)
-{
-	static char *sh;
-
-	if (!sh) {
-		sh = getenv("SHELL");
-		if (!sh)
-			sh = "/bin/sh";
-	}
-
-	return sh;
-}
-
-void Zcmd_to_screen(void)
-{
-	char tb[STRMAX * 2];
-
-	Arg = 0;
-	if (getarg("! ", Command, STRMAX) == 0) {
-		tfini();
-		sprintf(tb, "%s -c \"%s\"", get_shell(), Command);
-		if (system(tb) == EOF)
-			putpaw("command failed");
-		else {
-			fputs("\n[Hit Return to continue]", stdout);
-			tgetcmd();
-			putchar('\n');
-		}
-		tinit();
-	}
-}
-
 void Zcmd_to_buffer(void)
 {
 	struct wdo *save;
@@ -125,6 +93,5 @@ static void printexit(int code)
 		putpaw("Exit %d.", code);
 }
 #else
-void Zcmd_to_screen(void) { tbell(); }
 void Zcmd_to_buffer(void) { tbell(); }
 #endif /* SHELL */

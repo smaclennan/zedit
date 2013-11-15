@@ -89,12 +89,6 @@ struct cnames Cnames[] = {
 	 "output is put in the '.shell' buffer. Any previous contents of the\n"
 	 "'.shell' buffer are deleted. A Universal Argument is ignored.\n"
 	},
-	{"cmd-to-screen",		ZCMD_TO_SCREEN,		H_SHELL,
-	 "Prompts for a command and then executes the command in the shell. When\n"
-	 "the command has finished executing, '[Hit any key to continue]' is\n"
-	 "displayed. A key should then be hit to reenter Zedit. The key hit is\n"
-	 "thrown away.\n"
-	},
 	{"copy-region",			ZCOPY_REGION,		H_DELETE,
 	 "Copies the region to the kill buffer. The kill buffer is overwritten\n"
 	 "unless the the delete flag is set. See Append Kill command.\n"

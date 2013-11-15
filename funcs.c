@@ -118,7 +118,6 @@ void (*Cmds[][2])() = {
 	{ Zuppercase_region,		Zuppercase_region },
 	{ Zlowercase_region,		Zlowercase_region },
 	{ Zview_line,			Znotimpl },
-	{ Zcmd_to_screen,		Znotimpl },
 	{ Zjoin,			Znotimpl },
 	{ Zout_to,			Znotimpl },
 	{ Zmake,			Znotimpl },

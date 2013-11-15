@@ -49,6 +49,7 @@ void hang_up(int signal)
 #if SHELL
 static int readapipe(struct buff *);
 
+static int npipes;
 static int Waiting;
 fd_set SelectFDs;
 int NumFDs;
@@ -60,11 +61,17 @@ int readpipes(fd_set *fds)
 	struct buff *tbuff;
 	int did_something = 0;
 
-	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-		if (tbuff->child != EOF && FD_ISSET(tbuff->in_pipe, fds)) {
-			readapipe(tbuff);
-			++did_something;
-		}
+	if (npipes) {
+		npipes = 0;
+		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+			if (tbuff->child != EOF) {
+				++npipes;
+				if (FD_ISSET(tbuff->in_pipe, fds)) {
+					readapipe(tbuff);
+					++did_something;
+				}
+			}
+	}
 
 	return did_something;
 }
@@ -215,6 +222,7 @@ bool dopipe(struct buff *tbuff, char *icmd)
 			FD_SET(from[0], &SelectFDs);
 			if (from[0] >= NumFDs)
 				NumFDs = from[0] + 1;
+			++npipes;
 			return true;
 		} else {
 			/* fork failed - clean up */

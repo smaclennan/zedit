@@ -18,8 +18,6 @@
 #define LIVING	'+'
 #define DEAD	'X'
 
-static char *matrix1, *matrix2;
-
 /* Do one generation of life. First matrix 2 is cleared, then
  * matrix 1 is scanned. Wherever a living cell is found, the CORRESPONDING
  * NEIGHBOR CELLS IN MATRIX 2 are incremented by 1, and the corresponding
@@ -35,7 +33,7 @@ static char *matrix1, *matrix2;
  * Pass 2 is called to determine what actually lives or dies, based on
  * the neighbor-count of each cell.
  */
-static void generation(void)
+static void generation(char *matrix1, char *matrix2)
 {
 	char *p1, *p2, *end;
 	int msize, row = 0, col;
@@ -262,6 +260,7 @@ static void fill_matrix1(char *p1)
 
 void Zlife(void)
 {
+	char *matrix1, *matrix2;
 	bool go = true, step = true;
 	unsigned cmd;
 
@@ -298,7 +297,7 @@ void Zlife(void)
 		} else
 			usleep(100000);
 		if (go)
-			generation();
+			generation(matrix1, matrix2);
 	}
 	clrpaw();
 	free(matrix1);

@@ -177,6 +177,8 @@ extern Byte CRdefault;
 
 extern int circf;
 
+extern unsigned long undo_total;
+
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
 

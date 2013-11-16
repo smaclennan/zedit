@@ -1069,8 +1069,8 @@ int batoi(void)
 void Zstats(void)
 {
 #if UNDO
-	putpaw("Buffers: %d  Pages: %d  Marks: %d  Undos: %d",
-	       NumBuffs, NumPages, NumMarks, Curbuff->n_undo);
+	putpaw("Buffers: %d  Pages: %d  Marks: %d  Undos: %luK",
+	       NumBuffs, NumPages, NumMarks, (undo_total + 521) / 1024);
 #else
 	putpaw("Buffers: %d  Pages: %d  Marks: %d",
 	       NumBuffs, NumPages, NumMarks);

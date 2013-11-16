@@ -118,6 +118,9 @@ void resetcomments(void)
 	case ZYANK:
 	case ZINSERT:
 	case ZC_INSERT:
+
+	/* Can be insert or delete */
+	case ZUNDO:
 		Comstate = false;
 	}
 }

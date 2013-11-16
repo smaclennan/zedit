@@ -17,6 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/* BUGS:
+ *
+ * SERIOUS: Currently the changes cannot span page boundaries
+ */
+
 #include "z.h"
 
 #if UNDO
@@ -33,6 +38,8 @@ struct undo {
 };
 
 static bool InUndo;
+
+unsigned long undo_total; /* stats only */
 
 /* SAM DBG */
 #if 0
@@ -71,7 +78,8 @@ static struct undo *new_undo(struct buff *buff, int action, int size)
 	}
 	undo->prev = buff->undo_tail;
 	buff->undo_tail = undo;
-	buff->n_undo++;
+
+	undo_total += sizeof(struct undo) + sizeof(struct mark);
 
 	return undo;
 }
@@ -89,8 +97,10 @@ static void free_undo(struct buff *buff)
 		if (undo->data)
 			free(undo->data);
 
+		undo_total -= sizeof(struct undo) + sizeof(struct mark) + undo->size;
+
 		free(undo);
-		buff->n_undo--;
+
 	}
 }
 
@@ -120,6 +130,37 @@ void undo_add(int size)
 		return;
 }
 
+static void undo_append(struct undo *undo, Byte *data, int size)
+{
+	Byte *new = realloc(undo->data, undo->size + size);
+	if (!new)
+		return;
+
+	memcpy(new + undo->size, data, size);
+
+	undo->data = new;
+	undo->size += size;
+
+	undo_total += size;
+}
+
+static void undo_prepend(struct undo *undo, Byte *data, int size)
+{
+	Byte *new = realloc(undo->data, undo->size + size);
+	if (!new)
+		return;
+
+	/* Shift the old */
+	memmove(new + size, new, undo->size);
+	/* Move in the new */
+	memcpy(new, data, size);
+
+	undo->data = new;
+	undo->size += size;
+
+	undo_total += size;
+}
+
 /* Size is always within the current page. */
 void undo_del(int size)
 {
@@ -131,7 +172,25 @@ void undo_del(int size)
 	if (size == 0) /* this can happen on page boundaries */
 		return;
 
-	/* SAM merge deletes! */
+	/* We are not going to deal with page boundaries for now */
+	/* We also only merge simple deletes */
+	if (undo && undo->action == ACT_DELETE && undo->end->mpage == Curpage) {
+		switch (Lfunc) {
+		case ZDELETE_CHAR:
+			if (Curchar == undo->end->moffset) {
+				undo_append(undo, Curcptr, size);
+				return;
+			}
+			break;
+		case ZDELETE_PREVIOUS_CHAR:
+			if (Curchar == undo->end->moffset - 1) {
+				undo_prepend(undo, Curcptr, size);
+				--undo->end->moffset;
+				return;
+			}
+			break;
+		}
+	}
 
 	/* need a new undo */
 	undo = new_undo(Curbuff, ACT_DELETE, size);
@@ -145,6 +204,8 @@ void undo_del(int size)
 	}
 
 	memcpy(undo->data, Curcptr, size);
+
+	undo_total += size;
 }
 
 void undo_clear(struct buff *buff)

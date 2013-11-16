@@ -72,7 +72,6 @@ struct buff {
 	Byte comchar;			/* single char comment character */
 #if UNDO
 	void *undo_tail;
-	int n_undo;
 #endif
 };
 

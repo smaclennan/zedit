@@ -300,7 +300,7 @@ struct cnames Cnames[] = {
 	 "Kills the current make. The command must wait for the make to die before\n"
 	 "it can continue. Unix only.\n"
 	},
-	{"life",			ZLIFE,			H_SHELL,
+	{"life",			ZLIFE,			H_OTHER,
 	 "Destructively plays the game of Life on the current buffer.\n"
 	 "  A space does the next iteration.\n"
 	 "  A Return causes continuous iterations (with a slight delay).\n"
@@ -642,9 +642,6 @@ struct cnames Cnames[] = {
 	},
 	{"stats",			ZSTATS,			H_BUFF,
 	 "Displays some simple stats about Zedit. "
-#if UNDO
-	 "The undo stat is for the current buffer, not a global count."
-#endif
 	},
 	{"swap-chars",			ZSWAP_CHARS,		H_DISP,
 	 "Swaps the character before the Point with the character at the\n"

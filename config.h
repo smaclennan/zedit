@@ -11,6 +11,6 @@
 
 /* USER CONFIGURABLE - don't define any, see if I care */
 #define SHELL		1
-#define UNDO            0		/* EXPERIMENTAL undo code */
+#define UNDO            1		/* EXPERIMENTAL undo code */
 
 #endif

@@ -202,12 +202,10 @@ void Zc_insert(void)
 		}
 		break;
 
-#if COMMENTBOLD
 	case '/':
 		if (bpeek() == '*')
 			uncomment(Curbuff);
 		break;
-#endif
 	}
 
 	binsert(Cmd);
@@ -1025,7 +1023,6 @@ void toggle_mode(int mode)
 	else
 		new = mode;
 
-#if COMMENTBOLD
 	if (new == SHMODE) {
 		char *p = strrchr(bfname(), '.');
 		if (p && strcmp(p, ".el") == 0)
@@ -1034,7 +1031,6 @@ void toggle_mode(int mode)
 			Curbuff->comchar = '#';
 	} else
 		Curbuff->comchar = 0;
-#endif
 
 	Curbuff->bmode = (Curbuff->bmode & ~MAJORMODE) | new;
 	if (mode) {

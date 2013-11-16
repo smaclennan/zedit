@@ -19,7 +19,6 @@
 
 #include "z.h"
 
-#if COMMENTBOLD
 static bool Comstate;
 
 /* Mark a new comment from start to Point. */
@@ -150,4 +149,3 @@ void uncomment(struct buff *buff)
 
 	Comstate = false;
 }
-#endif

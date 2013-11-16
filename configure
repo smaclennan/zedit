@@ -8,16 +8,10 @@ do_help() {
 	echo "  --enable-ansi		enable ansi"
 	echo "  --enable-termcap	enable termcap"
 	echo "  --enable-terminfo	enable terminfo"
-	echo "  --enable-comment-bold	bold comments for C code"
 	echo "  --enable-shell	enable shell commands"
 	echo "  --enable-undo		EXPERIMNETAL undo"
 	echo
-	echo "Meta-features:"
-	echo "  --enable-minconfig	disable everything"
-	echo "  --enable-maxconfig	enable everything"
-	echo
 	echo "To disable a feature replace --enable with --disable."
-	echo "Disabling a meta-feature is a NOP."
 
 	exit 0
 }
@@ -38,9 +32,6 @@ while [ -n "$1" ]; do
 	*-ansi) ansi=$enable;;
 	*-termcap) termcap=$enable;;
 	*-terminfo) terminfo=$enable;;
-	*-minconfig) minconfig=$enable;;
-	*-maxconfig) maxconfig=$enable;;
-	*-comment-bold) comment=$enable;;
 	*-undo) undo=$enable;;
 	*-shell) shell=$enable;;
 	--config-dir) shift; confdir=$1;;
@@ -49,12 +40,6 @@ while [ -n "$1" ]; do
 
 	shift
 done
-
-if [ "$minconfig" = 1 ]; then
-	comment=0; undo=0; shell=0; spell=0; tags=0
-elif [ "$maxconfig" = 1 ]; then
-	comment=1; undo=1; shell=1; spell=1; tags=1
-fi
 
 if [ "$ansi" = 1 ]; then
     terminfo=0; termcap=0
@@ -77,7 +62,6 @@ set_one ANSI $ansi
 set_one TERMCAP $termcap
 set_one TERMINFO $terminfo
 
-set_one COMMENTBOLD $comment
 set_one UNDO $undo
 
 set_one SHELL $shell

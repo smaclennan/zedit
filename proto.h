@@ -309,14 +309,10 @@ void wswitchto(struct wdo *wdo);
 void wsize(void);
 bool wuseother(char *);
 
-#if COMMENTBOLD
+/* COMMENTBOLD */
 void resetcomments(void);
 void uncomment(struct buff *buff);
 void cprntchar(Byte ch);
-#else
-static inline void resetcomments(void) {}
-static inline void uncomment(struct buff *buff, int need_update) {}
-#endif
 
 #if UNDO
 void undo_add(int size);

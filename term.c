@@ -173,9 +173,7 @@ void tfini(void)
 
 	clrpaw();
 	t_goto(Rowmax - 1, 0);
-#if COMMENTBOLD
 	tstyle(T_NORMAL);
-#endif
 	tflush();
 	tlfini();
 }

@@ -48,12 +48,10 @@ struct mark {
 	struct mark *prev, *next;	/* list of marks */
 };
 
-#if COMMENTBOLD
 struct comment {
 	struct mark *start, *end;
 	struct comment *next;
 };
-#endif
 
 struct buff {
 	bool bmodf;			/* buffer modified? */
@@ -70,10 +68,8 @@ struct buff {
 	pid_t child;			/* PID of shell or EOF */
 	int in_pipe;			/* the pipe */
 #endif
-#if COMMENTBOLD
 	struct comment *chead, *ctail;	/* list of comments in file */
 	Byte comchar;			/* single char comment character */
-#endif
 #if UNDO
 	void *undo_tail;
 #endif

@@ -34,11 +34,7 @@ int Tlrow;			/* Last row displayed */
 static int NESTED;		/* zrefresh can go recursive... */
 Byte tline[COLMAX + 1];
 
-#if COMMENTBOLD
 static void (*printchar)(Byte ichar) = tprntchar;
-#else
-#define printchar tprntchar
-#endif
 
 
 /* Mark screen invalid */
@@ -241,9 +237,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 		}
 	}
 
-#if COMMENTBOLD
 	tstyle(T_NORMAL);
-#endif
 
 	return pntrow;
 }
@@ -342,9 +336,7 @@ static char *setmodes(struct buff *buff)
 	Keys[CR] = CRdefault;
 	Keys[' '] = Keys['}'] = Keys['#'] = Keys[':'] = Keys['/'] = ZINSERT;
 	Keys['\t'] = ZTAB;
-#if COMMENTBOLD
 	printchar = tprntchar;
-#endif
 
 	/* Set PawStr to majour mode and setup any special keys */
 	switch (buff->bmode & MAJORMODE) {
@@ -352,21 +344,17 @@ static char *setmodes(struct buff *buff)
 		strcpy(PawStr, "C");
 		Keys[CR] = ZC_INDENT;
 		Keys['}'] = Keys['#'] = Keys[':'] = Keys['\t'] = ZC_INSERT;
-#if COMMENTBOLD
 		if (VAR(VCOMMENTS)) {
 			Keys['/'] = ZC_INSERT;
 			printchar = cprntchar;
 		}
-#endif
 		break;
 	case SHMODE:
 		strcpy(PawStr, "sh");
 		Keys[CR] = ZC_INDENT;
 		Keys['\t'] = ZC_INSERT;
-#if COMMENTBOLD
 		if (VAR(VCOMMENTS))
 			printchar = cprntchar;
-#endif
 		break;
 	case TEXT:
 		strcpy(PawStr, "Text");

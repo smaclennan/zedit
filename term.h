@@ -35,7 +35,7 @@
 #define T_STANDOUT			1
 #define T_REVERSE			2
 #define T_BOLD				3
-#define T_COMMENT			4	/* COMMENTBOLD only */
+#define T_COMMENT			4
 
 #if TERMINFO || TERMCAP
 #define TPUTS(s)		tputs(s, 1, putchar)

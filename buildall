@@ -12,9 +12,6 @@ do_make --enable-termcap
 echo "Terminfo"
 do_make --enable-terminfo
 
-echo "Disable comment-bold"
-do_make --disable-comment-bold
-
 echo "Disable shell"
 do_make --disable-shell
 

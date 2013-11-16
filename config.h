@@ -7,6 +7,7 @@
 #ifdef __unix__
 # define HAVE_POLL
 # define HAVE_TERMIOS
+# define SHELL 1
 #else
 # error OS not detected.
 #endif
@@ -26,22 +27,13 @@
 #define TERMINFO	0
 
 /* USER CONFIGURABLE - don't define any, see if I care */
-#define MINCONFIG	0		/* Minimal configuration */
-
-#if !MINCONFIG
-#define COMMENTBOLD	1		/* bold C/shell comments */
-#define SHELL		1		/* shell interface */
 #define UNDO            0		/* EXPERIMENTAL undo code */
-#endif
 
 #include "configure.h"
 
 /* DON'T TOUCH THESE */
 #if ANSI + TERMCAP + TERMINFO != 1
 # error "You can't set more than one"
-#endif
-#if TERMCAP
-#undef COMMENTBOLD
 #endif
 
 #endif /* _CONFIG_H_ */

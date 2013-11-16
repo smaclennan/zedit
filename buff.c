@@ -35,6 +35,7 @@ struct page *Curpage;		/* the current page */
 static struct mark *freemark;
 
 /* stats only */
+static int NumBuffs;
 static int NumPages;
 static int NumMarks;
 
@@ -158,6 +159,7 @@ struct buff *bcreate(void)
 #if SHELL
 		new->child = EOF;
 #endif
+		++NumBuffs;
 	}
 
 	return new;
@@ -284,6 +286,8 @@ bool bdelbuff(struct buff *tbuff)
 	if (tbuff->next)
 		tbuff->next->prev = tbuff->prev;
 	free((char *)tbuff);	/* free the buffer proper */
+
+	--NumBuffs;
 
 	return true;
 }
@@ -1060,4 +1064,15 @@ int batoi(void)
 	for (num = 0; isdigit(Buff()); bmove1())
 		num = num * 10 + Buff() - '0';
 	return num;
+}
+
+void Zstats(void)
+{
+#if UNDO
+	putpaw("Buffers: %d  Pages: %d  Marks: %d  Undos: %d",
+	       NumBuffs, NumPages, NumMarks, Curbuff->n_undo);
+#else
+	putpaw("Buffers: %d  Pages: %d  Marks: %d",
+	       NumBuffs, NumPages, NumMarks);
+#endif
 }

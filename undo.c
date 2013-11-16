@@ -32,48 +32,71 @@ struct undo {
 	struct undo *prev, *next;
 };
 
-static struct undo *freelist;
+static bool InUndo;
 
-static struct undo *new_undo(struct buff *buff)
+/* SAM DBG */
+#if 0
+static void dump_undo(struct undo *undo, char *str)
 {
-	struct undo *undo;
+	static struct page *page;
 
-	if (freelist) {
-		undo = freelist;
-		freelist = freelist->prev;
-	} else {
-		undo = malloc(sizeof(struct undo));
-		if (!undo)
+	if (page) {
+		if (page != undo->end->mpage)
+			Dbg("WARNING: Not on same page\n");
+	} else
+		page = undo->end->mpage;
+
+	Dbg("%s: %d %d %d\n", str,
+	    undo->action, undo->size, undo->end->moffset);
+}
+#endif
+
+static struct undo *new_undo(struct buff *buff, int action, int size)
+{
+	struct undo *undo = calloc(1, sizeof(struct undo));
+	if (!undo)
+		return NULL;
+
+	undo->action = action;
+	undo->size = size;
+	if (action == ACT_INSERT)
+		undo->end = bcremrk();
+	else {
+		undo->end = calloc(1, sizeof(struct mark));
+		if (!undo->end) {
+			free(undo);
 			return NULL;
+		}
+		bmrktopnt(undo->end);
 	}
-
-	/* reset everything */
-	memset(undo, 0, sizeof(struct undo));
-
-	undo->end = bcremrk();
 	undo->prev = buff->undo_tail;
 	buff->undo_tail = undo;
+	buff->n_undo++;
 
 	return undo;
 }
 
-static void recycle_undo(struct buff *buff)
+static void free_undo(struct buff *buff)
 {
 	struct undo *undo = buff->undo_tail;
+	if (undo) {
+		buff->undo_tail = undo->prev;
 
-	buff->undo_tail = undo->prev;
+		if (undo->action == ACT_INSERT)
+			unmark(undo->end);
+		else
+			free(undo->end);
+		if (undo->data)
+			free(undo->data);
 
-	unmark(undo->end);
-	if (undo->data)
-		free(undo->data);
-
-	undo->prev = freelist;
-	freelist = undo;
+		free(undo);
+		buff->n_undo--;
+	}
 }
 
 static inline int no_undo(struct buff *buff)
 {
-	return buff == Paw || buff == Killbuff;
+	return InUndo || buff->bname == NULL || *buff->bname == '*';
 }
 
 /* Exports */
@@ -92,12 +115,9 @@ void undo_add(int size)
 	}
 
 	/* need a new undo */
-	undo = new_undo(Curbuff);
+	undo = new_undo(Curbuff, ACT_INSERT, size);
 	if (undo == NULL)
 		return;
-
-	undo->action = ACT_INSERT;
-	undo->size = size;
 }
 
 /* Size is always within the current page. */
@@ -114,61 +134,52 @@ void undo_del(int size)
 	/* SAM merge deletes! */
 
 	/* need a new undo */
-	undo = new_undo(Curbuff);
+	undo = new_undo(Curbuff, ACT_DELETE, size);
 	if (undo == NULL)
 		return;
 
 	undo->data = malloc(size);
 	if (!undo->data) {
-		recycle_undo(Curbuff);
+		free_undo(Curbuff);
 		return;
 	}
 
 	memcpy(undo->data, Curcptr, size);
-
-	undo->action = ACT_DELETE;
-	undo->size = size;
 }
 
 void undo_clear(struct buff *buff)
 {
 	while (buff->undo_tail)
-		recycle_undo(buff);
+		free_undo(buff);
 }
 
-void ufini(void)
-{
-	while (freelist) {
-		struct undo *next = freelist->prev;
-		free(freelist);
-		freelist = next;
-	}
-}
+void ufini(void) {}
 
 void Zundo(void)
 {
 	struct undo *undo = Curbuff->undo_tail;
 	int i;
 
-	if (!undo) {
+	if (!Curbuff->undo_tail) {
 		tbell();
 		return;
 	}
 
+	InUndo = true;
+	bpnttomrk(undo->end);
+
 	switch (undo->action) {
 	case ACT_INSERT:
-		bpnttomrk(undo->end);
 		bmove(-undo->size - 1);
 		bdelete(undo->size);
 		break;
 	case ACT_DELETE:
-		bpnttomrk(undo->end);
-		bmove(1);
 		for (i = 0; i < undo->size; ++i)
 			binsert(undo->data[i]);
 	}
+	InUndo = false;
 
-	recycle_undo(Curbuff);
+	free_undo(Curbuff);
 
 	if (!Curbuff->undo_tail)
 		/* Last undo */

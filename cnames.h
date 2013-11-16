@@ -640,6 +640,12 @@ struct cnames Cnames[] = {
 	 "both windows and the bottom window is made active. A Universal Argument\n"
 	 "keeps splitting the current window.\n"
 	},
+	{"stats",			ZSTATS,			H_BUFF,
+	 "Displays some simple stats about Zedit. "
+#if UNDO
+	 "The undo stat is for the current buffer, not a global count."
+#endif
+	},
 	{"swap-chars",			ZSWAP_CHARS,		H_DISP,
 	 "Swaps the character before the Point with the character at the\n"
 	 "Point. It leaves the Point after the second character. Successive\n"

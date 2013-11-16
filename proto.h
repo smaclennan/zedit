@@ -151,6 +151,7 @@ Z(Zyank);
 Z(Zhelp_variable);
 Z(Zhelp_function);
 Z(Zhelp_group);
+Z(Zstats);
 
 Z(pinsert);
 Z(pnewline);

@@ -311,12 +311,10 @@ bool wuseother(char *);
 
 #if COMMENTBOLD
 void resetcomments(void);
-void recomment(void);
-void uncomment(struct buff *buff, int need_update);
+void uncomment(struct buff *buff);
 void cprntchar(Byte ch);
 #else
 static inline void resetcomments(void) {}
-static inline void recomment(void) {}
 static inline void uncomment(struct buff *buff, int need_update) {}
 #endif
 

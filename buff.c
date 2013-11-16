@@ -271,7 +271,7 @@ bool bdelbuff(struct buff *tbuff)
 		unvoke(tbuff, true);
 #endif
 
-	uncomment(tbuff, false);
+	uncomment(tbuff);
 	undo_clear(tbuff);
 
 	while (tbuff->firstp)	/* delete the pages */

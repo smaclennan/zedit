@@ -179,7 +179,9 @@ static int innerdsp(int from, int to, struct mark *pmark)
 	Byte *lptr;
 	int needpnt = true, col;
 
-	resetcomments();
+	if (VAR(VCOMMENTS))
+		resetcomments();
+
 	for (trow = from; trow < to; ++trow) {
 		if (Scrnmarks[trow].modf || !bisatmrk(&Scrnmarks[trow])) {
 			Scrnmarks[trow].modf = false;
@@ -351,8 +353,10 @@ static char *setmodes(struct buff *buff)
 		Keys[CR] = ZC_INDENT;
 		Keys['}'] = Keys['#'] = Keys[':'] = Keys['\t'] = ZC_INSERT;
 #if COMMENTBOLD
-		Keys['/'] = ZC_INSERT;
-		printchar = cprntchar;
+		if (VAR(VCOMMENTS)) {
+			Keys['/'] = ZC_INSERT;
+			printchar = cprntchar;
+		}
 #endif
 		break;
 	case SHMODE:
@@ -360,7 +364,8 @@ static char *setmodes(struct buff *buff)
 		Keys[CR] = ZC_INDENT;
 		Keys['\t'] = ZC_INSERT;
 #if COMMENTBOLD
-		printchar = cprntchar;
+		if (VAR(VCOMMENTS))
+			printchar = cprntchar;
 #endif
 		break;
 	case TEXT:

@@ -307,12 +307,15 @@ void Zview_line(void)
 void Zredisplay(void)
 {
 	struct wdo *wdo;
+	struct buff *buff;
 
 	wsize();
 	for (wdo = Whead; wdo; wdo = wdo->next)
 		wdo->modeflags = INVALID;
 	redisplay();
-	recomment();
+
+	for (buff = Bufflist; buff; buff = buff->next)
+		uncomment(buff);
 }
 
 static void scroll(bool (*search)(Byte what))

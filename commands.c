@@ -205,7 +205,7 @@ void Zc_insert(void)
 #if COMMENTBOLD
 	case '/':
 		if (bpeek() == '*')
-			uncomment(Curbuff, false);
+			uncomment(Curbuff);
 		break;
 #endif
 	}

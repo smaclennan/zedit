@@ -200,6 +200,8 @@ static void setavar(char *vin, bool display)
 						Vars[i].vname, VAR(i));
 				if (i == VLINES)
 					Curwdo->modeflags = INVALID;
+				else if (i == VCOMMENTS)
+					Zredisplay();
 			}
 			break;
 		}

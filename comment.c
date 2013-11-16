@@ -40,33 +40,16 @@ static void newcomment(struct mark *start)
 	Curbuff->ctail = new;
 }
 
-/* Remove all comments from buffer and mark unscanned */
-void uncomment(struct buff *buff, int need_update)
-{
-	while (buff->chead) {
-		struct comment *com = buff->chead;
-		buff->chead = buff->chead->next;
-		unmark(com->start);
-		unmark(com->end);
-		free(com);
-	}
-	Comstate = false;
-
-	if (need_update) {
-		int i;
-
-		for (i = 0; i < tmaxrow() - 2; ++i)
-			Scrnmarks[i].modf = 1;
-	}
-}
-
 /* Scan an entire buffer for comments. */
 static void scanbuffer(void)
 {
-	struct mark tmark;
-	struct mark start;
+	struct mark tmark, start;
+	int i;
 
-	uncomment(Curbuff, true);
+	uncomment(Curbuff);
+
+	for (i = 0; i < tmaxrow() - 2; ++i)
+		Scrnmarks[i].modf = 1;
 
 	bmrktopnt(&tmark);
 
@@ -117,8 +100,6 @@ static struct comment *start;
 /* Called from innerdsp before display loop */
 void resetcomments(void)
 {
-	start = Curbuff->chead;
-
 	if (Lfunc == ZYANK)
 		Comstate = false;
 	else if (Curbuff->bmode & CMODE)
@@ -130,6 +111,8 @@ void resetcomments(void)
 					Comstate = false;
 					break;
 				}
+
+	start = Curbuff->chead;
 }
 
 /* Called from innerdsp for each char displayed. */
@@ -154,12 +137,17 @@ void cprntchar(Byte ch)
 	tprntchar(ch);
 }
 
-/* Called from Zredisplay */
-void recomment(void)
+/* Remove all comments from buffer and mark unscanned */
+void uncomment(struct buff *buff)
 {
-	struct buff *buff;
+	while (buff->chead) {
+		struct comment *com = buff->chead;
+		buff->chead = buff->chead->next;
+		unmark(com->start);
+		unmark(com->end);
+		free(com);
+	}
 
-	for (buff = Bufflist; buff; buff = buff->next)
-		uncomment(buff, true);
+	Comstate = false;
 }
 #endif

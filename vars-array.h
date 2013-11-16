@@ -20,6 +20,16 @@ struct avar Vars[] = {
 	  "spaces displayed per tab in C mode buffers, even if the buffer "
 	  "is in View mode. The default is 8 spaces. See also Tabs."
 	},
+	{ "comments",		FLAG,		{1},
+#if !COMMENTBOLD || TERMCAP
+	  "Note: Comment bolding disabled in this version of Zedit.\n\n"
+#endif
+	  "If set then Zedit tries to bold (display in red) "
+	  "comments in C and shell mode buffers. Enabled by default. "
+#if TERMINFO
+	  "\n\nComment bolding may not be supported on all terminals."
+#endif
+	},
 	{ "exact",		FLAG,		{1},
 	  "If Exact is set, all searches and replaces are case "
 	  "sensitive. This means that the search string 'string' will "

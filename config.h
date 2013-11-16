@@ -9,12 +9,6 @@
 
 #define ANSI		1
 
-/* Set SYSV4 if you need signal handlers to reset themselves. */
-/* #define SYSV4 */
-
-/* Define this if you have 16bit ints */
-/* #define INT_IS_16BITS */
-
 /* USER CONFIGURABLE - don't define any, see if I care */
 #define SHELL		1
 #define UNDO            0		/* EXPERIMENTAL undo code */

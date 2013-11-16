@@ -2,15 +2,18 @@
 
 do_help() {
 	echo
-	echo "--config-dir <dir>	Default config directory."
-	echo
 	echo "Screen display. Choose only one (defaults to ansi)."
+	echo "You want ansi unless you are running on a dump terminal, trust me."
 	echo "  --enable-ansi		enable ansi"
 	echo "  --enable-termcap	enable termcap"
 	echo "  --enable-terminfo	enable terminfo"
+	echo
 	echo "Optional features:"
 	echo "  --enable-shell	enable shell commands"
 	echo "  --enable-undo		EXPERIMNETAL undo"
+	echo "  --enable-16bitints	Enable if sizeof(int) = 2"
+	echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
+	echo "  --config-dir <dir>	Default config directory."
 	echo
 	echo "To disable a feature replace --enable with --disable."
 
@@ -32,6 +35,8 @@ while [ -n "$1" ]; do
 	*-terminfo) terminfo=$enable;;
 	*-undo) undo=$enable;;
 	*-shell) shell=$enable;;
+	*-16bitints) int16=$enable;;
+	*-sysv4) sysv4=$enable;;
 	--config-dir) shift; confdir=$1;;
 	*) echo "Unknown arg '$1' ignored";;
 	esac
@@ -65,6 +70,10 @@ else
 fi
 
 [ -f /usr/include/dirent.h ] || echo "#define HAVE_DIRECT 1" >> config.h
+
+[ "$int16" = 1 ] && echo "#define INT_IS_16BITS" >> config.h
+
+[ "$sysv4" = 1 ] && echo "#define SYSV4" >> config.h
 
 [ -n "$confdir" ] && echo "#define CONFIGDIR \"$confdir\"" >> config.h
 

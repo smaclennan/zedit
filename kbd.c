@@ -110,7 +110,7 @@ static void tungetkb(int j)
 	cpushed += j;
 }
 
-#ifdef HAVE_POLL
+#ifndef NO_POLL
 static struct pollfd stdin_fd = { .fd = 1, .events = POLLIN };
 #endif
 
@@ -119,9 +119,7 @@ int tkbrdy(void)
 	if (cpushed || Pending)
 		return true;
 
-#ifdef HAVE_POLL
-	return Pending = poll(&stdin_fd, 1, 0) == 1;
-#else
+#ifdef NO_POLL
 	{
 		static struct timeval poll = { 0, 0 };
 		fd_set fds;
@@ -131,6 +129,8 @@ int tkbrdy(void)
 
 		return Pending = select(1, &fds, NULL, NULL, &poll);
 	}
+#else
+	return Pending = poll(&stdin_fd, 1, 0) == 1;
 #endif
 }
 
@@ -139,9 +139,7 @@ bool delay(int ms)
 	if (InPaw || cpushed || Pending)
 		return false;
 
-#ifdef HAVE_POLL
-	return poll(&stdin_fd, 1, ms) != 1;
-#else
+#ifdef NO_POLL
 	{
 		struct timeval timeout;
 		fd_set fds;
@@ -154,5 +152,7 @@ bool delay(int ms)
 
 		return select(1, &fds, NULL, NULL, &timeout) <= 0;
 	}
+#else
+	return poll(&stdin_fd, 1, ms) != 1;
 #endif
 }

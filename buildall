@@ -1,10 +1,12 @@
 #!/bin/sh -e
 
 do_make () {
-	make clean > /dev/null
 	./configure $*
+	make clean > /dev/null
 	make -j8 all > /dev/null
 }
+
+mv config.h good-config.h
 
 echo "Termcap"
 do_make --enable-termcap
@@ -21,3 +23,4 @@ do_make --enable-undo
 echo "Stock make"
 do_make
 
+mv good-config.h config.h

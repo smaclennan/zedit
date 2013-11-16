@@ -24,6 +24,10 @@
 static unsigned Key_mask;
 static int Key_shortcut;
 
+#if ANSI + TERMCAP + TERMINFO != 1
+# error "You can't set more than one screen driver"
+#endif
+
 #if ANSI
 #include "ansi.c"
 #elif TERMINFO

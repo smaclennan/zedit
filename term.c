@@ -32,11 +32,7 @@
 #include <signal.h>
 #include <sys/wait.h>	/* need for WNOWAIT */
 
-#ifdef HAVE_TERMIOS
-#include <termios.h>
-static struct termios save_tty;
-static struct termios settty;
-#elif defined(HAVE_TERMIO)
+#if defined(HAVE_TERMIO)
 #include <termio.h>
 static struct termio save_tty;
 static struct termio settty;
@@ -49,7 +45,10 @@ static struct tchars setchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 static struct ltchars savelchars;
 static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 #else
-#error No-term
+#define HAVE_TERMIOS
+#include <termios.h>
+static struct termios save_tty;
+static struct termios settty;
 #endif
 
 int Clrcol[ROWMAX + 1];		/* Clear if past this */

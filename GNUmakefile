@@ -8,14 +8,8 @@ CFLAGS += -Wall -g -O3
 
 ETAGS=`which etags || echo true`
 
-TERMINFO=$(shell awk '/^\#define TERMINFO/ { print $$3 }' configure.h)
-ifeq ($(TERMINFO),)
 TERMINFO=$(shell awk '/^\#define TERMINFO/ { print $$3 }' config.h)
-endif
-TERMCAP=$(shell awk '/^\#define TERMCAP/ { print $$3 }' configure.h)
-ifeq ($(TERMCAP),)
 TERMCAP=$(shell awk '/^\#define TERMCAP/ { print $$3 }' config.h)
-endif
 
 ifeq ($(TERMINFO), 1)
 LIBS=-lncurses
@@ -47,14 +41,11 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 
 #################
 
-all:	configure.h fcheck $(ZEXE)
+all:	fcheck $(ZEXE)
 
 $(ZEXE): $O
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
-
-configure.h:
-	@touch configure.h
 
 fcheck: fcheck.c *.h $(CFILES)
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
@@ -69,7 +60,6 @@ install:
 	install -s ze $(DESTDIR)/bin/z
 
 clean:
-	rm -f configure.h *.o ze fcheck core* TAGS valgrind.out
+	rm -f *.o ze fcheck core* TAGS valgrind.out
 	@make -C docs clean
-	@touch configure.h
 

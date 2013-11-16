@@ -43,7 +43,7 @@ extern int Verbose;
 extern char *Home;
 
 #define ZSTR	"Zedit"
-#define VERSION	"5.1"
+#define VERSION	"5.2"
 #define ZFMT	"%s %s  (%s)  %s: "
 
 #define INVALID		-1

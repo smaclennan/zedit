@@ -99,19 +99,27 @@ static struct comment *start;
 /* Called from innerdsp before display loop */
 void resetcomments(void)
 {
-	if (Lfunc == ZYANK)
-		Comstate = false;
-	else if (Curbuff->bmode & CMODE)
-		/* Was the last command a delete of any type? */
-		if (delcmd() || Lfunc == ZDELETE_CHAR ||
-		    Lfunc == ZDELETE_PREVIOUS_CHAR)
-			for (start = Curbuff->chead; start; start = start->next)
-				if (markch(start->end) != '/') {
-					Comstate = false;
-					break;
-				}
-
 	start = Curbuff->chead;
+
+	switch (Lfunc) {
+	/* Was the last command a delete of any type? */
+	case ZDELETE_TO_EOL:
+	case ZDELETE_LINE:
+	case ZDELETE_REGION:
+	case ZDELETE_WORD:
+	case ZDELETE_PREVIOUS_WORD:
+	case ZCOPY_REGION:
+	case ZCOPY_WORD:
+	case ZAPPEND_KILL:
+	case ZDELETE_CHAR:
+	case ZDELETE_PREVIOUS_CHAR:
+
+	/* Or an insert? */
+	case ZYANK:
+	case ZINSERT:
+	case ZC_INSERT:
+		Comstate = false;
+	}
 }
 
 /* Called from innerdsp for each char displayed. */

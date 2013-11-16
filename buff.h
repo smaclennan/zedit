@@ -40,7 +40,6 @@ struct page {
 	struct page *nextp, *prevp;	/* list of pages in buffer */
 };
 
-
 struct mark {
 	struct page *mpage;		/* page in the buffer */
 	struct buff *mbuff;		/* buffer the mark is in */
@@ -51,8 +50,7 @@ struct mark {
 
 #if COMMENTBOLD
 struct comment {
-	struct mark *start;
-	struct mark *end;
+	struct mark *start, *end;
 	struct comment *next;
 };
 #endif
@@ -69,14 +67,12 @@ struct buff {
 	long mtime;			/* file time at read */
 	struct buff *prev, *next;	/* list of buffers */
 #if SHELL
-	int child;			/* PID of shell or EOF */
+	pid_t child;			/* PID of shell or EOF */
 	int in_pipe;			/* the pipe */
 #endif
 #if COMMENTBOLD
-	struct comment *comments;	/* list of comments in file */
-	struct comment *ctail;
-	int comstate;			/* comment state */
-	int comchar;			/* single char comment character */
+	struct comment *chead, *ctail;	/* list of comments in file */
+	Byte comchar;			/* single char comment character */
 #endif
 #if UNDO
 	void *undo_tail;
@@ -88,10 +84,10 @@ struct wdo {
 	struct mark *wpnt;		/* saved Point */
 	struct mark *wmrk;		/* saved Mark */
 	struct mark *wstart;		/* screen start */
-	int	first, last;		/* screen line boundries */
-	int	modecol;		/* column for modeflags */
-	int	modeflags;		/* flags for modeflags */
-	struct wdo	*prev, *next;
+	int first, last;		/* screen line boundries */
+	int modecol;			/* column for modeflags */
+	int modeflags;			/* flags for modeflags */
+	struct wdo *prev, *next;
 };
 
 extern Byte *Curcptr, *Cpstart;

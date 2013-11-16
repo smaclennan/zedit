@@ -205,7 +205,7 @@ void Zc_insert(void)
 #if COMMENTBOLD
 	case '/':
 		if (bpeek() == '*')
-			Curbuff->comstate = 0;
+			uncomment(Curbuff, false);
 		break;
 #endif
 	}
@@ -995,7 +995,6 @@ static bool extmatch(char *str, int mode)
 static bool shell_mode(void)
 {
 	bool issh = extmatch(bfname(), SHMODE);
-#ifdef __unix__
 	if (!issh) {
 		struct mark *tmark = bcremrk();
 		btostart();
@@ -1004,7 +1003,6 @@ static bool shell_mode(void)
 		bpnttomrk(tmark);
 		unmark(tmark);
 	}
-#endif
 	return issh;
 }
 

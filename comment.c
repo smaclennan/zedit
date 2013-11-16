@@ -20,6 +20,7 @@
 #include "z.h"
 
 #if COMMENTBOLD
+static bool Comstate;
 
 /* Mark a new comment from start to Point. */
 static void newcomment(struct mark *start)
@@ -32,8 +33,8 @@ static void newcomment(struct mark *start)
 
 	mrktomrk(new->start, start);
 
-	if (!Curbuff->comments)
-		Curbuff->comments = new;
+	if (!Curbuff->chead)
+		Curbuff->chead = new;
 	else
 		Curbuff->ctail->next = new;
 	Curbuff->ctail = new;
@@ -42,14 +43,14 @@ static void newcomment(struct mark *start)
 /* Remove all comments from buffer and mark unscanned */
 void uncomment(struct buff *buff, int need_update)
 {
-	while (buff->comments) {
-		struct comment *com = buff->comments;
-		buff->comments = buff->comments->next;
+	while (buff->chead) {
+		struct comment *com = buff->chead;
+		buff->chead = buff->chead->next;
 		unmark(com->start);
 		unmark(com->end);
 		free(com);
 	}
-	buff->comstate = 0;
+	Comstate = false;
 
 	if (need_update) {
 		int i;
@@ -107,7 +108,7 @@ static void scanbuffer(void)
 	}
 
 	bpnttomrk(&tmark);
-	Curbuff->comstate = 1;
+	Comstate = true;
 }
 
 /* The following are called by the innerdsp routine. */
@@ -116,17 +117,17 @@ static struct comment *start;
 /* Called from innerdsp before display loop */
 void resetcomments(void)
 {
-	start = Curbuff->comments;
+	start = Curbuff->chead;
 
 	if (Lfunc == ZYANK)
-		Curbuff->comstate = 0;
+		Comstate = false;
 	else if (Curbuff->bmode & CMODE)
 		/* Was the last command a delete of any type? */
 		if (delcmd() || Lfunc == ZDELETE_CHAR ||
 		    Lfunc == ZDELETE_PREVIOUS_CHAR)
-			for (start = Curbuff->comments; start; start = start->next)
+			for (start = Curbuff->chead; start; start = start->next)
 				if (markch(start->end) != '/') {
-					Curbuff->comstate = 0;
+					Comstate = false;
 					break;
 				}
 }
@@ -136,9 +137,9 @@ void cprntchar(Byte ch)
 {
 	int style = T_NORMAL;
 
-	if (!Curbuff->comstate) {
+	if (!Comstate) {
 		scanbuffer();
-		start = Curbuff->comments;
+		start = Curbuff->chead;
 	}
 
 	for (; start; start = start->next)

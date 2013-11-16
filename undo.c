@@ -41,23 +41,6 @@ static bool InUndo;
 
 unsigned long undo_total; /* stats only */
 
-/* SAM DBG */
-#if 0
-static void dump_undo(struct undo *undo, char *str)
-{
-	static struct page *page;
-
-	if (page) {
-		if (page != undo->end->mpage)
-			Dbg("WARNING: Not on same page\n");
-	} else
-		page = undo->end->mpage;
-
-	Dbg("%s: %d %d %d\n", str,
-	    undo->action, undo->size, undo->end->moffset);
-}
-#endif
-
 static struct undo *new_undo(struct buff *buff, int action, int size)
 {
 	struct undo *undo = calloc(1, sizeof(struct undo));

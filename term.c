@@ -74,6 +74,30 @@ static void sigwinch(int sig)
 }
 #endif
 
+/* Come here on SIGHUP or SIGTERM */
+void hang_up(int signal)
+{
+	struct buff *tbuff;
+
+	InPaw = true;	/* Kludge to turn off error */
+	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next) {
+		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF)) {
+			bswitchto(tbuff);
+			bwritefile(strcmp(bfname(),
+					  MAINBUFF) ? bfname() : "MAIN.HUP");
+		}
+#if SHELL
+		if (tbuff->child != EOF)
+			unvoke(tbuff, false);
+#endif
+	}
+#if SHELL
+	checkpipes(0);
+#endif
+	tfini();
+	exit(1);
+}
+
 /* This is called before the windows are created */
 static void initline(void)
 {

@@ -294,7 +294,6 @@ void wfini(void);
 int checkpipes(int type);
 int readpipes(fd_set *);
 void sigchild(int);
-bool dopipe(struct buff *, char *);
 void unvoke(struct buff *, bool);
 #endif
 

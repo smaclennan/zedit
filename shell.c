@@ -20,12 +20,215 @@
 #include "z.h"
 
 #if SHELL
-/* This is cleared in Zmake and set in Znexterror.
- * If clear, the make buffer is scrolled up. Once a next error is
- * called, the buffer is kept at the error line.
- */
-static int NexterrorCalled;
+#include <signal.h>
+#include <sys/wait.h>
 
+static int npipes;
+static int Waiting;
+fd_set SelectFDs;
+int NumFDs;
+
+/* pipe has something for us */
+static int readapipe(struct buff *tbuff)
+{
+	char buff[BUFSIZ], *ptr;
+	int cnt, i;
+
+	cnt = i = read(tbuff->in_pipe, ptr = buff, BUFSIZ);
+	if (i > 0) {
+		/* Yup! Read somethin' */
+		struct mark tmark;
+		struct buff *save = Curbuff;
+
+		bswitchto(tbuff);
+		bmrktopnt(&tmark);
+		btoend();
+		while (i-- > 0)
+			binsert(*ptr++);
+		bpnttomrk(&tmark);
+		bswitchto(save);
+	} else
+		/* pipe died */
+		checkpipes(1);
+	return cnt;
+}
+
+/* Read all the active pipe buffers. */
+int readpipes(fd_set *fds)
+{
+	struct buff *tbuff;
+	int did_something = 0;
+
+	if (npipes) {
+		npipes = 0;
+		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+			if (tbuff->child != EOF) {
+				++npipes;
+				if (FD_ISSET(tbuff->in_pipe, fds)) {
+					readapipe(tbuff);
+					++did_something;
+				}
+			}
+	}
+
+	return did_something;
+}
+
+static void exit_status(struct buff *tbuff, int status)
+{
+	if (status & 0xff)
+		message(tbuff, "Died.");
+	else {
+		status = status >> 8 & 0xff;
+		if (status == 0)
+			message(tbuff, "Done.");
+		else {
+			sprintf(PawStr,
+				"Exit %d.",
+				status);
+			message(tbuff, PawStr);
+		}
+	}
+	tbell();
+}
+
+/* Wait for dead children and cleanup.
+ *		type == 0 on exit
+ *		type == 1 on normal
+ *		type == 2 on blocking
+ */
+int checkpipes(int type)
+{
+	struct buff *tbuff;
+	int pid = 0, status;
+
+	if (type == 2)
+		waitpid((pid_t)-1, &status, WNOWAIT);
+	while ((pid = waitpid((pid_t)-1, &status, WNOHANG)) > 0) {
+		--Waiting;		/* one less to wait for */
+		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+			if (tbuff->child == pid) {
+				/*
+				 * make sure pipe empty (except on exit)
+				 *	- since child is dead, read
+				 *	will not block if nothing to
+				 *	read
+				 */
+				if (type)
+					while (readapipe(tbuff) > 0)
+						;
+				FD_CLR(tbuff->in_pipe, &SelectFDs);
+				/* SAM Should reduce NumFDs */
+				(void)close(tbuff->in_pipe);
+				tbuff->in_pipe = EOF;
+				tbuff->child = EOF;
+				if (type)
+					exit_status(tbuff, status);
+				break;
+			}
+	}
+
+#ifdef SYSV4
+	/* See note in sigchild() */
+#if !defined(WNOWAIT)
+	signal(SIGCLD, sigchild);
+#endif
+	signal(SIGPIPE, sigchild);
+#endif
+	return pid;
+}
+
+/* Split a string up into words.
+ * A single quoted string (e.g. 'a b c') is
+ * considered one word.
+ */
+static char *wordit(char **str)
+{
+	char *start;
+
+	while (isspace(**str))
+		++*str;
+	if (**str == '\'') {
+		start = ++*str;
+		while (**str && **str != '\'')
+			++*str;
+	} else {
+		start = *str;
+		while (**str && !isspace(**str))
+			++*str;
+	}
+	if (**str)
+		*(*str)++ = '\0';
+	return *start ? start : NULL;
+}
+
+/* Invoke 'cmd' on a pipe.
+ * Returns true if the invocation succeeded.
+*/
+static bool dopipe(struct buff *tbuff, char *icmd)
+{
+	char cmd[STRMAX + 1], *p, *argv[11];
+	int from[2], arg;
+
+	if (tbuff->child != EOF)
+		return false;
+
+	strcpy(p = cmd, icmd);
+	for (arg = 0; arg < 10 && (argv[arg] = wordit(&p)); ++arg)
+		;
+
+	if (pipe(from) == 0) {
+		tbuff->child = fork();
+		if (tbuff->child == 0) {
+			/* child */
+			(void)close(from[0]);
+			dup2(from[1], 1);
+			dup2(from[1], 2);
+			execvp(argv[0], argv);
+			exit(1);
+		}
+
+		(void)close(from[1]);		/* close fail or not */
+		if (tbuff->child != EOF) {
+			/* SUCCESS! */
+			tbuff->in_pipe = from[0];
+			FD_SET(from[0], &SelectFDs);
+			if (from[0] >= NumFDs)
+				NumFDs = from[0] + 1;
+			++npipes;
+			return true;
+		} else {
+			/* fork failed - clean up */
+			(void)close(from[0]);
+			error("Unable to fork shell");
+		}
+	} else
+		error("Unable to open pipes");
+	return false;
+}
+
+/* Try to kill a child process */
+void unvoke(struct buff *child, bool check)
+{
+	if (child && child->child != EOF) {
+		kill(child->child, SIGKILL);
+		if (check)
+			while (child->child != EOF && checkpipes(1) != -1)
+				;
+	} else
+		tbell();
+}
+
+/* Come here when a child dies or exits.
+ *
+ * NOTE:For system 3 and system 5: After coming here we do not rebind the
+ *		signals to sigchild. We wait until the checkpipes routine. If we
+ *		do it here, the system seems to send us infinite SIGCLDs.
+ */
+void sigchild(int signo)
+{
+	++Waiting;
+}
 
 static struct buff *cmdtobuff(char *bname, char *cmd)
 {
@@ -93,6 +296,12 @@ void Zcmd_to_buffer(void)
 		}
 	}
 }
+
+/* This is cleared in Zmake and set in Znexterror.
+ * If clear, the make buffer is scrolled up. Once a next error is
+ * called, the buffer is kept at the error line.
+ */
+static int NexterrorCalled;
 
 static int parse(char *fname);
 

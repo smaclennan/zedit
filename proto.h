@@ -246,7 +246,6 @@ void redisplay(void);
 void reframe(void);
 void zrefresh(void);
 void regerr(int);
-bool paw_resize(int);
 void save(struct buff *);
 bool saveall(bool);
 int settabsize(unsigned);

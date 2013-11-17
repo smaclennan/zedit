@@ -229,8 +229,6 @@ static bool sizewindow(int size)
 	return true;
 }
 
-static int nopaw_resize;
-
 static void do_wsize(int orow)
 {
 	struct wdo *wdo;
@@ -275,12 +273,7 @@ static void do_wsize(int orow)
 /* See if window size has changed */
 void wsize(void)
 {
-	int orow;
-
-	if (nopaw_resize)
-		return;
-
-	orow = Rowmax;
+	int orow = Rowmax;
 	termsize();
 
 	/* if Rowmax changed we must update window sizes */
@@ -292,6 +285,7 @@ void wsize(void)
 	}
 }
 
+#if 0 /* unused */
 /* paw_resize PAW by moving bottom window by 'diff' lines, if possible. */
 bool paw_resize(int diff)
 {
@@ -313,6 +307,7 @@ bool paw_resize(int diff)
 	clrpaw();
 	return true;
 }
+#endif
 
 /*
  * Create/Reuse a buffer in another window. Window to use:

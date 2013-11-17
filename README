@@ -4,7 +4,7 @@ Zedit - A Short History
 Back in 1988 I was using three editors on a daily basis. One for the
 bulk of my editing, one for regular expressions, and one for large
 files (memory maps mainly). I had access to an unused Unix workstation
-so I started writing an Emacs like editor.
+so I started writing an Emacs like editor I called Zedit.
 
 Once it was usable under Unix, I ported it to DOS and it became my
 only editor.
@@ -28,5 +28,5 @@ the fact that if you say z the British/Canadian way (zed not zee) it
 has the word ed in it but only needs one letter.
 
 So why does the Makefile produce ze? Zedit was my main editor. So z
-was the stable version and ze was the experimentatl version. If I
+was the stable version and ze was the experimental version. If I
 broke ze, I still had z to edit with.

@@ -137,6 +137,17 @@ void Zreverse_search(void)
 	promptsearch("Reverse Search: ", BACKWARD);
 }
 
+void Zword_search(void)
+{
+	getbword(old, sizeof(old), bisword);
+	
+	searchdir[0] = Argp ? BACKWARD : FORWARD;
+	searchdir[1] = 0;
+	Arg = 1;
+	
+	dosearch();
+}
+
 void Zglobal_search(void)
 {
 	if (getarg(nocase("Global Search: "), old, STRMAX))

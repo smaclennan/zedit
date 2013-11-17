@@ -713,6 +713,10 @@ struct cnames Cnames[] = {
 	 "Makes the Point line the top line in the window. A Universal Argument\n"
 	 "causes the command to repeat.\n"
 	},
+	{"word-search",			ZWORD_SEARCH,		H_SEARCH,
+	 "Search for the word at the point. A Universal Argument causes "
+	 "the search to go backwards."
+	},
 	{"write-file",			ZWRITE_FILE,		H_FILE,
 	 "Prompts for a path name and writes out the current buffer to this file\n"
 	 "name. Supports file name completion. It changes the path name of the\n"

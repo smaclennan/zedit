@@ -152,6 +152,7 @@ Z(Zhelp_variable);
 Z(Zhelp_function);
 Z(Zhelp_group);
 Z(Zstats);
+Z(Zword_search);
 
 Z(pinsert);
 Z(pnewline);

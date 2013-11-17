@@ -406,7 +406,8 @@ void Znext_error(void)
 	if (!NexterrorCalled) {
 		NexterrorCalled = 1;
 		btostart();
-	}
+	} else
+		toendline();
 	line = parse(fname);
 	if (line) {
 		vsetmrk(Curbuff->mark);
@@ -438,98 +439,33 @@ void Zkill(void)
 	unvoke(cfindbuff(MAKEBUFF), false);
 }
 
-/* Check if it is a warning or an error.
- * Currently works for GCC, g++, MIPs.
- */
-static bool IsWarning;
-
-static int isnotws(void)
-{
-	return Buff() != '\n' && Buff() != '\t' && Buff() != ' ';
-}
-
-static bool warning(void)
-{
-	if (Argp) {
-		if (IsWarning)
-			return true;
-
-		if (Buff() == ':') {
-			char word[10], *p;
-			getbword(p = word, 10, isnotws);
-			if (*p == ':')
-				++p;
-			return strcmp(p, "warning:") == 0;
-		}
-	}
-	return 0;
-}
-
 /* Find the next error in the .make buffer.
  * Ignores lines that start with a white space.
  * Supported:
- *	CC		"<fname>", line <line>: <msg>
- *	GNU C		<fname>:<line>: (error: | warning:) <msg>
- *      G++		<fname>:<line>: [warning:] <msg>
- *	HP CC		cc: "<fname>", line <line>: <msg>
- *	AS		as: "<fname>", line <line>: <msg>
- *	High C		[Ew] "<fname>",L<line>/C<column>: <msg>
- *	Microsoft	<fname>(<line>) : <msg>
- *	MIPS C		cfe: (Warning|error): <fname>, <line>: <msg>
- *	MIPS AS		as(0|1): (Warning|error): <fname>, line <line>: <msg>
- *
- *	ignores		conflicts: <line>
+ *	GNU C		<fname>:<line>:
+ *      grep		<fname>:<line>:
+ *	Microsoft	<fname>(<line>)
  */
 static int parse(char *fname)
 {
-	char word[41], *p;
-	int line, n;
+	char *p;
+	int line;
 
 	while (!bisend()) {
-		IsWarning = 0;
-
-		/* get first word in line */
-		n = getbword(word, 40, isnotws);
-
-		/* check for: as: cc: */
-		if (strcmp(word, "as:") == 0 || strcmp(word, "cc:") == 0)
-			bmove(4);
-		/* check for cfe:/as0:/as1: (MIPS) */
-		else if (strcmp(word, "cfe:") == 0 ||
-			 strcmp(word, "as0:") == 0 ||
-			 strcmp(word, "as1:") == 0) {
-			bmove(5);
-			IsWarning = Buff() == 'W';
-			bmove(IsWarning ? 9 : 7);
-		}
-		/* check High C for "E " or "w " */
-		else if (n == 1 && (*word == 'E' || *word == 'w'))
-			bmove(2);
-		else if (strcmp(word, "conflicts:") == 0) {
-			bcsearch(NL);	/* skip line */
-			continue;
-		}
 		/* try to get the fname */
-		if (Buff() == '"')
-			bmove1();
-		for (p = fname; !strchr("\",:(\n", Buff()); bmove1())
+		for (p = fname; !strchr(":(\n", Buff()); bmove1())
 			*p++ = Buff();
 		*p = '\0';
-		if (Buff() == '"')
-			bmove1();
 
 		/* try to get the line */
-		if (Buff() == ':' || Buff() == '(')
+		if (Buff() == ':' || Buff() == '(') {
 			bmove1();
-		else if (Buff() == ',') {
-			while (!isdigit(Buff()) && Buff() != '\n' && !bisend())
-				bmove1();
+		
+			/* look for line number */
+			line = batoi();
+			if (line)
+				return line;
 		}
-
-		/* look for line number */
-		line = batoi();
-		if (line != 0 && !warning())
-			return line;
 
 		/* skip to next line */
 		bcsearch(NL);

@@ -59,6 +59,7 @@ static void dump_bindings(int fnum)
 
 void Zhelp_function(void)
 {
+	char *p;
 	int rc = getplete("Function: ", NULL, (char **)Cnames,
 			  CNAMESIZE, NUMFUNCS);
 	if (rc == -1)
@@ -69,7 +70,13 @@ void Zhelp_function(void)
 	binstr(Cnames[rc].name);
 	binstr("\n\n");
 
-	binstr(Cnames[rc].doc);
+	for (p = Cnames[rc].doc; *p; ++p)
+		if (*p == ' ') {
+			Cmd = *p;
+			Zfill_check();
+		} else
+			binsert(*p);
+	binsert('\n');
 
 	if (Cnames[rc].fnum != ZNOTIMPL &&
 	    Cnames[rc].fnum != ZINSERT)

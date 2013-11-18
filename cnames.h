@@ -2,505 +2,505 @@
 
 struct cnames Cnames[] = {
 	{"abort",			ZABORT,			H_OTHER,
-	 "Aborts the current command. This is the only way to exit Universal\n"
-	 "Arguments and String Arguments. It will also abort C-X and Meta\n"
-	 "prefixes. Cannot abort the Quote command.\n"
+	 "Aborts the current command. This is the only way to exit Universal "
+	 "Arguments and String Arguments. It will also abort C-X and Meta "
+	 "prefixes. Cannot abort the Quote command."
 	},
 	{"again",			ZAGAIN,			H_SEARCH,
-	 "Causes the last search to be executed again. If the mode Exact is"
-	 "set,\n the search will be case sensitive. A Universal Argument"
-	 "causes the\n search to look for an exact number matches of the"
-	 "string. If the number\n cannot be matched, it will display the"
-	 "number actually matched in the\n PAW and leave the Point where it"
-	 "was. If no search commands have been\n executed, a Forward Search is"
-	 "executed.\n"
+	 "Causes the last search to be executed again. If the mode Exact is "
+	 "set, the search will be case sensitive. A Universal Argument "
+	 "causes the search to look for an exact number matches of the "
+	 "string. If the number cannot be matched, it will display the "
+	 "number actually matched in the PAW and leave the Point where it "
+	 "was. If no search commands have been executed, a Forward Search is "
+	 "executed."
 	},
 	{"append-kill",			ZAPPEND_KILL,		H_DELETE,
-	 "Sets the delete flag. The next delete command will append to the"
-	 "kill\n buffer. A Universal Argument is ignored.\n"
+	 "Sets the delete flag. The next delete command will append to the "
+	 "kill buffer. A Universal Argument is ignored."
 	},
 	{"arg",				ZARG,			H_OTHER,
-	 "Many of the commands accept a Universal Argument to cause the"
-	 "command to\n repeat or to modify the meaning of the command in some"
-	 "way. It reads\n decimal digits and displays them in the PAW. The"
-	 "first non-digit is\n processed as a command. The digits cannot be"
-	 "deleted since Delete is a\n valid command that accepts a Universal"
-	 "Argument. If a mistake is made,\n use the Abort Command.\n"
+	 "Many of the commands accept a Universal Argument to cause the "
+	 "command to repeat or to modify the meaning of the command in some "
+	 "way. It reads decimal digits and displays them in the PAW. The "
+	 "first non-digit is processed as a command. The digits cannot be "
+	 "deleted since Delete is a valid command that accepts a Universal "
+	 "Argument. If a mistake is made, use the Abort Command."
 	},
 	{"beginning-of-buffer",		ZBEGINNING_OF_BUFFER,	H_CURSOR,
-	 "Moves the Point to the beginning of the current buffer. A"
-	 "Universal\n Argument is ignored.\n"
+	 "Moves the Point to the beginning of the current buffer. A "
+	 "Universal Argument is ignored."
 	},
 	{"beginning-of-line",		ZBEGINNING_OF_LINE,	H_CURSOR,
-	 "Moves the Point to the beginning of the line or to the beginning of"
-	 "the\n previous line. A Universal Argument causes the command to"
-	 "repeat.\n"
+	 "Moves the Point to the beginning of the line or to the beginning of "
+	 "the previous line. A Universal Argument causes the command to "
+	 "repeat."
 	},
 	{"bind",			ZBIND,			H_BIND,
-	 "Binds a function to a key. It first prompts, with command"
-	 "completion,\n for the command to bind. It then prompts for the key"
-	 "to bind the command\n to. The Meta and C-X prefix keys are entered,"
-	 "Bind prompts for another\n key. The Abort command exits any"
-	 "prompt. The Quote command can be used\n to rebind the Abort, Quote,"
-	 "C-X, and Meta commands. A Universal Argument\n causes the Bind"
-	 "command to reset all the default arguments.  Keys can be\n 'unbound'"
-	 "by binding them to the NULL command.\n"
+	 "Binds a function to a key. It first prompts, with command "
+	 "completion, for the command to bind. It then prompts for the key "
+	 "to bind the command to. The Meta and C-X prefix keys are entered, "
+	 "Bind prompts for another key. The Abort command exits any "
+	 "prompt. The Quote command can be used to rebind the Abort, Quote, "
+	 "C-X, and Meta commands. A Universal Argument causes the Bind "
+	 "command to reset all the default arguments. Keys can be 'unbound' "
+	 "by binding them to the NULL command."
 	},
 	{"bound-to",			ZBOUND_TO,		H_BIND,
-	 "Prompts for a command with command complete and gives a list of the"
-	 "keys\n the command is bound to. A Universal Argument is ignored.\n"
+	 "Prompts for a command with command complete and gives a list of the "
+	 "keys the command is bound to. A Universal Argument is ignored."
 	},
 	{"c-indent",			ZC_INDENT,		H_MODE,
-	 "Causes Newline characters to auto-indent to the current tab"
-	 "level. If a\n Newline is hit after an open brace ({), the next line"
-	 "is indented an\n extra tab stop. Bound to Newline in C mode. A"
-	 "Universal Argument causes\n the command to repeat.\n"
+	 "Causes Newline characters to auto-indent to the current tab "
+	 "level. If a Newline is hit after an open brace ({), the next line "
+	 "is indented an extra tab stop. Bound to Newline in C mode. A "
+	 "Universal Argument causes the command to repeat."
 	},
 	{"c-insert",			ZC_INSERT,		H_SPECIAL,
-	 "Tries to perform brace matching. When a close brace (}) is"
-	 "entered,\n searches for a previous unmatched open brace ({). If it"
-	 "finds one, tries\n to put the close brace in the same column as the"
-	 "column of the first\n non-whitespace character in the matched"
-	 "line. If no match is found,\n beeps. Bound to close brace in C"
-	 "mode. If bound to a character other than\n a close brace, performs a"
-	 "Character Insert. A Universal Argument is\n ignored.\n"
+	 "Tries to perform brace matching. When a close brace (}) is "
+	 "entered, searches for a previous unmatched open brace ({). If it "
+	 "finds one, tries to put the close brace in the same column as the "
+	 "column of the first non-whitespace character in the matched "
+	 "line. If no match is found, beeps. Bound to close brace in C "
+	 "mode. If bound to a character other than a close brace, performs a "
+	 "Character Insert. A Universal Argument is ignored."
 	},
 	{"calc",			ZCALC,			H_HELP,
-	 "This is a very simple integer calculator. It handles addition,\n"
-	 "subtraction, multiplication, and division between\n"
-	 "octal/decimal/hexadecimal numbers. If a number begins with a '0x' it"
-	 "is\n assumed to be hexadecimal, if it begins with a '0' it is"
-	 "assumed to be\n octal, all others are assumed to be decimal. The"
-	 "output is displayed in\n decimal with hexadecimal in brackets"
-	 "'()'. Spaces and tabs are allowed\n but are not necessary between"
-	 "the numbers and their operators. A Universal\n Argument is"
-	 "ignored.\n"
+	 "This is a very simple integer calculator. It handles addition, "
+	 "subtraction, multiplication, and division between "
+	 "octal/decimal/hexadecimal numbers. If a number begins with a '0x' it "
+	 "is assumed to be hexadecimal, if it begins with a '0' it is "
+	 "assumed to be octal, all others are assumed to be decimal. The "
+	 "output is displayed in decimal with hexadecimal in brackets "
+	 "'()'. Spaces and tabs are allowed but are not necessary between "
+	 "the numbers and their operators. A Universal Argument is "
+	 "ignored."
 	},
 	{"capitalize-word",		ZCAPITALIZE_WORD,	H_DISP,
-	 "In C mode, converts the character at the Point to uppercase and the"
-	 "rest\n of the word to lowercase. In other modes, converts the first"
-	 "letter of\n the current word to uppercase and the rest of the"
-	 "characters in the word\n to lowercase. The Point is left at the end"
-	 "of the word. A Universal\n Argument causes the command to repeat.\n"
+	 "In C mode, converts the character at the Point to uppercase and the "
+	 "rest of the word to lowercase. In other modes, converts the first "
+	 "letter of the current word to uppercase and the rest of the "
+	 "characters in the word to lowercase. The Point is left at the end "
+	 "of the word. A Universal Argument causes the command to repeat."
 	},
 	{"center",			ZCENTER,		H_DISP,
-	 "Centers the current line on the screen. It uses FillWidth to define"
-	 "the\n right margin. A Universal Argument causes the command to"
-	 "repeat on the\n next lines.\n"
+	 "Centers the current line on the screen. It uses FillWidth to define "
+	 "the right margin. A Universal Argument causes the command to "
+	 "repeat on the next lines."
 	},
 	{"cmd-to-buffer",		ZCMD_TO_BUFFER,		H_SHELL,
 #if !SHELL
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
-	 "Prompts for a command and then executes the command in the"
-	 "shell. The\n output is put in the '.shell' buffer. Any previous"
-	 "contents of the\n '.shell' buffer are deleted. A Universal Argument"
-	 "is ignored.\n"
+	 "Prompts for a command and then executes the command in the "
+	 "shell. The output is put in the '.shell' buffer. Any previous "
+	 "contents of the '.shell' buffer are deleted. A Universal Argument "
+	 "is ignored."
 	},
 	{"copy-region",			ZCOPY_REGION,		H_DELETE,
-	 "Copies the region to the kill buffer. The kill buffer is"
-	 "overwritten\n unless the the delete flag is set. See Append Kill"
-	 "command.\n"
+	 "Copies the region to the kill buffer. The kill buffer is "
+	 "overwritten unless the the delete flag is set. See Append Kill "
+	 "command."
 	},
 	{"copy-word",			ZCOPY_WORD,		H_DELETE,
-	 "Copies the word the Point is on to the kill buffer. The kill buffer"
-	 "is\n overwritten unless the the delete flag is set.In the PAW, the"
-	 "Copy Word\n command takes the word the Point was on in the"
-	 "previously active window\n and inserts it into the PAW.\n"
+	 "Copies the word the Point is on to the kill buffer. The kill buffer "
+	 "is overwritten unless the the delete flag is set.In the PAW, the "
+	 "Copy Word command takes the word the Point was on in the "
+	 "previously active window and inserts it into the PAW."
 	},
 	{"count",			ZCOUNT,			H_HELP,
-	 "Count the number of lines, words, and characters in the region. A\n"
-	 "Universal Argument counts the entire buffer.\n"
+	 "Count the number of lines, words, and characters in the region. A "
+	 "Universal Argument counts the entire buffer."
 	},
 	{"ctrl-x",			ZCTRL_X,		H_SPECIAL,
-	 "Command prefix.\n"
+	 "Command prefix."
 	},
 	{"cwd",				ZCWD,			H_OTHER,
-	 "This command allows you to change Zedit's current working"
-	 "directory. All\n files will be relative to the new working"
-	 "directory. The default is the\n directory the editor was started"
-	 "in. A Universal Argument causes the\n command to repeat.\n"
+	 "This command allows you to change Zedit's current working "
+	 "directory. All files will be relative to the new working "
+	 "directory. The default is the directory the editor was started "
+	 "in. A Universal Argument causes the command to repeat."
 	},
 	{"delete-blanks",		ZDELETE_BLANKS,		H_DELETE,
-	 "Delete all the blank lines around the Point. The lines are not put"
-	 "in\n the Kill Buffer. A Universal Argument causes the command to"
-	 "repeat,\n which accomplishes nothing.\n"
+	 "Delete all the blank lines around the Point. The lines are not put "
+	 "in the Kill Buffer. A Universal Argument causes the command to "
+	 "repeat, which accomplishes nothing."
 	},
 	{"delete-buffer",		ZDELETE_BUFFER,		H_BUFF,
-	 "Deletes the current buffer and goes to a previous buffer. There"
-	 "must\n always be at least one buffer. If the buffer has been"
-	 "modified, Zedit\n asks to save it before deleting it. A Universal"
-	 "Argument prompts for the\n buffer to delete.\n"
+	 "Deletes the current buffer and goes to a previous buffer. There "
+	 "must always be at least one buffer. If the buffer has been "
+	 "modified, Zedit asks to save it before deleting it. A Universal "
+	 "Argument prompts for the buffer to delete."
 	},
 	{"delete-char",			ZDELETE_CHAR,		H_DELETE,
-	 "Deletes the character at the Point and leaves the Point on the"
-	 "next\n character in the buffer. The character is not put in the Kill"
-	 "Buffer. A\n Universal Argument causes the command to repeat.\n"
+	 "Deletes the character at the Point and leaves the Point on the "
+	 "next character in the buffer. The character is not put in the Kill "
+	 "Buffer. A Universal Argument causes the command to repeat."
 	},
 	{"delete-line",			ZDELETE_LINE,		H_DELETE,
-	 "Deletes the entire line, including the Newline, no matter where"
-	 "the\n Point is in the line. The Point is left at the start of the"
-	 "next line.\n The deleted line is put in the Kill Buffer. A Universal"
-	 "Argument causes\n the command to repeat.\n"
+	 "Deletes the entire line, including the Newline, no matter where "
+	 "the Point is in the line. The Point is left at the start of the "
+	 "next line. The deleted line is put in the Kill Buffer. A Universal "
+	 "Argument causes the command to repeat."
 	},
 	{"delete-previous-char",	ZDELETE_PREVIOUS_CHAR,	H_DELETE,
-	 "Deletes the character before the Point and leaves the Point in the"
-	 "same\n place. The character is not put in the Kill Buffer. A"
-	 "Universal Argument\n causes the command to repeat.\n"
+	 "Deletes the character before the Point and leaves the Point in the "
+	 "same place. The character is not put in the Kill Buffer. A "
+	 "Universal Argument causes the command to repeat."
 	},
 	{"delete-previous-word",	ZDELETE_PREVIOUS_WORD,	H_DELETE,
-	 "Deletes the word to the left of the Point. The character the Point"
-	 "is on\n is not deleted. The word is put in the Kill Buffer. A"
-	 "Universal Argument\n causes the command to repeat.\n"
+	 "Deletes the word to the left of the Point. The character the Point "
+	 "is on is not deleted. The word is put in the Kill Buffer. A "
+	 "Universal Argument causes the command to repeat."
 	},
 	{"delete-region",		ZDELETE_REGION,		H_DELETE,
-	 "Deletes the characters in the region. The deleted characters are put"
-	 "in\n the Kill Buffer based on the delete flag. A Universal Argument"
-	 "is\n ignored.\n"
+	 "Deletes the characters in the region. The deleted characters are put "
+	 "in the Kill Buffer based on the delete flag. A Universal Argument "
+	 "is ignored."
 	},
 	{"delete-to-eol",		ZDELETE_TO_EOL,		H_DELETE,
-	 "Deletes the characters from the Point to the end of the line. If"
-	 "the\n Point is at the end of a line, the Newline character is"
-	 "deleted and the\n next line is joined to the end of the current"
-	 "line. The characters\n deleted are put in the Kill Buffer. A"
-	 "Universal Argument causes the\n command to repeat.\n"
+	 "Deletes the characters from the Point to the end of the line. If "
+	 "the Point is at the end of a line, the Newline character is "
+	 "deleted and the next line is joined to the end of the current "
+	 "line. The characters deleted are put in the Kill Buffer. A "
+	 "Universal Argument causes the command to repeat."
 	},
 	{"delete-window",		ZDELETE_WINDOW,		H_BUFF,
-	 "Deletes the current window and places you in the other window. You\n"
-	 "cannot delete the last window. A Universal Argument is ignored.\n"
+	 "Deletes the current window and places you in the other window. You "
+	 "cannot delete the last window. A Universal Argument is ignored."
 	},
 	{"delete-word",			ZDELETE_WORD,		H_DELETE,
-	 "Deletes the word to the right of and including the Point. The word"
-	 "is\n put in the Kill Buffer. A Universal Argument causes the command"
-	 "to\n repeat.\n"
+	 "Deletes the word to the right of and including the Point. The word "
+	 "is put in the Kill Buffer. A Universal Argument causes the command "
+	 "to repeat."
 	},
 	{"display-bindings",		ZDISPLAY_BINDINGS,	H_BIND,
-	 "Inserts a list of the commands and their current bindings into the\n"
-	 ".list buffer. It deletes the contents of the .list buffer. Keys\n"
-	 "bound to NULL or Insert are not displayed. The PAW column displays\n"
-	 "if the command is allowed in the PAW.\n A Universal Argument prompts"
-	 "for an output file to put the list in.\n"
+	 "Inserts a list of the commands and their current bindings into the "
+	 ".list buffer. It deletes the contents of the .list buffer. Keys "
+	 "bound to NULL or Insert are not displayed. The PAW column displays "
+	 "if the command is allowed in the PAW. A Universal Argument prompts "
+	 "for an output file to put the list in."
 	},
 	{"empty-buffer",		ZEMPTY_BUFFER,		H_BUFF,
-	 "Deletes the entire contents of the current buffer. A Universal"
-	 "Arguments\n is ignored.\n"
+	 "Deletes the entire contents of the current buffer. A Universal "
+	 "Arguments is ignored."
 	},
 	{"end-of-buffer",		ZEND_OF_BUFFER,		H_CURSOR,
-	 "Moves the Point to the end of the buffer. A Universal Argument is\n"
-	 "ignored.\n"
+	 "Moves the Point to the end of the buffer. A Universal Argument is "
+	 "ignored."
 	},
 	{"end-of-line",			ZEND_OF_LINE,		H_CURSOR,
-	 "Moves the Point to the end of the line or to the end of the next"
-	 "line. A\n Universal Argument causes the command to repeat.\n"
+	 "Moves the Point to the end of the line or to the end of the next "
+	 "line. A Universal Argument causes the command to repeat."
 	},
 	{"exit",			ZEXIT,			H_OTHER,
-	 "Exits from the editor. It asks to save all modified buffers. A"
-	 "bang\n (!) saves all remaining buffers. A Universal Argument causes"
-	 "all\n modified buffers to be saved without prompting.\n"
+	 "Exits from the editor. It asks to save all modified buffers. A "
+	 "bang (!) saves all remaining buffers. A Universal Argument causes "
+	 "all modified buffers to be saved without prompting."
 	},
 	{"fill-check",			ZFILL_CHECK,		H_SPECIAL,
-	 "Checks if the current column is past the FillWidth column. If it is,"
-	 "the\n words past or on the FillWidth column are wrapped. This gives"
-	 "some word\n processing capability to the editor. Normally bound to"
-	 "the space bar and\n Newline only in Text Mode. A Universal Argument"
-	 "has no meaning.\n"
+	 "Checks if the current column is past the FillWidth column. If it is, "
+	 "the words past or on the FillWidth column are wrapped. This gives "
+	 "some word processing capability to the editor. Normally bound to "
+	 "the space bar and Newline only in Text Mode. A Universal Argument "
+	 "has no meaning."
 	},
 	{"fill-paragraph",		ZFILL_PARAGRAPH,	H_MODE,
-	 "Uses the FillWidth to reformat the paragraph the Point is in. This"
-	 "is\n useful if editing has messed up the right margin. A Universal"
-	 "Argument\n reformats the next Arg paragraphs. A Universal Argument"
-	 "of 0 reformats\n the entire buffer. When reformatting the entire"
-	 "buffer, hitting a\n character will abort the reformat. Not allowed"
-	 "in program mode buffers.\n"
+	 "Uses the FillWidth to reformat the paragraph the Point is in. This "
+	 "is useful if editing has messed up the right margin. A Universal "
+	 "Argument reformats the next Arg paragraphs. A Universal Argument "
+	 "of 0 reformats the entire buffer. When reformatting the entire "
+	 "buffer, hitting a character will abort the reformat. Not allowed "
+	 "in program mode buffers."
 	},
 	{"find-file",			ZFIND_FILE,		H_FILE,
-	 "Prompts for a path name. If a buffer already exists with this path"
-	 "name,\n that buffer is switched to. If no buffer is matched, a new"
-	 "buffer is\n created and the file read into it. Supports file name"
-	 "completion. A\n Universal Argument causes the command to repeat.\n"
+	 "Prompts for a path name. If a buffer already exists with this path "
+	 "name, that buffer is switched to. If no buffer is matched, a new "
+	 "buffer is created and the file read into it. Supports file name "
+	 "completion. A Universal Argument causes the command to repeat."
 	},
 	{"global-re-search",		ZGLOBAL_RE_SEARCH,	H_SEARCH,
-	 "This command is used to search for a regular expression in all the"
-	 "buffers.\n It prompts for a search string and then starts searching"
-	 "at the start of\n the first buffer. If a match is found, it stops"
-	 "and leaves the point at\n the match. If Again is executed, it starts"
-	 "at the current Point and\n searches forwards through the buffers. At"
-	 "the last buffer it stops and\n puts the Point back where it"
-	 "started. A Universal Argument is ignored.\n"
+	 "This command is used to search for a regular expression in all the "
+	 "buffers. It prompts for a search string and then starts searching "
+	 "at the start of the first buffer. If a match is found, it stops "
+	 "and leaves the point at the match. If Again is executed, it starts "
+	 "at the current Point and searches forwards through the buffers. At "
+	 "the last buffer it stops and puts the Point back where it "
+	 "started. A Universal Argument is ignored."
 	},
 	{"global-search",		ZGLOBAL_SEARCH,		H_SEARCH,
-	 "This command is used to search for a string in all the buffers. It\n"
-	 "prompts for a search string and then starts searching at the start"
-	 "of\n the first buffer. If a match is found, it stops and leaves the"
-	 "point at\n the match. If Again is executed, it starts at the current"
-	 "Point and\n searches forwards through the buffers. At the last"
-	 "buffer it stops and\n puts the Point back where it started. A"
-	 "Universal Argument is ignored.\n"
+	 "This command is used to search for a string in all the buffers. It "
+	 "prompts for a search string and then starts searching at the start "
+	 "of the first buffer. If a match is found, it stops and leaves the "
+	 "point at the match. If Again is executed, it starts at the current "
+	 "Point and searches forwards through the buffers. At the last "
+	 "buffer it stops and puts the Point back where it started. A "
+	 "Universal Argument is ignored."
 	},
 	{"goto-line",			ZGOTO_LINE,		H_CURSOR,
-	 "Moves the point to the start of a given line. If there is a"
-	 "Universal\n Argument, uses the argument, else prompts for the line"
-	 "number. If the\n line is past the end of the buffer, moves the Point"
-	 "is left at the end\n of the buffer.\n"
+	 "Moves the point to the start of a given line. If there is a "
+	 "Universal Argument, uses the argument, else prompts for the line "
+	 "number. If the line is past the end of the buffer, moves the Point "
+	 "is left at the end of the buffer."
 	},
 	{"grep",			ZGREP,			H_SHELL,
 #if !SHELL
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
-	 "Prompts for the completion of a grep command and then performs the\n"
-	 "grep command in the *grep* buffer.\n"
+	 "Prompts for the completion of a grep command and then performs the "
+	 "grep command in the *grep* buffer."
 	},
 	{"grow-window",			ZGROW_WINDOW,		H_BUFF,
-	 "Makes the active window one line bigger, and therefore the"
-	 "inactive\n window one line smaller. A window cannot be less than"
-	 "three (3) lines.\n If there is only one window, this command has no"
-	 "effect. A Universal\n Argument causes the command to grow the window"
-	 "by that number of lines.\n"
+	 "Makes the active window one line bigger, and therefore the "
+	 "inactive window one line smaller. A window cannot be less than "
+	 "three (3) lines. If there is only one window, this command has no "
+	 "effect. A Universal Argument causes the command to grow the window "
+	 "by that number of lines."
 	},
 	{"help-function",		ZHELP_FUNCTION,		H_HELP,
-	 "Displays help on any of the Zedit functions.\n Prompts for the"
-	 "function with full completion.\n"
+	 "Displays help on any of the Zedit functions. Prompts for the "
+	 "function with full completion."
 	},
 	{"help-group",			ZHELP_GROUP,		H_HELP,
-	 "The Zedit functions are grouped into categories. This command lets\n"
-	 "you see the grouped functions.\n"
+	 "The Zedit functions are grouped into categories. This command lets "
+	 "you see the grouped functions."
 	},
 	{"help-variable",		ZHELP_VARIABLE,		H_HELP,
-	 "Displays help on any of the configurable variables.\n Prompts for"
-	 "the variable with full completion.\n"
+	 "Displays help on any of the configurable variables. Prompts for "
+	 "the variable with full completion."
 	},
 	{"hex-output",			ZHEX_OUTPUT,		H_HELP,
-	 "Displays the character at the Point as a hexadecimal number in the"
-	 "PAW.\n A Universal Argument displays the next characters up to a\n"
-	 "maximum of 25. The Point is moved forward by the argument"
-	 "characters.\n"
+	 "Displays the character at the Point as a hexadecimal number in the "
+	 "PAW. A Universal Argument displays the next characters up to a "
+	 "maximum of 25. The Point is moved forward by the argument "
+	 "characters."
 	},
 	{"incremental-search",		ZINCREMENTAL_SEARCH,	H_SEARCH,
-	 "Searches for the string after every character is entered in the"
-	 "PAW. The\n Delete Previous Character command can be used to delete a"
-	 "character and\n 'back up' the search. The Newline character"
-	 "terminates the search. The\n Abort command terminates the search and"
-	 "places the Point back where it\n was. Any other commands terminates"
-	 "the search and performs that command.\n A Universal Argument causes"
-	 "the command to repeat.\n"
+	 "Searches for the string after every character is entered in the "
+	 "PAW. The Delete Previous Character command can be used to delete a "
+	 "character and 'back up' the search. The Newline character "
+	 "terminates the search. The Abort command terminates the search and "
+	 "places the Point back where it was. Any other commands terminates "
+	 "the search and performs that command. A Universal Argument causes "
+	 "the command to repeat."
 	},
 	{"indent",			ZINDENT,		H_DISP,
-	 "Indents the marked region Universal Argument tab stops.\n"
+	 "Indents the marked region Universal Argument tab stops."
 	},
 	{"insert",			ZINSERT,		H_SPECIAL,
-	 "Normally bound to the printable characters, causes the character to"
-	 "be\n inserted in the buffer. A Universal Argument causes the command"
-	 "to\n repeat.\n"
+	 "Normally bound to the printable characters, causes the character to "
+	 "be inserted in the buffer. A Universal Argument causes the command "
+	 "to repeat."
 	},
 	{"insert-overwrite",		ZINSERT_OVERWRITE,	H_MODE,
-	 "Toggles the current buffers minor mode between Insert, the default,"
-	 "and\n overwrite modes. On the PC the cursor shape reflects the"
-	 "mode. Insert\n mode has an underline cursor while overwrite mode has"
-	 "a block cursor. A\n Universal Argument is ignored.\n"
+	 "Toggles the current buffers minor mode between Insert, the default, "
+	 "and overwrite modes. On the PC the cursor shape reflects the "
+	 "mode. Insert mode has an underline cursor while overwrite mode has "
+	 "a block cursor. A Universal Argument is ignored."
 	},
 	{"join",			ZJOIN,			H_DELETE,
-	 "Joins two lines. Performs the following Zedit commands:\n End of"
-	 "Line, Delete Newline, Trim Whitespace, Insert space.\n"
+	 "Joins two lines. Performs the following Zedit commands: End of "
+	 "Line, Delete Newline, Trim Whitespace, Insert space."
 	},
 	{"key-binding",			ZKEY_BINDING,		H_BIND,
-	 "Prompts for a key and displays the current command bound to the key"
-	 "in the\n PAW. Handles C-X and M- prefixes. A Universal Argument is"
-	 "ignored.\n"
+	 "Prompts for a key and displays the current command bound to the key "
+	 "in the PAW. Handles C-X and M- prefixes. A Universal Argument is "
+	 "ignored."
 	},
 	{"kill",			ZKILL,			H_SHELL,
 #if !SHELL
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
-	 "Kills the current make. The command must wait for the make to die"
-	 "before\n it can continue. Unix only.\n"
+	 "Kills the current make. The command must wait for the make to die "
+	 "before it can continue. Unix only."
 	},
 	{"life",			ZLIFE,			H_OTHER,
-	 "Destructively plays the game of Life on the current buffer.\n A"
-	 "space does the next iteration.\n A Return causes continuous"
-	 "iterations (with a slight delay).\n An Abort stops the game.\n"
+	 "Destructively plays the game of Life on the current buffer. A "
+	 "space does the next iteration. A Return causes continuous "
+	 "iterations (with a slight delay). An Abort stops the game."
 	},
 	{"list-buffers",		ZLIST_BUFFERS,		H_BUFF,
-	 "Displays a list of the current buffers on the display.\n"
+	 "Displays a list of the current buffers on the display."
 	},
 	{"lowercase-region",		ZLOWERCASE_REGION,	H_DISP,
-	 "Converts the Region to lowercase. Not allowed in program mode"
-	 "buffers. A\n Universal Argument is ignored.\n"
+	 "Converts the Region to lowercase. Not allowed in program mode "
+	 "buffers. A Universal Argument is ignored."
 	},
 	{"lowercase-word",		ZLOWERCASE_WORD,	H_DISP,
-	 "Converts the current word starting at the Point to lowercase. It"
-	 "leaves\n the Point at the end of the word. A Universal Argument"
-	 "causes the\n command to repeat.\n"
+	 "Converts the current word starting at the Point to lowercase. It "
+	 "leaves the Point at the end of the word. A Universal Argument "
+	 "causes the command to repeat."
 	},
 	{"make",			ZMAKE,			H_SHELL,
 #if !SHELL
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
-	 "This command performs the command specified in the Make variable"
-	 "and\n puts the output in the '.make' buffer. The command is usually"
-	 "'make' and\n is used in conjunction with the Next Error command. A"
-	 "Universal Argument\n prompts for the command to execute.\n"
+	 "This command performs the command specified in the Make variable "
+	 "and puts the output in the '.make' buffer. The command is usually "
+	 "'make' and is used in conjunction with the Next Error command. A "
+	 "Universal Argument prompts for the command to execute."
 	},
 	{"mark-paragraph",		ZMARK_PARAGRAPH,	H_DELETE,
-	 "Sets the Mark to the start of the current paragraph and moves the"
-	 "Point\n to the start of the next paragraph. A Universal Argument"
-	 "causes the\n command to repeat.\n"
+	 "Sets the Mark to the start of the current paragraph and moves the "
+	 "Point to the start of the next paragraph. A Universal Argument "
+	 "causes the command to repeat."
 	},
 	{"meta",			ZMETA,			H_SPECIAL,
-	 "Command prefix.\n"
+	 "Command prefix."
 	},
 	{"meta-x",			ZMETA_X,		H_OTHER,
-	 "Prompts for a command to execute. Unbound commands may be executed"
-	 "in\n this manner. Supports command completion. A '?' will show all"
-	 "the\n possible matches. A Universal Argument is passed on to the"
-	 "selected\n command.\n"
+	 "Prompts for a command to execute. Unbound commands may be executed "
+	 "in this manner. Supports command completion. A '?' will show all "
+	 "the possible matches. A Universal Argument is passed on to the "
+	 "selected command."
 	},
 	{"mode",			ZMODE,			H_MODE,
-	 "Change the mode of the current buffer. Prompts (with command"
-	 "completion)\n for the mode to change to.  A Universal Argument"
-	 "causes multiple\n toggles.\n"
+	 "Change the mode of the current buffer. Prompts (with command "
+	 "completion) for the mode to change to. A Universal Argument "
+	 "causes multiple toggles."
 	},
 	{"newline",			ZNEWLINE,		H_SPECIAL,
-	 "The command normally bound to the Enter or Return key.\n In"
-	 "overwrite mode, a NL goes to start of next line.\n In insert mode,"
-	 "its just inserted.\n A Universal Argument causes the command to"
-	 "repeat.\n"
+	 "The command normally bound to the Enter or Return key. In "
+	 "overwrite mode, a NL goes to start of next line. In insert mode, "
+	 "its just inserted. A Universal Argument causes the command to "
+	 "repeat."
 	},
 	{"next-bookmark",		ZNEXT_BOOKMARK,		H_CURSOR,
-	 "Moves the Point to the last bookmark set in the bookmark ring. The\n"
-	 "bookmark moved to is displayed in the echo window. A Universal"
-	 "Argument\n in the range 1 to 10 corresponding to a set bookmark will"
-	 "go to the\n bookmark.\n"
+	 "Moves the Point to the last bookmark set in the bookmark ring. The "
+	 "bookmark moved to is displayed in the echo window. A Universal "
+	 "Argument in the range 1 to 10 corresponding to a set bookmark will "
+	 "go to the bookmark."
 	},
 	{"next-buffer",			ZNEXT_BUFFER,		H_BUFF,
-	 "Switches to the next buffer in the buffer list. At the end of the"
-	 "list,\n it switches to the first buffer in the list, i.e. treats the"
-	 "list like a\n ring. A Universal Argument causes the command to"
-	 "repeat.\n"
+	 "Switches to the next buffer in the buffer list. At the end of the "
+	 "list, it switches to the first buffer in the list, i.e. treats the "
+	 "list like a ring. A Universal Argument causes the command to "
+	 "repeat."
 	},
 	{"next-char",			ZNEXT_CHAR,		H_CURSOR,
-	 "Moves the Point forward one character. If the Point is at the end of"
-	 "a\n line, it is moved to the start of the next line. A Universal"
-	 "Argument\n causes the command to repeat.\n"
+	 "Moves the Point forward one character. If the Point is at the end of "
+	 "a line, it is moved to the start of the next line. A Universal "
+	 "Argument causes the command to repeat."
 	},
 	{"next-error",			ZNEXT_ERROR,		H_SHELL,
 #if !SHELL
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
-	 "Used after a Make command to search for error messages in the"
-	 "'.make'\n buffer. If an error is found, the Mark in the '.make'"
-	 "buffer is placed\n at the start of the error message. The file"
-	 "containing the error is\n loaded into a buffer using the Find File"
-	 "command and the Point is placed\n at the error line.\n If a"
-	 "Universal Argument is specified, Next Error tries to ignore"
-	 "warnings.\n"
+	 "Used after a Make command to search for error messages in the "
+	 "'.make' buffer. If an error is found, the Mark in the '.make' "
+	 "buffer is placed at the start of the error message. The file "
+	 "containing the error is loaded into a buffer using the Find File "
+	 "command and the Point is placed at the error line. If a "
+	 "Universal Argument is specified, Next Error tries to ignore "
+	 "warnings."
 	},
 	{"next-line",			ZNEXT_LINE,		H_CURSOR,
-	 "Moves the Point up one line in the buffer. It tries to maintain the"
-	 "same\n column position. If the line is to short the, Point will be"
-	 "the placed\n at the end of the line. Consecutive Previous/Next Line"
-	 "or Page commands\n try to maintain the original column position. A"
-	 "Universal Argument\n causes the command to repeat.\n"
+	 "Moves the Point up one line in the buffer. It tries to maintain the "
+	 "same column position. If the line is to short the, Point will be "
+	 "the placed at the end of the line. Consecutive Previous/Next Line "
+	 "or Page commands try to maintain the original column position. A "
+	 "Universal Argument causes the command to repeat."
 	},
 	{"next-page",			ZNEXT_PAGE,		H_CURSOR,
-	 "Moves the Point down one page and tries to center the Point line in"
-	 "the\n display. It tries to maintain the same column position. If the"
-	 "line is\n to short the, Point will be the placed at the end of the"
-	 "line.\n Consecutive Previous/Next Line or Page commands try to"
-	 "maintain the\n original column position. A Universal Argument causes"
-	 "the command to\n repeat.\n"
+	 "Moves the Point down one page and tries to center the Point line in "
+	 "the display. It tries to maintain the same column position. If the "
+	 "line is to short the, Point will be the placed at the end of the "
+	 "line. Consecutive Previous/Next Line or Page commands try to "
+	 "maintain the original column position. A Universal Argument causes "
+	 "the command to repeat."
 	},
 	{"next-paragraph",		ZNEXT_PARAGRAPH,	H_CURSOR,
-	 "Moves the Point to the start of the next paragraph. A Universal"
-	 "Argument\n causes the command to repeat.\n"
+	 "Moves the Point to the start of the next paragraph. A Universal "
+	 "Argument causes the command to repeat."
 	},
 	{"next-window",			ZNEXT_WINDOW,		H_DISP,
-	 "Goes to the next window on the screen. The windows are treated as"
-	 "a\n circular list. A Universal Argument goes to the Nth next"
-	 "window.\n"
+	 "Goes to the next window on the screen. The windows are treated as "
+	 "a circular list. A Universal Argument goes to the Nth next "
+	 "window."
 	},
 	{"next-word",			ZNEXT_WORD,		H_CURSOR,
-	 "Moves the Point to the start of the next word. A Universal"
-	 "Argument\n causes the command to repeat.\n"
+	 "Moves the Point to the start of the next word. A Universal "
+	 "Argument causes the command to repeat."
 	},
 	{"notimpl",			ZNOTIMPL,		H_BIND,
-	 "Used to unbind a key. This is bound to all the unbound keys. A"
-	 "Universal\n Argument does nothing Arg times.\n"
+	 "Used to unbind a key. This is bound to all the unbound keys. A "
+	 "Universal Argument does nothing Arg times."
 	},
 	{"one-window",			ZONE_WINDOW,		H_BUFF,
-	 "Makes the active window a full screen window. If there is only one\n"
-	 "window, this command has no effect. A Universal Argument is"
-	 "ignored.\n"
+	 "Makes the active window a full screen window. If there is only one "
+	 "window, this command has no effect. A Universal Argument is "
+	 "ignored."
 	},
 	{"open-line",			ZOPEN_LINE,		H_DISP,
-	 "Inserts a Newline at the Point but leaves the Point in front of"
-	 "the\n Newline. It is the same as typing a Newline and then a"
-	 "Previous\n Character command. A Universal Argument causes the"
-	 "command to repeat.\n"
+	 "Inserts a Newline at the Point but leaves the Point in front of "
+	 "the Newline. It is the same as typing a Newline and then a "
+	 "Previous Character command. A Universal Argument causes the "
+	 "command to repeat."
 	},
 	{"other-next-page",		ZOTHER_NEXT_PAGE,	H_BUFF,
-	 "Performs a Next Page command in the bottom window or the top window"
-	 "if\n you are in the bottom window. It leaves the Point where it is"
-	 "in the\n active window. If there is only one window, this command"
-	 "has no effect.\n A Universal Argument causes the command to page the"
-	 "Nth window.\n"
+	 "Performs a Next Page command in the bottom window or the top window "
+	 "if you are in the bottom window. It leaves the Point where it is "
+	 "in the active window. If there is only one window, this command "
+	 "has no effect. A Universal Argument causes the command to page the "
+	 "Nth window."
 	},
 	{"other-previous-page",		ZOTHER_PREVIOUS_PAGE,	H_BUFF,
-	 "Performs a Previous Page command in the bottom window or the top"
-	 "window\n if you are in the bottom window. It leaves the Point where"
-	 "it is in the\n active window. If there is only one window, this"
-	 "command has no effect.\n A Universal Argument pages the Nth"
-	 "window.\n"
+	 "Performs a Previous Page command in the bottom window or the top "
+	 "window if you are in the bottom window. It leaves the Point where "
+	 "it is in the active window. If there is only one window, this "
+	 "command has no effect. A Universal Argument pages the Nth "
+	 "window."
 	},
 	{"out-to",			ZOUT_TO,		H_CURSOR,
-	 "This command moves the Point to an absolute column position. If the"
-	 "line\n is shorter than the specified column, it is padded with tabs"
-	 "and spaces\n to the specified column. The command takes either a"
-	 "Universal Argument or\n prompts for the column to go to.\n"
+	 "This command moves the Point to an absolute column position. If the "
+	 "line is shorter than the specified column, it is padded with tabs "
+	 "and spaces to the specified column. The command takes either a "
+	 "Universal Argument or prompts for the column to go to."
 	},
 	{"position",			ZPOSITION,		H_HELP,
-	 "Displays the current Point position as a line, column, and byte"
-	 "offset\n in the echo window. Also displays the length of the"
-	 "buffer. A Universal\n Argument is ignored.\n"
+	 "Displays the current Point position as a line, column, and byte "
+	 "offset in the echo window. Also displays the length of the "
+	 "buffer. A Universal Argument is ignored."
 	},
 	{"previous-char",		ZPREVIOUS_CHAR,		H_CURSOR,
-	 "Moves the Point back one character. If the Point is at the start of"
-	 "the\n line, it is moved to the end of the previous line. A Universal"
-	 "Argument\n causes the command to repeat.\n"
+	 "Moves the Point back one character. If the Point is at the start of "
+	 "the line, it is moved to the end of the previous line. A Universal "
+	 "Argument causes the command to repeat."
 	},
 	{"previous-line",		ZPREVIOUS_LINE,		H_CURSOR,
-	 "Moves the Point up one line in the buffer. It tries to maintain the"
-	 "same\n column position. If the line is to short, the Point will be"
-	 "placed at\n the end of the line. Consecutive Previous/Next Line or"
-	 "Page commands try\n to maintain the original column position. A"
-	 "Universal Argument causes\n the command to repeat.\n"
+	 "Moves the Point up one line in the buffer. It tries to maintain the "
+	 "same column position. If the line is to short, the Point will be "
+	 "placed at the end of the line. Consecutive Previous/Next Line or "
+	 "Page commands try to maintain the original column position. A "
+	 "Universal Argument causes the command to repeat."
 	},
 	{"previous-page",		ZPREVIOUS_PAGE,		H_CURSOR,
-	 "Moves the Point up one page and tries to center the Point line in"
-	 "the\n display. It tries to maintain the same column position. If the"
-	 "line is\n to short, the Point will be placed at the end of the"
-	 "line. Consecutive\n Previous/Next Line or Page commands try to"
-	 "maintain the original column\n position. A Universal Argument causes"
-	 "the command to repeat.\n"
+	 "Moves the Point up one page and tries to center the Point line in "
+	 "the display. It tries to maintain the same column position. If the "
+	 "line is to short, the Point will be placed at the end of the "
+	 "line. Consecutive Previous/Next Line or Page commands try to "
+	 "maintain the original column position. A Universal Argument causes "
+	 "the command to repeat."
 	},
 	{"previous-paragraph",		ZPREVIOUS_PARAGRAPH,	H_CURSOR,
-	 "Moves the Point to the start of the paragraph or to the start of"
-	 "the\n previous paragraph. A Universal Argument causes the command to"
-	 "repeat.\n"
+	 "Moves the Point to the start of the paragraph or to the start of "
+	 "the previous paragraph. A Universal Argument causes the command to "
+	 "repeat."
 	},
 	{"previous-window",		ZPREVIOUS_WINDOW,	H_DISP,
-	 "Goes to the previous window on the screen. The windows are treated"
-	 "as a\n circular list. A Universal Argument goes to the Nth previous"
-	 "window.\n"
+	 "Goes to the previous window on the screen. The windows are treated "
+	 "as a circular list. A Universal Argument goes to the Nth previous "
+	 "window."
 	},
 	{"previous-word",		ZPREVIOUS_WORD,		H_CURSOR,
-	 "Moves the Point back to the start of a word or to the start of the\n"
-	 "previous word. A Universal Argument causes the command to repeat.\n"
+	 "Moves the Point back to the start of a word or to the start of the "
+	 "previous word. A Universal Argument causes the command to repeat."
 	},
 	{"query-replace",		ZQUERY_REPLACE,		H_SEARCH,
 	 "Prompts for a search string and a replacement string and searches "
-	 "from the\ncurrent Point looking for matches of the search string. "
-	 "If it finds a\nmatch, it moves the Point to the match and waits for "
-	 "one of the\nfollowing input characters:\n"
+	 "from the current Point looking for matches of the search string. "
+	 "If it finds a match, it moves the Point to the match and waits for "
+	 "one of the following input characters:\n"
 	 "\n"
 	 "  ,              Replace current match and confirm.\n"
 	 "  space          Replace current match and continue.\n"
@@ -512,255 +512,255 @@ struct cnames Cnames[] = {
 	 "  Others         Continue without replacing current match.\n"
 	 "\n"
 	 "The Point is left at the position it was in before the Query "
-	 "Replace. If\nthe mode Exact is set, the search will be case "
-	 "sensitive. A Universal\nArgument causes the replacement to be "
-	 "done globally in all the buffers.\n"
+	 "Replace. If the mode Exact is set, the search will be case "
+	 "sensitive. A Universal Argument causes the replacement to be "
+	 "done globally in all the buffers."
 	},
 	{"quote",			ZQUOTE,			H_OTHER,
-	 "The Quote command is used to insert a character into a buffer or"
-	 "String\n Argument that would normally be a command. The next"
-	 "character after the\n Quote command is taken literally, unless the"
-	 "key is a valid hexadecimal\n digit. If the key is a valid"
-	 "hexadecimal digit, it and the next key are\n taken together as a"
-	 "hexadecimal number and the ASCII character\n equivalent of this"
-	 "number is inserted into the buffer. If a key is not\n hit within"
-	 "approximately one second, 'Quote:' is displayed in the echo\n"
-	 "window. The Quote command does not work within a Universal"
-	 "Argument. A\n Universal Argument inserts Arg characters.\n"
+	 "The Quote command is used to insert a character into a buffer or "
+	 "String Argument that would normally be a command. The next "
+	 "character after the Quote command is taken literally, unless the "
+	 "key is a valid hexadecimal digit. If the key is a valid "
+	 "hexadecimal digit, it and the next key are taken together as a "
+	 "hexadecimal number and the ASCII character equivalent of this "
+	 "number is inserted into the buffer. If a key is not hit within "
+	 "approximately one second, 'Quote:' is displayed in the echo "
+	 "window. The Quote command does not work within a Universal "
+	 "Argument. A Universal Argument inserts Arg characters."
 	},
 	{"re-replace",			ZRE_REPLACE,		H_SEARCH,
-	 "Works like the Query Replace command except that the search string"
-	 "is a\n regular expression. The replacement string is a literal with"
-	 "two\n exceptions. An '&' character causes the matched string to be"
-	 "placed in\n the buffer. The escape character '\' can be used to turn"
-	 "off this\n special meaning of '&'. Note that '\\' is required to put"
-	 "a real '\' in\n the buffer. For each match, a prompt is made for the"
-	 "action to perform.\n See Query Replace for a list of valid"
-	 "actions. A Universal\n Argument causes the replacement to be done"
-	 "globally in all the buffers.\n"
+	 "Works like the Query Replace command except that the search string "
+	 "is a regular expression. The replacement string is a literal with "
+	 "two exceptions. An '&' character causes the matched string to be "
+	 "placed in the buffer. The escape character '\' can be used to turn "
+	 "off this special meaning of '&'. Note that '\\' is required to put "
+	 "a real '\' in the buffer. For each match, a prompt is made for the "
+	 "action to perform. See Query Replace for a list of valid "
+	 "actions. A Universal Argument causes the replacement to be done "
+	 "globally in all the buffers."
 	},
 	{"re-search",			ZRE_SEARCH,		H_SEARCH,
-	 "Asks for a regular expression search string and searches from the"
-	 "Point\n forward for a match in the buffer. If a match is found, the"
-	 "Point is\n moved to the start of the match. If the string is not"
-	 "found, then 'Not\n Found' is displayed in the echo window and the"
-	 "Point is left where it\n was. The search string is saved and"
-	 "subsequent search and replace\n commands will default to this"
-	 "string. If the mode Exact is set, the\n search will be case"
-	 "sensitive. A Universal Argument causes the search\n to look for"
-	 "exactly Arg matches of the string.\n"
+	 "Asks for a regular expression search string and searches from the "
+	 "Point forward for a match in the buffer. If a match is found, the "
+	 "Point is moved to the start of the match. If the string is not "
+	 "found, then 'Not Found' is displayed in the echo window and the "
+	 "Point is left where it was. The search string is saved and "
+	 "subsequent search and replace commands will default to this "
+	 "string. If the mode Exact is set, the search will be case "
+	 "sensitive. A Universal Argument causes the search to look for "
+	 "exactly Arg matches of the string."
 	},
 	{"read-file",			ZREAD_FILE,		H_FILE,
-	 "Prompts for a path name, with file name completion, and inserts"
-	 "the\n file into the current buffer before the Point. If there is a"
-	 "Universal\n Argument, the current buffer is deleted, first asking to"
-	 "save the file\n if it is modified, before reading in the new"
-	 "file. The buffers file name\n is not changed, any writes will be to"
-	 "the old file name.\n"
+	 "Prompts for a path name, with file name completion, and inserts "
+	 "the file into the current buffer before the Point. If there is a "
+	 "Universal Argument, the current buffer is deleted, first asking to "
+	 "save the file if it is modified, before reading in the new "
+	 "file. The buffers file name is not changed, any writes will be to "
+	 "the old file name."
 	},
 	{"redisplay",			ZREDISPLAY,		H_DISP,
-	 "Repaints the entire screen. A Universal Argument causes the command"
-	 "to\n repeat.\n"
+	 "Repaints the entire screen. A Universal Argument causes the command "
+	 "to repeat."
 	},
 	{"replace",			ZREPLACE,		H_SEARCH,
-	 "Prompts for a search string and a replacement string and searches"
-	 "from\n the current Point looking for matches of the search"
-	 "string. If it finds\n a match, it replaces the string and"
-	 "continues. The Point is left at the\n position it was in before the"
-	 "Query Replace. If the mode Exact is set,\n the search will be case"
-	 "sensitive. A Universal Argument causes the\n replacement to be done"
-	 "globally in all the buffers.\n"
+	 "Prompts for a search string and a replacement string and searches "
+	 "from the current Point looking for matches of the search "
+	 "string. If it finds a match, it replaces the string and "
+	 "continues. The Point is left at the position it was in before the "
+	 "Query Replace. If the mode Exact is set, the search will be case "
+	 "sensitive. A Universal Argument causes the replacement to be done "
+	 "globally in all the buffers."
 	},
 	{"reverse-inc-search",		ZREVERSE_INC_SEARCH,	H_SEARCH,
-	 "Searches backwards for the string after every character is entered\n"
-	 "in the PAW. The Delete Previous Character command can be used to\n"
-	 "delete a character and 'forward up' the search. The Newline\n"
-	 "character terminates the search. The Abort command terminates the\n"
-	 "search and places the Point back where it was. Any other command\n"
-	 "terminates the search and performs the command. A Universal\n"
-	 "Argument causes the command to repeat.\n"
+	 "Searches backwards for the string after every character is entered "
+	 "in the PAW. The Delete Previous Character command can be used to "
+	 "delete a character and 'forward up' the search. The Newline "
+	 "character terminates the search. The Abort command terminates the "
+	 "search and places the Point back where it was. Any other command "
+	 "terminates the search and performs the command. A Universal "
+	 "Argument causes the command to repeat."
 	},
 	{"reverse-search",		ZREVERSE_SEARCH,	H_SEARCH,
-	 "Prompts for a search string and searches from the Point backward for"
-	 "a\n match in the buffer. If a match is found, the Point is moved to"
-	 "the\n start of the match. If the string is not found, then 'Not"
-	 "Found' is\n displayed in the echo window and the Point is not"
-	 "moved. The search\n string is saved and subsequent search and"
-	 "replace commands will default\n to the last search string. If the"
-	 "mode Exact is set, the search will be\n case sensitive. A Universal"
-	 "Argument causes the search to look for\n exactly Arg matches of the"
-	 "String Argument.\n"
+	 "Prompts for a search string and searches from the Point backward for "
+	 "a match in the buffer. If a match is found, the Point is moved to "
+	 "the start of the match. If the string is not found, then 'Not "
+	 "Found' is displayed in the echo window and the Point is not "
+	 "moved. The search string is saved and subsequent search and "
+	 "replace commands will default to the last search string. If the "
+	 "mode Exact is set, the search will be case sensitive. A Universal "
+	 "Argument causes the search to look for exactly Arg matches of the "
+	 "String Argument."
 	},
 	{"revert-file",			ZREVERT_FILE,		H_FILE,
-	 "Rereads the current file. If the file has changed, asks to"
-	 "overwrite\n changes. A Universal Argument causes multiple"
-	 "rereads. Mimics the vi 'e'\n command.\n"
+	 "Rereads the current file. If the file has changed, asks to "
+	 "overwrite changes. A Universal Argument causes multiple "
+	 "rereads. Mimics the vi 'e' command."
 	},
 	{"save-all-files",		ZSAVE_ALL_FILES,	H_FILE,
-	 "Saves all modified buffers. A Universal Argument causes ALL files to"
-	 "be\n saved, modified or not.\n"
+	 "Saves all modified buffers. A Universal Argument causes ALL files to "
+	 "be saved, modified or not."
 	},
 	{"save-and-exit",		ZSAVE_AND_EXIT,		H_FILE,
-	 "An attempt to mimic the vi ZZ command. Does a save file on the\n"
-	 "current buffer and then exits. A universal argument will save all\n"
-	 "files.\n"
+	 "An attempt to mimic the vi ZZ command. Does a save file on the "
+	 "current buffer and then exits. A universal argument will save all "
+	 "files."
 	},
 	{"save-bindings",		ZSAVE_BINDINGS,		H_BIND,
-	 "A key bound with the Bind command only stays in effect for the\n"
-	 "duration of the edit session. The Save Bindings command is used to\n"
-	 "permanently save any new bindings in the bindings file. The file"
-	 "is\n saved in the users home directory. A Universal Argument causes"
-	 "Arg\n saves!\n"
+	 "A key bound with the Bind command only stays in effect for the "
+	 "duration of the edit session. The Save Bindings command is used to "
+	 "permanently save any new bindings in the bindings file. The file "
+	 "is saved in the users home directory. A Universal Argument causes "
+	 "Arg saves! "
 	},
 	{"save-file",			ZSAVE_FILE,		H_FILE,
-	 "Saves the current buffer to its file. If the current buffer has no"
-	 "path\n name, a path name is prompted for (with file name"
-	 "completion). A\n Universal Argument is ignored.\n"
+	 "Saves the current buffer to its file. If the current buffer has no "
+	 "path name, a path name is prompted for (with file name "
+	 "completion). A Universal Argument is ignored."
 	},
 	{"scroll-down",			ZSCROLL_DOWN,		H_DISP,
-	 "Scrolls the screen down one line. A Universal Argument causes the\n"
-	 "command to scroll multiple lines.\n"
+	 "Scrolls the screen down one line. A Universal Argument causes the "
+	 "command to scroll multiple lines."
 	},
 	{"scroll-up",			ZSCROLL_UP,		H_DISP,
-	 "Scrolls the screen up one line. A Universal Argument causes the\n"
-	 "command to scroll multiple lines.\n"
+	 "Scrolls the screen up one line. A Universal Argument causes the "
+	 "command to scroll multiple lines."
 	},
 	{"search",			ZSEARCH,		H_SEARCH,
-	 "Prompts for a search string and searches from the Point forward for"
-	 "a\n match in the buffer. If a match is found, the Point is moved to"
-	 "the\n start of the match. If the string is not found, then 'Not"
-	 "Found' is\n displayed in the echo window and the Point is not"
-	 "moved. The search\n string is saved and subsequent search or replace"
-	 "commands will default\n to the last search string. If the mode Exact"
-	 "is set, the search will be\n case sensitive. A Universal Argument"
-	 "causes the search to look for\n exactly Arg matches.\n"
+	 "Prompts for a search string and searches from the Point forward for "
+	 "a match in the buffer. If a match is found, the Point is moved to "
+	 "the start of the match. If the string is not found, then 'Not "
+	 "Found' is displayed in the echo window and the Point is not "
+	 "moved. The search string is saved and subsequent search or replace "
+	 "commands will default to the last search string. If the mode Exact "
+	 "is set, the search will be case sensitive. A Universal Argument "
+	 "causes the search to look for exactly Arg matches."
 	},
 	{"set-bookmark",		ZSET_BOOKMARK,		H_CURSOR,
-	 "Places an invisible 'bookmark' at the Point. There are 10\n"
-	 "bookmarks placed in a ring. The bookmark set is displayed in the"
-	 "PAW.\n A Universal Argument causes the command to repeat.\n"
+	 "Places an invisible 'bookmark' at the Point. There are 10 "
+	 "bookmarks placed in a ring. The bookmark set is displayed in the "
+	 "PAW. A Universal Argument causes the command to repeat."
 	},
 	{"set-mark",			ZSET_MARK,		H_DELETE,
-	 "Sets the Mark at the Point. A Universal Argument is ignored.\n"
+	 "Sets the Mark at the Point. A Universal Argument is ignored."
 	},
 	{"set-variable",		ZSET_VARIABLE,		H_HELP,
-	 "Allows any of the configurable variables to be set. Command"
-	 "completion\n is supported. Prompts for the variable, then prompts"
-	 "for the new\n setting. A Universal Argument causes numeric or flag"
-	 "variables to be\n set to Arg, string variables ignore the Universal"
-	 "Argument.\n"
+	 "Allows any of the configurable variables to be set. Command "
+	 "completion is supported. Prompts for the variable, then prompts "
+	 "for the new setting. A Universal Argument causes numeric or flag "
+	 "variables to be set to Arg, string variables ignore the Universal "
+	 "Argument."
 	},
 	{"setenv",			ZSETENV,		H_OTHER,
-	 "Performs a 'setenv' command on an environment variable. The variable"
-	 "will\n keep the setting during the the Zedit session.\n"
+	 "Performs a 'setenv' command on an environment variable. The variable "
+	 "will keep the setting during the the Zedit session."
 	},
 	{"show-config",			ZSHOW_CONFIG,		H_HELP,
-	 "Show the current settings of all the Zedit variables in a\n"
-	 "buffer. The buffer is suitable for use as a .config.z file and can\n"
-	 "be saved to a file using Write File.\n"
+	 "Show the current settings of all the Zedit variables in a "
+	 "buffer. The buffer is suitable for use as a .config.z file and can "
+	 "be saved to a file using Write File."
 	},
 	{"shrink-window",		ZSHRINK_WINDOW,		H_BUFF,
-	 "Shrinks the current window one line. A Universal Argument shrinks"
-	 "the\n window Arg lines.\n"
+	 "Shrinks the current window one line. A Universal Argument shrinks "
+	 "the window Arg lines."
 	},
 	{"size-window",			ZSIZE_WINDOW,		H_BUFF,
-	 "Sets the window to Universal Argument lines.\n"
+	 "Sets the window to Universal Argument lines."
 	},
 	{"split-window",		ZSPLIT_WINDOW,		H_BUFF,
-	 "Splits the current window into two windows. The same buffer is"
-	 "displayed in\n both windows and the bottom window is made active. A"
-	 "Universal Argument\n keeps splitting the current window.\n"
+	 "Splits the current window into two windows. The same buffer is "
+	 "displayed in both windows and the bottom window is made active. A "
+	 "Universal Argument keeps splitting the current window."
 	},
 	{"stats",			ZSTATS,			H_BUFF,
 	 "Displays some simple stats about Zedit."
 	},
 	{"swap-chars",			ZSWAP_CHARS,		H_DISP,
-	 "Swaps the character before the Point with the character at the\n"
-	 "Point. It leaves the Point after the second character. Successive\n"
-	 "commands will 'drag' the character that was before the Point towards"
-	 "the\n end of the line. If the Point was at the end of a line, the"
-	 "two\n characters before the Point are transposed. If the Point is at"
-	 "the\n beginning of the buffer, the character at the Point and the"
-	 "character\n after the Point are transposed. A Universal Argument"
-	 "causes the command\n to repeat.\n"
+	 "Swaps the character before the Point with the character at the "
+	 "Point. It leaves the Point after the second character. Successive "
+	 "commands will 'drag' the character that was before the Point towards "
+	 "the end of the line. If the Point was at the end of a line, the "
+	 "two characters before the Point are transposed. If the Point is at "
+	 "the beginning of the buffer, the character at the Point and the "
+	 "character after the Point are transposed. A Universal Argument "
+	 "causes the command to repeat."
 	},
 	{"swap-mark",			ZSWAP_MARK,		H_CURSOR,
-	 "The Mark goes to the current position of the Point and the Point is"
-	 "set\n where the Mark was. A Universal Argument is ignored.\n"
+	 "The Mark goes to the current position of the Point and the Point is "
+	 "set where the Mark was. A Universal Argument is ignored."
 	},
 	{"swap-words",			ZSWAP_WORDS,		H_DISP,
-	 "Swaps the words before and after the Point. The Point is left"
-	 "after\n the second word. Successive commands will 'drag' the word"
-	 "before the\n Point towards the end of the line. If the Point is at"
-	 "the end of a line,\n the last word on the line is transposed with"
-	 "the first word on the next\n line. The command does nothing at the"
-	 "end of the buffer. If the Point is\n in the middle of a word, the"
-	 "two halves of the word are transposed. A\n Universal Argument causes"
-	 "the command to repeat.\n"
+	 "Swaps the words before and after the Point. The Point is left "
+	 "after the second word. Successive commands will 'drag' the word "
+	 "before the Point towards the end of the line. If the Point is at "
+	 "the end of a line, the last word on the line is transposed with "
+	 "the first word on the next line. The command does nothing at the "
+	 "end of the buffer. If the Point is in the middle of a word, the "
+	 "two halves of the word are transposed. A Universal Argument causes "
+	 "the command to repeat."
 	},
 	{"switch-to-buffer",		ZSWITCH_TO_BUFFER,	H_BUFF,
-	 "Prompts for a buffer name to switch to with command completion.\n"
-	 "The previous buffer is stored and displayed as a default. This"
-	 "allows\n quick switching between two buffers. The Again command can"
-	 "be used to\n scroll through the buffer list. A Universal Argument is"
-	 "ignored.\n"
+	 "Prompts for a buffer name to switch to with command completion. "
+	 "The previous buffer is stored and displayed as a default. This "
+	 "allows quick switching between two buffers. The Again command can "
+	 "be used to scroll through the buffer list. A Universal Argument is "
+	 "ignored."
 	},
 	{"tab",				ZTAB,			H_SPECIAL,
-	 "Handles the tab key. A Universal Argument causes the command to"
-	 "repeat.\n"
+	 "Handles the tab key. A Universal Argument causes the command to "
+	 "repeat."
 	},
 	{"toggle-case",			ZTOGGLE_CASE,		H_SEARCH,
-	 "Switches the current buffers minor mode between case sensitive and"
-	 "case\n insensitive for searches and replacements. Ignores the"
-	 "Universal\n Argument.\n"
+	 "Switches the current buffers minor mode between case sensitive and "
+	 "case insensitive for searches and replacements. Ignores the "
+	 "Universal Argument."
 	},
 	{"trim-white-space",		ZTRIM_WHITE_SPACE,	H_DELETE,
-	 "Removes all spaces and tabs on both sides of the Point. The Point"
-	 "is\n left on the character that is to the right of the deleted"
-	 "text. The\n deleted characters are not put in the Kill Buffer. A"
-	 "Universal Argument\n is ignored.\n"
+	 "Removes all spaces and tabs on both sides of the Point. The Point "
+	 "is left on the character that is to the right of the deleted "
+	 "text. The deleted characters are not put in the Kill Buffer. A "
+	 "Universal Argument is ignored."
 	},
 	{"undent",			ZUNDENT,		H_DISP,
-	 "Removes Universal Argument tabs from the start of every line in"
-	 "the\n region.\n"
+	 "Removes Universal Argument tabs from the start of every line in "
+	 "the region."
 	},
 	{"undo",			ZUNDO,			H_OTHER,
 #if !UNDO
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
-	 "EXPERIMENTAL: Undo the previous edit. There is a list of undos.\n"
+	 "EXPERIMENTAL: Undo the previous edit. There is a list of undos."
 	},
 	{"unmodify",			ZUNMODIFY,		H_DELETE,
-	 "Turns off the modified flag for the current buffer. Does not change"
-	 "the\n buffer itself. A Universal Argument is ignored.\n"
+	 "Turns off the modified flag for the current buffer. Does not change "
+	 "the buffer itself. A Universal Argument is ignored."
 	},
 	{"uppercase-region",		ZUPPERCASE_REGION,	H_DISP,
-	 "Convert the Region to uppercase. Not allowed in program mode"
-	 "buffers. A\n Universal Argument is ignored.\n"
+	 "Convert the Region to uppercase. Not allowed in program mode "
+	 "buffers. A Universal Argument is ignored."
 	},
 	{"uppercase-word",		ZUPPERCASE_WORD,	H_DISP,
-	 "Converts the current word starting at the Point to uppercase. It"
-	 "leaves\n the Point at the end of the word. A Universal Argument"
-	 "causes the\n command to repeat.\n"
+	 "Converts the current word starting at the Point to uppercase. It "
+	 "leaves the Point at the end of the word. A Universal Argument "
+	 "causes the command to repeat."
 	},
 	{"view-line",			ZVIEW_LINE,		H_DISP,
-	 "Makes the Point line the top line in the window. A Universal"
-	 "Argument\n causes the command to repeat.\n"
+	 "Makes the Point line the top line in the window. A Universal "
+	 "Argument causes the command to repeat."
 	},
 	{"word-search",			ZWORD_SEARCH,		H_SEARCH,
-	 "Search for the word at the point. A Universal Argument causes the"
+	 "Search for the word at the point. A Universal Argument causes the "
 	 "search to go backwards."
 	},
 	{"write-file",			ZWRITE_FILE,		H_FILE,
-	 "Prompts for a path name and writes out the current buffer to this"
-	 "file\n name. Supports file name completion. It changes the path name"
-	 "of the\n current buffer to the new path name. A Universal Argument"
-	 "causes only\n the Region to be written and does not change the name"
-	 "of the buffer.\n"
+	 "Prompts for a path name and writes out the current buffer to this "
+	 "file name. Supports file name completion. It changes the path name "
+	 "of the current buffer to the new path name. A Universal Argument "
+	 "causes only the Region to be written and does not change the name "
+	 "of the buffer."
 	},
 	{"yank",			ZYANK,			H_DELETE,
-	 "Inserts the characters from the Kill Buffer before the Point. The\n"
-	 "characters are inserted, even in overwrite mode. A Universal"
-	 "Argument\n causes the command to repeat.\n"
+	 "Inserts the characters from the Kill Buffer before the Point. The "
+	 "characters are inserted, even in overwrite mode. A Universal "
+	 "Argument causes the command to repeat."
 	},
 };

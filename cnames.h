@@ -3,8 +3,8 @@
 struct cnames Cnames[] = {
 	{"abort",			ZABORT,			H_OTHER,
 	 "Aborts the current command. This is the only way to exit Universal "
-	 "Arguments and String Arguments. It will also abort C-X and Meta "
-	 "prefixes. Cannot abort the Quote command."
+	 "Arguments, String Arguments, and the quote command. It will also "
+	 "abort C-X and Meta prefixes."
 	},
 	{"again",			ZAGAIN,			H_SEARCH,
 	 "Causes the last search to be executed again. If the mode Exact is "

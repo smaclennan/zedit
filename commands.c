@@ -771,17 +771,22 @@ void Zquote(void)
 
 	tmp = delayprompt("Quote: ");
 	Cmd = tgetkb();
+	if (Keys[Cmd] == ZABORT)
+		goto done;
 	if (isxdigit(Cmd)) {
 		n[0] = Cmd;
 		n[1] = tgetkb();
 		n[2] = '\0';
 		Cmd = (int) strtol(n, NULL, 16);
+		if (Keys[(int)n[1]] == ZABORT)
+			goto done;
 	}
 	while (Arg-- > 0)
 		if (InPaw)
 			pinsert();
 		else
 			binsert(Cmd);
+done:
 	if (tmp)
 		clrpaw();
 	Arg = 0;

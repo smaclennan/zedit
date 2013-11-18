@@ -57,9 +57,21 @@ static void dump_bindings(int fnum)
 		binstr("Unbound");
 }
 
+void dump_doc(char *doc)
+{
+	binstr("\n\n");
+
+	for (; *doc; ++doc)
+		if (*doc == ' ') {
+			Cmd = *doc;
+			Zfill_check();
+		} else
+			binsert(*doc);
+	binsert('\n');
+}
+
 void Zhelp_function(void)
 {
-	char *p;
 	int rc = getplete("Function: ", NULL, (char **)Cnames,
 			  CNAMESIZE, NUMFUNCS);
 	if (rc == -1)
@@ -68,21 +80,15 @@ void Zhelp_function(void)
 	wuseother(HELPBUFF);
 
 	binstr(Cnames[rc].name);
-	binstr("\n\n");
 
-	for (p = Cnames[rc].doc; *p; ++p)
-		if (*p == ' ') {
-			Cmd = *p;
-			Zfill_check();
-		} else
-			binsert(*p);
-	binsert('\n');
+	dump_doc(Cnames[rc].doc);
 
 	if (Cnames[rc].fnum != ZNOTIMPL &&
 	    Cnames[rc].fnum != ZINSERT)
 		dump_bindings(Cnames[rc].fnum);
 
 	btostart();
+	Curbuff->bmodf = false;
 }
 
 void Zhelp_group(void)
@@ -114,4 +120,5 @@ void Zhelp_group(void)
 	binsert('\n');
 
 	btostart();
+	Curbuff->bmodf = false;
 }

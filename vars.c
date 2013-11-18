@@ -54,10 +54,7 @@ void Zset_variable(void)
 
 void Zhelp_variable(void)
 {
-	int rc;
-	char *p;
-
-	rc = getplete("Variable: ", NULL, (char **)Vars, VARSIZE, NUMVARS);
+	int rc = getplete("Variable: ", NULL, (char **)Vars, VARSIZE, NUMVARS);
 	if (rc == -1)
 		return;
 
@@ -66,17 +63,11 @@ void Zhelp_variable(void)
 	binstr(Vars[rc].vname);
 	binstr(": ");
 	varval(rc);
-	binstr("\n\n");
 
-	for (p = Vars[rc].doc; *p; ++p)
-		if (*p == ' ') {
-			Cmd = *p;
-			Zfill_check();
-		} else
-			binsert(*p);
-	binsert('\n');
+	dump_doc(Vars[rc].doc);
 
 	btostart();
+	Curbuff->bmodf = false;
 }
 
 /* If there is a config.z file, read it! */

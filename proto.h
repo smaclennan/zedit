@@ -279,6 +279,7 @@ void vfini(void);
 int chwidth(Byte, int, bool);
 void hang_up(int);
 bool notdup_key(int k);
+void dump_doc(char *doc);
 
 /* Terminal driver specific routines */
 void tlinit(void);

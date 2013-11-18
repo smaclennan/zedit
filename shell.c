@@ -264,16 +264,6 @@ static int pipetobuff(struct buff *buff, char *instr)
 	return pclose(pfp) >> 8;
 }
 
-static void printexit(int code)
-{
-	if (code == 0)
-		putpaw("Done.");
-	else if (code == -1)
-		putpaw("Unable to execute.");
-	else
-		putpaw("Exit %d.", code);
-}
-
 void Zcmd_to_buffer(void)
 {
 	static char cmd[STRMAX + 1];
@@ -289,9 +279,12 @@ void Zcmd_to_buffer(void)
 			if (rc == 0) {
 				message(Curbuff, cmd);
 				btostart();
-			}
+				putpaw("Done.");
+			} else if (rc == -1)
+				putpaw("Unable to execute.");
+			else
+				putpaw("Exit %d.", rc);
 			Curbuff->bmodf = false;
-			printexit(rc);
 			wswitchto(save);
 		}
 	}
@@ -460,7 +453,7 @@ static int parse(char *fname)
 		/* try to get the line */
 		if (Buff() == ':' || Buff() == '(') {
 			bmove1();
-		
+
 			/* look for line number */
 			line = batoi();
 			if (line)

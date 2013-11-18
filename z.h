@@ -115,20 +115,7 @@ extern char *Home;
 
 struct cnames {
 	char *name;
-	short fnum;
-	short htype;
-#define H_BIND				0
-#define H_BUFF				1
-#define H_DELETE			2
-#define H_CURSOR			3
-#define H_DISP				4
-#define H_FILE				5
-#define H_HELP				6
-#define H_MODE				7
-#define H_OTHER				8
-#define H_SEARCH			9
-#define H_SHELL				10
-#define H_SPECIAL			11
+	int fnum;
 	char *doc;
 };
 #define CNAMESIZE sizeof(struct cnames)

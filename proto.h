@@ -150,7 +150,7 @@ Z(Zview_line);
 Z(Zyank);
 Z(Zhelp_variable);
 Z(Zhelp_function);
-Z(Zhelp_group);
+Z(Zhelp_apropos);
 Z(Zstats);
 Z(Zword_search);
 

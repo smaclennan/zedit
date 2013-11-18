@@ -20,22 +20,6 @@
 #include "z.h"
 #include "keys.h"
 
-static char *Htype[] = {
-	"Bindings",
-	"Buffer/Window",
-	"Copy/Delete",
-	"Cursor",
-	"Display",
-	"File",
-	"Help/Status",
-	"Mode",
-	"Other",
-	"Search/Replace",
-	"Shell",
-	"Special",
-};
-#define HTYPES	(sizeof(Htype) / sizeof(char *))
-
 static void dump_bindings(int fnum)
 {
 	int k, found = 0;
@@ -77,7 +61,14 @@ void Zhelp_function(void)
 	if (rc == -1)
 		return;
 
-	wuseother(HELPBUFF);
+	if (Argp) {
+		struct buff *buff = cmakebuff(HELPBUFF, NULL);
+		if (buff == NULL)
+			return;
+		cswitchto(buff);
+		bempty();
+	} else
+		wuseother(HELPBUFF);
 
 	binstr(Cnames[rc].name);
 
@@ -91,22 +82,19 @@ void Zhelp_function(void)
 	Curbuff->bmodf = false;
 }
 
-void Zhelp_group(void)
+void Zhelp_apropos(void)
 {
-	char line[80];
+	char word[STRMAX], line[80];
 	int i, j, n;
-	int rc = getplete("Group: ", NULL, (char **)Htype,
-			  sizeof(char *), HTYPES);
-	if (rc == -1)
+
+	*word = '\0';
+	if (getarg("Word: ", word, sizeof(word)))
 		return;
 
 	wuseother(HELPBUFF);
 
-	binstr(Htype[rc]);
-	binstr("\n\n");
-
 	for (i = j = n = 0; i < NUMFUNCS; ++i)
-		if (Cnames[i].htype == rc) {
+		if (strstr(Cnames[i].name, word)) {
 			n += sprintf(line + n, "%-24s", Cnames[i].name);
 			if (++j == 3) {
 				binstr(line);

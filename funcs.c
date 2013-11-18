@@ -145,7 +145,7 @@ void (*Cmds[][2])() = {
 	{ Zundo,			Znotimpl },
 	{ Zhelp_variable,		Znotimpl },
 	{ Zhelp_function,		Znotimpl },
-	{ Zhelp_group,			Znotimpl },
+	{ Zhelp_apropos,		Znotimpl },
 	{ Zstats,			Znotimpl },
 	{ Zword_search,			Znotimpl },
 	/* only in the PAW you say? pity... */

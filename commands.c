@@ -369,7 +369,6 @@ void Zfill_check(void)
 		Ztrim_white_space();
 		tmp = !bisatmrk(tmark);
 		binsert(NL);
-		tindent(VAR(VMARGIN));
 		if (tmp) {
 			bpnttomrk(tmark);
 			binsert(Cmd);
@@ -429,8 +428,6 @@ void Zfill_paragraph(void)
 				moveto(bisspace, BACKWARD);
 				Ztrim_white_space();
 				binsert(NL);
-				if (VAR(VMARGIN))
-					tindent(VAR(VMARGIN));
 				moveto(bisspace, FORWARD);
 			}
 			movepast(biswhite, FORWARD);

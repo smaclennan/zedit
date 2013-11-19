@@ -60,11 +60,6 @@ struct avar Vars[] = {
 	  "This is a string variable which contains the default string "
 	  "for the Make command. The default is 'make'."
 	},
-	{ "margin",		DECIMAL,	{0},
-	  "This is a decimal variable that defines the left margin for "
-	  "Text mode and the Format Paragraph command. It does not "
-	  "affect the first line of the paragraph. The default is 0. "
-	},
 	{ "match",		FLAG,		{1},
 	  "This variable controls the C and Shell Mode matching "
 	  "function. Zedit will match all ')' and ']' with their "
@@ -101,11 +96,6 @@ struct avar Vars[] = {
 	  "spaces on the screen. This variable defines the number of "
 	  "space characters displayed per tab in buffers that are not in "
 	  "a program mode. The default is 8 spaces per tab."
-	},
-	{ "tagfile",		STRING,		{0},
-	  "This specifies the tag file name used by the Find Tag "
-	  "command. It is a full path name to the tag file. The "
-	  "default is empty."
 	},
 	{ "t-extends",		STRING,		{0},
 	  "This variable defines up to 8 extensions that turn on Text "

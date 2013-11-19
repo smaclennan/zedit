@@ -134,19 +134,10 @@ static void do_var_match(int i, char *vin)
 	}
 
 	/* This block handles the Wordprocessing variables */
-	if (i == VFILLWIDTH || i == VMARGIN) {
+	if (i == VFILLWIDTH) {
 		/* Fillwidth must be > 0 */
 		if (VAR(VFILLWIDTH) == 0)
 			VAR(VFILLWIDTH) = 1;
-		/* Fillwidth must be greater than Margin */
-		if (VAR(VFILLWIDTH) <= VAR(VMARGIN)) {
-			if (i == VMARGIN)
-				VAR(VMARGIN) =
-					VAR(VFILLWIDTH) - 1;
-			else
-				VAR(VFILLWIDTH) =
-					VAR(VMARGIN) + 1;
-		}
 	} else if (i == VCEXTS)
 		parsem(VARSTR(i), CMODE);
 	else if (i == VSEXTS)

@@ -64,11 +64,6 @@ struct avar Vars[] = {
 	  "This variable defines up to 8 extensions that turn on Shell "
 	  "Mode. The extensions are seperated with the colon (:)."
 	},
-	{ "single-scroll",	FLAG,		{0},
-	  "If SingleScroll is set, a Next Line command at the bottom of "
-	  "the screen will scroll one line. If not set, the Next Line "
-	  "will scroll a few lines. The default is off."
-	},
 	{ "space-tabs",		FLAG,		{0},
 	  "The tab character is normally inserted into the buffer as a "
 	  "single ASCII 9 character. If the SpaceTabs variable is set, "

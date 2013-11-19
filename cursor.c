@@ -53,46 +53,19 @@ static int forcecol(void)
 	return fcol;
 }
 
-static void ScrollLine(bool (*search)(Byte what))
-{
-	struct mark save;
-
-	bmrktopnt(&save);
-	bpnttomrk(Sstart);
-	search(NL);
-	tobegline();
-	bmrktopnt(Sstart);
-	bmove(-1);
-	bmrktopnt(Psstart);
-	bpnttomrk(&save);
-	Sendp = false;
-}
-
 void Zprevious_line(void)
 {
 	int col = forcecol();
-
 	while (Arg-- > 0)
 		bcrsearch(NL);
-
-	if (VAR(VSINGLE))
-		if (bisbeforemrk(Sstart))
-			ScrollLine(bcrsearch);
-
 	bmakecol(col, false);
 }
 
 void Znext_line(void)
 {
 	int col = forcecol();
-
 	while (Arg-- > 0)
 		bcsearch(NL);
-
-	if (VAR(VSINGLE))
-		if (Sendp && !bisbeforemrk(Send))
-			ScrollLine(bcsearch);
-
 	bmakecol(col, false);
 }
 

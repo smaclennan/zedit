@@ -269,7 +269,6 @@ void toendline(void);
 void toggle_mode(int);
 void tprntchar(Byte);
 void tprntstr(char *);
-void tsize(int *, int *);
 void tstyle(int);
 void unmark(struct mark *);
 void varval(int var);
@@ -281,11 +280,6 @@ void hang_up(int);
 bool notdup_key(int k);
 void dump_doc(char *doc);
 
-/* Terminal driver specific routines */
-void tlinit(void);
-void tlfini(void);
-
-/* compile switched routines */
 void message(struct buff *, char *);
 
 void winit(void);

@@ -17,15 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
-#if TERMINFO
-#include <term.h>
-#include <curses.h>
-#endif
-#if TERMCAP
-#include <termcap.h>
-#endif
-
 #include "z.h"
 #include "keys.h"
 
@@ -115,10 +106,6 @@ static void initline(void)
 /* Initalize the terminal. */
 void tinit(void)
 {
-	/* Initialize the low level interface.
-	 * Do this first - it may exit */
-	tlinit();
-
 #ifdef HAVE_TERMIOS
 	tcgetattr(fileno(stdin), &save_tty);
 	tcgetattr(fileno(stdin), &settty);
@@ -198,7 +185,6 @@ void tfini(void)
 	t_goto(Rowmax - 1, 0);
 	tstyle(T_NORMAL);
 	tflush();
-	tlfini();
 }
 
 void setmark(bool prntchar)
@@ -206,6 +192,29 @@ void setmark(bool prntchar)
 	tstyle(T_REVERSE);
 	tprntchar(prntchar ? Buff() : ' ');
 	tstyle(T_NORMAL);
+}
+
+static void tsize(int *rows, int *cols)
+{
+	char buf[12];
+	int n, w;
+
+	*rows = *cols = 0;
+
+	/* Save cursor position */
+	w = write(0, "\033[s", 3);
+	/* Send the cursor to the extreme right corner */
+	w += write(0, "\033[999;999H", 10);
+	/* Ask where we really ended up */
+	w += write(0, "\033[6n", 4);
+	n = read(0, buf, sizeof(buf) - 1);
+	/* Restore cursor */
+	w += write(0, "\033[u", 3);
+
+	if (n > 0) {
+		buf[n] = '\0';
+		sscanf(buf, "\033[%d;%dR", rows, cols);
+	}
 }
 
 /*
@@ -339,15 +348,7 @@ int prefline(void)
 void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
-#if TERMINFO
-		TPUTS(tparm(cursor_address, Prow, Pcol));
-#elif TERMCAP
-		TPUTS(tgoto(cm[0], Pcol, Prow));
-#elif ANSI
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
-#else
-#error tforce
-#endif
 		Srow = Prow;
 		Scol = Pcol;
 	}
@@ -357,31 +358,47 @@ void tcleol(void)
 {
 	if (Pcol < Clrcol[Prow]) {
 		tforce();
-#if TERMINFO
-		TPUTS(clr_eol);
-#elif TERMCAP
-		TPUTS(cm[1]);
-#elif ANSI
 		fputs("\033[K", stdout);
-#else
-#error tcleol
-#endif
 		Clrcol[Prow] = Pcol;
 	}
 }
 
 void tclrwind(void)
 {
-#if TERMINFO
-	TPUTS(clear_screen);
-#elif TERMCAP
-	TPUTS(cm[2]);
-#elif ANSI
 	fputs("\033[2J", stdout);
-#else
-#error tclrwind
-#endif
 	memset(Clrcol, 0, ROWMAX);
 	Prow = Pcol = 0;
 	tflush();
+}
+
+void tstyle(int style)
+{
+	static int cur_style = -1;
+
+	if (style == cur_style)
+		return;
+
+	switch (cur_style = style) {
+	case T_NORMAL:
+		fputs("\033[0m", stdout); break;
+	case T_STANDOUT:
+	case T_REVERSE:
+		fputs("\033[7m", stdout); break;
+	case T_BOLD:
+		fputs("\033[1m", stdout); break;
+	case T_COMMENT:
+		fputs("\033[31m", stdout); break; /* red */
+	}
+	fflush(stdout);
+}
+
+void tbell(void)
+{
+	if (VAR(VVISBELL)) {
+		fputs("\033[?5h", stdout);
+		fflush(stdout);
+		usleep(100000);
+		fputs("\033[?5l", stdout);
+	} else if (VAR(VSILENT) == 0)
+		putchar('\7');
 }

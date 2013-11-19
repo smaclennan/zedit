@@ -23,9 +23,6 @@ struct avar Vars[] = {
 	{ "comments",		FLAG,		{1},
 	  "If set then Zedit tries to bold (display in red) "
 	  "comments in C and shell mode buffers. Enabled by default. "
-#if TERMCAP | TERMINFO
-	  "\n\nComment bolding may not be supported on all terminals."
-#endif
 	},
 	{ "exact",		FLAG,		{1},
 	  "If Exact is set, all searches and replaces are case "

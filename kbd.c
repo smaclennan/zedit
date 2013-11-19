@@ -22,8 +22,7 @@
 #include <poll.h>
 
 
-unsigned Key_mask;
-int Key_shortcut = 1;
+#define Key_mask 0xfffffff
 
 static unsigned Cmdpushed, Cmdstack[10]; /* stack and vars for T[un]getcmd */
 
@@ -57,22 +56,21 @@ static int check_specials(void)
 
 int tgetcmd(void)
 {
+	int cmd;
+
 	if (Cmdpushed)
 		return Cmdstack[--Cmdpushed];
 
-	if (Key_shortcut) {
-		int cmd = tgetkb() & 0x7f;
+	cmd = tgetkb() & 0x7f;
 
-		/* All special keys start with ESC */
-		if (cmd == '\033')
-			if (tkbrdy()) {
-				tungetkb(1);
-				return check_specials();
-			}
+	/* All special keys start with ESC */
+	if (cmd == '\033')
+		if (tkbrdy()) {
+			tungetkb(1);
+			return check_specials();
+		}
 
-		return cmd;
-	} else
-		return check_specials();
+	return cmd;
 }
 
 

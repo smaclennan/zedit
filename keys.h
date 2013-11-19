@@ -17,14 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/*
-	The keys defined by TERMCAP
-	Don't change these without changing kbd.c
-		- TCkey array
-		- assumes numbers contiguous and start at SPECIAL_START
-	Max 32 keys (415)
-*/
-
 #ifndef _KEYS_H_
 #define _KEYS_H_
 
@@ -71,7 +63,5 @@ struct key_array {
 };
 
 extern struct key_array Tkeys[];
-extern unsigned int Key_mask;
-extern int Key_shortcut;
 
 #endif

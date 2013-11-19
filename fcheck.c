@@ -21,23 +21,7 @@
 #include "z.h"
 #include "vars-array.h"
 
-static unsigned Key_mask;
-static int Key_shortcut;
-
-#if ANSI + TERMCAP + TERMINFO != 1
-# error "You can't set more than one screen driver"
-#endif
-
-#if ANSI
 #include "ansi.c"
-#elif TERMINFO
-#include "terminfo.c"
-#elif TERMCAP
-#include "termcap.c"
-#else
-#error No-screen-driver
-#endif
-
 #include "funcs.c"
 
 void Dbg(char *fmt, ...) {}

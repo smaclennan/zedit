@@ -40,64 +40,6 @@ allows a make and editing at the same time or makes without leaving the
 editor. It also allows you to perform Next Error commands while the make
 is still in progress.
 
-<h2>Terminal Interfaces</h2>
-<p>Zedit supports termcap, terminfo, and "ANSI" terminal interface definitions.
-
-<p>Termcap is the first standard terminal database.
-<p>Terminfo is a second standard terminal database (after termcaps) that
-is compiled for faster database access. It also supports a wider range
-of keys and terminal characteristics.
-<p>The ANSI terminal interface emulates a basic vt100.
-
-<h3>Termcap</h3>
-
-<p>I actually dropped termcap support, but brought it back. I find
-both termcap and terminfo database interfaces tend to be broken almost
-everywhere. The big advantage that termcap has is that it is much
-easier to create termcap entries. They can be a simple environment
-variable. You need no root access.
-
-<p>Zedit requires at minimum the cm, ce, and cl entries. It will also
-use the se/so entries for reverse video.
-
-<p>The big loser in termcap is visible bell. Termcap has a vb entry,
-but since you cannot delay in an entry most terminals will not have
-visual bell.
-
-<p>Keyboard hack: If k; does not contain an entry, Zedit will use k0
-as k;. It seems many people consider k0 to be F10 since most keyboards
-don't have an F0.
-
-<h3>Terminfo</h3>
-
-<p>This section will describe what Zedit requires from terminfo. It is
-assumed the user knows what terminfo is and how to configure it. A
-description of the terminfo database is in the Unix manual.
-<p>To correctly display the text on the screen, Zedit needs some of the
-terminfo display variables. Zedit will not run if the terminfo entry
-cannot be found for your specified TERM variable. It also requires, at a
-minimum, the clear_screen, clr_eol, and cursor_address variables. With
-these basic strings Zedit will operate. There are, however, some other
-variables which may need to be set for correct operation.
-<p>The first important optional variables are columns and lines. If they
-are non-existent, Zedit will default to 80 columns and 24 lines. Zedit
-also has a maximum of 132 columns and 40 lines.
-<p>Zedit will send init_1string thru init_3string if found at startup. It
-sends the reset_1string at exit.
-<p>If reverse is defined, Zedit will display the mode line in reverse
-video, compensating for magic_cookie_glitch if necessary. If
-magic_cookie_glitch is not set and reverse is, Zedit will display the
-mark in reverse video. If bold is set and magic_cookie_glitch is not,
-Zedit will display the line continuation character (>) and control
-characters in bold.
-<p>Zedit will also use all the key definitions in the file. Use the Display
-Bindings command to find the default bindings for these keys.
-
-<h3>ANSI</h3>
-<p>The ANSI version supports an ANSI terminal, which is basically a
-vt100. No external files are required for ANSI. ANSI supports all
-Zedit screen features. This is the default.
-
 <h2>Keys</h2>
 
 <p>Zedit does not support as many keys as emacs. Aside from the normal

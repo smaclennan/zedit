@@ -8,12 +8,6 @@ do_make () {
 
 mv config.h good-config.h
 
-echo "Termcap"
-do_make --enable-termcap
-
-echo "Terminfo"
-do_make --enable-terminfo
-
 echo "Disable shell"
 do_make --disable-shell
 

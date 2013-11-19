@@ -7,8 +7,6 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#define ANSI		1
-
 /* USER CONFIGURABLE - don't define any, see if I care */
 #define SHELL		1
 #define UNDO            1		/* EXPERIMENTAL undo code */

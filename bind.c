@@ -116,7 +116,7 @@ void bind(void)
 	Keys[128 + 'X'] = Keys[128 + 'x'] = ZMETA_X;
 	Keys[128 + 'Y'] = Keys[128 + 'y'] = ZYANK;
 	Keys[128 + 'Z'] = Keys[128 + 'z'] = ZSAVE_AND_EXIT;
-	Keys[128 + DEL] = ZDELETE_PREVIOUS_WORD;	/* M-DEL */
+	Keys[128 + 127] = ZDELETE_PREVIOUS_WORD;	/* M-DEL */
 
 	/* Init the CTRL-X functions */
 

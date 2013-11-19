@@ -20,6 +20,9 @@
 #include "z.h"
 #include "keys.h"
 
+#define PNUMCOLS		3	/* default columns for pout */
+#define PCOLSIZE		26	/* default column size */
+
 /* globals for getarg */
 int InPaw;
 bool First;

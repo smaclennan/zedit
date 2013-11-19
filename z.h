@@ -179,8 +179,6 @@ extern unsigned long undo_total;
 
 #define	CR	('\r')
 #define	NL	('\n')
-#define	ESC	('\33')
-#define DEL	('\177')
 
 /* attributes */
 #define T_NORMAL			0
@@ -204,15 +202,11 @@ extern int Tabsize;
 /* this is MUCH faster than an isascii isprint pair */
 #define ZISPRINT(c)		(c >= ' ' && c <= '~')
 
-
 /* terminal variables */
 extern int Clrcol[ROWMAX + 1];		/* Clear if past this - must be Byte */
 extern int Prow, Pcol;			/* Point row and column */
 extern int Colmax, Rowmax;		/* Row and column maximums */
 extern int Tlrow;			/* Last row displayed (-1 for none) */
-
-#define PNUMCOLS		3	/* default columns for pout */
-#define PCOLSIZE		26	/* default column size */
 
 #define ISNL(c)			((c) == '\n')
 #define STRIP(c)		(c)

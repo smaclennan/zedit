@@ -71,16 +71,15 @@ void Zhelp_variable(void)
 }
 
 /* If there is a config.z file, read it! */
-/* CExtends, AExtends, TExtends defaults set in commands.c */
 void readvfile(void)
 {
 	char fname[PATHMAX + 1], line[STRMAX + 1];
 
-	VARSTR(VCEXTS) = strdup(".c:.h:.cpp:.cc:.cxx:.y:.l:.m:.m4");
+	VARSTR(VCEXTS) = strdup(".c:.h:.cpp:.cc:.cxx:.y:.l");
 	parsem(VARSTR(VCEXTS), CMODE);
 	VARSTR(VSEXTS) = strdup(".sh:.csh:.el");
 	parsem(VARSTR(VSEXTS), SHMODE);
-	VARSTR(VTEXTS) = strdup(".DOC:.doc:.tex:.txt:.d");
+	VARSTR(VTEXTS) = strdup(".txt");
 	parsem(VARSTR(VTEXTS), TEXT);
 
 	if (findpath(fname, ZCFILE)) {

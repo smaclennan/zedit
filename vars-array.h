@@ -10,11 +10,8 @@ struct avar Vars[] = {
 	  "If this flag variable is set, a backup file is created when "
 	  "a file is written. The default is off."
 	},
-	{ "bell",		DECIMAL,	{1},
-	  "If this variable is 0, the bell will be silent. If this "
-	  "variable is 1, the bell will flash the screen rather than "
-	  "producing an audible tone. Any other value tries to ring "
-	  "the bell."
+	{ "bell",		FLAG,		{1},
+	  "If this variable is set, the bell will flash the screen."
 	},
 	{ "c-extends",		STRING,		{0},
 	  "This variable defines up to 8 extensions that turn on C "

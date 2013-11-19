@@ -394,11 +394,11 @@ void tstyle(int style)
 
 void tbell(void)
 {
-	if (VAR(VVISBELL)) {
+	if (VAR(VBELL) == 1) {
 		fputs("\033[?5h", stdout);
 		fflush(stdout);
 		usleep(100000);
 		fputs("\033[?5l", stdout);
-	} else if (VAR(VSILENT) == 0)
+	} else if (VAR(VBELL))
 		putchar('\7');
 }

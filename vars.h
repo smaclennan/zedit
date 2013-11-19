@@ -43,7 +43,8 @@ extern struct avar Vars[];
 /* var defines */
 #define VADDNL		0
 #define VBACKUP		(VADDNL + 1)
-#define VCEXTS		(VBACKUP + 1)
+#define VBELL		(VBACKUP + 1)
+#define VCEXTS		(VBELL + 1)
 #define VCTABS		(VCEXTS + 1)
 #define VCOMMENTS	(VCTABS + 1)
 #define VEXACT		(VCOMMENTS + 1)
@@ -56,12 +57,10 @@ extern struct avar Vars[];
 #define VMATCH		(VMAKE + 1)
 #define VNORMAL		(VMATCH + 1)
 #define VSEXTS		(VNORMAL + 1)
-#define VSILENT		(VSEXTS + 1)
-#define VSINGLE		(VSILENT + 1)
+#define VSINGLE		(VSEXTS + 1)
 #define VSPACETAB	(VSINGLE + 1)
 #define VTABS		(VSPACETAB + 1)
 #define VTEXTS		(VTABS + 1)
-#define VVISBELL	(VTEXTS + 1)
-#define VARNUM		(VVISBELL + 1)
+#define VARNUM		(VTEXTS + 1)
 
 #endif

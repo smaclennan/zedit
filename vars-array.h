@@ -10,6 +10,12 @@ struct avar Vars[] = {
 	  "If this flag variable is set, a backup file is created when "
 	  "a file is written. The default is off."
 	},
+	{ "bell",		DECIMAL,	{1},
+	  "If this variable is 0, the bell will be silent. If this "
+	  "variable is 1, the bell will flash the screen rather than "
+	  "producing an audible tone. Any other value tries to ring "
+	  "the bell."
+	},
 	{ "c-extends",		STRING,		{0},
 	  "This variable defines up to 8 extensions that turn on C "
 	  "Mode. The extensions are seperated with the colon (:)."
@@ -76,9 +82,6 @@ struct avar Vars[] = {
 	  "This variable defines up to 8 extensions that turn on Shell "
 	  "Mode. The extensions are seperated with the colon (:)."
 	},
-	{ "silent",		FLAG,		{0},
-	  "If set, turns the bell off. Default is off (bell on)."
-	},
 	{ "single-scroll",	FLAG,		{0},
 	  "If SingleScroll is set, a Next Line command at the bottom of "
 	  "the screen will scroll one line. If not set, the Next Line "
@@ -102,11 +105,6 @@ struct avar Vars[] = {
 	  "Mode. The extensions are seperated with the colon (:). An "
 	  "extension of '.' matches no extension (i.e. no '.' in file "
 	  "name)."
-	},
-	{ "visible-bell",	FLAG,		{1},
-	  "If this variable is set, the bell will flash the screen "
-	  "rather than producing an audible tone. The default is on if "
-	  "flashing the screen is supported."
 	},
 };
 #define VARSIZE		sizeof(struct avar)

@@ -185,29 +185,6 @@ bool filesave(void)
 	return bwritefile(Curbuff->fname);
 }
 
-/*
- * Write the region to 'path'. Assumes 'path' correct.
- * Returns: true, false, ABORT
- */
-static int write_rgn(char *path)
-{
-	struct buff *tbuff, *save;
-	int rc = false;
-
-	save = Curbuff;
-	tbuff = cmakebuff("___tmp___", (char *)NULL);
-	if (tbuff) {
-		bswitchto(save);
-		bcopyrgn(Curbuff->mark, tbuff);
-		bswitchto(tbuff);
-		Curbuff->bmode = save->bmode;
-		rc = bwritefile(path);
-		bswitchto(save);
-		bdelbuff(tbuff);
-	}
-	return rc;
-}
-
 void Zwrite_file(void)
 {
 	char path[PATHMAX + 1], *prompt;
@@ -217,9 +194,19 @@ void Zwrite_file(void)
 	*path = '\0';
 	if (getfname(prompt, path) == 0) {
 		if (Argp) {
-			putpaw("Writing %s", path);
-			write_rgn(path);
-			clrpaw();
+			struct buff *tbuff, *save = Curbuff;
+			tbuff = cmakebuff("___tmp___", (char *)NULL);
+			if (tbuff) {
+				putpaw("Writing %s", path);
+				bswitchto(save);
+				bcopyrgn(Curbuff->mark, tbuff);
+				bswitchto(tbuff);
+				Curbuff->bmode = save->bmode;
+				bwritefile(path);
+				bswitchto(save);
+				bdelbuff(tbuff);
+				clrpaw();
+			}
 		} else {
 			if (Curbuff->fname)
 				free(Curbuff->fname);
@@ -231,19 +218,21 @@ void Zwrite_file(void)
 	}
 }
 
-/* read 'fname' into buffer at Point */
-static int fileread(char *fname)
+void Zread_file(void)
 {
 	struct buff *tbuff, *save;
 	struct mark *tmark;
 	int rc = 1;
+
+	if (get_findfile("Read File: "))
+		return;
 
 	save = Curbuff;
 	tbuff = bcreate();
 	if (tbuff) {
 		bswitchto(tbuff);
 		Curbuff->bmode = save->bmode;
-		rc = breadfile(fname);
+		rc = breadfile(Fname);
 		if (rc == 0) {
 			btoend();
 			tmark = bcremrk();
@@ -254,13 +243,7 @@ static int fileread(char *fname)
 		bswitchto(save);
 		bdelbuff(tbuff);
 	}
-	return rc;
-}
 
-void Zread_file(void)
-{
-	if (get_findfile("Read File: "))
-		return;
-	if (fileread(Fname) > 0)
+	if (rc > 0)
 		error("Unable to read %s", Fname);
 }

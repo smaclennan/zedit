@@ -34,7 +34,6 @@
 #include <sys/stat.h>
 
 #include "vars.h"
-#include "term.h"
 #include "funcs.h"
 #include "buff.h"
 
@@ -171,6 +170,52 @@ extern unsigned long undo_total;
 
 #define clrpaw(void)	putpaw("")
 #define error(...)	do { tbell(); putpaw(__VA_ARGS__); } while (0)
+
+/* The memory usage for screen stuff is approx:  (ROWMAX + 1) x 25 + COLMAX */
+#define	ROWMAX				110
+#define	COLMAX				256
+
+#define PREFLINE			10
+
+#define	CR	('\r')
+#define	NL	('\n')
+#define	ESC	('\33')
+#define DEL	('\177')
+
+/* attributes */
+#define T_NORMAL			0
+#define T_STANDOUT			1
+#define T_REVERSE			2
+#define T_BOLD				3
+#define T_COMMENT			4
+
+#define tsetpoint(r, c)		(Prow = r, Pcol = c)
+#define tgetrow()		Prow
+#define tgetcol()		Pcol
+#define tmaxrow()		Rowmax
+#define tmaxcol()		Colmax
+extern int Tabsize;
+
+#define tputchar(c)		putchar(c)
+#define tflush()		fflush(stdout)
+
+#define wheight()		(Curwdo->last - Curwdo->first)
+
+/* this is MUCH faster than an isascii isprint pair */
+#define ZISPRINT(c)		(c >= ' ' && c <= '~')
+
+
+/* terminal variables */
+extern int Clrcol[ROWMAX + 1];		/* Clear if past this - must be Byte */
+extern int Prow, Pcol;			/* Point row and column */
+extern int Colmax, Rowmax;		/* Row and column maximums */
+extern int Tlrow;			/* Last row displayed (-1 for none) */
+
+#define PNUMCOLS		3	/* default columns for pout */
+#define PCOLSIZE		26	/* default column size */
+
+#define ISNL(c)			((c) == '\n')
+#define STRIP(c)		(c)
 
 #include "proto.h"
 

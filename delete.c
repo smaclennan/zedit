@@ -61,7 +61,7 @@ void Zdelete_to_eol(void)
 
 	if (!bisend() && Buff() == NL)
 		bmove1();
-	else if (VAR(VKILLLINE)) {
+	{
 		bool atstart;
 
 		tobegline();
@@ -69,8 +69,7 @@ void Zdelete_to_eol(void)
 		toendline();
 		if (atstart)
 			bmove1(); /* delete the NL */
-	} else
-		toendline();
+	}
 	killtomrk(tmark);
 	unmark(tmark);
 }

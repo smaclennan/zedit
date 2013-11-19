@@ -370,7 +370,7 @@ int pathfixup(char *to, char *from)
 		if (*from && !Psep(*from) && !Psep(*(to - 1)))
 			*to++ = PSEP;
 	} else {
-		if (VAR(VEXPAND) && !Psep(*from)) {
+		if (!Psep(*from)) {
 			/* add the current directory */
 			strcpy(to, Cwd);
 			to += strlen(to);
@@ -379,32 +379,29 @@ int pathfixup(char *to, char *from)
 		}
 	}
 
-	if (VAR(VEXPAND)) {
-		/* now handle the filename */
-		for (; *from; ++from)
-			if (*from == '.') {
-				if (Psep(*(from + 1)))
+	/* now handle the filename */
+	for (; *from; ++from)
+		if (*from == '.') {
+			if (Psep(*(from + 1)))
+				++from;
+			else if (*(from + 1) == '.' &&
+				 (Psep(*(from + 2)) ||
+				  *(from + 2) == '\0')) {
+				to -= 2;
+				while (to > start && !Psep(*to))
+					--to;
+				++to;
+				if (*(++from + 1))
 					++from;
-				else if (*(from + 1) == '.' &&
-					 (Psep(*(from + 2)) ||
-					  *(from + 2) == '\0')) {
-					to -= 2;
-					while (to > start && !Psep(*to))
-						--to;
-					++to;
-					if (*(++from + 1))
-						++from;
-				} else
-					*to++ = *from;
-			} else if (Psep(*from)) {
-				/* strip redundant seperators */
-				if (to == start || !Psep(*(to - 1)))
-					*to++ = PSEP;
 			} else
 				*to++ = *from;
-		*to = '\0';
-	} else
-		strcpy(to, from);
+		} else if (Psep(*from)) {
+			/* strip redundant seperators */
+			if (to == start || !Psep(*(to - 1)))
+				*to++ = PSEP;
+		} else
+			*to++ = *from;
+	*to = '\0';
 
 	/* validate the filename */
 	if (stat(start, &sbuf) == EOF) {

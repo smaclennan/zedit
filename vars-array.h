@@ -36,12 +36,6 @@ struct avar Vars[] = {
 	  "only match 'string', not 'STRING', or 'String'. The default "
 	  "is on."
 	},
-	{ "expand-paths",	FLAG,		{1},
-	  "If ExpandPaths is set, all file names are expanded to a full "
-	  "path. For example, the file name '../file.c' might be "
-	  "expanded to '/home/sam/dir/file.c'. ~ and $ prefixed paths "
-	  "are always expanded.  The default is on."
-	},
 	{ "fill-ch-width",	DECIMAL,	{72},
 	  "This is the column at which the Text mode commands wrap the "
 	  "right margin. It is also used by the Center Line command. "
@@ -50,11 +44,6 @@ struct avar Vars[] = {
 	{ "grep",		STRING,		{0},
 	  "The command to use for the Zedit grep command. The default "
 	  "is `grep -n'."
-	},
-	{ "kill-line",		FLAG,		{1},
-	  "If this variable is set, the 'Delete to End of Line' command "
-	  "will delete the entire line. If at the start of line, it "
-	  "will delete the line including the NL. The default is on."
 	},
 	{ "lines",		FLAG,		{0},
 	  "This flag variable turns on a line:column indicator on the "
@@ -65,13 +54,6 @@ struct avar Vars[] = {
 	{ "make-cmd",		STRING,		{0},
 	  "This is a string variable which contains the default string "
 	  "for the Make command. The default is 'make'."
-	},
-	{ "match",		FLAG,		{1},
-	  "This variable controls the C and Shell Mode matching "
-	  "function. Zedit will match all ')' and ']' with their "
-	  "matching '(' or '[' by moving the cursor to the matching "
-	  "character temporarily. If there is no match, Zedit will "
-	  "beep. Default on."
 	},
 	{ "normal",		FLAG,		{1},
 	  "If on, sets the default buffer mode to Normal. If off, sets "

@@ -621,33 +621,32 @@ static void mshow(unsigned ch)
 
 	if (!(Curbuff->bmode & PROGMODE) || InPaw || tkbrdy())
 		return;
-	if (VAR(VMATCH) & 1) {
-		switch (ch) {
-		case ')':
-			match = '('; break;
-		case ']':
-			match = '['; break;
-		case '}':
-			match = '{'; break;
-		default:
-			return;
-		}
-		bmrktopnt(&save);
-		do {
-			bmove(-1);
-			if (*Curcptr == match)
-				--cnt;
-			else if (*Curcptr == ch)
-				++cnt;
-		} while (cnt && !bisstart());
-		if (cnt)
-			tbell();
-		else { /* show the match! */
-			zrefresh();
-			delay(999);
-		}
-		bpnttomrk(&save);
+
+	switch (ch) {
+	case ')':
+		match = '('; break;
+	case ']':
+		match = '['; break;
+	case '}':
+		match = '{'; break;
+	default:
+		return;
 	}
+	bmrktopnt(&save);
+	do {
+		bmove(-1);
+		if (*Curcptr == match)
+			--cnt;
+		else if (*Curcptr == ch)
+			++cnt;
+	} while (cnt && !bisstart());
+	if (cnt)
+		tbell();
+	else { /* show the match! */
+		zrefresh();
+		delay(999);
+	}
+	bpnttomrk(&save);
 }
 
 void Zinsert(void)

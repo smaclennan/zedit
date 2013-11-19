@@ -68,8 +68,8 @@ struct cnames Cnames[] = {
 	{"calc",			ZCALC,
 	 "This is a very simple integer calculator. It handles addition, "
 	 "subtraction, multiplication, and division between "
-	 "octal/decimal/hexadecimal numbers. If a number begins with a '0x' it "
-	 "is assumed to be hexadecimal, if it begins with a '0' it is "
+	 "octal/decimal/hexadecimal numbers. If a number begins with a '0x' "
+	 "it is assumed to be hexadecimal, if it begins with a '0' it is "
 	 "assumed to be octal, all others are assumed to be decimal. The "
 	 "output is displayed in decimal with hexadecimal in brackets "
 	 "'()'. Spaces and tabs are allowed but are not necessary between "
@@ -154,9 +154,9 @@ struct cnames Cnames[] = {
 	 "Universal Argument causes the command to repeat."
 	},
 	{"delete-region",		ZDELETE_REGION,
-	 "Deletes the characters in the region. The deleted characters are put "
-	 "in the Kill Buffer based on the delete flag. A Universal Argument "
-	 "is ignored."
+	 "Deletes the characters in the region. The deleted characters are "
+	 "put in the Kill Buffer based on the delete flag. A Universal "
+	 "Argument is ignored."
 	},
 	{"delete-to-eol",		ZDELETE_TO_EOL,
 	 "Deletes the characters from the Point to the end of the line. If "
@@ -199,11 +199,11 @@ struct cnames Cnames[] = {
 	 "all modified buffers to be saved without prompting."
 	},
 	{"fill-check",			ZFILL_CHECK,
-	 "Checks if the current column is past the FillWidth column. If it is, "
-	 "the words past or on the FillWidth column are wrapped. This gives "
-	 "some word processing capability to the editor. Normally bound to "
-	 "the space bar and Newline only in Text Mode. A Universal Argument "
-	 "has no meaning."
+	 "Checks if the current column is past the FillWidth column. If it "
+	 "is, the words past or on the FillWidth column are wrapped. This "
+	 "gives some word processing capability to the editor. Normally bound "
+	 "to the space bar and Newline only in Text Mode. A Universal "
+	 "Argument has no meaning."
 	},
 	{"fill-paragraph",		ZFILL_PARAGRAPH,
 	 "Uses the FillWidth to reformat the paragraph the Point is in. This "
@@ -378,8 +378,8 @@ struct cnames Cnames[] = {
 	 "repeat."
 	},
 	{"next-char",			ZNEXT_CHAR,
-	 "Moves the Point forward one character. If the Point is at the end of "
-	 "a line, it is moved to the start of the next line. A Universal "
+	 "Moves the Point forward one character. If the Point is at the end "
+	 "of a line, it is moved to the start of the next line. A Universal "
 	 "Argument causes the command to repeat."
 	},
 	{"next-error",			ZNEXT_ERROR,
@@ -581,9 +581,9 @@ struct cnames Cnames[] = {
 	 "Argument causes the command to repeat."
 	},
 	{"reverse-search",		ZREVERSE_SEARCH,
-	 "Prompts for a search string and searches from the Point backward for "
-	 "a match in the buffer. If a match is found, the Point is moved to "
-	 "the start of the match. If the string is not found, then 'Not "
+	 "Prompts for a search string and searches from the Point backward "
+	 "for a match in the buffer. If a match is found, the Point is moved "
+	 "to the start of the match. If the string is not found, then 'Not "
 	 "Found' is displayed in the echo window and the Point is not "
 	 "moved. The search string is saved and subsequent search and "
 	 "replace commands will default to the last search string. If the "
@@ -597,8 +597,8 @@ struct cnames Cnames[] = {
 	 "rereads. Mimics the vi 'e' command."
 	},
 	{"save-all-files",		ZSAVE_ALL_FILES,
-	 "Saves all modified buffers. A Universal Argument causes ALL files to "
-	 "be saved, modified or not."
+	 "Saves all modified buffers. A Universal Argument causes ALL files "
+	 "to be saved, modified or not."
 	},
 	{"save-and-exit",		ZSAVE_AND_EXIT,
 	 "An attempt to mimic the vi ZZ command. Does a save file on the "
@@ -651,8 +651,8 @@ struct cnames Cnames[] = {
 	 "Argument."
 	},
 	{"setenv",			ZSETENV,
-	 "Performs a 'setenv' command on an environment variable. The variable "
-	 "will keep the setting during the the Zedit session."
+	 "Performs a 'setenv' command on an environment variable. The "
+	 "variable will keep the setting during the the Zedit session."
 	},
 	{"show-config",			ZSHOW_CONFIG,
 	 "Show the current settings of all the Zedit variables in a "
@@ -677,10 +677,10 @@ struct cnames Cnames[] = {
 	{"swap-chars",			ZSWAP_CHARS,
 	 "Swaps the character before the Point with the character at the "
 	 "Point. It leaves the Point after the second character. Successive "
-	 "commands will 'drag' the character that was before the Point towards "
-	 "the end of the line. If the Point was at the end of a line, the "
-	 "two characters before the Point are transposed. If the Point is at "
-	 "the beginning of the buffer, the character at the Point and the "
+	 "commands will 'drag' the character that was before the Point "
+	 "towards the end of the line. If the Point was at the end of a line, "
+	 "the two characters before the Point are transposed. If the Point is "
+	 "at the beginning of the buffer, the character at the Point and the "
 	 "character after the Point are transposed. A Universal Argument "
 	 "causes the command to repeat."
 	},

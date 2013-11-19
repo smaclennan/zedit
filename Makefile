@@ -11,7 +11,7 @@ ETAGS=`which etags || echo true`
 #LIBS=-lncurses
 #LIBS=-ltermcap
 
-CFILES = ansi.c bcmds.c bind.c buff.c calc.c \
+CFILES = bcmds.c bind.c buff.c calc.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	life.c reg.c shell.c srch.c support.c term.c \

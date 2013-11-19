@@ -18,7 +18,7 @@
  */
 
 #include "z.h"
-#include "keys.h"
+#include "ansi.h"
 
 #include <signal.h>
 #include <sys/wait.h>	/* need for WNOWAIT */

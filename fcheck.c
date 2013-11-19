@@ -20,8 +20,8 @@
 #define FCHECK
 #include "z.h"
 #include "vars-array.h"
+#include "ansi.h"
 
-#include "ansi.c"
 #include "funcs.c"
 
 void Dbg(char *fmt, ...) {}

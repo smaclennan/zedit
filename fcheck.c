@@ -24,15 +24,17 @@
 
 #include "funcs.c"
 
+#define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))
+
 void Dbg(char *fmt, ...) {}
 
 int main(int argc, char *argv[])
 {
 	int i, err = 0;
 
-	if (NUMVARS != VARNUM) {
+	if (NUMVARS != VARSNUM) {
 		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",
-		       NUMVARS, VARNUM);
+		       NUMVARS, VARSNUM);
 		err = 1;
 	}
 

@@ -25,9 +25,8 @@ static void setavar(char *vin, bool display);
 void Zset_variable(void)
 {
 	char pstr[STRMAX], arg[STRMAX];
-	int rc;
-
-	rc = getplete("Variable: ", NULL, (char **)Vars, VARSIZE, NUMVARS);
+	int rc = getplete("Variable: ", NULL, (char **)Vars,
+			  sizeof(struct avar), NUMVARS);
 	if (rc == -1)
 		return;
 
@@ -54,7 +53,8 @@ void Zset_variable(void)
 
 void Zhelp_variable(void)
 {
-	int rc = getplete("Variable: ", NULL, (char **)Vars, VARSIZE, NUMVARS);
+	int rc = getplete("Variable: ", NULL, (char **)Vars,
+			  sizeof(struct avar), NUMVARS);
 	if (rc == -1)
 		return;
 

@@ -57,6 +57,6 @@ extern struct avar Vars[];
 #define VSPACETAB	(VSEXTS + 1)
 #define VTABS		(VSPACETAB + 1)
 #define VTEXTS		(VTABS + 1)
-#define VARNUM		(VTEXTS + 1)
+#define NUMVARS		(VTEXTS + 1)
 
 #endif

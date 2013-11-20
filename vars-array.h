@@ -78,5 +78,3 @@ struct avar Vars[] = {
 	  "name)."
 	},
 };
-#define VARSIZE		sizeof(struct avar)
-#define NUMVARS		((int)(sizeof(Vars) / VARSIZE))

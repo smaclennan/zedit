@@ -173,6 +173,8 @@ int main(int argc, char **argv)
 		execute();
 }
 
+/* Support functions */
+
 void Dbg(char *fmt, ...)
 {
 	FILE *fp = fopen(dbgfname, "a");
@@ -208,4 +210,223 @@ int findpath(char *p, char *f)
 		return 1;
 	else
 		return 0;
+}
+
+/* ask Yes/No question.
+ * Returns YES, NO, BANG, or ABORT
+ */
+int ask2(char *msg, bool allow_bang)
+{
+	int rc = BADCHAR;
+	unsigned cmd;
+
+	putpaw("%s", msg);
+	while (rc == BADCHAR)
+		switch (cmd = tgetcmd()) {
+		case 'y':
+		case 'Y':
+			rc = YES;
+			break;
+		case 'N':
+		case 'n':
+			rc = NO;
+			break;
+		case '!':
+			if (allow_bang)
+				rc = BANG;
+			else
+				tbell();
+			break;
+		default:
+			tbell();
+			if (Keys[cmd] == ZABORT)
+				rc = ABORT;
+		}
+	clrpaw();
+	return rc;
+}
+
+/* ask Yes/No question.
+ * Returns YES, NO, or ABORT
+ */
+int ask(char *msg)
+{
+	return ask2(msg, false);
+}
+
+bool delayprompt(char *msg)
+{
+	int rc = delay(500);
+	if (rc)
+		putpaw(msg);
+	return rc;
+}
+
+/* Was the last command a delete to kill buffer command? */
+bool delcmd(void)
+{
+	switch (Lfunc) {
+	case ZDELETE_TO_EOL:
+	case ZDELETE_LINE:
+	case ZDELETE_REGION:
+	case ZDELETE_WORD:
+	case ZDELETE_PREVIOUS_WORD:
+	case ZCOPY_REGION:
+	case ZCOPY_WORD:
+	case ZAPPEND_KILL:
+		return true;
+	default:
+		return false;
+	}
+}
+
+char PawStr[COLMAX + 10];
+
+/* Put a string into the PAW. */
+void putpaw(const char *fmt, ...)
+{
+	int trow, tcol;
+	char str[STRMAX];
+	va_list ap;
+
+	if (InPaw)
+		return;
+
+	va_start(ap, fmt);
+	vsnprintf(str, sizeof(str), fmt, ap);
+	va_end(ap);
+
+	trow = Prow; tcol = Pcol;
+	tsetpoint(tmaxrow() - 1, 0);
+	tprntstr(str);
+	tcleol();
+	tsetpoint(trow, tcol);
+	tforce();
+	tflush();
+}
+
+/* echo 'str' to the paw and as the filename for 'buff' */
+void message(struct buff *buff, char *str)
+{
+	struct wdo *wdo;
+
+	if (buff->fname)
+		free(buff->fname);
+	buff->fname = strdup(str);
+	for (wdo = Whead; wdo; wdo = wdo->next)
+		if (wdo->wbuff == buff)
+			wdo->modeflags = INVALID;
+	putpaw("%s", str);
+}
+
+/* Get the word at the current buffer point and store in 'word'.
+ *  Get at the most 'max' characters.
+ * Leaves the point alone.
+ */
+bool getbword(char word[], int max, int (*valid)())
+{
+	int i;
+	struct mark tmark;
+
+	bmrktopnt(&tmark);
+	moveto(bistoken, FORWARD);
+	if (bisend())
+		moveto(bistoken, BACKWARD);
+	movepast(bistoken, BACKWARD);
+	for (i = 0; !bisend() && valid() && i < max; ++i, bmove1())
+		word[i] = Buff();
+	word[i] = '\0';
+	bpnttomrk(&tmark);
+	return i;
+}
+
+/* Get the current buffer text and store in 'txt'.
+ * Get at the most 'max' characters.
+ * Leaves the point alone.
+ */
+char *getbtxt(char txt[], int max)
+{
+	int i;
+	struct mark tmark;
+
+	bmrktopnt(&tmark);
+	for (btostart(), i = 0; !bisend() && i < max; bmove1(), ++i)
+		txt[i] = Buff();
+	txt[i] = '\0';
+	bpnttomrk(&tmark);
+	return txt;
+}
+
+/* Go forward or back past a thingy */
+void movepast(int (*pred)(), bool forward)
+{
+	if (!forward)
+		bmove(-1);
+	while (!(forward ? bisend() : bisstart()) && (*pred)())
+		bmove(forward ? 1 : -1);
+	if (!forward && !(*pred)())
+		bmove1();
+}
+
+/* Go forward or back to a thingy */
+void moveto(int (*pred)(), bool forward)
+{
+	if (!forward)
+		bmove(-1);
+	while (!(forward ? bisend() : bisstart()) && !(*pred)())
+		bmove(forward ? 1 : -1);
+	if (!forward && !bisstart())
+		bmove1();
+}
+
+/* Put in the right number of tabs and spaces */
+void tindent(int arg)
+{
+	if (VAR(VSPACETAB) == 0)
+		for (; arg >= Tabsize; arg -= Tabsize)
+			binsert('\t');
+	while (arg-- > 0)
+		binsert(' ');
+}
+
+int bisspace(void)
+{
+	return isspace(Buff());
+}
+
+int bisword(void)
+{
+	return  isalnum(Buff()) || Buff() == '_' || Buff() == '.' ||
+		Buff() == '$';
+}
+
+/* Must be a real function. $ for PL/M */
+int bistoken(void)
+{
+	return isalnum(Buff()) || Buff() == '_' || Buff() == '.' ||
+		Buff() == '$' || Buff() == '/';
+}
+
+int biswhite(void)
+{
+	return STRIP(Buff()) == ' ' || STRIP(Buff()) == '\t';
+}
+
+/* Limit a filename to at most tmaxcol() - 'num' cols */
+char *limit(char *fname, int num)
+{
+	int off;
+
+	off = strlen(fname) - (tmaxcol() - num);
+	return off > 0 ? fname + off : fname;
+}
+
+/* Return a pointer to the start of the last part of fname */
+char *lastpart(char *fname)
+{
+	char *p = strrchr(fname, '/');
+	if (p)
+		return p + 1;
+	else
+		return fname;
 }

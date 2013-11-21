@@ -75,7 +75,7 @@ void bind(void)
 	Keys[128 + 22] = ZVIEW_LINE;		/* M-C-V */
 	Keys[128 + 27] = ZABORT;		/* M-M */
 	Keys[128 + ' '] = ZSEARCH;
-/* 	Keys[128 + '!'] = Keys[128 + '1'] = ; */
+/*	Keys[128 + '!'] = Keys[128 + '1'] = ; */
 	Keys[128 + '@'] = Keys[128 + '2'] = ZCMD_TO_BUFFER;
 	Keys[128 + '#'] = Keys[128 + '3'] = ZCALC;
 /*	Keys[128 + '&'] = Keys[128 + '7'] = ; */
@@ -178,7 +178,7 @@ void bind(void)
 /* C-X Y */
 	Keys[256 + 'Z'] = Keys[256 + 'z'] = ZEXIT;		/* C-X Z */
 	Keys[256 + '^'] = ZGROW_WINDOW;				/* C-X ^ */
-	
+
 	/* Special keys */
 
 	Keys[TC_UP]	= ZPREVIOUS_LINE;

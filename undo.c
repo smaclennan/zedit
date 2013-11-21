@@ -80,7 +80,8 @@ static void free_undo(struct buff *buff)
 		if (undo->data)
 			free(undo->data);
 
-		undo_total -= sizeof(struct undo) + sizeof(struct mark) + undo->size;
+		undo_total -= sizeof(struct undo) + sizeof(struct mark) +
+			undo->size;
 
 		free(undo);
 

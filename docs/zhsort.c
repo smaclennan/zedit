@@ -8,44 +8,79 @@ static int usage(void)
 	exit(2);
 }
 
-static int do_commands(void)
+static void header(FILE *out)
 {
-	int i;
-
-	for( i = 0; i < NUMFUNCS; ++i ) {
-		printf(":%s\n", Cnames[i].name);
-		fputc('\n', stdout);
-		fputs(Cnames[i].doc, stdout);
-		fputs(".sp 0\n", stdout);
-	}
-
-	return 0;
+	fputs("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n", out);
+	fputs("<html lang=\"en\">\n", out);
+	fputs("<head>\n", out);
+	fputs("<title>Zedit</title>\n", out);
+	fputs("<style type=\"text/css\">\n", out);
+	fputs("<!--\n", out);
+	fputs("body {\n", out);
+	fputs("background-color: #C0C0C0;\n", out);
+	fputs("margin: 1em 8% 0 8%;\n", out);
+	fputs("/* ie9 defaults to small */\n", out);
+	fputs("font-size: medium;\n", out);
+	fputs("}\n", out);
+	fputs("-->\n", out);
+	fputs("</style>\n", out);
+	fputs("</head>\n", out);
+	fputs("<body bgcolor=\"#C0C0C0\">\n", out);
 }
 
-static int do_variables(void)
+static void footer(FILE *out)
 {
-	int i;
+	fputs("</body>\n", out);
+	fputs("</html>\n", out);
+}
 
-	for( i = 0; i < NUMVARS; ++i ) {
-		printf(":%s\n", Vars[i].vname);
-		puts(Vars[i].doc);
-		fputs(".sp 0\n", stdout);
-	}
-
-	return 0;
+static void out_one(char *hdr, char *doc)
+{
+	fprintf(stdout, "<h3>%s</h3>\n", hdr);
+	fprintf(stdout, "<p>");
+	for (;*doc;++doc)
+		if (*doc == '\n')
+			printf("<br>\n");
+		else
+			putchar(*doc);
+	putchar('\n');
 }
 
 int main(int argc, char *argv[])
 {
+	int c, i, cmds = 0;
+	char *heading = NULL;
+
+	while ((c = getopt(argc, argv, "cvH:")) != EOF)
+		switch (c) {
+		case 'c':
+			cmds = 1;
+			break;
+		case 'v':
+			break;
+		case 'H':
+			heading = optarg;
+			break;
+		default:
+			puts("Sorry!");
+			exit(1);
+		}
+
+	header(stdout);
+
+	if (heading)
+		fprintf(stdout, "<h1>%s</h1>\n\n", heading);
+
 	if (argc == 1)
 		usage();
 
-	switch (*argv[1]) {
-	case 'c':
-		return do_commands();
-	case 'v':
-		return do_variables();
-	default:
-		return usage();
-	}
+	if (cmds)
+		for( i = 0; i < NUMFUNCS; ++i )
+			out_one(Cnames[i].name, Cnames[i].doc);
+	else
+		for( i = 0; i < NUMVARS; ++i )
+			out_one(Vars[i].vname, Vars[i].doc);
+
+	footer(stdout);
+	return 0;
 }

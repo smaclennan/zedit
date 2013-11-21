@@ -1,4 +1,4 @@
-.PHONY: all install install-help clean
+.PHONY: all install clean
 
 ZEXE = ze
 CC = gcc
@@ -7,9 +7,6 @@ CFLAGS += -Wall -g -O3
 #CFLAGS += -pedantic
 
 ETAGS=`which etags || echo true`
-
-#LIBS=-lncurses
-#LIBS=-ltermcap
 
 CFILES = bcmds.c bind.c buff.c calc.c \
 	comment.c commands.c cursor.c delete.c display.c \
@@ -40,11 +37,10 @@ $(ZEXE): $O
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
 
-fcheck: fcheck.c *.h $(CFILES)
+fcheck: fcheck.c *.h funcs.c
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
 	@./fcheck
 
-# We don't have that many .h files...
 # Make all c files depend on all .h files
 *.o: *.h
 

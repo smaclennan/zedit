@@ -198,8 +198,6 @@ void undo_clear(struct buff *buff)
 		free_undo(buff);
 }
 
-void ufini(void) {}
-
 void Zundo(void)
 {
 	struct undo *undo = Curbuff->undo_tail;
@@ -230,6 +228,4 @@ void Zundo(void)
 		/* Last undo */
 		Curbuff->bmodf = false;
 }
-#else
-void Zundo(void) { tbell(); }
 #endif

@@ -519,7 +519,6 @@ static void cleanup(void)
 	vfini();
 	wfini();
 	bfini();
-	ufini(); /* must be after bfini */
 
 	free(Cwd);
 }

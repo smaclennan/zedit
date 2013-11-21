@@ -34,15 +34,40 @@ static void footer(FILE *out)
 	fputs("</html>\n", out);
 }
 
+static void query_replace(char *doc)
+{
+	for (; *doc; ++doc)
+		if (*doc == '\n' && *(doc + 1) == '\n') {
+			printf("\n<p><table border=1>\n");
+			while (1) {
+				fputs("<tr><td>", stdout);
+				while (*doc && isspace(*doc)) ++doc;
+				while (*doc && !isspace(*doc)) putchar(*doc++);
+				while (*doc && isspace(*doc)) ++doc;
+				fputs("<td>", stdout);
+				while (*doc && *doc != '\n') putchar(*doc++);
+				putchar('\n');
+				if (doc) ++doc;
+				if (*doc == '\n')
+					break;
+			}
+			puts("</table>\n<p>");
+		} else
+			putchar(*doc);
+}
+
 static void out_one(char *hdr, char *doc)
 {
 	fprintf(stdout, "<h3>%s</h3>\n", hdr);
 	fprintf(stdout, "<p>");
-	for (;*doc;++doc)
-		if (*doc == '\n')
-			printf("<br>\n");
-		else
-			putchar(*doc);
+	if (strcmp(hdr, "query-replace") == 0)
+		query_replace(doc);
+	else
+		for (;*doc;++doc)
+			if (*doc == '\n')
+				printf("<br>\n");
+			else
+				putchar(*doc);
 	putchar('\n');
 }
 

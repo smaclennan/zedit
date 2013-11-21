@@ -175,12 +175,6 @@ int main(int argc, char **argv)
 	if (Argp)
 		Zgoto_line();
 
-#if SHELL
-	FD_ZERO(&SelectFDs);
-	FD_SET(1, &SelectFDs);
-	NumFDs = 2;
-#endif
-
 	Initializing = false;
 
 	if (exitflag)
@@ -188,48 +182,6 @@ int main(int argc, char **argv)
 
 	while (1)
 		execute();
-}
-
-/* NOTE: Dotty blocks */
-static void dotty(void)
-{
-	Cmd = tgetcmd();
-	Arg = 1;
-	Argp = false;
-	while (Arg > 0) {
-		CMD(Keys[Cmd]);
-		--Arg;
-	}
-	Lfunc = Keys[Cmd];
-	First = false;				/* used by pinsert when InPaw */
-}
-
-
-void execute(void)
-{
-#if SHELL
-	fd_set fds = SelectFDs;
-
-	zrefresh();
-
-	if (cpushed)
-		dotty();
-	else {
-		/* select returns -1 if a child dies (SIGPIPE) -
-		 * sigchild handles it */
-		while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
-			checkpipes(1);
-			zrefresh();
-			fds = SelectFDs;
-		}
-		readpipes(&fds);
-		if (FD_ISSET(1, &fds))
-			dotty();
-	}
-#else
-	zrefresh();
-	dotty();
-#endif
 }
 
 void Dbg(char *fmt, ...)

@@ -287,7 +287,6 @@ void wfini(void);
 
 #if SHELL
 int checkpipes(int type);
-int readpipes(fd_set *);
 void sigchild(int);
 void unvoke(struct buff *, bool);
 #endif
@@ -314,7 +313,6 @@ void undo_add(int size);
 void undo_del(int size);
 void undo_clear(struct buff *buff);
 #else
-void Zundo(void) { tbell(); }
 static inline void undo_add(int size) {}
 static inline void undo_del(int size) {}
 static inline void undo_clear(struct buff *buff) {}

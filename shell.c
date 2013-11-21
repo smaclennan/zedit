@@ -19,14 +19,29 @@
 
 #include "z.h"
 
+/* NOTE: Dotty blocks */
+static void dotty(void)
+{
+	Cmd = tgetcmd();
+	Arg = 1;
+	Argp = false;
+	while (Arg > 0) {
+		CMD(Keys[Cmd]);
+		--Arg;
+	}
+	Lfunc = Keys[Cmd];
+	First = false;				/* used by pinsert when InPaw */
+}
+
+
 #if SHELL
 #include <signal.h>
 #include <sys/wait.h>
 
 static int npipes;
 static int Waiting;
-fd_set SelectFDs;
-int NumFDs;
+static fd_set SelectFDs;
+static int NumFDs;
 
 /* pipe has something for us */
 static int readapipe(struct buff *tbuff)
@@ -54,7 +69,7 @@ static int readapipe(struct buff *tbuff)
 }
 
 /* Read all the active pipe buffers. */
-int readpipes(fd_set *fds)
+static int readpipes(fd_set *fds)
 {
 	struct buff *tbuff;
 	int did_something = 0;
@@ -69,9 +84,38 @@ int readpipes(fd_set *fds)
 					++did_something;
 				}
 			}
+		if (npipes == 0)
+			NumFDs = 2;
 	}
 
 	return did_something;
+}
+
+void execute(void)
+{
+	if (NumFDs == 0) {
+		FD_SET(1, &SelectFDs);
+		NumFDs = 2;
+	}
+
+	zrefresh();
+
+	if (cpushed)
+		dotty();
+	else {
+		fd_set fds = SelectFDs;
+
+		/* select returns -1 if a child dies (SIGPIPE) -
+		 * sigchild handles it */
+		while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
+			checkpipes(1);
+			zrefresh();
+			fds = SelectFDs;
+		}
+		readpipes(&fds);
+		if (FD_ISSET(1, &fds))
+			dotty();
+	}
 }
 
 static void exit_status(struct buff *tbuff, int status)
@@ -118,7 +162,6 @@ int checkpipes(int type)
 					while (readapipe(tbuff) > 0)
 						;
 				FD_CLR(tbuff->in_pipe, &SelectFDs);
-				/* SAM Should reduce NumFDs */
 				(void)close(tbuff->in_pipe);
 				tbuff->in_pipe = EOF;
 				tbuff->child = EOF;
@@ -466,6 +509,12 @@ static int parse(char *fname)
 	return 0;
 }
 #else
+void execute(void)
+{
+	zrefresh();
+	dotty();
+}
+
 void Zcmd_to_buffer(void) { tbell(); }
 void Zmake(void) { tbell(); }
 void Znext_error(void) { tbell(); }

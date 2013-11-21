@@ -78,7 +78,7 @@ int tgetcmd(void)
 #define CSTACK 16 /* must be power of 2 */
 static Byte cstack[CSTACK];
 static int cptr = -1;
-int cpushed;	/* needed in z.c */
+int cpushed;	/* needed in shell.c */
 static bool Pending;
 
 Byte tgetkb(void)

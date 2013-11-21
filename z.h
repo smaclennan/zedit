@@ -142,8 +142,6 @@ extern char *func_docs[];
 #define CMD(n) (*Cmds[n][Curcmds])()
 
 extern int cpushed;
-extern fd_set SelectFDs;
-extern int NumFDs;
 
 extern bool Sendp;
 extern struct buff *Killbuff;

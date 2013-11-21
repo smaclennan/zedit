@@ -370,7 +370,7 @@ bool bindfile(char *fname, int mode)
 	char version[3];
 	int fd, modesave, rc = false;
 
-	fd = open(fname, mode, Cmask);
+	fd = open(fname, mode, 0664);
 	if (fd == EOF) {
 		if (mode == WRITE_MODE)
 			error("Unable to Create Bindings File");

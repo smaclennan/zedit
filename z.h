@@ -37,8 +37,6 @@
 #include "funcs.h"
 #include "buff.h"
 
-extern int Verbose;
-
 extern char *Home;
 
 #define ZSTR	"Zedit"
@@ -127,9 +125,7 @@ extern int Pawcol, Pawlen, Pshift;
 extern Byte tline[];
 
 extern char *Cwd;
-extern int Cmask;
 extern unsigned Cmd;
-extern char *ConfigDir;
 
 extern struct cnames Cnames[];
 extern void (*Cmds[][2])();

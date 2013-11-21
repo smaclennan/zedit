@@ -129,30 +129,6 @@ void message(struct buff *buff, char *str)
 	putpaw("%s", str);
 }
 
-static bool isfile(char *path, char *dir, char *fname, bool must)
-{
-	if (!dir || !fname)
-		return false;
-	strcpy(path, dir);
-	if (!Psep(*(path + strlen(path) - 1)))
-		strcat(path, "/");
-	strcat(path, fname);
-	return !must || access(path, 0) == 0;
-}
-
-/* Find the correct path for the config files.
- * We check HOME and then CONFIGDIR.
- */
-int findpath(char *p, char *f)
-{
-	if (isfile(p, Home, f, true))
-		return 2;
-	else if (isfile(p, ConfigDir, f, true))
-		return 1;
-	else
-		return 0;
-}
-
 /* Get the word at the current buffer point and store in 'word'.
  *  Get at the most 'max' characters.
  * Leaves the point alone.

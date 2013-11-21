@@ -822,6 +822,7 @@ static bool cp(char *from, char *to)
  */
 int bwritefile(char *fname)
 {
+	static int Cmask;
 	char bakname[PATHMAX + 1];
 	int fd, mode, status = true, bak = false;
 	struct stat sbuf;
@@ -842,6 +843,11 @@ int bwritefile(char *fname)
 		mode  = sbuf.st_mode;
 		nlink = sbuf.st_nlink;
 	} else {
+		if (Cmask == 0) {
+			Cmask = umask(0);	/* get the current umask */
+			umask(Cmask);		/* set it back */
+			Cmask = ~Cmask & 0666;	/* make it usable */
+		}
 		mode  = Cmask;
 		nlink = 1;
 	}

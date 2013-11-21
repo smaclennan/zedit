@@ -23,12 +23,10 @@
 bool Initializing = true;
 char *Home;
 char *Cwd;
-char *ConfigDir;
-int Cmask;
 unsigned Cmd;
 jmp_buf	zenv;
-int Verbose;
 
+static char *ConfigDir;
 static char dbgfname[PATHMAX];
 
 #ifndef CONFIGDIR
@@ -76,25 +74,17 @@ int main(int argc, char **argv)
 	snprintf(dbgfname, sizeof(dbgfname), "%s/%s", Home, ZDBGFILE);
 	unlink(dbgfname);
 
-	Cmask = umask(0);	/* get the current umask */
-	umask(Cmask);		/* set it back */
-	Cmask = ~Cmask & 0666;	/* make it usable */
-
 	Cwd = getcwd(NULL, PATHMAX);
 	if (!Cwd) {
 		puts("Unable to get CWD");
 		exit(1);
 	}
 
-	Colmax = EOF;
-
-	while ((arg = getopt(argc, argv, "c:hl:tvE")) != EOF)
+	while ((arg = getopt(argc, argv, "c:hl:tE")) != EOF)
 		switch (arg) {
 		case 'c':
 			ConfigDir = optarg;
 			break;
-		case 'h':
-			usage(argv[0]);
 		case 'l':
 			Arg = atoi(optarg);
 			Argp = true;
@@ -102,12 +92,12 @@ int main(int argc, char **argv)
 		case 't':
 			textMode = 1;
 			break;
-		case 'v':
-			++Verbose;
-			break;
 		case 'E':
 			exitflag = true;
 			break;
+		case 'h':
+		default:
+			usage(argv[0]);
 		}
 
 	/* Deal with ConfigDir */
@@ -133,7 +123,6 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	Paw->bname = PAWBUFNAME;
-	InPaw = false;
 
 	tinit();
 
@@ -195,4 +184,28 @@ void Dbg(char *fmt, ...)
 		va_end(arg_ptr);
 		fclose(fp);
 	}
+}
+
+static bool isfile(char *path, char *dir, char *fname, bool must)
+{
+	if (!dir || !fname)
+		return false;
+	strcpy(path, dir);
+	if (!Psep(*(path + strlen(path) - 1)))
+		strcat(path, "/");
+	strcat(path, fname);
+	return !must || access(path, 0) == 0;
+}
+
+/* Find the correct path for the config files.
+ * We check HOME and then CONFIGDIR.
+ */
+int findpath(char *p, char *f)
+{
+	if (isfile(p, Home, f, true))
+		return 2;
+	else if (isfile(p, ConfigDir, f, true))
+		return 1;
+	else
+		return 0;
 }

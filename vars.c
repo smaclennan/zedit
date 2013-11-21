@@ -85,8 +85,6 @@ void readvfile(void)
 	if (findpath(fname, ZCFILE)) {
 		FILE *fp = fopen(fname, "r");
 		if (fp) {
-			if (Verbose)
-				Dbg("Config file %s\n", fname);
 			while (fgets(line, sizeof(line), fp)) {
 				char *p = strchr(line, '\n');
 				if (p)
@@ -119,8 +117,6 @@ static void do_var_match(int i, char *vin)
 {
 	char *ptr;
 
-	if (Verbose > 1)
-		Dbg("ok\n");
 	if (Argp && Vars[i].vtype != STRING)
 		VAR(i) = Arg;
 	else {
@@ -157,8 +153,6 @@ static void setavar(char *vin, bool display)
 	ptr = strchr(msg, '\t');
 	if (ptr)
 		*ptr = '\0';
-	if (Verbose > 1)
-		Dbg("SetAVar '%s' (%s) ", msg, vin);
 
 	for (i = 0; i < NUMVARS; ++i)
 		if (strcasecmp(msg, Vars[i].vname) == 0) {
@@ -187,8 +181,6 @@ static void setavar(char *vin, bool display)
 			break;
 		}
 	if (i == NUMVARS) {
-		if (Verbose > 1)
-			Dbg("no match\n");
 		if (display)
 			putpaw("Variable '%s' Not Found", vin);
 	}

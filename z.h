@@ -20,8 +20,6 @@
 #ifndef _Z_H_
 #define _Z_H_
 
-#include "config.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -30,33 +28,24 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <pwd.h>
 #include <sys/stat.h>
 
+#include "config.h"
 #include "vars.h"
 #include "funcs.h"
 #include "buff.h"
-
-extern char *Home;
+#include "proto.h"
 
 #define ZSTR	"Zedit"
 #define VERSION	"5.2"
-#define ZFMT	"%s %s  (%s)  %s: "
 
 #define INVALID		-1
 
 #define READ_MODE	O_RDONLY
 #define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC)
 
-#define Psep(c)		(c == '/')
-#define PSEP		'/'
-
-#define ZSHFILE		".zshXXXXXX"
-#define ZDBGFILE	"z.out"
-
 #define ZBFILE		".bindings.z"
 #define ZCFILE		".config.z"
-#define ZHFILE		"help.z"
 
 /* the first three must follow:  (define + 1) % 4 = 0 */
 #define BUFNAMMAX	31			/* max buffer name */
@@ -117,6 +106,7 @@ struct cnames {
 };
 #define CNAMESIZE sizeof(struct cnames)
 
+extern char *Home;
 extern bool Argp;
 extern int Arg;				/* must be signed */
 extern int InPaw;		/* Are we in the Paw window? */
@@ -133,12 +123,9 @@ extern int Curcmds;
 extern Byte Keys[], Lfunc;
 extern bool First;
 
-extern char *func_docs[];
-
 #define CMD(n) (*Cmds[n][Curcmds])()
 
 extern int cpushed;
-
 extern bool Sendp;
 extern struct buff *Killbuff;
 extern char Lbufname[];
@@ -147,17 +134,13 @@ extern struct buff *Bufflist, *Paw;
 extern struct buff *Buff_save;
 extern struct mark *Sstart, *Psstart, *Send, *REstart;
 extern struct mark Scrnmarks[];
-
 extern bool Initializing;
 extern bool Insearch;
+extern Byte CRdefault;
+extern int circf;
+extern unsigned long undo_total;
 
 extern void (*Nextpart)(void);
-
-extern Byte CRdefault;
-
-extern int circf;
-
-extern unsigned long undo_total;
 
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
@@ -204,7 +187,5 @@ extern int Tlrow;			/* Last row displayed (-1 for none) */
 
 #define ISNL(c)			((c) == '\n')
 #define STRIP(c)		(c)
-
-#include "proto.h"
 
 #endif /* _Z_H_ */

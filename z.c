@@ -62,16 +62,11 @@ int main(int argc, char **argv)
 
 	Home = getenv("HOME");
 	if (!Home) {
-		struct passwd *pw = getpwuid(getuid());
-		if (pw)
-			Home = strdup(pw->pw_dir);
-		if (!Home) {
-			puts("You don't exist!");
-			exit(1);
-		}
+		puts("You don't exist!");
+		exit(1);
 	}
 
-	snprintf(dbgfname, sizeof(dbgfname), "%s/%s", Home, ZDBGFILE);
+	snprintf(dbgfname, sizeof(dbgfname), "%s/z.out", Home);
 	unlink(dbgfname);
 
 	Cwd = getcwd(NULL, PATHMAX);
@@ -188,15 +183,15 @@ void Dbg(char *fmt, ...)
 	}
 }
 
-static bool isfile(char *path, char *dir, char *fname, bool must)
+static bool isfile(char *path, char *dir, char *fname)
 {
 	if (!dir || !fname)
 		return false;
 	strcpy(path, dir);
-	if (!Psep(*(path + strlen(path) - 1)))
+	if (*(path + strlen(path) - 1) != '/')
 		strcat(path, "/");
 	strcat(path, fname);
-	return !must || access(path, 0) == 0;
+	return access(path, 0) == 0;
 }
 
 /* Find the correct path for the config files.
@@ -204,9 +199,9 @@ static bool isfile(char *path, char *dir, char *fname, bool must)
  */
 int findpath(char *p, char *f)
 {
-	if (isfile(p, Home, f, true))
+	if (isfile(p, Home, f))
 		return 2;
-	else if (isfile(p, ConfigDir, f, true))
+	else if (isfile(p, ConfigDir, f))
 		return 1;
 	else
 		return 0;

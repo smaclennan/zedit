@@ -18,12 +18,17 @@
  */
 
 #include "z.h"
+#include <pwd.h>
 #ifdef HAVE_DIRECT
 #include <sys/dir.h>
 #define dirent direct
 #else
 #include <dirent.h>
 #endif
+
+#define PSEP		'/'
+#define Psep(c)		(c == PSEP)
+
 
 /* general linked list structure */
 struct llist {

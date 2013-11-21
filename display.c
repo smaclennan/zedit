@@ -271,8 +271,8 @@ static void modeline(struct wdo *wdo)
 
 	tsetpoint(wdo->last, 0);
 	tstyle(T_STANDOUT);
-	sprintf(str, ZFMT, ZSTR, VERSION, setmodes(wdo->wbuff),
-		wdo->wbuff->bname);
+	sprintf(str, "%s %s  (%s)  %s: ", ZSTR, VERSION,
+		setmodes(wdo->wbuff), wdo->wbuff->bname);
 	tprntstr(str);
 	if (wdo->wbuff->fname) {
 		len = (VAR(VLINES) ? 13 : 3) + strlen(str);

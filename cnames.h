@@ -665,6 +665,10 @@ struct cnames Cnames[] = {
 	{"size-window",			ZSIZE_WINDOW,
 	 "Sets the window to Universal Argument lines."
 	},
+	{"spell-word",			ZSPELL_WORD,
+	 "Check the spelling of the word at the point. Give hints about "
+	 "possible correct spellings."
+	},
 	{"split-window",		ZSPLIT_WINDOW,
 	 "Splits the current window into two windows. The same buffer is "
 	 "displayed in both windows and the bottom window is made active. A "

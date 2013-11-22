@@ -153,6 +153,7 @@ Z(Zhelp_function);
 Z(Zhelp_apropos);
 Z(Zstats);
 Z(Zword_search);
+Z(Zspell_word);
 
 Z(pinsert);
 Z(pnewline);

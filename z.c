@@ -324,9 +324,7 @@ bool getbword(char word[], int max, int (*valid)())
 	struct mark tmark;
 
 	bmrktopnt(&tmark);
-	moveto(bistoken, FORWARD);
-	if (bisend())
-		moveto(bistoken, BACKWARD);
+	moveto(bistoken, BACKWARD);
 	movepast(bistoken, BACKWARD);
 	for (i = 0; !bisend() && valid() && i < max; ++i, bmove1())
 		word[i] = Buff();

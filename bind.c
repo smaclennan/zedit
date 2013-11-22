@@ -78,6 +78,7 @@ void bind(void)
 /*	Keys[128 + '!'] = Keys[128 + '1'] = ; */
 	Keys[128 + '@'] = Keys[128 + '2'] = ZCMD_TO_BUFFER;
 	Keys[128 + '#'] = Keys[128 + '3'] = ZCALC;
+	Keys[128 + '$'] = Keys[128 + '4'] = ZSPELL_WORD;
 /*	Keys[128 + '&'] = Keys[128 + '7'] = ; */
 	Keys[128 + '*'] = Keys[128 + '8'] = ZUNMODIFY;
 	Keys[128 + '('] = Keys[128 + '9'] = ZBEGINNING_OF_BUFFER;

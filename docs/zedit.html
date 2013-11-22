@@ -150,15 +150,10 @@ brace ({), the next line is indented an extra tab stop. The close brace
 the first unmatched open brace. C mode is automatically set if a file
 ends in ".c", ".h", or ."y".
 
-<p>C Mode also has optional "matching" capabilities. The matching is
-controlled by the Match variable. If Match is 0, no matching occurs.
-
-<p>If Match is 1, Zedit will "match" all ')' and ']' with there matching
-'(' or '[' by moving the cursor to the matching character temporarily.
-If there is no match, Zedit will beep.
-
-<p>If Match is 2, Zedit will insert a ')' or ']' for every '(' or '['
-typed.
+<p>C Mode also has "matching" capabilities. Zedit will "match" all ')'
+and ']' with there matching '(' or '[' by moving the cursor to the
+matching character temporarily.  If there is no match, Zedit will
+beep.
 
 <h4>Shell Mode</h4>
 
@@ -181,7 +176,7 @@ will abort at the end of the paragraph it is currently formatting.
 
 <p>Text mode is turned on with the Toggle Fill Mode command or can be the
 default if the variable Normal is turned off. It also gets turned on by
-file names ending in ".doc".
+file names ending in ".txt".
 
 
 <h3>Minor Modes</h3>
@@ -345,12 +340,7 @@ Variable, and Switch Buffer.
 
 <h1>Configuration Files</h1>
 
-<p>Zedit has three configuration files: bindings, config, and help.
-All of these files are optional, however, help commands are unavailable
-without the help file. These files are used to customize the editor.
-
-<p>To find configuration files, Zedit first looks in the users home
-directory. If it is not there, the configuration directory is checked.
+<p>Zedit has two optional configuration files: bindings and config.
 
 <p>Zedit checks the following for the configuration directory:
 	<ol>
@@ -367,7 +357,6 @@ does not need a bindings file. This file is created with the Save
 Bindings command.
 
 <p>Note: The bindings file is a binary memory image.
-
 
 <h2>Configuration File</h2>
 
@@ -567,6 +556,7 @@ an initial segment of a line.
 a final segment of a line.
 </ul>
 
+	<!--
 <h2>Tag Files</h2>
 
 <p>Tag files are a list of tags, usually function names, and their
@@ -618,7 +608,7 @@ any. If the tag string is "file" and there is no tag "file" but a tag
 "Readfilename" exists, Zedit will reprompt for the tag with
 "Readfilename" as the default. The Again command can be used to find the
 next partial match.
-
+-->
 
 <h2>Calculator</h2>
 
@@ -639,7 +629,6 @@ string.
 <hr>
 <h2><a href="app-a.html">Appendix A: Commands</a></h2>
 <h2><a href="app-b.html">Appendix B: Variables</a></h2>
-<h2><a href="unix.html">Appendix C: Unix</a></h2>
 
   </body>
   </html>

@@ -103,8 +103,21 @@ int main(int argc, char *argv[])
 		for( i = 0; i < NUMFUNCS; ++i )
 			out_one(Cnames[i].name, Cnames[i].doc);
 	else
-		for( i = 0; i < NUMVARS; ++i )
+		for( i = 0; i < NUMVARS; ++i ) {
 			out_one(Vars[i].vname, Vars[i].doc);
+			switch (Vars[i].vtype) {
+			case FLAG:
+				printf("<p>Default: %s\n", VAR(i) ? "on" : "off");
+				break;
+			case DECIMAL:
+				printf("<p>Default: %d\n", VAR(i));
+				break;
+			case STRING:
+				if (VARSTR(i))
+					printf("<p>Default: %s\n", VARSTR(i));
+				break;
+			}
+		}
 
 	footer(stdout);
 	return 0;

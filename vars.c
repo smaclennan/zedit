@@ -35,10 +35,6 @@ void Zset_variable(void)
 		if (Vars[rc].vtype == STRING)
 			if (VARSTR(rc))
 				strcpy(arg, VARSTR(rc));
-			else if (rc == VMAKE)
-				strcpy(arg, MAKE_CMD);
-			else if (rc == VGREP)
-				strcpy(arg, GREP_CMD);
 			else
 				*arg = '\0';
 		else
@@ -75,11 +71,8 @@ void readvfile(void)
 {
 	char fname[PATHMAX + 1], line[STRMAX + 1];
 
-	VARSTR(VCEXTS) = strdup(".c:.h:.cpp:.cc:.cxx:.y:.l");
 	parsem(VARSTR(VCEXTS), CMODE);
-	VARSTR(VSEXTS) = strdup(".sh:.csh:.el");
 	parsem(VARSTR(VSEXTS), SHMODE);
-	VARSTR(VTEXTS) = strdup(".txt");
 	parsem(VARSTR(VTEXTS), TEXT);
 
 	if (findpath(fname, ZCFILE)) {
@@ -98,19 +91,22 @@ void readvfile(void)
 
 static void setit(int i, char *ptr)
 {
-	if (Vars[i].vtype == STRING) {
-		if (VARSTR(i))
-			free(VARSTR(i));
-		VARSTR(i) = strdup(ptr);
-	} else if (Vars[i].vtype == FLAG) {
+	switch (Vars[i].vtype) {
+	case STRING:
+		if (strcmp(VARSTR(i), ptr))
+			VARSTR(i) = strdup(ptr);
+		break;
+	case FLAG:
 		if (strncasecmp(ptr, "true", 4) == 0)
 			VAR(i) = 1;
 		else if (strncasecmp(ptr, "false", 5) == 0)
 			VAR(i) = 0;
 		else
 			VAR(i) = strtol(ptr, NULL, 0);
-	} else
+		break;
+	case DECIMAL:
 		VAR(i) = strtol(ptr, NULL, 0);
+	}
 }
 
 static void do_var_match(int i, char *vin)
@@ -276,11 +272,5 @@ void Zshow_config(void)
 
 void vfini(void)
 {
-	int i;
-
-	for (i = 0; i < NUMVARS; ++i)
-		if (Vars[i].vtype == STRING && VARSTR(i))
-			free(VARSTR(i));
-
 	free_extensions();
 }

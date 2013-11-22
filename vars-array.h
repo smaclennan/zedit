@@ -13,7 +13,7 @@ struct avar Vars[] = {
 	{ "bell",		FLAG,		{1},
 	  "If this variable is set, the bell will flash the screen."
 	},
-	{ "c-extends",		STRING,		{0},
+	{ "c-extends",		STRING,		.u.str = ".c:.h:.cpp:.cc:.cxx:.y:.l",
 	  "This variable defines up to 8 extensions that turn on C "
 	  "Mode. The extensions are seperated with the colon (:)."
 	},
@@ -36,7 +36,7 @@ struct avar Vars[] = {
 	  "This is the column at which the Text mode commands wrap the "
 	  "right margin. It is also used by the Center Line command. "
 	},
-	{ "grep",		STRING,		{0},
+	{ "grep",		STRING,		.u.str = "grep -n",
 	  "The command to use for the Zedit grep command. The default "
 	  "is `grep -n'."
 	},
@@ -45,7 +45,7 @@ struct avar Vars[] = {
 	  "mode line. The Lines feature can cause a lot of cursor "
 	  "movement and is irritating on some slow terminals."
 	},
-	{ "make-cmd",		STRING,		{0},
+	{ "make-cmd",		STRING,		.u.str = "make ",
 	  "This is a string variable which contains the default string "
 	  "for the Make command. The default is 'make'."
 	},
@@ -54,7 +54,7 @@ struct avar Vars[] = {
 	  "the default buffer mode to Text. Some file extensions "
 	  "override this variable."
 	},
-	{ "sh-extends",		STRING,		{0},
+	{ "sh-extends",		STRING,		.u.str = ".sh:.csh:.el",
 	  "This variable defines up to 8 extensions that turn on Shell "
 	  "Mode. The extensions are seperated with the colon (:)."
 	},
@@ -71,7 +71,7 @@ struct avar Vars[] = {
 	  "space characters displayed per tab in buffers that are not in "
 	  "a program mode."
 	},
-	{ "t-extends",		STRING,		{0},
+	{ "t-extends",		STRING,		.u.str = "txt",
 	  "This variable defines up to 8 extensions that turn on Text "
 	  "Mode. The extensions are seperated with the colon (:). An "
 	  "extension of '.' matches no extension (i.e. no '.' in file "

@@ -349,8 +349,6 @@ static int set_cmd(int which, char *prompt)
 	strcpy(cmd, VARSTR(which));
 	if (getarg(prompt, cmd, STRMAX))
 		return 0;
-	if (VARSTR(which))
-		free(VARSTR(which));
 	VARSTR(which) = strdup(cmd);
 	return 1;
 }
@@ -358,9 +356,6 @@ static int set_cmd(int which, char *prompt)
 void Zmake(void)
 {
 	struct buff *mbuff;
-
-	if (!VARSTR(VMAKE))
-		VARSTR(VMAKE) = strdup(MAKE_CMD);
 
 	NexterrorCalled = 0;	/* reset it */
 	Arg = 0;
@@ -385,9 +380,6 @@ void Zgrep(void)
 {
 	struct buff *mbuff;
 	char cmd[STRMAX * 3], input[STRMAX + 1], files[STRMAX + 1];
-
-	if (!VARSTR(VGREP))
-		VARSTR(VGREP) = strdup(GREP_CMD);
 
 	NexterrorCalled = 0;	/* reset it */
 	Arg = 0;

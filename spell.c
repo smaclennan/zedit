@@ -5,9 +5,6 @@
 
 void Zspell_word(void)
 {
-	char word[STRMAX];
-	getbword(word, sizeof(word), bisword);
-
 	AspellConfig *config = new_aspell_config();
 	if (!config) {
 		putpaw("Aspell failed");
@@ -23,6 +20,8 @@ void Zspell_word(void)
 	}
 	AspellSpeller *speller = to_aspell_speller(possible_err);
 
+	char word[STRMAX];
+	getbword(word, sizeof(word), bisword);
 	int size = strlen(word);
 	int correct = aspell_speller_check(speller, word, size);
 
@@ -31,11 +30,13 @@ void Zspell_word(void)
 	else {
 		int n, i = 0, len = Colmax;
 
-		const AspellWordList *suggestions = aspell_speller_suggest(speller,
-									   word, size);
-		AspellStringEnumeration * elements = aspell_word_list_elements(suggestions);
+		const AspellWordList *suggestions =
+			aspell_speller_suggest(speller, word, size);
+		AspellStringEnumeration *elements =
+			aspell_word_list_elements(suggestions);
 		const char *suggest;
-		while ((suggest = aspell_string_enumeration_next(elements)) && len > 0) {
+		while ((suggest = aspell_string_enumeration_next(elements)) &&
+		       len > 0) {
 			if (i == 0)
 				n = snprintf(PawStr + i, len, "%s", suggest);
 			else

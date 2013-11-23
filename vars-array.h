@@ -10,7 +10,7 @@ struct avar Vars[] = {
 	  "a file is written."
 	},
 	{ "bell",		FLAG,		V(1),
-	  "If this variable is set, the bell will flash the screen."
+	  "If this flag variable is set, the bell will flash the screen."
 	},
 	{ "c-extends",		STRING,		V(".c.h.cpp.cc.cxx.y.l"),
 	  "This variable defines up to 8 extensions that turn on C "
@@ -19,8 +19,7 @@ struct avar Vars[] = {
 	{ "c-tabs",		DECIMAL,	V(8),
 	  "A tab is a single character that is displayed as one or more "
 	  "spaces on the screen. This variable defines the number of "
-	  "spaces displayed per tab in C mode buffers, even if the buffer "
-	  "is in View mode. See also tabs."
+	  "spaces displayed per tab in C mode buffers. See also tabs."
 	},
 	{ "comments",		FLAG,		V(1),
 	  "If set then Zedit tries to bold (display in red) "
@@ -58,7 +57,7 @@ struct avar Vars[] = {
 	},
 	{ "space-tabs",		FLAG,		V(0),
 	  "The tab character is normally inserted into the buffer as a "
-	  "single ASCII 9 character. If the SpaceTabs variable is set, "
+	  "single ASCII 9 character. If the space-tabs variable is set, "
 	  "then a tab is inserted as spaces in the buffer. This flag "
 	  "does not affect tabs already in the buffer or tabs inserted "
 	  "in the PAW."

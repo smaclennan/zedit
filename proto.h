@@ -152,6 +152,8 @@ Z(Zhelp_apropos);
 Z(Zstats);
 Z(Zword_search);
 Z(Zspell_word);
+Z(Ztag);
+Z(Ztag_word);
 
 Z(pinsert);
 Z(pnewline);
@@ -174,6 +176,7 @@ void bdeltomrk(struct mark *);
 void bempty(void);
 int bgetcol(bool, int);
 void bgoto(struct buff *);
+void bgoto_char(long offset);
 void bind(void);
 bool bindfile(char *fname, int mode);
 void binsert(Byte);

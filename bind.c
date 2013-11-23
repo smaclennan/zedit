@@ -87,6 +87,7 @@ void bind(void)
 /*	Keys[128 + '.']			  = ; */
 	Keys[128 + '<']			  = ZBEGINNING_OF_BUFFER;
 	Keys[128 + '>']			  = ZEND_OF_BUFFER;
+	Keys[128 + '.']			  = ZTAG;
 /*	Keys[128 + '/'] = Keys[128 + '?'] = ; */
 /*	Keys[128 + '_']			  = ; */
 /*	Keys[128 + '-']			  = ; */
@@ -210,7 +211,7 @@ void bind(void)
 	Keys[TC_F7]	= ZMAKE;
 	Keys[TC_F8]	= ZGREP;
 	Keys[TC_F9]	= ZWORD_SEARCH;
-	Keys[TC_F10]	= ZNEXT_BOOKMARK;
+	Keys[TC_F10]	= ZTAG_WORD;
 	/* Keys[TC_F11] = ; */
 	Keys[TC_F12]	= ZREVERT_FILE;
 }

@@ -143,7 +143,9 @@
 #define ZSTATS			(ZHELP_APROPOS + 1)
 #define ZWORD_SEARCH		(ZSTATS + 1)
 #define ZSPELL_WORD		(ZWORD_SEARCH + 1)
-#define NUMFUNCS		(ZSPELL_WORD + 1)
+#define ZTAG			(ZSPELL_WORD + 1)
+#define ZTAG_WORD		(ZTAG + 1)
+#define NUMFUNCS		(ZTAG_WORD + 1)
 
 /* this is used by the getfname command in the PAW for command completion */
 #define ZFNAME		NUMFUNCS

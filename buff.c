@@ -1072,6 +1072,23 @@ int batoi(void)
 	return num;
 }
 
+void bgoto_char(long offset)
+{
+	struct page *tpage;
+
+	/* find the correct page */
+	Curpage->plen = Curplen;
+	for (tpage = Curbuff->firstp; tpage->nextp; tpage = tpage->nextp)
+		if (tpage->plen >= offset)
+			break;
+		else
+			offset -= tpage->plen;
+
+	makecur(tpage);
+	makeoffset(offset);
+}
+
+
 void Zstats(void)
 {
 #if UNDO

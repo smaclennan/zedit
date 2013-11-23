@@ -50,8 +50,7 @@
 #define ZNEXT_WORD		(ZNEXT_PARAGRAPH + 1)
 #define ZCOPY_WORD		(ZNEXT_WORD + 1)
 #define ZGROW_WINDOW		(ZCOPY_WORD + 1)
-#define ZHEX_OUTPUT		(ZGROW_WINDOW + 1)
-#define ZINSERT			(ZHEX_OUTPUT + 1) /* Also used for pinsert */
+#define ZINSERT			(ZGROW_WINDOW + 1) /* Also used for pinsert */
 #define ZDELETE_BUFFER		(ZINSERT + 1)
 #define ZLIFE			(ZDELETE_BUFFER + 1)
 #define ZGOTO_LINE		(ZLIFE + 1)
@@ -132,8 +131,7 @@
 #define ZREVERT_FILE		(ZSIZE_WINDOW + 1)
 #define ZSCROLL_DOWN		(ZREVERT_FILE + 1)
 #define ZSCROLL_UP		(ZSCROLL_DOWN + 1)
-#define ZCWD			(ZSCROLL_UP + 1)
-#define ZBOUND_TO		(ZCWD + 1)
+#define ZBOUND_TO		(ZSCROLL_UP + 1)
 #define ZSHOW_CONFIG		(ZBOUND_TO + 1)
 #define ZSETENV			(ZSHOW_CONFIG + 1)
 #define ZGLOBAL_RE_SEARCH	(ZSETENV + 1)

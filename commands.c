@@ -787,20 +787,6 @@ done:
 	Arg = 0;
 }
 
-void Zhex_output(void)
-{
-	char str[STRMAX], *p;
-
-	if (Arg > 25)
-		Arg = 25;
-	strcpy(str, "Hex: ");
-	for (p = str; Arg-- > 0 && !bisend(); bmove1()) {
-		p = strchr(p, '\0');
-		sprintf(p, " %02x", *Curcptr & 0xff);
-	}
-	putpaw("%s", str);
-}
-
 void Zswap_chars(void)
 {
 	int tmp;
@@ -825,23 +811,6 @@ void toendline(void)
 {
 	if (bcsearch(NL))
 		bmove(-1);
-}
-
-void Zcwd(void)
-{
-	char path[PATHMAX], *p;
-
-	strcpy(path, Cwd);
-	if (getdname("CWD: ", path) == 0) {
-		p = strdup(path);
-		if (!p)
-			error("Not enough memory");
-		else if (chdir(p) == 0) {
-			free(Cwd);
-			Cwd = p;
-		} else
-			error("chdir failed.");
-	}
 }
 
 void Zcount(void)

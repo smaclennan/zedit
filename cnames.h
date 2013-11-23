@@ -84,7 +84,7 @@ struct cnames Cnames[] = {
 	 "of the word. A Universal Argument causes the command to repeat."
 	},
 	{"center",			ZCENTER,
-	 "Centers the current line on the screen. It uses FillWidth to define "
+	 "Centers the current line on the screen. It uses fill-width to define "
 	 "the right margin. A Universal Argument causes the command to "
 	 "repeat on the next lines."
 	},
@@ -114,12 +114,6 @@ struct cnames Cnames[] = {
 	},
 	{"ctrl-x",			ZCTRL_X,
 	 "Command prefix."
-	},
-	{"cwd",				ZCWD,
-	 "This command allows you to change Zedit's current working "
-	 "directory. All files will be relative to the new working "
-	 "directory. The default is the directory the editor was started "
-	 "in. A Universal Argument causes the command to repeat."
 	},
 	{"delete-blanks",		ZDELETE_BLANKS,
 	 "Delete all the blank lines around the Point. The lines are not put "
@@ -270,12 +264,6 @@ struct cnames Cnames[] = {
 	 "Displays help on any of the configurable variables. Prompts for "
 	 "the variable with full completion. The current value of the variable "
 	 "is also displayed."
-	},
-	{"hex-output",			ZHEX_OUTPUT,
-	 "Displays the character at the Point as a hexadecimal number in the "
-	 "PAW. A Universal Argument displays the next characters up to a "
-	 "maximum of 25. The Point is moved forward by the argument "
-	 "characters."
 	},
 	{"incremental-search",		ZINCREMENTAL_SEARCH,
 	 "Searches for the string after every character is entered in the "
@@ -668,6 +656,9 @@ struct cnames Cnames[] = {
 	 "Sets the window to Universal Argument lines."
 	},
 	{"spell-word",			ZSPELL_WORD,
+#if !SPELL
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "Check the spelling of the word at the point. Give hints about "
 	 "possible correct spellings."
 	},

@@ -128,7 +128,7 @@ void bind(void)
 /* C-X C-E */
 	Keys[256 +  6]  = ZFIND_FILE;		/* C-X C-F */
 	Keys[256 +  7]  = ZABORT;		/* C-X C-G */
-	Keys[256 +  8]  = ZHEX_OUTPUT;		/* C-X C-H */
+/* C-X C-H */
 /* C-X C-I */
 /* C-X C-J */
 	Keys[256 + 11]  = ZDELETE_LINE;		/* C-X C-K */

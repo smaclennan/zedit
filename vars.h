@@ -29,8 +29,8 @@ struct avar {
 		FLAG
 	} vtype;
 	union {
-		unsigned val;
 		char *str;
+		unsigned val;
 	} u;
 	char *doc;
 };
@@ -55,8 +55,8 @@ extern struct avar Vars[];
 #define VNORMAL		(VMAKE + 1)
 #define VSEXTS		(VNORMAL + 1)
 #define VSPACETAB	(VSEXTS + 1)
-#define VTABS		(VSPACETAB + 1)
-#define VTEXTS		(VTABS + 1)
-#define NUMVARS		(VTEXTS + 1)
+#define VTEXTS		(VSPACETAB + 1)
+#define VTABS		(VTEXTS + 1)
+#define NUMVARS		(VTABS + 1)
 
 #endif

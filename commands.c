@@ -911,7 +911,6 @@ void Zmode(void)
 }
 
 /* we allow 8 extensions per type */
-static int NoExt;
 static char *cexts[9];
 static char *texts[9];
 static char *sexts[9];	/* s for shell */
@@ -948,26 +947,20 @@ static int get_mode(int mode, char ***exts)
 /* This is called to set the cexts/texts/aexts array */
 void parsem(char *in, int mode)
 {
-	char **o, *str, *start;
+	char save[40];
+	char **o, *str;
 	int i = 0;
 
-	mode = get_mode(mode, &o);
-	start = str = strdup(in);
+	snprintf(save, sizeof(save), "%s", in);
+	get_mode(mode, &o);
+	str = strtok(save, ".");
 	if (str) {
-		str = strtok(str, ":");
-		if (str) {
-			do {
-				if (strcmp(str, ".") == 0)
-					NoExt = mode;
-				else {
-					if (o[i])
-						free(o[i]);
-					o[i++] = strdup(str);
-				}
-			} while (i < 8 && (str = strtok(NULL, ":")));
-			o[i] = NULL;
-		}
-		free(start);
+		do {
+			if (o[i])
+				free(o[i]);
+			o[i++] = strdup(str);
+		} while (i < 8 && (str = strtok(NULL, ".")));
+		o[i] = NULL;
 	}
 }
 
@@ -979,12 +972,10 @@ static bool extmatch(char *str, int mode)
 	if (!str)
 		return false;
 
-	mode = get_mode(mode, &o);
+	get_mode(mode, &o);
 	str = strrchr(str, '.');
-	if (!str)
-		return NoExt == mode;
-	else
-		for (i = 0; o[i]; ++i)
+	if (str)
+		for (++str, i = 0; o[i]; ++i)
 			if (strcmp(o[i], str) == 0)
 				return true;
 	return false;

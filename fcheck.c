@@ -24,7 +24,7 @@
 
 #include "funcs.c"
 
-#define VARSNUM		((sizeof(Vars) / sizeof(struct avar)))
+#define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))
 
 void Dbg(char *fmt, ...) {}
 
@@ -33,13 +33,13 @@ int main(int argc, char *argv[])
 	int i, err = 0;
 
 	if (NUMVARS != VARSNUM) {
-		printf("Mismatch in NUMVARS and VARNUM %d:%ld\n",
+		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",
 		       NUMVARS, VARSNUM);
 		err = 1;
 	}
 
 	if (N_KEYS != NUM_SPECIAL) {
-		printf("Mismatch N_KEYS %ld NUMKEYS %d\n",
+		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
 		       N_KEYS, NUM_SPECIAL);
 		err = 1;
 	}
@@ -64,6 +64,14 @@ int main(int argc, char *argv[])
 			err = 1;
 		}
 	}
+
+	/* validate the Vars array */
+	for (s1 = 1; s1 < NUMVARS; ++s1)
+		if (strcasecmp(Vars[s1].vname, Vars[s1 - 1].vname) <= 0) {
+			printf("Problem: (%d) %s and %s\n",
+			    s1, Vars[s1 - 1].vname, Vars[s1].vname);
+			err = 1;
+		}
 
 	return err;
 }

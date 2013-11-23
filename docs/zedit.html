@@ -363,18 +363,17 @@ Bindings command.
 <p>The config file (.config.z) is used to save the configuration
 variables which allow customization of the editor. These variables are
 given defaults by Zedit, can be assigned values in the config file, or
-can be modified at run time. Since they are given built in defaults,
-the config file is optional.
+can be modified at run time with the set-variable command.
 
-<p>The format for specifying a variable in the config file is:
-&lt;variable_name&gt; &lt;variable&gt;
+<p>The output from the Zedit command show-config is suitable to save
+as a config file.
 
 <p>The variable_name is one of the variables name shown in appendix B.
-Only the first three (3) characters of the name are needed. The space
-can be any number of spaces and/or tabs as long as there is at least one
-space or tab. The variable is a number for DECIMAL or FLAG variables and
-a string for STRING variables. STRING variables can contain spaces. Each
-variable must be on a separate line. The variables are case insensitive.
+The space can be any number of spaces and/or tabs as long as there is
+at least one space or tab. The variable is a number for DECIMAL or
+FLAG variables and a string for STRING variables. STRING variables can
+contain spaces. Each variable must be on a separate line. The
+variables are case insensitive.
 
 <h1>Commands</h1>
 

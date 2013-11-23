@@ -257,17 +257,19 @@ struct cnames Cnames[] = {
 	 "effect. A Universal Argument causes the command to grow the window "
 	 "by that number of lines."
 	},
-	{"help-apropos",			ZHELP_APROPOS,
+	{"help-apropos",		ZHELP_APROPOS,
 	 "Asks for a string and then searches through all the functions and "
 	 "returns the functions that have the string in them."
 	},
 	{"help-function",		ZHELP_FUNCTION,
 	 "Displays help on any of the Zedit functions. Prompts for the "
-	 "function with full completion."
+	 "function with full completion. If the command has any key bindings, "
+	 " these are also displayed."
 	},
 	{"help-variable",		ZHELP_VARIABLE,
 	 "Displays help on any of the configurable variables. Prompts for "
-	 "the variable with full completion."
+	 "the variable with full completion. The current value of the variable "
+	 "is also displayed."
 	},
 	{"hex-output",			ZHEX_OUTPUT,
 	 "Displays the character at the Point as a hexadecimal number in the "

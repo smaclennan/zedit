@@ -377,10 +377,9 @@ int pathfixup(char *to, char *from)
 	} else {
 		if (!Psep(*from)) {
 			/* add the current directory */
-			strcpy(to, Cwd);
+			getcwd(to, PATHMAX);
 			to += strlen(to);
-			if (!Psep(*(to - 1)))
-				*to++ = PSEP;
+			*to++ = PSEP;
 		}
 	}
 

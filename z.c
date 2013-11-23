@@ -22,7 +22,6 @@
 
 bool Initializing = true;
 char *Home;
-char *Cwd;
 unsigned Cmd;
 jmp_buf	zenv;
 
@@ -68,12 +67,6 @@ int main(int argc, char **argv)
 
 	snprintf(dbgfname, sizeof(dbgfname), "%s/z.out", Home);
 	unlink(dbgfname);
-
-	Cwd = getcwd(NULL, PATHMAX);
-	if (!Cwd) {
-		puts("Unable to get CWD");
-		exit(1);
-	}
 
 	while ((arg = getopt(argc, argv, "c:hl:tE")) != EOF)
 		switch (arg) {

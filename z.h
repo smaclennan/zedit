@@ -111,7 +111,6 @@ extern char PawStr[];		/* handy string to put text in */
 extern int Pawcol, Pawlen, Pshift;
 extern Byte tline[];
 
-extern char *Cwd;
 extern unsigned Cmd;
 
 extern struct cnames Cnames[];

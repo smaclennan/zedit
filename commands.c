@@ -519,8 +519,6 @@ static void cleanup(void)
 	vfini();
 	wfini();
 	bfini();
-
-	free(Cwd);
 }
 
 void Zexit(void)

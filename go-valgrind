@@ -6,3 +6,5 @@ OPTS="$OPTS -v"
 #OPTS="$OPTS --suppressions=valgrind.supp"
 
 valgrind $OPTS ./ze $* 2>valgrind.out
+
+tail valgrind.out

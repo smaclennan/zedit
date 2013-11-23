@@ -25,9 +25,10 @@ static int get_findfile(char *prompt)
 {
 	struct stat sbuf;
 
-	if (!*Fname)
-		sprintf(Fname, "%s/", Cwd);
-	else if (stat(Fname, &sbuf) == 0)
+	if (!*Fname) {
+		getcwd(Fname, PATHMAX);
+		strcat(Fname, "/");
+	} else if (stat(Fname, &sbuf) == 0)
 		/* If Fname is a file, convert to directory */
 		if (S_ISREG(sbuf.st_mode)) {
 			char *p = strrchr(Fname, '/');

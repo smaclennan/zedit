@@ -212,7 +212,7 @@ void bind(void)
 	Keys[TC_F8]	= ZGREP;
 	Keys[TC_F9]	= ZWORD_SEARCH;
 	Keys[TC_F10]	= ZTAG_WORD;
-	/* Keys[TC_F11] = ; */
+	Keys[TC_F11]	= ZNEXT_BOOKMARK;
 	Keys[TC_F12]	= ZREVERT_FILE;
 }
 

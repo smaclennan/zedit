@@ -208,32 +208,36 @@ static char *Bookname[BOOKMARKS];		/* stack of book names */
 static int  Bookmark = -1;			/* current book mark */
 static int  Lastbook = -1;			/* last bookmark */
 
-void Zset_bookmark(void)
+int set_bookmark(char *bookname)
 {
-	if (Argp) {
-		Arg = 0;
-		*PawStr = '\0';
-		if (getarg("Bookmark name: ", PawStr, STRMAX))
-			return;
-	} else
-		strcpy(PawStr, "Unamed");
-
 	Bookmark = (Bookmark + 1) % BOOKMARKS;
 	if (Bookname[Bookmark])
 		free(Bookname[Bookmark]);
-	Bookname[Bookmark] = strdup(PawStr);
+	if (bookname)
+		Bookname[Bookmark] = strdup(bookname);
 
 	if (Bookmark > Lastbook) {
 		Lastbook = Bookmark;
 		Bookmrks[Bookmark] = bcremrk();
 	} else
 		bmrktopnt(Bookmrks[Bookmark]);
+	return Bookmark;
+}
 
-	if (Argp)
-		putpaw("Book Mark %s(%d) Set",
-		       Bookname[Bookmark], Bookmark + 1);
-	else
+void Zset_bookmark(void)
+{
+	if (Argp) {
+		Arg = 0;
+		*PawStr = '\0';
+		if (getarg("Bookmark name: ", PawStr, STRMAX) == 0) {
+			set_bookmark(PawStr);
+			putpaw("Book Mark %s(%d) Set",
+			       Bookname[Bookmark], Bookmark + 1);
+		}
+	} else {
+		set_bookmark(NULL);
 		putpaw("Book Mark %d Set", Bookmark + 1);
+	}
 }
 
 void Znext_bookmark(void)
@@ -262,6 +266,15 @@ void Znext_bookmark(void)
 	putpaw("Book Mark %d", Bookmark + 1);
 	if (--Bookmark < 0)
 		Bookmark = Lastbook;
+}
+
+void cleanup_bookmarks(void)
+{
+	int i;
+
+	for (i = 0; i < BOOKMARKS; ++i)
+		if (Bookname[i])
+			free(Bookname[i]);
 }
 
 void Zview_line(void)

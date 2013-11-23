@@ -8,8 +8,10 @@ static char Tagfile[PATHMAX];
 
 static int get_tagfile(void)
 {
-	if (Argp)
+	if (Argp) {
+		Arg = 0;
 		return getfname("Tagfile: ", Tagfile);
+	}
 
 	if (access(Tagfile, F_OK) == 0)
 		return 0;
@@ -58,7 +60,7 @@ static bool find_tag(char *word)
 		} else if (regexec(&tagreg, line, 3, pmatch, 0) == 0) {
 			int offset = strtol(line + pmatch[2].rm_so, NULL, 10);
 
-			/* Fixup the filename */
+			/* Isolate the filename */
 			p = strchr(fname, ',');
 			if (p)
 				*p = '\0';
@@ -70,7 +72,7 @@ static bool find_tag(char *word)
 			}
 			strcat(path, fname);
 
-			Zset_bookmark();
+			set_bookmark(word);
 
 			if (cmakebuff(fname, path)) {
 				bgoto_char(offset);
@@ -79,6 +81,9 @@ static bool find_tag(char *word)
 
 			break;
 		}
+
+	if (!found)
+		putpaw("%s not found.", word);
 
 done:
 	regfree(&tagreg);
@@ -90,6 +95,7 @@ void Ztag(void)
 {
 	char tag[STRMAX];
 
+	*tag = '\0';
 	if (getarg("Tag: ", tag, sizeof(tag)) == 0)
 		find_tag(tag);
 }

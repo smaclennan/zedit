@@ -519,6 +519,7 @@ static void cleanup(void)
 	vfini();
 	wfini();
 	bfini();
+	cleanup_bookmarks();
 }
 
 void Zexit(void)

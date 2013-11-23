@@ -281,6 +281,8 @@ int chwidth(Byte, int, bool);
 void hang_up(int);
 bool notdup_key(int k);
 void dump_doc(char *doc);
+int set_bookmark(char *bookname);
+void cleanup_bookmarks(void);
 
 void message(struct buff *, char *);
 

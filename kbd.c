@@ -107,7 +107,21 @@ static void tungetkb(int j)
 	cpushed += j;
 }
 
-#ifndef NO_POLL
+#ifdef NO_POLL
+static int do_select(int ms)
+{
+	struct timeval timeout;
+	fd_set fds;
+
+	FD_ZERO(&fds);
+	FD_SET(0, &fds);
+
+	timeout.tv_sec = 0;
+	timeout.tv_usec = ms * 1000;
+
+	return select(1, &fds, NULL, NULL, &timeout);
+}
+#else
 static struct pollfd stdin_fd = { .fd = 1, .events = POLLIN };
 #endif
 
@@ -117,15 +131,7 @@ int tkbrdy(void)
 		return true;
 
 #ifdef NO_POLL
-	{
-		static struct timeval poll = { 0, 0 };
-		fd_set fds;
-
-		FD_ZERO(&fds);
-		FD_SET(0, &fds);
-
-		return Pending = select(1, &fds, NULL, NULL, &poll);
-	}
+	return Pending = do_select(0);
 #else
 	return Pending = poll(&stdin_fd, 1, 0) == 1;
 #endif
@@ -137,18 +143,7 @@ bool delay(int ms)
 		return false;
 
 #ifdef NO_POLL
-	{
-		struct timeval timeout;
-		fd_set fds;
-
-		FD_ZERO(&fds);
-		FD_SET(0, &fds);
-
-		timeout.tv_sec = 0;
-		timeout.tv_usec = ms * 1000;
-
-		return select(1, &fds, NULL, NULL, &timeout) <= 0;
-	}
+	return do_select(ms) <= 0;
 #else
 	return poll(&stdin_fd, 1, ms) != 1;
 #endif

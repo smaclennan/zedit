@@ -22,8 +22,7 @@
 #include "ansi.h"
 #include <poll.h>
 
-
-static unsigned Cmdpushed, Cmdstack[10]; /* stack and vars for T[un]getcmd */
+int Cmdpushed = -1;
 
 /* stack and vars for t[un]getkb / tkbrdy */
 #define CSTACK 16 /* must be power of 2 */
@@ -32,12 +31,11 @@ static int cptr = -1;
 int cpushed;	/* needed in shell.c */
 static bool Pending;
 
-void tpushcmd(int cmd)
+static void tungetkb(int j)
 {
-	Cmdstack[Cmdpushed++] = cmd;
+	cptr = (cptr - j) & (CSTACK - 1);
+	cpushed += j;
 }
-
-static void tungetkb(int j);
 
 static int check_specials(void)
 {
@@ -67,21 +65,22 @@ int tgetcmd(void)
 {
 	int cmd;
 
-	if (Cmdpushed)
-		return Cmdstack[--Cmdpushed];
+	if (Cmdpushed >= 0) {
+		cmd = Cmdpushed;
+		Cmdpushed = -1;
+	} else {
+		cmd = tgetkb() & 0x7f;
 
-	cmd = tgetkb() & 0x7f;
-
-	/* All special keys start with ESC */
-	if (cmd == '\033')
-		if (tkbrdy()) {
-			tungetkb(1);
-			return check_specials();
-		}
+		/* All special keys start with ESC */
+		if (cmd == '\033')
+			if (tkbrdy()) {
+				tungetkb(1);
+				return check_specials();
+			}
+	}
 
 	return cmd;
 }
-
 
 Byte tgetkb(void)
 {
@@ -102,12 +101,6 @@ Byte tgetkb(void)
 	}
 	Pending = false;
 	return cstack[cptr];
-}
-
-static void tungetkb(int j)
-{
-	cptr = (cptr - j) & (CSTACK - 1);
-	cpushed += j;
 }
 
 #ifdef NO_POLL

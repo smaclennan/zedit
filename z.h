@@ -113,6 +113,7 @@ extern int Pawcol, Pawlen, Pshift;
 extern Byte tline[];
 
 extern unsigned Cmd;
+extern int Cmdpushed;
 
 extern struct cnames Cnames[];
 extern void (*Cmds[][2])();

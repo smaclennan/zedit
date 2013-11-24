@@ -260,7 +260,6 @@ void tfini(void);
 void tforce(void);
 int tgetcmd(void);
 Byte tgetkb(void);
-void tpushcmd(int cmd);
 void t_goto(int, int);
 void tindent(int);
 void tinit(void);

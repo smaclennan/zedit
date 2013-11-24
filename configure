@@ -7,9 +7,10 @@ undo=1
 
 do_help() {
 	echo "Optional features:"
-	echo "  --enable-shell	enable shell commands"
-	echo "  --enable-spell	enable spell commands"
-	echo "  --enable-zlib		enable gzip compression support"
+	echo "  --enable-clang	Enable clang compiler"
+	echo "  --enable-shell	Enable shell commands"
+	echo "  --enable-spell	Enable spell commands"
+	echo "  --enable-zlib		Enable gzip compression support"
 	echo "  --enable-undo		EXPERIMNETAL undo"
 	echo "  --enable-16bitints	Enable if sizeof(int) = 2"
 	echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
@@ -31,6 +32,7 @@ while [ -n "$1" ]; do
 	esac
 
 	case "$1" in
+	*-clang) clang=$enable;;
 	*-undo) undo=$enable;;
 	*-shell) shell=$enable;;
 	*-spell) spell=$enable;;
@@ -74,3 +76,24 @@ set_one SHELL $shell
 set_one SPELL $spell
 set_one ZLIB $zlib
 set_one UNDO $undo
+
+if [ "$spell" = 1 ]; then
+    sed 's/^#LIBS += -laspell/LIBS += -laspell/' Makefile > Makefile.tmp
+else
+    sed 's/^LIBS += -laspell/#LIBS += -laspell/' Makefile > Makefile.tmp
+fi
+mv Makefile.tmp Makefile
+
+if [ "$zlib" = 1 ]; then
+    sed 's/^#LIBS += -lz/LIBS += -lz/' Makefile > Makefile.tmp
+else
+    sed 's/^LIBS += -lz/#LIBS += -lz/' Makefile > Makefile.tmp
+fi
+mv Makefile.tmp Makefile
+
+if [ "$clang" = 1 ]; then
+    sed 's/^#CC = clang/CC = clang/' Makefile > Makefile.tmp
+else
+    sed 's/^CC = clang/#CC = clang/' Makefile > Makefile.tmp
+fi
+mv Makefile.tmp Makefile

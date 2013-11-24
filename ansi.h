@@ -19,6 +19,8 @@
 
 #include "keys.h"
 
+/* Note: We can currently only have 32 specials */
+
 struct key_array Tkeys[] = {
 	{ "\033[A",	"up" },
 	{ "\033[B",	"down" },
@@ -53,3 +55,5 @@ struct key_array Tkeys[] = {
 	{ "\033[8^",	"C-end" },
 };
 #define N_KEYS ((int)(sizeof(Tkeys) / sizeof(struct key_array)))
+
+#define Key_mask 0x0fffffff

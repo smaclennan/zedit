@@ -43,6 +43,19 @@ int main(int argc, char *argv[])
 		       N_KEYS, NUM_SPECIAL);
 		err = 1;
 	}
+	if (NUM_SPECIAL > 32) {
+		printf("Too many special keys\n");
+		err = 1;
+	} else {
+		unsigned mask = 0;
+
+		for (i = 0; i < NUM_SPECIAL; ++i)
+			mask = (mask << 1) | 1;
+		if (mask != Key_mask) {
+			printf("Mismatch mask %08x and %08;x\n", mask, Key_mask);
+			err = 1;
+		}
+	}
 
 	/* check sizes of various stuff */
 	int s1 = sizeof(Cnames) / sizeof(struct cnames);

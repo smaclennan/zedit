@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include "ansi.h"
 
 #include <signal.h>
 #include <sys/wait.h>	/* need for WNOWAIT */

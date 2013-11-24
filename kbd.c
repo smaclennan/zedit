@@ -19,10 +19,9 @@
 
 #include "z.h"
 #include "keys.h"
+#include "ansi.h"
 #include <poll.h>
 
-
-#define Key_mask 0xfffffff
 
 static unsigned Cmdpushed, Cmdstack[10]; /* stack and vars for T[un]getcmd */
 

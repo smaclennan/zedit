@@ -62,7 +62,7 @@ struct buff {
 	unsigned bmode;			/* buffer mode */
 	char *bname;			/* buffer name */
 	char *fname;			/* file name associated with buffer */
-	long mtime;			/* file time at read */
+	time_t mtime;			/* file time at read */
 	struct buff *prev, *next;	/* list of buffers */
 #if SHELL
 	pid_t child;			/* PID of shell or EOF */

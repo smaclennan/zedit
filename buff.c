@@ -698,6 +698,15 @@ void btostart(void)
 	makeoffset(0);
 }
 
+static time_t get_mtime(int fd)
+{
+	struct stat sbuf;
+
+	if (fstat(fd, &sbuf) == 0)
+		return sbuf.st_mtime;
+	else
+		return -1;
+}
 
 /*
 Load the file 'fname' into the current buffer.
@@ -708,11 +717,10 @@ Returns  0  successfully opened file
 int breadfile(char *fname)
 {
 	char buf[PSIZE];
-	struct stat sbuf;
 	int fd, len;
 
 	fd = open(fname, READ_MODE);
-	if (fd < 0  || fstat(fd, &sbuf) == EOF) {
+	if (fd < 0) {
 		if (fd >= 0)
 			close(fd);
 
@@ -727,6 +735,8 @@ int breadfile(char *fname)
 			return 1;
 		}
 	}
+
+	Curbuff->mtime = get_mtime(fd);
 
 	putpaw("Reading %s", lastpart(fname));
 	bempty();
@@ -759,7 +769,6 @@ int breadfile(char *fname)
 	(void)bclose(fd);
 
 	btostart();
-	Curbuff->mtime = sbuf.st_mtime;		/* save the modified time */
 	Curbuff->bmodf = false;
 	clrpaw();
 
@@ -786,16 +795,12 @@ static bool bwritegzip(int fd)
 		}
 
 	if (status) {
-		/* get the time here - on some machines (SUN) 'time'
-		 * incorrect */
-		struct stat sbuf;
-		fstat(fd, &sbuf);
-		Curbuff->mtime = sbuf.st_mtime;
+		Curbuff->mtime = get_mtime(fd);
 		Curbuff->bmodf = false;
 	} else
 		error("Unable to write file.");
 
-	gzclose(gz);
+	gzclose(gz); /* also closed fd */
 
 	return status;
 }
@@ -831,11 +836,7 @@ static bool bwritefd(int fd)
 	}
 
 	if (status) {
-		/* get the time here - on some machines (SUN) 'time'
-		 * incorrect */
-		struct stat sbuf;
-		fstat(fd, &sbuf);
-		Curbuff->mtime = sbuf.st_mtime;
+		Curbuff->mtime = get_mtime(fd);
 		Curbuff->bmodf = false;
 	} else
 		error("Unable to write file.");

@@ -25,6 +25,13 @@
 
 static unsigned Cmdpushed, Cmdstack[10]; /* stack and vars for T[un]getcmd */
 
+/* stack and vars for t[un]getkb / tkbrdy */
+#define CSTACK 16 /* must be power of 2 */
+static Byte cstack[CSTACK];
+static int cptr = -1;
+int cpushed;	/* needed in shell.c */
+static bool Pending;
+
 void tpushcmd(int cmd)
 {
 	Cmdstack[Cmdpushed++] = cmd;
@@ -46,9 +53,12 @@ static int check_specials(void)
 				mask &= ~bit;
 	}
 
-	/* No match - push back the chars and try to handle
-	 * the first one. */
+	/* No match - push back the chars */
 	tungetkb(j);
+
+	/* If it is an unknown CSI string, suck it up */
+	if (cstack[(cptr + 2) & (CSTACK - 1)] == '[')
+		cpushed = 2;
 
 	return tgetkb() & 0x7f;
 }
@@ -72,13 +82,6 @@ int tgetcmd(void)
 	return cmd;
 }
 
-
-/* stack and vars for t[un]getkb / tkbrdy */
-#define CSTACK 16 /* must be power of 2 */
-static Byte cstack[CSTACK];
-static int cptr = -1;
-int cpushed;	/* needed in shell.c */
-static bool Pending;
 
 Byte tgetkb(void)
 {

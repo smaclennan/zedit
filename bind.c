@@ -23,7 +23,6 @@
 Byte Keys[NUMKEYS], Lfunc;
 Byte CRdefault = ZNEWLINE;
 
-
 /* setup the default bindings for the Keys array */
 void bind(void)
 {

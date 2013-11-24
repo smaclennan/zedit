@@ -19,7 +19,46 @@
 
 #include "z.h"
 #include "keys.h"
-#include "ansi.h"
+
+/* Note: We can currently only have 32 specials */
+static struct key_array {
+	char *key;
+	char *label;
+} Tkeys[] = {
+	{ "\033[A",	"up" },
+	{ "\033[B",	"down" },
+	{ "\033[C",	"right" },
+	{ "\033[D",	"left" },
+
+	{ "\033[2~",	"insert" },
+	{ "\033[3~",	"delete" },
+	{ "\033[5~",	"page up" },
+	{ "\033[6~",	"page down" },
+	{ "\033[7~",	"home" },
+	{ "\033[8~",	"end" },
+
+	{ "\033[11~",	"f1" },
+	{ "\033[12~",	"f2" },
+	{ "\033[13~",	"f3" },
+	{ "\033[14~",	"f4" },
+	{ "\033[15~",	"f5" },
+	{ "\033[17~",	"f6" },
+	{ "\033[18~",	"f7" },
+	{ "\033[19~",	"f8" },
+	{ "\033[20~",	"f9" },
+	{ "\033[21~",	"f10" },
+	{ "\033[23~",	"f11" },
+	{ "\033[24~",	"f12" },
+
+	{ "\033Oa",	"C-up" },
+	{ "\033Ob",	"C-down" },
+	{ "\033Oc",	"C-right" },
+	{ "\033Od",	"C-left" },
+	{ "\033[7^",	"C-home" },
+	{ "\033[8^",	"C-end" },
+};
+#define N_KEYS ((int)(sizeof(Tkeys) / sizeof(struct key_array)))
+#define Key_mask 0x0fffffff
 
 int Cmdpushed = -1;
 
@@ -144,4 +183,32 @@ bool delay(int ms)
 #else
 	return poll(&stdin_fd, 1, ms) != 1;
 #endif
+}
+
+char *dispkey(unsigned key, char *s)
+{
+	char *p;
+	int j;
+
+	*s = '\0';
+	if (key > SPECIAL_START)
+		return strcpy(s, Tkeys[key - SPECIAL_START].label);
+	if (key > 127)
+		strcpy(s, key < 256 ? "M-" : "C-X ");
+	j = key & 0x7f;
+	if (j == 27)
+		strcat(s, "ESC");
+	else if (j < 32 || j == 127) {
+		strcat(s, "C-");
+		p = s + strlen(s);
+		*p++ = j ^ '@';
+		*p = '\0';
+	} else if (j == 32)
+		strcat(s, "Space");
+	else {
+		p = s + strlen(s);
+		*p++ = j;
+		*p = '\0';
+	}
+	return s;
 }

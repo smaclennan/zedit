@@ -40,7 +40,7 @@ $(ZEXE): $O
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
 
-fcheck: fcheck.c *.h funcs.c
+fcheck: fcheck.c *.h funcs.c kbd.c
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
 	@./fcheck
 

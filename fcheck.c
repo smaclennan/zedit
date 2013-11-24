@@ -20,11 +20,15 @@
 #define FCHECK
 #include "z.h"
 #include "vars-array.h"
-#include "ansi.h"
 
 #include "funcs.c"
+#include "kbd.c"
 
 #define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))
+
+int InPaw;
+
+void hang_up(int sig) {}
 
 void Dbg(char *fmt, ...) {}
 

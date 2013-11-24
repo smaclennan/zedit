@@ -57,11 +57,4 @@
 
 #define NUM_SPECIAL		(NUMKEYS - SPECIAL_START)
 
-struct key_array {
-	char *key;
-	char *label;
-};
-
-extern struct key_array Tkeys[];
-
 #endif

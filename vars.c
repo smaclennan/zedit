@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include "vars-array.h"
 
 static void setavar(char *vin, bool display);
 

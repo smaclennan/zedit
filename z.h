@@ -127,7 +127,6 @@ extern int cpushed;
 extern bool Sendp;
 extern struct buff *Killbuff;
 extern char Lbufname[];
-extern struct avar Vars[];
 extern struct buff *Bufflist, *Paw;
 extern struct buff *Buff_save;
 extern struct mark *Sstart, *Psstart, *Send, *REstart;

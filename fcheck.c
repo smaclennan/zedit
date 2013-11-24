@@ -19,8 +19,8 @@
 
 #define FCHECK
 #include "z.h"
-#include "vars-array.h"
 
+#include "vars-array.c"
 #include "funcs.c"
 #include "kbd.c"
 

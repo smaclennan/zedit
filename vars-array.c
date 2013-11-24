@@ -1,3 +1,5 @@
+#include "z.h"
+
 #define V(n) {(char *)n}
 
 struct avar Vars[] = {

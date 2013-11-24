@@ -1149,7 +1149,6 @@ void bgoto_char(long offset)
 	makeoffset(offset);
 }
 
-
 void Zstats(void)
 {
 #if UNDO

@@ -23,7 +23,6 @@
 Byte Keys[NUMKEYS], Lfunc;
 Byte CRdefault = ZNEWLINE;
 
-
 /* setup the default bindings for the Keys array */
 void bind(void)
 {
@@ -404,32 +403,4 @@ bool bindfile(char *fname, int mode)
 	Curwdo->modeflags = INVALID;
 
 	return rc;
-}
-
-char *dispkey(unsigned key, char *s)
-{
-	char *p;
-	int j;
-
-	*s = '\0';
-	if (key > SPECIAL_START)
-		return strcpy(s, Tkeys[key - SPECIAL_START].label);
-	if (key > 127)
-		strcpy(s, key < 256 ? "M-" : "C-X ");
-	j = key & 0x7f;
-	if (j == 27)
-		strcat(s, "ESC");
-	else if (j < 32 || j == 127) {
-		strcat(s, "C-");
-		p = s + strlen(s);
-		*p++ = j ^ '@';
-		*p = '\0';
-	} else if (j == 32)
-		strcat(s, "Space");
-	else {
-		p = s + strlen(s);
-		*p++ = j;
-		*p = '\0';
-	}
-	return s;
 }

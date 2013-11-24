@@ -103,7 +103,7 @@ again:
 				tbell();
 		} else if (Keys[cmd] != ZNOTIMPL) {
 			if (cmd != CR)
-				tpushcmd(cmd);
+				Cmdpushed = cmd;
 			go = false;
 		}
 		count = 0;

@@ -2,13 +2,10 @@
 #include "../cnames.h"
 #include "../vars-array.h"
 
-static int usage(void)
-{
-	puts("usage: zhsort {c | v}");
-	exit(2);
-}
+static char *heading[] = { "Appendix A: Commands", "Appendix B: Variables" };
+static char *fnames[] = { "app-a.html", "app-b.html" };
 
-static void header(FILE *out)
+static void header(FILE *out, char *heading)
 {
 	fputs("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n", out);
 	fputs("<html lang=\"en\">\n", out);
@@ -26,6 +23,7 @@ static void header(FILE *out)
 	fputs("</style>\n", out);
 	fputs("</head>\n", out);
 	fputs("<body bgcolor=\"#C0C0C0\">\n", out);
+	fprintf(out, "<h1>%s</h1>\n\n", heading);
 }
 
 static void footer(FILE *out)
@@ -34,91 +32,79 @@ static void footer(FILE *out)
 	fputs("</html>\n", out);
 }
 
-static void query_replace(char *doc)
+static void query_replace(FILE *out, char *doc)
 {
 	for (; *doc; ++doc)
 		if (*doc == '\n' && *(doc + 1) == '\n') {
-			printf("\n<p><table border=1>\n");
+			fputs("\n<p><table border=1>\n", out);
 			while (1) {
-				fputs("<tr><td>", stdout);
+				fputs("<tr><td>", out);
 				while (*doc && isspace(*doc)) ++doc;
-				while (*doc && !isspace(*doc)) putchar(*doc++);
+				while (*doc && !isspace(*doc)) fputc(*doc++, out);
 				while (*doc && isspace(*doc)) ++doc;
-				fputs("<td>", stdout);
-				while (*doc && *doc != '\n') putchar(*doc++);
-				putchar('\n');
+				fputs("<td>", out);
+				while (*doc && *doc != '\n') fputc(*doc++, out);
+				fputc('\n', out);
 				if (doc) ++doc;
 				if (*doc == '\n')
 					break;
 			}
-			puts("</table>\n<p>");
+			fputs("</table>\n<p>", out);
 		} else
-			putchar(*doc);
+			fputc(*doc, out);
 }
 
-static void out_one(char *hdr, char *doc)
+static void out_one(FILE *out, char *hdr, char *doc)
 {
-	fprintf(stdout, "<h3>%s</h3>\n", hdr);
-	fprintf(stdout, "<p>");
+	fprintf(out, "<h3>%s</h3>\n", hdr);
+	fprintf(out, "<p>");
 	if (strcmp(hdr, "query-replace") == 0)
-		query_replace(doc);
+		query_replace(out, doc);
 	else
 		for (;*doc;++doc)
 			if (*doc == '\n')
-				printf("<br>\n");
+				fputs("<br>\n", out);
 			else
-				putchar(*doc);
-	putchar('\n');
+				fputc(*doc, out);
+	fputc('\n', out);
 }
 
 int main(int argc, char *argv[])
 {
-	int c, i, cmds = 0;
-	char *heading = NULL;
+	int i, j;
 
-	while ((c = getopt(argc, argv, "cvH:")) != EOF)
-		switch (c) {
-		case 'c':
-			cmds = 1;
-			break;
-		case 'v':
-			break;
-		case 'H':
-			heading = optarg;
-			break;
-		default:
-			puts("Sorry!");
+	for (j = 0; j < 2; ++j) {
+		FILE *out = fopen(fnames[j], "w");
+		if (!out) {
+			perror(fnames[j]);
 			exit(1);
 		}
 
-	header(stdout);
+		header(out, heading[j]);
 
-	if (heading)
-		fprintf(stdout, "<h1>%s</h1>\n\n", heading);
-
-	if (argc == 1)
-		usage();
-
-	if (cmds)
-		for( i = 0; i < NUMFUNCS; ++i )
-			out_one(Cnames[i].name, Cnames[i].doc);
-	else
-		for( i = 0; i < NUMVARS; ++i ) {
-			out_one(Vars[i].vname, Vars[i].doc);
-			switch (Vars[i].vtype) {
-			case FLAG:
-				printf("<p>Default: %s\n", VAR(i) ? "on" : "off");
-				break;
-			case DECIMAL:
-				printf("<p>Default: %d\n", VAR(i));
-				break;
-			case STRING:
-				if (VARSTR(i))
-					printf("<p>Default: %s\n", VARSTR(i));
-				break;
+		if (j == 0)
+			for( i = 0; i < NUMFUNCS; ++i )
+				out_one(out, Cnames[i].name, Cnames[i].doc);
+		else
+			for( i = 0; i < NUMVARS; ++i ) {
+				out_one(out, Vars[i].vname, Vars[i].doc);
+				switch (Vars[i].vtype) {
+				case FLAG:
+					fprintf(out, "<p>Default: %s\n", VAR(i) ? "on" : "off");
+					break;
+				case DECIMAL:
+					fprintf(out, "<p>Default: %d\n", VAR(i));
+					break;
+				case STRING:
+					if (VARSTR(i))
+						fprintf(out, "<p>Default: %s\n", VARSTR(i));
+					break;
+				}
 			}
-		}
 
-	footer(stdout);
+		footer(out);
+		fclose(out);
+	}
+
 	return 0;
 }

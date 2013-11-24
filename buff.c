@@ -1153,8 +1153,9 @@ void bgoto_char(long offset)
 void Zstats(void)
 {
 #if UNDO
-	putpaw("Buffers: %d  Pages: %d  Marks: %d  Undos: %luK",
-	       NumBuffs, NumPages, NumMarks, (undo_total + 521) / 1024);
+	putpaw("Buffers: %d  Pages: %d  Marks: %d  Undos: %lu%c",
+	       NumBuffs, NumPages, NumMarks, (undo_total + 521) / 1024,
+	       undo_total ? 'K' : ' ');
 #else
 	putpaw("Buffers: %d  Pages: %d  Marks: %d",
 	       NumBuffs, NumPages, NumMarks);

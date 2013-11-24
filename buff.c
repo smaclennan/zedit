@@ -24,7 +24,6 @@
 #if ZLIB
 #undef Byte
 #include <zlib.h>
-#define Byte unsigned char
 
 #define bread(a, b, c) gzread(gz, b, c)
 #define bclose(a) gzclose(gz)

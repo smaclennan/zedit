@@ -1,8 +1,15 @@
 #!/bin/sh
 
+shell=1
+undo=1
+[ -f /usr/include/aspell.h ] && spell=1
+[ -f /usr/include/zlib.h ] && zlib=1
+
 do_help() {
 	echo "Optional features:"
 	echo "  --enable-shell	enable shell commands"
+	echo "  --enable-spell	enable spell commands"
+	echo "  --enable-zlib		enable gzip compression support"
 	echo "  --enable-undo		EXPERIMNETAL undo"
 	echo "  --enable-16bitints	Enable if sizeof(int) = 2"
 	echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
@@ -19,12 +26,15 @@ while [ -n "$1" ]; do
 	--disable-*) enable=0;;
 	--config-dir) ;;
 	--help) do_help;;
+	-h) do_help;;
 	*) echo "Unknown arg '$1' ignored"; shift; continue;;
 	esac
 
 	case "$1" in
 	*-undo) undo=$enable;;
 	*-shell) shell=$enable;;
+	*-spell) spell=$enable;;
+	*-zlib) zlib=$enable;;
 	*-16bitints) int16=$enable;;
 	*-sysv4) sysv4=$enable;;
 	--config-dir) shift; confdir=$1;;
@@ -60,7 +70,7 @@ set_one() {
     [ -n "$2" ] && echo "#define $1 $2" >> config.h
 }
 
-[ -n "$shell" ] || shell=1 # Default to on for now
 set_one SHELL $shell
-
+set_one SPELL $spell
+set_one ZLIB $zlib
 set_one UNDO $undo

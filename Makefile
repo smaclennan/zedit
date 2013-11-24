@@ -6,7 +6,8 @@ CC = gcc
 CFLAGS += -Wall -g -O3
 #CFLAGS += -pedantic
 
-LIBS := -laspell
+LIBS += -laspell
+LIBS += -lz
 
 ETAGS=`which etags || echo true`
 

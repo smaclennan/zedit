@@ -21,6 +21,20 @@
 #include <setjmp.h>
 #include <time.h>
 
+#if ZLIB
+#undef Byte
+#include <zlib.h>
+#define Byte unsigned char
+
+#define bread(a, b, c) gzread(gz, b, c)
+#define bwrite(a, b, c) gzwrite(gz, b, c)
+#define bclose(a) gzclose(gz)
+#else
+#define bread(a, b, c) read(a, b, c)
+#define bwrite(a, b, c) write(a, b, c)
+#define bclose(a) close(a)
+#endif
+
 bool Curmodf;		/* page modified?? */
 Byte *Cpstart;			/* pim data start */
 Byte *Curcptr;			/* current character */
@@ -717,12 +731,22 @@ int breadfile(char *fname)
 		}
 	}
 
-	Curbuff->mtime = sbuf.st_mtime;		/* save the modified time */
 	putpaw("Reading %s", lastpart(fname));
-
 	bempty();
 
-	while ((len = read(fd, buf, PSIZE)) > 0) {
+#if ZLIB
+	gzFile gz = gzdopen(fd, "rb");
+	if (!gz) {
+		close(fd);
+		error("gzdopen %s", fname);
+		return -1;
+	}
+
+	if (gzdirect(gz) == 0)
+		Curbuff->bmode |= COMPRESSED;
+#endif
+
+	while ((len = bread(fd, buf, PSIZE)) > 0) {
 		Curmodf = true;
 		if (Curplen) {
 			if (!newpage(Curbuff, Curpage, NULL)) {
@@ -735,9 +759,10 @@ int breadfile(char *fname)
 		memcpy(Cpstart, buf, len);
 		Curplen = len;
 	}
-	(void)close(fd);
+	(void)bclose(fd);
 
 	btostart();
+	Curbuff->mtime = sbuf.st_mtime;		/* save the modified time */
 	Curbuff->bmodf = false;
 	clrpaw();
 
@@ -749,24 +774,32 @@ int breadfile(char *fname)
  *	Returns:	true	if write successful
  *			false	if write failed
  */
-int bwritefd(int fd)
+static bool bwritefd(int fd)
 {
 	struct page *tpage;
 	int n, status = true;
 	Byte lastch = '\n'; /* don't add NL to zero byte file */
 
+#if ZLIB
+	gzFile gz = gzdopen(fd, "wb");
+	if (!gz) {
+		close(fd);
+		return false;
+	}
+#endif
+
 	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			lastch = tpage->pdata[tpage->plen - 1];
-			n = write(fd, tpage->pdata, tpage->plen);
+			n = bwrite(fd, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
 		}
 
 	/* handle ADDNL */
 	if (VAR(VADDNL) && lastch != '\n') {
 		char buf = '\n';
-		status &= write(fd, &buf, 1) == 1;
+		status &= bwrite(fd, &buf, 1) == 1;
 	}
 
 	if (status) {
@@ -779,7 +812,7 @@ int bwritefd(int fd)
 	} else
 		error("Unable to write file.");
 
-	(void)close(fd);
+	bclose(fd);
 
 	return status;
 }

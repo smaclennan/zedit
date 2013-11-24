@@ -68,6 +68,7 @@
 #define OVERWRITE			0x001
 #define EXACT				0x002
 #define VIEW				0x004
+#define COMPRESSED			0x008
 /* majour modes - only one allowed */
 #define NORMAL				0x010
 #define CMODE				0x020

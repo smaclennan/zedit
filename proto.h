@@ -196,7 +196,6 @@ void bswappnt(struct mark *);
 void bswitchto(struct buff *);
 void btoend(void);
 void btostart(void);
-int bwritefd(int);
 int bwritefile(char *);
 struct buff *cfindbuff(char *);
 struct buff *cmakebuff(char *, char *);

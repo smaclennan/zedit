@@ -366,6 +366,8 @@ static char *setmodes(struct buff *buff)
 
 	if (buff->bmode & VIEW)
 		strcat(PawStr, " RO");
+	if (buff->bmode & COMPRESSED)
+		strcat(PawStr, " Z");
 	if (buff->bmode & OVERWRITE)
 		strcat(PawStr, " OVWRT");
 

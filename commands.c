@@ -934,18 +934,31 @@ void parsem(char *in, int mode)
 
 static bool extmatch(char *str, int mode)
 {
-	char **o;
+	char **o, *p;
 	int i;
 
 	if (!str)
 		return false;
 
 	get_mode(mode, &o);
-	str = strrchr(str, '.');
-	if (str)
-		for (++str, i = 0; o[i]; ++i)
-			if (strcmp(o[i], str) == 0)
+	p = strrchr(str, '.');
+	if (p) {
+#if ZLIB
+		char tmp[PATHMAX];
+
+		if (strcmp(p, ".gz") == 0) {
+			strcpy(tmp, str);
+			p = strrchr(tmp, '.');
+			*p = '\0';
+			p = strrchr(tmp, '.');
+			if (!p)
+				return false;
+		}
+#endif
+		for (++p, i = 0; o[i]; ++i)
+			if (strcmp(o[i], p) == 0)
 				return true;
+	}
 	return false;
 }
 

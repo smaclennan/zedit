@@ -20,7 +20,6 @@
 #include "z.h"
 #include "keys.h"
 #include "ansi.h"
-#include <poll.h>
 
 int Cmdpushed = -1;
 
@@ -118,6 +117,8 @@ static int do_select(int ms)
 	return select(1, &fds, NULL, NULL, &timeout);
 }
 #else
+#include <poll.h>
+
 static struct pollfd stdin_fd = { .fd = 1, .events = POLLIN };
 #endif
 

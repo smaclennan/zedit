@@ -1109,17 +1109,18 @@ static bool pagesplit(void)
 /* Peek the previous byte */
 Byte bpeek(void)
 {
-	Byte ch;
-
-	if (bisstart())
-		ch = Buff();
+	if (Curchar > 0)
+		return *(Curcptr - 1);
+	else if (bisstart())
+		/* Pretend we are at the start of a line.
+		 * Needed for delete-to-eol. */
+		return NL;
 	else {
 		bmove(-1);
-		ch = Buff();
+		Byte ch = Buff();
 		bmove1();
+		return ch;
 	}
-
-	return ch;
 }
 
 /* Convert the next portion of buffer to integer. Skip leading ws. */

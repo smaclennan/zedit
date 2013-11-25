@@ -3,7 +3,7 @@
 ZEXE = ze
 CC = gcc
 #CC = clang -fno-color-diagnostics
-CFLAGS += -Wall -g -O3
+CFLAGS += -Wall -g
 #CFLAGS += -pedantic
 
 LIBS += -laspell

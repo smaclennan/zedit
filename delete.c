@@ -57,21 +57,17 @@ void Zdelete_previous_char(void)
 
 void Zdelete_to_eol(void)
 {
-	struct mark *tmark = bcremrk();
-
 	if (!bisend() && Buff() == NL)
-		bmove1();
-	{
-		bool atstart;
-
-		tobegline();
-		atstart = bisatmrk(tmark);
+		bdelete(1);
+	else {
+		bool atstart = bpeek() == NL;
+		struct mark *tmark = bcremrk();
 		toendline();
 		if (atstart)
 			bmove1(); /* delete the NL */
+		killtomrk(tmark);
+		unmark(tmark);
 	}
-	killtomrk(tmark);
-	unmark(tmark);
 }
 
 void Zdelete_line(void)

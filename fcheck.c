@@ -56,7 +56,8 @@ int main(int argc, char *argv[])
 		for (i = 0; i < NUM_SPECIAL; ++i)
 			mask = (mask << 1) | 1;
 		if (mask != Key_mask) {
-			printf("Mismatch mask %08x and %08;x\n", mask, Key_mask);
+			printf("Mismatch mask %08x and %08x\n",
+			       mask, Key_mask);
 			err = 1;
 		}
 	}

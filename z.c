@@ -49,7 +49,7 @@ static void usage(char *prog)
 int main(int argc, char **argv)
 {
 	char path[PATHMAX + 1];
-	int arg, files = 0, textMode = 0, exitflag = 0;
+	int arg, files = 0, textMode = 0, exitflag = 0, line = 0;
 	struct buff *tbuff = NULL;
 
 	/* A longjmp is called if bcremrk runs out of memory */
@@ -74,8 +74,7 @@ int main(int argc, char **argv)
 			ConfigDir = optarg;
 			break;
 		case 'l':
-			Arg = atoi(optarg);
-			Argp = true;
+			line = atoi(optarg);
 			break;
 		case 't':
 			textMode = 1;
@@ -149,8 +148,11 @@ int main(int argc, char **argv)
 
 	Curwdo->modeflags = INVALID;
 
-	if (Argp)
+	if (line) {
+		Argp = true;
+		Arg = line;
 		Zgoto_line();
+	}
 
 	Initializing = false;
 

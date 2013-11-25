@@ -23,6 +23,5 @@ fi
 echo "Running checkpatch..."
 for f in *.[ch]; do
     [ $f = proto.h ] && continue
-    [ -s $f ] || continue
     $checkpatch --no-tree --file $f | fgrep -q "no obvious style problems" || echo "$f"
 done

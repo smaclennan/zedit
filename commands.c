@@ -883,74 +883,48 @@ void Zmode(void)
 
 static bool matchit(char *extstr, char *str)
 {
-	char *p = strstr(extstr, str);
-	if (p) {
-		p += strlen(str);
-		return *p == '.' || *p == '\0';
+	if (str) {
+		char *p = strstr(extstr, str);
+		if (p) {
+			p += strlen(str);
+			return *p == '.' || *p == '\0';
+		}
 	}
 	return false;
-}
-
-/* Returns the mode based on the extension. */
-static int extmatch(char *str)
-{
-	if (!str)
-		return NORMAL;
-
-	char tmp[PATHMAX];
-	strcpy(tmp, str);
-
-	char *p = strrchr(tmp, '.');
-	if (!p)
-		return NORMAL;
-
-#if ZLIB
-	if (strcmp(p, ".gz") == 0) {
-		*p = '\0';
-		p = strrchr(tmp, '.');
-		if (!p)
-			return NORMAL;
-	}
-#endif
-
-	if (matchit(VARSTR(VCEXTS), p))
-		return CMODE;
-	if (matchit(VARSTR(VSEXTS), p))
-		return SHMODE;
-	if (matchit(VARSTR(VTEXTS), p))
-		return TEXT;
-	else
-		return NORMAL;
-}
-
-static bool shell_mode(void)
-{
-	bool issh = false;
-	struct mark *tmark = bcremrk();
-	btostart();
-	if (Curplen > 3)
-		issh = strncmp((char *)Curcptr, "#!/", 3) == 0;
-	bpnttomrk(tmark);
-	unmark(tmark);
-	return issh;
 }
 
 /* Toggle to 'mode'. Passed 0 to set for readone */
 void toggle_mode(int mode)
 {
-	if (mode == 0) {
-		mode = extmatch(bfname());
-		if (mode == NORMAL) {
-			if (shell_mode())
-				mode = SHMODE;
-			else if (!VAR(VNORMAL))
-				mode = TEXT;
+	char tmp[PATHMAX], *ext;
+	strcpy(tmp, bfname());
+
+	ext = strrchr(tmp, '.');
+#if ZLIB
+	if (ext) {
+		if (strcmp(ext, ".gz") == 0) {
+			*ext = '\0';
+			ext = strrchr(tmp, '.');
 		}
+	}
+#endif
+
+	if (mode == 0) {
+		if (matchit(VARSTR(VCEXTS), ext))
+			mode = CMODE;
+		else if (matchit(VARSTR(VSEXTS), ext) ||
+			 strncmp((char *)Curcptr, "#!/", 3) == 0)
+			mode = SHMODE;
+		else if (matchit(VARSTR(VTEXTS), ext))
+			mode = TEXT;
+		else if (!VAR(VNORMAL))
+			mode = TEXT;
+		else
+			mode = NORMAL;
 	}
 
 	if (mode == SHMODE) {
-		char *p = strrchr(bfname(), '.');
-		if (p && strcmp(p, ".el") == 0)
+		if (ext && strcmp(ext, ".el") == 0)
 			Curbuff->comchar = ';';
 		else
 			Curbuff->comchar = '#';

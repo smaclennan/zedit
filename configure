@@ -2,7 +2,7 @@
 
 shell=1
 undo=1
-[ -f /usr/include/aspell.h ] && spell=1
+[ -f /usr/include/aspell.h -a -f /usr/include/dlfcn.h ] && spell=1
 [ -f /usr/include/zlib.h ] && zlib=1
 
 do_help() {
@@ -78,9 +78,9 @@ set_one ZLIB $zlib
 set_one UNDO $undo
 
 if [ "$spell" = 1 ]; then
-    sed 's/^#LIBS += -laspell/LIBS += -laspell/' Makefile > Makefile.tmp
+    sed 's/^#LIBS += -ldl/LIBS += -ldl/' Makefile > Makefile.tmp
 else
-    sed 's/^LIBS += -laspell/#LIBS += -laspell/' Makefile > Makefile.tmp
+    sed 's/^LIBS += -ldl/#LIBS += -ldl/' Makefile > Makefile.tmp
 fi
 mv Makefile.tmp Makefile
 

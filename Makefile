@@ -4,10 +4,9 @@ ZEXE = ze
 CC = gcc
 #CC = clang -fno-color-diagnostics
 CFLAGS += -Wall -g
-#CFLAGS += -pedantic
 
-LIBS += -laspell
 LIBS += -lz
+LIBS += -ldl
 
 ETAGS=`which etags || echo true`
 

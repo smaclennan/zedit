@@ -15,7 +15,7 @@ static void *zdlsym(void *dl, char *sym)
 	return p;
 }
 
-#define ZDLSYM(A, B) A(*B)() = zdlsym(dl, #B)
+#define ZDLSYM(A, B, args...) A(*B)(args) = zdlsym(dl, #B)
 
 void Zspell_word(void)
 {
@@ -27,17 +27,28 @@ void Zspell_word(void)
 
 	zsymerr = 0;
 	ZDLSYM(AspellConfig *, new_aspell_config);
-	ZDLSYM(void , aspell_config_replace);
-	ZDLSYM(AspellCanHaveError *, new_aspell_speller);
-	ZDLSYM(int , aspell_error_number);
-	ZDLSYM(AspellSpeller *, to_aspell_speller);
-	ZDLSYM(int , aspell_speller_check);
-	ZDLSYM(const AspellWordList *, aspell_speller_suggest);
-	ZDLSYM(AspellStringEnumeration *, aspell_word_list_elements);
-	ZDLSYM(const char *, aspell_string_enumeration_next);
-	ZDLSYM(void , delete_aspell_string_enumeration);
-	ZDLSYM(void , delete_aspell_speller);
-	ZDLSYM(void , delete_aspell_config);
+	ZDLSYM(void , aspell_config_replace,
+	       AspellConfig*, char*, char*);
+	ZDLSYM(AspellCanHaveError *, new_aspell_speller,
+	       AspellConfig*);
+	ZDLSYM(int , aspell_error_number,
+	       AspellCanHaveError*);
+	ZDLSYM(AspellSpeller *, to_aspell_speller,
+	       AspellCanHaveError*);
+	ZDLSYM(int , aspell_speller_check,
+	       AspellSpeller*, char*, int);
+	ZDLSYM(const AspellWordList *, aspell_speller_suggest,
+	       AspellSpeller*, char*, int);
+	ZDLSYM(AspellStringEnumeration *, aspell_word_list_elements,
+	       const AspellWordList*);
+	ZDLSYM(const char *, aspell_string_enumeration_next,
+	       AspellStringEnumeration*);
+	ZDLSYM(void , delete_aspell_string_enumeration,
+	       AspellStringEnumeration*);
+	ZDLSYM(void , delete_aspell_speller,
+	       AspellSpeller*);
+	ZDLSYM(void , delete_aspell_config,
+	       AspellConfig*);
 	if (zsymerr) {
 		error("You have an incomplete libaspell.so");
 		goto done;

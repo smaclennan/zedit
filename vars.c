@@ -57,7 +57,17 @@ void Zhelp_variable(void)
 
 	binstr(Vars[rc].vname);
 	binstr(": ");
-	varval(rc);
+	switch (Vars[rc].vtype) {
+	case STRING:
+		binstr(VARSTR(rc) ? VARSTR(rc) : "NONE");
+		break;
+	case FLAG:
+		binstr(VAR(rc) ? "On" : "Off");
+		break;
+	case DECIMAL:
+		sprintf(PawStr, "%d", VAR(rc));
+		binstr(PawStr);
+	}
 
 	dump_doc(Vars[rc].doc);
 
@@ -199,21 +209,6 @@ int settabsize(unsigned mode)
 	if (VAR(i) == 0)
 		VAR(i) = 1;
 	return Tabsize = VAR(i);
-}
-
-void varval(int code)
-{
-	switch (Vars[code].vtype) {
-	case STRING:
-		binstr(VARSTR(code) ? VARSTR(code) : "NONE");
-		break;
-	case FLAG:
-		binstr(VAR(code) ? "On" : "Off");
-		break;
-	case DECIMAL:
-		sprintf(PawStr, "%d", VAR(code));
-		binstr(PawStr);
-	}
 }
 
 void Zshow_config(void)

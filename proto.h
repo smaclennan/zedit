@@ -268,7 +268,6 @@ void tprntchar(Byte);
 void tprntstr(char *);
 void tstyle(int);
 void unmark(struct mark *);
-void varval(int var);
 void vsetmod(bool);
 void vsetmrk(struct mark *);
 int chwidth(Byte, int, bool);

@@ -66,21 +66,18 @@ void Zhelp_variable(void)
 }
 
 /* If there is a config.z file, read it! */
-void readvfile(void)
+void readvfile(char *fname)
 {
-	char fname[PATHMAX + 1], line[STRMAX + 1];
-
-	if (findpath(fname, ZCFILE)) {
-		FILE *fp = fopen(fname, "r");
-		if (fp) {
-			while (fgets(line, sizeof(line), fp)) {
-				char *p = strchr(line, '\n');
-				if (p)
-					*p = '\0';
-				setavar(line, false);
-			}
-			fclose(fp);
+	char line[STRMAX + 1];
+	FILE *fp = fopen(fname, "r");
+	if (fp) {
+		while (fgets(line, sizeof(line), fp)) {
+			char *p = strchr(line, '\n');
+			if (p)
+				*p = '\0';
+			setavar(line, false);
 		}
+		fclose(fp);
 	}
 }
 

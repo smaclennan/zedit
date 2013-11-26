@@ -32,7 +32,6 @@ static char dbgfname[PATHMAX];
 #define CONFIGDIR "/usr/share/zedit"
 #endif
 
-
 static void usage(char *prog)
 {
 	printf(
@@ -44,6 +43,18 @@ static void usage(char *prog)
 		, prog);
 
 	exit(1);
+}
+
+/* Find the correct path for the config files. */
+static bool findpath(char *path, char *f)
+{
+	snprintf(path, PATHMAX, "%s/%s", Home, f);
+	if (access(path, F_OK) == 0)
+		return true;
+	snprintf(path, PATHMAX, "%s/%s", ConfigDir, f);
+	if (access(path, F_OK) == 0)
+		return true;
+	return false;
 }
 
 int main(int argc, char **argv)
@@ -94,7 +105,8 @@ int main(int argc, char **argv)
 			ConfigDir = CONFIGDIR;
 	}
 
-	readvfile();		/* Do this BEFORE tinit */
+	if (findpath(path, ZCFILE))
+		readvfile(path); /* Do this BEFORE tinit */
 
 	/* User wants Text mode as default */
 	if (textMode)
@@ -176,30 +188,6 @@ void Dbg(char *fmt, ...)
 		va_end(arg_ptr);
 		fclose(fp);
 	}
-}
-
-static bool isfile(char *path, char *dir, char *fname)
-{
-	if (!dir || !fname)
-		return false;
-	strcpy(path, dir);
-	if (*(path + strlen(path) - 1) != '/')
-		strcat(path, "/");
-	strcat(path, fname);
-	return access(path, 0) == 0;
-}
-
-/* Find the correct path for the config files.
- * We check HOME and then CONFIGDIR.
- */
-int findpath(char *p, char *f)
-{
-	if (isfile(p, Home, f))
-		return 2;
-	else if (isfile(p, ConfigDir, f))
-		return 1;
-	else
-		return 0;
 }
 
 /* ask Yes/No question.

@@ -57,6 +57,10 @@ struct avar Vars[] = {
 	  "Note that a '#!/bin/sh' type line at the start of the file can "
 	  "also turn on shell mode."
 	},
+	{ "sh-tabs",		DECIMAL,	V(4),
+	  "This variable defines the number of spaces displayed per tab "
+	  "in shell mode buffers. See also tabs."
+	},
 	{ "space-tabs",		FLAG,		V(0),
 	  "The tab character is normally inserted into the buffer as a "
 	  "single ASCII 9 character. If the space-tabs variable is set, "

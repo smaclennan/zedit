@@ -70,10 +70,6 @@ void readvfile(void)
 {
 	char fname[PATHMAX + 1], line[STRMAX + 1];
 
-	parsem(VARSTR(VCEXTS), CMODE);
-	parsem(VARSTR(VSEXTS), SHMODE);
-	parsem(VARSTR(VTEXTS), TEXT);
-
 	if (findpath(fname, ZCFILE)) {
 		FILE *fp = fopen(fname, "r");
 		if (fp) {
@@ -128,12 +124,7 @@ static void do_var_match(int i, char *vin)
 		/* Fillwidth must be > 0 */
 		if (VAR(VFILLWIDTH) == 0)
 			VAR(VFILLWIDTH) = 1;
-	} else if (i == VCEXTS)
-		parsem(VARSTR(i), CMODE);
-	else if (i == VSEXTS)
-		parsem(VARSTR(i), SHMODE);
-	else if (i == VTEXTS)
-		parsem(VARSTR(i), TEXT);
+	}
 }
 
 static void setavar(char *vin, bool display)
@@ -267,9 +258,4 @@ void Zshow_config(void)
 	tbuff->bmodf = false;
 	btostart();
 	cswitchto(tbuff);
-}
-
-void vfini(void)
-{
-	free_extensions();
 }

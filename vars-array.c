@@ -15,8 +15,7 @@ struct avar Vars[] = {
 	  "If this flag variable is set, the bell will flash the screen."
 	},
 	{ "c-extends",		STRING,		V(".c.h.cpp.cc.cxx.y.l"),
-	  "This variable defines up to 8 extensions that turn on C "
-	  "Mode."
+	  "This variable defines the extensions that turn on C mode."
 	},
 	{ "c-tabs",		DECIMAL,	V(8),
 	  "A tab is a single character that is displayed as one or more "
@@ -54,8 +53,9 @@ struct avar Vars[] = {
 	  "override this variable."
 	},
 	{ "sh-extends",		STRING,		V(".sh.csh.el"),
-	  "This variable defines up to 8 extensions that turn on Shell "
-	  "Mode."
+	  "This variable defines the extensions that turn on shell mode. "
+	  "Note that a '#!/bin/sh' type line at the start of the file can "
+	  "also turn on shell mode."
 	},
 	{ "space-tabs",		FLAG,		V(0),
 	  "The tab character is normally inserted into the buffer as a "
@@ -65,8 +65,7 @@ struct avar Vars[] = {
 	  "in the PAW."
 	},
 	{ "t-extends",		STRING,		V(".txt"),
-	  "This variable defines up to 8 extensions that turn on Text "
-	  "Mode."
+	  "This variable defines the extensions that turn on text mode."
 	},
 	{ "tabs",		DECIMAL,	V(8),
 	  "A tab is a single character that is displayed as one or more "

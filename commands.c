@@ -516,7 +516,6 @@ void Zset_mark(void)
 
 static void cleanup(void)
 {	/* Mainly for valgrind */
-	vfini();
 	wfini();
 	bfini();
 	cleanup_bookmarks();
@@ -859,7 +858,6 @@ static struct _amode
 	{ "Normal",	NORMAL	},
 	{ "SH",		SHMODE	},
 	{ "Text",	TEXT	},
-#define TEXTMODE	3
 };
 #define AMODESIZE	sizeof(struct _amode)
 #define NUMMODES	(sizeof(modes) / AMODESIZE)
@@ -874,128 +872,83 @@ void Zmode(void)
 			break;
 	rc = getplete("Mode: ", modes[i].str, (char **)modes,
 		      AMODESIZE, NUMMODES);
-	if (rc != -1)
+	if (rc != -1) {
+		int tsave = Tabsize;
 		toggle_mode(modes[rc].mode);
-}
-
-/* we allow 8 extensions per type */
-static char *cexts[9];
-static char *texts[9];
-static char *sexts[9];	/* s for shell */
-
-void free_extensions(void)
-{
-	int i;
-
-	for (i = 0; i < 9; ++i) {
-		if (cexts[i])
-			free(cexts[i]);
-		if (texts[i])
-			free(texts[i]);
-		if (sexts[i])
-			free(sexts[i]);
+		Curwdo->modeflags = INVALID;
+		if (settabsize(modes[rc].mode) != tsave)
+			Zredisplay();
 	}
 }
 
-static int get_mode(int mode, char ***exts)
+static bool matchit(char *extstr, char *str)
 {
-	switch (mode & PROGMODE) {
-	case CMODE:
-		mode = CMODE;	*exts = cexts; break;
-	case SHMODE:
-		mode = SHMODE;	*exts = sexts; break;
-	case TEXT:
-	default:
-		mode = TEXT;	*exts = texts; break;
-	}
-
-	return mode;
-}
-
-/* This is called to set the cexts/texts/aexts array */
-void parsem(char *in, int mode)
-{
-	char save[40];
-	char **o, *str;
-	int i = 0;
-
-	snprintf(save, sizeof(save), "%s", in);
-	get_mode(mode, &o);
-	str = strtok(save, ".");
-	if (str) {
-		do {
-			if (o[i])
-				free(o[i]);
-			o[i++] = strdup(str);
-		} while (i < 8 && (str = strtok(NULL, ".")));
-		o[i] = NULL;
-	}
-}
-
-static bool extmatch(char *str, int mode)
-{
-	char **o, *p;
-	int i;
-
-	if (!str)
-		return false;
-
-	get_mode(mode, &o);
-	p = strrchr(str, '.');
+	char *p = strstr(extstr, str);
 	if (p) {
-#if ZLIB
-		char tmp[PATHMAX];
-
-		if (strcmp(p, ".gz") == 0) {
-			strcpy(tmp, str);
-			p = strrchr(tmp, '.');
-			*p = '\0';
-			p = strrchr(tmp, '.');
-			if (!p)
-				return false;
-		}
-#endif
-		for (++p, i = 0; o[i]; ++i)
-			if (strcmp(o[i], p) == 0)
-				return true;
+		p += strlen(str);
+		return *p == '.' || *p == '\0';
 	}
 	return false;
 }
 
+/* Returns the mode based on the extension. */
+static int extmatch(char *str)
+{
+	if (!str)
+		return NORMAL;
+
+	char tmp[PATHMAX];
+	strcpy(tmp, str);
+
+	char *p = strrchr(tmp, '.');
+	if (!p)
+		return NORMAL;
+
+#if ZLIB
+	if (strcmp(p, ".gz") == 0) {
+		*p = '\0';
+		p = strrchr(tmp, '.');
+		if (!p)
+			return NORMAL;
+	}
+#endif
+
+	if (matchit(VARSTR(VCEXTS), p))
+		return CMODE;
+	if (matchit(VARSTR(VSEXTS), p))
+		return SHMODE;
+	if (matchit(VARSTR(VTEXTS), p))
+		return TEXT;
+	else
+		return NORMAL;
+}
+
 static bool shell_mode(void)
 {
-	bool issh = extmatch(bfname(), SHMODE);
-	if (!issh) {
-		struct mark *tmark = bcremrk();
-		btostart();
-		if (Curplen > 3)
-			issh = strncmp((char *)Curcptr, "#!/", 3) == 0;
-		bpnttomrk(tmark);
-		unmark(tmark);
-	}
+	bool issh = false;
+	struct mark *tmark = bcremrk();
+	btostart();
+	if (Curplen > 3)
+		issh = strncmp((char *)Curcptr, "#!/", 3) == 0;
+	bpnttomrk(tmark);
+	unmark(tmark);
 	return issh;
 }
 
-/* Toggle from/to 'mode'. Passed 0 to set for readone */
+/* Toggle to 'mode'. Passed 0 to set for readone */
 void toggle_mode(int mode)
 {
-	int new, tsave;
+	if (mode == 0) {
+		mode = extmatch(bfname());
+		if (mode == NORMAL) {
+			if (shell_mode())
+				mode = SHMODE;
+			else if (!VAR(VNORMAL))
+				mode = TEXT;
+		}
+	}
 
-	if ((Curbuff->bmode & mode) || mode == 0)
-		/* Toggle out of 'mode' - decide which to switch to */
-		if (mode != CMODE && extmatch(bfname(), CMODE))
-			new = CMODE;
-		else if (mode != SHMODE && shell_mode())
-			new = SHMODE;
-		else if (mode != TEXT &&
-			 (!VAR(VNORMAL) || extmatch(bfname(), TEXT)))
-			new = TEXT;
-		else
-			new = NORMAL;
-	else
-		new = mode;
-
-	if (new == SHMODE) {
+	if (mode == SHMODE) {
 		char *p = strrchr(bfname(), '.');
 		if (p && strcmp(p, ".el") == 0)
 			Curbuff->comchar = ';';
@@ -1004,13 +957,7 @@ void toggle_mode(int mode)
 	} else
 		Curbuff->comchar = 0;
 
-	Curbuff->bmode = (Curbuff->bmode & ~MAJORMODE) | new;
-	if (mode) {
-		Curwdo->modeflags = INVALID;
-		tsave = Tabsize;
-		if (settabsize(new) != tsave)
-			Zredisplay();
-	}
+	Curbuff->bmode = (Curbuff->bmode & ~MAJORMODE) | mode;
 }
 
 void Zmark_paragraph(void)

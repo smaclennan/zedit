@@ -68,7 +68,7 @@ static int getname(char *prompt, char *path, bool isdir)
 		Keys[(int)mod[i]] = was[i];
 	freelist(&Flist);
 	if (Didmatch) {
-		Zredisplay();
+		redisplay();
 		Didmatch = false;
 	}
 	return rc;
@@ -79,14 +79,6 @@ int getfname(char *prompt, char *path)
 	int rc = getname(prompt, path, false);
 	if (rc > 0)
 		error("Invalid path.");
-	return rc;
-}
-
-int getdname(char *prompt, char *path)
-{
-	int rc = getname(prompt, path, true);
-	if (rc > 0)
-		error("Invalid dir.");
 	return rc;
 }
 

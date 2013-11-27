@@ -150,13 +150,14 @@ void cprntchar(Byte ch)
 /* Remove all comments from buffer and mark unscanned */
 void uncomment(struct buff *buff)
 {
-	while (buff->chead) {
-		struct comment *com = buff->chead;
-		buff->chead = buff->chead->next;
-		unmark(com->start);
-		unmark(com->end);
-		free(com);
-	}
+	if (buff)
+		while (buff->chead) {
+			struct comment *com = buff->chead;
+			buff->chead = buff->chead->next;
+			unmark(com->start);
+			unmark(com->end);
+			free(com);
+		}
 
 	Comstate = false;
 }

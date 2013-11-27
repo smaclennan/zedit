@@ -877,7 +877,7 @@ void Zmode(void)
 		toggle_mode(modes[rc].mode);
 		Curwdo->modeflags = INVALID;
 		if (settabsize(modes[rc].mode) != tsave)
-			Zredisplay();
+			redisplay();
 	}
 }
 
@@ -968,7 +968,7 @@ static void setregion(int (*convert)(int))
 	else
 		bpnttomrk(&tmark);
 	Curbuff->bmodf = true;
-	Zredisplay();
+	redisplay();
 }
 
 void Zuppercase_region(void)

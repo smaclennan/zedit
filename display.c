@@ -46,6 +46,9 @@ void redisplay(void)
 	for (i = 0; i < tmaxrow() - 2; ++i)
 		Scrnmarks[i].modf = true;
 	Tlrow = -1;
+	
+	/* This is needed to set Comstate to false */
+	uncomment(NULL);
 }
 
 /* Do the actual display update from the buffer */

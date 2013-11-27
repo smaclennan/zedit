@@ -42,7 +42,8 @@ static int get_findfile(char *prompt)
 void Zfind_file(void)
 {
 	if (get_findfile("Find File: ") == 0)
-		findfile(Fname);
+		if (findfile(Fname))
+			redisplay();
 }
 
 void Zrevert_file(void)

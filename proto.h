@@ -214,7 +214,6 @@ struct wdo *findwdo(struct buff *);
 bool getarg(char *, char *, int);
 char *getbtxt(char *, int);
 bool getbword(char *, int, int (*)());
-int getdname(char *prompt, char *path);
 int getplete(char *, char *, char **, int, int);
 int bisspace(void);
 int bistoken(void);

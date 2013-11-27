@@ -55,7 +55,7 @@ static void sigwinch(int sig)
 		termsize();
 	else {
 		Zredisplay();		/* update the windows */
-		zrefresh();			/* force a screen update */
+		zrefresh();		/* force a screen update */
 	}
 
 #ifdef SYSV4
@@ -162,10 +162,7 @@ void tinit(void)
 	}
 
 	Srow = Scol = -1;	/* undefined */
-	if (Initializing)
-		initline();		/* Curwdo not defined yet */
-	else
-		Zredisplay();
+	initline();		/* Curwdo not defined yet */
 }
 
 void tfini(void)

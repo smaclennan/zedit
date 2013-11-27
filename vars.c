@@ -153,7 +153,7 @@ static void setavar(char *vin, bool display)
 			if (display) {
 				if (i == VTABS || i == VCTABS) {
 					settabsize(Curbuff->bmode);
-					Zredisplay();
+					redisplay();
 				}
 				if (Vars[i].vtype == STRING) {
 					if (VARSTR(i))
@@ -169,7 +169,7 @@ static void setavar(char *vin, bool display)
 				if (i == VLINES)
 					Curwdo->modeflags = INVALID;
 				else if (i == VCOMMENTS)
-					Zredisplay();
+					redisplay();
 			}
 			break;
 		}

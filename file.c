@@ -66,7 +66,7 @@ void Zrevert_file(void)
 	boffset(offset);
 }
 
-/* Read one file, creating the buffer is necessary.
+/* Read one file, creating the buffer if necessary.
  * Returns false if unable to create buffer only.
  * false means that there is no use continuing.
  */

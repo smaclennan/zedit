@@ -73,8 +73,8 @@ static bool find_tag(char *word)
 			strcat(path, fname);
 
 			set_bookmark(word);
-
-			if (cmakebuff(fname, path)) {
+			
+			if (findfile(fname)) {
 				bgoto_char(offset);
 				found = true;
 			}

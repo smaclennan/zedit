@@ -40,7 +40,11 @@ static void (*printchar)(Byte ichar) = tprntchar;
 /* Mark screen invalid */
 void redisplay(void)
 {
+	struct wdo *wdo;
 	int i;
+
+	for (wdo = Whead; wdo; wdo = wdo->next)
+		wdo->modeflags = INVALID;
 
 	tclrwind();
 	for (i = 0; i < tmaxrow() - 2; ++i)

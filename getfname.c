@@ -48,7 +48,7 @@ static void freelist(struct llist **list);
  *		ABORT(-1) for abort
  *		> 0 for error
  */
-static int getname(char *prompt, char *path, bool isdir)
+int getfname(char *prompt, char *path)
 {
 	const char mod[3] = { '\t', '/', '~' };
 	char tmp[PATHMAX + 1];
@@ -62,7 +62,7 @@ static int getname(char *prompt, char *path, bool isdir)
 	if (rc == 0) {
 		rc = pathfixup(path, tmp);
 		if (rc == -1)
-			rc = isdir ? 0 : 1;
+			rc = 1;
 	}
 	for (i = 0; i < 3; ++i)
 		Keys[(int)mod[i]] = was[i];
@@ -71,12 +71,6 @@ static int getname(char *prompt, char *path, bool isdir)
 		redisplay();
 		Didmatch = false;
 	}
-	return rc;
-}
-
-int getfname(char *prompt, char *path)
-{
-	int rc = getname(prompt, path, false);
 	if (rc > 0)
 		error("Invalid path.");
 	return rc;

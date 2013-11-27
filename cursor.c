@@ -292,12 +292,9 @@ void Zview_line(void)
 
 void Zredisplay(void)
 {
-	struct wdo *wdo;
 	struct buff *buff;
 
 	wsize();
-	for (wdo = Whead; wdo; wdo = wdo->next)
-		wdo->modeflags = INVALID;
 	redisplay();
 
 	for (buff = Bufflist; buff; buff = buff->next)

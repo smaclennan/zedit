@@ -73,10 +73,10 @@ static bool find_tag(char *word)
 			strcat(path, fname);
 
 			set_bookmark(word);
-
 			
-			if (findfile(fname)) {
+			if (findfile(path)) {
 				bgoto_char(offset);
+				redisplay();
 				found = true;
 			}
 

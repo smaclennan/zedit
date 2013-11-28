@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 
 	/* Do this after tinit */
 	if (findpath(path, ZBFILE))
-		bindfile(path, READ_MODE);
+		bindfile(path);
 	else
 		zbind();
 

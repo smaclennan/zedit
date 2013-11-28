@@ -17,7 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#define ZONE_WINDOW		0
+#define ZNOTIMPL		0
+#define ZONE_WINDOW		(ZNOTIMPL + 1)
 #define ZSPLIT_WINDOW		(ZONE_WINDOW + 1)
 #define ZABORT			(ZSPLIT_WINDOW + 1)
 #define ZAGAIN			(ZABORT + 1)
@@ -61,8 +62,7 @@
 #define ZNEXT_CHAR		(ZMETA + 1)
 #define ZNEXT_LINE		(ZNEXT_CHAR + 1)
 #define ZNEXT_PAGE		(ZNEXT_LINE + 1)
-#define ZNOTIMPL		(ZNEXT_PAGE + 1)
-#define ZNEXT_BOOKMARK		(ZNOTIMPL + 1)
+#define ZNEXT_BOOKMARK		(ZNEXT_PAGE + 1)
 #define ZOTHER_NEXT_PAGE	(ZNEXT_BOOKMARK + 1)
 #define ZOPEN_LINE		(ZOTHER_NEXT_PAGE + 1)
 #define ZINSERT_OVERWRITE	(ZOPEN_LINE + 1)

@@ -177,7 +177,7 @@ int bgetcol(bool, int);
 void bgoto(struct buff *);
 void bgoto_char(long offset);
 void zbind(void);
-bool bindfile(char *fname, int mode);
+void bindfile(const char *fname);
 void binsert(Byte);
 void binstr(const char *);
 bool bisaftermrk(struct mark *);

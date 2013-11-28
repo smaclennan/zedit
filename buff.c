@@ -151,29 +151,29 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 /* Create a buffer.   Returns a pointer to the buffer descriptor. */
 struct buff *bcreate(void)
 {
-	struct buff *new;
+	struct buff *buf;
 	struct page *fpage;
 
-	new = calloc(1, sizeof(struct buff));
-	if (new) {
-		fpage = newpage(new, NULL, NULL);
+	buf = calloc(1, sizeof(struct buff));
+	if (buf) {
+		fpage = newpage(buf, NULL, NULL);
 		if (!fpage) {
 			/* bad news, de-allocate */
-			free((char *)new);
+			free(buf);
 			return NULL;
 		}
-		new->mark = bcremrk();
-		new->mark->mbuff = new;
-		new->pnt_page = new->mark->mpage = fpage;
-		new->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
+		buf->mark = bcremrk();
+		buf->mark->mbuff = buf;
+		buf->pnt_page = buf->mark->mpage = fpage;
+		buf->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 			(VAR(VEXACT) ? EXACT     : 0);
 #if SHELL
-		new->child = EOF;
+		buf->child = EOF;
 #endif
 		++NumBuffs;
 	}
 
-	return new;
+	return buf;
 }
 
 /* Create a mark at the current point and add it to the list.
@@ -181,25 +181,25 @@ struct buff *bcreate(void)
  */
 struct mark *bcremrk(void)
 {
-	struct mark *new;
+	struct mark *mrk;
 
 	if (freemark) {
-		new = freemark;
+		mrk = freemark;
 		freemark = NULL;
 	} else {
-		new = calloc(1, sizeof(struct mark));
-		if (!new)
+		mrk = calloc(1, sizeof(struct mark));
+		if (!mrk)
 			longjmp(zenv, -1);	/* ABORT */
 	}
 
-	bmrktopnt(new);
-	new->prev = Mrklist;		/* add to end of list */
-	new->next = NULL;
+	bmrktopnt(mrk);
+	mrk->prev = Mrklist;		/* add to end of list */
+	mrk->next = NULL;
 	if (Mrklist)
-		Mrklist->next = new;
-	Mrklist = new;
+		Mrklist->next = mrk;
+	Mrklist = mrk;
 	++NumMarks;
-	return new;
+	return mrk;
 }
 
 /* Free up the given mark and remove it from the list.
@@ -398,14 +398,14 @@ int bgetcol(bool flag, int col)
 
 
 /* Insert a character in the current buffer. */
-void binsert(Byte new)
+void binsert(Byte byte)
 {
 	struct mark *btmark;
 
 	if (Curplen == PSIZE && !pagesplit())
 		return;
 	memmove(Curcptr + 1, Curcptr, Curplen - Curchar);
-	*Curcptr++ = new;
+	*Curcptr++ = byte;
 	++Curplen;
 	++Curchar;
 	Curbuff->bmodf = true;
@@ -669,16 +669,16 @@ void bswappnt(struct mark *tmark)
 }
 
 
-void bswitchto(struct buff *new)
+void bswitchto(struct buff *buf)
 {
-	if (new && new != Curbuff) {
+	if (buf && buf != Curbuff) {
 		if (Curbuff) {
 			Curbuff->pnt_page   = Curpage;
 			Curbuff->pnt_offset = Curchar;
 		}
-		makecur(new->pnt_page);
-		makeoffset(new->pnt_offset);
-		Curbuff = new;
+		makecur(buf->pnt_page);
+		makeoffset(buf->pnt_offset);
+		Curbuff = buf;
 	}
 }
 
@@ -1034,18 +1034,18 @@ bool mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage)
 {
-	struct page *new = calloc(1, sizeof(struct page));
+	struct page *page = calloc(1, sizeof(struct page));
 
-	if (new) {
-		new->nextp = npage;
-		new->prevp = ppage;
-		npage ? (npage->prevp = new) : (tbuff->lastp = new);
-		ppage ? (ppage->nextp = new) : (tbuff->firstp = new);
-		new->plines = EOF;	/* undefined */
+	if (page) {
+		page->nextp = npage;
+		page->prevp = ppage;
+		npage ? (npage->prevp = page) : (tbuff->lastp = page);
+		ppage ? (ppage->nextp = page) : (tbuff->firstp = page);
+		page->plines = EOF;	/* undefined */
 		++NumPages;
 	}
 
-	return new;
+	return page;
 }
 
 /* Free a memory page */
@@ -1082,25 +1082,25 @@ void makecur(struct page *page)
 /* Split the current (full) page. */
 static bool pagesplit(void)
 {
-	struct page *new;
+	struct page *newp;
 	struct mark *btmark;
 
-	new = newpage(Curbuff, Curpage, Curpage->nextp);
-	if (new == NULL)
+	newp = newpage(Curbuff, Curpage, Curpage->nextp);
+	if (newp == NULL)
 		return false;
 
-	memmove(new->pdata, Cpstart + HALFP, HALFP);
+	memmove(newp->pdata, Cpstart + HALFP, HALFP);
 	Curmodf = true;
 	Curplen = HALFP;
-	new->plen = HALFP;
+	newp->plen = HALFP;
 	for (btmark = Mrklist; btmark; btmark = btmark->prev)
 		if (btmark->mpage == Curpage && btmark->moffset >= HALFP) {
-			btmark->mpage = new;
+			btmark->mpage = newp;
 			btmark->moffset -= HALFP;
 		}
 	if (Curchar >= HALFP) {
 		/* new page has Point in it */
-		makecur(new);
+		makecur(newp);
 		makeoffset(Curchar - HALFP);
 	}
 	return true;

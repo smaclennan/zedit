@@ -1,7 +1,7 @@
 .PHONY: all install clean
 
 ZEXE = ze
-CC = gcc
+CC = g++
 #CC = clang -fno-color-diagnostics
 CFLAGS += -Wall -g
 

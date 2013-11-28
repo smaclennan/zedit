@@ -6,6 +6,6 @@
 
 /* USER CONFIGURABLE - don't define any, see if I care */
 #define SHELL		1
-#define SPELL		1		/* Requires libaspell */
+#define SPELL		0		/* Requires libaspell */
 #define ZLIB		1		/* Requires zlib */
 #define UNDO            1		/* EXPERIMENTAL undo code */

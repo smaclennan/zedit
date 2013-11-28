@@ -26,19 +26,19 @@ struct wdo *Whead, *Curwdo;
 /* Create a new window pointer - screen info invalid */
 static struct wdo *wcreate(int first, int last)
 {
-	struct wdo *new = calloc(1, sizeof(struct wdo));
+	struct wdo *wdo = calloc(1, sizeof(struct wdo));
 
-	if (new) {
-		new->wbuff	= Curbuff;
-		new->wpnt	= bcremrk();
-		new->wmrk	= bcremrk();
-		new->wstart	= bcremrk();
-		new->modeflags	= INVALID;
-		new->first	= first;
-		new->last	= last;
-		mrktomrk(new->wmrk, Curbuff->mark);
+	if (wdo) {
+		wdo->wbuff	= Curbuff;
+		wdo->wpnt	= bcremrk();
+		wdo->wmrk	= bcremrk();
+		wdo->wstart	= bcremrk();
+		wdo->modeflags	= INVALID;
+		wdo->first	= first;
+		wdo->last	= last;
+		mrktomrk(wdo->wmrk, Curbuff->mark);
 	}
-	return new;
+	return wdo;
 }
 
 /* free wdo - may invalidate Curwdo and Whead */
@@ -68,7 +68,7 @@ static void winvalidate(struct wdo *wdo)
 
 static bool wdelete(struct wdo *wdo)
 {
-	struct wdo *new;
+	struct wdo *new_wdo;
 
 	/* can't delete last window */
 	if (!Whead->next)
@@ -78,28 +78,28 @@ static bool wdelete(struct wdo *wdo)
 	if ((wdo->next ? wdo->next->last - wdo->next->first : ROWMAX + 1) <=
 	   (wdo->prev ? wdo->prev->last - wdo->prev->first : ROWMAX + 1)) {
 		/* give it to the next window */
-		new = wdo->next;
-		new->first = wdo->first;
-		new->prev = wdo->prev;
+		new_wdo = wdo->next;
+		new_wdo->first = wdo->first;
+		new_wdo->prev = wdo->prev;
 		if (wdo->prev)
-			wdo->prev->next = new;
+			wdo->prev->next = new_wdo;
 		else
-			Whead = new;
+			Whead = new_wdo;
 	} else if (wdo->prev) {
 		/* give it to the previous window */
-		new = wdo->prev;
-		new->last = wdo->last;
-		new->next = wdo->next;
+		new_wdo = wdo->prev;
+		new_wdo->last = wdo->last;
+		new_wdo->next = wdo->next;
 		if (wdo->next)
-			wdo->next->prev = new;
-		new->modeflags = INVALID;
+			wdo->next->prev = new_wdo;
+		new_wdo->modeflags = INVALID;
 	} else
 		return false;
 
 	winvalidate(wdo);
 
 	if (wdo == Curwdo) {
-		wswitchto(new);
+		wswitchto(new_wdo);
 		reframe();	/*SAM*/
 	}
 	wfree(wdo);
@@ -112,7 +112,7 @@ static bool wdelete(struct wdo *wdo)
  */
 static bool wsplit(void)
 {
-	struct wdo *new;
+	struct wdo *new_wdo;
 	int first, last;
 
 	if (wheight() < MINWDO)
@@ -121,27 +121,27 @@ static bool wsplit(void)
 	/* Create the new window. */
 	first = Curwdo->first + (wheight() / 2) + 1;
 	last = Curwdo->last;
-	new = wcreate(first, last);
-	if (!new)
+	new_wdo = wcreate(first, last);
+	if (!new_wdo)
 		return false;
 
 	/* resize the old window */
 	Curwdo->last = first - 1;
-	new->first = Curwdo->last + 1;
+	new_wdo->first = Curwdo->last + 1;
 	Curwdo->modeflags = INVALID;
 
 	/* link it into chain */
-	new->prev = Curwdo;
-	new->next = Curwdo->next;
+	new_wdo->prev = Curwdo;
+	new_wdo->next = Curwdo->next;
 	if (Curwdo->next)
-		Curwdo->next->prev = new;
-	Curwdo->next = new;
+		Curwdo->next->prev = new_wdo;
+	Curwdo->next = new_wdo;
 
 	/* Point may be off new screen, reframe just in case... */
 	reframe();
 
 	/* Go to new window. */
-	wswitchto(new);
+	wswitchto(new_wdo);
 	reframe();
 	mrktomrk(Curwdo->wstart, Sstart);
 	return true;

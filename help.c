@@ -41,7 +41,7 @@ static void dump_bindings(int fnum)
 		binstr("Unbound");
 }
 
-void dump_doc(char *doc)
+void dump_doc(const char *doc)
 {
 	binstr("\n\n");
 

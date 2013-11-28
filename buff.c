@@ -165,7 +165,7 @@ struct buff *bcreate(void)
 		new->mark = bcremrk();
 		new->mark->mbuff = new;
 		new->pnt_page = new->mark->mpage = fpage;
-		new->bmode = (VAR(VNORMAL) ? NORMAL : TEXT) |
+		new->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 			(VAR(VEXACT) ? EXACT     : 0);
 #if SHELL
 		new->child = EOF;
@@ -421,7 +421,7 @@ void binsert(Byte new)
 
 
 /* Insert a string into the current buffer. */
-void binstr(char *str)
+void binstr(const char *str)
 {
 	while (*str)
 		binsert(*str++);

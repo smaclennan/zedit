@@ -24,7 +24,7 @@ Byte Keys[NUMKEYS], Lfunc;
 Byte CRdefault = ZNEWLINE;
 
 /* setup the default bindings for the Keys array */
-void bind(void)
+void zbind(void)
 {
 	memset(Keys, ZNOTIMPL, NUMKEYS);
 
@@ -244,7 +244,7 @@ void Zbind(void)
 	int f, key;
 
 	if (Argp) {
-		bind();
+		zbind();
 		Arg = 0;
 		return;
 	}

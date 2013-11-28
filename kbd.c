@@ -22,8 +22,8 @@
 
 /* Note: We can currently only have 32 specials */
 static struct key_array {
-	char *key;
-	char *label;
+	const char *key;
+	const char *label;
 } Tkeys[] = {
 	{ "\033[A",	"up" },
 	{ "\033[B",	"down" },

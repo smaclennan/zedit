@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-static void setavar(char *vin, bool display);
+static void setavar(const char *vin, bool display);
 
 void Zset_variable(void)
 {
@@ -29,9 +29,9 @@ void Zset_variable(void)
 	if (rc == -1)
 		return;
 
-	if (!Argp || Vars[rc].vtype == STRING) {
+	if (!Argp || Vars[rc].vtype == V_STRING) {
 		sprintf(pstr, "%s: ", Vars[rc].vname);
-		if (Vars[rc].vtype == STRING)
+		if (Vars[rc].vtype == V_STRING)
 			if (VARSTR(rc))
 				strcpy(arg, VARSTR(rc));
 			else
@@ -58,13 +58,13 @@ void Zhelp_variable(void)
 	binstr(Vars[rc].vname);
 	binstr(": ");
 	switch (Vars[rc].vtype) {
-	case STRING:
+	case V_STRING:
 		binstr(VARSTR(rc) ? VARSTR(rc) : "NONE");
 		break;
-	case FLAG:
+	case V_FLAG:
 		binstr(VAR(rc) ? "On" : "Off");
 		break;
-	case DECIMAL:
+	case V_DECIMAL:
 		sprintf(PawStr, "%d", VAR(rc));
 		binstr(PawStr);
 	}
@@ -91,14 +91,14 @@ void readvfile(char *fname)
 	}
 }
 
-static void setit(int i, char *ptr)
+static void setit(int i, const char *ptr)
 {
 	switch (Vars[i].vtype) {
-	case STRING:
+	case V_STRING:
 		if (strcmp(VARSTR(i), ptr))
 			VARSTR(i) = strdup(ptr);
 		break;
-	case FLAG:
+	case V_FLAG:
 		if (strncasecmp(ptr, "true", 4) == 0)
 			VAR(i) = 1;
 		else if (strncasecmp(ptr, "false", 5) == 0)
@@ -106,16 +106,16 @@ static void setit(int i, char *ptr)
 		else
 			VAR(i) = strtol(ptr, NULL, 0);
 		break;
-	case DECIMAL:
+	case V_DECIMAL:
 		VAR(i) = strtol(ptr, NULL, 0);
 	}
 }
 
-static void do_var_match(int i, char *vin)
+static void do_var_match(int i, const char *vin)
 {
-	char *ptr;
+	const char *ptr;
 
-	if (Argp && Vars[i].vtype != STRING)
+	if (Argp && Vars[i].vtype != V_STRING)
 		VAR(i) = Arg;
 	else {
 		for (ptr = vin; *ptr && !isspace(*ptr); ++ptr)
@@ -134,7 +134,7 @@ static void do_var_match(int i, char *vin)
 	}
 }
 
-static void setavar(char *vin, bool display)
+static void setavar(const char *vin, bool display)
 {
 	char *ptr, msg[STRMAX + 1];
 	int i = 0;
@@ -155,7 +155,7 @@ static void setavar(char *vin, bool display)
 					settabsize(Curbuff->bmode);
 					redisplay();
 				}
-				if (Vars[i].vtype == STRING) {
+				if (Vars[i].vtype == V_STRING) {
 					if (VARSTR(i))
 						putpaw("%s = %s",
 						       Vars[i].vname,
@@ -222,7 +222,7 @@ void Zshow_config(void)
 	bempty();
 	binstr("# String variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
-		if (Vars[i].vtype == STRING) {
+		if (Vars[i].vtype == V_STRING) {
 			if (VARSTR(i))
 				snprintf(line, sizeof(line), "%-15s %s\n",
 					 Vars[i].vname, VARSTR(i));
@@ -234,7 +234,7 @@ void Zshow_config(void)
 
 	binstr("\n# Decimal variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
-		if (Vars[i].vtype == DECIMAL) {
+		if (Vars[i].vtype == V_DECIMAL) {
 			snprintf(line, sizeof(line), "%-15s %d\n",
 				 Vars[i].vname, VAR(i));
 			binstr(line);
@@ -242,7 +242,7 @@ void Zshow_config(void)
 
 	binstr("\n# Flag variables:\n");
 	for (i = 0; i < NUMVARS; ++i)
-		if (Vars[i].vtype == FLAG) {
+		if (Vars[i].vtype == V_FLAG) {
 			snprintf(line, sizeof(line), "%-15s %s\n",
 				 Vars[i].vname,
 				 VAR(i) ? "True" : "False");

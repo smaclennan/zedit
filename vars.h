@@ -20,19 +20,17 @@
 #ifndef _VARS_H_
 #define _VARS_H_
 
+enum v_type { V_STRING, V_DECIMAL, V_FLAG };
+
 /* The variable structure. */
 struct avar {
-	char *vname;
-	enum {
-		STRING,
-		DECIMAL,
-		FLAG
-	} vtype;
+	const char *vname;
+	enum v_type vtype;
 	union {
 		char *str;
 		unsigned val;
 	} u;
-	char *doc;
+	const char *doc;
 };
 extern struct avar Vars[];
 

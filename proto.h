@@ -211,7 +211,7 @@ void execute(void);
 bool filesave(void);
 bool findfile(char *);
 struct wdo *findwdo(struct buff *);
-bool getarg(char *, char *, int);
+bool getarg(const char *, char *, int);
 char *getbtxt(char *, int);
 bool getbword(char *, int, int (*)());
 int getplete(char *, char *, char **, int, int);
@@ -264,7 +264,7 @@ void tobegline(void);
 void toendline(void);
 void toggle_mode(int);
 void tprntchar(Byte);
-void tprntstr(char *);
+void tprntstr(const char *);
 void tstyle(int);
 void unmark(struct mark *);
 void vsetmod(bool);
@@ -291,7 +291,7 @@ void Dbg(char *fmt, ...);
 
 /* for getfname */
 
-int getfname(char *, char *);
+int getfname(const char *, char *);
 int nmatch(char *, char *);
 
 

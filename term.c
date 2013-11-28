@@ -319,7 +319,7 @@ int chwidth(Byte ch, int col, bool adjust)
 	}
 }
 
-void tprntstr(char *str)
+void tprntstr(const char *str)
 {
 	while (*str)
 		tprntchar(*str++);

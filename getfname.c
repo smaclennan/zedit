@@ -48,7 +48,7 @@ static void freelist(struct llist **list);
  *		ABORT(-1) for abort
  *		> 0 for error
  */
-int getfname(char *prompt, char *path)
+int getfname(const char *prompt, char *path)
 {
 	const char mod[3] = { '\t', '/', '~' };
 	char tmp[PATHMAX + 1];

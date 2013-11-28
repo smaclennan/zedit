@@ -41,7 +41,7 @@ void (*Nextpart)(void);
  * Only allow max chars.
  * Arg is NOT overwritten if the user aborts, or returns a null string.
  */
-bool getarg(char *prompt, char *arg, int max)
+bool getarg(const char *prompt, char *arg, int max)
 {
 	char *ptr;
 	int argp_save, arg_save, rc;

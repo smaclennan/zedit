@@ -49,12 +49,14 @@ static void usage(char *prog)
 /* Find the correct path for the config files. */
 static bool findpath(char *path, char *f)
 {
+#ifndef WIN32 // SAM FIX
 	snprintf(path, PATHMAX, "%s/%s", Home, f);
 	if (access(path, F_OK) == 0)
 		return true;
 	snprintf(path, PATHMAX, "%s/%s", ConfigDir, f);
 	if (access(path, F_OK) == 0)
 		return true;
+#endif
 	return false;
 }
 
@@ -71,11 +73,16 @@ int main(int argc, char **argv)
 		Zexit();
 	}
 
+#ifdef WIN32
+	/* SAM HACK FOR NOW */
+	Home = "/";
+#else
 	Home = getenv("HOME");
 	if (!Home) {
 		puts("You don't exist!");
 		exit(1);
 	}
+#endif
 
 	snprintf(dbgfname, sizeof(dbgfname), "%s/z.out", Home);
 	unlink(dbgfname);

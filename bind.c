@@ -359,11 +359,13 @@ void Zdisplay_bindings(void)
 
 void Zsave_bindings(void)
 {
+#ifndef WIN32 // SAM FIX
 	char path[PATHMAX + 1];
 
 	snprintf(path, sizeof(path), "%s/%s", Home, ZBFILE);
 	if (bindfile(path, WRITE_MODE))
 		putpaw("%s written.", path);
+#endif
 }
 
 bool bindfile(char *fname, int mode)

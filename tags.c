@@ -1,4 +1,6 @@
 #include "z.h"
+
+#ifndef WIN32
 #include <regex.h>
 
 static char Tagfile[PATHMAX];
@@ -108,3 +110,7 @@ void Ztag_word(void)
 	getbword(tag, sizeof(tag), bisword);
 	find_tag(tag);
 }
+#else
+void Ztag(void) { tbell(); }
+void Ztag_word(void) { tbell(); }
+#endif

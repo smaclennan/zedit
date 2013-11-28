@@ -30,7 +30,12 @@
 #include <sys/stat.h>
 
 #ifdef WIN32
+#include <Windows.h>
 #define inline __inline
+#define snprintf _snprintf
+#define F_OK 0
+#define R_OK 0
+#define W_OK 0
 #else
 #include <unistd.h>
 #endif

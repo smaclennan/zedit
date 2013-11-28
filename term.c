@@ -20,7 +20,7 @@
 #include "z.h"
 
 #include <signal.h>
-#include <sys/wait.h>	/* need for WNOWAIT */
+// SAM #include <sys/wait.h>	/* need for WNOWAIT */
 
 #if defined(HAVE_TERMIO)
 #include <termio.h>

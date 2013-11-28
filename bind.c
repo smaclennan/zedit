@@ -331,7 +331,7 @@ void Zdisplay_bindings(void)
 	int f, i;
 	unsigned k;
 
-	wuseother(LISTBUFF);
+	cmakebuff(LISTBUFF, NULL);
 	binstr("COMMAND                            PAW    BINDING\n");
 	for (f = 0; f < NUMFUNCS; ++f) {
 		if (Cnames[f].fnum == ZNOTIMPL || Cnames[f].fnum == ZINSERT)

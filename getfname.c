@@ -18,7 +18,9 @@
  */
 
 #include "z.h"
+#ifndef WIN32
 #include <pwd.h>
+#endif
 #ifdef HAVE_DIRECT
 #include <sys/dir.h>
 #define dirent direct
@@ -287,6 +289,9 @@ void Zfname(void)
 /* Get users directory - handles partial matches. */
 static bool zgetpwdir(char *name, char *to)
 {
+#ifdef WIN32
+	return false;
+#else
 	struct passwd *pwd;
 	bool match = false;
 	int len = strlen(name);
@@ -307,6 +312,7 @@ static bool zgetpwdir(char *name, char *to)
 		}
 	endpwent();
 	return match;
+#endif
 }
 
 /*

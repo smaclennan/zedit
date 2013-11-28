@@ -24,11 +24,16 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <unistd.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/stat.h>
+
+#ifdef WIN32
+#define inline __inline
+#else
+#include <unistd.h>
+#endif
 
 #include "config.h"
 #include "vars.h"

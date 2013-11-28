@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-static void setavar(char *vin, bool display);
+static void setavar(const char *vin, bool display);
 
 void Zset_variable(void)
 {
@@ -91,7 +91,7 @@ void readvfile(char *fname)
 	}
 }
 
-static void setit(int i, char *ptr)
+static void setit(int i, const char *ptr)
 {
 	switch (Vars[i].vtype) {
 	case V_STRING:
@@ -111,9 +111,9 @@ static void setit(int i, char *ptr)
 	}
 }
 
-static void do_var_match(int i, char *vin)
+static void do_var_match(int i, const char *vin)
 {
-	char *ptr;
+	const char *ptr;
 
 	if (Argp && Vars[i].vtype != V_STRING)
 		VAR(i) = Arg;
@@ -134,7 +134,7 @@ static void do_var_match(int i, char *vin)
 	}
 }
 
-static void setavar(char *vin, bool display)
+static void setavar(const char *vin, bool display)
 {
 	char *ptr, msg[STRMAX + 1];
 	int i = 0;

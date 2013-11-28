@@ -421,7 +421,7 @@ void binsert(Byte new)
 
 
 /* Insert a string into the current buffer. */
-void binstr(char *str)
+void binstr(const char *str)
 {
 	while (*str)
 		binsert(*str++);

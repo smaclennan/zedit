@@ -98,9 +98,9 @@
 #define BADCHAR		-2
 
 struct cnames {
-	char *name;
+	const char *name;
 	int fnum;
-	char *doc;
+	const char *doc;
 };
 #define CNAMESIZE sizeof(struct cnames)
 

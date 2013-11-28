@@ -30,7 +30,7 @@ int InPaw;
 
 void hang_up(int sig) {}
 
-void Dbg(char *fmt, ...) {}
+void Dbg(const char *fmt, ...) {}
 
 int main(int argc, char *argv[])
 {

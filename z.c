@@ -177,7 +177,7 @@ int main(int argc, char **argv)
 
 /* Support functions */
 
-void Dbg(char *fmt, ...)
+void Dbg(const char *fmt, ...)
 {
 	FILE *fp = fopen(dbgfname, "a");
 	if (fp) {
@@ -193,7 +193,7 @@ void Dbg(char *fmt, ...)
 /* ask Yes/No question.
  * Returns YES, NO, BANG, or ABORT
  */
-int ask2(char *msg, bool allow_bang)
+int ask2(const char *msg, bool allow_bang)
 {
 	int rc = BADCHAR;
 	unsigned cmd;
@@ -227,12 +227,12 @@ int ask2(char *msg, bool allow_bang)
 /* ask Yes/No question.
  * Returns YES, NO, or ABORT
  */
-int ask(char *msg)
+int ask(const char *msg)
 {
 	return ask2(msg, false);
 }
 
-bool delayprompt(char *msg)
+bool delayprompt(const char *msg)
 {
 	int rc = delay(500);
 	if (rc)

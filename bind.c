@@ -215,7 +215,7 @@ void zbind(void)
 	Keys[TC_F12]	= ZREVERT_FILE;
 }
 
-static bool bindone(char *prompt, int first, int *key)
+static bool bindone(const char *prompt, int first, int *key)
 {
 	putpaw("%s", prompt);
 	*key = tgetcmd();

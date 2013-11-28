@@ -318,7 +318,7 @@ bool paw_resize(int diff)
  * Makes new window and buffer current.
  * NOTE: Blows away previous buffer.
  */
-bool wuseother(char *bname)
+bool wuseother(const char *bname)
 {
 	struct wdo *wdo, *last;
 	struct buff *buff;

@@ -304,7 +304,7 @@ bool bdelbuff(struct buff *tbuff)
 }
 
 /* Delete quantity characters. */
-void bdelete(unsigned quantity)
+void bdelete(int quantity)
 {
 	int quan, noffset;
 	struct page *tpage;
@@ -857,7 +857,8 @@ static bool cp(char *from, char *to)
 {
 	FILE *in, *out;
 	char buf[1024];
-	int n, rc = true;
+	int rc = true;
+	size_t n;
 
 	in = fopen(from, "r");
 	out = fopen(to, "w");

@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 	if (findpath(path, ZBFILE))
 		bindfile(path, READ_MODE);
 	else
-		bind();
+		zbind();
 
 	Curwdo->modeflags = INVALID;
 

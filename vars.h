@@ -24,9 +24,9 @@
 struct avar {
 	char *vname;
 	enum {
-		STRING,
-		DECIMAL,
-		FLAG
+		V_STRING,
+		V_DECIMAL,
+		V_FLAG
 	} vtype;
 	union {
 		char *str;

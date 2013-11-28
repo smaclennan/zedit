@@ -176,7 +176,7 @@ void bempty(void);
 int bgetcol(bool, int);
 void bgoto(struct buff *);
 void bgoto_char(long offset);
-void bind(void);
+void zbind(void);
 bool bindfile(char *fname, int mode);
 void binsert(Byte);
 void binstr(char *);

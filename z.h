@@ -72,7 +72,7 @@
 /* majour modes - only one allowed */
 #define NORMAL				0x010
 #define CMODE				0x020
-#define TEXT				0x040
+#define TXTMODE				0x040
 #define SHMODE				0x080
 /* super modes - 0 to all allowed */
 #define SYSBUFF				0x1000
@@ -142,7 +142,7 @@ extern void (*Nextpart)(void);
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
 
-#define clrpaw(void)	putpaw("")
+#define clrpaw()	putpaw("")
 #define error(...)	do { tbell(); putpaw(__VA_ARGS__); } while (0)
 
 /* The memory usage for screen stuff is approx:  (ROWMAX + 1) x 25 + COLMAX */

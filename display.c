@@ -50,7 +50,7 @@ void redisplay(void)
 	for (i = 0; i < tmaxrow() - 2; ++i)
 		Scrnmarks[i].modf = true;
 	Tlrow = -1;
-	
+
 	/* This is needed to set Comstate to false */
 	uncomment(NULL);
 }
@@ -363,7 +363,7 @@ static char *setmodes(struct buff *buff)
 		if (VAR(VCOMMENTS))
 			printchar = cprntchar;
 		break;
-	case TEXT:
+	case TXTMODE:
 		strcpy(PawStr, "Text");
 		Keys[' '] = Keys[CR] = ZFILL_CHECK;
 		break;

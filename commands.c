@@ -857,7 +857,7 @@ static struct _amode
 	{ "C",		CMODE	},
 	{ "Normal",	NORMAL	},
 	{ "SH",		SHMODE	},
-	{ "Text",	TEXT	},
+	{ "Text",	TXTMODE	},
 };
 #define AMODESIZE	sizeof(struct _amode)
 #define NUMMODES	(sizeof(modes) / AMODESIZE)
@@ -916,9 +916,9 @@ void toggle_mode(int mode)
 			 strncmp((char *)Curcptr, "#!/", 3) == 0)
 			mode = SHMODE;
 		else if (matchit(VARSTR(VTEXTS), ext))
-			mode = TEXT;
+			mode = TXTMODE;
 		else if (!VAR(VNORMAL))
-			mode = TEXT;
+			mode = TXTMODE;
 		else
 			mode = NORMAL;
 	}

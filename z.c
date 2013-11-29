@@ -242,7 +242,7 @@ int ask(const char *msg)
 
 bool delayprompt(const char *msg)
 {
-	int rc = delay(500);
+	int rc = delay(600);
 	if (rc)
 		putpaw(msg);
 	return rc;

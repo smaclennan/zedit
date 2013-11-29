@@ -66,7 +66,7 @@ void zbind(void)
 
 	/* Init the Meta functions */
 
-	Keys[128 + 2] = ZBOUND_TO;		/* M-C-B */
+/*	Keys[128 + 2] = ;			* M-C-B */
 	Keys[128 + 7] = ZABORT;			/* M-C-G */
 	Keys[128 + 14] = ZSCROLL_DOWN;		/* M-C-N */
 	Keys[128 + 16] = ZSCROLL_UP;		/* M-C-P */
@@ -267,32 +267,6 @@ bool notdup_key(int k)
 	return ((k < (256 + 'a') || k > (256 + 'z')) &&
 		(k < (128 + 'a') || k > (128 + 'z'))) ||
 		Keys[k] != Keys[k - ('a' - 'A')];
-}
-
-void Zbound_to(void)
-{
-	char line[STRMAX];
-	int f, k, found = 0;
-
-	Arg = 0;
-	*PawStr = '\0';
-	f = getplete("Command: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
-	if (f != -1) {
-		for (k = 0; k < NUMKEYS; ++k)
-			if (Keys[k] == Cnames[f].fnum)
-				if (notdup_key(k)) {
-					if (found)
-						strcat(PawStr, " or ");
-					strcat(PawStr, dispkey(k, line));
-					if (strlen(PawStr) > Colmax)
-						break;
-					found = true;
-				}
-		if (found)
-			putpaw(PawStr);
-		else
-			putpaw("Unbound");
-	}
 }
 
 void Zdisplay_bindings(void)

@@ -46,10 +46,6 @@ struct cnames Cnames[] = {
 	 "command to reset all the default arguments. Keys can be 'unbound' "
 	 "by binding them to the NULL command."
 	},
-	{"bound-to",			ZBOUND_TO,
-	 "Prompts for a command with command complete and gives a list of the "
-	 "keys the command is bound to. A Universal Argument is ignored."
-	},
 	{"c-indent",			ZC_INDENT,
 	 "Causes Newline characters to auto-indent to the current tab "
 	 "level. If a Newline is hit after an open brace ({), the next line "

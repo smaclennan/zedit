@@ -41,7 +41,6 @@ Z(Zout_to);
 Z(Zc_indent);
 Z(Zc_insert);
 Z(Zcmd_to_buffer);
-Z(Zbound_to);
 Z(Zcopy_region);
 Z(Zcount);
 Z(Zctrl_x);

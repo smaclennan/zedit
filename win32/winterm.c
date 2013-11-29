@@ -6,7 +6,7 @@ int Prow, Pcol;			/* Point row and column */
 static int Srow, Scol;		/* Saved row and column */
 int Colmax = 80, Rowmax = 25;	/* Row and column maximums */
 
-static HANDLE hstdin, hstdout;	/* Console in and out handles */
+HANDLE hstdin, hstdout;	/* Console in and out handles */
 
 /* Come here on SIGHUP or SIGTERM */
 void hang_up(int signal)
@@ -49,6 +49,9 @@ void tinit(void) {
 	hstdin = GetStdHandle(STD_INPUT_HANDLE);
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 
+	/* We want everything else disabled */
+	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT);
+
 	signal(SIGHUP,  hang_up);
 	signal(SIGTERM, hang_up);
 #if SHELL
@@ -56,9 +59,6 @@ void tinit(void) {
 	signal(SIGCLD,  sigchild);
 #endif
 	signal(SIGPIPE, sigchild);
-#endif
-#ifdef SIGWINCH
-	signal(SIGWINCH, sigwinch); /* window has changed size - update */
 #endif
 
 	/* Must be after setting up tty */

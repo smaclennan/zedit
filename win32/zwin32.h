@@ -16,4 +16,6 @@
 #define R_OK 0
 #define W_OK 0
 
+extern HANDLE hstdin, hstdout;
+
 #endif

@@ -3,10 +3,10 @@
 int Clrcol[ROWMAX + 1];		/* Clear if past this */
 
 int Prow, Pcol;			/* Point row and column */
-static int Srow = -1, Scol = -1;		/* Saved row and column */
-int Colmax = 80, Rowmax = 25;	/* Row and column maximums */ // SAM HARDCODE
+static int Srow, Scol;		/* Saved row and column */
+int Colmax = 80, Rowmax = 25;	/* Row and column maximums */
 
-HANDLE hstdin, hstdout;
+static HANDLE hstdin, hstdout;	/* Console in and out handles */
 
 /* Come here on SIGHUP or SIGTERM */
 void hang_up(int signal)
@@ -31,12 +31,56 @@ void hang_up(int signal)
 	exit(1);
 }
 
+/* This is called before the windows are created */
+static void initline(void)
+{
+	int i = sprintf(PawStr, "%s %s  Initializing", ZSTR, VERSION);
+	tclrwind();
+	t_goto(Rowmax - 2, 0);
+	tstyle(T_STANDOUT);
+	tprntstr(PawStr);
+	for (++i; i < Colmax; ++i)
+		tprntchar(' ');
+	tstyle(T_NORMAL);
+	tflush();
+}
+
 void tinit(void) {
 	hstdin = GetStdHandle(STD_INPUT_HANDLE);
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
-} // SAM FIXME
 
-void tfini(void) {} // SAM FIXME
+	signal(SIGHUP,  hang_up);
+	signal(SIGTERM, hang_up);
+#if SHELL
+#if !defined(WNOWAIT)
+	signal(SIGCLD,  sigchild);
+#endif
+	signal(SIGPIPE, sigchild);
+#endif
+#ifdef SIGWINCH
+	signal(SIGWINCH, sigwinch); /* window has changed size - update */
+#endif
+
+	/* Must be after setting up tty */
+	termsize();
+
+	if (Rowmax < 3) {
+		/* screen too small */
+		tfini();
+		exit(1);
+	}
+
+	Srow = Scol = -1;	/* undefined */
+	initline();		/* Curwdo not defined yet */
+}
+
+void tfini(void)
+{
+	clrpaw();
+	t_goto(Rowmax - 1, 0);
+	tstyle(T_NORMAL);
+	tflush();
+}
 
 void setmark(bool prntchar)
 {
@@ -47,9 +91,12 @@ void setmark(bool prntchar)
 
 void termsize(void)
 {
-	// SAM FIXME
-	Rowmax = 24;
-	Colmax = 80;
+	CONSOLE_SCREEN_BUFFER_INFO info;
+
+	if (GetConsoleScreenBufferInfo(hstdout, &info)) {
+		Colmax = info.dwSize.X;
+		Rowmax = info.dwSize.Y;
+	}
 }
 
 static int tabsize(int col)
@@ -161,10 +208,8 @@ int prefline(void)
 void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
-		// WIN32
 		COORD where;
 
-		// SAM Save Scol/Srow as COORD?
 		where.X = Pcol;
 		where.Y = Prow;
 		SetConsoleCursorPosition(hstdout, where);
@@ -176,18 +221,31 @@ void tforce(void)
 void tcleol(void)
 {
 	if (Pcol < Clrcol[Prow]) {
-		tforce();
-		// SAM FIXME fputs("\033[K", stdout);
+		COORD where;
+		DWORD written;
+
+		where.X = Pcol;
+		where.Y = Prow;
+		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol,
+					   &where, &written);
 		Clrcol[Prow] = Pcol;
 	}
 }
 
 void tclrwind(void)
 {
-	// SAM FIXME
 	memset(Clrcol, 0, ROWMAX);
 	Prow = Pcol = 0;
+
+	COORD where;
+	DWORD written;
+	where.X = where.Y = 0;
+	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
+				   &where, &written);
 }
+
+#define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
+#define BLACK_ON_WHITE (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
 
 void tstyle(int style)
 {
@@ -198,14 +256,17 @@ void tstyle(int style)
 
 	switch (cur_style = style) {
 	case T_NORMAL:
-		SetConsoleTextAttribute(hstdout, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
+		SetConsoleTextAttribute(hstdout, WHITE_ON_BLACK);
 		break;
 	case T_STANDOUT:
 	case T_REVERSE:
-		SetConsoleTextAttribute(hstdout, BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED);
+		SetConsoleTextAttribute(hstdout, BLACK_ON_WHITE);
 		break;
 	case T_BOLD:
+		SetConsoleTextAttribute(hstdout, WHITE_ON_BLACK | FOREGROUND_INTENSITY);
+		break;
 	case T_COMMENT:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED);
 		break;
 	}
 	fflush(stdout);
@@ -214,31 +275,10 @@ void tstyle(int style)
 
 void tbell(void) {} // SAM FIXME
 
-int strcasecmp(const char *a, const char *b)
-{
-	while (*a && *b)
-	if (tolower(*a) == tolower(*b)) {
-		++a; ++b;
-	} else
-			break;
-	return *a - *b;
-}
-
-int strncasecmp(const char *a, const char *b, int n)
-{
-	while (*a && *b && n > 0)
-		if (tolower(*a) == tolower(*b)) {
-			++a; ++b; --n;
-		} else
-			break;
-	return n;
-}
-
-// SAM we can get mutch smarter with tputchar and tflush...
+// SAM we can get much smarter with tputchar and tflush...
 void tputchar(Byte c)
 {
 	DWORD written;
-
 	WriteConsole(hstdout, &c, 1, &written, NULL);
 }
 

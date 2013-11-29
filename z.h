@@ -178,8 +178,13 @@ extern void (*Nextpart)(void);
 #define tmaxcol()		Colmax
 extern int Tabsize;
 
+#ifdef WIN32
+void tputchar(Byte c);
+void tflush(void);
+#else
 #define tputchar(c)		putchar(c)
 #define tflush()		fflush(stdout)
+#endif
 
 #define wheight()		(Curwdo->last - Curwdo->first)
 

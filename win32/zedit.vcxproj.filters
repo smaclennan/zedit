@@ -45,9 +45,6 @@
     <ClCompile Include="..\display.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\fcheck.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\file.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -84,9 +81,6 @@
     <ClCompile Include="..\tags.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\term.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\undo.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -100,6 +94,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\z.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="winterm.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

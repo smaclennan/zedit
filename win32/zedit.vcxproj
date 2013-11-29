@@ -89,7 +89,6 @@
     <ClCompile Include="..\cursor.c" />
     <ClCompile Include="..\delete.c" />
     <ClCompile Include="..\display.c" />
-    <ClCompile Include="..\fcheck.c" />
     <ClCompile Include="..\file.c" />
     <ClCompile Include="..\funcs.c" />
     <ClCompile Include="..\getarg.c" />
@@ -102,12 +101,12 @@
     <ClCompile Include="..\spell.c" />
     <ClCompile Include="..\srch.c" />
     <ClCompile Include="..\tags.c" />
-    <ClCompile Include="..\term.c" />
     <ClCompile Include="..\undo.c" />
     <ClCompile Include="..\vars-array.c" />
     <ClCompile Include="..\vars.c" />
     <ClCompile Include="..\window.c" />
     <ClCompile Include="..\z.c" />
+    <ClCompile Include="winterm.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dirent.h" />

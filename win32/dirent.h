@@ -34,9 +34,9 @@ static __inline DIR *opendir(char *dirname)
 
 static __inline struct dirent *readdir(DIR *dir)
 {
-	if (dir->end->d_name == NULL) {
+	if (dir->ent.d_name == NULL) {
 		/* we filled in data in FindFirstFile above */
-		dir->ent->d_name = dir->data->cFileName;
+		dir->ent.d_name = dir->data.cFileName;
 		return &dir->ent;
 	}
 

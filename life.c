@@ -294,8 +294,13 @@ void Zlife(void)
 				go = false;
 			else
 				step = true;
-		} else
+		} else {
+#ifdef WIN32
+			Sleep(100);
+#else
 			usleep(100000);
+#endif
+		}
 		if (go)
 			generation(matrix1, matrix2);
 	}

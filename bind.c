@@ -36,7 +36,7 @@ void zbind(void)
 	Keys[5]  = ZEND_OF_LINE;		/* C-E */
 	Keys[6]  = ZNEXT_CHAR;			/* C-F */
 	Keys[7]  = ZABORT;			/* C-G */
-	Keys[8]  = ZDELETE_PREVIOUS_CHAR;	/* C-H */
+	Keys[8]  = ZHELP;			/* C-H */
 	Keys[9]  = ZTAB;			/* C-I */
 	Keys[10] = ZC_INDENT;			/* C-J */
 	Keys[11] = ZDELETE_TO_EOL;		/* C-K */
@@ -66,7 +66,7 @@ void zbind(void)
 
 	/* Init the Meta functions */
 
-	Keys[128 + 2] = ZBOUND_TO;		/* M-C-B */
+/*	Keys[128 + 2] = ;			* M-C-B */
 	Keys[128 + 7] = ZABORT;			/* M-C-G */
 	Keys[128 + 14] = ZSCROLL_DOWN;		/* M-C-N */
 	Keys[128 + 16] = ZSCROLL_UP;		/* M-C-P */
@@ -261,67 +261,12 @@ void Zbind(void)
 	clrpaw();
 }
 
-void Zkey_binding(void)
-{
-	char kstr[12];
-	int rc;
-	unsigned raw, key;
-
-	Arg = 0;
-	putpaw("Key: ");
-	raw = tgetcmd();
-	key = Keys[raw];
-	if (key == ZCTRL_X) {
-		putpaw("Key: C-X ");
-		raw = tgetcmd() + 256;
-		key = Keys[raw];
-	} else if (key == ZMETA) {
-		putpaw("Key: M-");
-		raw = tgetcmd() + 128;
-		key = Keys[raw];
-	}
-
-	if (key == ZNOTIMPL)
-		putpaw("%s Unbound", dispkey(raw, kstr));
-	else
-		for (rc = 0; rc < NUMFUNCS; ++rc)
-			if (Cnames[rc].fnum == key)
-				putpaw("%s Bound to %s",
-					dispkey(raw, kstr), Cnames[rc].name);
-}
-
 /* Don't display both C-X A and C-X a if bound to same Ditto for Meta */
 bool notdup_key(int k)
 {
 	return ((k < (256 + 'a') || k > (256 + 'z')) &&
 		(k < (128 + 'a') || k > (128 + 'z'))) ||
 		Keys[k] != Keys[k - ('a' - 'A')];
-}
-
-void Zbound_to(void)
-{
-	char line[STRMAX];
-	int f, k, found = 0;
-
-	Arg = 0;
-	*PawStr = '\0';
-	f = getplete("Command: ", NULL, (char **)Cnames, CNAMESIZE, NUMFUNCS);
-	if (f != -1) {
-		for (k = 0; k < NUMKEYS; ++k)
-			if (Keys[k] == Cnames[f].fnum)
-				if (notdup_key(k)) {
-					if (found)
-						strcat(PawStr, " or ");
-					strcat(PawStr, dispkey(k, line));
-					if (strlen(PawStr) > Colmax)
-						break;
-					found = true;
-				}
-		if (found)
-			putpaw(PawStr);
-		else
-			putpaw("Unbound");
-	}
 }
 
 void Zdisplay_bindings(void)

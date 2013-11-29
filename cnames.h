@@ -46,10 +46,6 @@ struct cnames Cnames[] = {
 	 "command to reset all the default arguments. Keys can be 'unbound' "
 	 "by binding them to the NULL command."
 	},
-	{"bound-to",			ZBOUND_TO,
-	 "Prompts for a command with command complete and gives a list of the "
-	 "keys the command is bound to. A Universal Argument is ignored."
-	},
 	{"c-indent",			ZC_INDENT,
 	 "Causes Newline characters to auto-indent to the current tab "
 	 "level. If a Newline is hit after an open brace ({), the next line "
@@ -251,6 +247,9 @@ struct cnames Cnames[] = {
 	 "effect. A Universal Argument causes the command to grow the window "
 	 "by that number of lines."
 	},
+	{"help",			ZHELP,
+	 "Interface to help functions. Mimics the emacs C-H command prefix."
+	},
 	{"help-apropos",		ZHELP_APROPOS,
 	 "Asks for a string and then searches through all the functions and "
 	 "returns the functions that have the string in them."
@@ -259,6 +258,11 @@ struct cnames Cnames[] = {
 	 "Displays help on any of the Zedit functions. Prompts for the "
 	 "function with full completion. If the command has any key bindings, "
 	 " these are also displayed."
+	},
+	{"help-key",			ZHELP_KEY,
+	 "Prompts for a key and displays the current command bound to the key "
+	 "in the PAW. Handles C-X and M- prefixes. A Universal Argument is "
+	 "ignored."
 	},
 	{"help-variable",		ZHELP_VARIABLE,
 	 "Displays help on any of the configurable variables. Prompts for "
@@ -291,11 +295,6 @@ struct cnames Cnames[] = {
 	{"join",			ZJOIN,
 	 "Joins two lines. Performs the following Zedit commands: End of "
 	 "Line, Delete Newline, Trim Whitespace, Insert space."
-	},
-	{"key-binding",			ZKEY_BINDING,
-	 "Prompts for a key and displays the current command bound to the key "
-	 "in the PAW. Handles C-X and M- prefixes. A Universal Argument is "
-	 "ignored."
 	},
 	{"kill",			ZKILL,
 #if !SHELL

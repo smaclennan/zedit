@@ -102,8 +102,8 @@
 #define ZSAVE_BINDINGS		(ZBIND + 1)
 #define ZDISPLAY_BINDINGS	(ZSAVE_BINDINGS + 1)
 #define ZNEXT_BUFFER		(ZDISPLAY_BINDINGS + 1)
-#define ZKEY_BINDING		(ZNEXT_BUFFER + 1)
-#define ZCOUNT			(ZKEY_BINDING + 1)
+#define ZHELP_KEY		(ZNEXT_BUFFER + 1)
+#define ZCOUNT			(ZHELP_KEY + 1)
 #define ZINCREMENTAL_SEARCH	(ZCOUNT + 1)
 #define ZREVERSE_INC_SEARCH	(ZINCREMENTAL_SEARCH + 1)
 #define ZUNMODIFY		(ZREVERSE_INC_SEARCH + 1)
@@ -131,8 +131,7 @@
 #define ZREVERT_FILE		(ZSIZE_WINDOW + 1)
 #define ZSCROLL_DOWN		(ZREVERT_FILE + 1)
 #define ZSCROLL_UP		(ZSCROLL_DOWN + 1)
-#define ZBOUND_TO		(ZSCROLL_UP + 1)
-#define ZSHOW_CONFIG		(ZBOUND_TO + 1)
+#define ZSHOW_CONFIG		(ZSCROLL_UP + 1)
 #define ZSETENV			(ZSHOW_CONFIG + 1)
 #define ZGLOBAL_RE_SEARCH	(ZSETENV + 1)
 #define ZGREP			(ZGLOBAL_RE_SEARCH + 1)
@@ -145,7 +144,8 @@
 #define ZSPELL_WORD		(ZWORD_SEARCH + 1)
 #define ZTAG			(ZSPELL_WORD + 1)
 #define ZTAG_WORD		(ZTAG + 1)
-#define NUMFUNCS		(ZTAG_WORD + 1)
+#define ZHELP			(ZTAG_WORD + 1)
+#define NUMFUNCS		(ZHELP + 1)
 
 /* this is used by the getfname command in the PAW for command completion */
 #define ZFNAME		NUMFUNCS

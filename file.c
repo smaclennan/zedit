@@ -30,7 +30,7 @@ static int get_findfile(char *prompt)
 		strcat(Fname, "/");
 	} else if (stat(Fname, &sbuf) == 0)
 		/* If Fname is a file, convert to directory */
-		if (S_ISREG(sbuf.st_mode)) {
+		if (sbuf.st_mode & S_IFREG) {
 			char *p = strrchr(Fname, '/');
 			if (p)
 				*(p + 1) = '\0';

@@ -106,7 +106,7 @@ void (*Cmds[][2])() = {
 	{ Zsave_bindings,		Znotimpl },
 	{ Zdisplay_bindings,		Znotimpl },
 	{ Znext_buffer,			Znotimpl },
-	{ Zkey_binding,			Znotimpl },
+	{ Zhelp_key,			Znotimpl },
 	{ Zcount,			Znotimpl },
 	{ Zincremental_search,		Znotimpl },
 	{ Zreverse_inc_search,		Znotimpl },
@@ -135,7 +135,6 @@ void (*Cmds[][2])() = {
 	{ Zrevert_file,			Znotimpl },
 	{ Zscroll_down,			Znotimpl },
 	{ Zscroll_up,			Znotimpl },
-	{ Zbound_to,			Znotimpl },
 	{ Zshow_config,			Znotimpl },
 	{ Zsetenv,			Znotimpl },
 	{ Zglobal_re_search,		Znotimpl },
@@ -149,6 +148,7 @@ void (*Cmds[][2])() = {
 	{ Zspell_word,			Znotimpl },
 	{ Ztag,				Znotimpl },
 	{ Ztag_word,			Znotimpl },
+	{ Zhelp,			Znotimpl },
 	/* only in the PAW you say? pity... */
 	{ Znotimpl,			Zfname },
 };

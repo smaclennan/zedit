@@ -54,6 +54,30 @@ void dump_doc(const char *doc)
 	binsert('\n');
 }
 
+void Zhelp(void)
+{
+	bool tmp = delayprompt("Help: a=apropos f=function k=key v=variable");
+	Cmd = tgetkb();
+	if (tmp)
+		clrpaw();
+	switch (Cmd) {
+	case 'a':
+		Zhelp_apropos();
+		break;
+	case 'f':
+		Zhelp_function();
+		break;
+	case 'k':
+		Zhelp_key();
+		break;
+	case 'v':
+		Zhelp_variable();
+		break;
+	default:
+		Zabort();
+	}
+}
+
 void Zhelp_function(void)
 {
 	int rc = getplete("Function: ", NULL, (char **)Cnames,
@@ -85,16 +109,16 @@ void Zhelp_function(void)
 void Zhelp_apropos(void)
 {
 	char word[STRMAX], line[80];
-	int i, j, n;
+	int i, j, n, match = 0;
 
 	*word = '\0';
 	if (getarg("Word: ", word, sizeof(word)))
 		return;
 
-	wuseother(HELPBUFF);
-
 	for (i = j = n = 0; i < NUMFUNCS; ++i)
 		if (strstr(Cnames[i].name, word)) {
+			if (match++ == 0)
+				wuseother(HELPBUFF);
 			n += sprintf(line + n, "%-24s", Cnames[i].name);
 			if (++j == 3) {
 				binstr(line);
@@ -103,10 +127,44 @@ void Zhelp_apropos(void)
 			}
 		}
 
-	if (j)
+	if (j) {
 		binstr(line);
-	binsert('\n');
+		binsert('\n');
+	}
 
-	btostart();
-	Curbuff->bmodf = false;
+	if (match == 0)
+		putpaw("No matches.");
+	else {
+		btostart();
+		Curbuff->bmodf = false;
+	}
+}
+
+void Zhelp_key(void)
+{
+	char kstr[12];
+	int rc;
+	unsigned raw, key;
+
+	Arg = 0;
+	putpaw("Key: ");
+	raw = tgetcmd();
+	key = Keys[raw];
+	if (key == ZCTRL_X) {
+		putpaw("Key: C-X ");
+		raw = tgetcmd() + 256;
+		key = Keys[raw];
+	} else if (key == ZMETA) {
+		putpaw("Key: M-");
+		raw = tgetcmd() + 128;
+		key = Keys[raw];
+	}
+
+	if (key == ZNOTIMPL)
+		putpaw("%s Unbound", dispkey(raw, kstr));
+	else
+		for (rc = 0; rc < NUMFUNCS; ++rc)
+			if (Cnames[rc].fnum == key)
+				putpaw("%s Bound to %s",
+					dispkey(raw, kstr), Cnames[rc].name);
 }

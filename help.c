@@ -127,14 +127,14 @@ void Zhelp_apropos(void)
 			}
 		}
 
-	if (j)
+	if (j) {
 		binstr(line);
+		binsert('\n');
+	}
 
 	if (match == 0)
 		putpaw("No matches.");
 	else {
-		binsert('\n');
-
 		btostart();
 		Curbuff->bmodf = false;
 	}

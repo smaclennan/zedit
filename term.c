@@ -71,10 +71,9 @@ void hang_up(int signal)
 
 	InPaw = true;	/* Kludge to turn off error */
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next) {
-		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF)) {
+		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF) && bfname()) {
 			bswitchto(tbuff);
-			bwritefile(strcmp(bfname(),
-					  MAINBUFF) ? bfname() : "MAIN.HUP");
+			bwritefile(bfname());
 		}
 #if SHELL
 		if (tbuff->child != EOF)
@@ -320,7 +319,7 @@ int chwidth(Byte ch, int col, bool adjust)
 	}
 }
 
-void tprntstr(char *str)
+void tprntstr(const char *str)
 {
 	while (*str)
 		tprntchar(*str++);

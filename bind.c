@@ -215,7 +215,7 @@ void zbind(void)
 	Keys[TC_F12]	= ZREVERT_FILE;
 }
 
-static bool bindone(char *prompt, int first, int *key)
+static bool bindone(const char *prompt, int first, int *key)
 {
 	putpaw("%s", prompt);
 	*key = tgetcmd();
@@ -331,7 +331,7 @@ void Zdisplay_bindings(void)
 	int f, i;
 	unsigned k;
 
-	wuseother(LISTBUFF);
+	cmakebuff(LISTBUFF, NULL);
 	binstr("COMMAND                            PAW    BINDING\n");
 	for (f = 0; f < NUMFUNCS; ++f) {
 		if (Cnames[f].fnum == ZNOTIMPL || Cnames[f].fnum == ZINSERT)
@@ -359,50 +359,41 @@ void Zdisplay_bindings(void)
 
 void Zsave_bindings(void)
 {
-#ifndef WIN32 // SAM FIX
-	char path[PATHMAX + 1];
-
-	snprintf(path, sizeof(path), "%s/%s", Home, ZBFILE);
-	if (bindfile(path, WRITE_MODE))
-		putpaw("%s written.", path);
+#ifdef WIN32
+	tbell();
+#else
+	if (Curbuff->bmode & NORMAL) {
+		int fd, rc = false;
+		char path[PATHMAX + 1];
+		snprintf(path, sizeof(path), "%s/%s", Home, ZBFILE);
+		fd = open(path, WRITE_MODE, 0664);
+		if (fd >= 0) {
+			rc = write(fd, "10", 2) == 2 &&
+				write(fd, (char *)Keys, NUMKEYS) == NUMKEYS;
+			close(fd);
+		}
+		if (rc == true)
+			putpaw("%s written.", path);
+		else
+			error("Unable to create bindings file");
+	} else
+		error("Please save bindings in a normal mode buffer.");
 #endif
 }
 
-bool bindfile(char *fname, int mode)
+void bindfile(const char *fname)
 {
-	char version[3];
-	int fd, modesave, rc = false;
+	int fd = open(fname, READ_MODE);
+	if (fd >= 0) {
+		char version[2];
 
-	fd = open(fname, mode, 0664);
-	if (fd == EOF) {
-		if (mode == WRITE_MODE)
-			error("Unable to Create Bindings File");
-		return false;
-	}
-
-	modesave = Curbuff->bmode;		/* set mode to normal !!! */
-	Curbuff->bmode = NORMAL;
-	Curwdo->modeflags = INVALID;
-	if (mode == WRITE_MODE) {
-		if (write(fd, "01", 2) != 2 ||
-		    write(fd, (char *)Keys, 510) != 510)
-			error("Unable to Write Bindings File");
-		else
-			rc = true;
-	} else {
-		if (read(fd, version, 2) != 2 || *version != '0')
+		if (read(fd, version, 2) != 2 || *version != '1')
 			error("Incompatible Bindings File");
-		else if (read(fd, (char *)Keys, NUMKEYS) == -1)
+		else if (read(fd, (char *)Keys, NUMKEYS) != NUMKEYS)
 			error("Unable to Read Bindings File");
-		else {
+		else
 			CRdefault = Keys[CR];
-			rc = true;
-		}
+
+		close(fd);
 	}
-
-	(void)close(fd);
-	Curbuff->bmode = modesave;
-	Curwdo->modeflags = INVALID;
-
-	return rc;
 }

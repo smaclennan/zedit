@@ -177,7 +177,7 @@ void Zunmodify(void)
  * If we hit maxbuffs, try to enlarge the Bnames array.
  * Note that the compare MUST be insensitive for the getplete!
  */
-static char *addbname(char *bname)
+static char *addbname(const char *bname)
 {
 	int i;
 
@@ -225,7 +225,7 @@ bool delbname(char *bname)
 }
 
 /* Create a buffer. */
-struct buff *cmakebuff(char *bname, char *fname)
+struct buff *cmakebuff(const char *bname, char *fname)
 {
 	struct buff *bptr, *save = Curbuff;
 
@@ -265,7 +265,7 @@ struct buff *cmakebuff(char *bname, char *fname)
 }
 
 /* Locate a given buffer */
-struct buff *cfindbuff(char *bname)
+struct buff *cfindbuff(const char *bname)
 {
 	struct buff *tbuff;
 

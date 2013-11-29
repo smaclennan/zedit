@@ -116,13 +116,13 @@ void undo_add(int size)
 
 static void undo_append(struct undo *undo, Byte *data, int size)
 {
-	Byte *new = realloc(undo->data, undo->size + size);
-	if (!new)
+	Byte *buf = realloc(undo->data, undo->size + size);
+	if (!buf)
 		return;
 
-	memcpy(new + undo->size, data, size);
+	memcpy(buf + undo->size, data, size);
 
-	undo->data = new;
+	undo->data = buf;
 	undo->size += size;
 
 	undo_total += size;
@@ -130,16 +130,16 @@ static void undo_append(struct undo *undo, Byte *data, int size)
 
 static void undo_prepend(struct undo *undo, Byte *data, int size)
 {
-	Byte *new = realloc(undo->data, undo->size + size);
-	if (!new)
+	Byte *buf = realloc(undo->data, undo->size + size);
+	if (!buf)
 		return;
 
 	/* Shift the old */
-	memmove(new + size, new, undo->size);
+	memmove(buf + size, buf, undo->size);
 	/* Move in the new */
-	memcpy(new, data, size);
+	memcpy(buf, data, size);
 
-	undo->data = new;
+	undo->data = buf;
 	undo->size += size;
 
 	undo_total += size;

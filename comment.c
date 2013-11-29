@@ -24,19 +24,19 @@ static bool Comstate;
 /* Mark a new comment from start to Point. */
 static void newcomment(struct mark *start)
 {
-	struct comment *new = calloc(sizeof(struct comment), 1);
-	if (!new)
+	struct comment *com = calloc(sizeof(struct comment), 1);
+	if (!com)
 		return;
-	new->start = bcremrk();
-	new->end   = bcremrk();
+	com->start = bcremrk();
+	com->end   = bcremrk();
 
-	mrktomrk(new->start, start);
+	mrktomrk(com->start, start);
 
 	if (!Curbuff->chead)
-		Curbuff->chead = new;
+		Curbuff->chead = com;
 	else
-		Curbuff->ctail->next = new;
-	Curbuff->ctail = new;
+		Curbuff->ctail->next = com;
+	Curbuff->ctail = com;
 }
 
 /* Scan an entire buffer for comments. */

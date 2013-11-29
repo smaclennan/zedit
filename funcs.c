@@ -21,6 +21,7 @@
 #include "cnames.h"
 
 void (*Cmds[][2])() = {
+	{ Znotimpl,			Znotimpl },
 	{ Zone_window,			Znotimpl },
 	{ Zsplit_window,		Znotimpl },
 	{ Zabort,			Zabort },
@@ -65,7 +66,6 @@ void (*Cmds[][2])() = {
 	{ Znext_char,			Znext_char },
 	{ Znext_line,			Znext_line },
 	{ Znext_page,			Znotimpl },
-	{ Znotimpl,			Znotimpl },
 	{ Znext_bookmark,		Znotimpl },
 	{ Zother_next_page,		Znotimpl },
 	{ Zopen_line,			Znotimpl },

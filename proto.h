@@ -161,8 +161,8 @@ Z(pnewline);
 /* General routines */
 
 void initscrnmarks(void);
-int ask(char *);
-int ask2(char *, bool);
+int ask(const char *);
+int ask2(const char *, bool);
 void bfini(void);
 int bcopyrgn(struct mark *, struct buff*);
 struct buff *bcreate(void);
@@ -170,14 +170,14 @@ struct mark *bcremrk(void);
 bool bcrsearch(Byte);
 bool bcsearch(Byte);
 bool bdelbuff(struct buff *);
-void bdelete(unsigned);
+void bdelete(int);
 void bdeltomrk(struct mark *);
 void bempty(void);
 int bgetcol(bool, int);
 void bgoto(struct buff *);
 void bgoto_char(long offset);
 void zbind(void);
-bool bindfile(char *fname, int mode);
+void bindfile(const char *fname);
 void binsert(Byte);
 void binstr(const char *);
 bool bisaftermrk(struct mark *);
@@ -196,13 +196,13 @@ void bswitchto(struct buff *);
 void btoend(void);
 void btostart(void);
 int bwritefile(char *);
-struct buff *cfindbuff(char *);
-struct buff *cmakebuff(char *, char *);
+struct buff *cfindbuff(const char *);
+struct buff *cmakebuff(const char *, char *);
 int cntlines(int);
 int compile(Byte*, Byte*, Byte*);
 void cswitchto(struct buff *);
 bool delay(int ms);
-bool delayprompt(char *);
+bool delayprompt(const char *);
 bool delbname(char *);
 void delbuff(struct buff *);
 bool delcmd(void);
@@ -211,10 +211,10 @@ void execute(void);
 bool filesave(void);
 bool findfile(char *);
 struct wdo *findwdo(struct buff *);
-bool getarg(char *, char *, int);
+bool getarg(const char *, char *, int);
 char *getbtxt(char *, int);
 bool getbword(char *, int, int (*)());
-int getplete(char *, char *, char **, int, int);
+int getplete(const char *, char *, char **, int, int);
 int bisspace(void);
 int bistoken(void);
 int biswhite(void);
@@ -264,7 +264,7 @@ void tobegline(void);
 void toendline(void);
 void toggle_mode(int);
 void tprntchar(Byte);
-void tprntstr(char *);
+void tprntstr(const char *);
 void tstyle(int);
 void unmark(struct mark *);
 void vsetmod(bool);
@@ -287,17 +287,17 @@ void sigchild(int);
 void unvoke(struct buff *, bool);
 #endif
 
-void Dbg(char *fmt, ...);
+void Dbg(const char *fmt, ...);
 
 /* for getfname */
 
-int getfname(char *, char *);
+int getfname(const char *, char *);
 int nmatch(char *, char *);
 
 
 void wswitchto(struct wdo *wdo);
 void wsize(void);
-bool wuseother(char *);
+bool wuseother(const char *);
 
 /* COMMENTBOLD */
 void resetcomments(void);

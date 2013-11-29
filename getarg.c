@@ -41,7 +41,7 @@ void (*Nextpart)(void);
  * Only allow max chars.
  * Arg is NOT overwritten if the user aborts, or returns a null string.
  */
-bool getarg(char *prompt, char *arg, int max)
+bool getarg(const char *prompt, char *arg, int max)
 {
 	char *ptr;
 	int argp_save, arg_save, rc;
@@ -90,7 +90,7 @@ bool getarg(char *prompt, char *arg, int max)
  * or char * array.
  * Returns offset of entry in array if found, else -1.
  */
-int getplete(char *prompt, char *def, char **array, int size, int num)
+int getplete(const char *prompt, char *def, char **array, int size, int num)
 {
 	char cmdstr[STRMAX + 1];
 

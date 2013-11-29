@@ -50,7 +50,7 @@ static void freelist(struct llist **list);
  *		ABORT(-1) for abort
  *		> 0 for error
  */
-int getfname(char *prompt, char *path)
+int getfname(const char *prompt, char *path)
 {
 	const char mod[3] = { '\t', '/', '~' };
 	char tmp[PATHMAX + 1];
@@ -151,30 +151,30 @@ int nmatch(char *s1, char *s2)
 
 static struct llist *add(struct llist **list, char *fname)
 {
-	struct llist *new, *l;
+	struct llist *newl, *l;
 
-	new = malloc(sizeof(struct llist));
-	if (new) {
-		strcpy(new->fname, fname);
+	newl = malloc(sizeof(struct llist));
+	if (newl) {
+		strcpy(newl->fname, fname);
 		if (*list == NULL || strcmp(fname, (*list)->fname) < 0) {
-			new->next = *list;
+			newl->next = *list;
 			if (*list)
-				(*list)->prev = new;
-			new->prev = NULL;
-			*list = new;
+				(*list)->prev = newl;
+			newl->prev = NULL;
+			*list = newl;
 		} else {
 			for (l = *list;
 			     l->next && strcmp(l->next->fname, fname) < 0;
 			     l = l->next)
 				;
 			if (l->next)
-				l->next->prev = new;
-			new->next = l->next;
-			l->next = new;
-			new->prev = l;
+				l->next->prev = newl;
+			newl->next = l->next;
+			l->next = newl;
+			newl->prev = l;
 		}
 	}
-	return new;
+	return newl;
 }
 
 

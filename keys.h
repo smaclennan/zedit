@@ -20,41 +20,42 @@
 #ifndef _KEYS_H_
 #define _KEYS_H_
 
-#define SPECIAL_START		384
-#define TC_UP			(SPECIAL_START + 0)
-#define TC_DOWN			(SPECIAL_START + 1)
-#define TC_RIGHT		(SPECIAL_START + 2)
-#define TC_LEFT			(SPECIAL_START + 3)
+#define TC_UP			(128 + 'a')
+#define TC_DOWN			(128 + 'b')
+#define TC_RIGHT		(128 + 'c')
+#define TC_LEFT			(128 + 'd')
 
-#define TC_INSERT		(SPECIAL_START + 4)
-#define TC_DELETE		(SPECIAL_START + 5)
-#define TC_PPAGE		(SPECIAL_START + 6)
-#define TC_NPAGE		(SPECIAL_START + 7)
-#define TC_HOME			(SPECIAL_START + 8)
-#define TC_END			(SPECIAL_START + 9)
+#define TC_INSERT		(128 + 'e')
+#define TC_DELETE		(128 + 'f')
+#define TC_PPAGE		(128 + 'g')
+#define TC_NPAGE		(128 + 'h')
+#define TC_HOME			(128 + 'i')
+#define TC_END			(128 + 'j')
 
-#define TC_F1			(SPECIAL_START + 10)
-#define TC_F2			(SPECIAL_START + 11)
-#define TC_F3			(SPECIAL_START + 12)
-#define TC_F4			(SPECIAL_START + 13)
-#define TC_F5			(SPECIAL_START + 14)
-#define TC_F6			(SPECIAL_START + 15)
-#define TC_F7			(SPECIAL_START + 16)
-#define TC_F8			(SPECIAL_START + 17)
-#define TC_F9			(SPECIAL_START + 18)
-#define TC_F10			(SPECIAL_START + 19)
-#define TC_F11			(SPECIAL_START + 20)
-#define TC_F12			(SPECIAL_START + 21)
+#define TC_F1			(128 + 'k')
+#define TC_F2			(128 + 'l')
+#define TC_F3			(128 + 'm')
+#define TC_F4			(128 + 'n')
+#define TC_F5			(128 + 'o')
+#define TC_F6			(128 + 'p')
+#define TC_F7			(128 + 'q')
+#define TC_F8			(128 + 'r')
+#define TC_F9			(128 + 's')
+#define TC_F10			(128 + 't')
+#define TC_F11			(128 + 'u')
+#define TC_F12			(128 + 'v')
 
-#define TC_C_UP			(SPECIAL_START + 22)
-#define TC_C_DOWN		(SPECIAL_START + 23)
-#define TC_C_RIGHT		(SPECIAL_START + 24)
-#define TC_C_LEFT		(SPECIAL_START + 25)
-#define TC_C_HOME		(SPECIAL_START + 26)
-#define TC_C_END		(SPECIAL_START + 27)
+#define KEY_MASK		0x003fffff
+#define SPECIAL_START		TC_UP
+#define SPECIAL_END		TC_F12
+#define NUM_SPECIAL		(SPECIAL_END - SPECIAL_START + 1)
 
-#define NUMKEYS			(SPECIAL_START + 28)
+/* 128 ASCII + 128 meta + 128 C-X */
+#define NUMKEYS			(128 + 128 + 128)
 
-#define NUM_SPECIAL		(NUMKEYS - SPECIAL_START)
+static inline bool is_special(int cmd)
+{
+	return cmd >= SPECIAL_START && cmd <= SPECIAL_END;
+}
 
 #endif

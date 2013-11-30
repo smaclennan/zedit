@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (N_KEYS != NUM_SPECIAL) {
-		printf("Mismatch N_KEYS %d NUMKEYS %d\n",
+		printf("Mismatch N_KEYS %d NUM_SPECIAL %d\n",
 		       N_KEYS, NUM_SPECIAL);
 		err = 1;
 	}
@@ -55,9 +55,9 @@ int main(int argc, char *argv[])
 
 		for (i = 0; i < NUM_SPECIAL; ++i)
 			mask = (mask << 1) | 1;
-		if (mask != Key_mask) {
+		if (mask != KEY_MASK) {
 			printf("Mismatch mask %08x and %08x\n",
-			       mask, Key_mask);
+			       mask, KEY_MASK);
 			err = 1;
 		}
 	}

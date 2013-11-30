@@ -255,7 +255,6 @@ void termsize(void);
 void tfini(void);
 void tforce(void);
 int tgetcmd(void);
-int tgetkb(void);
 void t_goto(int, int);
 void tindent(int);
 void tinit(void);

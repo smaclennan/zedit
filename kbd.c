@@ -49,16 +49,8 @@ static struct key_array {
 	{ "\033[21~",	"f10" },
 	{ "\033[23~",	"f11" },
 	{ "\033[24~",	"f12" },
-
-	{ "\033Oa",	"C-up" },
-	{ "\033Ob",	"C-down" },
-	{ "\033Oc",	"C-right" },
-	{ "\033Od",	"C-left" },
-	{ "\033[7^",	"C-home" },
-	{ "\033[8^",	"C-end" },
 };
 #define N_KEYS ((int)(sizeof(Tkeys) / sizeof(struct key_array)))
-#define Key_mask 0x0fffffff
 
 int Cmdpushed = -1;
 
@@ -69,6 +61,27 @@ static int cptr = -1;
 int cpushed;	/* needed in shell.c */
 static bool Pending;
 
+static Byte tgetkb(void)
+{
+	cptr = (cptr + 1) & (CSTACK - 1);
+	if (cpushed)
+		--cpushed;
+	else {
+		Byte buff[CSTACK];
+		int i, p = cptr;
+
+		cpushed = read(0, (char *)buff, CSTACK) - 1;
+		if (cpushed < 0)
+			hang_up(1);	/* we lost connection */
+		for (i = 0; i <= cpushed; ++i) {
+			cstack[p] = buff[i];
+			p = (p + 1) & (CSTACK - 1);
+		}
+	}
+	Pending = false;
+	return cstack[cptr];
+}
+
 static void tungetkb(int j)
 {
 	cptr = (cptr - j) & (CSTACK - 1);
@@ -77,7 +90,7 @@ static void tungetkb(int j)
 
 static int check_specials(void)
 {
-	int i, j, bit, mask = Key_mask;
+	int i, j, bit, mask = KEY_MASK;
 
 	for (j = 0; mask; ++j) {
 		int cmd = tgetkb() & 0x7f;
@@ -118,27 +131,6 @@ int tgetcmd(void)
 	}
 
 	return cmd;
-}
-
-Byte tgetkb(void)
-{
-	cptr = (cptr + 1) & (CSTACK - 1);
-	if (cpushed)
-		--cpushed;
-	else {
-		Byte buff[CSTACK];
-		int i, p = cptr;
-
-		cpushed = read(0, (char *)buff, CSTACK) - 1;
-		if (cpushed < 0)
-			hang_up(1);	/* we lost connection */
-		for (i = 0; i <= cpushed; ++i) {
-			cstack[p] = buff[i];
-			p = (p + 1) & (CSTACK - 1);
-		}
-	}
-	Pending = false;
-	return cstack[cptr];
 }
 
 #ifdef NO_POLL
@@ -195,7 +187,7 @@ char *dispkey(unsigned key, char *s)
 	int j;
 
 	*s = '\0';
-	if (key > SPECIAL_START)
+	if (is_special(key))
 		return strcpy(s, Tkeys[key - SPECIAL_START].label);
 	if (key > 127)
 		strcpy(s, key < 256 ? "M-" : "C-X ");

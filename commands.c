@@ -557,7 +557,8 @@ void Zexit(void)
 
 void Zsave_and_exit(void)
 {
-	Zsave_file();
+	if ((Curbuff->bmode & SYSBUFF) == 0)
+		Zsave_file();
 	Zexit();
 }
 

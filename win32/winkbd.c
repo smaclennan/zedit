@@ -120,11 +120,33 @@ int tgetcmd(void)
 	return cmd;
 }
 
-static bool convertKey(KEY_EVENT_RECORD *event)
+static Byte convertKey(KEY_EVENT_RECORD *event)
 {
+	Byte key = virt[event->VirtualKeyCode];
+	if (event->dwControlKeyState == 0 || key == 0)
+		return key;
+
+	if (key >= 127)
+		return key; /* SAM what about C-Left for example? */
+
 	bool meta = event->dwControlKeyState & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED);
 	bool ctrl = event->dwControlKeyState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED);
 	bool shift = event->dwControlKeyState & (CAPSLOCK_ON | SHIFT_PRESSED);
+
+	if (meta)
+		return key | 128;
+
+	if (ctrl) {
+		if (isalpha(key))
+			return key - 'a' + 1;
+		else
+			return 0; // SAM FIXME!
+	}
+
+	if (shift)
+		return toupper(key); // SAM ?
+
+	return key;
 }
 
 Byte tgetkb(void)
@@ -149,9 +171,11 @@ again:
 		switch (input[i].EventType) {
 		case KEY_EVENT: /* 1 */
 			if (input[i].Event.KeyEvent.bKeyDown == 0) {
-				cstack[p] = (Byte)input[i].Event.KeyEvent.wVirtualKeyCode;
-				p = (p + 1) & (CSTACK - 1);
-				++cpushed;
+				cstack[p] = convertKey(&input[i].Event.KeyEvent);
+				if (cstack[p]) {
+					p = (p + 1) & (CSTACK - 1);
+					++cpushed;
+				}
 			}
 			break;
 		case WINDOW_BUFFER_SIZE_EVENT:

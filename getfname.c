@@ -329,6 +329,11 @@ NOTE: assumes a valid path (in particular /.. would not work)
 
 int pathfixup(char *to, char *from)
 {
+#ifdef WIN32
+	// SAM FIXME we don't handle drive letters backslash
+	strcpy(to, from);
+	return 0;
+#else
 	char *start, save, dir[PATHMAX], *p;
 	int rc;
 	struct stat sbuf;
@@ -417,5 +422,6 @@ int pathfixup(char *to, char *from)
 	if (strlen(start) >= PATHMAX)
 		Dbg("TOO LONG %d '%s'\n", strlen(start), start);
 	return rc;
+#endif
 }
 

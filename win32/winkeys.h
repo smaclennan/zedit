@@ -1,4 +1,4 @@
-static Byte virt[] = {
+static short virt[] = {
 	0,
 	0,		/* 0x01 VK_LBUTTON */
 	0,		/* 0x02 VK_RBUTTON */
@@ -12,7 +12,7 @@ static Byte virt[] = {
 	0,		/* 0x0A-0B Reserved */
 	0,		/* 0x0A-0B Reserved */
 	0,		/* 0x0C VK_CLEAR */
-	'\r',		/* 0x0D VK_RETURN */
+	'\n',		/* 0x0D VK_RETURN */
 	0,		/* 0x0E-0F Undefined */
 	0,		/* 0x0E-0F Undefined */
 	0,		/* 0x10 VK_SHIFT */
@@ -26,14 +26,14 @@ static Byte virt[] = {
 	0,		/* 0x18 VK_FINAL */
 	0,		/* 0x19 VK_HANJA/VK_KANJI */
 	0,		/* 0x1A Undefined */
-	'\e',		/* 0x1B VK_ESCAPE */
+	'\033',		/* 0x1B VK_ESCAPE */
 	0,		/* 0x1C VK_CONVERT */
 	0,		/* 0x1D VK_NONCONVERT */
 	0,		/* 0x1E VK_ACCEPT */
 	0,		/* 0x1F VK_MODECHANGE */
 	' ',		/* 0x20 VK_SPACE */
-	0,		/* 0x21 VK_PRIOR */
-	0,		/* 0x22 VK_NEXT */
+	TC_PPAGE,		/* 0x21 VK_PRIOR */
+	TC_NPAGE,		/* 0x22 VK_NEXT */
 	TC_END,		/* 0x23 VK_END */
 	TC_HOME,	/* 0x24 VK_HOME */
 	TC_LEFT,	/* 0x25 VK_LEFT */
@@ -186,7 +186,7 @@ static Byte virt[] = {
 	0,		/* 0xB8-B9 Reserved */
 	0,		/* 0xB8-B9 Reserved */
 	';',		/* 0xBA VK_OEM_1';:' */
-	'+',		/* 0xBB VK_OEM_PLUS */
+	'=',		/* 0xBB VK_OEM_PLUS */
 	',',		/* 0xBC VK_OEM_COMMA */
 	'-',		/* 0xBD VK_OEM_MINUS */
 	'.',		/* 0xBE VK_OEM_PERIOD */
@@ -218,10 +218,10 @@ static Byte virt[] = {
 	0,		/* 0xD8-DA Unassigned */
 	0,		/* 0xD8-DA Unassigned */
 	0,		/* 0xD8-DA Unassigned */
-	'{',		/* 0xDB VK_OEM_4'[{' */
-	'|',		/* 0xDC VK_OEM_5'\|' */
-	'}',		/* 0xDD VK_OEM_6']}' */
-	'"',		/* 0xDE VK_OEM_7''"' */
+	'[',		/* 0xDB VK_OEM_4'[{' */
+	'\\',		/* 0xDC VK_OEM_5'\|' */
+	']',		/* 0xDD VK_OEM_6']}' */
+	'\'',		/* 0xDE VK_OEM_7''"' */
 	0,		/* 0xDF VK_OEM_8 */
 	0,		/* 0xE0 Reserved */
 	0,		/* 0xE1 OEM specific */

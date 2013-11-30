@@ -19,6 +19,7 @@
 
 #include "z.h"
 #include "keys.h"
+#include "winkeys.h"
 
 /* Note: We can currently only have 32 specials */
 static struct key_array {
@@ -64,7 +65,7 @@ int Cmdpushed = -1;
 
 /* stack and vars for t[un]getkb / tkbrdy */
 #define CSTACK 16 /* must be power of 2 */
-static Byte cstack[CSTACK];
+static int cstack[CSTACK];
 static int cptr = -1;
 int cpushed;	/* needed in shell.c */
 static bool Pending;
@@ -101,28 +102,17 @@ static int check_specials(void)
 
 int tgetcmd(void)
 {
-	int cmd;
-
 	if (Cmdpushed >= 0) {
-		cmd = Cmdpushed;
+		int cmd = Cmdpushed;
 		Cmdpushed = -1;
-	} else {
-		cmd = tgetkb() & 0x7f;
-
-		/* All special keys start with ESC */
-		if (cmd == '\033')
-			if (tkbrdy()) {
-				tungetkb(1);
-				return check_specials();
-			}
-	}
-
-	return cmd;
+		return cmd;
+	} else
+		return tgetkb();
 }
 
-static Byte convertKey(KEY_EVENT_RECORD *event)
+static short convertKey(KEY_EVENT_RECORD *event)
 {
-	Byte key = virt[event->VirtualKeyCode];
+	short key = virt[event->wVirtualKeyCode];
 	if (event->dwControlKeyState == 0 || key == 0)
 		return key;
 
@@ -143,13 +133,41 @@ static Byte convertKey(KEY_EVENT_RECORD *event)
 			return 0; // SAM FIXME!
 	}
 
-	if (shift)
-		return toupper(key); // SAM ?
+	if (shift)  {
+		if (isalpha(key))
+			return toupper(key);
+		switch (key) {
+		case '`': return '~';
+		case '1': return '!';
+		case '2': return '@';
+		case '3': return '#';
+		case '4': return '$';
+		case '5': return '%';
+		case '6': return '^';
+		case '7': return '&';
+		case '8': return '*';
+		case '9': return '(';
+		case '0': return ')';
+		case '-': return '_';
+		case '=': return '+';
+
+		case '[': return '{';
+		case ']': return '}';
+		case '\\': return '|';
+
+		case ';': return ':';
+		case '\'': return '"';
+
+		case ',': return '<';
+		case '.': return '>';
+		case '/': return '?';
+		}
+	}
 
 	return key;
 }
 
-Byte tgetkb(void)
+int tgetkb(void)
 {
 	Pending = false;
 

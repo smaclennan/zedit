@@ -3,8 +3,7 @@
 struct cnames Cnames[] = {
 	{"abort",			ZABORT,
 	 "Aborts the current command. This is the only way to exit Universal "
-	 "Arguments, String Arguments, and the quote command. It will also "
-	 "abort C-X and Meta prefixes."
+	 "and String Arguments. It will also abort C-X and Meta prefixes."
 	},
 	{"again",			ZAGAIN,
 	 "Causes the last search to be executed again. If the mode Exact is "
@@ -507,14 +506,8 @@ struct cnames Cnames[] = {
 	{"quote",			ZQUOTE,
 	 "The Quote command is used to insert a character into a buffer or "
 	 "String Argument that would normally be a command. The next "
-	 "character after the Quote command is taken literally, unless the "
-	 "key is a valid hexadecimal digit. If the key is a valid "
-	 "hexadecimal digit, it and the next key are taken together as a "
-	 "hexadecimal number and the ASCII character equivalent of this "
-	 "number is inserted into the buffer. If a key is not hit within "
-	 "approximately one second, 'Quote:' is displayed in the echo "
-	 "window. The Quote command does not work within a Universal "
-	 "Argument. A Universal Argument inserts Arg characters."
+	 "character after the Quote command is taken literally and inserted "
+	 " into the buffer. A Universal Argument inserts Arg characters."
 	},
 	{"re-replace",			ZRE_REPLACE,
 	 "Works like the Query Replace command except that the search string "

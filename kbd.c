@@ -69,6 +69,27 @@ static int cptr = -1;
 int cpushed;	/* needed in shell.c */
 static bool Pending;
 
+static Byte tgetkb(void)
+{
+	cptr = (cptr + 1) & (CSTACK - 1);
+	if (cpushed)
+		--cpushed;
+	else {
+		Byte buff[CSTACK];
+		int i, p = cptr;
+
+		cpushed = read(0, (char *)buff, CSTACK) - 1;
+		if (cpushed < 0)
+			hang_up(1);	/* we lost connection */
+		for (i = 0; i <= cpushed; ++i) {
+			cstack[p] = buff[i];
+			p = (p + 1) & (CSTACK - 1);
+		}
+	}
+	Pending = false;
+	return cstack[cptr];
+}
+
 static void tungetkb(int j)
 {
 	cptr = (cptr - j) & (CSTACK - 1);
@@ -118,27 +139,6 @@ int tgetcmd(void)
 	}
 
 	return cmd;
-}
-
-Byte tgetkb(void)
-{
-	cptr = (cptr + 1) & (CSTACK - 1);
-	if (cpushed)
-		--cpushed;
-	else {
-		Byte buff[CSTACK];
-		int i, p = cptr;
-
-		cpushed = read(0, (char *)buff, CSTACK) - 1;
-		if (cpushed < 0)
-			hang_up(1);	/* we lost connection */
-		for (i = 0; i <= cpushed; ++i) {
-			cstack[p] = buff[i];
-			p = (p + 1) & (CSTACK - 1);
-		}
-	}
-	Pending = false;
-	return cstack[cptr];
 }
 
 #ifdef NO_POLL

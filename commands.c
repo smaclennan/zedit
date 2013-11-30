@@ -557,7 +557,8 @@ void Zexit(void)
 
 void Zsave_and_exit(void)
 {
-	Zsave_file();
+	if ((Curbuff->bmode & SYSBUFF) == 0)
+		Zsave_file();
 	Zexit();
 }
 
@@ -713,26 +714,24 @@ void Zarg(void)
 	CMD(Keys[Cmd]);
 }
 
+static void do_prefix_cmd(const char *prompt, int mask)
+{
+	Cmd = delayprompt(prompt);
+	if (Cmd < 128) {
+		Cmd |= mask;
+		CMD(Keys[Cmd]);
+	} else
+		Zabort();
+}
+
 void Zmeta(void)
 {
-	bool tmp;
-
-	tmp = delayprompt("Meta: ");
-	Cmd = tgetkb() | 128;
-	if (tmp)
-		clrpaw();
-	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
+	do_prefix_cmd("Meta: ", 128);
 }
 
 void Zctrl_x(void)
 {
-	bool tmp;
-
-	tmp = delayprompt("C-X: ");
-	Cmd = tgetcmd() | 256;
-	if (tmp)
-		clrpaw();
-	CMD(Cmd < SPECIAL_START ? Keys[Cmd] : ZNOTIMPL);
+	do_prefix_cmd("C-X: ", 256);
 }
 
 void Zmeta_x(void)
@@ -759,11 +758,9 @@ void Zabort(void)
 
 void Zquote(void)
 {
-	bool tmp;
 	char n[3];
 
-	tmp = delayprompt("Quote: ");
-	Cmd = tgetkb();
+	Cmd = delayprompt("Quote: ");
 	if (Keys[Cmd] == ZABORT)
 		goto done;
 	if (isxdigit(Cmd)) {
@@ -780,8 +777,6 @@ void Zquote(void)
 		else
 			binsert(Cmd);
 done:
-	if (tmp)
-		clrpaw();
 	Arg = 0;
 }
 

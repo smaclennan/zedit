@@ -202,7 +202,7 @@ int cntlines(int);
 int compile(Byte*, Byte*, Byte*);
 void cswitchto(struct buff *);
 bool delay(int ms);
-bool delayprompt(const char *);
+int delayprompt(const char *);
 bool delbname(char *);
 void delbuff(struct buff *);
 bool delcmd(void);

@@ -1,4 +1,4 @@
-static short virt[] = {
+static Byte virt[] = {
 	0,
 	0,		/* 0x01 VK_LBUTTON */
 	0,		/* 0x02 VK_RBUTTON */
@@ -7,7 +7,7 @@ static short virt[] = {
 	0,		/* 0x05 VK_XBUTTON1 */
 	0,		/* 0x06 VK_XBUTTON2 */
 	0,		/* 0x07 Undefined */
-	0,		/* 0x08 VK_BACK */
+	'\0177',	/* 0x08 VK_BACK */
 	'\t',		/* 0x09 VK_TAB */
 	0,		/* 0x0A-0B Reserved */
 	0,		/* 0x0A-0B Reserved */

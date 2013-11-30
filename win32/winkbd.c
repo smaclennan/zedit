@@ -22,44 +22,15 @@
 #include "winkeys.h"
 
 /* Note: We can currently only have 32 specials */
-static struct key_array {
-	const char *key;
-	const char *label;
-} Tkeys[] = {
-	{ "\033[A",	"up" },
-	{ "\033[B",	"down" },
-	{ "\033[C",	"right" },
-	{ "\033[D",	"left" },
+static char *Tkeys[] = {
+	"up", "down", "right", "left",
 
-	{ "\033[2~",	"insert" },
-	{ "\033[3~",	"delete" },
-	{ "\033[5~",	"page up" },
-	{ "\033[6~",	"page down" },
-	{ "\033[7~",	"home" },
-	{ "\033[8~",	"end" },
+	"insert", "delete", "page up", "page down", "home", "end",
 
-	{ "\033[11~",	"f1" },
-	{ "\033[12~",	"f2" },
-	{ "\033[13~",	"f3" },
-	{ "\033[14~",	"f4" },
-	{ "\033[15~",	"f5" },
-	{ "\033[17~",	"f6" },
-	{ "\033[18~",	"f7" },
-	{ "\033[19~",	"f8" },
-	{ "\033[20~",	"f9" },
-	{ "\033[21~",	"f10" },
-	{ "\033[23~",	"f11" },
-	{ "\033[24~",	"f12" },
-
-	{ "\033Oa",	"C-up" },
-	{ "\033Ob",	"C-down" },
-	{ "\033Oc",	"C-right" },
-	{ "\033Od",	"C-left" },
-	{ "\033[7^",	"C-home" },
-	{ "\033[8^",	"C-end" },
+	"f1", "f2", "f3", "f4", "f5", "f6",
+	"f7", "f8", "f9", "f10", "f11", "f12"
 };
-#define N_KEYS ((int)(sizeof(Tkeys) / sizeof(struct key_array)))
-#define Key_mask 0x0fffffff
+#define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
 
 int Cmdpushed = -1;
 
@@ -70,70 +41,26 @@ static int cptr = -1;
 int cpushed;	/* needed in shell.c */
 static bool Pending;
 
-static void tungetkb(int j)
-{
-	cptr = (cptr - j) & (CSTACK - 1);
-	cpushed += j;
-}
-
-static int check_specials(void)
-{
-	int i, j, bit, mask = Key_mask;
-
-	for (j = 0; mask; ++j) {
-		int cmd = tgetkb() & 0x7f;
-		for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
-			if ((mask & bit) && cmd == Tkeys[i].key[j]) {
-				if (Tkeys[i].key[j + 1] == '\0')
-					return i + SPECIAL_START;
-			} else
-				mask &= ~bit;
-	}
-
-	/* No match - push back the chars */
-	tungetkb(j);
-
-	/* If it is an unknown CSI string, suck it up */
-	if (cstack[(cptr + 2) & (CSTACK - 1)] == '[')
-		cpushed = 2;
-
-	return tgetkb() & 0x7f;
-}
-
-int tgetcmd(void)
-{
-	if (Cmdpushed >= 0) {
-		int cmd = Cmdpushed;
-		Cmdpushed = -1;
-		return cmd;
-	} else
-		return tgetkb();
-}
-
 static short convertKey(KEY_EVENT_RECORD *event)
 {
-	short key = virt[event->wVirtualKeyCode];
+	Byte key = virt[event->wVirtualKeyCode];
 	if (event->dwControlKeyState == 0 || key == 0)
 		return key;
 
-	if (key >= 127)
-		return key; /* SAM what about C-Left for example? */
+	if (key >= 128)
+		return key;
 
-	bool meta = event->dwControlKeyState & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED);
-	bool ctrl = event->dwControlKeyState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED);
-	bool shift = event->dwControlKeyState & (CAPSLOCK_ON | SHIFT_PRESSED);
-
-	if (meta)
+	if (event->dwControlKeyState & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED))
 		return key | 128;
 
-	if (ctrl) {
+	if (event->dwControlKeyState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED)) {
 		if (isalpha(key))
 			return key - 'a' + 1;
 		else
 			return 0; // SAM FIXME!
 	}
 
-	if (shift)  {
+	if (event->dwControlKeyState & (CAPSLOCK_ON | SHIFT_PRESSED)) {
 		if (isalpha(key))
 			return toupper(key);
 		switch (key) {
@@ -167,7 +94,7 @@ static short convertKey(KEY_EVENT_RECORD *event)
 	return key;
 }
 
-int tgetkb(void)
+static int tgetkb(void)
 {
 	Pending = false;
 
@@ -212,6 +139,22 @@ again:
 		goto again; /* keep reading till we get a key */
 
 	return cstack[cptr];
+}
+
+static void tungetkb(int j)
+{
+	cptr = (cptr - j) & (CSTACK - 1);
+	cpushed += j;
+}
+
+int tgetcmd(void)
+{
+	if (Cmdpushed >= 0) {
+		int cmd = Cmdpushed;
+		Cmdpushed = -1;
+		return cmd;
+	} else
+		return tgetkb();
 }
 
 #ifdef NO_POLL
@@ -268,7 +211,7 @@ char *dispkey(unsigned key, char *s)
 	int j;
 
 	*s = '\0';
-	if (key > SPECIAL_START)
+	if (is_special(key))
 		return strcpy(s, Tkeys[key - SPECIAL_START].label);
 	if (key > 127)
 		strcpy(s, key < 256 ? "M-" : "C-X ");

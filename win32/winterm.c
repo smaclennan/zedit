@@ -229,32 +229,6 @@ void tforce(void)
 	}
 }
 
-void tcleol(void)
-{
-	if (Pcol < Clrcol[Prow]) {
-		COORD where;
-		DWORD written;
-
-		where.X = Pcol;
-		where.Y = Prow;
-		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol,
-					   where, &written);
-		Clrcol[Prow] = Pcol;
-	}
-}
-
-void tclrwind(void)
-{
-	memset(Clrcol, 0, ROWMAX);
-	Prow = Pcol = 0;
-
-	COORD where;
-	DWORD written;
-	where.X = where.Y = 0;
-	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
-				   where, &written);
-}
-
 #define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
 #define BLACK_ON_WHITE (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
 
@@ -283,8 +257,50 @@ void tstyle(int style)
 	fflush(stdout);
 }
 
+void tcleol(void)
+{
+	if (Pcol < Clrcol[Prow]) {
+		COORD where;
+		DWORD written;
 
-void tbell(void) {} // SAM FIXME
+		where.X = Pcol;
+		where.Y = Prow;
+		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol, where, &written);
+
+		/* This is to clear a possible mark */
+		if (Clrcol[Prow])
+			where.X = Clrcol[Prow] - 1;
+		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, 1, where, &written);
+
+		Clrcol[Prow] = Pcol;
+	}
+}
+
+void tclrwind(void)
+{
+	memset(Clrcol, 0, ROWMAX);
+	Prow = Pcol = 0;
+
+	COORD where;
+	DWORD written;
+	where.X = where.Y = 0;
+	FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax * Rowmax, where, &written);
+	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax, where, &written);
+}
+
+
+void tbell(void)
+{
+	if (VAR(VBELL)) {
+		COORD where;
+		DWORD written;
+		where.X = 0;
+		where.Y = Rowmax - 2;
+		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax, where, &written);
+		Beep(440, 250);
+		FillConsoleOutputAttribute(hstdout, BLACK_ON_WHITE, Colmax, where, &written);
+	}
+}
 
 // SAM we can get much smarter with tputchar and tflush...
 void tputchar(Byte c)

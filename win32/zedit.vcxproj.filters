@@ -99,12 +99,18 @@
     <ClCompile Include="winkbd.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="zwin32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dirent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="getopt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\z.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

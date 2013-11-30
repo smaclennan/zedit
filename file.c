@@ -83,10 +83,8 @@ static bool readone(char *bname, char *path)
 			toggle_mode(0);
 			if (rc > 0)
 				putpaw("New File");
-#ifndef WIN32 // SAM FIX
-			else if (access(path, R_OK|W_OK) == EOF)
+			else if (access(path, R_OK | W_OK) == EOF)
 				Curbuff->bmode |= VIEW;
-#endif
 			strcpy(Lbufname, was->bname);
 		} else { /* error */
 			delbname(Curbuff->bname);

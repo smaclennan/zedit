@@ -107,8 +107,10 @@
     <ClCompile Include="..\z.c" />
     <ClCompile Include="winkbd.c" />
     <ClCompile Include="winterm.c" />
+    <ClCompile Include="zwin32.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\z.h" />
     <ClInclude Include="dirent.h" />
     <ClInclude Include="getopt.h" />
   </ItemGroup>

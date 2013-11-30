@@ -17,14 +17,14 @@
 #define read _read
 #define write _write
 #define close _close
+#define access _access
 #define umask _umask
 #define putenv _putenv
 #define getcwd _getcwd
 
 #define F_OK 0
-#define R_OK 0
-#define W_OK 0
+#define R_OK 4
+#define W_OK 2
 
 extern HANDLE hstdin, hstdout;
-
 #endif

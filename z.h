@@ -174,9 +174,11 @@ extern void (*Nextpart)(void);
 extern int Tabsize;
 
 #ifdef WIN32
+char *gethomedir(void);
 void tputchar(Byte c);
 void tflush(void);
 #else
+#define gethomedir()		getenv("HOME")
 #define tputchar(c)		putchar(c)
 #define tflush()		fflush(stdout)
 #endif

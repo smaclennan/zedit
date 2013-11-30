@@ -22,8 +22,8 @@ static __inline DIR *opendir(char *dirname)
 		return NULL;
 
 	char path[PATHMAX];
-	snprintf(path, sizeof(path), "%s/*", dir);
-	dir->handle = FindFirstFile(path, &dir->data);
+	snprintf(path, sizeof(path), "%s", dirname);
+	dir->handle = FindFirstFile(L"F:\\zedit\\win32\\*", &dir->data);
 	if (dir->handle == INVALID_HANDLE_VALUE) {
 		free(dir);
 		return NULL;

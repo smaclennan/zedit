@@ -53,12 +53,24 @@ static short convertKey(KEY_EVENT_RECORD *event)
 	if (event->dwControlKeyState & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED))
 		return key | 128;
 
-	if (event->dwControlKeyState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED)) {
-		if (isalpha(key))
-			return key - 'a' + 1;
-		else
-			return 0; // SAM FIXME!
-	}
+	if (event->dwControlKeyState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED))
+		switch (key) {
+		case ' ':
+		case '\\':
+			return 28;
+		case ']':
+			return 29;
+		case '^':
+			return 30;
+		case '_':
+		case '-':
+			return 31;
+		default:
+			if (isalpha(key))
+				return key - 'a' + 1;
+			else
+				return 0;
+		}
 
 	if (event->dwControlKeyState & (CAPSLOCK_ON | SHIFT_PRESSED)) {
 		if (isalpha(key))
@@ -138,6 +150,7 @@ again:
 	if (cpushed == 0)
 		goto again; /* keep reading till we get a key */
 
+	--cpushed;
 	return cstack[cptr];
 }
 
@@ -212,7 +225,7 @@ char *dispkey(unsigned key, char *s)
 
 	*s = '\0';
 	if (is_special(key))
-		return strcpy(s, Tkeys[key - SPECIAL_START].label);
+		return strcpy(s, Tkeys[key - SPECIAL_START]);
 	if (key > 127)
 		strcpy(s, key < 256 ? "M-" : "C-X ");
 	j = key & 0x7f;

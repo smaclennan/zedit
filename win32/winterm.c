@@ -1,4 +1,5 @@
 #include "../z.h"
+#include <signal.h>
 
 int Clrcol[ROWMAX + 1];		/* Clear if past this */
 
@@ -43,16 +44,18 @@ static void initline(void)
 		tprntchar(' ');
 	tstyle(T_NORMAL);
 	tflush();
+	t_goto(Rowmax - 1, 0);
 }
 
-void tinit(void) {
+void tinit(void)
+{
 	hstdin = GetStdHandle(STD_INPUT_HANDLE);
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT);
 
-	signal(SIGHUP,  hang_up);
+//	signal(SIGHUP,  hang_up);
 	signal(SIGTERM, hang_up);
 #if SHELL
 #if !defined(WNOWAIT)
@@ -91,12 +94,20 @@ void setmark(bool prntchar)
 
 void termsize(void)
 {
+	/* Win8 creates a huge screen buffer (300 lines) set a reasonable default */
+#if 0
 	CONSOLE_SCREEN_BUFFER_INFO info;
 
 	if (GetConsoleScreenBufferInfo(hstdout, &info)) {
 		Colmax = info.dwSize.X;
 		Rowmax = info.dwSize.Y;
 	}
+#endif
+
+	COORD size;
+	size.X = Colmax;
+	size.Y = Rowmax;
+	SetConsoleScreenBufferSize(hstdout, size);
 }
 
 static int tabsize(int col)
@@ -227,7 +238,7 @@ void tcleol(void)
 		where.X = Pcol;
 		where.Y = Prow;
 		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol,
-					   &where, &written);
+					   where, &written);
 		Clrcol[Prow] = Pcol;
 	}
 }
@@ -241,7 +252,7 @@ void tclrwind(void)
 	DWORD written;
 	where.X = where.Y = 0;
 	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
-				   &where, &written);
+				   where, &written);
 }
 
 #define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)

@@ -30,8 +30,8 @@ static void getrnge(Byte *);
 #define GETC()		(*sp++)
 #define PEEKC()		(*sp)
 #define UNGETC(c)	(--sp)
-#define RETURN(c)   return(0)
-#define ERROR(c)    return(c)
+#define RETURN(c)   return(0) // SAM FIXME
+#define ERROR(c)    return(c) // SAM FIXME
 
 struct mark *REstart;		/* assigned in Setup */
 static struct mark braslist[NBRA];

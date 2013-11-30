@@ -60,9 +60,6 @@
     <ClCompile Include="..\help.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\kbd.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\life.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -97,6 +94,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="winterm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="winkbd.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

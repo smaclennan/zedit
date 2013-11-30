@@ -120,6 +120,13 @@ int tgetcmd(void)
 	return cmd;
 }
 
+static bool convertKey(KEY_EVENT_RECORD *event)
+{
+	bool meta = event->dwControlKeyState & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED);
+	bool ctrl = event->dwControlKeyState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED);
+	bool shift = event->dwControlKeyState & (CAPSLOCK_ON | SHIFT_PRESSED);
+}
+
 Byte tgetkb(void)
 {
 	Pending = false;
@@ -131,8 +138,8 @@ Byte tgetkb(void)
 	}
 
 	INPUT_RECORD input[CSTACK];
-	DWORD n;
-	int i, p = cptr;
+	DWORD i, n;
+	int p = cptr;
 
 again:
 	if (!ReadConsoleInput(hstdin, input, CSTACK, &n))
@@ -140,10 +147,12 @@ again:
 
 	for (i = 0; i < n; ++i)
 		switch (input[i].EventType) {
-		case KEY_EVENT:
-			cstack[p] = input[i].Event.KeyEvent.wVirtualKeyCode;
-			p = (p + 1) & (CSTACK - 1);
-			++cpushed;
+		case KEY_EVENT: /* 1 */
+			if (input[i].Event.KeyEvent.bKeyDown == 0) {
+				cstack[p] = (Byte)input[i].Event.KeyEvent.wVirtualKeyCode;
+				p = (p + 1) & (CSTACK - 1);
+				++cpushed;
+			}
 			break;
 		case WINDOW_BUFFER_SIZE_EVENT:
 			Rowmax = input[i].Event.WindowBufferSizeEvent.dwSize.Y;

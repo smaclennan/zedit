@@ -52,7 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,7 +94,6 @@
     <ClCompile Include="..\getarg.c" />
     <ClCompile Include="..\getfname.c" />
     <ClCompile Include="..\help.c" />
-    <ClCompile Include="..\kbd.c" />
     <ClCompile Include="..\life.c" />
     <ClCompile Include="..\reg.c" />
     <ClCompile Include="..\shell.c" />
@@ -106,6 +105,7 @@
     <ClCompile Include="..\vars.c" />
     <ClCompile Include="..\window.c" />
     <ClCompile Include="..\z.c" />
+    <ClCompile Include="winkbd.c" />
     <ClCompile Include="winterm.c" />
   </ItemGroup>
   <ItemGroup>

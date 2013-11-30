@@ -30,8 +30,6 @@ static void getrnge(Byte *);
 #define GETC()		(*sp++)
 #define PEEKC()		(*sp)
 #define UNGETC(c)	(--sp)
-#define RETURN(c)   return(0) // SAM FIXME
-#define ERROR(c)    return(c) // SAM FIXME
 
 struct mark *REstart;		/* assigned in Setup */
 static struct mark braslist[NBRA];
@@ -277,16 +275,16 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 #ifdef ALLOW_NL
 	if (c == EOFCH) {
 		if (*ep == NULL)
-			ERROR(41);
-		RETURN(ep);
+			return 41;
+		return 0;
 	}
 #else
 	if (c == EOFCH || c == '\n') {
 		if (c == '\n')
 			UNGETC(c);
 		if (*ep == 0)
-			ERROR(41);
-		RETURN(ep);
+			return 41;
+		return 0;
 	}
 #endif
 	bracketp = bracket;
@@ -297,13 +295,13 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 		UNGETC(c);
 	while (1) {
 		if (ep >= endbuf)
-			ERROR(50);
+			return 50;
 		c = GETC();
 		if (c != '*' && ((c != '\\') || (PEEKC() != '{')))
 			lastep = ep;
 		if (c == EOFCH) {
 			*ep++ = CCEOF;
-			RETURN(ep);
+			return 0;
 		}
 		switch (c) {
 
@@ -315,7 +313,7 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 		case '\n':
 			UNGETC(c);
 			*ep++ = CCEOF;
-			RETURN(ep);
+			return 0;
 #endif
 		case '*':
 			if (!lastep || *lastep == CBRA || *lastep == CKET)
@@ -331,7 +329,7 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 
 		case '[':
 			if (&ep[17] >= endbuf)
-				ERROR(50);
+				return 50;
 
 			*ep++ = CCL;
 			lc = 0;
@@ -347,7 +345,7 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 
 			do {
 				if (c == '\0' || c == '\n')
-					ERROR(49);
+					return 49;
 				if (c == '-' && lc != 0) {
 					c = GETC();
 					if (c == ']') {
@@ -378,7 +376,7 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 
 			case '(':
 				if (nbra >= NBRA)
-					ERROR(43);
+					return 43;
 				*bracketp++ = nbra;
 				*ep++ = CBRA;
 				*ep++ = nbra++;
@@ -386,7 +384,7 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 
 			case ')':
 				if (bracketp <= bracket || ++ebra != nbra)
-					ERROR(42);
+					return 42;
 				*ep++ = CKET;
 				*ep++ = *--bracketp;
 				closed++;
@@ -404,14 +402,14 @@ nlim:
 					if ('0' <= c && c <= '9')
 						i = 10 * i + c - '0';
 					else
-						ERROR(48);
+						return 48;
 				} while (((c = GETC()) != '\\') && (c != ','));
 				if (i > 255)
-					ERROR(47);
+					return 47;
 				*ep++ = i;
 				if (c == ',') {
 					if (cflg++)
-						ERROR(44);
+						return 44;
 					c = GETC();
 					if (c == '\\')
 						*ep++ = 255;
@@ -422,15 +420,15 @@ nlim:
 					}
 				}
 				if (GETC() != '}')
-					ERROR(45);
+					return 45;
 				if (!cflg)	/* one number */
 					*ep++ = i;
 				else if ((ep[-1] & 0377) < (ep[-2] & 0377))
-					ERROR(46);
+					return 46;
 				continue;
 
 			case '\n':
-				ERROR(40);
+				return 40;
 
 			case 'n':
 				c = '\n';
@@ -439,7 +437,7 @@ nlim:
 			default:
 				if (c >= '1' && c <= '9') {
 					if (--c  >= closed)
-						ERROR(51);
+						return 51;
 					*ep++ = CBACK;
 					*ep++ = c;
 					continue;

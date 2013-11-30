@@ -56,10 +56,7 @@ void dump_doc(const char *doc)
 
 void Zhelp(void)
 {
-	bool tmp = delayprompt("Help: a=apropos f=function k=key v=variable");
-	Cmd = tgetkb();
-	if (tmp)
-		clrpaw();
+	Cmd = delayprompt("Help: a=apropos f=function k=key v=variable");
 	switch (Cmd) {
 	case 'a':
 		Zhelp_apropos();

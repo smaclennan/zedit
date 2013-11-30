@@ -232,12 +232,16 @@ int ask(const char *msg)
 	return ask2(msg, false);
 }
 
-bool delayprompt(const char *msg)
+/* Delay before displaying a prompt and wait for a cmd */
+int delayprompt(const char *msg)
 {
-	int rc = delay(600);
+	int cmd, rc = delay(600);
 	if (rc)
 		putpaw(msg);
-	return rc;
+	cmd = tgetcmd();
+	if (rc)
+		clrpaw();
+	return cmd;
 }
 
 /* Was the last command a delete to kill buffer command? */

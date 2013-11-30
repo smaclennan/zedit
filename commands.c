@@ -718,7 +718,7 @@ static void do_prefix_cmd(const char *prompt, int mask)
 {
 	Cmd = delayprompt(prompt);
 	if (Cmd < 128) {
-		Cmd |= mask;
+		Cmd = toupper(Cmd) | mask;
 		CMD(Keys[Cmd]);
 	} else
 		Zabort();

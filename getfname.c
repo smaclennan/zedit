@@ -65,6 +65,8 @@ int getfname(const char *prompt, char *path)
 		rc = pathfixup(path, tmp);
 		if (rc == -1)
 			rc = 1;
+		if (rc)
+			error("Invalid path.");
 	}
 	for (i = 0; i < 3; ++i)
 		Keys[(int)mod[i]] = was[i];
@@ -73,8 +75,6 @@ int getfname(const char *prompt, char *path)
 		redisplay();
 		Didmatch = false;
 	}
-	if (rc > 0)
-		error("Invalid path.");
 	return rc;
 }
 

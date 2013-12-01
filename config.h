@@ -9,7 +9,6 @@
 #define SHELL		1
 #define SPELL		1		/* Requires libaspell */
 #define ZLIB		1		/* Requires zlib */
-#define TAGS		1
 #endif
 
 #define UNDO            1		/* EXPERIMENTAL undo code */

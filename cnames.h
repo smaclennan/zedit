@@ -691,18 +691,12 @@ struct cnames Cnames[] = {
 	 "repeat."
 	},
 	{"tag",				ZTAG,
-#if !TAGS
-	 "Note: Disabled in this version of Zedit.\n\n"
-#endif
 	 "The tag command asks for a function and looks for the function in a "
 	 "tagfile. If there is no tagfile specified, then it will prompt for a "
 	 "tagfile. A Universal Argument always prompts for a tagfile.\n\n"
 	 "Only supports etags style tagfiles."
 	},
 	{"tag-word",			ZTAG_WORD,
-#if !TAGS
-	 "Note: Disabled in this version of Zedit.\n\n"
-#endif
 	 "Like the tag command but uses the word at the point for the search tag."
 	},
 	{"toggle-case",			ZTOGGLE_CASE,

@@ -1,12 +1,29 @@
-#include "z.h"
+/* tags.c - tag file commands
+ * Copyright (C) 2013 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
-#if TAGS
-#include <regex.h>
+#include "z.h"
 
 static char Tagfile[PATHMAX];
 
 /* SAM Currently works for functions only */
-#define TAG_REGEX "[^a-zA-Z0-9_]%s\\([^0-9]+([0-9]+),([0-9]+)$"
+/* Leaves the point at the char offset */
+#define TAG_REGEX "[^a-zA-Z0-9_]%s\\([^0-9]*[0-9][0-9]*,"
 
 static int get_tagfile(void)
 {
@@ -27,71 +44,102 @@ static int get_tagfile(void)
 			if (access(Tagfile, F_OK) == 0)
 				return 0;
 		}
+	} else {
+		getcwd(Tagfile, sizeof(Tagfile) - 5);
+		strcat(Tagfile, "/TAGS");
+		if (access(Tagfile, F_OK) == 0)
+			return 0;
 	}
 
 	*Tagfile = '\0';
 	return getfname("Tagfile: ", Tagfile);
 }
 
-static bool find_tag(char *word)
+static bool tagfile_modified(struct buff *buff)
 {
-	char fname[PATHMAX], line[PATHMAX], path[PATHMAX], *p;
-	regex_t tagreg;
-	regmatch_t pmatch[3];
-	bool found = false;
+	struct stat sbuf;
+
+	if (strcmp(buff->fname, Tagfile))
+		return true;
+
+	if (stat(Tagfile, &sbuf) || sbuf.st_mtime > buff->mtime)
+		return true;
+
+	return false;
+}
+
+/* May change Curbuff */
+static struct buff *read_tagfile(void)
+{
+	struct buff *buff;
 
 	if (get_tagfile())
+		return NULL;
+
+	/* Check if we can reuse an existing tag buffer */
+	buff = cfindbuff(TAGBUFF);
+	if (buff && tagfile_modified(buff) == false)
+		return buff;
+
+	buff = cmakebuff(TAGBUFF, Tagfile);
+	if (!buff)
+		return NULL;
+
+	if (breadfile(Tagfile))
+		return NULL;
+
+	return buff;
+}
+
+static bool find_tag(char *word)
+{
+	char path[PATHMAX], regstr[STRMAX], *p;
+	Byte ebuf[ESIZE];
+	struct buff *buff, *save = Curbuff;
+	int offset;
+
+	buff = read_tagfile();
+	bswitchto(save);
+	if (!buff)
 		return false;
 
-	snprintf(line, sizeof(line), TAG_REGEX, word);
-	if (regcomp(&tagreg, line, REG_EXTENDED | REG_NEWLINE)) {
+	snprintf(regstr, sizeof(regstr), TAG_REGEX, word);
+	if (compile((Byte *)regstr, ebuf, &ebuf[ESIZE])) {
 		putpaw("regcomp failed");
 		return false;
 	}
 
-	FILE *fp = fopen(Tagfile, "r");
-	if (!fp) {
-		putpaw("Unable to open tagfile.");
-		goto done;
+	bswitchto(buff);
+	if (!step(ebuf))
+		goto failed;
+
+	offset = batoi();
+
+	if (!bcrsearch(014)) /* C-L */
+		goto failed;
+	bmove(2);
+
+	strcpy(path, Tagfile);
+	p = strrchr(path, '/');
+	if (p)
+		++p;
+	else
+		p = path + strlen(path);
+	getbword(p, sizeof(path), bistoken);
+
+	bswitchto(save);
+	set_bookmark(word);
+
+	if (findfile(path)) {
+		bgoto_char(offset);
+		redisplay();
+		return true;
 	}
 
-	while (fgets(line, sizeof(line), fp))
-		if (*line == 014) { /* C-L */
-			if (fgets(line, sizeof(line), fp))
-				strcpy(fname, line);
-		} else if (regexec(&tagreg, line, 3, pmatch, 0) == 0) {
-			int offset = strtol(line + pmatch[2].rm_so, NULL, 10);
-
-			/* Isolate the filename */
-			p = strchr(fname, ',');
-			if (p)
-				*p = '\0';
-			strcpy(path, Tagfile);
-			p = strrchr(path, '/');
-			if (p) {
-				++p;
-				*p = '\0';
-			}
-			strcat(path, fname);
-
-			set_bookmark(word);
-
-			if (findfile(path)) {
-				bgoto_char(offset);
-				redisplay();
-				found = true;
-			}
-
-			break;
-		}
-
-	if (!found)
-		putpaw("%s not found.", word);
-
-done:
-	regfree(&tagreg);
-	fclose(fp);
-	return found;
+failed:
+	putpaw("No match.");
+	bswitchto(save);
+	return false;
 }
 
 void Ztag(void)
@@ -110,7 +158,3 @@ void Ztag_word(void)
 	getbword(tag, sizeof(tag), bisword);
 	find_tag(tag);
 }
-#else
-void Ztag(void) { tbell(); }
-void Ztag_word(void) { tbell(); }
-#endif

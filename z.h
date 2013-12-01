@@ -94,6 +94,7 @@
 #define SHELLBUFF	"*shell*"
 #define LISTBUFF	"*list*"
 #define CONFBUFF	"*config*"
+#define TAGBUFF		"*tags*"
 
 /* ask return values */
 #define BANG		2

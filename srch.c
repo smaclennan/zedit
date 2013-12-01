@@ -385,8 +385,9 @@ input:
 					bdelete(dist);
 					Zyank();
 				} else {
-					bmove(-strlen(news));
-					bdelete(strlen(news));
+					int len = strlen(news);
+					bmove(-len);
+					bdelete(len);
 					binstr(olds);
 				}
 			}

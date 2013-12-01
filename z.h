@@ -168,6 +168,7 @@ extern void (*Nextpart)(void);
 #define tmaxcol()		Colmax
 extern int Tabsize;
 
+#define gethomedir()		getenv("HOME")
 #define tputchar(c)		putchar(c)
 #define tflush()		fflush(stdout)
 

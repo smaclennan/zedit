@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 		Zexit();
 	}
 
-	Home = getenv("HOME");
+	Home = gethomedir();
 	if (!Home) {
 		puts("You don't exist!");
 		exit(1);

@@ -115,7 +115,7 @@ void Zswap_words(void)
 
 void Zcenter(void)
 {
-	unsigned tmp;
+	int tmp;
 
 	tobegline();
 	Ztrim_white_space();

@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\bcmds.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -93,13 +90,13 @@
     <ClCompile Include="..\z.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="winterm.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="winkbd.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="zwin32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\term.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -108,6 +105,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="winkeys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zwin32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

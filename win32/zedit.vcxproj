@@ -78,9 +78,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\bcmds.c" />
     <ClCompile Include="..\bind.c" />
     <ClCompile Include="..\buff.c" />
@@ -101,18 +98,20 @@
     <ClCompile Include="..\spell.c" />
     <ClCompile Include="..\srch.c" />
     <ClCompile Include="..\tags.c" />
+    <ClCompile Include="..\term.c" />
     <ClCompile Include="..\undo.c" />
     <ClCompile Include="..\vars-array.c" />
     <ClCompile Include="..\vars.c" />
     <ClCompile Include="..\window.c" />
     <ClCompile Include="..\z.c" />
     <ClCompile Include="winkbd.c" />
-    <ClCompile Include="winterm.c" />
     <ClCompile Include="zwin32.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\z.h" />
+    <ClInclude Include="winkeys.h" />
+    <ClInclude Include="zwin32.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

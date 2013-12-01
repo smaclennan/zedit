@@ -286,12 +286,11 @@ void Zfname(void)
 	}
 }
 
+#ifndef WIN32
+
 /* Get users directory - handles partial matches. */
 static bool zgetpwdir(char *name, char *to)
 {
-#ifdef WIN32
-	return false;
-#else
 	struct passwd *pwd;
 	bool match = false;
 	int len = strlen(name);
@@ -312,7 +311,6 @@ static bool zgetpwdir(char *name, char *to)
 		}
 	endpwent();
 	return match;
-#endif
 }
 
 /*
@@ -327,7 +325,6 @@ Returns -1 if the 'from' is a directory
 NOTE: assumes a valid path (in particular /.. would not work)
 */
 
-#ifndef WIN32
 int pathfixup(char *to, char *from)
 {
 	char *start, save, dir[PATHMAX], *p;
@@ -419,5 +416,4 @@ int pathfixup(char *to, char *from)
 		Dbg("TOO LONG %d '%s'\n", strlen(start), start);
 	return rc;
 }
-#endif
-
+#endif /* WIN32 */

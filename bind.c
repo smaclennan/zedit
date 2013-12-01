@@ -299,9 +299,6 @@ void Zdisplay_bindings(void)
 
 void Zsave_bindings(void)
 {
-#ifdef WIN32
-	tbell();
-#else
 	if (Curbuff->bmode & NORMAL) {
 		int fd, rc = false;
 		char path[PATHMAX + 1];
@@ -318,7 +315,6 @@ void Zsave_bindings(void)
 			error("Unable to create bindings file");
 	} else
 		error("Please save bindings in a normal mode buffer.");
-#endif
 }
 
 void bindfile(const char *fname)

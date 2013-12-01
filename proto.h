@@ -52,7 +52,6 @@ Z(Zdelete_region);
 Z(Ztrim_white_space);
 Z(Zdelete_window);
 Z(Zdelete_word);
-Z(Zdisplay_bindings);
 Z(Zrevert_file);
 Z(Zempty_buffer);
 Z(Zend_of_line);
@@ -206,7 +205,6 @@ int delayprompt(const char *);
 bool delbname(char *);
 void delbuff(struct buff *);
 bool delcmd(void);
-char *dispkey(unsigned, char *);
 void execute(void);
 bool filesave(void);
 bool findfile(char *);
@@ -270,10 +268,10 @@ void vsetmod(bool);
 void vsetmrk(struct mark *);
 int chwidth(Byte, int, bool);
 void hang_up(int);
-bool notdup_key(int k);
 void dump_doc(const char *doc);
 int set_bookmark(char *bookname);
 void cleanup_bookmarks(void);
+const char *special_label(int key);
 
 void message(struct buff *, char *);
 

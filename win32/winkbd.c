@@ -21,24 +21,13 @@
 #include "keys.h"
 #include "winkeys.h"
 
-/* Note: We can currently only have 32 specials */
-static char *Tkeys[] = {
-	"up", "down", "right", "left",
-
-	"insert", "delete", "page up", "page down", "home", "end",
-
-	"f1", "f2", "f3", "f4", "f5", "f6",
-	"f7", "f8", "f9", "f10", "f11", "f12"
-};
-#define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
-
 int Cmdpushed = -1;
 
 /* stack and vars for t[un]getkb / tkbrdy */
 #define CSTACK 16 /* must be power of 2 */
 static int cstack[CSTACK];
 static int cptr = -1;
-int cpushed;	/* needed in shell.c */
+static int cpushed;	/* needed in shell.c */
 static bool Pending;
 
 static short convertKey(KEY_EVENT_RECORD *event)
@@ -156,12 +145,6 @@ again:
 	return cstack[cptr];
 }
 
-static void tungetkb(int j)
-{
-	cptr = (cptr - j) & (CSTACK - 1);
-	cpushed += j;
-}
-
 int tgetcmd(void)
 {
 	if (Cmdpushed >= 0) {
@@ -188,30 +171,14 @@ bool delay(int ms)
 	return WaitForSingleObject(hstdin, ms) != WAIT_OBJECT_0;
 }
 
-char *dispkey(unsigned key, char *s)
+const char *special_label(int key)
 {
-	char *p;
-	int j;
+	static char *Tkeys[] = {
+		"up", "down", "right", "left",
+		"insert", "delete", "page up", "page down", "home", "end",
+		"f1", "f2", "f3", "f4", "f5", "f6",
+		"f7", "f8", "f9", "f10", "f11", "f12"
+	};
 
-	*s = '\0';
-	if (is_special(key))
-		return strcpy(s, Tkeys[key - SPECIAL_START]);
-	if (key > 127)
-		strcpy(s, key < 256 ? "M-" : "C-X ");
-	j = key & 0x7f;
-	if (j == 27)
-		strcat(s, "ESC");
-	else if (j < 32 || j == 127) {
-		strcat(s, "C-");
-		p = s + strlen(s);
-		*p++ = j ^ '@';
-		*p = '\0';
-	} else if (j == 32)
-		strcat(s, "Space");
-	else {
-		p = s + strlen(s);
-		*p++ = j;
-		*p = '\0';
-	}
-	return s;
+	return Tkeys[key - SPECIAL_START];
 }

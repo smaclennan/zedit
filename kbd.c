@@ -177,30 +177,7 @@ bool delay(int ms)
 #endif
 }
 
-char *dispkey(unsigned key, char *s)
+const char *special_label(int key)
 {
-	char *p;
-	int j;
-
-	*s = '\0';
-	if (is_special(key))
-		return strcpy(s, Tkeys[key - SPECIAL_START].label);
-	if (key > 127)
-		strcpy(s, key < 256 ? "M-" : "C-X ");
-	j = key & 0x7f;
-	if (j == 27)
-		strcat(s, "ESC");
-	else if (j < 32 || j == 127) {
-		strcat(s, "C-");
-		p = s + strlen(s);
-		*p++ = j ^ '@';
-		*p = '\0';
-	} else if (j == 32)
-		strcat(s, "Space");
-	else {
-		p = s + strlen(s);
-		*p++ = j;
-		*p = '\0';
-	}
-	return s;
+	return Tkeys[key - SPECIAL_START].label;
 }

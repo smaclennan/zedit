@@ -256,47 +256,6 @@ void Zbind(void)
 	clrpaw();
 }
 
-/* Don't display both C-X A and C-X a if bound to same Ditto for Meta */
-bool notdup_key(int k)
-{
-	return ((k < (256 + 'a') || k > (256 + 'z')) &&
-		(k < (128 + 'a') || k > (128 + 'z'))) ||
-		Keys[k] != Keys[k - ('a' - 'A')];
-}
-
-void Zdisplay_bindings(void)
-{
-	bool found;
-	char line[STRMAX];
-	int f, i;
-	unsigned k;
-
-	cmakebuff(LISTBUFF, NULL);
-	binstr("COMMAND                            PAW    BINDING\n");
-	for (f = 0; f < NUMFUNCS; ++f) {
-		if (Cnames[f].fnum == ZNOTIMPL || Cnames[f].fnum == ZINSERT)
-			continue;
-		sprintf(line, "%-35s %c     ", Cnames[f].name,
-			Cmds[Cnames[f].fnum][1] == Znotimpl ? 'n' : 'y');
-		binstr(line);
-		found = false;
-		for (k = 0; k < NUMKEYS; ++k)
-			if (Keys[k] == Cnames[f].fnum && notdup_key(k)) {
-				if (found)
-					for (i = 0; i < 45; ++i)
-						binsert(' ');
-				binstr(dispkey(k, line));
-				binsert('\n');
-				found = true;
-			}
-		if (!found)
-			binstr("Unbound\n");
-	}
-	btostart();
-	Curbuff->bmodf = false;
-	Arg = 0;
-}
-
 void Zsave_bindings(void)
 {
 	if (Curbuff->bmode & NORMAL) {

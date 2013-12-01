@@ -163,13 +163,6 @@ struct cnames Cnames[] = {
 	 "is put in the Kill Buffer. A Universal Argument causes the command "
 	 "to repeat."
 	},
-	{"display-bindings",		ZDISPLAY_BINDINGS,
-	 "Inserts a list of the commands and their current bindings into the "
-	 ".list buffer. It deletes the contents of the .list buffer. Keys "
-	 "bound to NULL or Insert are not displayed. The PAW column displays "
-	 "if the command is allowed in the PAW. A Universal Argument prompts "
-	 "for an output file to put the list in."
-	},
 	{"empty-buffer",		ZEMPTY_BUFFER,
 	 "Deletes the entire contents of the current buffer. A Universal "
 	 "Arguments is ignored."

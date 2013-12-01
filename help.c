@@ -20,6 +20,42 @@
 #include "z.h"
 #include "keys.h"
 
+/* Don't display both C-X A and C-X a if bound to same Ditto for Meta */
+static bool notdup_key(int k)
+{
+	return ((k < (256 + 'a') || k > (256 + 'z')) &&
+		(k < (128 + 'a') || k > (128 + 'z'))) ||
+		Keys[k] != Keys[k - ('a' - 'A')];
+}
+
+static char *dispkey(unsigned key, char *s)
+{
+	char *p;
+	int j;
+
+	*s = '\0';
+	if (is_special(key))
+		return strcpy(s, special_label(key));
+	if (key > 127)
+		strcpy(s, key < 256 ? "M-" : "C-X ");
+	j = key & 0x7f;
+	if (j == 27)
+		strcat(s, "ESC");
+	else if (j < 32 || j == 127) {
+		strcat(s, "C-");
+		p = s + strlen(s);
+		*p++ = j ^ '@';
+		*p = '\0';
+	} else if (j == 32)
+		strcat(s, "Space");
+	else {
+		p = s + strlen(s);
+		*p++ = j;
+		*p = '\0';
+	}
+	return s;
+}
+
 static void dump_bindings(int fnum)
 {
 	int k, found = 0;

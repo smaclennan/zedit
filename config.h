@@ -4,12 +4,8 @@
  * If not, try running ./configure
  */
 
-#ifdef WIN32
-#define NO_POLL 1
-#endif
-
 /* USER CONFIGURABLE - don't define any, see if I care */
 #define SHELL		0
 #define SPELL		0		/* Requires libaspell */
 #define ZLIB		0		/* Requires zlib */
-#define UNDO            0		/* EXPERIMENTAL undo code */
+#define UNDO            1		/* EXPERIMENTAL undo code */

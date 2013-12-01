@@ -136,9 +136,6 @@ int tgetcmd(void)
 #ifdef NO_POLL
 static int do_select(int ms)
 {
-#ifdef WIN32
-	return false; /* SAM HACK */
-#else
 	struct timeval timeout;
 	fd_set fds;
 
@@ -149,7 +146,6 @@ static int do_select(int ms)
 	timeout.tv_usec = ms * 1000;
 
 	return select(1, &fds, NULL, NULL, &timeout);
-#endif
 }
 #else
 #include <poll.h>

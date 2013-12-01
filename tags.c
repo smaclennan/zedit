@@ -110,6 +110,7 @@ static bool find_tag(char *word)
 	}
 
 	bswitchto(buff);
+	btostart();
 	if (!step(ebuf))
 		goto failed;
 

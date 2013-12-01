@@ -23,7 +23,7 @@ static char Tagfile[PATHMAX];
 
 /* SAM Currently works for functions only */
 /* Leaves the point at the char offset */
-#define TAG_REGEX "[^a-zA-Z0-9_]%s\\([^0-9]*[0-9][0-9]*,"
+#define TAG_REGEX "[^a-zA-Z0-9_]%s\\(.*[0-9][0-9]*,"
 
 static int get_tagfile(void)
 {

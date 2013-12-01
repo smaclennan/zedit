@@ -24,7 +24,12 @@
 #include <sys/wait.h>	/* need for WNOWAIT */
 #endif
 
-#if defined(HAVE_TERMIO)
+#ifdef WIN32
+HANDLE hstdin, hstdout;	/* Console in and out handles */
+
+#define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
+#define BLACK_ON_WHITE (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
+#elif defined(HAVE_TERMIO)
 #include <termio.h>
 static struct termio save_tty;
 static struct termio settty;
@@ -140,6 +145,12 @@ void tinit(void)
 
 	ioctl(fileno(stdin), TIOCGLTC, &savelchars);
 	ioctl(fileno(stdin), TIOCSLTC, &setlchars);
+#elif defined(WIN32)
+	hstdin = GetStdHandle(STD_INPUT_HANDLE);
+	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	/* We want everything else disabled */
+	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT);
 #endif
 
 #ifdef SIGHUP
@@ -198,6 +209,21 @@ void setmark(bool prntchar)
 
 static void tsize(int *rows, int *cols)
 {
+#ifdef WIN32
+	if (Colmax == EOF) {
+		/* Win8 creates a huge screen buffer (300 lines) */
+		COORD size;
+		size.X = *cols = 80;
+		size.Y = *rows = 25;
+		SetConsoleScreenBufferSize(hstdout, size);
+	} else {
+		CONSOLE_SCREEN_BUFFER_INFO info;
+		if (GetConsoleScreenBufferInfo(hstdout, &info)) {
+			*cols = info.dwSize.X;
+			*rows = info.dwSize.Y;
+		}
+	}
+#else
 	char buf[12];
 	int n, w;
 
@@ -215,6 +241,7 @@ static void tsize(int *rows, int *cols)
 		buf[n] = '\0';
 		sscanf(buf, "\033[%d;%dR", rows, cols);
 	}
+#endif
 }
 
 void termsize(void)
@@ -341,7 +368,15 @@ int prefline(void)
 void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
+#ifdef WIN32
+		COORD where;
+
+		where.X = Pcol;
+		where.Y = Prow;
+		SetConsoleCursorPosition(hstdout, where);
+#else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
+#endif
 		Srow = Prow;
 		Scol = Pcol;
 	}
@@ -350,15 +385,41 @@ void tforce(void)
 void tcleol(void)
 {
 	if (Pcol < Clrcol[Prow]) {
+#ifdef WIN32
+		COORD where;
+		DWORD written;
+
+		where.X = Pcol;
+		where.Y = Prow;
+		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol,
+					   where, &written);
+
+		/* This is to clear a possible mark */
+		if (Clrcol[Prow])
+			where.X = Clrcol[Prow] - 1;
+		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, 1,
+					   where, &written);
+#else
 		tforce();
 		fputs("\033[K", stdout);
+#endif
 		Clrcol[Prow] = Pcol;
 	}
 }
 
 void tclrwind(void)
 {
+#ifdef WIN32
+	COORD where;
+	DWORD written;
+	where.X = where.Y = 0;
+	FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax * Rowmax,
+				   where, &written);
+	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
+				   where, &written);
+#else
 	fputs("\033[2J", stdout);
+#endif
 	memset(Clrcol, 0, ROWMAX);
 	Prow = Pcol = 0;
 	tflush();
@@ -371,7 +432,25 @@ void tstyle(int style)
 	if (style == cur_style)
 		return;
 
-	switch (cur_style = style) {
+#ifdef WIN32
+	switch (style) {
+	case T_NORMAL:
+		SetConsoleTextAttribute(hstdout, WHITE_ON_BLACK);
+		break;
+	case T_STANDOUT:
+	case T_REVERSE:
+		SetConsoleTextAttribute(hstdout, BLACK_ON_WHITE);
+		break;
+	case T_BOLD:
+		SetConsoleTextAttribute(hstdout,
+					WHITE_ON_BLACK | FOREGROUND_INTENSITY);
+		break;
+	case T_COMMENT:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED);
+		break;
+	}
+#else
+	switch (style) {
 	case T_NORMAL:
 		fputs("\033[0m", stdout); break;
 	case T_STANDOUT:
@@ -382,15 +461,41 @@ void tstyle(int style)
 	case T_COMMENT:
 		fputs("\033[31m", stdout); break; /* red */
 	}
-	fflush(stdout);
+#endif
+
+	cur_style = style;
+	tflush();
 }
 
 void tbell(void)
 {
 	if (VAR(VBELL)) {
+#ifdef WIN32
+		COORD where;
+		DWORD written;
+		where.X = 0;
+		where.Y = Rowmax - 2;
+		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax,
+					   where, &written);
+		Beep(440, 250);
+		FillConsoleOutputAttribute(hstdout, BLACK_ON_WHITE, Colmax,
+					   where, &written);
+#else
 		fputs("\033[?5h", stdout);
 		fflush(stdout);
 		usleep(100000);
 		fputs("\033[?5l", stdout);
+#endif
 	}
 }
+
+#ifdef WIN32
+/* SAM we can get much smarter with tputchar and tflush... */
+void tputchar(Byte c)
+{
+	DWORD written;
+	WriteConsole(hstdout, &c, 1, &written, NULL);
+}
+
+void tflush(void) {}
+#endif

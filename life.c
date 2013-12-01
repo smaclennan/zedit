@@ -295,7 +295,7 @@ void Zlife(void)
 			else
 				step = true;
 		} else
-			usleep(100000);
+			delay(100);
 		if (go)
 			generation(matrix1, matrix2);
 	}

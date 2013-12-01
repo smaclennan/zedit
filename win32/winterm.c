@@ -55,7 +55,7 @@ void tinit(void)
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT);
 
-//	signal(SIGHUP,  hang_up);
+/*	signal(SIGHUP,  hang_up); */
 	signal(SIGTERM, hang_up);
 #if SHELL
 #if !defined(WNOWAIT)
@@ -94,7 +94,7 @@ void setmark(bool prntchar)
 
 void termsize(void)
 {
-	/* Win8 creates a huge screen buffer (300 lines) set a reasonable default */
+	/* Win8 creates a huge screen buffer (300 lines) */
 #if 0
 	CONSOLE_SCREEN_BUFFER_INFO info;
 
@@ -133,8 +133,7 @@ void tprntchar(Byte ichar)
 		++Pcol;
 		if (Clrcol[Prow] < Pcol)
 			Clrcol[Prow] = Pcol;
-	}
-	else
+	} else
 		switch (ichar) {
 		case '\t':
 			if (InPaw)
@@ -155,8 +154,7 @@ void tprntchar(Byte ichar)
 			if (ichar & 0x80) {
 				tprntchar('~');
 				tprntchar(ichar & 0x7f);
-			}
-			else {
+			} else {
 				tprntchar('^');
 				tprntchar(ichar ^ '@');
 			}
@@ -248,7 +246,8 @@ void tstyle(int style)
 		SetConsoleTextAttribute(hstdout, BLACK_ON_WHITE);
 		break;
 	case T_BOLD:
-		SetConsoleTextAttribute(hstdout, WHITE_ON_BLACK | FOREGROUND_INTENSITY);
+		SetConsoleTextAttribute(hstdout,
+					WHITE_ON_BLACK | FOREGROUND_INTENSITY);
 		break;
 	case T_COMMENT:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_RED);
@@ -265,12 +264,14 @@ void tcleol(void)
 
 		where.X = Pcol;
 		where.Y = Prow;
-		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol, where, &written);
+		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol,
+					   where, &written);
 
 		/* This is to clear a possible mark */
 		if (Clrcol[Prow])
 			where.X = Clrcol[Prow] - 1;
-		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, 1, where, &written);
+		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, 1,
+					   where, &written);
 
 		Clrcol[Prow] = Pcol;
 	}
@@ -284,8 +285,10 @@ void tclrwind(void)
 	COORD where;
 	DWORD written;
 	where.X = where.Y = 0;
-	FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax * Rowmax, where, &written);
-	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax, where, &written);
+	FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax * Rowmax,
+				   where, &written);
+	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
+				   where, &written);
 }
 
 
@@ -296,13 +299,15 @@ void tbell(void)
 		DWORD written;
 		where.X = 0;
 		where.Y = Rowmax - 2;
-		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax, where, &written);
+		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax,
+					   where, &written);
 		Beep(440, 250);
-		FillConsoleOutputAttribute(hstdout, BLACK_ON_WHITE, Colmax, where, &written);
+		FillConsoleOutputAttribute(hstdout, BLACK_ON_WHITE, Colmax,
+					   where, &written);
 	}
 }
 
-// SAM we can get much smarter with tputchar and tflush...
+/* SAM we can get much smarter with tputchar and tflush... */
 void tputchar(Byte c)
 {
 	DWORD written;

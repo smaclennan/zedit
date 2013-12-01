@@ -40,14 +40,19 @@ int getopt(int argc, char *argv[], const char *optstring)
 			optarg = argptr;
 			argptr = NULL;
 			++optind;
-		}
-		else if (++optind >= argc)
+		} else if (++optind >= argc)
 			return '?';
 		else
 			optarg = argv[optind];
 	}
 
 	return arg;
+}
+
+static __inline void psepfixup(char *path)
+{
+	while ((path = strchr(path, '\\')))
+		*path = '/';
 }
 
 char *gethomedir(void)
@@ -60,9 +65,7 @@ char *gethomedir(void)
 		return NULL;
 
 	snprintf(home, sizeof(home), "%s%s", homedrive, homepath);
-
-	char *p = home;
-	while ((p = strchr(p, '\\'))) *p = '/';
+	psepfixup(home);
 
 	return home;
 }
@@ -70,10 +73,9 @@ char *gethomedir(void)
 void zgetcwd(char *dir, int len)
 {
 	_getcwd(dir, len);
-
-	char *p = dir;
-	while ((p = strchr(p, '\\'))) *p = '/';
+	psepfixup(dir);
 }
+
 /* Fixup the pathname. 'to' and 'from' cannot overlap.
  * Currently just a trivial version.
  */
@@ -92,8 +94,7 @@ int pathfixup(char *to, char *from)
 		strcat(to, from);
 	}
 
-	while ((to = strchr(to, '\\')))
-		*to = '/';
+	psepfixup(to);
 
 	return 0;
 }

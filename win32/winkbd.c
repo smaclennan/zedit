@@ -129,12 +129,12 @@ again:
 	for (i = 0; i < n; ++i)
 		switch (input[i].EventType) {
 		case KEY_EVENT: /* 1 */
-			if (input[i].Event.KeyEvent.bKeyDown == 0) {
-				cstack[p] = convertKey(&input[i].Event.KeyEvent);
-				if (cstack[p]) {
-					p = (p + 1) & (CSTACK - 1);
-					++cpushed;
-				}
+			if (input[i].Event.KeyEvent.bKeyDown == 1)
+				break;
+			cstack[p] = convertKey(&input[i].Event.KeyEvent);
+			if (cstack[p]) {
+				p = (p + 1) & (CSTACK - 1);
+				++cpushed;
 			}
 			break;
 		case WINDOW_BUFFER_SIZE_EVENT:

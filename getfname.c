@@ -101,7 +101,7 @@ static struct llist *fill_list(char *dir)
 		return Flist;
 
 	while ((dirp = readdir(dp)))
-	if (!isext(dirp->d_name, OBJEXT) && strcmp(dirp->d_name, ".") && strcmp(dirp->d_name, ".."))
+		if (!isext(dirp->d_name, OBJEXT))
 			add(&Flist, dirp->d_name);
 
 	closedir(dp);

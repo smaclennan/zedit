@@ -18,9 +18,11 @@
  */
 
 #include "z.h"
-
 #include <signal.h>
+
+#if SHELL
 #include <sys/wait.h>	/* need for WNOWAIT */
+#endif
 
 #if defined(HAVE_TERMIO)
 #include <termio.h>
@@ -98,6 +100,7 @@ static void initline(void)
 	for (++i; i < Colmax; ++i)
 		tprntchar(' ');
 	tstyle(T_NORMAL);
+	t_goto(0, 0);
 	tflush();
 }
 
@@ -139,8 +142,12 @@ void tinit(void)
 	ioctl(fileno(stdin), TIOCSLTC, &setlchars);
 #endif
 
+#ifdef SIGHUP
 	signal(SIGHUP,  hang_up);
+#endif
+#ifdef SIGTERM
 	signal(SIGTERM, hang_up);
+#endif
 #if SHELL
 #if !defined(WNOWAIT)
 	signal(SIGCLD,  sigchild);
@@ -194,8 +201,6 @@ static void tsize(int *rows, int *cols)
 	char buf[12];
 	int n, w;
 
-	*rows = *cols = 0;
-
 	/* Save cursor position */
 	w = write(0, "\033[s", 3);
 	/* Send the cursor to the extreme right corner */
@@ -212,16 +217,9 @@ static void tsize(int *rows, int *cols)
 	}
 }
 
-/*
- * Set Rowmax and Colmax.
- *		1. Use environment variables.
- *		2. Use given variables.
- *		3. Default to 24x80
- *		4. Limit to ROWMAXxCOLMAX.
- */
 void termsize(void)
 {
-	int rows, cols;
+	int rows = 0, cols = 0;
 
 	/* Get the defaults from the low level interface */
 	tsize(&rows, &cols);

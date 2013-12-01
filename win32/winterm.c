@@ -1,11 +1,47 @@
-#include "../z.h"
+/* term.c - generic terminal commands
+ * Copyright (C) 1988-2013 Sean MacLennan
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this project; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+#include "z.h"
 #include <signal.h>
 
 int Clrcol[ROWMAX + 1];		/* Clear if past this */
 
 int Prow, Pcol;			/* Point row and column */
 static int Srow, Scol;		/* Saved row and column */
-int Colmax = 80, Rowmax = 25;	/* Row and column maximums */
+int Colmax = EOF, Rowmax;	/* Row and column maximums */
+
+#ifdef SIGWINCH
+/* This is called if the window has changed size. */
+static void sigwinch(int sig)
+{
+	if (Initializing)
+		termsize();
+	else {
+		Zredisplay();		/* update the windows */
+		zrefresh();		/* force a screen update */
+	}
+
+#ifdef SYSV4
+	signal(SIGWINCH, sigwinch);
+#endif
+}
+#endif
 
 HANDLE hstdin, hstdout;	/* Console in and out handles */
 
@@ -43,10 +79,11 @@ static void initline(void)
 	for (++i; i < Colmax; ++i)
 		tprntchar(' ');
 	tstyle(T_NORMAL);
+	t_goto(0, 0);
 	tflush();
-	t_goto(Rowmax - 1, 0);
 }
 
+/* Initalize the terminal. */
 void tinit(void)
 {
 	hstdin = GetStdHandle(STD_INPUT_HANDLE);
@@ -55,13 +92,20 @@ void tinit(void)
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT);
 
-/*	signal(SIGHUP,  hang_up); */
+#ifdef SIGHUP
+	signal(SIGHUP,  hang_up);
+#endif
+#ifdef SIGTERM
 	signal(SIGTERM, hang_up);
+#endif
 #if SHELL
 #if !defined(WNOWAIT)
 	signal(SIGCLD,  sigchild);
 #endif
 	signal(SIGPIPE, sigchild);
+#endif
+#ifdef SIGWINCH
+	signal(SIGWINCH, sigwinch); /* window has changed size - update */
 #endif
 
 	/* Must be after setting up tty */
@@ -79,6 +123,16 @@ void tinit(void)
 
 void tfini(void)
 {
+#ifdef HAVE_TERMIOS
+	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
+#elif defined(HAVE_TERMIO)
+	ioctl(fileno(stdin), TCSETAF, &save_tty);
+#elif defined(HAVE_SGTTY)
+	stty(fileno(stdin), &save_tty);
+	ioctl(fileno(stdin), TIOCSETC, &savechars);
+	ioctl(fileno(stdin), TIOCSLTC, &savelchars);
+#endif
+
 	clrpaw();
 	t_goto(Rowmax - 1, 0);
 	tstyle(T_NORMAL);
@@ -92,22 +146,38 @@ void setmark(bool prntchar)
 	tstyle(T_NORMAL);
 }
 
+static void tsize(int *rows, int *cols)
+{
+	if (Colmax == EOF) {
+		/* Win8 creates a huge screen buffer (300 lines) */
+		COORD size;
+		size.X = *cols = 80;
+		size.Y = *rows = 25;
+		SetConsoleScreenBufferSize(hstdout, size);
+	} else {
+		CONSOLE_SCREEN_BUFFER_INFO info;
+
+		if (GetConsoleScreenBufferInfo(hstdout, &info)) {
+			*cols = info.dwSize.X;
+			*rows = info.dwSize.Y;
+		}
+	}
+}
+
 void termsize(void)
 {
-	/* Win8 creates a huge screen buffer (300 lines) */
-#if 0
-	CONSOLE_SCREEN_BUFFER_INFO info;
+	int rows = 0, cols = 0;
 
-	if (GetConsoleScreenBufferInfo(hstdout, &info)) {
-		Colmax = info.dwSize.X;
-		Rowmax = info.dwSize.Y;
-	}
-#endif
+	/* Get the defaults from the low level interface */
+	tsize(&rows, &cols);
 
-	COORD size;
-	size.X = Colmax;
-	size.Y = Rowmax;
-	SetConsoleScreenBufferSize(hstdout, size);
+	Rowmax = rows <= 0 ? 24 : rows;
+	if (Rowmax > ROWMAX)
+		Rowmax = ROWMAX;
+
+	Colmax = cols <= 0 ? 80 : cols;
+	if (Colmax > COLMAX)
+		Colmax = COLMAX;
 }
 
 static int tabsize(int col)
@@ -121,6 +191,7 @@ static int tabsize(int col)
 		return Tabsize - (col % Tabsize);
 	}
 }
+
 /* Print a char. */
 void tprntchar(Byte ichar)
 {
@@ -139,8 +210,8 @@ void tprntchar(Byte ichar)
 			if (InPaw)
 				tprntstr("^I");
 			else
-			for (tcol = tabsize(Pcol); tcol > 0; --tcol)
-				tprntchar(' ');
+				for (tcol = tabsize(Pcol); tcol > 0; --tcol)
+					tprntchar(' ');
 			break;
 
 		case 0x89:
@@ -164,7 +235,7 @@ void tprntchar(Byte ichar)
 }
 
 /* Calculate the width of a character.
-* The 'adjust' parameter adjusts for the end of line.
+ * The 'adjust' parameter adjusts for the end of line.
 */
 int chwidth(Byte ch, int col, bool adjust)
 {
@@ -227,35 +298,6 @@ void tforce(void)
 	}
 }
 
-#define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
-#define BLACK_ON_WHITE (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
-
-void tstyle(int style)
-{
-	static int cur_style = -1;
-
-	if (style == cur_style)
-		return;
-
-	switch (cur_style = style) {
-	case T_NORMAL:
-		SetConsoleTextAttribute(hstdout, WHITE_ON_BLACK);
-		break;
-	case T_STANDOUT:
-	case T_REVERSE:
-		SetConsoleTextAttribute(hstdout, BLACK_ON_WHITE);
-		break;
-	case T_BOLD:
-		SetConsoleTextAttribute(hstdout,
-					WHITE_ON_BLACK | FOREGROUND_INTENSITY);
-		break;
-	case T_COMMENT:
-		SetConsoleTextAttribute(hstdout, FOREGROUND_RED);
-		break;
-	}
-	fflush(stdout);
-}
-
 void tcleol(void)
 {
 	if (Pcol < Clrcol[Prow]) {
@@ -291,6 +333,34 @@ void tclrwind(void)
 				   where, &written);
 }
 
+#define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
+#define BLACK_ON_WHITE (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
+
+void tstyle(int style)
+{
+	static int cur_style = -1;
+
+	if (style == cur_style)
+		return;
+
+	switch (cur_style = style) {
+	case T_NORMAL:
+		SetConsoleTextAttribute(hstdout, WHITE_ON_BLACK);
+		break;
+	case T_STANDOUT:
+	case T_REVERSE:
+		SetConsoleTextAttribute(hstdout, BLACK_ON_WHITE);
+		break;
+	case T_BOLD:
+		SetConsoleTextAttribute(hstdout,
+					WHITE_ON_BLACK | FOREGROUND_INTENSITY);
+		break;
+	case T_COMMENT:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED);
+		break;
+	}
+	fflush(stdout);
+}
 
 void tbell(void)
 {

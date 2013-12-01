@@ -1,6 +1,6 @@
 #include "z.h"
 
-#ifndef WIN32
+#if TAGS
 #include <regex.h>
 
 static char Tagfile[PATHMAX];

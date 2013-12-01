@@ -6,8 +6,10 @@
 
 /* USER CONFIGURABLE - don't define any, see if I care */
 #ifndef WIN32
-#define SHELL		1		/* Needs fork/exec */
+#define SHELL		1
 #define SPELL		1		/* Requires libaspell */
 #define ZLIB		1		/* Requires zlib */
+#define TAGS		1
 #endif
+
 #define UNDO            1		/* EXPERIMENTAL undo code */

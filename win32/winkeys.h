@@ -12,7 +12,7 @@ static Byte virt[] = {
 	0,		/* 0x0A-0B Reserved */
 	0,		/* 0x0A-0B Reserved */
 	0,		/* 0x0C VK_CLEAR */
-	'\n',		/* 0x0D VK_RETURN */
+	'\r',		/* 0x0D VK_RETURN */
 	0,		/* 0x0E-0F Undefined */
 	0,		/* 0x0E-0F Undefined */
 	0,		/* 0x10 VK_SHIFT */

@@ -20,12 +20,12 @@
 #include "z.h"
 #ifndef WIN32
 #include <pwd.h>
-#endif
 #ifdef HAVE_DIRECT
 #include <sys/dir.h>
 #define dirent direct
 #else
 #include <dirent.h>
+#endif
 #endif
 
 #define PSEP		'/'
@@ -101,7 +101,7 @@ static struct llist *fill_list(char *dir)
 		return Flist;
 
 	while ((dirp = readdir(dp)))
-		if (!isext(dirp->d_name, OBJEXT))
+	if (!isext(dirp->d_name, OBJEXT) && strcmp(dirp->d_name, ".") && strcmp(dirp->d_name, ".."))
 			add(&Flist, dirp->d_name);
 
 	closedir(dp);

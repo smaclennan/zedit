@@ -51,7 +51,7 @@ static short convertKey(KEY_EVENT_RECORD *event)
 		return key;
 
 	if (event->dwControlKeyState & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED))
-		return key | 128;
+		return toupper(key) | 128;
 
 	if (event->dwControlKeyState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED))
 		switch (key) {

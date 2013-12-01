@@ -28,7 +28,7 @@ struct avar {
 	enum v_type vtype;
 	union {
 		char *str;
-		unsigned val;
+		int val;
 	} u;
 	const char *doc;
 };

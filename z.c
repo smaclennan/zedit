@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include <getopt.h>
 #include <stdarg.h>
 
 bool Initializing = true;

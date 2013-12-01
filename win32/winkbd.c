@@ -73,8 +73,6 @@ static short convertKey(KEY_EVENT_RECORD *event)
 		}
 
 	if (event->dwControlKeyState & (CAPSLOCK_ON | SHIFT_PRESSED)) {
-		if (isalpha(key))
-			return toupper(key);
 		switch (key) {
 		case '`': return '~';
 		case '1': return '!';
@@ -100,6 +98,10 @@ static short convertKey(KEY_EVENT_RECORD *event)
 		case ',': return '<';
 		case '.': return '>';
 		case '/': return '?';
+
+		default:
+			if (isalpha(key))
+				return toupper(key);
 		}
 	}
 
@@ -170,40 +172,12 @@ int tgetcmd(void)
 		return tgetkb();
 }
 
-#ifdef NO_POLL
-static int do_select(int ms)
-{
-#ifdef WIN32
-	return false; /* SAM HACK */
-#else
-	struct timeval timeout;
-	fd_set fds;
-
-	FD_ZERO(&fds);
-	FD_SET(0, &fds);
-
-	timeout.tv_sec = 0;
-	timeout.tv_usec = ms * 1000;
-
-	return select(1, &fds, NULL, NULL, &timeout);
-#endif
-}
-#else
-#include <poll.h>
-
-static struct pollfd stdin_fd = { .fd = 1, .events = POLLIN };
-#endif
-
 int tkbrdy(void)
 {
 	if (cpushed || Pending)
 		return true;
 
-#ifdef NO_POLL
-	return Pending = do_select(0);
-#else
-	return Pending = poll(&stdin_fd, 1, 0) == 1;
-#endif
+	return Pending = WaitForSingleObject(hstdin, 0) == WAIT_OBJECT_0;
 }
 
 bool delay(int ms)
@@ -211,11 +185,7 @@ bool delay(int ms)
 	if (InPaw || cpushed || Pending)
 		return false;
 
-#ifdef NO_POLL
-	return do_select(ms) <= 0;
-#else
-	return poll(&stdin_fd, 1, ms) != 1;
-#endif
+	return WaitForSingleObject(hstdin, ms) != WAIT_OBJECT_0;
 }
 
 char *dispkey(unsigned key, char *s)

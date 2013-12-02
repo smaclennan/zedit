@@ -43,6 +43,20 @@ static int Waiting;
 static fd_set SelectFDs;
 static int NumFDs;
 
+static void do_chdir(struct buff *buff)
+{
+	if (buff->fname) {
+		char dir[PATHMAX + 1], *p;
+		
+		strcpy(dir, buff->fname);
+		p = strrchr(dir, '/');
+		if (p) {
+			*p = '\0';
+			chdir(dir);
+		}
+	}
+}
+
 /* pipe has something for us */
 static int readapipe(struct buff *tbuff)
 {
@@ -279,6 +293,7 @@ static struct buff *cmdtobuff(char *bname, char *cmd)
 	struct wdo *save;
 
 	save = Curwdo;
+	do_chdir(Curbuff);
 	if (wuseother(bname)) {
 		if (dopipe(Curbuff, cmd))
 			tbuff = Curbuff;
@@ -316,6 +331,7 @@ void Zcmd_to_buffer(void)
 	Arg = 0;
 	if (getarg("@ ", cmd, STRMAX) == 0) {
 		save = Curwdo;
+		do_chdir(Curbuff);
 		if (wuseother(SHELLBUFF)) {
 			putpaw("Please wait...");
 			rc = pipetobuff(Curbuff, cmd);

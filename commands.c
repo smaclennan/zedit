@@ -398,7 +398,6 @@ void Znotimpl(void)
 	tbell();
 }
 
-
 void Zset_mark(void)
 {
 	bmrktopnt(Curbuff->mark);
@@ -406,7 +405,7 @@ void Zset_mark(void)
 }
 
 static void cleanup(void)
-{	/* Mainly for valgrind */
+{	/* For valgrind */
 	wfini();
 	bfini();
 	cleanup_bookmarks();
@@ -728,7 +727,7 @@ static struct _amode
 } modes[] = {
 	{ "C",		CMODE	},
 	{ "Normal",	NORMAL	},
-	{ "SH",		SHMODE	},
+	{ "Shell",	SHMODE	},
 	{ "Text",	TXTMODE	},
 };
 #define AMODESIZE	sizeof(struct _amode)

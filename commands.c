@@ -244,111 +244,6 @@ void Zc_indent(void)
 	}
 }
 
-
-/* This is called from Zfillpara if we are in C mode.
- * It is used to reformat comments.
- *
- * It is fairly deadly, so I break all rules and ask "Are you sure?"
- *
- * We assume comments are as follows:
- *
- *		[<ws>] <start_comment> [*]
- *		[<ws>] [*] [<text>]
- *			...
- *		[<ws>] [*] <end_comment> [<text>]
- */
-static void zfillcomment(void)
-{
-	struct mark *start, *end, *tmp, tmark;
-	int col;
-
-	if (ask("Are you sure? ") != YES)
-		return;
-
-	if (Curbuff->bmodf)
-		Zsave_file();
-
-	bmrktopnt(&tmark);
-
-	/* find start of comment */
-	if (!bstrsearch("/*", false)) {
-		bpnttomrk(&tmark);
-		error("Unable to find start of comment.");
-		return;
-	}
-	col = bgetcol(true, 0) + 1;
-	bcsearch(NL);
-	start = bcremrk();
-
-	/* find end of comment */
-	if (!bstrsearch("*/", true)) {
-		unmark(start);
-		bpnttomrk(&tmark);
-		error("Unable to find end of comment.");
-		return;
-	}
-	Ztrim_white_space();
-	tindent(col);
-	bcrsearch(NL);
-	end = bcremrk();
-
-	/* Remove leading ws and '*'s */
-	for (bpnttomrk(start); bisbeforemrk(end); bcsearch(NL)) {
-		Ztrim_white_space();
-		if (*Curcptr == '*') {
-			bdelete(1);
-			Ztrim_white_space();
-		}
-	}
-
-	/* do it! */
-	bpnttomrk(start);
-	do {	/* mark the end of the paragraph and move the point to
-		 * the start */
-		Znext_paragraph();
-		movepast(bisspace, BACKWARD);
-		tmp = bcremrk();
-		if (mrkaftermrk(tmp, end))
-			mrktomrk(tmp, end);
-		Zprevious_paragraph();
-		if (bisbeforemrk(start))
-			bpnttomrk(start);
-		tindent(col); binstr("* ");
-
-		/* main loop */
-		while (bisbeforemrk(tmp)) {
-			moveto(bisspace, FORWARD);
-			if (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
-				moveto(bisspace, BACKWARD);
-				Ztrim_white_space();
-				binsert(NL);
-				tindent(col); binstr("* ");
-			}
-			movepast(biswhite, FORWARD);
-			if (*Curcptr == NL && bisbeforemrk(tmp)) {
-				/* convert NL to space */
-				bdelete(1);
-				Ztrim_white_space();
-				binsert(' ');
-			}
-		}
-		unmark(tmp);
-
-		movepast(bisspace, FORWARD); /* setup for next iteration */
-	} while (bisbeforemrk(end));
-
-	/* Fill in empty lines. */
-	for (bpnttomrk(start); bisbeforemrk(end); bcsearch(NL))
-		if (*Curcptr == NL) {
-			tindent(col);
-			binsert('*');
-		}
-	if (*Curcptr == NL) {
-		tindent(col);
-		binsert('*');
-	}
-}
-
 /* FILL MODE COMMANDS */
 
 void Zfill_check(void)
@@ -397,10 +292,6 @@ void Zfill_paragraph(void)
 	bool all;
 	struct mark *tmark, *tmp;
 
-	if (Curbuff->bmode & CMODE) {
-		zfillcomment();
-		return;
-	}
 	if (Curbuff->bmode & PROGMODE) {
 		putpaw("Not in program mode");
 		tbell();

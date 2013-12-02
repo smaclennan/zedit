@@ -305,7 +305,7 @@ void message(struct buff *buff, char *str)
  *  Get at the most 'max' characters.
  * Leaves the point alone.
  */
-bool getbword(char word[], int max, int (*valid)())
+int getbword(char word[], int max, int (*valid)())
 {
 	int i;
 	struct mark tmark;

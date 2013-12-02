@@ -451,7 +451,7 @@ void Znext_error(void)
 		NexterrorCalled = 1;
 		btostart();
 	} else
-		toendline();
+		bcsearch(NL);
 	line = parse(fname);
 	if (line) {
 		vsetmrk(Curbuff->mark);
@@ -485,24 +485,19 @@ void Zkill(void)
 
 /* Find the next error in the .make buffer.
  * Ignores lines that start with a white space.
- * Supported:
- *	GNU C		<fname>:<line>:
- *      grep		<fname>:<line>:
- *	Microsoft	<fname>(<line>)
+ * Supported: <fname>:<line>:
  */
 static int parse(char *fname)
 {
-	char *p;
-	int line;
+	int line, n;
 
 	while (!bisend()) {
 		/* try to get the fname */
-		for (p = fname; !strchr(":(\n", Buff()); bmove1())
-			*p++ = Buff();
-		*p = '\0';
+		n = getbword(fname, PATHMAX, bistoken);
+		bmove(n);
 
 		/* try to get the line */
-		if (Buff() == ':' || Buff() == '(') {
+		if (Buff() == ':') {
 			bmove1();
 
 			/* look for line number */

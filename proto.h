@@ -211,7 +211,7 @@ bool findfile(char *);
 struct wdo *findwdo(struct buff *);
 bool getarg(const char *, char *, int);
 char *getbtxt(char *, int);
-bool getbword(char *, int, int (*)());
+int getbword(char *, int, int (*)());
 int getplete(const char *, char *, char **, int, int);
 int bisspace(void);
 int bistoken(void);

@@ -51,17 +51,11 @@ static Byte bittab[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
 bool step(Byte *ep)
 {
 	/* ^ must match from start */
-	if (circf) {
+	if (circf)
 		/* if not at the start of the current line - go to the
 		 * next line */
-		if (!bisstart()) {
-			bmove(-1);		/* check previous char */
-			if (ISNL(Buff()))	/* we where at start */
-				bmove1();		/* undo move */
-			else
-				bcsearch(NL);	/* goto next line */
-		}
-	}
+		if (bpeek() != NL)
+			bcsearch(NL);	/* goto next line */
 
 	/* regular algorithm */
 	while (!bisend()) {

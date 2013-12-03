@@ -1114,7 +1114,7 @@ Byte bpeek(void)
 		return *(Curcptr - 1);
 	else if (bisstart())
 		/* Pretend we are at the start of a line.
-		 * Needed for delete-to-eol. */
+		 * Needed for delete-to-eol and step in reg.c. */
 		return NL;
 	else {
 		bmove(-1);

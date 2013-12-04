@@ -82,17 +82,11 @@ static Byte tgetkb(void)
 	return cstack[cptr];
 }
 
-static void tungetkb(int j)
-{
-	cptr = (cptr - j) & (CSTACK - 1);
-	cpushed += j;
-}
-
 static int check_specials(void)
 {
 	int i, j, bit, mask = KEY_MASK;
 
-	for (j = 0; mask; ++j) {
+	for (j = 1; mask; ++j) {
 		int cmd = tgetkb() & 0x7f;
 		for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
 			if ((mask & bit) && cmd == Tkeys[i].key[j]) {
@@ -103,7 +97,8 @@ static int check_specials(void)
 	}
 
 	/* No match - push back the chars */
-	tungetkb(j);
+	cptr = (cptr - j) & (CSTACK - 1);
+	cpushed += j;
 
 	/* If it is an unknown CSI string, suck it up */
 	if (cstack[(cptr + 2) & (CSTACK - 1)] == '[')
@@ -123,11 +118,8 @@ int tgetcmd(void)
 		cmd = tgetkb() & 0x7f;
 
 		/* All special keys start with ESC */
-		if (cmd == '\033')
-			if (tkbrdy()) {
-				tungetkb(1);
-				return check_specials();
-			}
+		if (cmd == '\033' && tkbrdy())
+			return check_specials();
 	}
 
 	return cmd;

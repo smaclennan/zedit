@@ -91,10 +91,7 @@ static bool wsplit(void)
 	Curwdo->modeflags = INVALID;
 
 	/* link it into chain */
-	new_wdo->prev = Curwdo;
 	new_wdo->next = Curwdo->next;
-	if (Curwdo->next)
-		Curwdo->next->prev = new_wdo;
 	Curwdo->next = new_wdo;
 
 	/* Point may be off new screen, reframe just in case... */
@@ -174,7 +171,8 @@ static bool sizewindow(int size)
 		Curwdo->last += size;
 		other->first += size;
 	} else {
-		other = Curwdo->prev;
+		for (other = Whead; other && other->next != Curwdo; other = other->next)
+			;
 		if (other && other->last - other->first - size > MINWDO) {
 			Curwdo->first -= size;
 			other->last   -= size;
@@ -298,7 +296,7 @@ void Zone_window(void)
 	Curwdo->first = 0;
 	Curwdo->last = tmaxrow() - 2;
 	Curwdo->modeflags = INVALID;
-	Curwdo->prev = Curwdo->next = NULL;
+	Curwdo->next = NULL;
 	Whead = Curwdo;
 
 	for (i = 0; i < Curwdo->last; ++i)

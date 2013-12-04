@@ -83,7 +83,7 @@ struct wdo {
 	int first, last;		/* screen line boundries */
 	int modecol;			/* column for modeflags */
 	int modeflags;			/* flags for modeflags */
-	struct wdo *prev, *next;
+	struct wdo *next;
 };
 
 extern Byte *Curcptr, *Cpstart;

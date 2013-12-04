@@ -154,10 +154,6 @@ struct cnames Cnames[] = {
 	 "line. The characters deleted are put in the Kill Buffer. A "
 	 "Universal Argument causes the command to repeat."
 	},
-	{"delete-window",		ZDELETE_WINDOW,
-	 "Deletes the current window and places you in the other window. You "
-	 "cannot delete the last window. A Universal Argument is ignored."
-	},
 	{"delete-word",			ZDELETE_WORD,
 	 "Deletes the word to the right of and including the Point. The word "
 	 "is put in the Kill Buffer. A Universal Argument causes the command "
@@ -468,11 +464,6 @@ struct cnames Cnames[] = {
 	 "the previous paragraph. A Universal Argument causes the command to "
 	 "repeat."
 	},
-	{"previous-window",		ZPREVIOUS_WINDOW,
-	 "Goes to the previous window on the screen. The windows are treated "
-	 "as a circular list. A Universal Argument goes to the Nth previous "
-	 "window."
-	},
 	{"previous-word",		ZPREVIOUS_WORD,
 	 "Moves the Point back to the start of a word or to the start of the "
 	 "previous word. A Universal Argument causes the command to repeat."
@@ -632,10 +623,6 @@ struct cnames Cnames[] = {
 	 "Show the current settings of all the Zedit variables in a "
 	 "buffer. The buffer is suitable for use as a .config.z file and can "
 	 "be saved to a file using Write File."
-	},
-	{"shrink-window",		ZSHRINK_WINDOW,
-	 "Shrinks the current window one line. A Universal Argument shrinks "
-	 "the window Arg lines."
 	},
 	{"size-window",			ZSIZE_WINDOW,
 	 "Sets the window to Universal Argument lines."

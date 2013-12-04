@@ -169,7 +169,7 @@ void zbind(void)
 	Keys[256 + 'M'] = ZSET_BOOKMARK;	/* C-X M */
 	Keys[256 + 'N'] = ZNEXT_WINDOW;	/* C-X N */
 	Keys[256 + 'O'] = ZNEXT_WINDOW;	/* C-X O */
-	Keys[256 + 'P'] = ZPREVIOUS_WINDOW;	/* C-X P */
+/* C-X P */
 /* C-X Q */
 /* C-X R */
 	Keys[256 + 'S'] = ZSAVE_ALL_FILES;	/* C-X S */

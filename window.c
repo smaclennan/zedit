@@ -66,46 +66,6 @@ static void winvalidate(struct wdo *wdo)
 	wdo->modeflags = INVALID;
 }
 
-static bool wdelete(struct wdo *wdo)
-{
-	struct wdo *new_wdo;
-
-	/* can't delete last window */
-	if (!Whead->next)
-		return false;
-
-	/* give more space to the smaller of the 2 windows (favour next) */
-	if ((wdo->next ? wdo->next->last - wdo->next->first : ROWMAX + 1) <=
-	   (wdo->prev ? wdo->prev->last - wdo->prev->first : ROWMAX + 1)) {
-		/* give it to the next window */
-		new_wdo = wdo->next;
-		new_wdo->first = wdo->first;
-		new_wdo->prev = wdo->prev;
-		if (wdo->prev)
-			wdo->prev->next = new_wdo;
-		else
-			Whead = new_wdo;
-	} else if (wdo->prev) {
-		/* give it to the previous window */
-		new_wdo = wdo->prev;
-		new_wdo->last = wdo->last;
-		new_wdo->next = wdo->next;
-		if (wdo->next)
-			wdo->next->prev = new_wdo;
-		new_wdo->modeflags = INVALID;
-	} else
-		return false;
-
-	winvalidate(wdo);
-
-	if (wdo == Curwdo) {
-		wswitchto(new_wdo);
-		reframe();	/*SAM*/
-	}
-	wfree(wdo);
-	return true;
-}
-
 /*
  * Split the current window in 2, putting the same buffer in both windows.
  * Leaves the user in the new window.
@@ -285,30 +245,6 @@ void wsize(void)
 	}
 }
 
-#if 0 /* unused */
-/* paw_resize PAW by moving bottom window by 'diff' lines, if possible. */
-bool paw_resize(int diff)
-{
-	struct wdo *last;
-	int i;
-
-	/* find the last window */
-	for (last = Whead; last->next; last = last->next)
-		;
-
-	if (last->last - last->first + diff < 1)
-		return false;
-	if (diff > 0)
-		for (i = 0; i < diff; ++i)
-			Scrnmarks[i + last->last].modf = true;
-	last->last += diff;
-	Rowmax += diff;
-	last->modeflags = INVALID;
-	clrpaw();
-	return true;
-}
-#endif
-
 /*
  * Create/Reuse a buffer in another window. Window to use:
  *	1. if buffer in a window - use window
@@ -371,28 +307,6 @@ void Zone_window(void)
 	tclrwind();
 }
 
-void Zdelete_window(void)
-{
-	if (!wdelete(Curwdo))
-		tbell();
-}
-
-void Zprevious_window(void)
-{
-	struct wdo *wdo;
-
-	if (Curwdo->prev)
-		wswitchto(Curwdo->prev);
-	else {
-		for (wdo = Whead; wdo->next; wdo = wdo->next)
-			;
-		if (wdo != Curwdo)
-			wswitchto(wdo);
-		else
-			tbell();
-	}
-}
-
 void Znext_window(void)
 {
 	if (Curwdo->next)
@@ -406,12 +320,6 @@ void Znext_window(void)
 void Zgrow_window(void)
 {
 	sizewindow(Arg);
-	Arg = 0;
-}
-
-void Zshrink_window(void)
-{
-	sizewindow(-Arg);
 	Arg = 0;
 }
 

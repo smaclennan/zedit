@@ -1,6 +1,6 @@
 #include "../z.h"
 #include "../cnames.h"
-#include "../vars-array.h"
+#include "../vars-array.c"
 
 static char *heading[] = { "Appendix A: Commands", "Appendix B: Variables" };
 static char *fnames[] = { "app-a.html", "app-b.html" };
@@ -32,7 +32,7 @@ static void footer(FILE *out)
 	fputs("</html>\n", out);
 }
 
-static void query_replace(FILE *out, char *doc)
+static void query_replace(FILE *out, const char *doc)
 {
 	for (; *doc; ++doc)
 		if (*doc == '\n' && *(doc + 1) == '\n') {
@@ -54,7 +54,7 @@ static void query_replace(FILE *out, char *doc)
 			fputc(*doc, out);
 }
 
-static void out_one(FILE *out, char *hdr, char *doc)
+static void out_one(FILE *out, const char *hdr, const char *doc)
 {
 	fprintf(out, "<h3>%s</h3>\n", hdr);
 	fprintf(out, "<p>");
@@ -89,13 +89,13 @@ int main(int argc, char *argv[])
 			for( i = 0; i < NUMVARS; ++i ) {
 				out_one(out, Vars[i].vname, Vars[i].doc);
 				switch (Vars[i].vtype) {
-				case FLAG:
+				case V_FLAG:
 					fprintf(out, "<p>Default: %s\n", VAR(i) ? "on" : "off");
 					break;
-				case DECIMAL:
+				case V_DECIMAL:
 					fprintf(out, "<p>Default: %d\n", VAR(i));
 					break;
-				case STRING:
+				case V_STRING:
 					if (VARSTR(i))
 						fprintf(out, "<p>Default: %s\n", VARSTR(i));
 					break;

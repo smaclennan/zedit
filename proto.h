@@ -256,7 +256,7 @@ int tgetcmd(void);
 void t_goto(int, int);
 void tindent(int);
 void tinit(void);
-int tkbrdy(void);
+bool tkbrdy(void);
 void tobegline(void);
 void toendline(void);
 void toggle_mode(int);

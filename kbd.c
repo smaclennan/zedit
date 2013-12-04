@@ -19,6 +19,7 @@
 
 #include "z.h"
 #include "keys.h"
+#include <poll.h>
 
 /* Note: We can currently only have 32 specials */
 static struct key_array {
@@ -125,36 +126,14 @@ int tgetcmd(void)
 	return cmd;
 }
 
-#ifdef NO_POLL
-static int do_select(int ms)
-{
-	struct timeval timeout;
-	fd_set fds;
-
-	FD_ZERO(&fds);
-	FD_SET(0, &fds);
-
-	timeout.tv_sec = 0;
-	timeout.tv_usec = ms * 1000;
-
-	return select(1, &fds, NULL, NULL, &timeout);
-}
-#else
-#include <poll.h>
-
 static struct pollfd stdin_fd = { .fd = 1, .events = POLLIN };
-#endif
 
-int tkbrdy(void)
+bool tkbrdy(void)
 {
 	if (cpushed || Pending)
 		return true;
 
-#ifdef NO_POLL
-	return Pending = do_select(0);
-#else
 	return Pending = poll(&stdin_fd, 1, 0) == 1;
-#endif
 }
 
 bool delay(int ms)
@@ -162,11 +141,7 @@ bool delay(int ms)
 	if (InPaw || cpushed || Pending)
 		return false;
 
-#ifdef NO_POLL
-	return do_select(ms) <= 0;
-#else
 	return poll(&stdin_fd, 1, ms) != 1;
-#endif
 }
 
 const char *special_label(int key)

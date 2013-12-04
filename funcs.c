@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include "cnames.h"
 
 void (*Cmds[][2])() = {
 	{ Znotimpl,			Znotimpl },

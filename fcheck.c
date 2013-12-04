@@ -22,6 +22,7 @@
 
 #include "vars-array.c"
 #include "funcs.c"
+#include "cnames.c"
 #include "kbd.c"
 
 #define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))

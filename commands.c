@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include "keys.h"
 
 int Arg;
 bool Argp;

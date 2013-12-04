@@ -10,7 +10,7 @@ LIBS += -ldl
 
 ETAGS=`which etags || echo true`
 
-CFILES = bcmds.c bind.c buff.c calc.c \
+CFILES = bcmds.c bind.c buff.c calc.c cnames.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	life.c reg.c shell.c spell.c srch.c tags.c term.c \
@@ -39,7 +39,7 @@ $(ZEXE): $O
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
 
-fcheck: fcheck.c funcs.c kbd.c vars-array.c keys.h
+fcheck: fcheck.c funcs.c kbd.c vars-array.c cnames.c keys.h
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
 	@./fcheck
 

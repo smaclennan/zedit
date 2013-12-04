@@ -109,7 +109,7 @@ struct wdo *findwdo(struct buff *buff)
 {
 	struct wdo *wdo;
 
-	for (wdo = Whead; wdo; wdo = wdo->next)
+	foreachwdo(wdo)
 		if (wdo->wbuff == buff)
 			return wdo;
 	return NULL;
@@ -195,20 +195,23 @@ static void do_wsize(int orow)
 
 	if (d > 0) {
 		/* make the windows bigger starting at the top */
-		while (d > 0)
-			for (i = 1, wdo = Whead; wdo; wdo = wdo->next) {
+		while (d > 0) {
+			i = 1;
+			foreachwdo(wdo) {
 				wdo->last += i;
 				if (wdo->next)
 					wdo->next->first += i;
 				if (--d > 0)
 					++i;
 			}
+		}
 	} else {
 		/* make the windows smaller starting at the bottom */
 		d = -d;
 		while (d > 0 && changed) {
 			changed = false;
-			for (i = 1, wdo = Whead; wdo; wdo = wdo->next) {
+			i = 1;
+			foreachwdo(wdo) {
 				if (wdo->last - wdo->first - 1 > 3 && d > 0) {
 					wdo->last -= i;
 					if (wdo->next)

@@ -295,7 +295,7 @@ void message(struct buff *buff, char *str)
 	if (buff->fname)
 		free(buff->fname);
 	buff->fname = strdup(str);
-	for (wdo = Whead; wdo; wdo = wdo->next)
+	foreachwdo(wdo)
 		if (wdo->wbuff == buff)
 			wdo->modeflags = INVALID;
 	putpaw("%s", str);

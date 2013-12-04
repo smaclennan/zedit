@@ -43,7 +43,7 @@ void redisplay(void)
 	struct wdo *wdo;
 	int i;
 
-	for (wdo = Whead; wdo; wdo = wdo->next)
+	foreachwdo(wdo)
 		wdo->modeflags = INVALID;
 
 	tclrwind();
@@ -107,7 +107,7 @@ void zrefresh(void)
 
 	/* update the other windows except Curwdo */
 	tsave = Tabsize;
-	for (wdo = Whead; wdo; wdo = wdo->next)
+	foreachwdo(wdo)
 		if (wdo != Curwdo) {
 			struct mark *point;
 			bswitchto(wdo->wbuff);
@@ -423,7 +423,7 @@ void vsetmod(bool flag)
 {
 	struct wdo *wdo;
 
-	for (wdo = Whead; wdo; wdo = wdo->next)
+	foreachwdo(wdo)
 		if (wdo->wbuff == Curbuff)
 			subset(wdo->first, wdo->last, flag);
 }

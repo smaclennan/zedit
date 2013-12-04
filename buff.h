@@ -86,6 +86,8 @@ struct wdo {
 	struct wdo *next;
 };
 
+#define foreachwdo(wdo) for (wdo = Whead; wdo; wdo = wdo->next)
+
 extern Byte *Curcptr, *Cpstart;
 extern int Curchar, Curplen;
 extern struct buff *Curbuff;

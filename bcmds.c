@@ -121,7 +121,7 @@ void delbuff(struct buff *buff)
 		cswitchto(Curbuff);
 
 		/* make sure all windows pointed to deleted buff are updated */
-		for (wdo = Whead; wdo; wdo = wdo->next)
+		foreachwdo(wdo)
 			if (wdo->wbuff == buff) {
 				wdo->wbuff = Curbuff;
 				bmrktopnt(wdo->wpnt);

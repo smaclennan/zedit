@@ -82,29 +82,6 @@ static int readapipe(struct buff *tbuff)
 	return cnt;
 }
 
-/* Read all the active pipe buffers. */
-static int readpipes(fd_set *fds)
-{
-	struct buff *tbuff;
-	int did_something = 0;
-
-	if (npipes) {
-		npipes = 0;
-		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-			if (tbuff->child != EOF) {
-				++npipes;
-				if (FD_ISSET(tbuff->in_pipe, fds)) {
-					readapipe(tbuff);
-					++did_something;
-				}
-			}
-		if (npipes == 0)
-			NumFDs = 2;
-	}
-
-	return did_something;
-}
-
 void execute(void)
 {
 	if (NumFDs == 0) {
@@ -114,9 +91,10 @@ void execute(void)
 
 	zrefresh();
 
-	if (cpushed)
+	if (cpushed || npipes == 0)
 		dotty();
 	else {
+		struct buff *tbuff;
 		fd_set fds = SelectFDs;
 
 		/* select returns -1 if a child dies (SIGPIPE) -
@@ -126,7 +104,18 @@ void execute(void)
 			zrefresh();
 			fds = SelectFDs;
 		}
-		readpipes(&fds);
+
+		npipes = 0;
+		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+			if (tbuff->child != EOF) {
+				++npipes;
+				if (FD_ISSET(tbuff->in_pipe, &fds))
+					readapipe(tbuff);
+			}
+
+		if (npipes == 0)
+			NumFDs = 2;
+
 		if (FD_ISSET(1, &fds))
 			dotty();
 	}

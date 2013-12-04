@@ -87,6 +87,7 @@ struct wdo {
 };
 
 #define foreachwdo(wdo) for (wdo = Whead; wdo; wdo = wdo->next)
+#define wheight() (Curwdo->last - Curwdo->first)
 
 extern Byte *Curcptr, *Cpstart;
 extern int Curchar, Curplen;

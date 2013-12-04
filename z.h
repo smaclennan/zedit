@@ -184,8 +184,6 @@ void tflush(void);
 #define tflush()		fflush(stdout)
 #endif
 
-#define wheight()		(Curwdo->last - Curwdo->first)
-
 /* this is MUCH faster than an isascii isprint pair */
 #define ZISPRINT(c)		(c >= ' ' && c <= '~')
 

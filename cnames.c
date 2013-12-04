@@ -418,15 +418,13 @@ struct cnames Cnames[] = {
 	 "Performs a Next Page command in the bottom window or the top window "
 	 "if you are in the bottom window. It leaves the Point where it is "
 	 "in the active window. If there is only one window, this command "
-	 "has no effect. A Universal Argument causes the command to page the "
-	 "Nth window."
+	 "is the same as next-page. A Universal Argument works normally."
 	},
 	{"other-previous-page",		ZOTHER_PREVIOUS_PAGE,
 	 "Performs a Previous Page command in the bottom window or the top "
 	 "window if you are in the bottom window. It leaves the Point where "
-	 "it is in the active window. If there is only one window, this "
-	 "command has no effect. A Universal Argument pages the Nth "
-	 "window."
+	 "it is in the active window. If there is only one window, it performs "
+	 "a previous-page. A Universal Argument works normally."
 	},
 	{"out-to",			ZOUT_TO,
 	 "This command moves the Point to an absolute column position. If the "

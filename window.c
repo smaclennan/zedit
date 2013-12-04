@@ -328,48 +328,30 @@ void Zsize_window(void)
 	Arg = 0;
 }
 
-/*
- * Find the "other" window:
- *	- if there is an Arg - go to Arg window (start at 1)
- *	- use bottom window unless current
- *	- use top window
- *	- use current if only one
- * Makes new window current.
- * Never fails.
- */
-static struct wdo *otherwind(void)
+static void other_page(void (*action)(void))
 {
-	struct wdo *wdo;
-
-	if (Argp)
-		for (wdo = Whead;
-		     --Arg > 0;
-		     wdo = wdo->next ? wdo->next : Whead)
-			;
-	else {
-		for (wdo = Whead; wdo->next; wdo = wdo->next)
-			;
-		if (wdo == Curwdo)
-			wdo = Whead;
-	}
+	struct wdo *wdo, *save = Curwdo;
+	
+	/* Find the bottom window */
+	for (wdo = Whead; wdo->next; wdo = wdo->next)
+		;
+	/* If we are already the bottom, use the top */
+	if (wdo == Curwdo)
+		wdo = Whead;
+		
 	wswitchto(wdo);
-	return wdo;
+	action();
+	wswitchto(save);
 }
-
+	
 void Zother_next_page(void)
 {
-	struct wdo *save = Curwdo;
-	otherwind();
-	Znext_page();
-	wswitchto(save);
+	other_page(Znext_page);
 }
 
 void Zother_previous_page(void)
 {
-	struct wdo *save = Curwdo;
-	otherwind();
-	Zprevious_page();
-	wswitchto(save);
+	other_page(Zprevious_page);
 }
 
 /*

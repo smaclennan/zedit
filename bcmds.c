@@ -55,6 +55,7 @@ void Zswitch_to_buffer(void)
 		return;
 	strcpy(Lbufname, was);
 	cswitchto(cfindbuff(Bnames[rc]));
+	uncomment(Curbuff);
 }
 
 void Znext_buffer(void)

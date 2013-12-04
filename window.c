@@ -280,8 +280,7 @@ bool wuseother(const char *bname)
 
 void Zsplit_window(void)
 {
-	if (!wsplit())
-		tbell();
+	wsplit();
 }
 
 void Zone_window(void)
@@ -314,8 +313,6 @@ void Znext_window(void)
 		wswitchto(Curwdo->next);
 	else if (Curwdo != Whead)
 		wswitchto(Whead);
-	else
-		tbell();
 }
 
 void Zgrow_window(void)

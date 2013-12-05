@@ -276,7 +276,7 @@ void message(struct buff *, const char *);
 void winit(void);
 void wfini(void);
 
-#if SHELL
+#if DOPIPES
 int checkpipes(int type);
 void sigchild(int);
 void unvoke(struct buff *, bool);

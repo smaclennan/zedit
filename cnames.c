@@ -84,7 +84,7 @@ struct cnames Cnames[] = {
 	 "repeat on the next lines."
 	},
 	{"cmd-to-buffer",		ZCMD_TO_BUFFER,
-#if !SHELL
+#if !DOPIPES
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "Prompts for a command and then executes the command in the "
@@ -222,7 +222,7 @@ struct cnames Cnames[] = {
 	 "is left at the end of the buffer."
 	},
 	{"grep",			ZGREP,
-#if !SHELL
+#if !DOPIPES
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "Prompts for the completion of a grep command and then performs the "
@@ -287,7 +287,7 @@ struct cnames Cnames[] = {
 	 "Line, Delete Newline, Trim Whitespace, Insert space."
 	},
 	{"kill",			ZKILL,
-#if !SHELL
+#if !DOPIPES
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "Kills the current make. The command must wait for the make to die "
@@ -311,7 +311,7 @@ struct cnames Cnames[] = {
 	 "causes the command to repeat."
 	},
 	{"make",			ZMAKE,
-#if !SHELL
+#if !DOPIPES
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "This command performs the command specified in the Make variable "
@@ -362,7 +362,7 @@ struct cnames Cnames[] = {
 	 "Argument causes the command to repeat."
 	},
 	{"next-error",			ZNEXT_ERROR,
-#if !SHELL
+#if !DOPIPES
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "Used after a make or grep command to search for error messages, "

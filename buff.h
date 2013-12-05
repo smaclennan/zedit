@@ -64,7 +64,7 @@ struct buff {
 	char *fname;			/* file name associated with buffer */
 	time_t mtime;			/* file time at read */
 	struct buff *prev, *next;	/* list of buffers */
-#if SHELL
+#if DOPIPES
 	pid_t child;			/* PID of shell or EOF */
 	int in_pipe;			/* the pipe */
 #endif

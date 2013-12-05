@@ -414,7 +414,7 @@ void Zexit(void)
 {
 	struct buff *tbuff;
 	bool modf = false;
-#if SHELL
+#if DOPIPES
 	struct buff *make = cfindbuff(MAKEBUFF);
 
 	if (make && make->child != EOF)
@@ -431,7 +431,7 @@ void Zexit(void)
 	if (modf && ask("Modified buffers. quit anyway? ") != YES)
 		return;
 
-#if SHELL
+#if DOPIPES
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (tbuff->child != EOF)
 			unvoke(tbuff, false);

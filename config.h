@@ -6,7 +6,7 @@
 
 /* USER CONFIGURABLE - don't define any, see if I care */
 #ifndef WIN32
-#define SHELL		1
+#define DOPIPES		1
 #define SPELL		1		/* Requires libaspell */
 #define ZLIB		1		/* Requires zlib */
 #endif

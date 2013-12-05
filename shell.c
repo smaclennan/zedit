@@ -47,7 +47,7 @@ void do_chdir(struct buff *buff)
 	}
 }
 
-#if SHELL
+#if DOPIPES
 #include <signal.h>
 #include <sys/wait.h>
 
@@ -455,4 +455,4 @@ void Zmake(void) { tbell(); }
 void Znext_error(void) { tbell(); }
 void Zkill(void) { tbell(); }
 void Zgrep(void) { tbell(); }
-#endif /* SHELL */
+#endif

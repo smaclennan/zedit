@@ -20,7 +20,7 @@
 #include "z.h"
 #include <signal.h>
 
-#if SHELL
+#if DOPIPES
 #include <sys/wait.h>	/* need for WNOWAIT */
 #endif
 
@@ -82,12 +82,12 @@ void hang_up(int signal)
 			bswitchto(tbuff);
 			bwritefile(bfname());
 		}
-#if SHELL
+#if DOPIPES
 		if (tbuff->child != EOF)
 			unvoke(tbuff, false);
 #endif
 	}
-#if SHELL
+#if DOPIPES
 	checkpipes(0);
 #endif
 	tfini();
@@ -159,7 +159,7 @@ void tinit(void)
 #ifdef SIGTERM
 	signal(SIGTERM, hang_up);
 #endif
-#if SHELL
+#if DOPIPES
 #if !defined(WNOWAIT)
 	signal(SIGCLD,  sigchild);
 #endif

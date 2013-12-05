@@ -226,7 +226,9 @@ struct cnames Cnames[] = {
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "Prompts for the completion of a grep command and then performs the "
-	 "grep command in the *grep* buffer."
+	 "grep command in the " MAKEBUFF " buffer. A Universal Argument will "
+	 "prompt for the grep command to use. Use next-error to go through the "
+	 "grep output."
 	},
 	{"grow-window",			ZGROW_WINDOW,
 	 "Makes the active window one line bigger, and therefore the "
@@ -313,7 +315,7 @@ struct cnames Cnames[] = {
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "This command performs the command specified in the Make variable "
-	 "and puts the output in the '.make' buffer. The command is usually "
+	 "and puts the output in the " MAKEBUFF " buffer. The command is usually "
 	 "'make' and is used in conjunction with the Next Error command. A "
 	 "Universal Argument prompts for the command to execute."
 	},
@@ -363,13 +365,13 @@ struct cnames Cnames[] = {
 #if !SHELL
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
-	 "Used after a Make command to search for error messages in the "
-	 "'.make' buffer. If an error is found, the Mark in the '.make' "
-	 "buffer is placed at the start of the error message. The file "
-	 "containing the error is loaded into a buffer using the Find File "
-	 "command and the Point is placed at the error line. If a "
-	 "Universal Argument is specified, Next Error tries to ignore "
-	 "warnings."
+	 "Used after a make or grep command to search for error messages, "
+	 "or grep output, "
+	 "in the " MAKEBUFF " buffer. If an error is found, the "
+	 "Mark in the " MAKEBUFF " buffer is placed at the start of the "
+	 "error message. The file containing the error is loaded into a "
+	 "buffer using the Find File command and the Point is placed at "
+	 "the error line."
 	},
 	{"next-line",			ZNEXT_LINE,
 	 "Moves the Point up one line in the buffer. It tries to maintain the "

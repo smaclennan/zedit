@@ -1,5 +1,5 @@
 #include "../z.h"
-#include "../cnames.h"
+#include "../cnames.c"
 #include "../vars-array.c"
 
 static char *heading[] = { "Appendix A: Commands", "Appendix B: Variables" };

@@ -20,14 +20,6 @@
 #include "z.h"
 #include "keys.h"
 
-/* Don't display both C-X A and C-X a if bound to same Ditto for Meta */
-static bool notdup_key(int k)
-{
-	return ((k < (256 + 'a') || k > (256 + 'z')) &&
-		(k < (128 + 'a') || k > (128 + 'z'))) ||
-		Keys[k] != Keys[k - ('a' - 'A')];
-}
-
 static char *dispkey(unsigned key, char *s)
 {
 	char *p;
@@ -64,14 +56,13 @@ static void dump_bindings(int fnum)
 	binstr("\nBinding(s): ");
 
 	for (k = 0; k < NUMKEYS; ++k)
-		if (Keys[k] == fnum)
-			if (notdup_key(k)) {
-				if (found)
-					binstr(",  ");
-				else
-					found = true;
-				binstr(dispkey(k, buff));
-			}
+		if (Keys[k] == fnum) {
+			if (found)
+				binstr(",  ");
+			else
+				found = true;
+			binstr(dispkey(k, buff));
+		}
 
 	if (!found)
 		binstr("Unbound");

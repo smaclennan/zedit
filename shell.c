@@ -47,7 +47,7 @@ static void do_chdir(struct buff *buff)
 {
 	if (buff->fname) {
 		char dir[PATHMAX + 1], *p;
-		
+
 		strcpy(dir, buff->fname);
 		p = strrchr(dir, '/');
 		if (p) {

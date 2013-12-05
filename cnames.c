@@ -315,9 +315,9 @@ struct cnames Cnames[] = {
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "This command performs the command specified in the Make variable "
-	 "and puts the output in the " MAKEBUFF " buffer. The command is usually "
-	 "'make' and is used in conjunction with the Next Error command. A "
-	 "Universal Argument prompts for the command to execute."
+	 "and puts the output in the " MAKEBUFF " buffer. The command is "
+	 "usually 'make' and is used in conjunction with the next-error "
+	 "command. A Universal Argument prompts for the command to execute."
 	},
 	{"mark-paragraph",		ZMARK_PARAGRAPH,
 	 "Sets the Mark to the start of the current paragraph and moves the "

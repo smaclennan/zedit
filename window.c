@@ -171,7 +171,9 @@ static bool sizewindow(int size)
 		Curwdo->last += size;
 		other->first += size;
 	} else {
-		for (other = Whead; other && other->next != Curwdo; other = other->next)
+		for (other = Whead;
+		     other && other->next != Curwdo;
+		     other = other->next)
 			;
 		if (other && other->last - other->first - size > MINWDO) {
 			Curwdo->first -= size;
@@ -331,19 +333,19 @@ void Zsize_window(void)
 static void other_page(void (*action)(void))
 {
 	struct wdo *wdo, *save = Curwdo;
-	
+
 	/* Find the bottom window */
 	for (wdo = Whead; wdo->next; wdo = wdo->next)
 		;
 	/* If we are already the bottom, use the top */
 	if (wdo == Curwdo)
 		wdo = Whead;
-		
+
 	wswitchto(wdo);
 	action();
 	wswitchto(save);
 }
-	
+
 void Zother_next_page(void)
 {
 	other_page(Znext_page);

@@ -269,6 +269,7 @@ void dump_doc(const char *doc);
 int set_bookmark(char *bookname);
 void cleanup_bookmarks(void);
 const char *special_label(int key);
+void do_chdir(struct buff *buff);
 
 void message(struct buff *, const char *);
 

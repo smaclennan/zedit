@@ -20,6 +20,7 @@
 #define close _close
 #define access _access
 #define umask _umask
+#define chdir _chdir
 #define putenv _putenv
 
 void zgetcwd(char *path, int len);

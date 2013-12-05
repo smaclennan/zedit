@@ -155,7 +155,7 @@ int tgetcmd(void)
 		return tgetkb();
 }
 
-int tkbrdy(void)
+bool tkbrdy(void)
 {
 	if (cpushed || Pending)
 		return true;

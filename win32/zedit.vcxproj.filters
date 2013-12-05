@@ -99,6 +99,9 @@
     <ClCompile Include="..\term.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\cnames.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\z.h">

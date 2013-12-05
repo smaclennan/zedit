@@ -136,20 +136,6 @@ void closedir(DIR *dir)
 	free(dir);
 }
 
-static void do_chdir(struct buff *buff)
-{
-	if (buff->fname) {
-		char dir[PATHMAX + 1], *p;
-
-		strcpy(dir, buff->fname);
-		p = strrchr(dir, '/');
-		if (p) {
-			*p = '\0';
-			chdir(dir);
-		}
-	}
-}
-
 /* Returns -1 if popen failed, else exit code.
  * Leaves Point at end of new text.
  */
@@ -161,13 +147,13 @@ static int pipetobuff(struct buff *buff, char *instr)
 	if (cmd == NULL)
 		return -1;
 	sprintf(cmd, "%s 2>&1", instr);
-	pfp = popen(cmd, "r");
+	pfp = _popen(cmd, "r");
 	if (pfp == NULL)
 		return -1;
 	while ((c = getc(pfp)) != EOF)
 		binsert((char)c);
 	free(cmd);
-	return pclose(pfp) >> 8;
+	return _pclose(pfp) >> 8;
 }
 
 void Zcmd_to_buffer(void)

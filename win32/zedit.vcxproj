@@ -82,6 +82,7 @@
     <ClCompile Include="..\bind.c" />
     <ClCompile Include="..\buff.c" />
     <ClCompile Include="..\calc.c" />
+    <ClCompile Include="..\cnames.c" />
     <ClCompile Include="..\commands.c" />
     <ClCompile Include="..\comment.c" />
     <ClCompile Include="..\cursor.c" />

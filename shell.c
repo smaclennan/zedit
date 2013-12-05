@@ -30,20 +30,10 @@ static void dotty(void)
 		--Arg;
 	}
 	Lfunc = Keys[Cmd];
-	First = false;				/* used by pinsert when InPaw */
+	First = false; /* used by pinsert when InPaw */
 }
 
-
-#if SHELL
-#include <signal.h>
-#include <sys/wait.h>
-
-static int npipes;
-static int Waiting;
-static fd_set SelectFDs;
-static int NumFDs;
-
-static void do_chdir(struct buff *buff)
+void do_chdir(struct buff *buff)
 {
 	if (buff->fname) {
 		char dir[PATHMAX + 1], *p;
@@ -56,6 +46,15 @@ static void do_chdir(struct buff *buff)
 		}
 	}
 }
+
+#if SHELL
+#include <signal.h>
+#include <sys/wait.h>
+
+static int npipes;
+static int Waiting;
+static fd_set SelectFDs;
+static int NumFDs;
 
 /* pipe has something for us */
 static int readapipe(struct buff *tbuff)

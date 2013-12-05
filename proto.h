@@ -270,7 +270,7 @@ int set_bookmark(char *bookname);
 void cleanup_bookmarks(void);
 const char *special_label(int key);
 
-void message(struct buff *, char *);
+void message(struct buff *, const char *);
 
 void winit(void);
 void wfini(void);

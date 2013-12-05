@@ -211,13 +211,15 @@ static char *wordit(char **str)
 /* Invoke 'cmd' on a pipe.
  * Returns true if the invocation succeeded.
 */
-static bool dopipe(struct buff *tbuff, char *icmd)
+static bool dopipe(struct buff *tbuff, const char *icmd)
 {
 	char cmd[STRMAX + 1], *p, *argv[11];
 	int from[2], arg;
 
-	if (tbuff->child != EOF)
+	if (tbuff->child != EOF) {
+		error("%s in use....", tbuff->bname);
 		return false;
+	}
 
 	strcpy(p = cmd, icmd);
 	for (arg = 0; arg < 10 && (argv[arg] = wordit(&p)); ++arg)
@@ -276,66 +278,26 @@ void sigchild(int signo)
 	++Waiting;
 }
 
-static struct buff *cmdtobuff(char *bname, char *cmd)
+static void cmdtobuff(const char *bname, const char *cmd)
 {
-	struct buff *tbuff = NULL;
-	struct wdo *save;
+	struct wdo *save = Curwdo;
 
-	save = Curwdo;
-	do_chdir(Curbuff);
 	if (wuseother(bname)) {
+		do_chdir(Curbuff);
 		if (dopipe(Curbuff, cmd))
-			tbuff = Curbuff;
+			message(Curbuff, cmd);
+
 		wswitchto(save);
 	}
-	return tbuff;
-}
-
-/* Returns -1 if popen failed, else exit code.
- * Leaves Point at end of new text.
- */
-static int pipetobuff(struct buff *buff, char *instr)
-{
-	FILE *pfp;
-	int c;
-	char *cmd = malloc(strlen(instr) + 10);
-	if (cmd == NULL)
-		return -1;
-	sprintf(cmd, "%s 2>&1", instr);
-	pfp = popen(cmd, "r");
-	if (pfp == NULL)
-		return -1;
-	while ((c = getc(pfp)) != EOF)
-		binsert((char)c);
-	free(cmd);
-	return pclose(pfp) >> 8;
 }
 
 void Zcmd_to_buffer(void)
 {
 	static char cmd[STRMAX + 1];
-	struct wdo *save;
-	int rc;
 
 	Arg = 0;
-	if (getarg("@ ", cmd, STRMAX) == 0) {
-		save = Curwdo;
-		do_chdir(Curbuff);
-		if (wuseother(SHELLBUFF)) {
-			putpaw("Please wait...");
-			rc = pipetobuff(Curbuff, cmd);
-			if (rc == 0) {
-				message(Curbuff, cmd);
-				btostart();
-				putpaw("Done.");
-			} else if (rc == -1)
-				putpaw("Unable to execute.");
-			else
-				putpaw("Exit %d.", rc);
-			Curbuff->bmodf = false;
-			wswitchto(save);
-		}
-	}
+	if (getarg("@ ", cmd, STRMAX) == 0)
+		cmdtobuff(SHELLBUFF, cmd);
 }
 
 /* This is cleared in Zmake and set in Znexterror.
@@ -358,36 +320,28 @@ static int set_cmd(int which, char *prompt)
 	return 1;
 }
 
-void Zmake(void)
+void do_make(const char *cmd)
 {
-	struct buff *mbuff;
-
 	NexterrorCalled = 0;	/* reset it */
 	Arg = 0;
+
+	saveall(true);
+	cmdtobuff(MAKEBUFF, cmd);
+}
+
+void Zmake(void)
+{
 	if (Argp)
 		if (!set_cmd(VMAKE, "Make: "))
 			return;
-	saveall(true);
-	mbuff = cfindbuff(MAKEBUFF);
-	if (mbuff && mbuff->child != EOF) {
-		putpaw("Killing current make.");
-		unvoke(mbuff, true);
-		clrpaw();
-	}
-	mbuff = cmdtobuff(MAKEBUFF, VARSTR(VMAKE));
-	if (mbuff)
-		message(mbuff, VARSTR(VMAKE));
-	else
-		error("Unable to execute make.");
+
+	do_make(VARSTR(VMAKE));
 }
 
 void Zgrep(void)
 {
-	struct buff *mbuff;
 	char cmd[STRMAX * 3], input[STRMAX + 1], files[STRMAX + 1];
 
-	NexterrorCalled = 0;	/* reset it */
-	Arg = 0;
 	if (Argp)
 		if (!set_cmd(VGREP, "grep: "))
 			return;
@@ -408,17 +362,7 @@ void Zgrep(void)
 	snprintf(cmd, sizeof(cmd), "sh -c '%s \"%s\" %s'",
 		 VARSTR(VGREP), input, files);
 
-	saveall(true);
-	mbuff = cfindbuff(MAKEBUFF);
-	if (mbuff && mbuff->child != EOF) {
-		error("Make buffer in use...");
-		return;
-	}
-	mbuff = cmdtobuff(MAKEBUFF, cmd);
-	if (mbuff)
-		message(mbuff, cmd);
-	else
-		error("Unable to execute grep.");
+	do_make(cmd);
 }
 
 void Znext_error(void)
@@ -507,7 +451,9 @@ void execute(void)
 	dotty();
 }
 
+#ifndef WIN32
 void Zcmd_to_buffer(void) { tbell(); }
+#endif
 void Zmake(void) { tbell(); }
 void Znext_error(void) { tbell(); }
 void Zkill(void) { tbell(); }

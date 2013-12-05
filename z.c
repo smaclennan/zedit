@@ -288,7 +288,7 @@ void putpaw(const char *fmt, ...)
 }
 
 /* echo 'str' to the paw and as the filename for 'buff' */
-void message(struct buff *buff, char *str)
+void message(struct buff *buff, const char *str)
 {
 	struct wdo *wdo;
 

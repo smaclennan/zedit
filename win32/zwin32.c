@@ -135,3 +135,64 @@ void closedir(DIR *dir)
 	FindClose(dir->handle);
 	free(dir);
 }
+
+static void do_chdir(struct buff *buff)
+{
+	if (buff->fname) {
+		char dir[PATHMAX + 1], *p;
+
+		strcpy(dir, buff->fname);
+		p = strrchr(dir, '/');
+		if (p) {
+			*p = '\0';
+			chdir(dir);
+		}
+	}
+}
+
+/* Returns -1 if popen failed, else exit code.
+ * Leaves Point at end of new text.
+ */
+static int pipetobuff(struct buff *buff, char *instr)
+{
+	FILE *pfp;
+	int c;
+	char *cmd = malloc(strlen(instr) + 10);
+	if (cmd == NULL)
+		return -1;
+	sprintf(cmd, "%s 2>&1", instr);
+	pfp = popen(cmd, "r");
+	if (pfp == NULL)
+		return -1;
+	while ((c = getc(pfp)) != EOF)
+		binsert((char)c);
+	free(cmd);
+	return pclose(pfp) >> 8;
+}
+
+void Zcmd_to_buffer(void)
+{
+	static char cmd[STRMAX + 1];
+	struct wdo *save;
+	int rc;
+
+	Arg = 0;
+	if (getarg("@ ", cmd, STRMAX) == 0) {
+		save = Curwdo;
+		do_chdir(Curbuff);
+		if (wuseother(SHELLBUFF)) {
+			putpaw("Please wait...");
+			rc = pipetobuff(Curbuff, cmd);
+			if (rc == 0) {
+				message(Curbuff, cmd);
+				btostart();
+				putpaw("Done.");
+			} else if (rc == -1)
+				putpaw("Unable to execute.");
+			else
+				putpaw("Exit %d.", rc);
+			Curbuff->bmodf = false;
+			wswitchto(save);
+		}
+	}
+}

@@ -25,7 +25,6 @@ char *Home;
 unsigned Cmd;
 jmp_buf	zenv;
 
-static char *ConfigDir;
 static char dbgfname[PATHMAX];
 
 #ifndef CONFIGDIR
@@ -35,10 +34,9 @@ static char dbgfname[PATHMAX];
 static void usage(char *prog)
 {
 	printf(
-		"usage: %s [-ht] [-c config_dir] [-l line] [fname ...]\n"
+		"usage: %s [-ht] [-l line] [fname ...]\n"
 		"where:\t-h  displays this message.\n"
 		"\t-t  default to text mode.\n"
-		"\t-c  specifies a config dir.\n"
 		"\t-l  goto specified line number. (First file only)\n"
 		, prog);
 
@@ -51,7 +49,7 @@ static bool findpath(char *path, char *f)
 	snprintf(path, PATHMAX, "%s/%s", Home, f);
 	if (access(path, F_OK) == 0)
 		return true;
-	snprintf(path, PATHMAX, "%s/%s", ConfigDir, f);
+	snprintf(path, PATHMAX, "%s/%s", CONFIGDIR, f);
 	if (access(path, F_OK) == 0)
 		return true;
 	return false;
@@ -79,11 +77,8 @@ int main(int argc, char **argv)
 	snprintf(dbgfname, sizeof(dbgfname), "%s/z.out", Home);
 	unlink(dbgfname);
 
-	while ((arg = getopt(argc, argv, "c:hl:tE")) != EOF)
+	while ((arg = getopt(argc, argv, "hl:tE")) != EOF)
 		switch (arg) {
-		case 'c':
-			ConfigDir = optarg;
-			break;
 		case 'l':
 			line = atoi(optarg);
 			break;
@@ -97,13 +92,6 @@ int main(int argc, char **argv)
 		default:
 			usage(argv[0]);
 		}
-
-	/* Deal with ConfigDir */
-	if (!ConfigDir) {
-		ConfigDir = getenv("ZPATH");
-		if (!ConfigDir)
-			ConfigDir = CONFIGDIR;
-	}
 
 	if (findpath(path, ZCFILE))
 		readvfile(path); /* Do this BEFORE tinit */

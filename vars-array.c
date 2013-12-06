@@ -4,52 +4,49 @@
 
 struct avar Vars[] = {
 	{ "add-nl",		V_FLAG,		V(1),
-	  "If this flag variable is set, the editor will insure that "
-	  "all saved files end in a Newline."
+	  "If set, the editor will insure that all saved files end in a "
+	  "newline."
 	},
 	{ "backup",		V_FLAG,		V(0),
-	  "If this flag variable is set, a backup file is created when "
-	  "a file is written."
+	  "If set, a backup file is created when a file is written."
 	},
 	{ "bell",		V_FLAG,		V(1),
-	  "If this flag variable is set, the bell will flash the screen."
+	  "If set, the bell will flash the screen."
 	},
 	{ "c-extends",		V_STRING,	V(".c.h.cpp.cc.cxx.y.l"),
 	  "This variable defines the extensions that turn on C mode."
 	},
 	{ "c-tabs",		V_DECIMAL,	V(8),
-	  "A tab is a single character that is displayed as one or more "
-	  "spaces on the screen. This variable defines the number of "
-	  "spaces displayed per tab in C mode buffers. See also tabs."
+	  "This variable defines the number of spaces displayed per tab in "
+	  "C mode buffers. See also tabs."
 	},
 	{ "comments",		V_FLAG,		V(1),
-	  "If set then Zedit tries to bold (display in red) "
-	  "comments in C and shell mode buffers."
+	  "If set then Zedit tries to bold (display in red) comments in C "
+	  "and shell mode buffers."
 	},
 	{ "exact",		V_FLAG,		V(1),
-	  "If Exact is set, all searches and replaces are case "
-	  "sensitive. This means that the search string 'string' will "
-	  "only match 'string', not 'STRING', or 'String'."
+	  "If set, all searches and replaces are case sensitive. This means "
+	  "that the search string 'string' will only match 'string', not "
+	  "'STRING', or 'String'."
 	},
 	{ "fill-ch-width",	V_DECIMAL,	V(72),
-	  "This is the column at which the Text mode commands wrap the "
+	  "This is the column at which the text mode commands wrap the "
 	  "right margin."
 	},
 	{ "grep",		V_STRING,	V("grep -n"),
-	  "The command to use for the Zedit grep command."
+	  "The command to use for the grep command."
 	},
 	{ "lines",		V_FLAG,		V(0),
-	  "This flag variable turns on a line:column indicator on the "
-	  "mode line. The Lines feature can cause a lot of cursor "
-	  "movement and is irritating on some slow terminals."
+	  "This variable turns on a line:column indicator on the mode line. "
+	  "This can cause a lot of cursor movement and can be irritating on "
+	  "slow terminals."
 	},
 	{ "make-cmd",		V_STRING,	V("make "),
-	  "This is a string variable which contains the default string "
-	  "for the Make command."
+	  "The command to use for the make command."
 	},
 	{ "normal",		V_FLAG,		V(1),
-	  "If on, sets the default buffer mode to Normal. If off, sets "
-	  "the default buffer mode to Text. Some file extensions "
+	  "If set, the default buffer mode is Normal. If off, "
+	  "the default buffer mode is Text. Some file extensions "
 	  "override this variable."
 	},
 	{ "sh-extends",		V_STRING,	V(".sh.csh.el"),

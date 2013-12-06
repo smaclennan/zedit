@@ -33,7 +33,7 @@ struct avar Vars[] = {
 	},
 	{ "fill-ch-width",	V_DECIMAL,	V(72),
 	  "This is the column at which the Text mode commands wrap the "
-	  "right margin. It is also used by the Center Line command. "
+	  "right margin."
 	},
 	{ "grep",		V_STRING,	V("grep -n"),
 	  "The command to use for the Zedit grep command."

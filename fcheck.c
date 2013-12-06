@@ -25,6 +25,14 @@
 #include "cnames.c"
 #include "kbd.c"
 
+#ifdef __unix__
+#define OS unix
+#elif defined WIN32
+#define OS win32
+#else
+#error Unknow OS
+#endif
+
 #define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))
 
 int InPaw;

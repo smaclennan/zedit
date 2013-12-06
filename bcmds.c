@@ -219,7 +219,7 @@ bool delbname(char *bname)
 		maxbuffs = 0;
 		free(Bnames);
 	} else
-		for (; i <= Numbuffs; ++i)
+		for (; i < Numbuffs; ++i)
 			Bnames[i] = Bnames[i + 1];
 
 	return true;

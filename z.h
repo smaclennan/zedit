@@ -29,13 +29,18 @@
 #include <errno.h>
 #include <sys/stat.h>
 
+#ifdef __unix__
+#define DOPIPES 1
+#define ZLIB 1
+#endif
+#include "config.h"
+
 #ifdef WIN32
 #include "zwin32.h"
 #else
 #include <unistd.h>
 #endif
 
-#include "config.h"
 #include "vars.h"
 #include "funcs.h"
 #include "buff.h"

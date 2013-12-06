@@ -6,9 +6,10 @@
 
 /* USER CONFIGURABLE - don't define any, see if I care */
 #ifndef WIN32
-#define DOPIPES		1
-#define SPELL		1		/* Requires libaspell */
-#define ZLIB		1		/* Requires zlib */
+#define DOPIPES		1	/* Non-blocking shell commands */
+#define SPELL		1	/* Requires libaspell */
+#define ZLIB		1	/* Requires zlib */
 #endif
 
-#define UNDO            1		/* EXPERIMENTAL undo code */
+#define SHELL		1
+#define UNDO            1	/* EXPERIMENTAL undo code */

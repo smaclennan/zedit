@@ -9,6 +9,7 @@ do_help() {
 	echo "Optional features:"
 	echo "  --enable-clang	Enable clang compiler"
 	echo "  --enable-shell	Enable shell commands"
+	echo "  --enable-dopipes	Enable non-blocking shell commands"
 	echo "  --enable-spell	Enable spell commands"
 	echo "  --enable-zlib		Enable gzip compression support"
 	echo "  --enable-undo		EXPERIMNETAL undo"
@@ -35,6 +36,7 @@ while [ -n "$1" ]; do
 	*-clang) clang=$enable;;
 	*-undo) undo=$enable;;
 	*-shell) shell=$enable;;
+	*-dopipes) dopipes=$enable;;
 	*-spell) spell=$enable;;
 	*-zlib) zlib=$enable;;
 	*-16bitints) int16=$enable;;
@@ -71,6 +73,7 @@ set_one() {
 }
 
 set_one SHELL $shell
+set_one DOPIPES $dopipes
 set_one SPELL $spell
 set_one ZLIB $zlib
 set_one UNDO $undo

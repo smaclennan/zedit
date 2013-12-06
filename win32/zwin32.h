@@ -5,6 +5,7 @@
 #include <io.h>
 #include <direct.h>
 
+/* WIN32 sure likes underscores */
 #define inline __inline
 
 #define snprintf _snprintf
@@ -22,6 +23,8 @@
 #define umask _umask
 #define chdir _chdir
 #define putenv _putenv
+#define popen _popen
+#define pclose _pclose
 
 void zgetcwd(char *path, int len);
 

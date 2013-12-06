@@ -33,7 +33,8 @@ static void dotty(void)
 	First = false; /* used by pinsert when InPaw */
 }
 
-void do_chdir(struct buff *buff)
+#if DOPIPES || SHELL
+static void do_chdir(struct buff *buff)
 {
 	if (buff->fname) {
 		char dir[PATHMAX + 1], *p;
@@ -46,6 +47,7 @@ void do_chdir(struct buff *buff)
 		}
 	}
 }
+#endif
 
 #if DOPIPES
 #include <signal.h>
@@ -290,6 +292,56 @@ static void cmdtobuff(const char *bname, const char *cmd)
 	}
 }
 
+void Zkill(void)
+{
+	unvoke(cfindbuff(MAKEBUFF), false);
+}
+#else
+void Zkill(void) { tbell(); }
+
+void execute(void)
+{
+	zrefresh();
+	dotty();
+}
+#endif /* DOPIPES */
+
+#if !DOPIPES && SHELL
+static void cmdtobuff(const char *bname, const char *cmdin)
+{
+	FILE *pfp;
+	int rc;
+	struct wdo *save = Curwdo;
+	char cmd[PATHMAX], line[STRMAX];
+	snprintf(cmd, sizeof(cmd), "%s 2>&1", cmdin);
+
+	pfp = popen(cmd, "r");
+	if (pfp == NULL) {
+		error("Unable to execute %s.", cmd);
+		return;
+	}
+
+	do_chdir(Curbuff);
+	if (wuseother(bname)) {
+		message(Curbuff, cmdin);
+		putpaw("Please wait...");
+		while (fgets(line, sizeof(line), pfp)) {
+			binstr(line);
+			zrefresh();
+		}
+	}
+
+	rc = pclose(pfp) >> 8;
+	if (rc == 0) {
+		btostart();
+		putpaw("Done.");
+	} else
+		putpaw("Returned %d", rc);
+	wswitchto(save);
+}
+#endif
+
+#if DOPIPES || SHELL
 /* This is cleared in Zmake and set in Znexterror.
  * If clear, the make buffer is scrolled up. Once a next error is
  * called, the buffer is kept at the error line.
@@ -428,11 +480,6 @@ void Znext_error(void)
 	Arg = 0;
 }
 
-void Zkill(void)
-{
-	unvoke(cfindbuff(MAKEBUFF), false);
-}
-
 void Zcmd_to_buffer(void)
 {
 	static char cmd[STRMAX + 1];
@@ -442,17 +489,8 @@ void Zcmd_to_buffer(void)
 		cmdtobuff(SHELLBUFF, cmd);
 }
 #else
-void execute(void)
-{
-	zrefresh();
-	dotty();
-}
-
-#ifndef WIN32
 void Zcmd_to_buffer(void) { tbell(); }
-#endif
 void Zmake(void) { tbell(); }
 void Znext_error(void) { tbell(); }
-void Zkill(void) { tbell(); }
 void Zgrep(void) { tbell(); }
-#endif
+#endif /* SHELL */

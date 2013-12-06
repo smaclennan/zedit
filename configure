@@ -1,6 +1,6 @@
 #!/bin/sh
 
-shell=1
+dopipes=1
 undo=1
 [ -f /usr/include/aspell.h -a -f /usr/include/dlfcn.h ] && spell=1
 [ -f /usr/include/zlib.h ] && zlib=1
@@ -8,7 +8,6 @@ undo=1
 do_help() {
 	echo "Optional features:"
 	echo "  --enable-clang	Enable clang compiler"
-	echo "  --enable-shell	Enable shell commands"
 	echo "  --enable-dopipes	Enable non-blocking shell commands"
 	echo "  --enable-spell	Enable spell commands"
 	echo "  --enable-zlib		Enable gzip compression support"
@@ -35,7 +34,6 @@ while [ -n "$1" ]; do
 	case "$1" in
 	*-clang) clang=$enable;;
 	*-undo) undo=$enable;;
-	*-shell) shell=$enable;;
 	*-dopipes) dopipes=$enable;;
 	*-spell) spell=$enable;;
 	*-zlib) zlib=$enable;;
@@ -72,7 +70,6 @@ set_one() {
     [ -n "$2" ] && echo "#define $1 $2" >> config.h
 }
 
-set_one SHELL $shell
 set_one DOPIPES $dopipes
 set_one SPELL $spell
 set_one ZLIB $zlib

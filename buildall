@@ -2,15 +2,12 @@
 
 do_make () {
 	./configure $*
-	echo Paused...; read line
+#	echo Paused...; read line
 	make clean > /dev/null
 	make -j8 all > /dev/null
 }
 
 mv config.h good-config.h
-
-echo "Disable shell"
-do_make --disable-shell --disable-dopipes
 
 echo "Blocking shell"
 do_make --disable-dopipes

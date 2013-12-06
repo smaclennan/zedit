@@ -11,5 +11,4 @@
 #define ZLIB		1	/* Requires zlib */
 #endif
 
-#define SHELL		1
 #define UNDO            1	/* EXPERIMENTAL undo code */

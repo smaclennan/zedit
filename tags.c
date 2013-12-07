@@ -113,7 +113,6 @@ static bool find_tag(char *word)
 	btostart();
 	if (!step(ebuf))
 		goto failed;
-	zrefresh(); // SAM DBG
 
 	offset = batoi();
 

@@ -384,7 +384,7 @@ static int set_cmd(int which, char *prompt)
 	return 1;
 }
 
-void do_make(const char *cmd)
+static void do_make(const char *cmd)
 {
 	NexterrorCalled = 0;	/* reset it */
 	Arg = 0;

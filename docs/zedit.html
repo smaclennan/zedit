@@ -403,30 +403,29 @@ lines, paragraphs, and buffer.
 arrow keys, however, control commands are included for terminals without
 such keys.
 
-<h2>Search and Replace Commands</h2>
+<h2>Search Commands</h2>
 
 <p>Zedit supports a wide variety of search and replace commands. There
-three basic types of searches: literal, incremental, and expression. The
-literal searches are performed by the Forward Search and Reverse Search
-commands. These commands prompt for a search string and look for a match
-of that string in the buffer. A Universal Argument causes the literal
-and expression searches to look for exactly Arg matches. If they cannot
-find the correct number of matches, they display the message "Found #",
-where # is the number of matches found. "Not Found" is displayed if no
-matches where found.
+are two basic types of searches: incremental and non-incremental.
 
-<p>The incremental search commands (Incremental Search and Reverse Inc.
-Search) are used to find a match in the least amount of key strokes. On
-every normal ASCII character entered, Zedit will try to find a match for
-the current string in the PAW. If a match is found, the Mark is
-displayed at this Point on the screen. If the Delete Previous Character
-command is executed, the previous character is deleted in the PAW and
-the Mark is backed up to the last complete match.
+<h3>Incremental Search</h3>
+
+<p>The incremental-search command is used to find a match in the least
+amount of key strokes. On every normal ASCII character entered, Zedit
+will try to find a match for the current string in the PAW. If a match
+is found, the Mark is displayed at this Point on the screen. If the
+delete-previous-character command is executed, the previous character is
+deleted in the PAW and the Mark is backed up to the last complete match.
+A Universal Argument causes a reverse incremental search.
+
+<p>C-S can be used to jump to the next match of the current string. Any
+subsiquent input starts from this point.
 
 <p>The Abort command can be executed to leave the incremental search and
 return to the original Point. A Newline command terminates the search
 and moves the Point to the match. Any other command causes the search to
-terminate and that command to be immediately executed.
+terminate and that command to be immediately executed. The again command
+can get executed to search again for the string.
 
 <p>Assume the buffer contains the text "Do not panic." and that the Point
 is currently on the "D" in "Do".
@@ -438,11 +437,32 @@ is currently on the "D" in "Do".
 <tr><td>Backspace	<td>n		<td>"n" in "not"
 </table>
 
-<p>The last type of search is the expression search. The only command is
-the Expression Search. This command prompts for a regular expression to
-search for instead of a literal. Regular expressions are discussed in
-Section 1.10. Expression searches are much more powerful than literal
-searches, but are also slower.
+<h3>Non-icremental Search</h3>
+
+<p>There are three types of non-incrmental searches: literal,
+regular expression, and global. All non-incremental searches work basically the
+same way. The searches prompt for the search string (except for
+word-search which defaults to the current word in the buffer) and then
+search for the match. A Universal Argument searches for Arg matches. If
+there are less than Arg matches, the point is left at the last match.
+
+<p>The again command can be used with all of the searches to find the
+next match. After the last match "Not Found" will be displayed in the
+PAW. If you do another again after that, the again will wrap to the
+start of the buffer and start over.
+
+<p>The literal searches are performed by the search and reverse-search
+commands. These commands are the most basic search.
+
+<p>The regular expression searchs (re-search and global-re-search)
+search for a regular expression rather than a literal string. Regular
+expression searches only support searching forward through the buffer.
+
+<p>The global searches are like their non-global counterparts except
+that they search all the non-system buffers in the editor. This can give
+you poor-man's grep.
+
+<h2>Replace Commands</h2>
 
 <p>There are two replace commands: Query Replace and Expression Replace.
 Query Replace expects a literal search string while the Expression

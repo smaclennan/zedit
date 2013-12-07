@@ -427,9 +427,9 @@ static bool dosearch(void)
 {
 	bool found = true;
 	int fcnt = 0, rc;
-	struct mark *tmark;
+	struct mark save, fmark;
 
-	tmark = bcremrk();
+	bmrktopnt(&save);
 	bmove(searchdir[0] == BACKWARD ? -1 : 1);
 	if (searchdir[0] == REGEXP) {
 		Byte ebuf[ESIZE];
@@ -437,32 +437,33 @@ static bool dosearch(void)
 		if (rc == 0) {
 			while (Arg-- > 0 && found) {
 				found = step(ebuf);
-				if (found)
+				if (found) {
+					mrktomrk(&fmark, REstart);
 					++fcnt;
+				}
 			}
-		} else
+		} else {
 			regerr(rc);
-		if (found)
-			bpnttomrk(REstart);
+			found = false;
+		}
 	} else {
 		while (Arg-- > 0 && found) {
 			found = bstrsearch(olds, searchdir[0]);
-			if (found)
+			if (found) {
+				bmrktopnt(&fmark);
 				++fcnt;
+			}
 			bmove1();
 		}
-		bmove(-1);
 	}
-	if (!found) {
-		bpnttomrk(tmark);
-		if (fcnt)
-			putpaw("Found %d", fcnt);
-		else
-			putpaw("Not Found");
+	if (fcnt)
+		bpnttomrk(&fmark);
+	else if (!found) {
+		bpnttomrk(&save);
+		putpaw("Not Found");
 	}
-	unmark(tmark);
 	Arg = 0;
-	return found;
+	return fcnt;
 }
 
 /* This is an implementation of the Boyer-Moore Search.

@@ -6,13 +6,8 @@ struct cnames Cnames[] = {
 	 "and String Arguments. It will also abort C-X and Meta prefixes."
 	},
 	{"again",			ZAGAIN,
-	 "Causes the last search to be executed again. If the mode Exact is "
-	 "set, the search will be case sensitive. A Universal Argument "
-	 "causes the search to look for an exact number matches of the "
-	 "string. If the number cannot be matched, it will display the "
-	 "number actually matched in the PAW and leave the Point where it "
-	 "was. If no search commands have been executed, a Forward Search is "
-	 "executed."
+	 "Causes the last search to be executed again. If no search commands "
+	 "have been executed, a search command is executed."
 	},
 	{"append-kill",			ZAPPEND_KILL,
 	 "Sets the delete flag. The next delete command will append to the "

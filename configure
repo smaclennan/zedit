@@ -10,7 +10,6 @@ do_help() {
 	echo "  --enable-dopipes	Enable non-blocking shell commands"
 	echo "  --enable-spell	Enable spell commands"
 	echo "  --enable-zlib		Enable gzip compression support"
-	echo "  --enable-undo		EXPERIMNETAL undo"
 	echo "  --enable-16bitints	Enable if sizeof(int) = 2"
 	echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
 	echo "  --config-dir <dir>	Default config directory."
@@ -32,7 +31,6 @@ while [ -n "$1" ]; do
 
 	case "$1" in
 	*-clang) clang=$enable;;
-	*-undo) undo=$enable;;
 	*-dopipes) dopipes=$enable;;
 	*-spell) spell=$enable;;
 	*-zlib) zlib=$enable;;
@@ -75,7 +73,6 @@ set_one() {
 set_one DOPIPES $dopipes
 set_one SPELL $spell
 set_one ZLIB $zlib
-set_one UNDO $undo
 
 if [ "$spell" = 1 ]; then
     sed 's/^#LIBS += -ldl/LIBS += -ldl/' Makefile > Makefile.tmp

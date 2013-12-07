@@ -145,7 +145,7 @@ void Zword_search(void)
 	searchdir[1] = 0;
 	Arg = 1;
 
-	dosearch();
+	promptsearch(NULL, AGAIN);
 }
 
 void Zglobal_search(void)
@@ -195,8 +195,15 @@ void Zagain(void)
 				return;
 			}
 		}
-	} else
-		promptsearch("Search: ", AGAIN);
+	} else {
+		if (searchdir[0] & AGAIN_WRAP) {
+			searchdir[0] &= ~AGAIN_WRAP;
+			btostart();
+			putpaw("Wrapped....");
+			dosearch();
+		} else if (promptsearch("Search: ", AGAIN) == 0)
+			searchdir[0] |= AGAIN_WRAP;
+	}
 }
 
 void Zreplace(void)
@@ -420,14 +427,13 @@ static int promptsearch(char *prompt, int type)
 static bool dosearch(void)
 {
 	bool found = true;
-	Byte ebuf[ESIZE];
 	int fcnt = 0, rc;
 	struct mark *tmark;
 
 	tmark = bcremrk();
 	bmove(searchdir[0] == BACKWARD ? -1 : 1);
-	putpaw("Searching...");
 	if (searchdir[0] == REGEXP) {
+		Byte ebuf[ESIZE];
 		rc = compile((Byte *)olds, ebuf, &ebuf[ESIZE]);
 		if (rc == 0) {
 			while (Arg-- > 0 && found) {
@@ -454,13 +460,11 @@ static bool dosearch(void)
 			putpaw("Found %d", fcnt);
 		else
 			putpaw("Not Found");
-	} else
-		clrpaw();
+	}
 	unmark(tmark);
 	Arg = 0;
 	return found;
 }
-
 
 /* This is an implementation of the Boyer-Moore Search.
  * It uses the delta1 only with the fast/slow loops.

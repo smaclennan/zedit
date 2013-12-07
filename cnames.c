@@ -261,12 +261,12 @@ struct cnames Cnames[] = {
 	},
 	{"incremental-search",		ZINCREMENTAL_SEARCH,
 	 "Searches for the string after every character is entered in the "
-	 "PAW. The Delete Previous Character command can be used to delete a "
+	 "PAW. The delete-previous-character command can be used to delete a "
 	 "character and 'back up' the search. The Newline character "
 	 "terminates the search. The Abort command terminates the search and "
 	 "places the Point back where it was. Any other commands terminates "
 	 "the search and performs that command. A Universal Argument causes "
-	 "the command to repeat."
+	 "the search to search backwards."
 	},
 	{"indent",			ZINDENT,
 	 "Indents the marked region Universal Argument tab stops."
@@ -535,15 +535,6 @@ struct cnames Cnames[] = {
 	 "Query Replace. If the mode Exact is set, the search will be case "
 	 "sensitive. A Universal Argument causes the replacement to be done "
 	 "globally in all the buffers."
-	},
-	{"reverse-inc-search",		ZREVERSE_INC_SEARCH,
-	 "Searches backwards for the string after every character is entered "
-	 "in the PAW. The Delete Previous Character command can be used to "
-	 "delete a character and 'forward up' the search. The Newline "
-	 "character terminates the search. The Abort command terminates the "
-	 "search and places the Point back where it was. Any other command "
-	 "terminates the search and performs the command. A Universal "
-	 "Argument causes the command to repeat."
 	},
 	{"reverse-search",		ZREVERSE_SEARCH,
 	 "Prompts for a search string and searches from the Point backward "

@@ -113,7 +113,6 @@ Z(Zreplace);
 Z(Zre_replace);
 Z(Zre_search);
 Z(Zglobal_re_search);
-Z(Zreverse_inc_search);
 Z(Zreverse_search);
 Z(Zsave_all_files);
 Z(Zsave_bindings);

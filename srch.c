@@ -119,12 +119,11 @@ again:
 
 void Zincremental_search(void)
 {
-	doincsrch("I-search", FORWARD);
-}
-
-void Zreverse_inc_search(void)
-{
-	doincsrch("Reverse I-search", BACKWARD);
+	Arg = 0;
+	if (Argp)
+		doincsrch("Reverse I-search", BACKWARD);
+	else
+		doincsrch("I-search", FORWARD);
 }
 
 void Zsearch(void)

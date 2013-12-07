@@ -107,7 +107,6 @@ void (*Cmds[][2])() = {
 	{ Zhelp_key,			Znotimpl },
 	{ Zcount,			Znotimpl },
 	{ Zincremental_search,		Znotimpl },
-	{ Zreverse_inc_search,		Znotimpl },
 	{ Zunmodify,			Znotimpl },
 	{ Zdelete_blanks,		Znotimpl },
 	{ Zmark_paragraph,		Znotimpl },

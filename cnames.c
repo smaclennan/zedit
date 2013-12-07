@@ -702,9 +702,6 @@ struct cnames Cnames[] = {
 	 "the region."
 	},
 	{"undo",			ZUNDO,
-#if !UNDO
-	 "Note: Disabled in this version of Zedit.\n\n"
-#endif
 	 "EXPERIMENTAL: Undo the previous edit. There is a list of undos."
 	},
 	{"unmodify",			ZUNMODIFY,

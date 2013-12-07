@@ -10,5 +10,3 @@
 #ifndef WIN32
 #define SPELL		1	/* Requires libaspell */
 #endif
-
-#define UNDO            1	/* EXPERIMENTAL undo code */

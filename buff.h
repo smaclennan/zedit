@@ -63,16 +63,14 @@ struct buff {
 	char *bname;			/* buffer name */
 	char *fname;			/* file name associated with buffer */
 	time_t mtime;			/* file time at read */
-	struct buff *prev, *next;	/* list of buffers */
 #if DOPIPES
 	pid_t child;			/* PID of shell or EOF */
 	int in_pipe;			/* the pipe */
 #endif
 	struct comment *chead, *ctail;	/* list of comments in file */
 	Byte comchar;			/* single char comment character */
-#if UNDO
 	void *undo_tail;
-#endif
+	struct buff *prev, *next;	/* list of buffers */
 };
 
 struct wdo {

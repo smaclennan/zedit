@@ -1,6 +1,5 @@
 #!/bin/sh
 
-undo=1
 [ -f /usr/include/aspell.h -a -f /usr/include/dlfcn.h ] && spell=1
 [ -f /usr/include/zlib.h ] && zlib=1
 
@@ -64,12 +63,10 @@ fi
 [ -n "$confdir" ] && echo "#define CONFIGDIR \"$confdir\"" >> config.h
 
 set_one() {
-    if [ -n "$2" ]; then
-	echo "#undef $1" >> config.h
-	echo "#define $1 $2" >> config.h
-    fi
+    [ -n "$2" ] && echo "#define $1 $2" >> config.h
 }
 
+[ "$dopipes" = 0 ] && echo "#undef DOPIPES" >> config.h
 set_one DOPIPES $dopipes
 set_one SPELL $spell
 set_one ZLIB $zlib

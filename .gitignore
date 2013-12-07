@@ -1,5 +1,6 @@
 *.o
 ze
+config.h
 fcheck
 TAGS
 valgrind.out

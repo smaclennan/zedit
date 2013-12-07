@@ -24,11 +24,10 @@
 #include <sys/wait.h>	/* need for WNOWAIT */
 #endif
 
-#ifdef WIN32
-HANDLE hstdin, hstdout;	/* Console in and out handles */
-
-#define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
-#define BLACK_ON_WHITE (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
+#if defined(HAVE_TERMIOS)
+#include <termios.h>
+static struct termios save_tty;
+static struct termios settty;
 #elif defined(HAVE_TERMIO)
 #include <termio.h>
 static struct termio save_tty;
@@ -41,11 +40,13 @@ static struct tchars savechars;
 static struct tchars setchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 static struct ltchars savelchars;
 static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+#elif defined(WIN32)
+HANDLE hstdin, hstdout;	/* Console in and out handles */
+
+#define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
+#define BLACK_ON_WHITE (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
 #else
-#define HAVE_TERMIOS
-#include <termios.h>
-static struct termios save_tty;
-static struct termios settty;
+#error No term driver
 #endif
 
 int Clrcol[ROWMAX + 1];		/* Clear if past this */

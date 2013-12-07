@@ -31,7 +31,6 @@
 
 #ifdef __unix__
 #define DOPIPES 1
-#define ZLIB 1
 #endif
 #include "config.h"
 

@@ -101,8 +101,6 @@ void (*Cmds[][2])() = {
 	{ Znewline,			pnewline },
 	{ Zredisplay,			Znotimpl },
 	{ Zmeta_x,			Znotimpl },
-	{ Zbind,			Znotimpl },
-	{ Zsave_bindings,		Znotimpl },
 	{ Znext_buffer,			Znotimpl },
 	{ Zhelp_key,			Znotimpl },
 	{ Zcount,			Znotimpl },

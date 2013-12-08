@@ -141,10 +141,7 @@ int main(int argc, char **argv)
 		putpaw("New File");
 
 	/* Do this after tinit */
-	if (findpath(path, ZBFILE))
-		bindfile(path);
-	else
-		zbind();
+	zbind();
 
 	Curwdo->modeflags = INVALID;
 

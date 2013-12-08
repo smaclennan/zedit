@@ -53,7 +53,6 @@
 #define READ_MODE	O_RDONLY
 #define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC)
 
-#define ZBFILE		".bindings.z"
 #define ZCFILE		".config.z"
 
 /* the first three must follow:  (define + 1) % 4 = 0 */

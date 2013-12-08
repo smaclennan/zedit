@@ -32,17 +32,6 @@ struct cnames Cnames[] = {
 	 "Moves the Point to the beginning of the line or to the beginning of "
 	 "the previous line."
 	},
-	{"bind",			ZBIND,			0,
-	 "Binds a function to a key. It first prompts, with command "
-	 "completion, for the command to bind. It then prompts for the key "
-	 "to bind the command to. The Meta and C-X prefix keys are entered, "
-	 "Bind prompts for another key. The Abort command exits any "
-	 "prompt. The Quote command can be used to rebind the Abort, Quote, "
-	 "C-X, and Meta commands. A Universal Argument causes the Bind "
-	 "command to reset all the default arguments. Keys can be 'unbound' "
-	 "by binding them to the NULL command. A Universal Arg resets all "
-	 "bindings to the default."
-	},
 	{"c-indent",			ZC_INDENT,		AN,
 	 "Causes Newline characters to auto-indent to the current tab "
 	 "level. If a Newline is hit after an open brace ({), the next line "
@@ -504,12 +493,6 @@ struct cnames Cnames[] = {
 	 "An attempt to mimic the vi ZZ command. Does a save file on the "
 	 "current buffer and then exits. A universal argument will save all "
 	 "files."
-	},
-	{"save-bindings",		ZSAVE_BINDINGS,		AN,
-	 "A key bound with the Bind command only stays in effect for the "
-	 "duration of the edit session. The Save Bindings command is used to "
-	 "permanently save any new bindings in the bindings file. The file "
-	 "is saved in the users home directory."
 	},
 	{"save-file",			ZSAVE_FILE,		AI,
 	 "Saves the current buffer to its file. If the current buffer has no "

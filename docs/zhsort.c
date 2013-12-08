@@ -153,10 +153,10 @@ int main(int argc, char *argv[])
 
 		header(out, heading[j]);
 
-		fputs("<p>Note: The bindings shown are the Zedit defaults and may be "
-		      "overridden by a bindings file or the bind command.\n", out);
+		if (j == 0) {
+			fputs("<p>Note: The bindings shown are the Zedit defaults and may be "
+			      "overridden by a bindings file or the bind command.\n", out);
 
-		if (j == 0)
 			for( i = 0; i < NUMFUNCS; ++i ) {
 				char flags[20];
 
@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
 
 				dump_bindings(out, Cnames[i].fnum);
 			}
-	else
+		} else
 			for( i = 0; i < NUMVARS; ++i ) {
 				out_one(out, Vars[i].vname, NULL, Vars[i].doc);
 				switch (Vars[i].vtype) {

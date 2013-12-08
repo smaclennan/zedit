@@ -140,10 +140,8 @@ void Zword_search(void)
 {
 	getbword(olds, sizeof(olds), bisword);
 
-	searchdir[0] = Argp ? BACKWARD : FORWARD;
+	searchdir[0] = FORWARD;
 	searchdir[1] = 0;
-	Arg = 1;
-
 	promptsearch(NULL, AGAIN);
 }
 

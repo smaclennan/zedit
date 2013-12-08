@@ -708,8 +708,8 @@ struct cnames Cnames[] = {
 	 "Argument causes the command to repeat."
 	},
 	{"word-search",			ZWORD_SEARCH,
-	 "Search for the word at the point. A Universal Argument causes the "
-	 "search to go backwards."
+	 "Search for the word at the point. A Universal Argument causes "
+	 "the search to repeat."
 	},
 	{"write-file",			ZWRITE_FILE,
 	 "Prompts for a path name and writes out the current buffer to this "

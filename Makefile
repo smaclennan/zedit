@@ -33,14 +33,11 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 
 #################
 
-all:	config.h fcheck $(ZEXE)
+all:	fcheck $(ZEXE)
 
 $(ZEXE): $O
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
-
-config.h:
-	./configure
 
 fcheck: fcheck.c funcs.c kbd.c vars-array.c cnames.c keys.h
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
@@ -54,5 +51,5 @@ install:
 	install -s ze $(DESTDIR)/bin/z
 
 clean:
-	rm -f *.o ze fcheck config.h core* TAGS valgrind.out
+	rm -f *.o ze fcheck core* TAGS valgrind.out
 	@make -C docs clean

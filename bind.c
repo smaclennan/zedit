@@ -210,6 +210,7 @@ void zbind(void)
 	Keys[TC_F12]	= ZREVERT_FILE;
 }
 
+#ifndef FCHECK
 static bool bindone(const char *prompt, int first, int *key)
 {
 	putpaw("%s", prompt);
@@ -292,3 +293,4 @@ void bindfile(const char *fname)
 		close(fd);
 	}
 }
+#endif

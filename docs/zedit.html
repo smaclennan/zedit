@@ -234,24 +234,23 @@ overwritten.
 
 <h2>String Arguments and the PAW</h2>
 
-<p>Various command require string arguments. For example, the Forward
-Search command needs the string to search for. String arguments are
+<p>Various command require string arguments. For example, the
+search command needs the string to search for. String arguments are
 entered in the Prompt Argument Window (PAW). The PAW is a special one
 line buffer that is on the last line of the display. The PAW is
 restricted to this one line and will truncate past the end of this line.
 The PAW is also used to display error and informational messages.
 
 <p>Most of the editor commands are available in the PAW. Commands that
-leave the current buffer or window, for example Switch to Buffer, or
-commands that need the PAW, for example Print Position, cannot be
-executed in the PAW. The commands available in the PAW are marked with a
-"p" in the perms column of appendix A and the output of the Display
-Bindings command. Note that the Again command is marked as usable in the
-PAW. This is only true for the Find Tag command for partial matches. See
-section "tags" for more detail.
+leave the current buffer or window, for example switch-to-buffer, or
+commands that need the PAW, for example print-position, cannot be
+executed in the PAW. The commands available in the PAW are marked with
+a "P" in the flag for the command. Note that the again command is
+marked as usable in the PAW. This is only true for the find-tag
+command for partial matches. See section "tags" for more detail.
 
-<p>String arguments may have optional defaults. For example, the Forward
-Search command defaults to the last search string. When a string
+<p>String arguments may have optional defaults. For example, the
+search command defaults to the last search string. When a string
 argument has a default, the default is displayed in the PAW and the
 Point is placed at the start of the default. If the Newline command is
 executed, the default will be used. If a key bound to the Insert

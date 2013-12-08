@@ -78,8 +78,8 @@ struct cnames Cnames[] = {
 	},
 	{"cmd-to-buffer",		ZCMD_TO_BUFFER,		AI,
 	 "Prompts for a command and then executes the command in the "
-	 "shell. The output is put in the '.shell' buffer. Any previous "
-	 "contents of the '.shell' buffer are deleted."
+	 "shell. The output is put in the " SHELLBUFF " buffer. Any previous "
+	 "contents of the " SHELLBUFF " buffer are deleted."
 	},
 	{"copy-region",			ZCOPY_REGION,		AI,
 	 "Copies the region to the kill buffer. The kill buffer is "
@@ -248,14 +248,11 @@ struct cnames Cnames[] = {
 	 "Indents the marked region."
 	},
 	{"insert",			ZINSERT,		AN,
-	 "Normally bound to the printable characters, causes the character to "
-	 "be inserted in the buffer."
+	 "Normally bound to all the printable characters."
 	},
 	{"insert-overwrite",		ZINSERT_OVERWRITE,	AI,
-	 "Toggles the current buffers minor mode between Insert, the default, "
-	 "and overwrite modes. On the PC the cursor shape reflects the "
-	 "mode. Insert mode has an underline cursor while overwrite mode has "
-	 "a block cursor."
+	 "Toggles the current buffer's minor mode between insert, the default, "
+	 "and overwrite modes."
 	},
 	{"join",			ZJOIN,			AN,
 	 "Joins two lines. Performs the following Zedit commands: End of "

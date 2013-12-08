@@ -1,5 +1,14 @@
+#define FCHECK
 #include "../z.h"
+#include "../keys.h"
+
+void hang_up(int sig) {}
+int InPaw;
+
+#include "../bind.c"
 #include "../cnames.c"
+#include "../funcs.c"
+#include "../kbd.c"
 #include "../vars-array.c"
 
 static char *heading[] = { "Appendix A: Commands", "Appendix B: Variables" };
@@ -19,6 +28,13 @@ static void header(FILE *out, char *heading)
 	fputs("/* ie9 defaults to small */\n", out);
 	fputs("font-size: medium;\n", out);
 	fputs("}\n", out);
+
+	fputs("strong {\n", out);
+	fputs("font-size: 1.7em;\n", out);
+	fputs("font-weight: bold;\n", out);
+	fputs("line-height: 125%;\n", out);
+	fputs("}\n", out);
+
 	fputs("-->\n", out);
 	fputs("</style>\n", out);
 	fputs("</head>\n", out);
@@ -54,10 +70,63 @@ static void query_replace(FILE *out, const char *doc)
 			fputc(*doc, out);
 }
 
-static void out_one(FILE *out, const char *hdr, const char *doc)
+static char *dispkey(unsigned key, char *s)
 {
-	fprintf(out, "<h3>%s</h3>\n", hdr);
-	fprintf(out, "<p>");
+	char *p;
+	int j;
+
+	*s = '\0';
+	if (is_special(key))
+		return strcpy(s, special_label(key));
+	if (key > 127)
+		strcpy(s, key < 256 ? "M-" : "C-X ");
+	j = key & 0x7f;
+	if (j == 27)
+		strcat(s, "ESC");
+	else if (j < 32 || j == 127) {
+		strcat(s, "C-");
+		p = s + strlen(s);
+		*p++ = j ^ '@';
+		*p = '\0';
+	} else if (j == 32)
+		strcat(s, "Space");
+	else {
+		p = s + strlen(s);
+		*p++ = j;
+		*p = '\0';
+	}
+	return s;
+}
+
+static void dump_bindings(FILE *out, int fnum)
+{
+	int k, found = 0;
+	char buff[BUFSIZ];
+
+	if (fnum == ZNOTIMPL || fnum == ZINSERT)
+		return;
+
+	fputs("\n<p>Binding(s): ", out);
+
+	for (k = 0; k < NUMKEYS; ++k)
+		if (Keys[k] == fnum) {
+			if (found)
+				fputs(",  ", out);
+			else
+				found = true;
+			fputs(dispkey(k, buff), out);
+		}
+
+	if (!found)
+		fputs("Unbound", out);
+}
+
+static void out_one(FILE *out, const char *hdr, const char *opt, const char *doc)
+{
+	fprintf(out, "<p><strong class=large>%s</strong>", hdr);
+	if (opt && *opt)
+		fputs(opt, out);
+	fprintf(out, "\n<p>");
 	if (strcmp(hdr, "query-replace") == 0)
 		query_replace(out, doc);
 	else
@@ -73,6 +142,8 @@ int main(int argc, char *argv[])
 {
 	int i, j;
 
+	zbind();
+
 	for (j = 0; j < 2; ++j) {
 		FILE *out = fopen(fnames[j], "w");
 		if (!out) {
@@ -82,12 +153,31 @@ int main(int argc, char *argv[])
 
 		header(out, heading[j]);
 
+		fputs("<p>Note: The bindings shown are the Zedit defaults and may be "
+		      "overridden by a bindings file or the bind command.\n", out);
+
 		if (j == 0)
-			for( i = 0; i < NUMFUNCS; ++i )
-				out_one(out, Cnames[i].name, Cnames[i].doc);
-		else
+			for( i = 0; i < NUMFUNCS; ++i ) {
+				char flags[20];
+
+				bool pawok = Cmds[Cnames[i].fnum][1] != Znotimpl;
+				if (pawok || Cnames[i].flags) {
+					int n = sprintf(flags, " &nbsp;&nbsp;(");
+					if (Cnames[i].flags)
+						sprintf(flags + n, "%c", Cnames[i].flags);
+					if (pawok)
+						strcat(flags, "p");
+					strcat(flags, ")");
+				} else
+					*flags = '\0';
+
+				out_one(out, Cnames[i].name, flags, Cnames[i].doc);
+
+				dump_bindings(out, Cnames[i].fnum);
+			}
+	else
 			for( i = 0; i < NUMVARS; ++i ) {
-				out_one(out, Vars[i].vname, Vars[i].doc);
+				out_one(out, Vars[i].vname, NULL, Vars[i].doc);
 				switch (Vars[i].vtype) {
 				case V_FLAG:
 					fprintf(out, "<p>Default: %s\n", VAR(i) ? "on" : "off");

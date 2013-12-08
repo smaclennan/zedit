@@ -40,7 +40,7 @@ void (*Nextpart)(void);
  * Only allow max chars.
  * Arg is NOT overwritten if the user aborts, or returns a null string.
  */
-bool getarg(const char *prompt, char *arg, int max)
+bool _getarg(const char *prompt, char *arg, int max, bool tostart)
 {
 	char *ptr;
 	int argp_save, arg_save, rc;
@@ -60,6 +60,8 @@ bool getarg(const char *prompt, char *arg, int max)
 	Pshift = 0;
 	Pawlen = max;
 	makepaw(arg, false);
+	if (tostart)
+		btostart();
 	First = true;
 	while (InPaw == true)
 		execute();
@@ -83,6 +85,11 @@ bool getarg(const char *prompt, char *arg, int max)
 	Curcmds = 0;
 	clrpaw();
 	return rc;
+}
+
+bool getarg(const char *prompt, char *arg, int max)
+{
+	return _getarg(prompt, arg, max, true);
 }
 
 /* General purpose ask for an argument with completion given a struct

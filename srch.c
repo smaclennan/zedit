@@ -43,6 +43,7 @@ static void doincsrch(char *prompt, bool forward)
 	int cmd, i = 0, count = 0;
 	struct mark marks[STRMAX];
 
+	bmrktopnt(&marks[0]); /* make sure this is set */
 	memset(str, '\0', sizeof(str));
 	strcpy(promptstr, nocase(prompt));
 	while (go) {

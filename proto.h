@@ -206,6 +206,7 @@ bool filesave(void);
 bool findfile(char *);
 struct wdo *findwdo(struct buff *);
 bool getarg(const char *, char *, int);
+bool _getarg(const char *, char *, int, bool);
 char *getbtxt(char *, int);
 int getbword(char *, int, int (*)());
 int getplete(const char *, char *, char **, int, int);

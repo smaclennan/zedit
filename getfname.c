@@ -60,7 +60,7 @@ int getfname(const char *prompt, char *path)
 		was[i] = Keys[(int)mod[i]];
 		Keys[(int)mod[i]] = ZFNAME;
 	}
-	rc = getarg(prompt, strcpy(tmp, path), PATHMAX);
+	rc = _getarg(prompt, strcpy(tmp, path), PATHMAX, false);
 	if (rc == 0) {
 		rc = pathfixup(path, tmp);
 		if (rc == -1)

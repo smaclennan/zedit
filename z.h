@@ -110,7 +110,8 @@
 
 struct cnames {
 	const char *name;
-	unsigned fnum;
+	short fnum;
+	short flags;
 	const char *doc;
 };
 #define CNAMESIZE sizeof(struct cnames)

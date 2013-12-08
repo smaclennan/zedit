@@ -120,6 +120,16 @@ void Zhelp_function(void)
 
 	binstr(Cnames[rc].name);
 
+	bool pawok = Cmds[Cnames[rc].fnum][1] != Znotimpl;
+	if (pawok || Cnames[rc].flags) {
+		binstr(" (");
+		if (Cnames[rc].flags)
+			binsert(Cnames[rc].flags);
+		if (pawok)
+			binsert('P');
+		binsert(')');
+	}
+
 	dump_doc(Cnames[rc].doc);
 
 	if (Cnames[rc].fnum != ZNOTIMPL &&

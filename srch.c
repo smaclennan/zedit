@@ -425,7 +425,6 @@ static int promptsearch(char *prompt, int type)
 
 static bool dosearch(void)
 {
-	bool found = true;
 	int fcnt = 0, rc;
 	struct mark save, fmark;
 
@@ -434,31 +433,26 @@ static bool dosearch(void)
 	if (searchdir[0] == REGEXP) {
 		Byte ebuf[ESIZE];
 		rc = compile((Byte *)olds, ebuf, &ebuf[ESIZE]);
-		if (rc == 0) {
-			while (Arg-- > 0 && found) {
-				found = step(ebuf);
-				if (found) {
-					mrktomrk(&fmark, REstart);
-					++fcnt;
-				}
-			}
-		} else {
+		if (rc)
 			regerr(rc);
-			found = false;
-		}
-	} else {
-		while (Arg-- > 0 && found) {
-			found = bstrsearch(olds, searchdir[0]);
-			if (found) {
+		else
+			while (Arg-- > 0)
+				if (step(ebuf)) {
+					bmrktopnt(&fmark);
+					++fcnt;
+				} else
+					break;
+	} else
+		while (Arg-- > 0)
+			if (bstrsearch(olds, searchdir[0])) {
+				bmove(strlen(olds));
 				bmrktopnt(&fmark);
 				++fcnt;
-			}
-			bmove1();
-		}
-	}
+			} else
+				break;
 	if (fcnt)
 		bpnttomrk(&fmark);
-	else if (!found) {
+	else {
 		bpnttomrk(&save);
 		putpaw("Not Found");
 	}

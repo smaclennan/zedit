@@ -517,9 +517,13 @@ the buffers in the buffer list.
 
 <h2>Pattern Matching</h2>
 
-<p>Zedit supports pattern matching using regular expressions (REs). The REs
-are the same as the Unix grep command. The rules for created the REs are
-described below.
+<p>Zedit supports pattern matching using regular expressions
+(REs). The REs are the same as the Unix grep command. By today's
+standard the REs are fairly primitive. Extended REs are not
+supported. For example: rather than <code>[0-9]+</code> you have to do <code>[0-9][0-9]*</code>
+or <code>[0-9]\{1,\}</code>.
+
+<p>The rules for created the REs are described below.
 
     <ul>
 <li>An ordinary character matches itself.

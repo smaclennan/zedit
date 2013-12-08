@@ -378,7 +378,7 @@ static int set_cmd(int which, char *prompt)
 
 	Argp = false;
 	strcpy(cmd, VARSTR(which));
-	if (getarg(prompt, cmd, STRMAX))
+	if (_getarg(prompt, cmd, STRMAX, false))
 		return 0;
 	VARSTR(which) = strdup(cmd);
 	return 1;

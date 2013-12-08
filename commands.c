@@ -24,20 +24,13 @@ bool Argp;
 
 /* Word COMMANDS */
 
-/* Find the start of a word. In normal/text, we always move to the
- * start of a word if we are in the middle. In program mode, if we are
- * in a word, we do not move.
- */
+/* Find the start of a word. */
 static bool Findstart(void)
 {
-	if ((Curbuff->bmode & PROGMODE))
-		moveto(bistoken, FORWARD);
-	else {
-		while (!bisstart() && bistoken())
-			bmove(-1);
-		while (!bisend() && !isalpha(*Curcptr))
-			bmove1();
-	}
+	while (!bisstart() && bistoken())
+		bmove(-1);
+	while (!bisend() && !isalpha(*Curcptr))
+		bmove1();
 	return !bisend();
 }
 
@@ -111,7 +104,6 @@ void Zswap_words(void)
 	unmark(tmp);
 }
 
-
 void Zcenter(void)
 {
 	int tmp;
@@ -126,7 +118,6 @@ void Zcenter(void)
 		toendline();
 	}
 }
-
 
 /* C MODE COMMANDS */
 

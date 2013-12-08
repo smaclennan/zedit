@@ -67,11 +67,10 @@ struct cnames Cnames[] = {
 	 "ignored."
 	},
 	{"capitalize-word",		ZCAPITALIZE_WORD,
-	 "In C mode, converts the character at the Point to uppercase and the "
-	 "rest of the word to lowercase. In other modes, converts the first "
-	 "letter of the current word to uppercase and the rest of the "
-	 "characters in the word to lowercase. The Point is left at the end "
-	 "of the word. A Universal Argument causes the command to repeat."
+	 "Converts the first letter of the current word to uppercase and "
+	 "the rest of the characters in the word to lowercase. The Point "
+	 "is left at the end of the word. A Universal Argument causes the "
+	 "command to repeat."
 	},
 	{"center",			ZCENTER,
 	 "Centers the current line on the screen. It uses fill-width to define "

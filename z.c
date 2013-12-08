@@ -44,15 +44,16 @@ static void usage(char *prog)
 }
 
 /* Find the correct path for the config files. */
-static bool findpath(char *path, char *f)
+static void findpath(char *path, char *f, void (*action)(char *))
 {
 	snprintf(path, PATHMAX, "%s/%s", Home, f);
 	if (access(path, F_OK) == 0)
-		return true;
+		action(path);
 	snprintf(path, PATHMAX, "%s/%s", CONFIGDIR, f);
 	if (access(path, F_OK) == 0)
-		return true;
-	return false;
+		action(path);
+	if (access(f, F_OK) == 0)
+		action(f);
 }
 
 int main(int argc, char **argv)
@@ -93,8 +94,10 @@ int main(int argc, char **argv)
 			usage(argv[0]);
 		}
 
-	if (findpath(path, ZCFILE))
-		readvfile(path); /* Do this BEFORE tinit */
+	zbind();
+	
+	/* Do this BEFORE tinit */
+	findpath(path, ZCFILE, readvfile);
 
 	/* User wants Text mode as default */
 	if (textMode)
@@ -139,9 +142,6 @@ int main(int argc, char **argv)
 
 	if (!Curbuff->mtime && Curbuff->fname)
 		putpaw("New File");
-
-	/* Do this after tinit */
-	zbind();
 
 	Curwdo->modeflags = INVALID;
 

@@ -57,9 +57,11 @@ static void dump_bindings(int fnum)
 
 	for (k = 0; k < NUMKEYS; ++k)
 		if (Keys[k] == fnum) {
-			if (found)
-				binstr(",  ");
-			else
+			if (found) {
+				binsert(',');
+				Cmd = ' ';
+				Zfill_check();
+			} else
 				found = true;
 			binstr(dispkey(k, buff));
 		}
@@ -132,8 +134,8 @@ void Zhelp_function(void)
 
 	dump_doc(Cnames[rc].doc);
 
-	if (Cnames[rc].fnum != ZNOTIMPL &&
-	    Cnames[rc].fnum != ZINSERT)
+//	if (Cnames[rc].fnum != ZNOTIMPL &&
+//	    Cnames[rc].fnum != ZINSERT)
 		dump_bindings(Cnames[rc].fnum);
 
 	btostart();
@@ -195,10 +197,11 @@ void Zhelp_key(void)
 	}
 
 	if (key == ZNOTIMPL)
-		putpaw("%s Unbound", dispkey(raw, kstr));
+		putpaw("%s (%d) Unbound", dispkey(raw, kstr), raw);
 	else
 		for (rc = 0; rc < NUMFUNCS; ++rc)
 			if (Cnames[rc].fnum == key)
-				putpaw("%s Bound to %s",
-					dispkey(raw, kstr), Cnames[rc].name);
+				putpaw("%s (%d) Bound to %s",
+					dispkey(raw, kstr), raw,
+					Cnames[rc].name);
 }

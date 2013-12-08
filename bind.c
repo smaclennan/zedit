@@ -83,7 +83,6 @@ void zbind(void)
 	Keys[128 + '('] = Keys[128 + '9'] = ZBEGINNING_OF_BUFFER;
 	Keys[128 + ')'] = Keys[128 + '0'] = ZEND_OF_BUFFER;
 /*	Keys[128 + ',']			  = ; */
-/*	Keys[128 + '.']			  = ; */
 	Keys[128 + '<']			  = ZBEGINNING_OF_BUFFER;
 	Keys[128 + '>']			  = ZEND_OF_BUFFER;
 	Keys[128 + '.']			  = ZTAG;

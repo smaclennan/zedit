@@ -18,6 +18,7 @@
  */
 
 #include "z.h"
+#include "keys.h"
 
 static void setavar(const char *vin, bool display);
 
@@ -75,6 +76,29 @@ void Zhelp_variable(void)
 	Curbuff->bmodf = false;
 }
 
+static void bindone(char *line)
+{
+	char cmd[STRMAX];
+	int key, i;
+	
+	if (sscanf(line, "bind %d %s", &key, cmd) != 2) {
+		Dbg("Bad bind line %s\n", line);
+		return;
+	}
+	if (key < 0 || key >= NUMKEYS) {
+		Dbg("Invalid key %d\n", key);
+		return;
+	}
+	
+	for (i = 0; i < NUMFUNCS; ++i)
+		if (strcmp(Cnames[i].name, cmd) == 0) {
+			Keys[key] = Cnames[i].fnum;
+			return;
+		}
+		
+	Dbg("Invalid cmd %s\n", cmd);
+}
+
 /* If there is a config.z file, read it! */
 void readvfile(char *fname)
 {
@@ -85,7 +109,10 @@ void readvfile(char *fname)
 			char *p = strchr(line, '\n');
 			if (p)
 				*p = '\0';
-			setavar(line, false);
+			if (strncmp(line, "bind", 4) == 0)
+				bindone(line);
+			else
+				setavar(line, false);
 		}
 		fclose(fp);
 	}

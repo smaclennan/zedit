@@ -340,13 +340,17 @@ command completion.
 Variable, and Switch Buffer.
 
 
-<h1>Configuration Files</h1>
+<h1>Configuration File</h1>
 
-<p>Zedit has an optional configuration files.
-Zedit first checks the home directory for the configuration file
-then the config directory (default: /usr/share/zedit).
+<p>Zedit has an optional configuration file. Zedit will read up to
+three configuration files in order:
+<ol>
+<li>/usr/share/zedit/.config.z
+<li>~/.config.z
+<li>./config.z
+</ol>
 
-<p>The config file (.config.z) is used to save the configuration
+<p>The config file is used to save the configuration
 variables which allow customization of the editor. These variables are
 given defaults by Zedit, can be assigned values in the config file, or
 can be modified at run time with the set-variable command.
@@ -360,6 +364,14 @@ at least one space or tab. The variable is a number for DECIMAL or
 FLAG variables and a string for STRING variables. STRING variables can
 contain spaces. Each variable must be on a separate line. The
 variables are case insensitive.
+
+<p>You can also add bind commands to the configuration file. The format is:
+<pre>bind &lt;keynum&gt; &lt;cmd&gt;</pre>
+Where keynum is the actual number of the key (not the name) and cmd is
+the command name. The keynum is the ASCII value of the key. To make it a
+meta key add in 128. To make it a C-X key add 256. The special keys use
+the  lowercase meta key slots. So the special keys are M-a to M-z. The
+help-key command displays the key number.
 
 <h1>Commands</h1>
 

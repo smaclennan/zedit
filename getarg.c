@@ -118,7 +118,18 @@ static int p_ncols = PNUMCOLS;
 
 static void pclear(void)
 {
-	redisplay();
+	int i;
+	struct wdo *wdo;
+
+	/* We can't use redisplay here */
+	foreachwdo(wdo)
+		wdo->modeflags = INVALID;
+
+	for (i = 0; i < Rowmax - 2; ++i) {
+		tsetpoint(i, 0);
+		tcleol();
+		Scrnmarks[i].modf = true;
+	}
 	pset(0, 0, PNUMCOLS);
 }
 

@@ -171,9 +171,10 @@ A Universal Argument of zero (0) causes the command to reformat the
 entire buffer. If a key is hit during a global reformat, the reformat
 will abort at the end of the paragraph it is currently formatting.
 
-<p>Text mode is turned on with the Toggle Fill Mode command or can be the
+<p>Text mode is turned on with the mode command or can be the
 default if the variable Normal is turned off. It also gets turned on by
-file names ending in ".txt".
+file names ending in any of the extensions specific by the textends
+variable, usually ".txt".
 
 
 <h3>Minor Modes</h3>
@@ -186,9 +187,8 @@ given buffer.
 <h4>View Mode</h4>
 
 <p>View mode is set automatically for read only files. It is just a
-hint that you cannot write the current file.
-
-<p>Hint: You can use Write File to write the file to another file name.
+hint that you cannot write the current file. You can use Write File to
+write the file to another file name.
 
 <h4>Overwrite Mode</h4>
 
@@ -318,10 +318,10 @@ three configuration files in order:
 <li>./config.z
 </ol>
 
-<p>The config file is used to save the configuration
-variables which allow customization of the editor. These variables are
-given defaults by Zedit, can be assigned values in the config file, or
-can be modified at run time with the set-variable command.
+<p>The config file is used to save the configuration variables which
+allow customization of the editor. These variables are given defaults
+by Zedit, can be assigned values in the config file, or can be
+modified at run time with the set-variable command.
 
 <p>The output from the Zedit command show-config is suitable to save
 as a config file.
@@ -335,11 +335,10 @@ variables are case insensitive.
 
 <p>You can also add bind commands to the configuration file. The format is:
 <pre>bind &lt;keynum&gt; &lt;cmd&gt;</pre>
-Where keynum is the actual number of the key (not the name) and cmd is
-the command name. The keynum is the ASCII value of the key in octal. To make it a
-meta key add in 200. To make it a C-X key add 400. The special keys use
-the  lowercase meta key slots. So the special keys are M-a to M-z. The
-help-key command displays the key number.
+Where keynum is the actual number of the key in octal and cmd is
+the command name. The help-key command displays the key
+number. You can also do help-function on the notimpl command to see
+all the unbound keys. Warning, there are a lot of them.
 
 <h1>Commands</h1>
 
@@ -358,8 +357,8 @@ sequence. On most keyboards Meta is also the Alt key. The Alt key
 works like the Ctrl key.
 
 <p>So M-A could be Esc then A or Alt and A at the same time. Currently
-all alphabetic Meta characters are case insensitive. So M-A and M-a
-are the same thing.
+all alphabetic prefix characters are case insensitive. So M-A and M-a
+or C-X A and C-X a are the same thing.
 
 <h2>Point Movement</h2>
 
@@ -432,10 +431,10 @@ you poor-man's grep.
 
 <h2>Replace Commands</h2>
 
-<p>There are two replace commands: Query Replace and Expression Replace.
-Query Replace expects a literal search string while the Expression
-Replace expects a regular expression search string. The replace string
-for Query Replace is also a literal, however the Expression Replace is a
+<p>There are two replace commands: query-replace and re-replace.
+The query-replace command expects a literal search string while the
+re-replace expects a regular expression search string. The replace
+string for query-replace is also a literal, however the re-replace is a
 literal with two exceptions. An '&' character in the replace string
 causes the matched string to be placed in the buffer instead of the '&'
 character itself. For example, if the search string was ".*", and the
@@ -545,7 +544,6 @@ an initial segment of a line.
 a final segment of a line.
 </ul>
 
-	<!--
 <h2>Tag Files</h2>
 
 <p>Tag files are a list of tags, usually function names, and their
@@ -553,52 +551,20 @@ associated file name and position in the file. Tag files allow files to
 be found by function names instead of file names.
 
 <p>Zedit does not produce the tag files. They must be created by an
-external program. The tag file formats supported are:
+external program. The only tag file format supported is etags.
 
-      <ul>
-	<li>&lt;tag&gt; &lt;num&gt;   &lt;fname&gt;
-	<li>&lt;tag&gt; &lt;fname&gt; &lt;num&gt;
-	<li>&lt;tag&gt; &lt;fname&gt; &lt;match_ch&gt;[^]&lt;search_string&gt;[$][&lt;match_ch&gt;]
-    </ul>
+<p>The tag or tag-word command is used to look for a tag in the tags file. If it
+finds the tag, it sets a bookmark at the current Point, performs a find-file
+with the matched filename, and positions the Point in the opened
+file. The first time the tag command command is executed, it creates the
+"*tags*" buffer and loads the tags file. The tag file is only
+re-loaded if the file is modified.
 
-<p>The single space shown can actually be any number of spaces and/or tabs
-as long as there is at least one space or tab. If the number <num> has a
-leading 0 it is assumed to be a byte offset, else a line offset.
+<p>The tag commands look for a TAGS file in the current directory. If
+it is not found, Zedit will prompt for the filename.  A Universal
+Argument will always prompt for the tag file to read.
 
-<p>The first format is produced by ctags with the -x option. The second is
-produced by Microsoft's calltree program. The third format is the ctags
-type format. The match_ch is any character except '\'. The '^' and '$'
-are optional and match the start of line and end of line respectively.
-The ending match_ch is also optional. The search_string ends at the end
-of the line. The search string is a literal. '\' characters can be used
-to escape the match_ch in the string.
-
-<p>Other programs that produce one of these formats can be used.
-
-<p>The command Find Tag is used to look for a tag in the tags file. If it
-finds the tag, it sets a bookmark at the current Point, performs a Find
-File with the matched filename, and positions the Point in the opened
-file. The first time the Find Tag command is executed, it creates the
-".tags" buffer and loads the tags file. The tag file is only loaded
-once.
-
-<p>The tag file is loaded into a special buffer called ".tags". This buffer
-is editable. If a line in the file needs to be changed, it can be edited
-in the ".tags" buffer and saved to disk with the Write File command.
-
-<p>The Tagfile variable is used to find the tag file. The editor first
-looks for the tag file in the current directory under the name "tags",
-the default output name for the ctags command. If the file is not found,
-it looks for the file specified by the Tagfile variable. A Universal
-Argument will prompt for the tag file to read.
-
-<p>If Zedit cannot find the tag, it will return the first partial match, if
-any. If the tag string is "file" and there is no tag "file" but a tag
-"Readfilename" exists, Zedit will reprompt for the tag with
-"Readfilename" as the default. The Again command can be used to find the
-next partial match.
--->
-<hr>
+ <hr>
 <h2><a href="app-a.html">Appendix A: Commands</a></h2>
 <h2><a href="app-b.html">Appendix B: Variables</a></h2>
 

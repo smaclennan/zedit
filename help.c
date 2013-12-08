@@ -188,11 +188,11 @@ void Zhelp_key(void)
 	key = Keys[raw];
 	if (key == ZCTRL_X) {
 		putpaw("Key: C-X ");
-		raw = tgetcmd() + 256;
+		raw = toupper(tgetcmd()) + 256;
 		key = Keys[raw];
 	} else if (key == ZMETA) {
 		putpaw("Key: M-");
-		raw = tgetcmd() + 128;
+		raw = toupper(tgetcmd()) + 128;
 		key = Keys[raw];
 	}
 

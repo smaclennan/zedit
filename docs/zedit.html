@@ -29,14 +29,7 @@ way you want it.
 
 <p>To allow further customization of Zedit, there are user variables that
 allow you to change the workings of Zedit. For example, there is a
-variable called "Tabs" that controls the tab columns.
-
-<p>One of the most powerful features of the editor is tag files. A tag file
-allows you to find files by "tag" name instead of file name. For
-example, you might create a tag file of all the functions in a given
-executable program and reference the files by function name instead of
-having to know which file a function is in. See the "Tags" section for a
-description of tag files.
+variable called "tabs" that controls the tab columns.
 
 <p>You can get Zedit at <a
       href="git://github.com/smaclennan/zedit">git://github.com/smaclennan/zedit</a>.
@@ -51,9 +44,10 @@ editor. A buffer is usually, but does not have to be, associated with a
 file. A buffer called "*scratch*" is always created on startup. The number of
 buffers is only limited by available memory.
 
-<p>A buffer can be much larger than the size of a computer screen. A <b>window</b>
-is the portion of the buffer that is displayed on the screen. By moving
-the window over the buffer, the entire buffer can be edited.
+<p>A buffer can be much larger than the size of a computer screen. A
+<b>window</b> is the portion of the buffer that is displayed on the
+screen. By moving the window over the buffer, the entire buffer can be
+edited.
 
 <p>Mulitple windows can be displayed on the screen at the same time. The
 windows can display different buffers, or different sections of the same
@@ -73,15 +67,15 @@ cursor.
 <p>Every buffer also has a user defined <b>Mark</b>, which is set with the Set
 Mark command. The Mark is represented by a reverse video block on the
 screen. The Mark is like a bookmark, it is used to keep track of a
-specific place in a buffer. One difference between Zedit and Emacs is that Zedit always
-has a mark set.
+specific place in a buffer. One difference between Zedit and Emacs is
+that Zedit always has a mark set in every buffer (including the PAW).
 
-<p>Hint: The Point and Mark are actually before the character they are displayed
-on but after the previous character.
+<p>Hint: The Point and Mark are actually before the character they are
+displayed on but after the previous character.
 
-<p>The <b>Region</b> is all the characters in the buffer bounded by the Mark and
-the Point. The Region can be before or after the Point. The Region is
-used to work with blocks of text.
+<p>The <b>Region</b> is all the characters in the buffer bounded by the
+Mark and the Point. The Region can be before or after the Point. The
+Region is used to work with blocks of text.
 
 
 <h2>Invocation</h2>
@@ -124,7 +118,7 @@ have a file name. This name is usually the name of the file read into
 the buffer at startup or with the Find File command. If the file name is
 too large to fit on the status line, it will be left truncated.
 
-<li>The asterisk (*) means that the buffer has been modified. The Exit
+<li>The asterisk (*) means that the buffer has been modified. The exit
 command, for example, uses this flag to decide whether to ask to save a
 buffer.
 	    <li>The plus sign (+) is the delete flag. See the "Kill Ring"
@@ -292,53 +286,27 @@ for each command.
 not enough control keys on a keyboard. To solve this problem, Zedit
 employs prefix commands. A prefix command waits for another keystroke
 and modifies the meaning of that keystroke. This allows a much wider set
-of commands.
+of commands. Zedit has two prefix commands: Meta and C-X.
 
-<p>For example, C-F goes forward one character, M-F goes forward one word.
-The Meta key is the Esc key. To execute M-F you would type Esc and then
-F.
+<p>For example, C-F goes forward one character, M-F goes forward one
+word, C-X F goes forward one paragraph. The Meta key is the Esc key or
+the Alt key. To execute M-F you would  type Esc and then F or just Alt +
+F at the same time.
 
-<p>On the PC, the Meta key is also the ALT key and should be used like the
-Ctrl key. If the "-u" option is specified, the Esc key is bound to the
-Abort command and the ALT key must be used as the Meta key. This is to
-conform to the PC usage of Esc as an "Escape" key.
-
-<p>The Extended Command, also known as the Meta X (M-X) command, allows any
+<p>The meta-x (M-X) command, allows any
 Zedit command to be executed, even if it is not bound to a key. When the
-Extended Command is executed, it prompts with "M-X:" and waits for a
-command name. Hitting the Abort command will cancel the Extended
-Command. A list of the valid commands is included in appendix A. When a
+meta-x command is executed, it prompts with "M-X:" and waits for a
+command name. Hitting the Abort command will cancel the meta-x command.
+A list of the valid commands is included in appendix A. When a
 valid command is entered, it is executed normally. Any Universal
 Argument is passed directly to the entered command.
 
-<p>The Extended Command supports command completion. As you type characters
-at the prompt, the editor tries to complete the command you are typing.
-If the text matches a command uniquely, the editor will display the
-complete command. If the current word is unique, the complete word will
-be displayed with a space after it. The editor will not allow you to hit
-return if the command in the PAW is not unique.
+<p>The meta-x command supports command completion. If you hit the tab
+key, Zedit will complete the current word as much as possible. It will
+also display all the matches.
 
-<p>If the variable ExecOnMatch is set, command completion will execute the
-command as soon as the command is uniquely matched.
-
-<p>An example of command completion is given for the Find Tag
-command.
-
-<p><table>
-<tr><th>User<th>Displayed<th>Commentary
-<tr><td>"f"<td>"Fi"<td>Non-unique: matches Find File, Find Tag, or Fill Paragraph.
-<tr><td>"n"<td>"Find "<td>Now matches a unique word: completes word.
-<tr><td>"t"<td>"Find Tag"<td>Now matches a unique command. Hit Enter
-to execute or C-G to abort.
-</table>
-
-<p>In the above example only 3 characters had to be typed to complete a 8
-character command. Full editing capabilities are still available during
-command completion.
-
-<p>Other commands also support command completion, for example: Bind, Set
-Variable, and Switch Buffer.
-
+<p>If the current word is unique, you can hit Return and it will be executed.
+The editor will not allow you to hit Return if the command in the PAW is not unique.
 
 <h1>Configuration File</h1>
 

@@ -157,8 +157,8 @@ void zbind(void)
 	Keys[256 + 'B'] = ZNEXT_BOOKMARK;	/* C-X B */
 	Keys[256 + 'C'] = ZCOUNT;		/* C-X C */
 /* C-X D */
-	Keys[256 + 'E'] = ZRE_REPLACE;	/* C-X E */
-/* C-X F */
+	Keys[256 + 'E'] = ZRE_REPLACE;		/* C-X E */
+	Keys[256 + 'F'] = ZNEXT_PARAGRAPH;	/* C-X F */
 /* C-X G */
 	Keys[256 + 'H'] = ZHELP_FUNCTION;	/* C-X H */
 	Keys[256 + 'I'] = ZINDENT;		/* C-X I */

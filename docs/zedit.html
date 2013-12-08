@@ -336,8 +336,8 @@ variables are case insensitive.
 <p>You can also add bind commands to the configuration file. The format is:
 <pre>bind &lt;keynum&gt; &lt;cmd&gt;</pre>
 Where keynum is the actual number of the key (not the name) and cmd is
-the command name. The keynum is the ASCII value of the key. To make it a
-meta key add in 128. To make it a C-X key add 256. The special keys use
+the command name. The keynum is the ASCII value of the key in octal. To make it a
+meta key add in 200. To make it a C-X key add 400. The special keys use
 the  lowercase meta key slots. So the special keys are M-a to M-z. The
 help-key command displays the key number.
 

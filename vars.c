@@ -81,7 +81,7 @@ static void bindone(char *line)
 	char cmd[STRMAX];
 	int key, i;
 	
-	if (sscanf(line, "bind %d %s", &key, cmd) != 2) {
+	if (sscanf(line, "bind %o %s", &key, cmd) != 2) {
 		Dbg("Bad bind line %s\n", line);
 		return;
 	}

@@ -197,11 +197,11 @@ void Zhelp_key(void)
 	}
 
 	if (key == ZNOTIMPL)
-		putpaw("%s (%d) Unbound", dispkey(raw, kstr), raw);
+		putpaw("%s (%03o) Unbound", dispkey(raw, kstr), raw);
 	else
 		for (rc = 0; rc < NUMFUNCS; ++rc)
 			if (Cnames[rc].fnum == key)
-				putpaw("%s (%d) Bound to %s",
+				putpaw("%s (%03o) Bound to %s",
 					dispkey(raw, kstr), raw,
 					Cnames[rc].name);
 }

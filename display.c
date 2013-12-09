@@ -32,7 +32,7 @@ struct mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
 int Tlrow;			/* Last row displayed */
 
 static int NESTED;		/* zrefresh can go recursive... */
-Byte tline[COLMAX + 1];
+static Byte tline[COLMAX + 1];
 
 static void (*printchar)(Byte ichar) = tprntchar;
 
@@ -538,4 +538,16 @@ void initscrnmarks(void)
 
 	/* init the Mrklist */
 	Mrklist = &Scrnmarks[ROWMAX - 1];
+}
+
+void makepaw(char *word, bool start)
+{
+	bswitchto(Paw);
+	btostart();
+	bdelete(Curplen);
+	binstr(word);
+	tcleol();
+	memset(tline, '\376', COLMAX);	/* invalidate it */
+	if (start)
+		btostart();
 }

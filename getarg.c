@@ -278,15 +278,3 @@ void Zpart(void)
 	else
 		tbell();
 }
-
-void makepaw(char *word, bool start)
-{
-	bswitchto(Paw);
-	btostart();
-	bdelete(Curplen);
-	binstr(word);
-	tcleol();
-	memset(tline, '\376', COLMAX);	/* invalidate it */
-	if (start)
-		btostart();
-}

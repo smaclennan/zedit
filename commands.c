@@ -383,10 +383,7 @@ void Zposition(void)
 	       line, bgetcol(false, 0) + 1, point, mark, blength(Curbuff));
 }
 
-void Znotimpl(void)
-{
-	tbell();
-}
+void Znotimpl(void) { tbell(); }
 
 void Zset_mark(void)
 {
@@ -394,24 +391,10 @@ void Zset_mark(void)
 	putpaw("Mark Set.");
 }
 
-static void cleanup(void)
-{	/* For valgrind */
-	wfini();
-	bfini();
-	cleanup_bookmarks();
-}
-
 void Zexit(void)
 {
 	struct buff *tbuff;
 	bool modf = false;
-#if DOPIPES
-	struct buff *make = cfindbuff(MAKEBUFF);
-
-	if (make && make->child != EOF)
-		if (ask("You have a make running. Kill it?") != YES)
-			return;
-#endif
 
 	if (!saveall(Argp))
 		return;
@@ -430,7 +413,11 @@ void Zexit(void)
 #endif
 
 	tfini();
-	cleanup();
+
+	/* For valgrind */
+	wfini();
+	bfini();
+	cleanup_bookmarks();
 
 	exit(0);
 }

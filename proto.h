@@ -74,7 +74,6 @@ Z(Zinsert);
 Z(Zjoin);
 Z(Zkill);
 Z(Zdelete_buffer);
-Z(Zlife);
 Z(Zgoto_line);
 Z(Zlowercase_region);
 Z(Zlowercase_word);

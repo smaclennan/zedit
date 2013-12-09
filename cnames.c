@@ -254,11 +254,6 @@ struct cnames Cnames[] = {
 	 "Kills the current make. The command must wait for the make to die "
 	 "before it can continue. Unix only."
 	},
-	{"life",			ZLIFE,			AI,
-	 "Destructively plays the game of Life on the current buffer. A "
-	 "space does the next iteration. A Return causes continuous "
-	 "iterations (with a slight delay). An Abort stops the game."
-	},
 	{"list-buffers",		ZLIST_BUFFERS,		AI,
 	 "Displays a list of the current buffers on the display."
 	},

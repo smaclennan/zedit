@@ -53,8 +53,7 @@
 #define ZGROW_WINDOW		(ZCOPY_WORD + 1)
 #define ZINSERT			(ZGROW_WINDOW + 1) /* Also used for pinsert */
 #define ZDELETE_BUFFER		(ZINSERT + 1)
-#define ZLIFE			(ZDELETE_BUFFER + 1)
-#define ZGOTO_LINE		(ZLIFE + 1)
+#define ZGOTO_LINE		(ZDELETE_BUFFER + 1)
 #define ZLOWERCASE_WORD		(ZGOTO_LINE + 1)
 #define ZLIST_BUFFERS		(ZLOWERCASE_WORD + 1)
 #define ZAPPEND_KILL		(ZLIST_BUFFERS + 1)

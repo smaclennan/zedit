@@ -56,7 +56,6 @@ void (*Cmds[][2])() = {
 	{ Zgrow_window,			Znotimpl },
 	{ Zinsert,			pinsert },
 	{ Zdelete_buffer,		Znotimpl },
-	{ Zlife,			Znotimpl },
 	{ Zgoto_line,			Znotimpl },
 	{ Zlowercase_word,		Zlowercase_word },
 	{ Zlist_buffers,		Znotimpl },

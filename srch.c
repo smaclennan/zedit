@@ -500,8 +500,8 @@ bool bstrsearch(char *str, bool forward)
 				bmove(delta[Buff()]);
 			/* slow loop */
 			for (i = len;
-				 (char)STRIP(Buff()) == str[i] ||
-				 (!exact && tolower(STRIP(Buff())) == str[i]);
+				 (char)Buff() == str[i] ||
+				 (!exact && tolower(Buff()) == str[i]);
 				 bmove(-1), --i)
 					if (i == 0)
 						return true;
@@ -535,9 +535,9 @@ bool bstrsearch(char *str, bool forward)
 			/* slow loop */
 			for (i = 0;
 			     i <= len &&
-				     ((char)STRIP(Buff()) == str[i] ||
+				     ((char)Buff() == str[i] ||
 				      (!exact &&
-				       tolower(STRIP(Buff())) == str[i]));
+				       tolower(Buff()) == str[i]));
 			     ++i, bmove1())
 				;
 			if (i > len) {

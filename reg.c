@@ -81,7 +81,7 @@ static bool advance(Byte *ep)
 	while (!bisend()) {
 		switch (*ep++) {
 		case CCHR:
-			if (*ep++ == STRIP(Buff()))
+			if (*ep++ == Buff())
 				break;
 			return false;
 
@@ -99,7 +99,7 @@ static bool advance(Byte *ep)
 			return true;
 
 		case CCL:
-			if (ISTHERE(((Byte)STRIP(Buff())))) {
+			if (ISTHERE(((Byte)Buff()))) {
 				ep += 16;
 				break;
 			}
@@ -114,18 +114,18 @@ static bool advance(Byte *ep)
 			continue;
 
 		case CCHR | RNGE:
-			c = STRIP(Buff());
+			c = Buff();
 			bmove1();
 			getrnge(ep);
 			while (low--)
-				if (STRIP(Buff()) != c)
+				if (Buff() != c)
 					return false;
 				else
 					bmove1();
 			bmrktopnt(&curlp);
-			while (size-- && STRIP(Buff()) == c)
+			while (size-- && Buff() == c)
 				bmove1();
-			if (size < 0 || STRIP(Buff()) != c)
+			if (size < 0 || Buff() != c)
 				bmove1();
 			ep += 2;
 			goto star;
@@ -192,14 +192,14 @@ static bool advance(Byte *ep)
 
 		case CCHR | STAR:
 			bmrktopnt(&curlp); /* save the current position */
-			while (STRIP(Buff()) == *ep)  /* skip over matches */
+			while (Buff() == *ep)  /* skip over matches */
 				bmove1();
 			ep++;                       /* go on */
 			goto star;
 
 		case CCL | STAR:
 			bmrktopnt(&curlp);
-			while (!bisend() && ISTHERE(((Byte)STRIP(Buff()))))
+			while (!bisend() && ISTHERE(((Byte)Buff())))
 				bmove1();
 			ep += 16;
 
@@ -237,10 +237,10 @@ static bool ecmp(struct mark *start, int cnt)
 
 	while (cnt-- > 0 && !bisend()) {
 		bswappnt(start);
-		c = STRIP(Buff());
+		c = Buff();
 		bmove1();
 		bswappnt(start);
-		if (STRIP(Buff()) != c)
+		if (Buff() != c)
 			return false;
 		bmove1();
 	}

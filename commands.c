@@ -137,7 +137,7 @@ void Zc_insert(void)
 		tmark = bcremrk();
 		bmrktopnt(tmark);	/* save current position */
 		for (cnt = 0, bmove(-1); !bisstart(); bmove(-1))
-			if (STRIP(*Curcptr) == '{') {
+			if (*Curcptr == '{') {
 				if (cnt)
 					--cnt;
 				else {  /* matched */
@@ -153,7 +153,7 @@ void Zc_insert(void)
 					unmark(tmark);
 					return;
 				}
-			} else if (STRIP(*Curcptr) == '}')
+			} else if (*Curcptr == '}')
 				++cnt;
 			else if (ISNL(*Curcptr))
 				crfound = true;
@@ -213,18 +213,18 @@ void Zc_indent(void)
 
 		bmrktopnt(&tmark);
 		do {
-			if (STRIP(*Curcptr) == '#')
+			if (*Curcptr == '#')
 				bmove(-1);
 			tobegline();
-		} while (STRIP(*Curcptr) == '#' && !bisstart());
+		} while (*Curcptr == '#' && !bisstart());
 		movepast(biswhite, FORWARD);
 		if (bisaftermrk(&tmark))
 			bpnttomrk(&tmark);
 		for (width = bgetcol(true, 0); bisbeforemrk(&tmark); bmove1())
-			if (STRIP(*Curcptr) == '{') {
+			if (*Curcptr == '{') {
 				width += Tabsize;
 				++sawstart;
-			} else if (STRIP(*Curcptr) == '}' && sawstart) {
+			} else if (*Curcptr == '}' && sawstart) {
 				width -= Tabsize;
 				--sawstart;
 			}

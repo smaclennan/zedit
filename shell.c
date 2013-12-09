@@ -47,6 +47,20 @@ static void do_chdir(struct buff *buff)
 	}
 }
 
+/* echo 'str' to the paw and as the filename for 'buff' */
+static void message(struct buff *buff, const char *str)
+{
+	struct wdo *wdo;
+
+	if (buff->fname)
+		free(buff->fname);
+	buff->fname = strdup(str);
+	foreachwdo(wdo)
+		if (wdo->wbuff == buff)
+			wdo->modeflags = INVALID;
+	putpaw("%s", str);
+}
+
 #if DOPIPES
 #include <signal.h>
 #include <sys/wait.h>

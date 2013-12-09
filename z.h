@@ -199,6 +199,5 @@ extern int Colmax, Rowmax;		/* Row and column maximums */
 extern int Tlrow;			/* Last row displayed (-1 for none) */
 
 #define ISNL(c)			((c) == '\n')
-#define STRIP(c)		(c)
 
 #endif /* _Z_H_ */

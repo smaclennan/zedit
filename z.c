@@ -272,22 +272,8 @@ void putpaw(const char *fmt, ...)
 	tflush();
 }
 
-/* echo 'str' to the paw and as the filename for 'buff' */
-void message(struct buff *buff, const char *str)
-{
-	struct wdo *wdo;
-
-	if (buff->fname)
-		free(buff->fname);
-	buff->fname = strdup(str);
-	foreachwdo(wdo)
-		if (wdo->wbuff == buff)
-			wdo->modeflags = INVALID;
-	putpaw("%s", str);
-}
-
 /* Get the word at the current buffer point and store in 'word'.
- *  Get at the most 'max' characters.
+ * Get at the most 'max' characters.
  * Leaves the point alone.
  */
 int getbword(char word[], int max, int (*valid)())
@@ -362,28 +348,24 @@ int bisspace(void)
 
 int bisword(void)
 {
-	return  isalnum(Buff()) || Buff() == '_' || Buff() == '.' ||
-		Buff() == '$';
+	return  isalnum(Buff()) || Buff() == '_' || Buff() == '.';
 }
 
-/* Must be a real function. $ for PL/M */
+/* Must be a real function. */
 int bistoken(void)
 {
-	return isalnum(Buff()) || Buff() == '_' || Buff() == '.' ||
-		Buff() == '$' || Buff() == '/';
+	return bisword() || Buff() == '/';
 }
 
 int biswhite(void)
 {
-	return STRIP(Buff()) == ' ' || STRIP(Buff()) == '\t';
+	return Buff() == ' ' || Buff() == '\t';
 }
 
 /* Limit a filename to at most tmaxcol() - 'num' cols */
 char *limit(char *fname, int num)
 {
-	int off;
-
-	off = strlen(fname) - (tmaxcol() - num);
+	int off = strlen(fname) - (tmaxcol() - num);
 	return off > 0 ? fname + off : fname;
 }
 

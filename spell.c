@@ -1,21 +1,10 @@
 #include "z.h"
 
-#if SPELL && !defined(__cplusplus)
+#if SPELL
 #include <aspell.h>
 #include <dlfcn.h>
 
-static int zsymerr;
-
-/* This is just for checkpatch... the if could be part of the macro. */
-static void *zdlsym(void *dl, const char *sym)
-{
-	void *p = dlsym(dl, sym);
-	if (!p)
-		zsymerr++;
-	return p;
-}
-
-#define ZDLSYM(A, B, args...) A(*B)(args) = zdlsym(dl, #B)
+#define ZDLSYM(A, B, args...) A(*B)(args) = (A(*)(args))dlsym(dl, #B)
 
 void Zspell_word(void)
 {
@@ -25,7 +14,7 @@ void Zspell_word(void)
 		return;
 	}
 
-	zsymerr = 0;
+	dlerror(); /* clear errors */
 	ZDLSYM(AspellConfig *, new_aspell_config);
 	ZDLSYM(void , aspell_config_replace,
 	       AspellConfig*, char*, char*);
@@ -49,23 +38,26 @@ void Zspell_word(void)
 	       AspellSpeller*);
 	ZDLSYM(void , delete_aspell_config,
 	       AspellConfig*);
-	if (zsymerr) {
+	if (dlerror()) {
 		error("You have an incomplete libaspell.so");
-		goto done;
+		dlclose(dl);
+		return;
 	}
 
 	AspellConfig *config = new_aspell_config();
 	if (!config) {
 		error("Aspell failed");
-		goto done;
+		dlclose(dl);
+		return;
 	}
 
-	aspell_config_replace(config, "lang", "en_US");
+	aspell_config_replace(config, (char *)"lang", (char *)"en_US");
 
 	AspellCanHaveError *possible_err = new_aspell_speller(config);
 	if (aspell_error_number(possible_err)) {
 		error("Aspell failed");
-		goto done;
+		dlclose(dl);
+		return;
 	}
 	AspellSpeller *speller = to_aspell_speller(possible_err);
 
@@ -100,9 +92,6 @@ void Zspell_word(void)
 
 	delete_aspell_speller(speller);
 	delete_aspell_config(config);
-
-done:
-	dlclose(dl);
 }
 #else
 void Zspell_word(void) { tbell(); }

@@ -26,7 +26,7 @@ struct wdo *Whead, *Curwdo;
 /* Create a new window pointer - screen info invalid */
 static struct wdo *wcreate(int first, int last)
 {
-	struct wdo *wdo = calloc(1, sizeof(struct wdo));
+	struct wdo *wdo = (struct wdo *)calloc(1, sizeof(struct wdo));
 
 	if (wdo) {
 		wdo->wbuff	= Curbuff;

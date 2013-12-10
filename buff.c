@@ -151,12 +151,9 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 /* Create a buffer.   Returns a pointer to the buffer descriptor. */
 struct buff *bcreate(void)
 {
-	struct buff *buf;
-	struct page *fpage;
-
-	buf = calloc(1, sizeof(struct buff));
+	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));
 	if (buf) {
-		fpage = newpage(buf, NULL, NULL);
+		struct page *fpage = newpage(buf, NULL, NULL);
 		if (!fpage) {
 			/* bad news, de-allocate */
 			free(buf);
@@ -187,7 +184,7 @@ struct mark *bcremrk(void)
 		mrk = freemark;
 		freemark = NULL;
 	} else {
-		mrk = calloc(1, sizeof(struct mark));
+		mrk = (struct mark *)calloc(1, sizeof(struct mark));
 		if (!mrk)
 			longjmp(zenv, -1);	/* ABORT */
 	}
@@ -1035,7 +1032,7 @@ bool mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage)
 {
-	struct page *page = calloc(1, sizeof(struct page));
+	struct page *page = (struct page *)calloc(1, sizeof(struct page));
 
 	if (page) {
 		page->nextp = npage;

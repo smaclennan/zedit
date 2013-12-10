@@ -184,7 +184,8 @@ static char *addbname(const char *bname)
 
 	if (Numbuffs == maxbuffs) {
 		/* increase Bnames array */
-		char **ptr = realloc(Bnames, (maxbuffs + 10) * sizeof(char *));
+		char **ptr = (char **)realloc(Bnames,
+					      (maxbuffs + 10) * sizeof(char *));
 		if (!ptr)
 			return NULL;
 

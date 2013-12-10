@@ -41,7 +41,7 @@ unsigned long undo_total; /* stats only */
 
 static struct undo *new_undo(struct buff *buff, int action, int size)
 {
-	struct undo *undo = calloc(1, sizeof(struct undo));
+	struct undo *undo = (struct undo *)calloc(1, sizeof(struct undo));
 	if (!undo)
 		return NULL;
 
@@ -50,14 +50,14 @@ static struct undo *new_undo(struct buff *buff, int action, int size)
 	if (action == ACT_INSERT)
 		undo->end = bcremrk();
 	else {
-		undo->end = calloc(1, sizeof(struct mark));
+		undo->end = (struct mark *)calloc(1, sizeof(struct mark));
 		if (!undo->end) {
 			free(undo);
 			return NULL;
 		}
 		bmrktopnt(undo->end);
 	}
-	undo->prev = buff->undo_tail;
+	undo->prev = (struct undo *)buff->undo_tail;
 	buff->undo_tail = undo;
 
 	undo_total += sizeof(struct undo) + sizeof(struct mark);
@@ -67,7 +67,7 @@ static struct undo *new_undo(struct buff *buff, int action, int size)
 
 static void free_undo(struct buff *buff)
 {
-	struct undo *undo = buff->undo_tail;
+	struct undo *undo = (struct undo *)buff->undo_tail;
 	if (undo) {
 		buff->undo_tail = undo->prev;
 
@@ -95,7 +95,7 @@ static inline int no_undo(struct buff *buff)
 
 void undo_add(int size)
 {
-	struct undo *undo = Curbuff->undo_tail;
+	struct undo *undo = (struct undo *)Curbuff->undo_tail;
 
 	if (no_undo(Curbuff))
 		return;
@@ -114,7 +114,7 @@ void undo_add(int size)
 
 static void undo_append(struct undo *undo, Byte *data, int size)
 {
-	Byte *buf = realloc(undo->data, undo->size + size);
+	Byte *buf = (Byte *)realloc(undo->data, undo->size + size);
 	if (!buf)
 		return;
 
@@ -128,7 +128,7 @@ static void undo_append(struct undo *undo, Byte *data, int size)
 
 static void undo_prepend(struct undo *undo, Byte *data, int size)
 {
-	Byte *buf = realloc(undo->data, undo->size + size);
+	Byte *buf = (Byte *)realloc(undo->data, undo->size + size);
 	if (!buf)
 		return;
 
@@ -146,7 +146,7 @@ static void undo_prepend(struct undo *undo, Byte *data, int size)
 /* Size is always within the current page. */
 void undo_del(int size)
 {
-	struct undo *undo = Curbuff->undo_tail;
+	struct undo *undo = (struct undo *)Curbuff->undo_tail;
 
 	if (no_undo(Curbuff))
 		return;
@@ -179,7 +179,7 @@ void undo_del(int size)
 	if (undo == NULL)
 		return;
 
-	undo->data = malloc(size);
+	undo->data = (Byte *)malloc(size);
 	if (!undo->data) {
 		free_undo(Curbuff);
 		return;
@@ -198,7 +198,7 @@ void undo_clear(struct buff *buff)
 
 void Zundo(void)
 {
-	struct undo *undo = Curbuff->undo_tail;
+	struct undo *undo = (struct undo *)Curbuff->undo_tail;
 	int i;
 
 	if (!Curbuff->undo_tail) {

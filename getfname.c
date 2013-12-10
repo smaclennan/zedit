@@ -152,7 +152,7 @@ static struct llist *add(struct llist **list, char *fname)
 {
 	struct llist *newl, *l;
 
-	newl = malloc(sizeof(struct llist));
+	newl = (struct llist *)malloc(sizeof(struct llist));
 	if (newl) {
 		strcpy(newl->fname, fname);
 		if (*list == NULL || strcmp(fname, (*list)->fname) < 0) {

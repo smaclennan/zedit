@@ -891,7 +891,7 @@ void Zsetenv(void)
 		return;
 
 	/* putenv cannot be passed an automatic: malloc the space */
-	p = malloc(strlen(env) + strlen(set));
+	p = (char *)malloc(strlen(env) + strlen(set));
 	if (p) {
 		strcpy(p, env);
 		strcat(p, set);

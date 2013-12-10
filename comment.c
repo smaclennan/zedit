@@ -24,7 +24,8 @@ static bool Comstate;
 /* Mark a new comment from start to Point. */
 static void newcomment(struct mark *start)
 {
-	struct comment *com = calloc(sizeof(struct comment), 1);
+	struct comment *com;
+	com = (struct comment *)calloc(sizeof(struct comment), 1);
 	if (!com)
 		return;
 	com->start = bcremrk();

@@ -465,93 +465,109 @@ static bool dosearch(void)
  * forward is true, it searches forward, else it searches backwards.
  * The search will be case insensitive if the buffers current mode is so set.
  */
-bool bstrsearch(const char *str, bool forward)
+static bool bm_search(const char *str)
 {
-	bool exact;
 	int delta[NUMASCII], len, i, shift;
+	bool exact = Curbuff->bmode & EXACT;
 
-	exact = Curbuff->bmode & EXACT;
 	len = strlen(str) - 1;
 
-	if (forward) {
-		/* Init the delta table to str length.
-		 * For each char in the str, store the offset from the
-		 * str start in the delta table.
-		 * If we are in case insensitive mode - lower case the
-		 * match string and mark both the upper case version
-		 * and the lower case version of the match string
-		 * chars in the delta array.
-		 */
-		for (i = 0; i < NUMASCII; ++i)
-			delta[i] = len ? len : 1;
-		if (exact)
-			for (i = 0; i <= len;  ++i)
-				delta[(int)str[i]] = len - i;
-		else
-			for (i = 0; i <= len;  ++i) {
-				delta[toupper(str[i])] = len - i;
-				delta[tolower(str[i])] = len - i;
-			}
+	/* Init the delta table to str length.  For each char in the
+	 * str, store the offset from the str start in the delta
+	 * table.  If we are in case insensitive mode - lower case the
+	 * match string and mark both the upper case version and the
+	 * lower case version of the match string chars in the delta
+	 * array.
+	 */
+	for (i = 0; i < NUMASCII; ++i)
+		delta[i] = len ? len : 1;
+	if (exact)
+		for (i = 0; i <= len;  ++i)
+			delta[(int)str[i]] = len - i;
+	else
+		for (i = 0; i <= len;  ++i) {
+			delta[toupper(str[i])] = len - i;
+			delta[tolower(str[i])] = len - i;
+		}
 
-		/* search forward*/
-		bmove(len);
-		while (!bisend()) {
-			/* fast loop - delta will be 0 if matched */
-			while (!bisend() && delta[Buff()])
-				bmove(delta[Buff()]);
-			/* slow loop */
-			for (i = len;
-			     (char)Buff() == str[i] ||
-				     (!exact && tolower(Buff()) == tolower(str[i]));
-			     bmove(-1), --i)
-				if (i == 0)
-					return true;
-			/* compute shift. shift must be forward! */
-			if (i + delta[Buff()] > len)
-				shift = delta[Buff()];
-			else
-				shift = len - i + 1;
-			bmove(shift);
-		}
-	} else {
-		/* Init the delta table to str length.
-		 * For each char in the str, store the negative offset
-		 * from the str start in the delta table.
-		 */
-		for (i = 0; i < NUMASCII; ++i)
-			delta[i] = len ? -len : -1;
-		if (exact)
-			for (i = len; i >= 0; --i)
-				delta[(int)str[i]] = -i;
-		else
-			for (i = len; i >= 0; --i) {
-				delta[toupper(str[i])] = -i;
-				delta[tolower(str[i])] = -i;
-			}
-		/* reverse search */
-		bmove(-len);
-		while (!bisstart()) {
-			/* fast loop - delta will be 0 if matched */
-			while (delta[Buff()] && !bisstart())
-				bmove(delta[Buff()]);
-			/* slow loop */
-			for (i = 0;
-			     i <= len &&
-				     ((char)Buff() == str[i] ||
-				      (!exact &&
-				       tolower(Buff()) == tolower(str[i])));
-			     ++i, bmove1())
-				;
-			if (i > len) {
-				/* we matched! */
-				bmove(-len - 1);
+	/* search forward*/
+	bmove(len);
+	while (!bisend()) {
+		/* fast loop - delta will be 0 if matched */
+		while (!bisend() && delta[Buff()])
+			bmove(delta[Buff()]);
+		/* slow loop */
+		for (i = len;
+		     (char)Buff() == str[i] ||
+			     (!exact && tolower(Buff()) == tolower(str[i]));
+		     bmove(-1), --i)
+			if (i == 0)
 				return true;
-			}
-			/* compute shift. shift must be backward! */
-			bmove(delta[Buff()] + i < 0 ? delta[Buff()] : -i - 1);
-		}
+		/* compute shift. shift must be forward! */
+		if (i + delta[Buff()] > len)
+			shift = delta[Buff()];
+		else
+			shift = len - i + 1;
+		bmove(shift);
 	}
+
 	return false;
+}
+
+static bool bm_rsearch(const char *str)
+{
+	int delta[NUMASCII], len, i;
+	bool exact = Curbuff->bmode & EXACT;
+
+	len = strlen(str) - 1;
+
+	/* Init the delta table to str length.  For each char in the
+	 * str, store the negative offset from the str start in the
+	 * delta table.
+	 */
+	for (i = 0; i < NUMASCII; ++i)
+		delta[i] = len ? -len : -1;
+	if (exact)
+		for (i = len; i >= 0; --i)
+			delta[(int)str[i]] = -i;
+	else
+		for (i = len; i >= 0; --i) {
+			delta[toupper(str[i])] = -i;
+			delta[tolower(str[i])] = -i;
+		}
+
+	/* reverse search */
+	bmove(-len);
+	while (!bisstart()) {
+		/* fast loop - delta will be 0 if matched */
+		while (delta[Buff()] && !bisstart())
+			bmove(delta[Buff()]);
+		/* slow loop */
+		for (i = 0;
+		     i <= len &&
+			     ((char)Buff() == str[i] ||
+			      (!exact &&
+			       tolower(Buff()) == tolower(str[i])));
+		     ++i, bmove1())
+			;
+		if (i > len) {
+			/* we matched! */
+			bmove(-len - 1);
+			return true;
+		}
+		/* compute shift. shift must be backward! */
+		bmove(delta[Buff()] + i < 0 ? delta[Buff()] : -i - 1);
+	}
+
+	return false;
+}
+
+bool bstrsearch(const char *str, bool forward)
+{
+	if (forward)
+		return bm_search(str);
+	else
+		return bm_rsearch(str);
 }
 
 char *nocase(const char *prompt)

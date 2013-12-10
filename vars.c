@@ -80,7 +80,7 @@ static void bindone(char *line)
 {
 	char cmd[STRMAX];
 	int key, i;
-	
+
 	if (sscanf(line, "bind %o %s", &key, cmd) != 2) {
 		Dbg("Bad bind line %s\n", line);
 		return;
@@ -89,13 +89,13 @@ static void bindone(char *line)
 		Dbg("Invalid key %d\n", key);
 		return;
 	}
-	
+
 	for (i = 0; i < NUMFUNCS; ++i)
 		if (strcmp(Cnames[i].name, cmd) == 0) {
 			Keys[key] = Cnames[i].fnum;
 			return;
 		}
-		
+
 	Dbg("Invalid cmd %s\n", cmd);
 }
 

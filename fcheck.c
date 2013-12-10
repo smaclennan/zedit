@@ -72,6 +72,10 @@ int main(int argc, char *argv[])
 	}
 
 	/* check sizes of various stuff */
+	if (NUMFUNCS >= 256) {
+		printf("Cnames[].fnum is a byte. Too many functions.\n");
+		err = 1;
+	}
 	int s1 = sizeof(Cnames) / sizeof(struct cnames);
 	int s2 = (sizeof(Cmds) / sizeof(void *) / 2) - 1;
 	if (s1 != NUMFUNCS || s2 != NUMFUNCS) {

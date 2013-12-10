@@ -296,7 +296,8 @@ static void modeline(struct wdo *wdo)
 /* This routine will call modeline if wdo->modeflags == INVALID */
 static void modeflags(struct wdo *wdo)
 {
-	unsigned trow, tcol, line, col, mask;
+	unsigned trow, tcol, line, col;
+	int mask;
 
 	trow = tgetrow();
 	tcol = tgetcol();

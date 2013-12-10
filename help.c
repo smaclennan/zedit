@@ -133,10 +133,7 @@ void Zhelp_function(void)
 	}
 
 	dump_doc(Cnames[rc].doc);
-
-//	if (Cnames[rc].fnum != ZNOTIMPL &&
-//	    Cnames[rc].fnum != ZINSERT)
-		dump_bindings(Cnames[rc].fnum);
+	dump_bindings(Cnames[rc].fnum);
 
 	btostart();
 	Curbuff->bmodf = false;

@@ -450,7 +450,7 @@ defchar:
 
 void regerr(int errnum)
 {
-	static const char *errs[] = {
+	static const char * const errs[] = {
 		/*40*/	"Illegal or missing delimiter.",
 		/*41*/	"No search string.",
 		/*42*/	"() imbalance.",

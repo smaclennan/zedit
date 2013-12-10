@@ -21,7 +21,7 @@
 
 static char Fname[PATHMAX + 1];
 
-static int get_findfile(char *prompt)
+static int get_findfile(const char *prompt)
 {
 	struct stat sbuf;
 

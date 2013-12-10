@@ -146,7 +146,7 @@ void Zopen_line(void)
 	bmove(-1);
 }
 
-static long getnum(char *prompt)
+static long getnum(const char *prompt)
 {
 	char str[10];
 	long num = -1;

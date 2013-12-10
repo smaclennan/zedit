@@ -699,7 +699,7 @@ void Zcount(void)
 /* this struct must be sorted */
 static struct _amode
 {
-	char *str;
+	const char *str;
 	int mode;
 } modes[] = {
 	{ "C",		CMODE	},
@@ -708,7 +708,7 @@ static struct _amode
 	{ "Text",	TXTMODE	},
 };
 #define AMODESIZE	sizeof(struct _amode)
-#define NUMMODES	(sizeof(modes) / AMODESIZE)
+#define NUMMODES	((int)(sizeof(modes) / AMODESIZE))
 
 void Zmode(void)
 {

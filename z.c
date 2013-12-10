@@ -44,7 +44,7 @@ static void usage(char *prog)
 }
 
 /* Find the correct path for the config files. */
-static void findpath(char *path, char *f, void (*action)(char *))
+static void findpath(char *path, const char *f, void (*action)(const char *))
 {
 	snprintf(path, PATHMAX, "%s/%s", Home, f);
 	if (access(path, F_OK) == 0)
@@ -112,7 +112,6 @@ int main(int argc, char **argv)
 		puts("Not enough memory.");
 		exit(1);
 	}
-	Paw->bname = PAWBUFNAME;
 
 	tinit();
 

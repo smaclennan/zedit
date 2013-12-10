@@ -1,13 +1,13 @@
 #include "z.h"
 
-#if SPELL
+#if SPELL && !defined(__cplusplus)
 #include <aspell.h>
 #include <dlfcn.h>
 
 static int zsymerr;
 
 /* This is just for checkpatch... the if could be part of the macro. */
-static void *zdlsym(void *dl, char *sym)
+static void *zdlsym(void *dl, const char *sym)
 {
 	void *p = dlsym(dl, sym);
 	if (!p)

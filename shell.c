@@ -386,7 +386,7 @@ static int parse(char *fname)
 	return 0;
 }
 
-static int set_cmd(int which, char *prompt)
+static int set_cmd(int which, const char *prompt)
 {
 	char cmd[STRMAX + 1];
 

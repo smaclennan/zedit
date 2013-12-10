@@ -20,7 +20,7 @@
 #include "z.h"
 
 
-static int promptsearch(char *prompt, int type);
+static int promptsearch(const char *prompt, int type);
 static void promptreplace(int type);
 static bool dosearch(void);
 static bool replaceone(int, bool *, bool *, Byte *, bool);
@@ -36,7 +36,7 @@ static struct mark *Gmark;	/* used by global search routines */
 #define QHELP	\
 "Options: ' ' 'y'=change; 'n'=don't; '.'=change & quit; 'u'=undo; '^G'=quit"
 
-static void doincsrch(char *prompt, bool forward)
+static void doincsrch(const char *prompt, bool forward)
 {
 	bool go = true;
 	char str[STRMAX + 1], promptstr[40];
@@ -261,7 +261,7 @@ static void doreplace(int type)
 
 static void promptreplace(int type)
 {
-	char *prompt = NULL;
+	const char *prompt = NULL;
 	int rc;
 
 	switch (type) {
@@ -409,7 +409,7 @@ input:
 	return found;
 }
 
-static int promptsearch(char *prompt, int type)
+static int promptsearch(const char *prompt, int type)
 {
 	if (*olds == '\0' || type != AGAIN) {
 		if (getarg(nocase(prompt), olds, STRMAX)) {
@@ -465,7 +465,7 @@ static bool dosearch(void)
  * forward is true, it searches forward, else it searches backwards.
  * The search will be case insensitive if the buffers current mode is so set.
  */
-bool bstrsearch(char *str, bool forward)
+bool bstrsearch(const char *str, bool forward)
 {
 	bool exact;
 	int delta[NUMASCII], len, i, shift;
@@ -484,12 +484,13 @@ bool bstrsearch(char *str, bool forward)
 		 */
 		for (i = 0; i < NUMASCII; ++i)
 			delta[i] = len ? len : 1;
-		for (i = 0; i <= len;  ++i)
-			delta[(int)str[i]] = len - i;
-		if (!exact)
+		if (exact)
+			for (i = 0; i <= len;  ++i)
+				delta[(int)str[i]] = len - i;
+		else
 			for (i = 0; i <= len;  ++i) {
 				delta[toupper(str[i])] = len - i;
-				str[i] = tolower(str[i]);
+				delta[tolower(str[i])] = len - i;
 			}
 
 		/* search forward*/
@@ -500,11 +501,11 @@ bool bstrsearch(char *str, bool forward)
 				bmove(delta[Buff()]);
 			/* slow loop */
 			for (i = len;
-				 (char)Buff() == str[i] ||
-				 (!exact && tolower(Buff()) == str[i]);
-				 bmove(-1), --i)
-					if (i == 0)
-						return true;
+			     (char)Buff() == str[i] ||
+				     (!exact && tolower(Buff()) == tolower(str[i]));
+			     bmove(-1), --i)
+				if (i == 0)
+					return true;
 			/* compute shift. shift must be forward! */
 			if (i + delta[Buff()] > len)
 				shift = delta[Buff()];
@@ -519,12 +520,13 @@ bool bstrsearch(char *str, bool forward)
 		 */
 		for (i = 0; i < NUMASCII; ++i)
 			delta[i] = len ? -len : -1;
-		for (i = len; i >= 0; --i)
-			delta[(int)str[i]] = -i;
-		if (!exact)
+		if (exact)
+			for (i = len; i >= 0; --i)
+				delta[(int)str[i]] = -i;
+		else
 			for (i = len; i >= 0; --i) {
 				delta[toupper(str[i])] = -i;
-				str[i] = tolower(str[i]);
+				delta[tolower(str[i])] = -i;
 			}
 		/* reverse search */
 		bmove(-len);
@@ -537,7 +539,7 @@ bool bstrsearch(char *str, bool forward)
 			     i <= len &&
 				     ((char)Buff() == str[i] ||
 				      (!exact &&
-				       tolower(Buff()) == str[i]));
+				       tolower(Buff()) == tolower(str[i])));
 			     ++i, bmove1())
 				;
 			if (i > len) {
@@ -552,12 +554,13 @@ bool bstrsearch(char *str, bool forward)
 	return false;
 }
 
-char *nocase(char *prompt)
+char *nocase(const char *prompt)
 {
 	static char is[20], upper[20];
 
 	if (prompt) {
-		char *p, *u;
+		const char *p;
+		char *u;
 
 		strcpy(is, prompt);
 		for (p = prompt, u = upper; *p; ++p, ++u)

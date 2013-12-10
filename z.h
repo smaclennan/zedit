@@ -92,7 +92,6 @@
 /* System buffer names */
 #define UNTITLED	"NoFile"	/* for buffers with no fname */
 #define MAINBUFF	"*scratch*"
-#define PAWBUFNAME	"*PAW*"		/* Paw - should never be display */
 #define HELPBUFF	"*help*"
 #define MAKEBUFF	"*compile*"
 #define SHELLBUFF	"*shell*"

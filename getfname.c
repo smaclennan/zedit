@@ -78,14 +78,13 @@ int getfname(const char *prompt, char *path)
 	return rc;
 }
 
-static bool isext(char *fname, char *ext)
+static bool isext(char *fname, const char *ext)
 {
 	char *ptr;
-
 	return fname && (ptr = strrchr(fname, '.')) && strcmp(ptr, ext) == 0;
 }
 
-static struct llist *fill_list(char *dir)
+static struct llist *fill_list(const char *dir)
 {
 	static char savedir[PATHMAX + 1];
 	DIR *dp;

@@ -100,7 +100,7 @@ static void bindone(char *line)
 }
 
 /* If there is a config.z file, read it! */
-void readvfile(char *fname)
+void readvfile(const char *fname)
 {
 	char line[STRMAX + 1];
 	FILE *fp = fopen(fname, "r");

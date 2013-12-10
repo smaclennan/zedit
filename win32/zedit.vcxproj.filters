@@ -57,9 +57,6 @@
     <ClCompile Include="..\help.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\life.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\reg.c">
       <Filter>Source Files</Filter>
     </ClCompile>

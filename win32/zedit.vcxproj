@@ -88,7 +88,6 @@
     <ClCompile Include="..\cursor.c" />
     <ClCompile Include="..\delete.c" />
     <ClCompile Include="..\display.c" />
-    <ClCompile Include="..\file.c" />
     <ClCompile Include="..\funcs.c" />
     <ClCompile Include="..\getarg.c" />
     <ClCompile Include="..\getfname.c" />

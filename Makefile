@@ -1,4 +1,4 @@
-.PHONY: all install clean
+.PHONY: all check install clean
 
 ZEXE = ze
 CC = gcc
@@ -46,6 +46,10 @@ fcheck: fcheck.c funcs.c kbd.c vars-array.c cnames.c keys.h
 
 # Make all c files depend on all .h files
 *.o: *.h
+
+check:
+	sparse -D__unix__ $(CFILES)
+	sparse -D__unix__ fcheck.c
 
 install:
 	mkdir -p $(DESTDIR)/bin

@@ -48,8 +48,8 @@ fcheck: fcheck.c funcs.c kbd.c vars-array.c cnames.c keys.h
 *.o: *.h
 
 check:
-	sparse -D__unix__ $(CFILES)
-	sparse -D__unix__ fcheck.c
+	@sparse -D__unix__ $(CFILES)
+	@sparse -D__unix__ fcheck.c
 
 install:
 	mkdir -p $(DESTDIR)/bin

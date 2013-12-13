@@ -32,7 +32,7 @@
 #define bclose(a) close(a)
 #endif
 
-bool Curmodf;		/* page modified?? */
+bool Curmodf;			/* page modified?? */
 Byte *Cpstart;			/* pim data start */
 Byte *Curcptr;			/* current character */
 int Curchar;			/* current offset in Cpstart */

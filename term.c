@@ -83,14 +83,10 @@ void hang_up(int signal)
 			bswitchto(tbuff);
 			bwritefile(bfname());
 		}
-#if DOPIPES
 		if (tbuff->child != EOF)
 			unvoke(tbuff, false);
-#endif
 	}
-#if DOPIPES
 	checkpipes(0);
-#endif
 	tfini();
 	exit(1);
 }

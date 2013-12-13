@@ -164,9 +164,7 @@ struct buff *bcreate(void)
 		buf->pnt_page = buf->mark->mpage = fpage;
 		buf->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 			(VAR(VEXACT) ? EXACT     : 0);
-#if DOPIPES
 		buf->child = EOF;
-#endif
 		++NumBuffs;
 	}
 
@@ -276,10 +274,8 @@ bool bdelbuff(struct buff *tbuff)
 		}
 	}
 
-#if DOPIPES
 	if (tbuff->child != EOF)
 		unvoke(tbuff, true);
-#endif
 
 	uncomment(tbuff);
 	undo_clear(tbuff);

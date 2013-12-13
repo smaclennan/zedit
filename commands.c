@@ -405,12 +405,10 @@ void Zexit(void)
 	if (modf && ask("Modified buffers. quit anyway? ") != YES)
 		return;
 
-#if DOPIPES
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (tbuff->child != EOF)
 			unvoke(tbuff, false);
 	checkpipes(0);		/* make sure waited for ALL children */
-#endif
 
 	tfini();
 

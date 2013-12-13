@@ -349,6 +349,9 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 		putpaw("Returned %d", rc);
 	wswitchto(save);
 }
+
+void unvoke(struct buff *child, bool check) {}
+int checkpipes(int type) { return 0; }
 #endif /* DOPIPES */
 
 /* This is cleared in Zmake and set in Znexterror.

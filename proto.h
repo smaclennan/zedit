@@ -269,11 +269,9 @@ const char *special_label(int key);
 void winit(void);
 void wfini(void);
 
-#if DOPIPES
 int checkpipes(int type);
 void sigchild(int);
 void unvoke(struct buff *, bool);
-#endif
 
 void Dbg(const char *fmt, ...);
 

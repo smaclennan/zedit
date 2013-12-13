@@ -63,10 +63,8 @@ struct buff {
 	char *bname;			/* buffer name */
 	char *fname;			/* file name associated with buffer */
 	time_t mtime;			/* file time at read */
-#if DOPIPES
 	pid_t child;			/* PID of shell or EOF */
 	int in_pipe;			/* the pipe */
-#endif
 	struct comment *chead, *ctail;	/* list of comments in file */
 	Byte comchar;			/* single char comment character */
 	void *undo_tail;

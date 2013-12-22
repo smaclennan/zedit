@@ -178,16 +178,7 @@ static void setavar(const char *vin, bool display)
 	Arg = 0;
 }
 
-/*
-Set Tabsize variable. Uses Ctabs if the buffer is in C mode, else Tabs.
-
-Tabs must be > 0 and <= screen width - 2.
-The -4 takes into account borders and a fudge factors.
-NOTE: During setup, screen width is undefined.
-
-This routine is called when VTABS or VCTABS is changed or
-setmodes is called.
-*/
+/* Set Tabsize variable. Tabs must be >= 2 and <= 8. */
 int Tabsize = 8;
 
 int settabsize(unsigned mode)
@@ -201,11 +192,10 @@ int settabsize(unsigned mode)
 		i = VSHTABS;
 	else
 		i = VTABS;
-	if (tmaxcol() != EOF)
-		if (VAR(i) > tmaxcol() - 2)
-			VAR(i) = tmaxcol() - 2;
-	if (VAR(i) == 0)
-		VAR(i) = 1;
+	if (VAR(i) <= 0)
+		VAR(i) = 2;
+	else if (VAR(i) > 8)
+		VAR(i) = 8;
 	return Tabsize = VAR(i);
 }
 

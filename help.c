@@ -139,6 +139,35 @@ void Zhelp_function(void)
 	Curbuff->bmodf = false;
 }
 
+void Zhelp_variable(void)
+{
+	int rc = getplete("Variable: ", NULL, (char **)Vars,
+			  sizeof(struct avar), NUMVARS);
+	if (rc == -1)
+		return;
+
+	wuseother(HELPBUFF);
+
+	binstr(Vars[rc].vname);
+	binstr(": ");
+	switch (Vars[rc].vtype) {
+	case V_STRING:
+		binstr(VARSTR(rc) ? VARSTR(rc) : "NONE");
+		break;
+	case V_FLAG:
+		binstr(VAR(rc) ? "On" : "Off");
+		break;
+	case V_DECIMAL:
+		sprintf(PawStr, "%d", VAR(rc));
+		binstr(PawStr);
+	}
+
+	dump_doc(Vars[rc].doc);
+
+	btostart();
+	Curbuff->bmodf = false;
+}
+
 void Zhelp_apropos(void)
 {
 	char word[STRMAX], line[80];

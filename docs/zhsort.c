@@ -142,8 +142,6 @@ int main(int argc, char *argv[])
 {
 	int i, j;
 
-	zbind();
-
 	for (j = 0; j < 2; ++j) {
 		FILE *out = fopen(fnames[j], "w");
 		if (!out) {

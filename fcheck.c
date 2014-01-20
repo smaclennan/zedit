@@ -24,6 +24,7 @@
 #include "funcs.c"
 #include "cnames.c"
 #include "kbd.c"
+#include "bind.c"
 
 #ifdef __unix__
 #define OS unix
@@ -69,6 +70,16 @@ int main(int argc, char *argv[])
 			       mask, KEY_MASK);
 			err = 1;
 		}
+	}
+
+	/* Spot check keys array */
+	Byte array[97];
+	memset(array, ZINSERT, sizeof(array));
+	array[0] = ZUNDO;
+	array[96] = ZDELETE_PREVIOUS_CHAR;
+	if (memcmp(array, Keys + 31, sizeof(array))) {
+		printf("Problems with Keys array\n");
+		err = 1;
 	}
 
 	/* check sizes of various stuff */

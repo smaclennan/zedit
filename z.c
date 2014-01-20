@@ -94,8 +94,6 @@ int main(int argc, char **argv)
 			usage(argv[0]);
 		}
 
-	zbind();
-
 	/* Do this BEFORE tinit */
 	findpath(path, ZCFILE, readvfile);
 

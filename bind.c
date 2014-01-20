@@ -132,59 +132,50 @@ Byte Keys[NUMKEYS] = {
 	[256 +  2]  = ZSWITCH_TO_BUFFER,	/* C-X C-B */
 	[256 +  3]  = ZEXIT,			/* C-X C-C */
 	[256 +  4]  = ZDELETE_BUFFER,		/* C-X C-D */
-/* C-X C-E */
 	[256 +  6]  = ZFIND_FILE,		/* C-X C-F */
 	[256 +  7]  = ZABORT,			/* C-X C-G */
-/* C-X C-H */
-/* C-X C-I */
-/* C-X C-J */
 	[256 + 11]  = ZDELETE_LINE,		/* C-X C-K */
 	[256 + 12]  = ZLOWERCASE_REGION,	/* C-X C-L */
 	[256 + 13]  = ZMAKE,			/* C-X C-M */
 	[256 + 14]  = ZNEXT_ERROR,		/* C-X C-N */
 	[256 + 15]  = ZOUT_TO,			/* C-X C-O */
 	[256 + 16]  = ZMARK_PARAGRAPH,		/* C-X C-P */
-/* C-X C-Q */
 	[256 + 18]  = ZREAD_FILE,		/* C-X C-R */
 	[256 + 19]  = ZSAVE_FILE,		/* C-X C-S */
-/* C-X C-T */
 	[256 + 21]  = ZUPPERCASE_REGION,	/* C-X C-U */
 	[256 + 22]  = ZOTHER_NEXT_PAGE,		/* C-X C-V */
 	[256 + 23]  = ZWRITE_FILE,		/* C-X C-W */
 	[256 + 24]  = ZSWAP_MARK,		/* C-X C-X */
-/* C-X C-Y */
 	[256 + 26]  = ZOTHER_PREVIOUS_PAGE,	/* C-X C-Z */
 	[256 + '='] = ZPOSITION,
 	[256 + '1'] = ZONE_WINDOW,
 	[256 + '2'] = ZSPLIT_WINDOW,
-/* C-X ( */
-/* C-X ) */
 	/* All lowercase converted to uppercase */
 	[256 + 'A'] = ZGLOBAL_SEARCH,
 	[256 + 'B'] = ZNEXT_BOOKMARK,
 	[256 + 'C'] = ZCOUNT,
-/* C-X D */
+/*	[256 + 'D'] = , */
 	[256 + 'E'] = ZRE_REPLACE,
 	[256 + 'F'] = ZNEXT_PARAGRAPH,
-/* C-X G */
+/*	[256 + 'G'] = , */
 	[256 + 'H'] = ZHELP_FUNCTION,
 	[256 + 'I'] = ZINDENT,
-/* C-X J */
+/*	[256 + 'J'] = , */
 	[256 + 'K'] = ZDELETE_BUFFER,
 	[256 + 'L'] = ZLIST_BUFFERS,
 	[256 + 'M'] = ZSET_BOOKMARK,
 	[256 + 'N'] = ZNEXT_WINDOW,
 	[256 + 'O'] = ZNEXT_WINDOW,
-/* C-X P */
-/* C-X Q */
-/* C-X R */
+/*	[256 + 'P'] = , */
+/*	[256 + 'Q'] = , */
+/*	[256 + 'R'] = , */
 	[256 + 'S'] = ZSAVE_ALL_FILES,
 	[256 + 'T'] = ZTRIM_WHITE_SPACE,
 	[256 + 'U'] = ZUNDENT,
 	[256 + 'V'] = ZSET_VARIABLE,
 	[256 + 'W'] = ZWRITE_FILE,
 	[256 + 'X'] = ZNEXT_BUFFER,
-/* C-X Y */
+/*	[256 + 'Y'] = , */
 	[256 + 'Z'] = ZEXIT,
 	[256 + '^'] = ZGROW_WINDOW,
 
@@ -207,7 +198,7 @@ Byte Keys[NUMKEYS] = {
 	[TC_F3]	= ZAGAIN,
 	[TC_F4]	= ZNEXT_ERROR,
 	[TC_F5]	= ZRE_REPLACE,
-	/* [TC_F6]	= , */
+	/* [TC_F6] = , */
 	[TC_F7]	= ZMAKE,
 	[TC_F8]	= ZGREP,
 	[TC_F9]	= ZWORD_SEARCH,

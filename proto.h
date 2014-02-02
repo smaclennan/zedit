@@ -275,10 +275,8 @@ void unvoke(struct buff *, bool);
 void Dbg(const char *fmt, ...);
 
 /* for getfname */
-
 int getfname(const char *, char *);
 int nmatch(char *, char *);
-
 
 void wswitchto(struct wdo *wdo);
 void wsize(void);
@@ -289,6 +287,14 @@ void resetcomments(void);
 void uncomment(struct buff *buff);
 void cprntchar(Byte ch);
 
+#if UNDO
+extern unsigned long undo_total;
 void undo_add(int size);
 void undo_del(int size);
 void undo_clear(struct buff *buff);
+#else
+static inline void undo_add(int size) {}
+static inline void undo_del(int size) {}
+static inline void undo_clear(struct buff *buff) {}
+#define Zundo Znotimpl
+#endif

@@ -74,7 +74,4 @@ struct avar Vars[] = {
 	  "space characters displayed per tab in buffers that are not in "
 	  "a program mode."
 	},
-	{"undo",		V_FLAG,		V(1),
-	 "Enable undo support."
-	},
 };

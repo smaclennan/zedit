@@ -24,6 +24,8 @@
 
 #include "z.h"
 
+#if UNDO
+
 #define ACT_INSERT 1
 #define ACT_DELETE 2
 
@@ -226,3 +228,4 @@ void Zundo(void)
 		/* Last undo */
 		Curbuff->bmodf = false;
 }
+#endif

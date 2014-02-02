@@ -144,7 +144,6 @@ extern bool Initializing;
 extern bool Insearch;
 extern Byte CRdefault;
 extern int circf;
-extern unsigned long undo_total;
 
 extern void (*Nextpart)(void);
 

@@ -152,6 +152,12 @@ Z(pnewline);
 
 /* General routines */
 
+#ifdef DOS
+void bind_init(void);
+#else
+#define bind_init()
+#endif
+
 void initscrnmarks(void);
 int ask(const char *);
 int ask2(const char *, bool);

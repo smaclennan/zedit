@@ -1,6 +1,8 @@
 #ifndef __ZWIN32_H__
 #define __ZWIN32_H__
 
+#ifdef WIN32
+
 #include <Windows.h>
 #include <io.h>
 #include <direct.h>
@@ -28,15 +30,7 @@
 
 void zgetcwd(char *path, int len);
 
-#define F_OK 0
-#define R_OK 4
-#define W_OK 2
-
 extern HANDLE hstdin, hstdout;
-
-extern int optind;
-extern char *optarg;
-int getopt(int argc, char *argv[], const char *optstring);
 
 struct dirent {
 	char *d_name;
@@ -51,5 +45,33 @@ typedef struct DIR {
 DIR *opendir(const char *dirname);
 struct dirent *readdir(DIR *dir);
 void closedir(DIR *dir);
+
+#endif
+
+#ifdef DOS
+#include <time.h>
+
+typedef int bool;
+#define true  1
+#define false 0
+
+typedef int pid_t;
+
+#define vsnprintf(a, b, c, d) vsprintf(a, c, d)
+#define strcasecmp stricmp
+#define strncasecmp strnicmp
+
+#define usleep(us) delay((us) / 1000)
+#endif
+
+/* COMMON */
+
+extern int optind;
+extern char *optarg;
+int getopt(int argc, char *argv[], const char *optstring);
+
+#define F_OK 0
+#define R_OK 4
+#define W_OK 2
 
 #endif

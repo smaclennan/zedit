@@ -45,6 +45,8 @@ HANDLE hstdin, hstdout;	/* Console in and out handles */
 
 #define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
 #define BLACK_ON_WHITE (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
+#elif defined(DOS)
+#include <conio.h>
 #else
 #error No term driver
 #endif
@@ -220,6 +222,9 @@ static void tsize(int *rows, int *cols)
 			*rows = info.dwSize.Y;
 		}
 	}
+#elif defined(DOS)
+	*rows = 24;
+	*cols = 80;
 #else
 	char buf[12];
 	int n, w;
@@ -371,6 +376,8 @@ void tforce(void)
 		where.X = Pcol;
 		where.Y = Prow;
 		SetConsoleCursorPosition(hstdout, where);
+#elif defined(DOS)
+		gotoxy(Pcol + 1, Prow + 1);
 #else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
 #endif
@@ -396,6 +403,12 @@ void tcleol(void)
 			where.X = Clrcol[Prow] - 1;
 		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, 1,
 					   where, &written);
+#elif defined(DOS)
+		int i, len = Clrcol[Prow] - Pcol;
+
+		tforce();
+		for (i = 0; i < len; ++i)
+			putch(' ');
 #else
 		tforce();
 		fputs("\033[K", stdout);
@@ -414,6 +427,8 @@ void tclrwind(void)
 				   where, &written);
 	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
 				   where, &written);
+#elif defined(DOS)
+	clrscr();
 #else
 	fputs("\033[2J", stdout);
 #endif
@@ -446,6 +461,8 @@ void tstyle(int style)
 		SetConsoleTextAttribute(hstdout, FOREGROUND_RED);
 		break;
 	}
+#elif defined(DOS)
+	/* SAM FIXME */
 #else
 	switch (style) {
 	case T_NORMAL:
@@ -477,6 +494,8 @@ void tbell(void)
 		Beep(440, 250);
 		FillConsoleOutputAttribute(hstdout, BLACK_ON_WHITE, Colmax,
 					   where, &written);
+#elif defined(DOS)
+		/* SAM FIXME */
 #else
 		fputs("\033[?5h", stdout);
 		fflush(stdout);

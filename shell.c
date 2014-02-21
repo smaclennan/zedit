@@ -33,6 +33,7 @@ static void dotty(void)
 	First = false; /* used by pinsert when InPaw */
 }
 
+#if SHELL
 static void do_chdir(struct buff *buff)
 {
 	if (buff->fname) {
@@ -60,6 +61,7 @@ static void message(struct buff *buff, const char *str)
 			wdo->modeflags = INVALID;
 	putpaw("%s", str);
 }
+#endif
 
 #if DOPIPES
 #include <signal.h>
@@ -310,6 +312,8 @@ void Zkill(void)
 }
 #else
 void Zkill(void) { tbell(); }
+void unvoke(struct buff *child, bool check) {}
+int checkpipes(int type) { return 0; }
 
 void execute(void)
 {
@@ -317,6 +321,7 @@ void execute(void)
 	dotty();
 }
 
+#if SHELL
 static void cmdtobuff(const char *bname, const char *cmdin)
 {
 	FILE *pfp;
@@ -349,11 +354,11 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 		putpaw("Returned %d", rc);
 	wswitchto(save);
 }
+#endif
 
-void unvoke(struct buff *child, bool check) {}
-int checkpipes(int type) { return 0; }
 #endif /* DOPIPES */
 
+#if SHELL
 /* This is cleared in Zmake and set in Znexterror.
  * If clear, the make buffer is scrolled up. Once a next error is
  * called, the buffer is kept at the error line.
@@ -500,3 +505,10 @@ void Zcmd_to_buffer(void)
 	if (getarg("@ ", cmd, STRMAX) == 0)
 		cmdtobuff(SHELLBUFF, cmd);
 }
+
+#else
+void Zmake(void) { tbell(); }
+void Znext_error(void) { tbell(); }
+void Zcmd_to_buffer(void) { tbell(); }
+void Zgrep(void) { tbell(); }
+#endif /* SHELL */

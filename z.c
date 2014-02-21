@@ -103,6 +103,8 @@ int main(int argc, char **argv)
 
 	initscrnmarks(); /* init the screen marks and mark list */
 
+	bind_init();
+
 	/* create the needed buffers */
 	Killbuff = bcreate();
 	Paw = bcreate();

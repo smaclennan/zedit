@@ -49,31 +49,10 @@ int getopt(int argc, char *argv[], const char *optstring)
 	return arg;
 }
 
-static __inline void psepfixup(char *path)
+static void psepfixup(char *path)
 {
 	while ((path = strchr(path, '\\')))
 		*path = '/';
-}
-
-char *gethomedir(void)
-{
-	static char home[PATHMAX];
-	char *homedrive = getenv("HOMEDRIVE");
-	char *homepath = getenv("HOMEPATH");
-
-	if (!homedrive || !homepath)
-		return NULL;
-
-	snprintf(home, sizeof(home), "%s%s", homedrive, homepath);
-	psepfixup(home);
-
-	return home;
-}
-
-void zgetcwd(char *dir, int len)
-{
-	_getcwd(dir, len);
-	psepfixup(dir);
 }
 
 /* Fixup the pathname. 'to' and 'from' cannot overlap.
@@ -97,6 +76,29 @@ int pathfixup(char *to, char *from)
 	psepfixup(to);
 
 	return 0;
+}
+
+#ifdef WIN32
+
+char *gethomedir(void)
+{
+	static char home[PATHMAX];
+	char *homedrive = getenv("HOMEDRIVE");
+	char *homepath = getenv("HOMEPATH");
+
+	if (!homedrive || !homepath)
+		return NULL;
+
+	snprintf(home, sizeof(home), "%s%s", homedrive, homepath);
+	psepfixup(home);
+
+	return home;
+}
+
+void zgetcwd(char *dir, int len)
+{
+	_getcwd(dir, len);
+	psepfixup(dir);
 }
 
 DIR *opendir(const char *dirname)
@@ -135,3 +137,5 @@ void closedir(DIR *dir)
 	FindClose(dir->handle);
 	free(dir);
 }
+
+#endif

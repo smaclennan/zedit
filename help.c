@@ -106,6 +106,7 @@ void Zhelp(void)
 
 void Zhelp_function(void)
 {
+	bool pawok;
 	int rc = getplete("Function: ", NULL, (char **)Cnames,
 			  CNAMESIZE, NUMFUNCS);
 	if (rc == -1)
@@ -122,7 +123,7 @@ void Zhelp_function(void)
 
 	binstr(Cnames[rc].name);
 
-	bool pawok = Cmds[Cnames[rc].fnum][1] != Znotimpl;
+	pawok = Cmds[Cnames[rc].fnum][1] != Znotimpl;
 	if (pawok || Cnames[rc].flags) {
 		binstr(" (");
 		if (Cnames[rc].flags)
@@ -211,6 +212,10 @@ void Zhelp_key(void)
 	Arg = 0;
 	putpaw("Key: ");
 	raw = tgetcmd();
+	if (raw == TC_UNKNOWN) {
+		putpaw("Sorry, I don't recognize that key.");
+		return;
+	}
 	key = Keys[raw];
 	if (key == ZCTRL_X) {
 		putpaw("Key: C-X ");

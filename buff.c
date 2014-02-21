@@ -1122,8 +1122,9 @@ Byte bpeek(void)
 		 * Needed for delete-to-eol and step in reg.c. */
 		return NL;
 	else {
+		Byte ch;
 		bmove(-1);
-		Byte ch = Buff();
+		ch = Buff();
 		bmove1();
 		return ch;
 	}

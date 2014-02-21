@@ -45,6 +45,9 @@
 #define TC_F11			(128 + 'u')
 #define TC_F12			(128 + 'v')
 
+/* Unknown key - always bound to Znotimpl */
+#define TC_UNKNOWN		(128 + 'z')
+
 #define KEY_MASK		0x003fffff
 #define SPECIAL_START		TC_UP
 #define SPECIAL_END		TC_F12
@@ -53,9 +56,6 @@
 /* 128 ASCII + 128 meta + 128 C-X */
 #define NUMKEYS			(128 + 128 + 128)
 
-static inline bool is_special(int cmd)
-{
-	return cmd >= SPECIAL_START && cmd <= SPECIAL_END;
-}
+#define is_special(cmd) (cmd >= SPECIAL_START && cmd <= SPECIAL_END)
 
 #endif

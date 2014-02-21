@@ -20,7 +20,7 @@
 #define FCHECK
 #include "z.h"
 
-#include "vars-array.c"
+#include "varray.c"
 #include "funcs.c"
 #include "cnames.c"
 #include "kbd.c"

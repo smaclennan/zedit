@@ -15,7 +15,7 @@ CFILES = bcmds.c bind.c buff.c calc.c cnames.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	reg.c shell.c spell.c srch.c tags.c term.c \
-	undo.c vars.c window.c vars-array.c z.c
+	undo.c vars.c window.c varray.c z.c
 
 O := $(CFILES:.c=.o)
 
@@ -40,7 +40,7 @@ $(ZEXE): $O
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
 
-fcheck: fcheck.c funcs.c kbd.c vars-array.c cnames.c bind.c keys.h
+fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c keys.h
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
 	@./fcheck
 

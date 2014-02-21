@@ -27,8 +27,8 @@
 
 #define TC_INSERT		(128 + 'e')
 #define TC_DELETE		(128 + 'f')
-#define TC_PPAGE		(128 + 'g')
-#define TC_NPAGE		(128 + 'h')
+#define TC_PGUP			(128 + 'g')
+#define TC_PGDOWN		(128 + 'h')
 #define TC_HOME			(128 + 'i')
 #define TC_END			(128 + 'j')
 

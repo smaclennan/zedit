@@ -604,7 +604,7 @@ bool bmove(int dist)
 #ifdef INT_IS_16BITS
 #define MAXMOVE		(0x7fff - 1024)
 
-static inline void boffset(unsigned long off)
+void boffset(unsigned long off)
 {
 	btostart();
 	for (; off > MAXMOVE; off -= MAXMOVE)

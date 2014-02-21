@@ -227,7 +227,9 @@ void pntmove(int, int);
 void pout(char *, bool);
 void pset(int, int, int);
 int prefline(void);
+void _putpaw(const char *str);
 void putpaw(const char *fmt, ...);
+void error(const char *fmt, ...);
 void readvfile(const char *path);
 void redisplay(void);
 void reframe(void);
@@ -293,8 +295,8 @@ void undo_add(int size);
 void undo_del(int size);
 void undo_clear(struct buff *buff);
 #else
-static inline void undo_add(int size) {}
-static inline void undo_del(int size) {}
-static inline void undo_clear(struct buff *buff) {}
+#define undo_add(size)
+#define undo_del(size)
+#define undo_clear(buff)
 #define Zundo Znotimpl
 #endif

@@ -246,27 +246,45 @@ bool delcmd(void)
 
 char PawStr[COLMAX + 10];
 
-/* Put a string into the PAW. */
-void putpaw(const char *fmt, ...)
+void _putpaw(const char *str)
 {
-	int trow, tcol;
-	char str[STRMAX];
-	va_list ap;
+	int trow = Prow, tcol = Pcol;
 
 	if (InPaw)
 		return;
 
-	va_start(ap, fmt);
-	vsnprintf(str, sizeof(str), fmt, ap);
-	va_end(ap);
-
-	trow = Prow; tcol = Pcol;
 	tsetpoint(tmaxrow() - 1, 0);
 	tprntstr(str);
 	tcleol();
 	tsetpoint(trow, tcol);
 	tforce();
 	tflush();
+}
+
+/* Put a string into the PAW. */
+void putpaw(const char *fmt, ...)
+{
+	char str[STRMAX];
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(str, sizeof(str), fmt, ap);
+	va_end(ap);
+
+	_putpaw(str);
+}
+
+void error(const char *fmt, ...)
+{
+	char str[STRMAX];
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(str, sizeof(str), fmt, ap);
+	va_end(ap);
+
+	tbell();
+	_putpaw(str);
 }
 
 /* Get the word at the current buffer point and store in 'word'.

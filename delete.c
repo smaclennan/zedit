@@ -95,7 +95,6 @@ void Zcopy_region(void)
 void Zyank(void)
 {
 	struct buff *tbuff;
-	int yanked;
 	struct mark *tmark, save;	/* save must NOT be a pointer */
 
 	if (InPaw && First) {
@@ -110,10 +109,13 @@ void Zyank(void)
 	btoend();
 	tmark = bcremrk();
 	btostart();
-	yanked = bcopyrgn(tmark, tbuff);
+#if UNDO
+	undo_add(bcopyrgn(tmark, tbuff));
+#else
+	bcopyrgn(tmark, tbuff);
+#endif
 	unmark(tmark);
 	bswitchto(tbuff);
-	undo_add(yanked);
 	if (bisaftermrk(&save))
 		reframe();
 }

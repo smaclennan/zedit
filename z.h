@@ -150,8 +150,7 @@ extern void (*Nextpart)(void);
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
 
-#define clrpaw()	putpaw("")
-#define error(...)	do { tbell(); putpaw(__VA_ARGS__); } while (0)
+#define clrpaw()	_putpaw("")
 
 /* The memory usage for screen stuff is approx:  (ROWMAX + 1) x 25 + COLMAX */
 #define	ROWMAX				110

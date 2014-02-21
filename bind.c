@@ -206,3 +206,18 @@ Byte Keys[NUMKEYS] = {
 	[TC_F11] = ZNEXT_BOOKMARK,
 	[TC_F12] = ZREVERT_FILE,
 };
+
+const char *special_label(int key)
+{
+	static char *label[] = {
+		"up", "down", "right", "left",
+		"insert", "delete", "page up", "page down", "home", "end",
+		"f1", "f2", "f3", "f4", "f5", "f6",
+		"f7", "f8", "f9", "f10", "f11", "f12"
+	};
+
+	if (key >= SPECIAL_START && key <= SPECIAL_END)
+		return label[key - SPECIAL_START];
+	else
+		return "???";
+}

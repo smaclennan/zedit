@@ -170,15 +170,3 @@ bool delay(int ms)
 
 	return WaitForSingleObject(hstdin, ms) != WAIT_OBJECT_0;
 }
-
-const char *special_label(int key)
-{
-	static char *Tkeys[] = {
-		"up", "down", "right", "left",
-		"insert", "delete", "page up", "page down", "home", "end",
-		"f1", "f2", "f3", "f4", "f5", "f6",
-		"f7", "f8", "f9", "f10", "f11", "f12"
-	};
-
-	return Tkeys[key - SPECIAL_START];
-}

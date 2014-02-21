@@ -22,36 +22,33 @@
 #include <poll.h>
 
 /* Note: We can currently only have 32 specials */
-static struct key_array {
-	const char *key;
-	const char *label;
-} Tkeys[] = {
-	{ "\033[A",	"up" },
-	{ "\033[B",	"down" },
-	{ "\033[C",	"right" },
-	{ "\033[D",	"left" },
+static const char *Tkeys[] = {
+	"\033[A",	/* up */
+	"\033[B",	/* down */
+	"\033[C",	/* right */
+	"\033[D",	/* left */
 
-	{ "\033[2~",	"insert" },
-	{ "\033[3~",	"delete" },
-	{ "\033[5~",	"page up" },
-	{ "\033[6~",	"page down" },
-	{ "\033[7~",	"home" },
-	{ "\033[8~",	"end" },
+	"\033[2~",	/* insert */
+	"\033[3~",	/* delete */
+	"\033[5~",	/* page up */
+	"\033[6~",	/* page down */
+	"\033[7~",	/* home */
+	"\033[8~",	/* end */
 
-	{ "\033[11~",	"f1" },
-	{ "\033[12~",	"f2" },
-	{ "\033[13~",	"f3" },
-	{ "\033[14~",	"f4" },
-	{ "\033[15~",	"f5" },
-	{ "\033[17~",	"f6" },
-	{ "\033[18~",	"f7" },
-	{ "\033[19~",	"f8" },
-	{ "\033[20~",	"f9" },
-	{ "\033[21~",	"f10" },
-	{ "\033[23~",	"f11" },
-	{ "\033[24~",	"f12" },
+	"\033[11~",	/* f1 */
+	"\033[12~",	/* f2 */
+	"\033[13~",	/* f3 */
+	"\033[14~",	/* f4 */
+	"\033[15~",	/* f5 */
+	"\033[17~",	/* f6 */
+	"\033[18~",	/* f7 */
+	"\033[19~",	/* f8 */
+	"\033[20~",	/* f9 */
+	"\033[21~",	/* f10 */
+	"\033[23~",	/* f11 */
+	"\033[24~"	/* f12 */
 };
-#define N_KEYS ((int)(sizeof(Tkeys) / sizeof(struct key_array)))
+#define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
 
 int Cmdpushed = -1;
 
@@ -90,8 +87,8 @@ static int check_specials(void)
 	for (j = 1; mask; ++j) {
 		int cmd = tgetkb() & 0x7f;
 		for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
-			if ((mask & bit) && cmd == Tkeys[i].key[j]) {
-				if (Tkeys[i].key[j + 1] == '\0')
+			if ((mask & bit) && cmd == Tkeys[i][j]) {
+				if (Tkeys[i][j + 1] == '\0')
 					return i + SPECIAL_START;
 			} else
 				mask &= ~bit;
@@ -142,9 +139,4 @@ bool delay(int ms)
 		return false;
 
 	return poll(&stdin_fd, 1, ms) != 1;
-}
-
-const char *special_label(int key)
-{
-	return Tkeys[key - SPECIAL_START].label;
 }

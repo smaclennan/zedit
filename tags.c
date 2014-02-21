@@ -36,8 +36,9 @@ static int get_tagfile(void)
 		return 0;
 
 	if (Curbuff->fname) {
+		char *p;
 		strcpy(Tagfile, Curbuff->fname);
-		char *p = strrchr(Tagfile, '/');
+		p = strrchr(Tagfile, '/');
 		if (p) {
 			++p;
 			strcpy(p, "TAGS");

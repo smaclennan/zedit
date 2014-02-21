@@ -601,6 +601,18 @@ bool bmove(int dist)
 	return true;
 }
 
+#ifdef INT_IS_16BITS
+#define MAXMOVE		(0x7fff - 1024)
+
+static inline void boffset(unsigned long off)
+{
+	btostart();
+	for (; off > MAXMOVE; off -= MAXMOVE)
+		bmove(MAXMOVE);
+	bmove(off);
+}
+#endif
+
 /* Put the mark where the point is. */
 void bmrktopnt(struct mark *tmark)
 {

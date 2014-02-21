@@ -205,11 +205,10 @@ static char *addbname(const char *bname)
 
 bool delbname(char *bname)
 {
-	int i, rc;
+	int i;
 
-	for (i = rc = 0; i <= Numbuffs && (rc = strcmp(bname, Bnames[i])); ++i)
-		;
-	if (rc)
+	for (i = 0; i < Numbuffs && strcmp(bname, Bnames[i]); ++i) ;
+	if (i == Numbuffs)
 		return false;
 
 	--Numbuffs;

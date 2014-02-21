@@ -190,9 +190,9 @@ bool filesave(void)
 void Zwrite_file(void)
 {
 	char path[PATHMAX + 1];
+	const char *prompt = Argp ? "Write Region: " : "Write File: ";
 
 	Arg = 0;
-	const char *prompt = Argp ? "Write Region: " : "Write File: ";
 	*path = '\0';
 	if (getfname(prompt, path) == 0) {
 		if (Argp) {

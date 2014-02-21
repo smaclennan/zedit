@@ -108,15 +108,7 @@ int batoi(void);
 bool bmove(int);
 void bmove1(void);
 #ifdef INT_IS_16BITS
-#define MAXMOVE		(0x7fff - 1024)
-
-static inline void boffset(unsigned long off)
-{
-	btostart();
-	for (; off > MAXMOVE; off -= MAXMOVE)
-		bmove(MAXMOVE);
-	bmove(off);
-}
+void boffset(unsigned long off);
 #else
 static inline void boffset(unsigned long offset) { bmove((int)offset); }
 #endif

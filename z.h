@@ -184,6 +184,7 @@ void tflush(void);
 #elif defined(DOS)
 #define gethomedir()		getenv("HOME")
 #define tputchar(c)		putch(c)
+#define tkbrdy			kbhit
 #define tflush()
 #else
 #define gethomedir()		getenv("HOME")

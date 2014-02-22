@@ -223,7 +223,7 @@ static void tsize(int *rows, int *cols)
 		}
 	}
 #elif defined(DOS)
-	*rows = 24;
+	*rows = 25;
 	*cols = 80;
 #else
 	char buf[12];
@@ -428,6 +428,7 @@ void tclrwind(void)
 	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
 				   where, &written);
 #elif defined(DOS)
+	tstyle(T_NORMAL);
 	clrscr();
 #else
 	fputs("\033[2J", stdout);
@@ -462,7 +463,26 @@ void tstyle(int style)
 		break;
 	}
 #elif defined(DOS)
-	/* SAM FIXME */
+	if (cur_style == T_BOLD)
+		normvideo();
+
+	switch (style) {
+	case T_NORMAL:
+		textcolor(WHITE);
+		textbackground(BLACK);
+		break;
+	case T_STANDOUT:
+	case T_REVERSE:
+		textcolor(BLACK);
+		textbackground(WHITE);
+		break;
+	case T_BOLD:
+		highvideo();
+		break;
+	case T_COMMENT:
+		textcolor(RED);
+		break;
+	}
 #else
 	switch (style) {
 	case T_NORMAL:

@@ -20,9 +20,19 @@
 #include "z.h"
 #include "keys.h"
 
+int Cmdpushed = -1;
+
 int tgetcmd(void)
 {
-	int cmd = getch() & 0x7f;
+	int cmd;
+
+	if (Cmdpushed >= 0) {
+		cmd = Cmdpushed;
+		Cmdpushed = -1;
+		return cmd;
+	}
+
+	cmd = getch() & 0x7f;
 	if (cmd == 0) {
 		cmd = getch();
 		if (cmd >= 0x3b && cmd <= 0x44)
@@ -48,11 +58,6 @@ int tgetcmd(void)
 	if (cmd == 8) cmd = 127;
 
 	return cmd;
-}
-
-bool tkbrdy(void)
-{
-	return kbhit();
 }
 
 bool delay(int ms)

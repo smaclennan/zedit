@@ -22,6 +22,14 @@
 
 int Cmdpushed = -1;
 
+#if 0
+static int alts[] = {
+	/* 10 */ 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', 0, 0,
+	/* 1E */ 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', '\'', 0, 0,
+	/* 2C */ 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/'
+	/* 36 */ };
+#endif
+
 int tgetcmd(void)
 {
 	int cmd;
@@ -60,7 +68,7 @@ int tgetcmd(void)
 	return cmd;
 }
 
-bool delay(int ms)
+bool tdelay(int ms)
 {
 	clock_t end;
 
@@ -69,5 +77,5 @@ bool delay(int ms)
 
 	end = clock() + (ms / 55); /* clock in 55ms increments */
 	while (!kbhit() && clock() <= end) ;
-	return kbhit();
+	return kbhit() == 0;
 }

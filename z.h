@@ -110,7 +110,7 @@
 
 struct cnames {
 	const char *name;
-	Byte fnum;
+	short fnum;
 	short flags;
 	const char *doc;
 };

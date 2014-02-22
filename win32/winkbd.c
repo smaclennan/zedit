@@ -163,7 +163,7 @@ bool tkbrdy(void)
 	return Pending = WaitForSingleObject(hstdin, 0) == WAIT_OBJECT_0;
 }
 
-bool delay(int ms)
+bool tdelay(int ms)
 {
 	if (InPaw || cpushed || Pending)
 		return false;

@@ -219,7 +219,7 @@ int ask(const char *msg)
 /* Delay before displaying a prompt and wait for a cmd */
 int delayprompt(const char *msg)
 {
-	int cmd, rc = delay(600);
+	int cmd, rc = tdelay(600);
 	if (rc)
 		putpaw(msg);
 	cmd = tgetcmd();

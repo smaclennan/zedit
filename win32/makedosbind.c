@@ -26,12 +26,11 @@ int main(int argc, char *argv[])
 	}
 
 	char line[128], *p, *s;
-	while (fgets(line, sizeof(line), in))
+	while (fgets(line, sizeof(line), in)) {
+		fputs(line, out);
 		if (strstr(line, "ZDELETE_PREVIOUS_CHAR"))
 			break;
-		else
-			fputs(line, out);
-
+	}
 	fputs("};\n\n", out);
 
 	fputs("void bind_init(void)\n{\n", out);

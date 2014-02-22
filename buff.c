@@ -726,9 +726,6 @@ int breadfile(char *fname)
 
 	fd = open(fname, READ_MODE);
 	if (fd < 0) {
-		if (fd >= 0)
-			close(fd);
-
 		switch (errno) {
 		case EACCES:
 			error("No read access: %s", fname);

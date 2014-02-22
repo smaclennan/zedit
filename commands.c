@@ -507,7 +507,7 @@ static void mshow(unsigned ch)
 		tbell();
 	else { /* show the match! */
 		zrefresh();
-		delay(999);
+		tdelay(999);
 	}
 	bpnttomrk(&save);
 }

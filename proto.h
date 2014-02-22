@@ -191,7 +191,7 @@ struct buff *cmakebuff(const char *, char *);
 int cntlines(int);
 int compile(Byte*, Byte*, Byte*);
 void cswitchto(struct buff *);
-bool delay(int ms);
+bool tdelay(int ms);
 int delayprompt(const char *);
 bool delbname(char *);
 void delbuff(struct buff *);

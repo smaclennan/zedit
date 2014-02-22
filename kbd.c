@@ -133,7 +133,7 @@ bool tkbrdy(void)
 	return Pending = poll(&stdin_fd, 1, 0) == 1;
 }
 
-bool delay(int ms)
+bool tdelay(int ms)
 {
 	if (InPaw || cpushed || Pending)
 		return false;

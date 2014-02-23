@@ -75,11 +75,9 @@ static Byte tgetkb(void)
 		if (cpushed < 0)
 			hang_up(1);	/* we lost connection */
 		for (i = 0; i <= cpushed; ++i) {
-			Dbg(" %c", buff[i]); // SAM DBG
 			cstack[p] = buff[i];
 			p = (p + 1) & (CSTACK - 1);
 		}
-		Dbg("\n"); // SAM DBG
 	}
 	Pending = false;
 	return cstack[cptr];

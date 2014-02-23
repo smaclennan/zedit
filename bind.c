@@ -205,6 +205,9 @@ Byte Keys[NUMKEYS] = {
 	[TC_F10] = ZTAG_WORD,
 	[TC_F11] = ZNEXT_BOOKMARK,
 	[TC_F12] = ZREVERT_FILE,
+
+	[TC_C_HOME] = ZBEGINNING_OF_BUFFER,
+	[TC_C_END] = ZEND_OF_BUFFER
 };
 
 const char *special_label(int key)
@@ -213,7 +216,8 @@ const char *special_label(int key)
 		"up", "down", "right", "left",
 		"insert", "delete", "page up", "page down", "home", "end",
 		"f1", "f2", "f3", "f4", "f5", "f6",
-		"f7", "f8", "f9", "f10", "f11", "f12"
+		"f7", "f8", "f9", "f10", "f11", "f12",
+		"C-home", "C-end"
 	};
 
 	if (key >= SPECIAL_START && key <= SPECIAL_END)

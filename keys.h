@@ -45,12 +45,15 @@
 #define TC_F11			(128 + 'u')
 #define TC_F12			(128 + 'v')
 
+#define TC_C_HOME		(128 + 'w')
+#define TC_C_END		(128 + 'x')
+
 /* Unknown key - always bound to Znotimpl */
 #define TC_UNKNOWN		(128 + 'z')
 
-#define KEY_MASK		0x003fffff
+#define KEY_MASK		0x00ffffff
 #define SPECIAL_START		TC_UP
-#define SPECIAL_END		TC_F12
+#define SPECIAL_END		TC_C_END
 #define NUM_SPECIAL		(SPECIAL_END - SPECIAL_START + 1)
 
 /* 128 ASCII + 128 meta + 128 C-X */

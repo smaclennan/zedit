@@ -42,9 +42,6 @@
     <ClCompile Include="..\display.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\file.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\funcs.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -78,9 +75,6 @@
     <ClCompile Include="..\vars.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\vars-array.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\window.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -97,6 +91,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\cnames.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\varray.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\file.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

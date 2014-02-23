@@ -32,8 +32,8 @@ static Byte virt[] = {
 	0,		/* 0x1E VK_ACCEPT */
 	0,		/* 0x1F VK_MODECHANGE */
 	' ',		/* 0x20 VK_SPACE */
-	TC_PPAGE,		/* 0x21 VK_PRIOR */
-	TC_NPAGE,		/* 0x22 VK_NEXT */
+	TC_PGUP,		/* 0x21 VK_PRIOR */
+	TC_PGDOWN,		/* 0x22 VK_NEXT */
 	TC_END,		/* 0x23 VK_END */
 	TC_HOME,	/* 0x24 VK_HOME */
 	TC_LEFT,	/* 0x25 VK_LEFT */

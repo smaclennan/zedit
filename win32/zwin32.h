@@ -52,4 +52,6 @@ DIR *opendir(const char *dirname);
 struct dirent *readdir(DIR *dir);
 void closedir(DIR *dir);
 
+typedef int pid_t;
+
 #endif

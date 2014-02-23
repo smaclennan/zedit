@@ -6,3 +6,5 @@
 #define UNDO		0	/* EXPERIMENTAL */
 #endif
 
+#define INTERNAL_GREP	1
+

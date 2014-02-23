@@ -51,7 +51,6 @@ static const char *Tkeys[] = {
 	"\033[7^",	/* C-home */
 	"\033[8^"	/* C-end */
 };
-#define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
 
 int Cmdpushed = -1;
 

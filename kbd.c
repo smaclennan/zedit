@@ -46,7 +46,10 @@ static const char *Tkeys[] = {
 	"\033[20~",	/* f9 */
 	"\033[21~",	/* f10 */
 	"\033[23~",	/* f11 */
-	"\033[24~"	/* f12 */
+	"\033[24~",	/* f12 */
+
+	"\033[7^",	/* C-home */
+	"\033[8^"	/* C-end */
 };
 #define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
 
@@ -72,9 +75,11 @@ static Byte tgetkb(void)
 		if (cpushed < 0)
 			hang_up(1);	/* we lost connection */
 		for (i = 0; i <= cpushed; ++i) {
+			Dbg(" %c", buff[i]); // SAM DBG
 			cstack[p] = buff[i];
 			p = (p + 1) & (CSTACK - 1);
 		}
+		Dbg("\n"); // SAM DBG
 	}
 	Pending = false;
 	return cstack[cptr];

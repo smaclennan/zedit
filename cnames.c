@@ -1,8 +1,8 @@
 #include "z.h"
 
 /* For now it is a char. May be expanded later. */
-#define AN '+'
-#define AI '-'
+#define AN '+'	/* Arg Normal */
+#define AI '-'	/* Arg Ignored */
 
 struct cnames Cnames[] = {
 	{"abort",			ZABORT,			AI,

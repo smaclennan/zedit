@@ -115,5 +115,15 @@ int main(int argc, char *argv[])
 			err = 1;
 		}
 
+	/* getplete structs must be aligned */
+	if (sizeof(struct cnames) % sizeof(char *)) {
+		printf("struct cnames not aligned\n");
+		err = 1;
+	}
+	if (sizeof(struct avar) % sizeof(char *)) {
+		printf("struct avar not aligned\n");
+		err = 1;
+	}
+
 	return err;
 }

@@ -36,6 +36,8 @@
 
 #define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))
 
+#define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
+
 int InPaw;
 
 void hang_up(int sig) {}
@@ -52,11 +54,13 @@ int main(int argc, char *argv[])
 		err = 1;
 	}
 
-	if (N_KEYS != NUM_SPECIAL) {
-		printf("Mismatch N_KEYS %d NUM_SPECIAL %d\n",
-		       N_KEYS, NUM_SPECIAL);
+	i = sizeof(key_label) / sizeof(char *);
+	if (N_KEYS != NUM_SPECIAL || i != NUM_SPECIAL) {
+		printf("Mismatch N_KEYS %d NUM_SPECIAL %d labels %d\n",
+		       N_KEYS, NUM_SPECIAL, i);
 		err = 1;
 	}
+		
 	if (NUM_SPECIAL > 32) {
 		printf("Too many special keys\n");
 		err = 1;

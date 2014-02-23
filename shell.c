@@ -424,6 +424,7 @@ void Zmake(void)
 	do_make(VARSTR(VMAKE));
 }
 
+#if !INTERNAL_GREP
 void Zgrep(void)
 {
 	char cmd[STRMAX * 3], input[STRMAX + 1], files[STRMAX + 1];
@@ -450,6 +451,7 @@ void Zgrep(void)
 
 	do_make(cmd);
 }
+#endif
 
 void Znext_error(void)
 {

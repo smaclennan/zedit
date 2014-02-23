@@ -210,18 +210,18 @@ Byte Keys[NUMKEYS] = {
 	[TC_C_END] = ZEND_OF_BUFFER
 };
 
+static char *key_label[] = {
+	"up", "down", "right", "left",
+	"insert", "delete", "page up", "page down", "home", "end",
+	"f1", "f2", "f3", "f4", "f5", "f6",
+	"f7", "f8", "f9", "f10", "f11", "f12",
+	"C-home", "C-end",
+};
+
 const char *special_label(int key)
 {
-	static char *label[] = {
-		"up", "down", "right", "left",
-		"insert", "delete", "page up", "page down", "home", "end",
-		"f1", "f2", "f3", "f4", "f5", "f6",
-		"f7", "f8", "f9", "f10", "f11", "f12",
-		"C-home", "C-end"
-	};
-
 	if (key >= SPECIAL_START && key <= SPECIAL_END)
-		return label[key - SPECIAL_START];
+		return key_label[key - SPECIAL_START];
 	else
 		return "???";
 }

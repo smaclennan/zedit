@@ -59,6 +59,8 @@ int tgetcmd(void)
 		if (cmd >= 0x10 && cmd <= 0x53)
 			return alts[cmd - 0x10];
 		switch (cmd) {
+		case 0x77: return TC_C_HOME;
+		case 0x75: return TC_C_END;
 		case 0x85: return TC_F11;
 		case 0x86: return TC_F12;
 		default:   return TC_UNKNOWN;

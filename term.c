@@ -150,6 +150,8 @@ void tinit(void)
 
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT);
+#elif defined(DOS)
+	_setcursortype(_SOLIDCURSOR);
 #endif
 
 #ifdef SIGHUP
@@ -526,6 +528,16 @@ void tbell(void)
 		fputs("\033[?5l", stdout);
 #endif
 	}
+}
+
+void tsetcursor(void)
+{
+#ifdef DOS
+	if (Curbuff->bmode & OVERWRITE)
+		_setcursortype(_NORMALCURSOR);
+	else
+		_setcursortype(_SOLIDCURSOR);
+#endif
 }
 
 #ifdef WIN32

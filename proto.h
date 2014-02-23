@@ -252,6 +252,7 @@ void tclrwind(void);
 void termsize(void);
 void tfini(void);
 void tforce(void);
+void tsetcursor(void);
 int tgetcmd(void);
 void t_goto(int, int);
 void tindent(int);

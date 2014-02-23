@@ -20,21 +20,17 @@
 #include "z.h"
 
 #if INTERNAL_GREP
+
+#ifndef WIN32
 #ifdef HAVE_DIRECT
 #include <sys/dir.h>
 #define dirent direct
 #else
 #include <dirent.h>
 #endif
-
-#ifdef WIN32
-static inline int fnmatch(const char *pat, const char *name, int flags)
-{
-	return PathMatchSpec(name, pat);
-}
-#else
-#include <fnmatch.h>
 #endif
+
+#include <fnmatch.h>
 
 static void grep_one(char *fname, Byte *ebuf,
 		     struct buff *inbuff, struct buff *outbuff)
@@ -45,8 +41,6 @@ static void grep_one(char *fname, Byte *ebuf,
 	if (breadfile(fname))
 		return;
 		
-	Dbg("grep_one %s\n", fname); // SAM DBG
-
 	while (step(ebuf)) {
 		struct mark *start;
 		unsigned line;

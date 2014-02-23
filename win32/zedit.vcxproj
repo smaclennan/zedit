@@ -104,6 +104,8 @@
     <ClCompile Include="..\vars.c" />
     <ClCompile Include="..\window.c" />
     <ClCompile Include="..\z.c" />
+    <ClCompile Include="..\zgrep.c" />
+    <ClCompile Include="fnmatch.c" />
     <ClCompile Include="winkbd.c" />
     <ClCompile Include="zwin32.c" />
   </ItemGroup>

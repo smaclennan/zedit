@@ -57,6 +57,8 @@ int Prow, Pcol;			/* Point row and column */
 static int Srow, Scol;		/* Saved row and column */
 int Colmax = EOF, Rowmax;	/* Row and column maximums */
 
+int ring_bell;			/* tbell called */
+
 #ifdef SIGWINCH
 /* This is called if the window has changed size. */
 static void sigwinch(int sig)
@@ -476,7 +478,10 @@ void tstyle(int style)
 		textcolor(WHITE);
 		textbackground(BLACK);
 		break;
-	case T_STANDOUT:
+	case T_STANDOUT: /* modeline */
+		textcolor(BLACK);
+		textbackground(ring_bell ? RED : WHITE);
+		break;
 	case T_REVERSE:
 		textcolor(BLACK);
 		textbackground(WHITE);
@@ -520,13 +525,14 @@ void tbell(void)
 		FillConsoleOutputAttribute(hstdout, BLACK_ON_WHITE, Colmax,
 					   where, &written);
 #elif defined(DOS)
-		/* SAM FIXME */
+		Curwdo->modeflags = INVALID;
 #else
 		fputs("\033[?5h", stdout);
 		fflush(stdout);
 		usleep(100000);
 		fputs("\033[?5l", stdout);
 #endif
+		ring_bell = 1;
 	}
 }
 

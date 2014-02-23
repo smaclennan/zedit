@@ -24,21 +24,22 @@
 int Cmdpushed = -1;
 static int kb_hit;
 
-static int alts[] = {
-	/* 10 */ 'Q' + 128, 'W' + 128, 'E' + 128, 'R' + 128, 'T' + 128, 'Y' + 128,
-	/* 16 */ 'U' + 128, 'I' + 128, 'O' + 128, 'P' + 128, '[' + 128, ']' + 128, 0, 0,
-	/* 1E */ 'A' + 128, 'S' + 128, 'D' + 128, 'F' + 128, 'G' + 128, 'H' + 128,
-	/* 24 */ 'J' + 128, 'K' + 128, 'L' + 128, ';' + 128, '\'' + 128, 0, 0, 0,
-	/* 2C */ 'Z' + 128, 'X' + 128, 'C' + 128, 'V' + 128, 'B' + 128, 'N' + 128,
-	/* 32 */ 'M' + 128, ',' + 128, '.' + 128, '/', 0, 0, 0, 0, 0,
-	/* 3B */ TC_F1, TC_F2, TC_F3, TC_F4, TC_F5, TC_F6, TC_F7, TC_F8, TC_F9, TC_F10, 0, 0,
-	/* 47 */ TC_HOME, TC_UP, TC_PGUP, 0,
-	/* 4B */ TC_LEFT, 0, TC_RIGHT, 0, TC_END,
-	/* 50 */ TC_DOWN, TC_PGDOWN, TC_INSERT, TC_DELETE,
+static int alts[] = { /* 0x10 to 0x53 inclusive */
+	'Q' + 128, 'W' + 128, 'E' + 128, 'R' + 128, 'T' + 128, 'Y' + 128,
+	'U' + 128, 'I' + 128, 'O' + 128, 'P' + 128, '[' + 128, ']' + 128, 0, 0,
+	'A' + 128, 'S' + 128, 'D' + 128, 'F' + 128, 'G' + 128, 'H' + 128,
+	'J' + 128, 'K' + 128, 'L' + 128, ';' + 128, '\'' + 128, 0, 0, 0,
+	'Z' + 128, 'X' + 128, 'C' + 128, 'V' + 128, 'B' + 128, 'N' + 128,
+	'M' + 128, ',' + 128, '.' + 128, '/', 0, 0, 0, 0, 0,
+	TC_F1, TC_F2, TC_F3, TC_F4, TC_F5, TC_F6, TC_F7, TC_F8, TC_F9, TC_F10, 0, 0,
+	TC_HOME, TC_UP, TC_PGUP, 0,
+	TC_LEFT, 0, TC_RIGHT, 0, TC_END,
+	TC_DOWN, TC_PGDOWN, TC_INSERT, TC_DELETE,
 };
 
 int tgetcmd(void)
 {
+	extern int ring_bell;
 	int cmd;
 
 	if (Cmdpushed >= 0) {
@@ -47,8 +48,12 @@ int tgetcmd(void)
 		return cmd;
 	}
 
-	kb_hit = 0;
 	cmd = getch() & 0x7f;
+	kb_hit = 0;
+	if (ring_bell) {
+		ring_bell = 0;
+		Curwdo->modeflags = INVALID;
+	}
 	if (cmd == 0) {
 		cmd = getch();
 		if (cmd >= 0x10 && cmd <= 0x53)

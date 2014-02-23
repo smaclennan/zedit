@@ -202,13 +202,16 @@ void bind_init(void)
 	Keys[TC_F3]	= ZAGAIN;
 	Keys[TC_F4]	= ZNEXT_ERROR;
 	Keys[TC_F5]	= ZRE_REPLACE;
-	/* [TC_F6] = , */
+	Keys[TC_F6]	= ZHELP,
 	Keys[TC_F7]	= ZMAKE;
 	Keys[TC_F8]	= ZGREP;
 	Keys[TC_F9]	= ZWORD_SEARCH;
 	Keys[TC_F10] = ZTAG_WORD;
 	Keys[TC_F11] = ZNEXT_BOOKMARK;
 	Keys[TC_F12] = ZREVERT_FILE;
+
+	/* HACK. I wanted to keep this in DOS specific code. */
+	install_ints();
 }
 
 const char *special_label(int key)

@@ -2,6 +2,12 @@
 
 #define V(n) {(char *)n}
 
+#ifdef DOS
+#define COMMENT_DEF 0
+#else
+#define COMMENT_DEF 1
+#endif
+
 struct avar Vars[] = {
 	{ "add-nl",		V_FLAG,		V(1),
 	  "If set, the editor will insure that all saved files end in a "
@@ -20,7 +26,7 @@ struct avar Vars[] = {
 	  "This variable defines the number of spaces displayed per tab in "
 	  "C mode buffers. See also tabs."
 	},
-	{ "comments",		V_FLAG,		V(1),
+	{ "comments",		V_FLAG,		V(COMMENT_DEF),
 	  "If set then Zedit tries to bold (display in red) comments in C "
 	  "and shell mode buffers."
 	},

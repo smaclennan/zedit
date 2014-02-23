@@ -19,8 +19,10 @@
 
 #include "z.h"
 #include "keys.h"
+#include <time.h>
 
 int Cmdpushed = -1;
+static int kb_hit;
 
 #if 0
 static int alts[] = {
@@ -40,6 +42,7 @@ int tgetcmd(void)
 		return cmd;
 	}
 
+	kb_hit = 0;
 	cmd = getch() & 0x7f;
 	if (cmd == 0) {
 		cmd = getch();
@@ -68,14 +71,35 @@ int tgetcmd(void)
 	return cmd;
 }
 
+bool tkbrdy(void)
+{
+	/* Once kbhit returns true you cannot call it again
+	 * without calling getch or it will block. */
+	if (!kb_hit)
+		kb_hit = kbhit();
+
+	return kb_hit;
+}
+
 bool tdelay(int ms)
 {
+#if 0
+	/* This works. Except if you hit C-C during a clock call then the C-C
+	 * will abort Zedit. The C-C interrupt handler doesn't seem to help.
+	 * The delay call has the same problem.
+	 */
 	clock_t end;
 
 	if (InPaw)
 		return false;
 
-	end = clock() + (ms / 55); /* clock in 55ms increments */
-	while (!kbhit() && clock() <= end) ;
-	return kbhit() == 0;
+	end = clock() + (clock_t)(ms / 55); /* clock in 55ms increments */
+	while (!tkbrdy() && clock() <= end) ;
+	return !tkbrdy();
+#else
+	if (InPaw)
+		return false;
+	else
+		return !tkbrdy();
+#endif
 }

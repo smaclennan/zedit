@@ -30,7 +30,11 @@ extern jmp_buf zenv;
 /* The bigger the page size the faster the editor.
  * However, every buffer has at least one page.
  */
+#ifdef DOS
+#define PSIZE		512		/* size of page */
+#else
 #define PSIZE		4096		/* size of page */
+#endif
 #define HALFP		(PSIZE / 2)	/* half the page size */
 
 struct page {

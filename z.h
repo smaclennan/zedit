@@ -155,8 +155,13 @@ extern void (*Nextpart)(void);
 #define clrpaw()	_putpaw("")
 
 /* The memory usage for screen stuff is approx:  (ROWMAX + 1) x 25 + COLMAX */
+#ifdef DOS
+#define ROWMAX				25
+#define COLMAX				80
+#else
 #define	ROWMAX				110
 #define	COLMAX				256
+#endif
 
 #define PREFLINE			10
 
@@ -184,7 +189,6 @@ void tflush(void);
 #elif defined(DOS)
 #define gethomedir()		getenv("HOME")
 #define tputchar(c)		putch(c)
-#define tkbrdy			kbhit
 #define tflush()
 #else
 #define gethomedir()		getenv("HOME")

@@ -139,3 +139,19 @@ void closedir(DIR *dir)
 }
 
 #endif
+
+#ifdef DOS
+#include <stdarg.h>
+
+int snprintf(char *str, int size, const char *fmt, ...)
+{
+	int n;
+	va_list ap;
+
+	va_start(ap, fmt);
+	n = vsprintf(str, fmt, ap);
+	va_end(ap);
+
+	return n;
+}
+#endif

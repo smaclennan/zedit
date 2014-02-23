@@ -409,6 +409,9 @@ void tcleol(void)
 		tforce();
 		for (i = 0; i < len; ++i)
 			putch(' ');
+		/* We need to move the cursor back.
+		 * We cannot call tforce since it has saved the position. */
+		gotoxy(Pcol + 1, Prow + 1);
 #else
 		tforce();
 		fputs("\033[K", stdout);

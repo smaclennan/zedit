@@ -117,6 +117,7 @@ void Zgrep(void)
 		return;
 
 	if (wuseother(MAKEBUFF)) {
+		NexterrorCalled = 0;
 		grepit(input, files);
 		wswitchto(save);
 	}

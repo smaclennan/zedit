@@ -192,7 +192,7 @@ struct cnames Cnames[] = {
 	 "is left at the end of the buffer."
 	},
 	{"grep",			ZGREP,			0,
-#if !SHELL
+#if !SHELL && !INTERNAL_GREP
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "Prompts for the completion of a grep command and then performs the "
@@ -318,7 +318,7 @@ struct cnames Cnames[] = {
 	 "of a line, it is moved to the start of the next line."
 	},
 	{"next-error",			ZNEXT_ERROR,		AN,
-#if !SHELL
+#if !SHELL && !INTERNAL_GREP
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "Used after a make or grep command to search for error messages, "

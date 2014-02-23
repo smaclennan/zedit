@@ -147,6 +147,8 @@ extern bool Insearch;
 extern Byte CRdefault;
 extern int circf;
 
+extern int NexterrorCalled;
+
 extern void (*Nextpart)(void);
 
 #define MIN(a, b)	(a < b ? a : b)

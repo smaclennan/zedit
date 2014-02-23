@@ -12,4 +12,5 @@
 #define UNDO		0	/* EXPERIMENTAL */
 #endif
 
+/* This overrides the SHELL version */
 #define INTERNAL_GREP	1

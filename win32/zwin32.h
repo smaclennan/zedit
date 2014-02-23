@@ -46,8 +46,6 @@ DIR *opendir(const char *dirname);
 struct dirent *readdir(DIR *dir);
 void closedir(DIR *dir);
 
-typedef int pid_t;
-
 #endif
 
 #ifdef DOS
@@ -56,8 +54,6 @@ typedef int pid_t;
 typedef int bool;
 #define true  1
 #define false 0
-
-typedef int pid_t;
 
 #define vsnprintf(a, b, c, d) vsprintf(a, c, d)
 #define strcasecmp stricmp
@@ -75,5 +71,7 @@ int getopt(int argc, char *argv[], const char *optstring);
 #define F_OK 0
 #define R_OK 4
 #define W_OK 2
+
+typedef int pid_t;
 
 #endif

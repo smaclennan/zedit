@@ -152,8 +152,6 @@ void tinit(void)
 
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT);
-#elif defined(DOS)
-	_setcursortype(_SOLIDCURSOR);
 #endif
 
 #ifdef SIGHUP
@@ -180,6 +178,8 @@ void tinit(void)
 		tfini();
 		exit(1);
 	}
+
+	tsetcursor();
 
 	Srow = Scol = -1;	/* undefined */
 	initline();		/* Curwdo not defined yet */
@@ -543,6 +543,15 @@ void tsetcursor(void)
 		_setcursortype(_NORMALCURSOR);
 	else
 		_setcursortype(_SOLIDCURSOR);
+#elif defined(WIN32)
+	CONSOLE_CURSOR_INFO cursorinfo;
+
+	if (Curbuff->bmode & OVERWRITE)
+		cursorinfo.dwSize = 25; /* default */
+	else
+		cursorinfo.dwSize = 100; /* solid */
+	cursorinfo.bVisible = true;
+	SetConsoleCursorInfo(hstdout, &cursorinfo);
 #endif
 }
 

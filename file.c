@@ -199,11 +199,11 @@ void Zwrite_file(void)
 	if (getfname(prompt, path) == 0) {
 		if (Argp) {
 			struct buff *tbuff, *save = Curbuff;
-			tbuff = cmakebuff("___tmp___", (char *)NULL);
+			tbuff = bcreate();
 			if (tbuff) {
 				putpaw("Writing %s", path);
 				bswitchto(save);
-				bcopyrgn(Curbuff->mark, tbuff);
+				bcopyrgn(Curbuff->umark, tbuff);
 				bswitchto(tbuff);
 				Curbuff->bmode = save->bmode;
 				bwritefile(path);

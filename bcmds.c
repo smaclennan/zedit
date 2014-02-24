@@ -126,7 +126,7 @@ void delbuff(struct buff *buff)
 			if (wdo->wbuff == buff) {
 				wdo->wbuff = Curbuff;
 				bmrktopnt(wdo->wpnt);
-				mrktomrk(wdo->wmrk, Curbuff->mark);
+				mrktomrk(wdo->wmrk, Curbuff->umark);
 				bmrktopnt(wdo->wstart);
 				wdo->modeflags = INVALID;
 			}

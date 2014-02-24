@@ -83,12 +83,12 @@ void Zdelete_line(void)
 
 void Zdelete_region(void)
 {
-	killtomrk(Curbuff->mark);
+	killtomrk(Curbuff->umark);
 }
 
 void Zcopy_region(void)
 {
-	copytomrk(Curbuff->mark);
+	copytomrk(Curbuff->umark);
 }
 
 
@@ -104,7 +104,7 @@ void Zyank(void)
 
 	mrktomrk(&save, Send);
 	tbuff = Curbuff;
-	bmrktopnt(Curbuff->mark);
+	bmrktopnt(Curbuff->umark);
 	bswitchto(Killbuff);
 	btoend();
 	tmark = bcremrk();

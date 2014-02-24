@@ -210,7 +210,7 @@ star:
 					return true;
 				bpnttomrk(&tmark);
 				bmove(-1); /* go back and try again */
-			} while (bisaftermrk(&curlp)); /* till back to start */
+			} while (!bisbeforemrk(&curlp)); /* till back to start */
 			bpnttomrk(&curlp); /* Don't slip backwards */
 			return false;
 		}

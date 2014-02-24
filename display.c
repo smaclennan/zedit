@@ -36,6 +36,20 @@ static Byte tline[COLMAX + 1];
 
 static void (*printchar)(Byte ichar) = tprntchar;
 
+/* True if user mark moved */
+static bool umarkmoved(struct mark *tmark)
+{
+	return	tmark->moffset != Curbuff->umark->moffset ||
+		tmark->mpage != Curbuff->umark->mpage ||
+		tmark->mbuff != Curbuff->umark->mbuff;
+}
+
+/* True if buffer at user mark */
+static bool bisatumark(void)
+{
+	return  Curpage == Curbuff->umark->mpage &&
+		Curchar == Curbuff->umark->moffset;
+}
 
 /* Mark screen invalid */
 void redisplay(void)
@@ -76,7 +90,7 @@ void zrefresh(void)
 
 	setmodes(Curbuff);	/* SAM make sure OK */
 
-	if (!mrkatmrk(was, Curbuff->umark)) {
+	if (umarkmoved(was)) {
 		/* the user mark has moved! */
 		vsetmrk(was);
 		vsetmrk(Curbuff->umark);
@@ -140,7 +154,7 @@ void zrefresh(void)
 	 * and invalidates its position so it will be updated when the
 	 * cursor moves on...
 	 */
-	if (bisatmrk(Curbuff->umark)) {
+	if (bisatumark()) {
 		tstyle(T_NORMAL);
 		tprntchar((bisend() || ISNL(Buff())) ? ' ' : Buff());
 		t_goto(pntrow, col);
@@ -199,7 +213,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 				    Buff() != (Byte)'\376')
 					tgetcol() = col;
 				else {
-					if (bisatmrk(Curbuff->umark))
+					if (bisatumark())
 						setmark(true);
 					else
 						/* usually tprntchar */
@@ -213,8 +227,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 				bmove1();
 			}
 			tcleol();
-			if (bisatmrk(Curbuff->umark) &&
-				(ISNL(Buff()) || bisstart() || bisend()))
+			if (bisatumark() && (ISNL(Buff()) || bisstart() || bisend()))
 					setmark(false);
 			if (col >= tmaxcol())
 				extendedlinemarker();
@@ -446,7 +459,7 @@ void vsetmrk(struct mark *mrk)
 static void pawdisplay(struct mark *pmark, struct mark *was)
 {
 	int bcol = 0, i, nested = 0;
-	bool mrkmoved = !mrkatmrk(was, Curbuff->umark);
+	bool mrkmoved = umarkmoved(was);
 
 	Prow = Rowmax - 1;
 pawshift:
@@ -456,8 +469,8 @@ pawshift:
 	     bmove1(), ++i) {
 		if (bisatmrk(pmark))
 			bcol = Pcol;
-		if (mrkmoved && (bisatmrk(Curbuff->umark) || bisatmrk(was))) {
-			if (bisatmrk(Curbuff->umark))
+		if (mrkmoved && (bisatumark() || bisatmrk(was))) {
+			if (bisatumark())
 				tstyle(T_REVERSE);
 			tprntchar(Buff());
 			tstyle(T_NORMAL);
@@ -473,7 +486,7 @@ pawshift:
 	tcleol();
 
 	if (bisend()) {
-		if (bisatmrk(Curbuff->umark)) {
+		if (bisatumark()) {
 			setmark(false);
 			--Pcol;		/* space always 1 character! */
 		} else if (bisatmrk(pmark))
@@ -511,7 +524,7 @@ pawshift:
 	 * and invalidates its position so it will be updated when the
 	 * cursor moves on...
 	 */
-	if (bisatmrk(Curbuff->umark)) {
+	if (bisatumark()) {
 		i = Pcol;
 		tprntchar(bisend() ? ' ' : Buff());
 		Pcol = i;

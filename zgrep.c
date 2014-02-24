@@ -32,6 +32,13 @@
 
 #include <fnmatch.h>
 
+
+#if defined(WIN32) || defined(DOS)
+#define FNM_FLAGS FNM_CASEFOLD
+#else
+#define FNM_FLAGS 0
+#endif
+
 static void grep_one(char *fname, Byte *ebuf,
 		     struct buff *inbuff, struct buff *outbuff)
 {
@@ -40,7 +47,7 @@ static void grep_one(char *fname, Byte *ebuf,
 
 	if (breadfile(fname))
 		return;
-		
+
 	while (step(ebuf)) {
 		struct mark *start;
 		unsigned line;
@@ -65,6 +72,7 @@ static void grepit(char *input, char *files)
 {
 	Byte ebuf[ESIZE];
 	DIR *dir;
+	char *p;
 	struct dirent *ent;
 	struct buff *inbuff, *outbuff = Curbuff;
 
@@ -74,8 +82,13 @@ static void grepit(char *input, char *files)
 		return;
 	}
 
-	/* SAM this could be smarter and pull the dir off the files spec */
-	dir = opendir(".");
+	p = strrchr(files, '/');
+	if (p) {
+		*p++ = '\0';
+		dir = opendir(files);
+		files = p;
+	} else
+		dir = opendir(".");
 	if (!dir) {
 		error("Unable to open directory");
 		return;
@@ -88,7 +101,7 @@ static void grepit(char *input, char *files)
 	}
 
 	while ((ent = readdir(dir)))
-		if (fnmatch(files, ent->d_name, 0) == 0)
+		if (fnmatch(files, ent->d_name, FNM_FLAGS) == 0)
 			grep_one(ent->d_name, ebuf, inbuff, outbuff);
 
 cleanup:

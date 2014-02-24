@@ -159,9 +159,9 @@ struct buff *bcreate(void)
 			free(buf);
 			return NULL;
 		}
-		buf->mark = bcremrk();
-		buf->mark->mbuff = buf;
-		buf->pnt_page = buf->mark->mpage = fpage;
+		buf->umark = bcremrk();
+		buf->umark->mbuff = buf;
+		buf->pnt_page = buf->umark->mpage = fpage;
 		buf->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 			(VAR(VEXACT) ? EXACT     : 0);
 		buf->child = EOF;
@@ -282,7 +282,7 @@ bool bdelbuff(struct buff *tbuff)
 
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);
-	unmark(tbuff->mark);	/* free the user mark */
+	unmark(tbuff->umark);	/* free the user mark */
 	if (tbuff == Bufflist)	/* unlink from the list */
 		Bufflist = tbuff->next;
 	if (tbuff->prev)

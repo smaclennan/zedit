@@ -36,7 +36,7 @@ static struct wdo *wcreate(int first, int last)
 		wdo->modeflags	= INVALID;
 		wdo->first	= first;
 		wdo->last	= last;
-		mrktomrk(wdo->wmrk, Curbuff->mark);
+		mrktomrk(wdo->wmrk, Curbuff->umark);
 	}
 	return wdo;
 }
@@ -121,7 +121,7 @@ void wswitchto(struct wdo *wdo)
 	if (wdo != Curwdo) {
 		if (Curwdo) {
 			bmrktopnt(Curwdo->wpnt);
-			mrktomrk(Curwdo->wmrk, Curbuff->mark);
+			mrktomrk(Curwdo->wmrk, Curbuff->umark);
 			/* don't update wstart unless Sstart for this window */
 			if (Sstart->mbuff == Curwdo->wbuff)
 				mrktomrk(Curwdo->wstart, Sstart);
@@ -129,7 +129,7 @@ void wswitchto(struct wdo *wdo)
 		Curwdo = wdo;
 		bswitchto(wdo->wbuff);
 		bpnttomrk(wdo->wpnt);
-		mrktomrk(Curbuff->mark, wdo->wmrk);
+		mrktomrk(Curbuff->umark, wdo->wmrk);
 		mrktomrk(Sstart, wdo->wstart);
 		Sendp = false;
 	}
@@ -143,7 +143,7 @@ void cswitchto(struct buff *buff)
 	if (Curwdo->wbuff != Curbuff) {
 		Curwdo->wbuff = Curbuff;
 		bmrktopnt(Curwdo->wpnt);
-		mrktomrk(Curwdo->wmrk, Curbuff->mark);
+		mrktomrk(Curwdo->wmrk, Curbuff->umark);
 		if (Sstart->mbuff == Curbuff)
 			mrktomrk(Curwdo->wstart, Sstart);
 		else {

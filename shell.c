@@ -470,14 +470,14 @@ void Znext_error(void)
 		bcsearch(NL);
 	line = parse(fname);
 	if (line) {
-		vsetmrk(Curbuff->mark);
-		bmrktopnt(Curbuff->mark);
+		vsetmrk(Curbuff->umark);
+		bmrktopnt(Curbuff->umark);
 		tobegline();
-		bswappnt(Curbuff->mark);
-		vsetmrk(Curbuff->mark);
+		bswappnt(Curbuff->umark);
+		vsetmrk(Curbuff->umark);
 		wdo = findwdo(mbuff);
 		if (wdo)
-			mrktomrk(wdo->wstart, Curbuff->mark);
+			mrktomrk(wdo->wstart, Curbuff->umark);
 		pathfixup(path, fname);
 		findfile(path);
 		Argp = true;
@@ -486,7 +486,7 @@ void Znext_error(void)
 		tobegline();
 	} else {
 		btoend();
-		bmrktopnt(Curbuff->mark);
+		bmrktopnt(Curbuff->umark);
 		bswitchto(save);
 		putpaw("No more errors");
 	}

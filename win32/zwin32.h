@@ -51,6 +51,9 @@ void closedir(DIR *dir);
 #ifdef DOS
 #include <time.h>
 
+#define inline
+#define _inline
+
 typedef int bool;
 #define true  1
 #define false 0

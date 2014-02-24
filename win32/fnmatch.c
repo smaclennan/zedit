@@ -149,7 +149,7 @@ size_t alloca_used;
 		switch (c)
 		{
 		case L('?'):
-			if (__builtin_expect(flags & FNM_EXTMATCH, 0) && *p == '(')
+			if ((flags & FNM_EXTMATCH) == 0 && *p == '(')
 			{
 				int res = EXT(c, p, n, string_end, no_leading_period,
 					      flags, alloca_used);
@@ -179,7 +179,7 @@ size_t alloca_used;
 			break;
 
 		case L('*'):
-			if (__builtin_expect(flags & FNM_EXTMATCH, 0) && *p == '(')
+			if ((flags & FNM_EXTMATCH) == 0 && *p == '(')
 			{
 				int res = EXT(c, p, n, string_end, no_leading_period,
 					      flags, alloca_used);
@@ -217,7 +217,7 @@ size_t alloca_used;
 						/* There isn't another character; no match.  */
 						return FNM_NOMATCH;
 					else if (*n == L('/')
-						 && __builtin_expect(flags & FNM_FILE_NAME, 0))
+						 && (flags & FNM_FILE_NAME) == 0)
 						/* A slash does not match a wildcard under
 						   FNM_FILE_NAME.  */
 						return FNM_NOMATCH;
@@ -262,7 +262,7 @@ size_t alloca_used;
 					endp = string_end;
 
 				if (c == L('[')
-				    || (__builtin_expect(flags & FNM_EXTMATCH, 0) != 0
+				    || ((flags & FNM_EXTMATCH)
 					&& (c == L('@') || c == L('+') || c == L('!'))
 					&& *p == L('(')))
 				{
@@ -535,7 +535,7 @@ size_t alloca_used;
 		case L('+'):
 		case L('@'):
 		case L('!'):
-			if (__builtin_expect(flags & FNM_EXTMATCH, 0) && *p == '(')
+			if ((flags & FNM_EXTMATCH) == 0 && *p == '(')
 			{
 				int res = EXT(c, p, n, string_end, no_leading_period, flags,
 					      alloca_used);
@@ -620,7 +620,7 @@ EXT(INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
 	{
 		struct patternlist *next;
 		CHAR malloced;
-		CHAR str[0];
+		CHAR str[1]; /* Turbo C does not allow 0 */
 	} *list = NULL;
 	struct patternlist **lastp = &list;
 	size_t pattern_len = STRLEN(pattern);

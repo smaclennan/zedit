@@ -135,6 +135,8 @@ void Zswap_mark(void)
 	struct mark tmark;
 
 	Arg = 0;
+	NEED_UMARK;
+
 	mrktomrk(&tmark, Curbuff->umark);
 	Zset_mark();
 	bpnttomrk(&tmark);

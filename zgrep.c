@@ -130,6 +130,7 @@ void Zgrep(void)
 		return;
 
 	if (wuseother(MAKEBUFF)) {
+		set_umark(NULL);
 		grepit(input, files);
 		wswitchto(save);
 	}

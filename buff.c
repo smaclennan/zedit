@@ -1174,6 +1174,7 @@ void set_umark(struct mark *tmark)
 void unset_umark(void)
 {
 	if (Curbuff->umark) {
+		vsetmrk(Curbuff->umark);
 		if (freeumark)
 			unmark(Curbuff->umark);
 		else

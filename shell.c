@@ -296,6 +296,7 @@ static void cmdtobuff(const char *bname, const char *cmd)
 	struct wdo *save = Curwdo;
 
 	if (wuseother(bname)) {
+		set_umark(NULL);
 		do_chdir(Curbuff);
 		if (dopipe(Curbuff, cmd))
 			message(Curbuff, cmd);
@@ -333,6 +334,7 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 
 	do_chdir(Curbuff);
 	if (wuseother(bname)) {
+		set_umark(NULL);
 		message(Curbuff, cmdin);
 		putpaw("Please wait...");
 		while (fgets(line, sizeof(line), pfp)) {
@@ -463,6 +465,7 @@ void Znext_error(void)
 	}
 	save = Curbuff;
 	bswitchto(mbuff);
+	NEED_UMARK;
 	if (!NexterrorCalled) {
 		NexterrorCalled = 1;
 		btostart();
@@ -486,7 +489,7 @@ void Znext_error(void)
 		tobegline();
 	} else {
 		btoend();
-		bmrktopnt(Curbuff->umark);
+		unset_umark();
 		bswitchto(save);
 		putpaw("No more errors");
 	}

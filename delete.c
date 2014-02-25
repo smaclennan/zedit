@@ -83,11 +83,13 @@ void Zdelete_line(void)
 
 void Zdelete_region(void)
 {
+	NEED_UMARK;
 	killtomrk(Curbuff->umark);
 }
 
 void Zcopy_region(void)
 {
+	NEED_UMARK;
 	copytomrk(Curbuff->umark);
 }
 

@@ -9,7 +9,7 @@ int InPaw;
 #include "../cnames.c"
 #include "../funcs.c"
 #include "../kbd.c"
-#include "../vars-array.c"
+#include "../varray.c"
 
 static char *heading[] = { "Appendix A: Commands", "Appendix B: Variables" };
 static char *fnames[] = { "app-a.html", "app-b.html" };

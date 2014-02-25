@@ -228,4 +228,6 @@ void Zundo(void)
 		/* Last undo */
 		Curbuff->bmodf = false;
 }
+#else
+void Zundo(void) { tbell(); }
 #endif

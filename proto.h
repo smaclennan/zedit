@@ -302,5 +302,4 @@ void undo_clear(struct buff *buff);
 #define undo_add(size)
 #define undo_del(size)
 #define undo_clear(buff)
-#define Zundo Znotimpl
 #endif

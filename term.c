@@ -45,6 +45,8 @@ HANDLE hstdin, hstdout;	/* Console in and out handles */
 
 #define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
 #define BLACK_ON_WHITE (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
+#elif defined(DOS)
+#include <conio.h>
 #else
 #error No term driver
 #endif
@@ -54,6 +56,8 @@ int Clrcol[ROWMAX + 1];		/* Clear if past this */
 int Prow, Pcol;			/* Point row and column */
 static int Srow, Scol;		/* Saved row and column */
 int Colmax = EOF, Rowmax;	/* Row and column maximums */
+
+int ring_bell;			/* tbell called */
 
 #ifdef SIGWINCH
 /* This is called if the window has changed size. */
@@ -175,6 +179,8 @@ void tinit(void)
 		exit(1);
 	}
 
+	tsetcursor();
+
 	Srow = Scol = -1;	/* undefined */
 	initline();		/* Curwdo not defined yet */
 }
@@ -220,6 +226,9 @@ static void tsize(int *rows, int *cols)
 			*rows = info.dwSize.Y;
 		}
 	}
+#elif defined(DOS)
+	*rows = 25;
+	*cols = 80;
 #else
 	char buf[12];
 	int n, w;
@@ -371,6 +380,8 @@ void tforce(void)
 		where.X = Pcol;
 		where.Y = Prow;
 		SetConsoleCursorPosition(hstdout, where);
+#elif defined(DOS)
+		gotoxy(Pcol + 1, Prow + 1);
 #else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
 #endif
@@ -396,6 +407,15 @@ void tcleol(void)
 			where.X = Clrcol[Prow] - 1;
 		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, 1,
 					   where, &written);
+#elif defined(DOS)
+		int i, len = Clrcol[Prow] - Pcol;
+
+		tforce();
+		for (i = 0; i < len; ++i)
+			putch(' ');
+		/* We need to move the cursor back.
+		 * We cannot call tforce since it has saved the position. */
+		gotoxy(Pcol + 1, Prow + 1);
 #else
 		tforce();
 		fputs("\033[K", stdout);
@@ -414,6 +434,9 @@ void tclrwind(void)
 				   where, &written);
 	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
 				   where, &written);
+#elif defined(DOS)
+	tstyle(T_NORMAL);
+	clrscr();
 #else
 	fputs("\033[2J", stdout);
 #endif
@@ -444,6 +467,30 @@ void tstyle(int style)
 		break;
 	case T_COMMENT:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_RED);
+		break;
+	}
+#elif defined(DOS)
+	if (cur_style == T_BOLD)
+		normvideo();
+
+	switch (style) {
+	case T_NORMAL:
+		textcolor(WHITE);
+		textbackground(BLACK);
+		break;
+	case T_STANDOUT: /* modeline */
+		textcolor(BLACK);
+		textbackground(ring_bell ? RED : WHITE);
+		break;
+	case T_REVERSE:
+		textcolor(BLACK);
+		textbackground(WHITE);
+		break;
+	case T_BOLD:
+		highvideo();
+		break;
+	case T_COMMENT:
+		textcolor(RED);
 		break;
 	}
 #else
@@ -477,13 +524,35 @@ void tbell(void)
 		Beep(440, 250);
 		FillConsoleOutputAttribute(hstdout, BLACK_ON_WHITE, Colmax,
 					   where, &written);
+#elif defined(DOS)
+		Curwdo->modeflags = INVALID;
 #else
 		fputs("\033[?5h", stdout);
 		fflush(stdout);
 		usleep(100000);
 		fputs("\033[?5l", stdout);
 #endif
+		ring_bell = 1;
 	}
+}
+
+void tsetcursor(void)
+{
+#ifdef DOS
+	if (Curbuff->bmode & OVERWRITE)
+		_setcursortype(_NORMALCURSOR);
+	else
+		_setcursortype(_SOLIDCURSOR);
+#elif defined(WIN32)
+	CONSOLE_CURSOR_INFO cursorinfo;
+
+	if (Curbuff->bmode & OVERWRITE)
+		cursorinfo.dwSize = 25; /* default */
+	else
+		cursorinfo.dwSize = 100; /* solid */
+	cursorinfo.bVisible = true;
+	SetConsoleCursorInfo(hstdout, &cursorinfo);
+#endif
 }
 
 #ifdef WIN32

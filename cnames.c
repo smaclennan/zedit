@@ -66,6 +66,9 @@ struct cnames Cnames[] = {
 	 "the right margin."
 	},
 	{"cmd-to-buffer",		ZCMD_TO_BUFFER,		AI,
+#if !SHELL
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "Prompts for a command and then executes the command in the "
 	 "shell. The output is put in the " SHELLBUFF " buffer. Any previous "
 	 "contents of the " SHELLBUFF " buffer are deleted."
@@ -189,6 +192,9 @@ struct cnames Cnames[] = {
 	 "is left at the end of the buffer."
 	},
 	{"grep",			ZGREP,			0,
+#if !SHELL && !INTERNAL_GREP
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "Prompts for the completion of a grep command and then performs the "
 	 "grep command in the " MAKEBUFF " buffer. A Universal Argument will "
 	 "prompt for the grep command to use. Use next-error to go through the "
@@ -266,6 +272,9 @@ struct cnames Cnames[] = {
 	 "leaves the Point at the end of the word."
 	},
 	{"make",			ZMAKE,			0,
+#if !SHELL
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "This command performs the command specified in the Make variable "
 	 "and puts the output in the " MAKEBUFF " buffer. The command is "
 	 "usually 'make' and is used in conjunction with the next-error "
@@ -309,6 +318,9 @@ struct cnames Cnames[] = {
 	 "of a line, it is moved to the start of the next line."
 	},
 	{"next-error",			ZNEXT_ERROR,		AN,
+#if !SHELL && !INTERNAL_GREP
+	 "Note: Disabled in this version of Zedit.\n\n"
+#endif
 	 "Used after a make or grep command to search for error messages, "
 	 "or grep output, "
 	 "in the " MAKEBUFF " buffer. If an error is found, the "

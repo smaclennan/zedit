@@ -152,6 +152,12 @@ Z(pnewline);
 
 /* General routines */
 
+#ifdef DOS
+void bind_init(void);
+#else
+#define bind_init()
+#endif
+
 void initscrnmarks(void);
 int ask(const char *);
 int ask2(const char *, bool);
@@ -246,6 +252,7 @@ void tclrwind(void);
 void termsize(void);
 void tfini(void);
 void tforce(void);
+void tsetcursor(void);
 int tgetcmd(void);
 void t_goto(int, int);
 void tindent(int);

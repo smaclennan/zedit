@@ -22,19 +22,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef DOS
 #include <stdbool.h>
+#endif
 #include <string.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/stat.h>
 
-#ifdef __unix__
+#if defined(__unix__) && SHELL
 #define DOPIPES 1
 #endif
 #include "config.h"
 
-#ifdef WIN32
+#if defined(WIN32) || defined(DOS)
 #include "zwin32.h"
 #else
 #include <unistd.h>
@@ -145,6 +147,8 @@ extern bool Insearch;
 extern Byte CRdefault;
 extern int circf;
 
+extern int NexterrorCalled;
+
 extern void (*Nextpart)(void);
 
 #define MIN(a, b)	(a < b ? a : b)
@@ -153,8 +157,13 @@ extern void (*Nextpart)(void);
 #define clrpaw()	_putpaw("")
 
 /* The memory usage for screen stuff is approx:  (ROWMAX + 1) x 25 + COLMAX */
+#ifdef DOS
+#define ROWMAX				25
+#define COLMAX				80
+#else
 #define	ROWMAX				110
 #define	COLMAX				256
+#endif
 
 #define PREFLINE			10
 
@@ -179,6 +188,10 @@ extern int Tabsize;
 char *gethomedir(void);
 void tputchar(Byte c);
 void tflush(void);
+#elif defined(DOS)
+#define gethomedir()		getenv("HOME")
+#define tputchar(c)		putch(c)
+#define tflush()
 #else
 #define gethomedir()		getenv("HOME")
 #define tputchar(c)		putchar(c)

@@ -33,6 +33,7 @@ static void dotty(void)
 	First = false; /* used by pinsert when InPaw */
 }
 
+#if SHELL
 static void do_chdir(struct buff *buff)
 {
 	if (buff->fname) {
@@ -60,6 +61,7 @@ static void message(struct buff *buff, const char *str)
 			wdo->modeflags = INVALID;
 	putpaw("%s", str);
 }
+#endif
 
 #if DOPIPES
 #include <signal.h>
@@ -311,6 +313,8 @@ void Zkill(void)
 }
 #else
 void Zkill(void) { tbell(); }
+void unvoke(struct buff *child, bool check) {}
+int checkpipes(int type) { return 0; }
 
 void execute(void)
 {
@@ -318,6 +322,7 @@ void execute(void)
 	dotty();
 }
 
+#if SHELL
 static void cmdtobuff(const char *bname, const char *cmdin)
 {
 	FILE *pfp;
@@ -351,46 +356,11 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 		putpaw("Returned %d", rc);
 	wswitchto(save);
 }
+#endif
 
-void unvoke(struct buff *child, bool check) {}
-int checkpipes(int type) { return 0; }
 #endif /* DOPIPES */
 
-/* This is cleared in Zmake and set in Znexterror.
- * If clear, the make buffer is scrolled up. Once a next error is
- * called, the buffer is kept at the error line.
- */
-static int NexterrorCalled;
-
-/* Find the next error in the .make buffer.
- * Ignores lines that start with a white space.
- * Supported: <fname>:<line>:
- */
-static int parse(char *fname)
-{
-	int line, n;
-
-	while (!bisend()) {
-		/* try to get the fname */
-		n = getbword(fname, PATHMAX, bistoken);
-		bmove(n);
-
-		/* try to get the line */
-		if (Buff() == ':') {
-			bmove1();
-
-			/* look for line number */
-			line = batoi();
-			if (line)
-				return line;
-		}
-
-		/* skip to next line */
-		bcsearch(NL);
-	}
-	return 0;
-}
-
+#if SHELL
 static int set_cmd(int which, const char *prompt)
 {
 	char cmd[STRMAX + 1];
@@ -450,6 +420,57 @@ void Zgrep(void)
 }
 #endif
 
+void Zcmd_to_buffer(void)
+{
+	static char cmd[STRMAX + 1];
+
+	Arg = 0;
+	if (getarg("@ ", cmd, STRMAX) == 0)
+		cmdtobuff(SHELLBUFF, cmd);
+}
+
+#else
+void Zmake(void) { tbell(); }
+void Zcmd_to_buffer(void) { tbell(); }
+#endif /* SHELL */
+
+#if SHELL || INTERNAL_GREP
+
+/* This is cleared in Zmake and set in Znexterror.
+ * If clear, the make buffer is scrolled up. Once a next error is
+ * called, the buffer is kept at the error line.
+ */
+int NexterrorCalled;
+
+/* Find the next error in the .make buffer.
+ * Ignores lines that start with a white space.
+ * Supported: <fname>:<line>:
+ */
+static int parse(char *fname)
+{
+	int line, n;
+
+	while (!bisend()) {
+		/* try to get the fname */
+		n = getbword(fname, PATHMAX, bistoken);
+		bmove(n);
+
+		/* try to get the line */
+		if (Buff() == ':') {
+			bmove1();
+
+			/* look for line number */
+			line = batoi();
+			if (line)
+				return line;
+		}
+
+		/* skip to next line */
+		bcsearch(NL);
+	}
+	return 0;
+}
+
 void Znext_error(void)
 {
 	struct wdo *wdo;
@@ -497,11 +518,7 @@ void Znext_error(void)
 	Arg = 0;
 }
 
-void Zcmd_to_buffer(void)
-{
-	static char cmd[STRMAX + 1];
-
-	Arg = 0;
-	if (getarg("@ ", cmd, STRMAX) == 0)
-		cmdtobuff(SHELLBUFF, cmd);
-}
+#else
+void Zgrep(void) { tbell(); }
+void Znext_error(void) { tbell(); }
+#endif

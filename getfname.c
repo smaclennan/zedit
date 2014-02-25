@@ -19,7 +19,6 @@
 
 #include "z.h"
 #ifndef WIN32
-#include <pwd.h>
 #ifdef HAVE_DIRECT
 #include <sys/dir.h>
 #define dirent direct
@@ -40,7 +39,11 @@ struct llist {
 
 static struct llist *Flist;
 static bool Didmatch;
-#define OBJEXT		".o"
+#if defined(WIN32) || defined(DOS)
+#define OBJEXT ".obj"
+#else
+#define OBJEXT ".o"
+#endif
 
 static struct llist *add(struct llist **list, char *fname);
 static void freelist(struct llist **list);
@@ -285,7 +288,8 @@ void Zfname(void)
 	}
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(DOS)
+#include <pwd.h>
 
 /* Get users directory - handles partial matches. */
 static bool zgetpwdir(char *name, char *to)

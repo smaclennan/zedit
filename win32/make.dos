@@ -1,0 +1,33 @@
+ZEXE = z.exe
+CC = tcc -ml
+CFLAGS=-DDOS -I. -Iwin32
+
+O=bcmds.obj dosbind.obj buff.obj calc.obj cnames.obj \
+	comment.obj commands.obj cursor.obj delete.obj display.obj \
+	file.obj funcs.obj getarg.obj help.obj \
+	reg.obj shell.obj spell.obj srch.obj \
+	undo.obj vars.obj window.obj varray.obj z.obj       \
+	getfname.obj doskbd.obj tags.obj term.obj zwin32.obj       \
+	zgrep.obj fnmatch.obj dosint.obj
+
+.c.obj:
+	$(CC) -c $(CFLAGS) $<
+	tlib zedit.lib +-$*.obj
+
+all:    $(ZEXE)
+
+$(ZEXE): $(O) z.obj
+	$(CC) z.obj zedit.lib $(LIBS)
+
+z.obj: z.c
+	$(CC) -c $(CFLAGS) z.c
+
+dosint.obj: dosint.asm
+	tasm -mx dosint.asm
+	tlib zedit.lib +-dosint.obj
+
+clean:
+	del *.obj
+	del *.lib
+	del *.exe
+

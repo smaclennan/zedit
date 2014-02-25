@@ -39,15 +39,17 @@ static void (*printchar)(Byte ichar) = tprntchar;
 /* True if user mark moved */
 static bool umarkmoved(struct mark *tmark)
 {
-	return	tmark->moffset != Curbuff->umark->moffset ||
-		tmark->mpage != Curbuff->umark->mpage ||
-		tmark->mbuff != Curbuff->umark->mbuff;
+	return	Curbuff->umark &&
+		(tmark->moffset != Curbuff->umark->moffset ||
+		 tmark->mpage != Curbuff->umark->mpage ||
+		 tmark->mbuff != Curbuff->umark->mbuff);
 }
 
 /* True if buffer at user mark */
 static bool bisatumark(void)
 {
-	return  Curpage == Curbuff->umark->mpage &&
+	return  Curbuff->umark &&
+		Curpage == Curbuff->umark->mpage &&
 		Curchar == Curbuff->umark->moffset;
 }
 
@@ -516,7 +518,8 @@ pawshift:
 	if (bcol)
 		Pcol = bcol;
 	bpnttomrk(pmark);
-	mrktomrk(was, Curbuff->umark);
+	if (Curbuff->umark)
+		mrktomrk(was, Curbuff->umark);
 
 	/*
 	 * If we display the cursor on the mark, they both disappear.

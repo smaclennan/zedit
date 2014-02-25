@@ -387,7 +387,7 @@ void Znotimpl(void) { tbell(); }
 
 void Zset_mark(void)
 {
-	bmrktopnt(Curbuff->umark);
+	set_umark(NULL); /* set to point */
 	putpaw("Mark Set.");
 }
 

@@ -199,6 +199,8 @@ void Zwrite_file(void)
 	if (getfname(prompt, path) == 0) {
 		if (Argp) {
 			struct buff *tbuff, *save = Curbuff;
+
+			NEED_UMARK;
 			tbuff = bcreate();
 			if (tbuff) {
 				putpaw("Writing %s", path);

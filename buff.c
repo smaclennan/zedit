@@ -44,6 +44,8 @@ struct page *Curpage;		/* the current page */
 
 /* Keeping just one mark around is a HUGE win for a trivial amount of code. */
 static struct mark *freemark;
+/* Same for user mark */
+static struct mark *freeumark;
 
 /* stats only */
 static int NumBuffs;
@@ -159,9 +161,7 @@ struct buff *bcreate(void)
 			free(buf);
 			return NULL;
 		}
-		buf->umark = bcremrk();
-		buf->umark->mbuff = buf;
-		buf->pnt_page = buf->umark->mpage = fpage;
+		buf->pnt_page = fpage;
 		buf->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 			(VAR(VEXACT) ? EXACT     : 0);
 		buf->child = EOF;
@@ -1153,6 +1153,33 @@ void bgoto_char(long offset)
 
 	makecur(tpage);
 	makeoffset(offset);
+}
+
+void set_umark(struct mark *tmark)
+{
+	if (Curbuff->umark == NULL) {
+		if (freeumark) {
+			Curbuff->umark = freeumark;
+			freeumark = NULL;
+		} else
+			Curbuff->umark = bcremrk();
+	}
+
+	if (tmark)
+		mrktomrk(Curbuff->umark, tmark);
+	else
+		bmrktopnt(Curbuff->umark);
+}
+
+void unset_umark(void)
+{
+	if (Curbuff->umark) {
+		if (freeumark)
+			unmark(Curbuff->umark);
+		else
+			freeumark = Curbuff->umark;
+		Curbuff->umark = NULL;
+	}
 }
 
 void Zstats(void)

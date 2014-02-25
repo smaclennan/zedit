@@ -76,6 +76,7 @@ struct wdo {
 	struct mark *wpnt;		/* saved Point */
 	struct mark *wmrk;		/* saved Mark */
 	struct mark *wstart;		/* screen start */
+	int umark_set;
 	int first, last;		/* screen line boundries */
 	int modecol;			/* column for modeflags */
 	int modeflags;			/* flags for modeflags */
@@ -115,5 +116,7 @@ static inline void boffset(unsigned long offset) { bmove((int)offset); }
 
 /* Return the character a mark points to. */
 #define markch(mrk)	((mrk)->mpage->pdata[(mrk)->moffset])
+
+#define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)
 
 #endif

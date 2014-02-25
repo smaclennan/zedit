@@ -96,7 +96,6 @@ void zrefresh(void)
 		/* the user mark has moved! */
 		vsetmrk(was);
 		vsetmrk(Curbuff->umark);
-		Tlrow = -1;
 		mrktomrk(was, Curbuff->umark);
 	}
 
@@ -447,6 +446,8 @@ void vsetmod(bool flag)
 void vsetmrk(struct mark *mrk)
 {
 	int row;
+
+	Tlrow = -1; /* Needed if mark and point on same row */
 
 	for (row = 0; row < tmaxrow() - 1; ++row)
 		if (mrkaftermrk(&Scrnmarks[row], mrk)) {

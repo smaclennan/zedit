@@ -186,9 +186,9 @@ extern int Tabsize;
 #ifdef WIN32
 char *gethomedir(void);
 void tputchar(Byte c);
-void tflush(void);
+#define tflush()
 #elif defined(DOS)
-#define gethomedir()		getenv("HOME")
+char *gethomedir(void);
 #define tputchar(c)		putch(c)
 #define tflush()
 #else

@@ -8,6 +8,12 @@
 #include <errno.h>
 
 
+static void hack(FILE *out)
+{
+	fputs("\n\t/* HACK. I wanted to keep this in DOS specific code. */\n", out);
+	fputs("\tinstall_ints();\n", out);
+}
+
 int main(int argc, char *argv[])
 {
 	FILE *in = fopen("bind.c", "r");
@@ -41,6 +47,7 @@ int main(int argc, char *argv[])
 			if ((s = strchr(p, ','))) *s = ';';
 			fprintf(out, "\tKeys%s", p);
 		} else if (*p == '}') {
+			hack(out);
 			fputs("}\n", out);
 			break;
 		} else

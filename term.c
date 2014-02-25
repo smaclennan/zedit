@@ -555,12 +555,9 @@ void tsetcursor(void)
 }
 
 #ifdef WIN32
-/* SAM we can get much smarter with tputchar and tflush... */
 void tputchar(Byte c)
 {
 	DWORD written;
 	WriteConsole(hstdout, &c, 1, &written, NULL);
 }
-
-void tflush(void) {}
 #endif

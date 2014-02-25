@@ -30,6 +30,7 @@
 # include <string.h>
 # include <stdlib.h>
 
+#include "z.h"
 #include "./fnmatch.h"
 
 #ifndef __GNUC__

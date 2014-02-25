@@ -154,4 +154,12 @@ int snprintf(char *str, int size, const char *fmt, ...)
 
 	return n;
 }
+
+char *gethomedir(void)
+{
+	char *home = getenv("HOME");
+	psepfixup(home ? home : "C:/");
+	return home;
+}
+
 #endif

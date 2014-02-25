@@ -185,7 +185,7 @@ void bind_init(void)
 
 	/* Special keys */
 
-	Keys[TC_UP]	= ZPREVIOUS_LINE;
+	Keys[TC_UP] = ZPREVIOUS_LINE;
 	Keys[TC_DOWN] = ZNEXT_LINE;
 	Keys[TC_LEFT] = ZPREVIOUS_CHAR;
 	Keys[TC_RIGHT] = ZNEXT_CHAR;
@@ -197,34 +197,38 @@ void bind_init(void)
 	Keys[TC_INSERT] = ZINSERT_OVERWRITE;
 	Keys[TC_DELETE] = ZDELETE_CHAR;
 
-	Keys[TC_F1]	= ZFIND_FILE;
-	Keys[TC_F2]	= ZSEARCH;
-	Keys[TC_F3]	= ZAGAIN;
-	Keys[TC_F4]	= ZNEXT_ERROR;
-	Keys[TC_F5]	= ZRE_REPLACE;
-	Keys[TC_F6]	= ZHELP,
-	Keys[TC_F7]	= ZMAKE;
-	Keys[TC_F8]	= ZGREP;
-	Keys[TC_F9]	= ZWORD_SEARCH;
+	Keys[TC_F1] = ZFIND_FILE;
+	Keys[TC_F2] = ZSEARCH;
+	Keys[TC_F3] = ZAGAIN;
+	Keys[TC_F4] = ZNEXT_ERROR;
+	Keys[TC_F5] = ZRE_REPLACE;
+	Keys[TC_F6] = ZHELP;
+	Keys[TC_F7] = ZMAKE;
+	Keys[TC_F8] = ZGREP;
+	Keys[TC_F9] = ZWORD_SEARCH;
 	Keys[TC_F10] = ZTAG_WORD;
 	Keys[TC_F11] = ZNEXT_BOOKMARK;
 	Keys[TC_F12] = ZREVERT_FILE;
+
+	Keys[TC_C_HOME] = ZBEGINNING_OF_BUFFER;
+	Keys[TC_C_END] = ZEND_OF_BUFFER
 
 	/* HACK. I wanted to keep this in DOS specific code. */
 	install_ints();
 }
 
+static char *key_label[] = {
+	"up", "down", "right", "left",
+	"insert", "delete", "page up", "page down", "home", "end",
+	"f1", "f2", "f3", "f4", "f5", "f6",
+	"f7", "f8", "f9", "f10", "f11", "f12",
+	"C-home", "C-end",
+};
+
 const char *special_label(int key)
 {
-	static char *label[] = {
-		"up", "down", "right", "left",
-		"insert", "delete", "page up", "page down", "home", "end",
-		"f1", "f2", "f3", "f4", "f5", "f6",
-		"f7", "f8", "f9", "f10", "f11", "f12"
-	};
-
 	if (key >= SPECIAL_START && key <= SPECIAL_END)
-		return label[key - SPECIAL_START];
+		return key_label[key - SPECIAL_START];
 	else
 		return "???";
 }

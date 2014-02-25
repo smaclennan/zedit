@@ -2,13 +2,13 @@ ZEXE = z.exe
 CC = tcc -ml
 CFLAGS=-DDOS -I. -Iwin32
 
-O=bcmds.obj dosbind.obj buff.obj calc.obj cnames.obj \
-	comment.obj commands.obj cursor.obj delete.obj display.obj \
-	file.obj funcs.obj getarg.obj help.obj \
-	reg.obj shell.obj spell.obj srch.obj \
-	undo.obj vars.obj window.obj varray.obj z.obj       \
-	getfname.obj doskbd.obj tags.obj term.obj zwin32.obj       \
-	zgrep.obj fnmatch.obj dosint.obj
+O=bcmds.obj buff.obj calc.obj cnames.obj comment.obj commands.obj \
+	cursor.obj delete.obj display.obj file.obj funcs.obj \
+	getarg.obj help.obj reg.obj shell.obj spell.obj srch.obj \
+	undo.obj vars.obj window.obj varray.obj z.obj \
+	getfname.obj tags.obj term.obj zgrep.obj
+
+O2=dosbind.obj doskbd.obj dosint.obj zwin32.obj fnmatch.obj
 
 .c.obj:
 	$(CC) -c $(CFLAGS) $<
@@ -16,18 +16,28 @@ O=bcmds.obj dosbind.obj buff.obj calc.obj cnames.obj \
 
 all:    $(ZEXE)
 
-$(ZEXE): $(O) z.obj
-	$(CC) z.obj zedit.lib $(LIBS)
+$(ZEXE): $(O) $(O2) z.obj
+	$(CC) z.obj $(O2) zedit.lib $(LIBS)
 
 z.obj: z.c
 	$(CC) -c $(CFLAGS) z.c
 
-dosint.obj: dosint.asm
-	tasm -mx dosint.asm
-	tlib zedit.lib +-dosint.obj
+dosbind.obj: win32\dosbind.c 
+	$(CC) -c $(CFLAGS) win32\dosbind.c
+
+doskbd.obj: win32\doskbd.c 
+	$(CC) -c $(CFLAGS) win32\doskbd.c
+
+zwin32.obj: win32\zwin32.c 
+	$(CC) -c $(CFLAGS) win32\zwin32.c
+
+fnmatch.obj: win32\fnmatch.c
+	$(CC) -c $(CFLAGS) win32\fnmatch.c
+
+dosint.obj: win32\dosint.asm
+	tasm -mx win32\dosint.asm
 
 clean:
 	del *.obj
 	del *.lib
 	del *.exe
-

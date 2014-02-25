@@ -622,7 +622,6 @@ void Zmeta_x(void)
 
 void Zabort(void)
 {
-	tbell();
 	Arg = 0;
 	if (InPaw)
 		InPaw = ABORT;

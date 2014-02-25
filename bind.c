@@ -207,7 +207,7 @@ Byte Keys[NUMKEYS] = {
 	[TC_F12] = ZREVERT_FILE,
 
 	[TC_C_HOME] = ZBEGINNING_OF_BUFFER,
-	[TC_C_END] = ZEND_OF_BUFFER
+	[TC_C_END] = ZEND_OF_BUFFER,
 };
 
 static char *key_label[] = {

@@ -211,7 +211,7 @@ void bind_init(void)
 	Keys[TC_F12] = ZREVERT_FILE;
 
 	Keys[TC_C_HOME] = ZBEGINNING_OF_BUFFER;
-	Keys[TC_C_END] = ZEND_OF_BUFFER
+	Keys[TC_C_END] = ZEND_OF_BUFFER;
 
 	/* HACK. I wanted to keep this in DOS specific code. */
 	install_ints();

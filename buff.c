@@ -824,8 +824,10 @@ static bool bwritefd(int fd)
 
 	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
-		if (tpage->plen)
-			status = write(fd, tpage->pdata, tpage->plen) == tpage->plen;
+		if (tpage->plen) {
+			int n = write(fd, tpage->pdata, tpage->plen);
+			status = n == tpage->plen;
+		}
 
 	if (status) {
 		Curbuff->mtime = get_mtime(fd);

@@ -513,27 +513,26 @@ void tstyle(int style)
 
 void tbell(void)
 {
-	if (VAR(VBELL)) {
 #ifdef WIN32
-		COORD where;
-		DWORD written;
-		where.X = 0;
-		where.Y = Rowmax - 2;
-		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax,
-					   where, &written);
-		Beep(440, 250);
-		FillConsoleOutputAttribute(hstdout, BLACK_ON_WHITE, Colmax,
-					   where, &written);
+	COORD where;
+	DWORD written;
+	where.X = 0;
+	where.Y = Rowmax - 2;
+	FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax,
+				   where, &written);
+	Beep(440, 250);
+	FillConsoleOutputAttribute(hstdout, BLACK_ON_WHITE, Colmax,
+				   where, &written);
 #elif defined(DOS)
-		Curwdo->modeflags = INVALID;
+	Curwdo->modeflags = INVALID;
 #else
-		fputs("\033[?5h", stdout);
-		fflush(stdout);
-		usleep(100000);
-		fputs("\033[?5l", stdout);
+	fputs("\033[?5h", stdout);
+	fflush(stdout);
+	usleep(100000);
+	fputs("\033[?5l", stdout);
 #endif
-		ring_bell = 1;
-	}
+
+	ring_bell = 1;
 }
 
 void tsetcursor(void)

@@ -39,16 +39,13 @@ extern struct avar Vars[];
 #define VARSTR(n)	Vars[n].u.str
 
 /* var defines */
-#define VADDNL		0
-#define VBACKUP		(VADDNL + 1)
-#define VBELL		(VBACKUP + 1)
-#define VCEXTS		(VBELL + 1)
+#define VBACKUP		0
+#define VCEXTS		(VBACKUP + 1)
 #define VCTABS		(VCEXTS + 1)
 #define VCOMMENTS	(VCTABS + 1)
 #define VEXACT		(VCOMMENTS + 1)
 #define VFILLWIDTH	(VEXACT + 1)
-#define VGREP		(VFILLWIDTH + 1)
-#define VLINES		(VGREP + 1)
+#define VLINES		(VFILLWIDTH + 1)
 #define VMAKE		(VLINES + 1)
 #define VNORMAL		(VMAKE + 1)
 #define VSEXTS		(VNORMAL + 1)

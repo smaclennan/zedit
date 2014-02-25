@@ -816,7 +816,6 @@ static bool bwritefd(int fd)
 {
 	struct page *tpage;
 	int n, status = true;
-	Byte lastch = '\n'; /* don't add NL to zero byte file */
 
 #if ZLIB
 	if (Curbuff->bmode & COMPRESSED)
@@ -826,16 +825,9 @@ static bool bwritefd(int fd)
 	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
-			lastch = tpage->pdata[tpage->plen - 1];
 			n = write(fd, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
 		}
-
-	/* handle ADDNL */
-	if (VAR(VADDNL) && lastch != '\n') {
-		char buf = '\n';
-		status &= write(fd, &buf, 1) == 1;
-	}
 
 	if (status) {
 		Curbuff->mtime = get_mtime(fd);

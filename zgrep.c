@@ -19,8 +19,6 @@
 
 #include "z.h"
 
-#if INTERNAL_GREP
-
 #ifndef WIN32
 #ifdef HAVE_DIRECT
 #include <sys/dir.h>
@@ -137,4 +135,84 @@ void Zgrep(void)
 	}
 }
 
-#endif
+/* This is cleared in Zgrep/Zmake and set in Znexterror.
+ * If clear, the make buffer is scrolled up. Once a next error is
+ * called, the buffer is kept at the error line.
+ */
+int NexterrorCalled;
+
+/* Find the next error in the shell buffer.
+ * Ignores lines that start with a white space.
+ * Supported: <fname>:<line>:
+ */
+static int parse(char *fname)
+{
+	int line, n;
+
+	while (!bisend()) {
+		/* try to get the fname */
+		n = getbword(fname, PATHMAX, bistoken);
+		bmove(n);
+
+		/* try to get the line */
+		if (Buff() == ':') {
+			bmove1();
+
+			/* look for line number */
+			line = batoi();
+			if (line)
+				return line;
+		}
+
+		/* skip to next line */
+		bcsearch(NL);
+	}
+	return 0;
+}
+
+void Znext_error(void)
+{
+	struct wdo *wdo;
+	struct buff *save, *mbuff;
+	char fname[STRMAX + 1];
+	char path[PATHMAX + 1];
+	int line;
+
+	mbuff = cfindbuff(SHELLBUFF);
+	if (!mbuff) {
+		tbell();
+		return;
+	}
+	save = Curbuff;
+	bswitchto(mbuff);
+	NEED_UMARK;
+	if (!NexterrorCalled) {
+		NexterrorCalled = 1;
+		btostart();
+	} else
+		bcsearch(NL);
+	line = parse(fname);
+	if (line) {
+		vsetmrk(Curbuff->umark);
+		bmrktopnt(Curbuff->umark);
+		tobegline();
+		bswappnt(Curbuff->umark);
+		vsetmrk(Curbuff->umark);
+		wdo = findwdo(mbuff);
+		if (wdo)
+			mrktomrk(wdo->wstart, Curbuff->umark);
+		pathfixup(path, fname);
+		findfile(path);
+		Argp = true;
+		Arg = line;
+		Zgoto_line();
+		tobegline();
+	} else {
+		btoend();
+		CLEAR_UMARK;
+		bswitchto(save);
+		putpaw("No more errors");
+	}
+	Argp = false;
+	Arg = 0;
+}

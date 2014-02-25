@@ -9,15 +9,8 @@
 #endif
 
 struct avar Vars[] = {
-	{ "add-nl",		V_FLAG,		V(1),
-	  "If set, the editor will insure that all saved files end in a "
-	  "newline."
-	},
 	{ "backup",		V_FLAG,		V(0),
 	  "If set, a backup file is created when a file is written."
-	},
-	{ "bell",		V_FLAG,		V(1),
-	  "If set, the bell will flash the screen."
 	},
 	{ "c-extends",		V_STRING,	V(".c.h.cpp.cc.cxx.y.l"),
 	  "This variable defines the extensions that turn on C mode."
@@ -38,9 +31,6 @@ struct avar Vars[] = {
 	{ "fill-ch-width",	V_DECIMAL,	V(72),
 	  "This is the column at which the text mode commands wrap the "
 	  "right margin."
-	},
-	{ "grep",		V_STRING,	V("grep -n"),
-	  "The command to use for the grep command."
 	},
 	{ "lines",		V_FLAG,		V(0),
 	  "This variable turns on a line:column indicator on the mode line. "

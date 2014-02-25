@@ -309,7 +309,7 @@ static void cmdtobuff(const char *bname, const char *cmd)
 
 void Zkill(void)
 {
-	unvoke(cfindbuff(MAKEBUFF), false);
+	unvoke(cfindbuff(SHELLBUFF), false);
 }
 #else
 void Zkill(void) { tbell(); }
@@ -379,7 +379,7 @@ static void do_make(const char *cmd)
 	Arg = 0;
 
 	saveall(true);
-	cmdtobuff(MAKEBUFF, cmd);
+	cmdtobuff(SHELLBUFF, cmd);
 }
 
 void Zmake(void)
@@ -479,7 +479,7 @@ void Znext_error(void)
 	char path[PATHMAX + 1];
 	int line;
 
-	mbuff = cfindbuff(MAKEBUFF);
+	mbuff = cfindbuff(SHELLBUFF);
 	if (!mbuff) {
 		tbell();
 		return;

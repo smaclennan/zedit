@@ -95,7 +95,6 @@
 #define UNTITLED	"NoFile"	/* for buffers with no fname */
 #define MAINBUFF	"*scratch*"
 #define HELPBUFF	"*help*"
-#define MAKEBUFF	"*compile*"
 #define SHELLBUFF	"*shell*"
 #define LISTBUFF	"*list*"
 #define CONFBUFF	"*config*"

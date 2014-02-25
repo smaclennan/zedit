@@ -196,7 +196,7 @@ struct cnames Cnames[] = {
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "Prompts for the completion of a grep command and then performs the "
-	 "grep command in the " MAKEBUFF " buffer. A Universal Argument will "
+	 "grep command in the " SHELLBUFF " buffer. A Universal Argument will "
 	 "prompt for the grep command to use. Use next-error to go through the "
 	 "grep output."
 	},
@@ -276,7 +276,7 @@ struct cnames Cnames[] = {
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "This command performs the command specified in the Make variable "
-	 "and puts the output in the " MAKEBUFF " buffer. The command is "
+	 "and puts the output in the " SHELLBUFF " buffer. The command is "
 	 "usually 'make' and is used in conjunction with the next-error "
 	 "command. A Universal Argument prompts for the command to execute."
 	},
@@ -323,8 +323,8 @@ struct cnames Cnames[] = {
 #endif
 	 "Used after a make or grep command to search for error messages, "
 	 "or grep output, "
-	 "in the " MAKEBUFF " buffer. If an error is found, the "
-	 "Mark in the " MAKEBUFF " buffer is placed at the start of the "
+	 "in the " SHELLBUFF " buffer. If an error is found, the "
+	 "Mark in the " SHELLBUFF " buffer is placed at the start of the "
 	 "error message. The file containing the error is loaded into a "
 	 "buffer using the Find File command and the Point is placed at "
 	 "the error line."

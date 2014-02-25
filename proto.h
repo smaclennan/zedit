@@ -269,7 +269,7 @@ const char *special_label(int key);
 
 /* umark routines */
 void set_umark(struct mark *tmark); /* tmark == NULL means set to point */
-void unset_umark(void);
+void clear_umark(void);
 
 void winit(void);
 void wfini(void);

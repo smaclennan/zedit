@@ -375,12 +375,18 @@ void Zposition(void)
 	unsigned long mark, point;
 	unsigned line;
 
-	bswappnt(Curbuff->umark);
-	mark = blocation(&line);
-	bswappnt(Curbuff->umark);
-	point = blocation(&line);
-	putpaw("Line: %u  Column: %u  Point: %lu  Mark: %lu  Length: %lu",
-	       line, bgetcol(false, 0) + 1, point, mark, blength(Curbuff));
+	if (Curbuff->umark) {
+		bswappnt(Curbuff->umark);
+		mark = blocation(&line);
+		bswappnt(Curbuff->umark);
+		point = blocation(&line);
+		putpaw("Line: %u  Column: %u  Point: %lu  Mark: %lu  Length: %lu",
+		       line, bgetcol(false, 0) + 1, point, mark, blength(Curbuff));
+	} else {
+		point = blocation(&line);
+		putpaw("Line: %u  Column: %u  Point: %lu  Mark: unset  Length: %lu",
+		       line, bgetcol(false, 0) + 1, point, blength(Curbuff));
+	}
 }
 
 void Znotimpl(void) { tbell(); }
@@ -665,18 +671,19 @@ void Zcount(void)
 
 	Arg = 0;
 	if (Argp) {
-		tmark = bcremrk();
-		btostart();
-	} else {
+		NEED_UMARK;
 		swapped = bisaftermrk(Curbuff->umark);
 		if (swapped)
 			bswappnt(Curbuff->umark);
 		tmark = bcremrk();
+	} else {
+		tmark = bcremrk();
+		btostart();
 	}
 	l = w = c = 0;
 	putpaw("Counting...");
 	word = false;
-	for (; Argp ? !bisend() : bisbeforemrk(Curbuff->umark); bmove1(), ++c) {
+	for (; Argp ? bisbeforemrk(Curbuff->umark): !bisend(); bmove1(), ++c) {
 		if (ISNL(*Curcptr))
 			++l;
 		if (!bistoken())
@@ -782,6 +789,8 @@ void toggle_mode(int mode)
 
 void Zmark_paragraph(void)
 {
+	NEED_UMARK;
+
 	bmove1();	/* make sure we are not at the start of a paragraph */
 	Zprevious_paragraph();
 	bmrktopnt(Curbuff->umark);
@@ -794,6 +803,8 @@ static void setregion(int (*convert)(int))
 {
 	bool swapped;
 	struct mark tmark;
+
+	NEED_UMARK;
 
 	if (Curbuff->bmode & PROGMODE) {
 		putpaw("Not in program mode");
@@ -831,6 +842,8 @@ static void indent(bool flag)
 {
 	struct mark *psave, *msave = NULL;
 	int i;
+
+	NEED_UMARK;
 
 	psave = bcremrk();
 	if (bisaftermrk(Curbuff->umark)) {

@@ -82,8 +82,8 @@ struct cnames Cnames[] = {
 	 "previously active window and inserts it into the PAW."
 	},
 	{"count",			ZCOUNT,			0,
-	 "Count the number of lines, words, and characters in the region. A "
-	 "Universal Argument counts the entire buffer."
+	 "Count the number of lines, words, and characters in the buffer. A "
+	 "Universal Argument counts the region."
 	},
 	{"ctrl-x",			ZCTRL_X,		0,
 	 "Command prefix."

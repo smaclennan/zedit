@@ -106,7 +106,10 @@ void Zyank(void)
 
 	mrktomrk(&save, Send);
 	tbuff = Curbuff;
-	bmrktopnt(Curbuff->umark);
+#if !UNDO
+	/* This leaves the mark at the start of the yank and the point at the end. */
+	set_umark(NULL);
+#endif
 	bswitchto(Killbuff);
 	btoend();
 	tmark = bcremrk();

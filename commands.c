@@ -625,6 +625,7 @@ void Zabort(void)
 	Arg = 0;
 	if (InPaw)
 		InPaw = ABORT;
+	CLEAR_UMARK;
 }
 
 void Zquote(void)
@@ -804,13 +805,13 @@ static void setregion(int (*convert)(int))
 	bool swapped;
 	struct mark tmark;
 
-	NEED_UMARK;
-
 	if (Curbuff->bmode & PROGMODE) {
 		putpaw("Not in program mode");
 		tbell();
 		return;
 	}
+
+	NEED_UMARK;
 
 	swapped = bisaftermrk(Curbuff->umark);
 	if (swapped)
@@ -825,6 +826,8 @@ static void setregion(int (*convert)(int))
 	else
 		bpnttomrk(&tmark);
 	Curbuff->bmodf = true;
+
+	CLEAR_UMARK;
 	redisplay();
 }
 
@@ -868,6 +871,8 @@ static void indent(bool flag)
 		mrktomrk(Curbuff->umark, msave);
 		unmark(msave);
 	}
+
+	CLEAR_UMARK;
 }
 
 void Zindent(void)

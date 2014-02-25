@@ -118,5 +118,7 @@ static inline void boffset(unsigned long offset) { bmove((int)offset); }
 #define markch(mrk)	((mrk)->mpage->pdata[(mrk)->moffset])
 
 #define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)
+/* This does not need to be a macro... just makes it easier to see */
+#define CLEAR_UMARK clear_umark()
 
 #endif

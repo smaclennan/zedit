@@ -489,7 +489,7 @@ void Znext_error(void)
 		tobegline();
 	} else {
 		btoend();
-		clear_umark();
+		CLEAR_UMARK;
 		bswitchto(save);
 		putpaw("No more errors");
 	}

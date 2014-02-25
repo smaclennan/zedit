@@ -200,9 +200,9 @@ void Zwrite_file(void)
 		if (Argp) {
 			struct buff *tbuff, *save = Curbuff;
 
-			NEED_UMARK;
 			tbuff = bcreate();
 			if (tbuff) {
+				NEED_UMARK;
 				putpaw("Writing %s", path);
 				bswitchto(save);
 				bcopyrgn(Curbuff->umark, tbuff);
@@ -212,6 +212,7 @@ void Zwrite_file(void)
 				bswitchto(save);
 				bdelbuff(tbuff);
 				clrpaw();
+				CLEAR_UMARK;
 			}
 		} else {
 			if (Curbuff->fname)

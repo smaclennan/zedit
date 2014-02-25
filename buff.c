@@ -703,16 +703,6 @@ void btostart(void)
 	makeoffset(0);
 }
 
-static time_t get_mtime(int fd)
-{
-	struct stat sbuf;
-
-	if (fstat(fd, &sbuf) == 0)
-		return sbuf.st_mtime;
-	else
-		return -1;
-}
-
 /*
 Load the file 'fname' into the current buffer.
 Returns  0  successfully opened file
@@ -722,6 +712,7 @@ Returns  0  successfully opened file
 int breadfile(char *fname)
 {
 	char buf[PSIZE];
+	struct stat sbuf;
 	int fd, len;
 
 	fd = open(fname, READ_MODE);
@@ -738,7 +729,10 @@ int breadfile(char *fname)
 		}
 	}
 
-	Curbuff->mtime = get_mtime(fd);
+	if (fstat(fd, &sbuf) == 0)
+		Curbuff->mtime = sbuf.st_mtime;
+	else
+		Curbuff->mtime = -1;
 
 	putpaw("Reading %s", lastpart(fname));
 	bempty();
@@ -761,6 +755,7 @@ int breadfile(char *fname)
 			if (!newpage(Curbuff, Curpage, NULL)) {
 				bempty();
 				error("Out of memory!");
+				bclose(fd);
 				return -ENOMEM;
 			}
 			makecur(Curpage->nextp);
@@ -781,7 +776,7 @@ int breadfile(char *fname)
 static bool bwritegzip(int fd)
 {
 	struct page *tpage;
-	int n, status = true;
+	int status = true;
 
 	gzFile gz = gzdopen(fd, "wb");
 	if (!gz) {
@@ -792,35 +787,20 @@ static bool bwritegzip(int fd)
 	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
-			n = gzwrite(gz, tpage->pdata, tpage->plen);
+			int n = gzwrite(gz, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
 		}
 
-	if (status) {
-		Curbuff->mtime = get_mtime(fd);
-		Curbuff->bmodf = false;
-	} else
-		error("Unable to write file.");
-
-	gzclose(gz); /* also closed fd */
+	gzclose(gz); /* also closes fd */
 
 	return status;
 }
 #endif
 
-/*	Write the current buffer to an open file descriptor.
- *	Returns:	true	if write successful
- *			false	if write failed
- */
 static bool bwritefd(int fd)
 {
 	struct page *tpage;
 	int status = true;
-
-#if ZLIB
-	if (Curbuff->bmode & COMPRESSED)
-		return bwritegzip(fd);
-#endif
 
 	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
@@ -828,12 +808,6 @@ static bool bwritefd(int fd)
 			int n = write(fd, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
 		}
-
-	if (status) {
-		Curbuff->mtime = get_mtime(fd);
-		Curbuff->bmodf = false;
-	} else
-		error("Unable to write file.");
 
 	close(fd);
 
@@ -873,7 +847,7 @@ static bool cp(char *from, char *to)
 
 /*	Write the current buffer to the file 'fname'.
  *	Handles the backup scheme according to VAR(VBACKUP).
- *	Returns:	true	if write successfull
+ *	Returns:	true	if write successful
  *				false	if write failed
  *				ABORT	if user didn't want to overwrite
  */
@@ -933,9 +907,14 @@ int bwritefile(char *fname)
 
 	/* Write the output file */
 	fd = open(fname, WRITE_MODE, mode);
-	if (fd != EOF)
-		status = bwritefd(fd);
-	else {
+	if (fd != EOF) {
+#if ZLIB
+		if (Curbuff->bmode & COMPRESSED)
+			status = bwritegzip(fd);
+		else
+#endif
+			status = bwritefd(fd);
+	} else {
 		if (errno == EACCES)
 			error("File is read only.");
 		else
@@ -945,15 +924,25 @@ int bwritefile(char *fname)
 
 	/* cleanup */
 	if (status) {
+		struct stat sbuf;
+
+		if (stat(fname, &sbuf) == 0)
+			Curbuff->mtime = sbuf.st_mtime;
+		else
+			Curbuff->mtime = -1;
 		clrpaw();
 		/* If we saved the file... it isn't read-only */
 		Curbuff->bmode &= ~VIEW;
-	} else if (bak) {
-		if (sbuf.st_nlink) {
-			cp(bakname, fname);
-			unlink(bakname);
-		} else
-			rename(bakname, fname);
+		Curbuff->bmodf = false;
+	} else {
+		error("Unable to write file.");
+		if (bak) {
+			if (sbuf.st_nlink) {
+				cp(bakname, fname);
+				unlink(bakname);
+			} else
+				rename(bakname, fname);
+		}
 	}
 
 	return status;

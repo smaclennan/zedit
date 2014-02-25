@@ -815,7 +815,7 @@ static bool bwritegzip(int fd)
 static bool bwritefd(int fd)
 {
 	struct page *tpage;
-	int n, status = true;
+	int status = true;
 
 #if ZLIB
 	if (Curbuff->bmode & COMPRESSED)
@@ -824,10 +824,8 @@ static bool bwritefd(int fd)
 
 	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
-		if (tpage->plen) {
-			n = write(fd, tpage->pdata, tpage->plen);
-			status = n == tpage->plen;
-		}
+		if (tpage->plen)
+			status = write(fd, tpage->pdata, tpage->plen) == tpage->plen;
 
 	if (status) {
 		Curbuff->mtime = get_mtime(fd);

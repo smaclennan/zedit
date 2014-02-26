@@ -33,7 +33,7 @@ static void dotty(void)
 	First = false; /* used by pinsert when InPaw */
 }
 
-#if SHELL
+// SAM #if SHELL
 static void do_chdir(struct buff *buff)
 {
 	if (buff->fname) {
@@ -61,7 +61,7 @@ static void message(struct buff *buff, const char *str)
 			wdo->modeflags = INVALID;
 	putpaw("%s", str);
 }
-#endif
+// SAM #endif
 
 #if DOPIPES
 #include <signal.h>
@@ -359,6 +359,44 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 #endif
 
 #endif /* DOPIPES */
+
+#ifdef DOS
+static void cmdtobuff(const char *bname, const char *cmdin)
+{
+	int fd, rc;
+	struct wdo *save = Curwdo;
+	char cmd[PATHMAX], line[STRMAX];
+	snprintf(cmd, sizeof(cmd), "%s", cmdin);
+
+	fd = open("__ZSH__.OUT", O_WRONLY|O_CREAT|O_TRUNC, 0666);
+	if (fd < 0) {
+		perror("open");
+		return;
+	}
+	dup2(fd, 1);
+	dup2(1, 2);
+
+	do_chdir(Curbuff);
+	if (wuseother(bname)) {
+		set_umark(NULL);
+		message(Curbuff, cmdin);
+		putpaw("Please wait...");
+		rc = system(cmd);
+		breadfile("__ZSH__.out");
+	}
+
+	close(fd);
+	unlink("__ZSH__.out");
+
+	if (rc == 0) {
+		btostart();
+		putpaw("Done.");
+	} else
+		putpaw("Returned %d", rc);
+	wswitchto(save);
+}
+#define SHELL 1
+#endif
 
 #if SHELL
 static int set_cmd(int which, const char *prompt)

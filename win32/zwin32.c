@@ -159,15 +159,16 @@ int snprintf(char *str, int size, const char *fmt, ...)
 char *gethomedir(void)
 {
 	char *home = getenv("HOME");
-	psepfixup(home ? home : "C:/");
+	if (home == NULL) home = "C:/";
+	psepfixup(home);
 	return home;
 }
 
-void zgetcwd(char *dir, int len)
+char *zgetcwd(char *dir, int len)
 {
 	getcwd(dir, len);
 	psepfixup(dir);
-	strlwr(dir);
+	return strlwr(dir);
 }
 
 #endif

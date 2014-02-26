@@ -185,12 +185,12 @@ extern int Tabsize;
 
 #ifdef WIN32
 char *gethomedir(void);
-char *zgetcwd(char *cwd);
+char *zgetcwd(char *cwd, int len);
 void tputchar(Byte c);
 #define tflush()
 #elif defined(DOS)
 char *gethomedir(void);
-char *zgetcwd(char *cwd);
+char *zgetcwd(char *cwd, int len);
 #define tputchar(c)		putch(c)
 #define tflush()
 #else

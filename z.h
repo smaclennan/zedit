@@ -42,9 +42,9 @@
 #include <unistd.h>
 #endif
 
+#include "buff.h"
 #include "vars.h"
 #include "funcs.h"
-#include "buff.h"
 #include "proto.h"
 
 #define ZSTR	"Zedit"
@@ -112,6 +112,9 @@ struct cnames {
 	Byte fnum;
 	Byte flags;
 	const char *doc;
+#ifdef DOS
+	Byte pad[2];
+#endif
 };
 #define CNAMESIZE sizeof(struct cnames)
 

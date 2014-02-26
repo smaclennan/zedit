@@ -31,6 +31,9 @@ struct avar {
 		int val;
 	} u;
 	const char *doc;
+#ifdef DOS
+	Byte pad[2];
+#endif
 };
 extern struct avar Vars[];
 

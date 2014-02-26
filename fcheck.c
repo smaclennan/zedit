@@ -23,22 +23,36 @@
 #include "varray.c"
 #include "funcs.c"
 #include "cnames.c"
+#ifdef DOS
+#define install_ints()
+#include "doskbd.c"
+#include "dosbind.c"
+#else
 #include "kbd.c"
 #include "bind.c"
+#endif
 
 #ifdef __unix__
 #define OS unix
 #elif defined WIN32
 #define OS win32
+#elif defined DOS
+#define OS dos
 #else
-#error Unknow OS
+#error Unknown OS
 #endif
 
 #define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))
 
+#ifdef __unix__
 #define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
+#else
+#define N_KEYS NUM_SPECIAL
+#endif
 
 int InPaw;
+int ring_bell;
+struct wdo *Curwdo;
 
 void hang_up(int sig) {}
 
@@ -46,18 +60,22 @@ void Dbg(const char *fmt, ...) {}
 
 int main(int argc, char *argv[])
 {
-	int i, err = 0;
+	int i, s1, s2, err = 0;
+	Byte array[97];
 
+	((void)argc);
+	((void)argv);
+	
 	if (NUMVARS != VARSNUM) {
 		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",
 		       NUMVARS, VARSNUM);
 		err = 1;
 	}
 
-	i = sizeof(key_label) / sizeof(char *);
-	if (N_KEYS != NUM_SPECIAL || i != NUM_SPECIAL) {
+	s1 = sizeof(key_label) / sizeof(char *);	
+	if (N_KEYS != NUM_SPECIAL || s1 != NUM_SPECIAL) {
 		printf("Mismatch N_KEYS %d NUM_SPECIAL %d labels %d\n",
-		       N_KEYS, NUM_SPECIAL, i);
+		       N_KEYS, NUM_SPECIAL, s1);
 		err = 1;
 	}
 		
@@ -65,19 +83,18 @@ int main(int argc, char *argv[])
 		printf("Too many special keys\n");
 		err = 1;
 	} else {
-		unsigned mask = 0;
+		unsigned long mask = 0;
 
 		for (i = 0; i < NUM_SPECIAL; ++i)
 			mask = (mask << 1) | 1;
 		if (mask != KEY_MASK) {
-			printf("Mismatch mask %08x and %08x\n",
+			printf("Mismatch mask %08lx and %08lx\n",
 			       mask, KEY_MASK);
 			err = 1;
 		}
 	}
 
 	/* Spot check keys array */
-	Byte array[97];
 	memset(array, ZINSERT, sizeof(array));
 	array[0] = ZUNDO;
 	array[96] = ZDELETE_PREVIOUS_CHAR;
@@ -85,14 +102,22 @@ int main(int argc, char *argv[])
 		printf("Problems with Keys array\n");
 		err = 1;
 	}
+	
+#ifdef DOS
+	if ((sizeof(alts) / sizeof(int)) != 0x86 - 0x10 + 1) {
+		printf("Problems with alts 0x%x\n", 
+			sizeof(alts) / sizeof(int));
+		err = 1;
+	}
+#endif
 
 	/* check sizes of various stuff */
 	if (NUMFUNCS >= 256) {
 		printf("Cnames[].fnum is a byte. Too many functions.\n");
 		err = 1;
 	}
-	int s1 = sizeof(Cnames) / sizeof(struct cnames);
-	int s2 = (sizeof(Cmds) / sizeof(void *) / 2) - 1;
+	s1 = sizeof(Cnames) / sizeof(struct cnames);
+	s2 = (sizeof(Cmds) / sizeof(void *) / 2) - 1;
 	if (s1 != NUMFUNCS || s2 != NUMFUNCS) {
 		printf("Cnames: %d Cmds: %d NUMFUNCS: %d\n", s1, s2, NUMFUNCS);
 		exit(1); /* stop since the loop below might segfault */
@@ -121,11 +146,13 @@ int main(int argc, char *argv[])
 
 	/* getplete structs must be aligned */
 	if (sizeof(struct cnames) % sizeof(char *)) {
-		printf("struct cnames not aligned\n");
+		printf("struct cnames not aligned [%d/%d]\n", 
+			sizeof(struct cnames), sizeof(char *));
 		err = 1;
 	}
 	if (sizeof(struct avar) % sizeof(char *)) {
-		printf("struct avar not aligned\n");
+		printf("struct avar not aligned [%d/%d]\n",
+			sizeof(struct avar), sizeof(char *));
 		err = 1;
 	}
 

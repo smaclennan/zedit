@@ -24,17 +24,24 @@
 int Cmdpushed = -1;
 static int kb_hit;
 
-static int alts[] = { /* 0x10 to 0x53 inclusive */
-	'Q' + 128, 'W' + 128, 'E' + 128, 'R' + 128, 'T' + 128, 'Y' + 128,
-	'U' + 128, 'I' + 128, 'O' + 128, 'P' + 128, '[' + 128, ']' + 128, 0, 0,
-	'A' + 128, 'S' + 128, 'D' + 128, 'F' + 128, 'G' + 128, 'H' + 128,
-	'J' + 128, 'K' + 128, 'L' + 128, ';' + 128, '\'' + 128, 0, 0, 0,
-	'Z' + 128, 'X' + 128, 'C' + 128, 'V' + 128, 'B' + 128, 'N' + 128,
-	'M' + 128, ',' + 128, '.' + 128, '/', 0, 0, 0, 0, 0,
-	TC_F1, TC_F2, TC_F3, TC_F4, TC_F5, TC_F6, TC_F7, TC_F8, TC_F9, TC_F10, 0, 0,
-	TC_HOME, TC_UP, TC_PGUP, 0,
+#define M(a) (a + 128)
+
+static int alts[] = { /* 0x10 to 0x86 inclusive */
+	M('Q'), M('W'), M('E'), M('R'), M('T'), M('Y'),
+	M('U'), M('I'), M('O'), M('P'), M('['), M(']'), 0, 0,
+	M('A'), M('S'), M('D'), M('F'), M('G'), M('H'),
+	M('J'), M('K'), M('L'), M(';'), M('\''), 0, 0, 0,
+	M('Z'), M('X'), M('C'), M('V'), M('B'), M('N'),
+	M('M'), M(','), M('.'), '/', 0, 0, 0, 0, 0,
+	TC_F1, TC_F2, TC_F3, TC_F4, TC_F5, TC_F6, TC_F7, TC_F8, TC_F9, TC_F10,
+	0, 0, TC_HOME, TC_UP, TC_PGUP, 0,
 	TC_LEFT, 0, TC_RIGHT, 0, TC_END,
 	TC_DOWN, TC_PGDOWN, TC_INSERT, TC_DELETE,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 54 to 5F */
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 60 to 6F */
+	0, 0, 0, 0, 0, TC_C_END, 0, TC_C_HOME,
+	M('!'), M('@'), M('#'), M('$'), M('%'), M('^'), M('&'), M('*'),
+	M('('), M(')'), M('-'), M('+'), 0, TC_F11, TC_F12,
 };
 
 int tgetcmd(void)
@@ -56,15 +63,9 @@ int tgetcmd(void)
 	}
 	if (cmd == 0) {
 		cmd = getch();
-		if (cmd >= 0x10 && cmd <= 0x53)
+		if (cmd >= 0x10 && cmd <= 0x86)
 			return alts[cmd - 0x10];
-		switch (cmd) {
-		case 0x77: return TC_C_HOME;
-		case 0x75: return TC_C_END;
-		case 0x85: return TC_F11;
-		case 0x86: return TC_F12;
-		default:   return TC_UNKNOWN;
-		}
+		return TC_UNKNOWN;
 	}
 
 	/* Unfortunately DOS uses C-H for backspace */
@@ -99,6 +100,8 @@ bool tdelay(int ms)
 	while (!tkbrdy() && clock() <= end) ;
 	return !tkbrdy();
 #else
+	((void)ms);
+
 	if (InPaw)
 		return false;
 	else

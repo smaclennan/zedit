@@ -19,16 +19,21 @@ all:    $(ZEXE)
 $(ZEXE): $(O) $(O2) z.obj
 	$(CC) z.obj $(O2) zedit.lib $(LIBS)
 
+# Don't call it fcheck.exe. We want to force a rebuild.
+fcheck: fcheck.c
+	$(CC) $(CFLAGS) fcheck.c
+	fcheck.exe
+
 z.obj: z.c
 	$(CC) -c $(CFLAGS) z.c
 
-dosbind.obj: win32\dosbind.c 
+dosbind.obj: win32\dosbind.c
 	$(CC) -c $(CFLAGS) win32\dosbind.c
 
-doskbd.obj: win32\doskbd.c 
+doskbd.obj: win32\doskbd.c
 	$(CC) -c $(CFLAGS) win32\doskbd.c
 
-zwin32.obj: win32\zwin32.c 
+zwin32.obj: win32\zwin32.c
 	$(CC) -c $(CFLAGS) win32\zwin32.c
 
 fnmatch.obj: win32\fnmatch.c

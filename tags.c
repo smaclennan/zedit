@@ -46,7 +46,7 @@ static int get_tagfile(void)
 				return 0;
 		}
 	} else {
-		getcwd(Tagfile, sizeof(Tagfile) - 5);
+		zgetcwd(Tagfile, sizeof(Tagfile) - 5);
 		strcat(Tagfile, "/TAGS");
 		if (access(Tagfile, F_OK) == 0)
 			return 0;

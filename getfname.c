@@ -84,8 +84,18 @@ int getfname(const char *prompt, char *path)
 static bool isext(char *fname, const char *ext)
 {
 	char *ptr;
+#ifdef DOS
+	return fname && (ptr = strrchr(fname, '.')) && stricmp(ptr, ext) == 0;
+#else
 	return fname && (ptr = strrchr(fname, '.')) && strcmp(ptr, ext) == 0;
+#endif
 }
+
+#if defined(DOS)
+#define fnamelower strlwr
+#else
+#define fnamelower(f) f
+#endif
 
 static struct llist *fill_list(const char *dir)
 {
@@ -104,7 +114,7 @@ static struct llist *fill_list(const char *dir)
 
 	while ((dirp = readdir(dp)))
 		if (!isext(dirp->d_name, OBJEXT))
-			add(&Flist, dirp->d_name);
+			add(&Flist, fnamelower(dirp->d_name));
 
 	closedir(dp);
 
@@ -370,7 +380,7 @@ int pathfixup(char *to, char *from)
 	} else {
 		if (!Psep(*from)) {
 			/* add the current directory */
-			getcwd(to, PATHMAX);
+			zgetcwd(to, PATHMAX);
 			to += strlen(to);
 			*to++ = PSEP;
 		}

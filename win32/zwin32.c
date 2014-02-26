@@ -74,6 +74,7 @@ int pathfixup(char *to, char *from)
 	}
 
 	psepfixup(to);
+	strlwr(to);
 
 	return 0;
 }
@@ -160,6 +161,13 @@ char *gethomedir(void)
 	char *home = getenv("HOME");
 	psepfixup(home ? home : "C:/");
 	return home;
+}
+
+void zgetcwd(char *dir, int len)
+{
+	getcwd(dir, len);
+	psepfixup(dir);
+	strlwr(dir);
 }
 
 #endif

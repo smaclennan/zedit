@@ -26,7 +26,7 @@ static int get_findfile(const char *prompt)
 	struct stat sbuf;
 
 	if (!*Fname) {
-		getcwd(Fname, PATHMAX);
+		zgetcwd(Fname, PATHMAX);
 		strcat(Fname, "/");
 	} else if (stat(Fname, &sbuf) == 0)
 		/* If Fname is a file, convert to directory */

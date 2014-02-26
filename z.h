@@ -31,9 +31,6 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#if defined(__unix__) && SHELL
-#define DOPIPES 1
-#endif
 #include "config.h"
 
 #if defined(WIN32) || defined(DOS)

@@ -66,9 +66,6 @@ struct cnames Cnames[] = {
 	 "the right margin."
 	},
 	{"cmd-to-buffer",		ZCMD_TO_BUFFER,		AI,
-#if !SHELL
-	 "Note: Disabled in this version of Zedit.\n\n"
-#endif
 	 "Prompts for a command and then executes the command in the "
 	 "shell. The output is put in the " SHELLBUFF " buffer. Any previous "
 	 "contents of the " SHELLBUFF " buffer are deleted."
@@ -255,7 +252,7 @@ struct cnames Cnames[] = {
 	 "Note: Disabled in this version of Zedit.\n\n"
 #endif
 	 "Kills the current make. The command must wait for the make to die "
-	 "before it can continue. Unix only."
+	 "before it can continue."
 	},
 	{"list-buffers",		ZLIST_BUFFERS,		AI,
 	 "Displays a list of the current buffers on the display."
@@ -269,9 +266,6 @@ struct cnames Cnames[] = {
 	 "leaves the Point at the end of the word."
 	},
 	{"make",			ZMAKE,			0,
-#if !SHELL
-	 "Note: Disabled in this version of Zedit.\n\n"
-#endif
 	 "This command performs the command specified in the Make variable "
 	 "and puts the output in the " SHELLBUFF " buffer. The command is "
 	 "usually 'make' and is used in conjunction with the next-error "

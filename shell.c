@@ -33,7 +33,6 @@ static void dotty(void)
 	First = false; /* used by pinsert when InPaw */
 }
 
-// SAM #if SHELL
 static void do_chdir(struct buff *buff)
 {
 	if (buff->fname) {
@@ -61,7 +60,6 @@ static void message(struct buff *buff, const char *str)
 			wdo->modeflags = INVALID;
 	putpaw("%s", str);
 }
-// SAM #endif
 
 #if DOPIPES
 #include <signal.h>
@@ -322,7 +320,7 @@ void execute(void)
 	dotty();
 }
 
-#if SHELL
+#if DOPOPEN
 static void cmdtobuff(const char *bname, const char *cmdin)
 {
 	FILE *pfp;
@@ -356,16 +354,12 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 		putpaw("Returned %d", rc);
 	wswitchto(save);
 }
-#endif
-
-#endif /* DOPIPES */
-
-#ifdef DOS
+#else
 static void cmdtobuff(const char *bname, const char *cmdin)
 {
 	int fd, rc;
 	struct wdo *save = Curwdo;
-	char cmd[PATHMAX], line[STRMAX];
+	char cmd[PATHMAX];
 	snprintf(cmd, sizeof(cmd), "%s", cmdin);
 
 	fd = open("__ZSH__.OUT", O_WRONLY|O_CREAT|O_TRUNC, 0666);
@@ -395,38 +389,27 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 		putpaw("Returned %d", rc);
 	wswitchto(save);
 }
-#define SHELL 1
-#endif
+#endif /* DOPOPEN */
 
-#if SHELL
-static int set_cmd(int which, const char *prompt)
+#endif /* DOPIPES */
+
+void Zmake(void)
 {
-	char cmd[STRMAX + 1];
+	if (Argp) {
+		char cmd[STRMAX + 1];
 
-	Argp = false;
-	strcpy(cmd, VARSTR(which));
-	if (_getarg(prompt, cmd, STRMAX, false))
-		return 0;
-	VARSTR(which) = strdup(cmd);
-	return 1;
-}
+		Argp = false;
+		strcpy(cmd, VARSTR(VMAKE));
+		if (_getarg("Make: ", cmd, STRMAX, false))
+			return;
+		VARSTR(VMAKE) = strdup(cmd);
+	}
 
-static void do_make(const char *cmd)
-{
 	NexterrorCalled = 0;	/* reset it */
 	Arg = 0;
 
 	saveall(true);
-	cmdtobuff(SHELLBUFF, cmd);
-}
-
-void Zmake(void)
-{
-	if (Argp)
-		if (!set_cmd(VMAKE, "Make: "))
-			return;
-
-	do_make(VARSTR(VMAKE));
+	cmdtobuff(SHELLBUFF, VARSTR(VMAKE));
 }
 
 void Zcmd_to_buffer(void)
@@ -437,8 +420,3 @@ void Zcmd_to_buffer(void)
 	if (getarg("@ ", cmd, STRMAX) == 0)
 		cmdtobuff(SHELLBUFF, cmd);
 }
-
-#else
-void Zmake(void) { tbell(); }
-void Zcmd_to_buffer(void) { tbell(); }
-#endif /* SHELL */

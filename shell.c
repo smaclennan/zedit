@@ -311,8 +311,8 @@ void Zkill(void)
 }
 #else
 void Zkill(void) { tbell(); }
-void unvoke(struct buff *child, bool check) {}
-int checkpipes(int type) { return 0; }
+void unvoke(struct buff *child, bool check) { ((void)child); ((void)check); }
+int checkpipes(int type) { ((void)type); return 0; }
 
 void execute(void)
 {
@@ -440,6 +440,21 @@ static int parse(char *fname)
 		/* try to get the fname */
 		n = getbword(fname, PATHMAX, bistoken);
 		bmove(n);
+
+#ifdef __TURBOC__
+		/* Error|Warning <fname> <line>: <msg> */
+		if (strcmp(fname, "Error") == 0 || strcmp(fname, "Warning") == 0) {
+			bmove1();
+
+			n = getbword(fname, PATHMAX, bistoken);
+			bmove(n);
+
+			/* look for line number */
+			line = batoi();
+			if (Buff() == ':')
+				return line;
+		}
+#endif
 
 		/* try to get the line */
 		if (Buff() == ':') {

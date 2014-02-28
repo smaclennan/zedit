@@ -434,20 +434,23 @@ int NexterrorCalled;
  */
 static int parse(char *fname)
 {
-	int line, n;
+	int line;
+	char *p;
 
 	while (!bisend()) {
 		/* try to get the fname */
-		n = getbword(fname, PATHMAX, bistoken);
-		bmove(n);
+		for (p = fname; !isspace(Buff()) && Buff() != ':'; bmove1())
+			*p++ = Buff();
+		*p = '\0';
 
 #ifdef __TURBOC__
 		/* Error|Warning <fname> <line>: <msg> */
 		if (strcmp(fname, "Error") == 0 || strcmp(fname, "Warning") == 0) {
 			bmove1();
 
-			n = getbword(fname, PATHMAX, bistoken);
-			bmove(n);
+			for (p = fname; !isspace(Buff()); bmove1())
+				*p++ = Buff();
+			*p = '\0';
 
 			/* look for line number */
 			line = batoi();

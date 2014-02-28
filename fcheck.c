@@ -102,6 +102,14 @@ int main(int argc, char *argv[])
 		printf("Problems with Keys array\n");
 		err = 1;
 	}
+
+	if (Keys[CX('1')] != ZONE_WINDOW ||
+	    Keys[CX('=')] != ZPOSITION ||
+	    Keys[CX('O')] != ZNEXT_WINDOW ||
+	    Keys[CX('Z')] != ZEXIT) {
+		printf("Problems with Keys array 2\n");
+		err = 1;
+	}
 	
 #ifdef DOS
 	if ((sizeof(alts) / sizeof(int)) != 0x86 - 0x10 + 1) {

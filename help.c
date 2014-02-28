@@ -29,7 +29,7 @@ static char *dispkey(unsigned key, char *s)
 	if (is_special(key))
 		return strcpy(s, special_label(key));
 	if (key > 127)
-		strcpy(s, key < 256 ? "M-" : "C-X ");
+		strcpy(s, key < 256 ? "C-X " : "M-" );
 	j = key & 0x7f;
 	if (j == 27)
 		strcat(s, "ESC");

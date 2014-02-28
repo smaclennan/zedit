@@ -33,15 +33,16 @@ int main(int argc, char *argv[])
 
 	char line[128], *p, *s;
 	while (fgets(line, sizeof(line), in)) {
-		fputs(line, out);
-		if (strstr(line, "ZDELETE_PREVIOUS_CHAR"))
+		for (p = line; isspace(*p); ++p) ;
+		if (*p == '[') /* first of array type */
 			break;
+		fputs(line, out);
 	}
 	fputs("};\n\n", out);
 
 	fputs("void bind_init(void)\n{\n", out);
 
-	while (fgets(line, sizeof(line), in)) {
+	do {
 		for (p = line; isspace(*p); ++p) ;
 		if (*p == '[') {
 			if ((s = strchr(p, ','))) *s = ';';
@@ -52,7 +53,8 @@ int main(int argc, char *argv[])
 			break;
 		} else
 			fputs(line, out);
-	}
+	} while (fgets(line, sizeof(line), in));
+
 
 	while (fgets(line, sizeof(line), in))
 		fputs(line, out);

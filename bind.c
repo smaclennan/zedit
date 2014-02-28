@@ -75,56 +75,85 @@ Byte Keys[NUMKEYS] = {
 
 	/* Init the CTRL-X functions */
 
-	[CX(1)]  = ZSAVE_ALL_FILES,		/* C-X C-A */
-	[CX(2)]  = ZSWITCH_TO_BUFFER,	/* C-X C-B */
-	[CX(3)]  = ZEXIT,			/* C-X C-C */
-	[CX(4)]  = ZDELETE_BUFFER,		/* C-X C-D */
-	[CX(6)]  = ZFIND_FILE,		/* C-X C-F */
-	[CX(7)]  = ZABORT,			/* C-X C-G */
-	[CX(11)]  = ZDELETE_LINE,		/* C-X C-K */
-	[CX(12)]  = ZLOWERCASE_REGION,	/* C-X C-L */
-	[CX(13)]  = ZMAKE,			/* C-X C-M */
-	[CX(14)]  = ZNEXT_ERROR,		/* C-X C-N */
-	[CX(15)]  = ZOUT_TO,			/* C-X C-O */
-	[CX(16)]  = ZMARK_PARAGRAPH,		/* C-X C-P */
-	[CX(18)]  = ZREAD_FILE,		/* C-X C-R */
-	[CX(19)]  = ZSAVE_FILE,		/* C-X C-S */
-	[CX(21)]  = ZUPPERCASE_REGION,	/* C-X C-U */
-	[CX(22)]  = ZOTHER_NEXT_PAGE,		/* C-X C-V */
-	[CX(23)]  = ZWRITE_FILE,		/* C-X C-W */
-	[CX(24)]  = ZSWAP_MARK,		/* C-X C-X */
-	[CX(26)]  = ZOTHER_PREVIOUS_PAGE,	/* C-X C-Z */
-	[CX('=')] = ZPOSITION,
-	[CX('1')] = ZONE_WINDOW,
-	[CX('2')] = ZSPLIT_WINDOW,
+	0,			/* C-X C-@ */
+	ZSAVE_ALL_FILES,	/* C-X C-A */
+	ZSWITCH_TO_BUFFER,	/* C-X C-B */
+	ZEXIT,			/* C-X C-C */
+	ZDELETE_BUFFER,		/* C-X C-D */
+	0,			/* C-X C-E */
+	ZFIND_FILE,		/* C-X C-F */
+	ZABORT,			/* C-X C-G */
+	0,			/* C-X C-H */
+	0,			/* C-X C-I */
+	0,			/* C-X C-J */
+	ZDELETE_LINE,		/* C-X C-K */
+	ZLOWERCASE_REGION,	/* C-X C-L */
+	ZMAKE,			/* C-X C-M */
+	ZNEXT_ERROR,		/* C-X C-N */
+	ZOUT_TO,		/* C-X C-O */
+	ZMARK_PARAGRAPH,	/* C-X C-P */
+	0,			/* C-X C-Q */
+	ZREAD_FILE,		/* C-X C-R */
+	ZSAVE_FILE,		/* C-X C-S */
+	0,			/* C-X C-T */
+	ZUPPERCASE_REGION,	/* C-X C-U */
+	ZOTHER_NEXT_PAGE,	/* C-X C-V */
+	ZWRITE_FILE,		/* C-X C-W */
+	ZSWAP_MARK,		/* C-X C-X */
+	0,			/* C-X C-Y */
+	ZOTHER_PREVIOUS_PAGE,	/* C-X C-Z */
+	0,			/* C-X Esc */
+	0,			/* C-X C-\ */
+	0,			/* C-X C-] */
+	ZGROW_WINDOW,		/* C-X C-^ */
+	0,			/* C-X C-_ */
+
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+
+	0,			/* C-X 0 */
+	ZONE_WINDOW,		/* C-X 1 */
+	ZSPLIT_WINDOW,		/* C-X 2 */
+	0,			/* C-X 3 */
+	0,			/* C-X 4 */
+	0,			/* C-X 5 */
+	0,			/* C-X 6 */
+	0,			/* C-X 7 */
+	0,			/* C-X 8 */
+	0,			/* C-X 9 */
+
+	0, 0, 0,
+	ZPOSITION,		/* C-X = */
+	0, 0, 0,
+
 	/* All lowercase converted to uppercase */
-	[CX('A')] = ZGLOBAL_SEARCH,
-	[CX('B')] = ZNEXT_BOOKMARK,
-	[CX('C')] = ZCOUNT,
-/*	[CX('D')] = , */
-	[CX('E')] = ZRE_REPLACE,
-	[CX('F')] = ZNEXT_PARAGRAPH,
-/*	[CX('G')] = , */
-	[CX('H')] = ZHELP_FUNCTION,
-	[CX('I')] = ZINDENT,
-/*	[CX('J')] = , */
-	[CX('K')] = ZDELETE_BUFFER,
-	[CX('L')] = ZLIST_BUFFERS,
-	[CX('M')] = ZSET_BOOKMARK,
-	[CX('N')] = ZNEXT_WINDOW,
-	[CX('O')] = ZNEXT_WINDOW,
-/*	[CX('P')] = , */
-/*	[CX('Q')] = , */
-/*	[CX('R')] = , */
-	[CX('S')] = ZSAVE_ALL_FILES,
-	[CX('T')] = ZTRIM_WHITE_SPACE,
-	[CX('U')] = ZUNDENT,
-	[CX('V')] = ZSET_VARIABLE,
-	[CX('W')] = ZWRITE_FILE,
-	[CX('X')] = ZNEXT_BUFFER,
-/*	[CX('Y')] = , */
-	[CX('Z')] = ZEXIT,
-	[CX('^')] = ZGROW_WINDOW,
+	ZGLOBAL_SEARCH,		/* C-X A */
+	ZNEXT_BOOKMARK,		/* C-X B */
+	ZCOUNT,			/* C-X C */
+	0,			/* C-X D */
+	ZRE_REPLACE,		/* C-X E */
+	ZNEXT_PARAGRAPH,	/* C-X F */
+	0,			/* C-X G */
+	ZHELP_FUNCTION,		/* C-X H */
+	ZINDENT,		/* C-X I */
+	0,			/* C-X J */
+	ZDELETE_BUFFER,		/* C-X K */
+	ZLIST_BUFFERS,		/* C-X L */
+	ZSET_BOOKMARK,		/* C-X M */
+	ZNEXT_WINDOW,		/* C-X N */
+	ZNEXT_WINDOW,		/* C-X O */
+	0,			/* C-X P */
+	0,			/* C-X Q */
+	0,			/* C-X R */
+	ZSAVE_ALL_FILES,	/* C-X S */
+	ZTRIM_WHITE_SPACE,	/* C-X T */
+	ZUNDENT,		/* C-X U */
+	ZSET_VARIABLE,		/* C-X V */
+	ZWRITE_FILE,		/* C-X W */
+	ZNEXT_BUFFER,		/* C-X X */
+	0,			/* C-X Y */
+	ZEXIT,			/* C-X Z */
+	0, 0, 0,
+	ZGROW_WINDOW,		/* C-X ^ */
 
 	/* Init the Meta functions */
 

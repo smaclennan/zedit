@@ -72,116 +72,145 @@ Byte Keys[NUMKEYS] = {
 	ZINSERT, ZINSERT, ZINSERT, ZINSERT, ZINSERT, ZINSERT, ZINSERT,
 
 	ZDELETE_PREVIOUS_CHAR,	/* 127 Backspace */
+
+	/* Init the CTRL-X functions */
+
+	0,			/* C-X C-@ */
+	ZSAVE_ALL_FILES,	/* C-X C-A */
+	ZSWITCH_TO_BUFFER,	/* C-X C-B */
+	ZEXIT,			/* C-X C-C */
+	ZDELETE_BUFFER,		/* C-X C-D */
+	0,			/* C-X C-E */
+	ZFIND_FILE,		/* C-X C-F */
+	ZABORT,			/* C-X C-G */
+	0,			/* C-X C-H */
+	0,			/* C-X C-I */
+	0,			/* C-X C-J */
+	ZDELETE_LINE,		/* C-X C-K */
+	ZLOWERCASE_REGION,	/* C-X C-L */
+	ZMAKE,			/* C-X C-M */
+	ZNEXT_ERROR,		/* C-X C-N */
+	ZOUT_TO,		/* C-X C-O */
+	ZMARK_PARAGRAPH,	/* C-X C-P */
+	0,			/* C-X C-Q */
+	ZREAD_FILE,		/* C-X C-R */
+	ZSAVE_FILE,		/* C-X C-S */
+	0,			/* C-X C-T */
+	ZUPPERCASE_REGION,	/* C-X C-U */
+	ZOTHER_NEXT_PAGE,	/* C-X C-V */
+	ZWRITE_FILE,		/* C-X C-W */
+	ZSWAP_MARK,		/* C-X C-X */
+	0,			/* C-X C-Y */
+	ZOTHER_PREVIOUS_PAGE,	/* C-X C-Z */
+	0,			/* C-X Esc */
+	0,			/* C-X C-\ */
+	0,			/* C-X C-] */
+	ZGROW_WINDOW,		/* C-X C-^ */
+	0,			/* C-X C-_ */
+
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+
+	0,			/* C-X 0 */
+	ZONE_WINDOW,		/* C-X 1 */
+	ZSPLIT_WINDOW,		/* C-X 2 */
+	0,			/* C-X 3 */
+	0,			/* C-X 4 */
+	0,			/* C-X 5 */
+	0,			/* C-X 6 */
+	0,			/* C-X 7 */
+	0,			/* C-X 8 */
+	0,			/* C-X 9 */
+
+	0, 0, 0,
+	ZPOSITION,		/* C-X = */
+	0, 0, 0,
+
+	/* All lowercase converted to uppercase */
+	ZGLOBAL_SEARCH,		/* C-X A */
+	ZNEXT_BOOKMARK,		/* C-X B */
+	ZCOUNT,			/* C-X C */
+	0,			/* C-X D */
+	ZRE_REPLACE,		/* C-X E */
+	ZNEXT_PARAGRAPH,	/* C-X F */
+	0,			/* C-X G */
+	ZHELP_FUNCTION,		/* C-X H */
+	ZINDENT,		/* C-X I */
+	0,			/* C-X J */
+	ZDELETE_BUFFER,		/* C-X K */
+	ZLIST_BUFFERS,		/* C-X L */
+	ZSET_BOOKMARK,		/* C-X M */
+	ZNEXT_WINDOW,		/* C-X N */
+	ZNEXT_WINDOW,		/* C-X O */
+	0,			/* C-X P */
+	0,			/* C-X Q */
+	0,			/* C-X R */
+	ZSAVE_ALL_FILES,	/* C-X S */
+	ZTRIM_WHITE_SPACE,	/* C-X T */
+	ZUNDENT,		/* C-X U */
+	ZSET_VARIABLE,		/* C-X V */
+	ZWRITE_FILE,		/* C-X W */
+	ZNEXT_BUFFER,		/* C-X X */
+	0,			/* C-X Y */
+	ZEXIT,			/* C-X Z */
+	0, 0, 0,
+	ZGROW_WINDOW,		/* C-X ^ */
+
+	/* Init the Meta functions */
+
 };
 
 void bind_init(void)
 {
-
-	/* Init the Meta functions */
-
-	Keys[128 + 7] = ZABORT;			/* M-C-G */
-	Keys[128 + 14] = ZSCROLL_DOWN;		/* M-C-N */
-	Keys[128 + 16] = ZSCROLL_UP;		/* M-C-P */
-	Keys[128 + 19] = ZINCREMENTAL_SEARCH;	/* M-C-S */
-	Keys[128 + 22] = ZVIEW_LINE;		/* M-C-V */
-	Keys[128 + 27] = ZABORT;			/* M-M */
-	Keys[128 + ' '] = ZSEARCH;
-/*	[128 + '!'] = , */
-	Keys[128 + '@'] = ZCMD_TO_BUFFER;
-/*	[128 + '#'] = , */
-	Keys[128 + '*'] = ZUNMODIFY;
-	Keys[128 + '('] = ZBEGINNING_OF_BUFFER;
-	Keys[128 + ')'] = ZEND_OF_BUFFER;
-/*	[128 + ','] = , */
-	Keys[128 + '<'] = ZBEGINNING_OF_BUFFER;
-	Keys[128 + '>'] = ZEND_OF_BUFFER;
-	Keys[128 + '.'] = ZTAG;
-/*	[128 + '/'] = , */
-/*	[128 + '_'] = , */
-/*	[128 + '-'] = , */
-	Keys[128 + '+'] = ZAPPEND_KILL;
-	Keys[128 + '='] = ZAPPEND_KILL;
+	Keys[M(7)] = ZABORT;			/* M-C-G */
+	Keys[M(14)] = ZSCROLL_DOWN;		/* M-C-N */
+	Keys[M(16)] = ZSCROLL_UP;		/* M-C-P */
+	Keys[M(19)] = ZINCREMENTAL_SEARCH;	/* M-C-S */
+	Keys[M(22)] = ZVIEW_LINE;		/* M-C-V */
+	Keys[M(27)] = ZABORT;			/* M-M */
+	Keys[M(' ')] = ZSEARCH;
+/*	[M('!')] = , */
+	Keys[M('@')] = ZCMD_TO_BUFFER;
+/*	[M('#')] = , */
+	Keys[M('*')] = ZUNMODIFY;
+	Keys[M('(')] = ZBEGINNING_OF_BUFFER;
+	Keys[M(')')] = ZEND_OF_BUFFER;
+/*	[M(',')] = , */
+	Keys[M('<')] = ZBEGINNING_OF_BUFFER;
+	Keys[M('>')] = ZEND_OF_BUFFER;
+	Keys[M('.')] = ZTAG;
+/*	[M('/')] = , */
+/*	[M('_')] = , */
+/*	[M('-')] = , */
+	Keys[M('+')] = ZAPPEND_KILL;
+	Keys[M('=')] = ZAPPEND_KILL;
 	/* All lowercase chars converted to uppercase */
-	Keys[128 + 'A'] = ZAGAIN;
-	Keys[128 + 'B'] = ZPREVIOUS_WORD;
-	Keys[128 + 'C'] = ZCAPITALIZE_WORD;
-	Keys[128 + 'D'] = ZDELETE_WORD;
-	Keys[128 + 'E'] = ZRE_SEARCH;
-	Keys[128 + 'F'] = ZNEXT_WORD;
-	Keys[128 + 'G'] = ZGOTO_LINE;
-	Keys[128 + 'H'] = ZDELETE_PREVIOUS_WORD;
-	Keys[128 + 'I'] = ZTAB;
-	Keys[128 + 'J'] = ZJOIN;
-	Keys[128 + 'K'] = ZKILL;
-	Keys[128 + 'L'] = ZLOWERCASE_WORD;
-	Keys[128 + 'M'] = ZFILL_PARAGRAPH;
-	Keys[128 + 'N'] = ZNEXT_PARAGRAPH;
-	Keys[128 + 'O'] = ZREVERT_FILE;
-	Keys[128 + 'P'] = ZPREVIOUS_PARAGRAPH;
-	Keys[128 + 'Q'] = ZQUOTE;
-	Keys[128 + 'R'] = ZQUERY_REPLACE;
-	Keys[128 + 'S'] = ZSEARCH;
-	Keys[128 + 'T'] = ZSWAP_WORDS;
-	Keys[128 + 'U'] = ZUPPERCASE_WORD;
-	Keys[128 + 'V'] = ZPREVIOUS_PAGE;
-	Keys[128 + 'W'] = ZCOPY_REGION;
-	Keys[128 + 'X'] = ZMETA_X;
-	Keys[128 + 'Y'] = ZYANK;
-	Keys[128 + 'Z'] = ZSAVE_AND_EXIT;
-	Keys[128 + 127] = ZDELETE_PREVIOUS_WORD;	/* M-DEL */
-
-	/* Init the CTRL-X functions */
-
-	Keys[256 +  1]  = ZSAVE_ALL_FILES;		/* C-X C-A */
-	Keys[256 +  2]  = ZSWITCH_TO_BUFFER;	/* C-X C-B */
-	Keys[256 +  3]  = ZEXIT;			/* C-X C-C */
-	Keys[256 +  4]  = ZDELETE_BUFFER;		/* C-X C-D */
-	Keys[256 +  6]  = ZFIND_FILE;		/* C-X C-F */
-	Keys[256 +  7]  = ZABORT;			/* C-X C-G */
-	Keys[256 + 11]  = ZDELETE_LINE;		/* C-X C-K */
-	Keys[256 + 12]  = ZLOWERCASE_REGION;	/* C-X C-L */
-	Keys[256 + 13]  = ZMAKE;			/* C-X C-M */
-	Keys[256 + 14]  = ZNEXT_ERROR;		/* C-X C-N */
-	Keys[256 + 15]  = ZOUT_TO;			/* C-X C-O */
-	Keys[256 + 16]  = ZMARK_PARAGRAPH;		/* C-X C-P */
-	Keys[256 + 18]  = ZREAD_FILE;		/* C-X C-R */
-	Keys[256 + 19]  = ZSAVE_FILE;		/* C-X C-S */
-	Keys[256 + 21]  = ZUPPERCASE_REGION;	/* C-X C-U */
-	Keys[256 + 22]  = ZOTHER_NEXT_PAGE;		/* C-X C-V */
-	Keys[256 + 23]  = ZWRITE_FILE;		/* C-X C-W */
-	Keys[256 + 24]  = ZSWAP_MARK;		/* C-X C-X */
-	Keys[256 + 26]  = ZOTHER_PREVIOUS_PAGE;	/* C-X C-Z */
-	Keys[256 + '='] = ZPOSITION;
-	Keys[256 + '1'] = ZONE_WINDOW;
-	Keys[256 + '2'] = ZSPLIT_WINDOW;
-	/* All lowercase converted to uppercase */
-	Keys[256 + 'A'] = ZGLOBAL_SEARCH;
-	Keys[256 + 'B'] = ZNEXT_BOOKMARK;
-	Keys[256 + 'C'] = ZCOUNT;
-/*	[256 + 'D'] = , */
-	Keys[256 + 'E'] = ZRE_REPLACE;
-	Keys[256 + 'F'] = ZNEXT_PARAGRAPH;
-/*	[256 + 'G'] = , */
-	Keys[256 + 'H'] = ZHELP_FUNCTION;
-	Keys[256 + 'I'] = ZINDENT;
-/*	[256 + 'J'] = , */
-	Keys[256 + 'K'] = ZDELETE_BUFFER;
-	Keys[256 + 'L'] = ZLIST_BUFFERS;
-	Keys[256 + 'M'] = ZSET_BOOKMARK;
-	Keys[256 + 'N'] = ZNEXT_WINDOW;
-	Keys[256 + 'O'] = ZNEXT_WINDOW;
-/*	[256 + 'P'] = , */
-/*	[256 + 'Q'] = , */
-/*	[256 + 'R'] = , */
-	Keys[256 + 'S'] = ZSAVE_ALL_FILES;
-	Keys[256 + 'T'] = ZTRIM_WHITE_SPACE;
-	Keys[256 + 'U'] = ZUNDENT;
-	Keys[256 + 'V'] = ZSET_VARIABLE;
-	Keys[256 + 'W'] = ZWRITE_FILE;
-	Keys[256 + 'X'] = ZNEXT_BUFFER;
-/*	[256 + 'Y'] = , */
-	Keys[256 + 'Z'] = ZEXIT;
-	Keys[256 + '^'] = ZGROW_WINDOW;
+	Keys[M('A')] = ZAGAIN;
+	Keys[M('B')] = ZPREVIOUS_WORD;
+	Keys[M('C')] = ZCAPITALIZE_WORD;
+	Keys[M('D')] = ZDELETE_WORD;
+	Keys[M('E')] = ZRE_SEARCH;
+	Keys[M('F')] = ZNEXT_WORD;
+	Keys[M('G')] = ZGOTO_LINE;
+	Keys[M('H')] = ZDELETE_PREVIOUS_WORD;
+	Keys[M('I')] = ZTAB;
+	Keys[M('J')] = ZJOIN;
+	Keys[M('K')] = ZKILL;
+	Keys[M('L')] = ZLOWERCASE_WORD;
+	Keys[M('M')] = ZFILL_PARAGRAPH;
+	Keys[M('N')] = ZNEXT_PARAGRAPH;
+	Keys[M('O')] = ZREVERT_FILE;
+	Keys[M('P')] = ZPREVIOUS_PARAGRAPH;
+	Keys[M('Q')] = ZQUOTE;
+	Keys[M('R')] = ZQUERY_REPLACE;
+	Keys[M('S')] = ZSEARCH;
+	Keys[M('T')] = ZSWAP_WORDS;
+	Keys[M('U')] = ZUPPERCASE_WORD;
+	Keys[M('V')] = ZPREVIOUS_PAGE;
+	Keys[M('W')] = ZCOPY_REGION;
+	Keys[M('X')] = ZMETA_X;
+	Keys[M('Y')] = ZYANK;
+	Keys[M('Z')] = ZSAVE_AND_EXIT;
+	Keys[M(127)] = ZDELETE_PREVIOUS_WORD;	/* M-DEL */
 
 	/* Special keys */
 

@@ -408,14 +408,8 @@ void tcleol(void)
 		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, 1,
 					   where, &written);
 #elif defined(DOS)
-		int i, len = Clrcol[Prow] - Pcol;
-
 		tforce();
-		for (i = 0; i < len; ++i)
-			putch(' ');
-		/* We need to move the cursor back.
-		 * We cannot call tforce since it has saved the position. */
-		gotoxy(Pcol + 1, Prow + 1);
+		clreol();
 #else
 		tforce();
 		fputs("\033[K", stdout);

@@ -73,111 +73,111 @@ Byte Keys[NUMKEYS] = {
 
 	ZDELETE_PREVIOUS_CHAR,	/* 127 Backspace */
 
-	/* Init the Meta functions */
-
-	[128 + 7] = ZABORT,			/* M-C-G */
-	[128 + 14] = ZSCROLL_DOWN,		/* M-C-N */
-	[128 + 16] = ZSCROLL_UP,		/* M-C-P */
-	[128 + 19] = ZINCREMENTAL_SEARCH,	/* M-C-S */
-	[128 + 22] = ZVIEW_LINE,		/* M-C-V */
-	[128 + 27] = ZABORT,			/* M-M */
-	[128 + ' '] = ZSEARCH,
-/*	[128 + '!'] = , */
-	[128 + '@'] = ZCMD_TO_BUFFER,
-/*	[128 + '#'] = , */
-	[128 + '*'] = ZUNMODIFY,
-	[128 + '('] = ZBEGINNING_OF_BUFFER,
-	[128 + ')'] = ZEND_OF_BUFFER,
-/*	[128 + ','] = , */
-	[128 + '<'] = ZBEGINNING_OF_BUFFER,
-	[128 + '>'] = ZEND_OF_BUFFER,
-	[128 + '.'] = ZTAG,
-/*	[128 + '/'] = , */
-/*	[128 + '_'] = , */
-/*	[128 + '-'] = , */
-	[128 + '+'] = ZAPPEND_KILL,
-	[128 + '='] = ZAPPEND_KILL,
-	/* All lowercase chars converted to uppercase */
-	[128 + 'A'] = ZAGAIN,
-	[128 + 'B'] = ZPREVIOUS_WORD,
-	[128 + 'C'] = ZCAPITALIZE_WORD,
-	[128 + 'D'] = ZDELETE_WORD,
-	[128 + 'E'] = ZRE_SEARCH,
-	[128 + 'F'] = ZNEXT_WORD,
-	[128 + 'G'] = ZGOTO_LINE,
-	[128 + 'H'] = ZDELETE_PREVIOUS_WORD,
-	[128 + 'I'] = ZTAB,
-	[128 + 'J'] = ZJOIN,
-	[128 + 'K'] = ZKILL,
-	[128 + 'L'] = ZLOWERCASE_WORD,
-	[128 + 'M'] = ZFILL_PARAGRAPH,
-	[128 + 'N'] = ZNEXT_PARAGRAPH,
-	[128 + 'O'] = ZREVERT_FILE,
-	[128 + 'P'] = ZPREVIOUS_PARAGRAPH,
-	[128 + 'Q'] = ZQUOTE,
-	[128 + 'R'] = ZQUERY_REPLACE,
-	[128 + 'S'] = ZSEARCH,
-	[128 + 'T'] = ZSWAP_WORDS,
-	[128 + 'U'] = ZUPPERCASE_WORD,
-	[128 + 'V'] = ZPREVIOUS_PAGE,
-	[128 + 'W'] = ZCOPY_REGION,
-	[128 + 'X'] = ZMETA_X,
-	[128 + 'Y'] = ZYANK,
-	[128 + 'Z'] = ZSAVE_AND_EXIT,
-	[128 + 127] = ZDELETE_PREVIOUS_WORD,	/* M-DEL */
-
 	/* Init the CTRL-X functions */
 
-	[256 +  1]  = ZSAVE_ALL_FILES,		/* C-X C-A */
-	[256 +  2]  = ZSWITCH_TO_BUFFER,	/* C-X C-B */
-	[256 +  3]  = ZEXIT,			/* C-X C-C */
-	[256 +  4]  = ZDELETE_BUFFER,		/* C-X C-D */
-	[256 +  6]  = ZFIND_FILE,		/* C-X C-F */
-	[256 +  7]  = ZABORT,			/* C-X C-G */
-	[256 + 11]  = ZDELETE_LINE,		/* C-X C-K */
-	[256 + 12]  = ZLOWERCASE_REGION,	/* C-X C-L */
-	[256 + 13]  = ZMAKE,			/* C-X C-M */
-	[256 + 14]  = ZNEXT_ERROR,		/* C-X C-N */
-	[256 + 15]  = ZOUT_TO,			/* C-X C-O */
-	[256 + 16]  = ZMARK_PARAGRAPH,		/* C-X C-P */
-	[256 + 18]  = ZREAD_FILE,		/* C-X C-R */
-	[256 + 19]  = ZSAVE_FILE,		/* C-X C-S */
-	[256 + 21]  = ZUPPERCASE_REGION,	/* C-X C-U */
-	[256 + 22]  = ZOTHER_NEXT_PAGE,		/* C-X C-V */
-	[256 + 23]  = ZWRITE_FILE,		/* C-X C-W */
-	[256 + 24]  = ZSWAP_MARK,		/* C-X C-X */
-	[256 + 26]  = ZOTHER_PREVIOUS_PAGE,	/* C-X C-Z */
-	[256 + '='] = ZPOSITION,
-	[256 + '1'] = ZONE_WINDOW,
-	[256 + '2'] = ZSPLIT_WINDOW,
+	[CX(1)]  = ZSAVE_ALL_FILES,		/* C-X C-A */
+	[CX(2)]  = ZSWITCH_TO_BUFFER,	/* C-X C-B */
+	[CX(3)]  = ZEXIT,			/* C-X C-C */
+	[CX(4)]  = ZDELETE_BUFFER,		/* C-X C-D */
+	[CX(6)]  = ZFIND_FILE,		/* C-X C-F */
+	[CX(7)]  = ZABORT,			/* C-X C-G */
+	[CX(11)]  = ZDELETE_LINE,		/* C-X C-K */
+	[CX(12)]  = ZLOWERCASE_REGION,	/* C-X C-L */
+	[CX(13)]  = ZMAKE,			/* C-X C-M */
+	[CX(14)]  = ZNEXT_ERROR,		/* C-X C-N */
+	[CX(15)]  = ZOUT_TO,			/* C-X C-O */
+	[CX(16)]  = ZMARK_PARAGRAPH,		/* C-X C-P */
+	[CX(18)]  = ZREAD_FILE,		/* C-X C-R */
+	[CX(19)]  = ZSAVE_FILE,		/* C-X C-S */
+	[CX(21)]  = ZUPPERCASE_REGION,	/* C-X C-U */
+	[CX(22)]  = ZOTHER_NEXT_PAGE,		/* C-X C-V */
+	[CX(23)]  = ZWRITE_FILE,		/* C-X C-W */
+	[CX(24)]  = ZSWAP_MARK,		/* C-X C-X */
+	[CX(26)]  = ZOTHER_PREVIOUS_PAGE,	/* C-X C-Z */
+	[CX('=')] = ZPOSITION,
+	[CX('1')] = ZONE_WINDOW,
+	[CX('2')] = ZSPLIT_WINDOW,
 	/* All lowercase converted to uppercase */
-	[256 + 'A'] = ZGLOBAL_SEARCH,
-	[256 + 'B'] = ZNEXT_BOOKMARK,
-	[256 + 'C'] = ZCOUNT,
-/*	[256 + 'D'] = , */
-	[256 + 'E'] = ZRE_REPLACE,
-	[256 + 'F'] = ZNEXT_PARAGRAPH,
-/*	[256 + 'G'] = , */
-	[256 + 'H'] = ZHELP_FUNCTION,
-	[256 + 'I'] = ZINDENT,
-/*	[256 + 'J'] = , */
-	[256 + 'K'] = ZDELETE_BUFFER,
-	[256 + 'L'] = ZLIST_BUFFERS,
-	[256 + 'M'] = ZSET_BOOKMARK,
-	[256 + 'N'] = ZNEXT_WINDOW,
-	[256 + 'O'] = ZNEXT_WINDOW,
-/*	[256 + 'P'] = , */
-/*	[256 + 'Q'] = , */
-/*	[256 + 'R'] = , */
-	[256 + 'S'] = ZSAVE_ALL_FILES,
-	[256 + 'T'] = ZTRIM_WHITE_SPACE,
-	[256 + 'U'] = ZUNDENT,
-	[256 + 'V'] = ZSET_VARIABLE,
-	[256 + 'W'] = ZWRITE_FILE,
-	[256 + 'X'] = ZNEXT_BUFFER,
-/*	[256 + 'Y'] = , */
-	[256 + 'Z'] = ZEXIT,
-	[256 + '^'] = ZGROW_WINDOW,
+	[CX('A')] = ZGLOBAL_SEARCH,
+	[CX('B')] = ZNEXT_BOOKMARK,
+	[CX('C')] = ZCOUNT,
+/*	[CX('D')] = , */
+	[CX('E')] = ZRE_REPLACE,
+	[CX('F')] = ZNEXT_PARAGRAPH,
+/*	[CX('G')] = , */
+	[CX('H')] = ZHELP_FUNCTION,
+	[CX('I')] = ZINDENT,
+/*	[CX('J')] = , */
+	[CX('K')] = ZDELETE_BUFFER,
+	[CX('L')] = ZLIST_BUFFERS,
+	[CX('M')] = ZSET_BOOKMARK,
+	[CX('N')] = ZNEXT_WINDOW,
+	[CX('O')] = ZNEXT_WINDOW,
+/*	[CX('P')] = , */
+/*	[CX('Q')] = , */
+/*	[CX('R')] = , */
+	[CX('S')] = ZSAVE_ALL_FILES,
+	[CX('T')] = ZTRIM_WHITE_SPACE,
+	[CX('U')] = ZUNDENT,
+	[CX('V')] = ZSET_VARIABLE,
+	[CX('W')] = ZWRITE_FILE,
+	[CX('X')] = ZNEXT_BUFFER,
+/*	[CX('Y')] = , */
+	[CX('Z')] = ZEXIT,
+	[CX('^')] = ZGROW_WINDOW,
+
+	/* Init the Meta functions */
+
+	[M(7)] = ZABORT,			/* M-C-G */
+	[M(14)] = ZSCROLL_DOWN,		/* M-C-N */
+	[M(16)] = ZSCROLL_UP,		/* M-C-P */
+	[M(19)] = ZINCREMENTAL_SEARCH,	/* M-C-S */
+	[M(22)] = ZVIEW_LINE,		/* M-C-V */
+	[M(27)] = ZABORT,			/* M-M */
+	[M(' ')] = ZSEARCH,
+/*	[M('!')] = , */
+	[M('@')] = ZCMD_TO_BUFFER,
+/*	[M('#')] = , */
+	[M('*')] = ZUNMODIFY,
+	[M('(')] = ZBEGINNING_OF_BUFFER,
+	[M(')')] = ZEND_OF_BUFFER,
+/*	[M(',')] = , */
+	[M('<')] = ZBEGINNING_OF_BUFFER,
+	[M('>')] = ZEND_OF_BUFFER,
+	[M('.')] = ZTAG,
+/*	[M('/')] = , */
+/*	[M('_')] = , */
+/*	[M('-')] = , */
+	[M('+')] = ZAPPEND_KILL,
+	[M('=')] = ZAPPEND_KILL,
+	/* All lowercase chars converted to uppercase */
+	[M('A')] = ZAGAIN,
+	[M('B')] = ZPREVIOUS_WORD,
+	[M('C')] = ZCAPITALIZE_WORD,
+	[M('D')] = ZDELETE_WORD,
+	[M('E')] = ZRE_SEARCH,
+	[M('F')] = ZNEXT_WORD,
+	[M('G')] = ZGOTO_LINE,
+	[M('H')] = ZDELETE_PREVIOUS_WORD,
+	[M('I')] = ZTAB,
+	[M('J')] = ZJOIN,
+	[M('K')] = ZKILL,
+	[M('L')] = ZLOWERCASE_WORD,
+	[M('M')] = ZFILL_PARAGRAPH,
+	[M('N')] = ZNEXT_PARAGRAPH,
+	[M('O')] = ZREVERT_FILE,
+	[M('P')] = ZPREVIOUS_PARAGRAPH,
+	[M('Q')] = ZQUOTE,
+	[M('R')] = ZQUERY_REPLACE,
+	[M('S')] = ZSEARCH,
+	[M('T')] = ZSWAP_WORDS,
+	[M('U')] = ZUPPERCASE_WORD,
+	[M('V')] = ZPREVIOUS_PAGE,
+	[M('W')] = ZCOPY_REGION,
+	[M('X')] = ZMETA_X,
+	[M('Y')] = ZYANK,
+	[M('Z')] = ZSAVE_AND_EXIT,
+	[M(127)] = ZDELETE_PREVIOUS_WORD,	/* M-DEL */
 
 	/* Special keys */
 

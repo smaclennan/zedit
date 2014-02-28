@@ -24,8 +24,6 @@
 int Cmdpushed = -1;
 static int kb_hit;
 
-#define M(a) (a + 128)
-
 static int alts[] = { /* 0x10 to 0x86 inclusive */
 	M('Q'), M('W'), M('E'), M('R'), M('T'), M('Y'),
 	M('U'), M('I'), M('O'), M('P'), M('['), M(']'), 0, 0,

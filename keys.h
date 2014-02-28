@@ -20,36 +20,39 @@
 #ifndef _KEYS_H_
 #define _KEYS_H_
 
-#define TC_UP			(128 + 'a')
-#define TC_DOWN			(128 + 'b')
-#define TC_RIGHT		(128 + 'c')
-#define TC_LEFT			(128 + 'd')
+#define CX(n)	((n) + 128)
+#define M(n)	((n) + 256)
 
-#define TC_INSERT		(128 + 'e')
-#define TC_DELETE		(128 + 'f')
-#define TC_PGUP			(128 + 'g')
-#define TC_PGDOWN		(128 + 'h')
-#define TC_HOME			(128 + 'i')
-#define TC_END			(128 + 'j')
+#define TC_UP			M('a')
+#define TC_DOWN			M('b')
+#define TC_RIGHT		M('c')
+#define TC_LEFT			M('d')
 
-#define TC_F1			(128 + 'k')
-#define TC_F2			(128 + 'l')
-#define TC_F3			(128 + 'm')
-#define TC_F4			(128 + 'n')
-#define TC_F5			(128 + 'o')
-#define TC_F6			(128 + 'p')
-#define TC_F7			(128 + 'q')
-#define TC_F8			(128 + 'r')
-#define TC_F9			(128 + 's')
-#define TC_F10			(128 + 't')
-#define TC_F11			(128 + 'u')
-#define TC_F12			(128 + 'v')
+#define TC_INSERT		M('e')
+#define TC_DELETE		M('f')
+#define TC_PGUP			M('g')
+#define TC_PGDOWN		M('h')
+#define TC_HOME			M('i')
+#define TC_END			M('j')
 
-#define TC_C_HOME		(128 + 'w')
-#define TC_C_END		(128 + 'x')
+#define TC_F1			M('k')
+#define TC_F2			M('l')
+#define TC_F3			M('m')
+#define TC_F4			M('n')
+#define TC_F5			M('o')
+#define TC_F6			M('p')
+#define TC_F7			M('q')
+#define TC_F8			M('r')
+#define TC_F9			M('s')
+#define TC_F10			M('t')
+#define TC_F11			M('u')
+#define TC_F12			M('v')
+
+#define TC_C_HOME		M('w')
+#define TC_C_END		M('x')
 
 /* Unknown key - always bound to Znotimpl */
-#define TC_UNKNOWN		(128 + 'z')
+#define TC_UNKNOWN		M('z')
 
 #define KEY_MASK		0x00ffffff
 #define SPECIAL_START		TC_UP

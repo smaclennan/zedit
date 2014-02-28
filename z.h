@@ -43,6 +43,7 @@
 #include "vars.h"
 #include "funcs.h"
 #include "proto.h"
+#include "keys.h"
 
 #define ZSTR	"Zedit"
 #define VERSION	"5.2"

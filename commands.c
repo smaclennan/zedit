@@ -595,12 +595,12 @@ static void do_prefix_cmd(const char *prompt, int mask)
 
 void Zmeta(void)
 {
-	do_prefix_cmd("Meta: ", 128);
+	do_prefix_cmd("Meta: ", M(0));
 }
 
 void Zctrl_x(void)
 {
-	do_prefix_cmd("C-X: ", 256);
+	do_prefix_cmd("C-X: ", CX(0));
 }
 
 void Zmeta_x(void)

@@ -128,9 +128,6 @@ void Zc_insert(void)
 	char word[16];
 
 	switch (Cmd) {
-	case '\t':
-		return;
-
 	case '}':
 		/* line it up with last unmatched '{' */
 		Arg = 0;

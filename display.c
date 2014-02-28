@@ -365,7 +365,7 @@ static char *setmodes(struct buff *buff)
 	case CMODE:
 		strcpy(PawStr, "C");
 		Keys[CR] = ZC_INDENT;
-		Keys['}'] = Keys['#'] = Keys[':'] = Keys['\t'] = ZC_INSERT;
+		Keys['}'] = Keys['#'] = Keys[':'] = ZC_INSERT;
 		if (VAR(VCOMMENTS)) {
 			Keys['/'] = ZC_INSERT;
 			printchar = cprntchar;
@@ -374,7 +374,6 @@ static char *setmodes(struct buff *buff)
 	case SHMODE:
 		strcpy(PawStr, "sh");
 		Keys[CR] = ZC_INDENT;
-		Keys['\t'] = ZC_INSERT;
 		if (VAR(VCOMMENTS))
 			printchar = cprntchar;
 		break;

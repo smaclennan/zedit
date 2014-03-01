@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 			mask = (mask << 1) | 1;
 		if (mask != KEY_MASK) {
 			printf("Mismatch mask %08lx and %08lx\n",
-			       mask, KEY_MASK);
+			       mask, (unsigned long)KEY_MASK);
 			err = 1;
 		}
 	}
@@ -155,12 +155,12 @@ int main(int argc, char *argv[])
 	/* getplete structs must be aligned */
 	if (sizeof(struct cnames) % sizeof(char *)) {
 		printf("struct cnames not aligned [%d/%d]\n", 
-			sizeof(struct cnames), sizeof(char *));
+		       (int)sizeof(struct cnames), (int)sizeof(char *));
 		err = 1;
 	}
 	if (sizeof(struct avar) % sizeof(char *)) {
 		printf("struct avar not aligned [%d/%d]\n",
-			sizeof(struct avar), sizeof(char *));
+		       (int)sizeof(struct avar), (int)sizeof(char *));
 		err = 1;
 	}
 

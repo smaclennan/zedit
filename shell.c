@@ -70,6 +70,25 @@ static int Waiting;
 static fd_set SelectFDs;
 static int NumFDs;
 
+/* Come here when a child dies or exits.
+ *
+ * NOTE:For system 3 and system 5: After coming here we do not rebind the
+ *		signals to sigchild. We wait until the checkpipes routine. If we
+ *		do it here, the system seems to send us infinite SIGCLDs.
+ */
+static void sigchild(int signo)
+{
+	++Waiting;
+}
+
+void siginit(void)
+{
+#if !defined(WNOWAIT)
+	signal(SIGCLD,  sigchild);
+#endif
+	signal(SIGPIPE, sigchild);
+}
+
 /* pipe has something for us */
 static int readapipe(struct buff *tbuff)
 {
@@ -188,11 +207,7 @@ int checkpipes(int type)
 	}
 
 #ifdef SYSV4
-	/* See note in sigchild() */
-#if !defined(WNOWAIT)
-	signal(SIGCLD, sigchild);
-#endif
-	signal(SIGPIPE, sigchild);
+	siginit();
 #endif
 	return pid;
 }
@@ -278,17 +293,6 @@ void unvoke(struct buff *child, bool check)
 				;
 	} else
 		tbell();
-}
-
-/* Come here when a child dies or exits.
- *
- * NOTE:For system 3 and system 5: After coming here we do not rebind the
- *		signals to sigchild. We wait until the checkpipes routine. If we
- *		do it here, the system seems to send us infinite SIGCLDs.
- */
-void sigchild(int signo)
-{
-	++Waiting;
 }
 
 static void cmdtobuff(const char *bname, const char *cmd)

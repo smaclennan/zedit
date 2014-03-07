@@ -282,7 +282,7 @@ void winit(void);
 void wfini(void);
 
 int checkpipes(int type);
-void sigchild(int);
+void siginit(void);
 void unvoke(struct buff *, bool);
 
 void Dbg(const char *fmt, ...);

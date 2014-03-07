@@ -20,10 +20,6 @@
 #include "z.h"
 #include <signal.h>
 
-#if DOPIPES
-#include <sys/wait.h>	/* need for WNOWAIT */
-#endif
-
 #if defined(HAVE_TERMIOS)
 #include <termios.h>
 static struct termios save_tty;
@@ -160,14 +156,11 @@ void tinit(void)
 #ifdef SIGTERM
 	signal(SIGTERM, hang_up);
 #endif
-#if DOPIPES
-#if !defined(WNOWAIT)
-	signal(SIGCLD,  sigchild);
-#endif
-	signal(SIGPIPE, sigchild);
-#endif
 #ifdef SIGWINCH
 	signal(SIGWINCH, sigwinch); /* window has changed size - update */
+#endif
+#if DOPIPES
+	siginit();
 #endif
 
 	/* Must be after setting up tty */

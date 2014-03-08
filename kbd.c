@@ -52,8 +52,6 @@ static const char *Tkeys[] = {
 	"\033[8^"	/* C-end */
 };
 
-int Cmdpushed = -1;
-
 /* stack and vars for t[un]getkb / tkbrdy */
 #define CSTACK 16 /* must be power of 2 */
 static Byte cstack[CSTACK];
@@ -111,16 +109,11 @@ int tgetcmd(void)
 {
 	int cmd;
 
-	if (Cmdpushed >= 0) {
-		cmd = Cmdpushed;
-		Cmdpushed = -1;
-	} else {
-		cmd = tgetkb() & 0x7f;
+	cmd = tgetkb() & 0x7f;
 
-		/* All special keys start with ESC */
-		if (cmd == '\033' && tkbrdy())
-			return check_specials();
-	}
+	/* All special keys start with ESC */
+	if (cmd == '\033' && tkbrdy())
+		return check_specials();
 
 	return cmd;
 }

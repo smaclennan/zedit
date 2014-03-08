@@ -19,10 +19,19 @@
 
 #include "z.h"
 
+/* Search pushed a key */
+int Cmdpushed = -1;
+
+
 /* NOTE: Dotty blocks */
 static void dotty(void)
 {
-	Cmd = tgetcmd();
+	if (Cmdpushed == -1)
+		Cmd = tgetcmd();
+	else {
+		Cmd = Cmdpushed;
+		Cmdpushed = -1;
+	}
 	Arg = 1;
 	Argp = false;
 	while (Arg > 0) {

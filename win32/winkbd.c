@@ -21,8 +21,6 @@
 #include "keys.h"
 #include "winkeys.h"
 
-int Cmdpushed = -1;
-
 /* stack and vars for t[un]getkb / tkbrdy */
 #define CSTACK 16 /* must be power of 2 */
 static int cstack[CSTACK];
@@ -97,7 +95,7 @@ static short convertKey(KEY_EVENT_RECORD *event)
 	return key;
 }
 
-static int tgetkb(void)
+int tgetcmd(void)
 {
 	Pending = false;
 
@@ -143,16 +141,6 @@ again:
 
 	--cpushed;
 	return cstack[cptr];
-}
-
-int tgetcmd(void)
-{
-	if (Cmdpushed >= 0) {
-		int cmd = Cmdpushed;
-		Cmdpushed = -1;
-		return cmd;
-	} else
-		return tgetkb();
 }
 
 bool tkbrdy(void)

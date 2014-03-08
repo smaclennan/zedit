@@ -21,7 +21,6 @@
 #include "keys.h"
 #include <time.h>
 
-int Cmdpushed = -1;
 static int kb_hit;
 
 static int alts[] = { /* 0x10 to 0x86 inclusive */
@@ -45,15 +44,8 @@ static int alts[] = { /* 0x10 to 0x86 inclusive */
 int tgetcmd(void)
 {
 	extern int ring_bell;
-	int cmd;
+	int cmd = getch() & 0x7f;
 
-	if (Cmdpushed >= 0) {
-		cmd = Cmdpushed;
-		Cmdpushed = -1;
-		return cmd;
-	}
-
-	cmd = getch() & 0x7f;
 	kb_hit = 0;
 	if (ring_bell) {
 		ring_bell = 0;

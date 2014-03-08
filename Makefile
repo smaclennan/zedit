@@ -4,7 +4,7 @@ ZEXE = ze
 CC = gcc
 #CC = g++
 #CC = clang -fno-color-diagnostics
-CFLAGS += -Wall -g
+CFLAGS += -Wall -g -O2
 
 LIBS += -lz
 LIBS += -ldl

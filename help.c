@@ -72,14 +72,16 @@ static void dump_bindings(int fnum)
 
 void dump_doc(const char *doc)
 {
-	binstr("\n\n");
+	if (doc) {
+		binstr("\n\n");
 
-	for (; *doc; ++doc)
-		if (*doc == ' ') {
-			Cmd = *doc;
-			Zfill_check();
-		} else
-			binsert(*doc);
+		for (; *doc; ++doc)
+			if (*doc == ' ') {
+				Cmd = *doc;
+				Zfill_check();
+			} else
+				binsert(*doc);
+	}
 	binsert('\n');
 }
 

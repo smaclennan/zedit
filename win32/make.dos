@@ -8,7 +8,7 @@ O=bcmds.obj buff.obj calc.obj cnames.obj comment.obj commands.obj \
 	undo.obj vars.obj window.obj varray.obj z.obj \
 	getfname.obj tags.obj term.obj zgrep.obj
 
-O2=dosbind.obj doskbd.obj dosint.obj zwin32.obj fnmatch.obj
+O2=dosbind.obj doskbd.obj zwin32.obj fnmatch.obj
 
 .c.obj:
 	$(CC) -c $(CFLAGS) $<
@@ -38,9 +38,6 @@ zwin32.obj: win32\zwin32.c
 
 fnmatch.obj: win32\fnmatch.c
 	$(CC) -c $(CFLAGS) win32\fnmatch.c
-
-dosint.obj: win32\dosint.asm
-	tasm -mx win32\dosint.asm
 
 clean:
 	del *.obj

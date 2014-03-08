@@ -51,7 +51,7 @@ int getopt(int argc, char *argv[], const char *optstring)
 
 static void psepfixup(char *path)
 {
-	while ((path = strchr(path, '\\')))
+	while ((path = strchr(path, '\\')) != NULL)
 		*path = '/';
 }
 
@@ -149,6 +149,7 @@ int snprintf(char *str, int size, const char *fmt, ...)
 {
 	int n;
 	va_list ap;
+	((void)size);
 
 	va_start(ap, fmt);
 	n = vsprintf(str, fmt, ap);
@@ -165,4 +166,10 @@ char *gethomedir(void)
 	return home;
 }
 
+static void interrupt far criterr(void) {}
+
+void install_ints(void)
+{
+	_dos_setvect(0x24, criterr);
+}
 #endif

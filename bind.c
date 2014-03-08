@@ -23,7 +23,7 @@
 Byte Lfunc;
 Byte CRdefault = ZNEWLINE;
 
-Byte Keys[NUMKEYS] = {
+Byte Keys[] = {
 	ZSET_MARK,		/* C-@ */
 	ZBEGINNING_OF_LINE,	/* C-A */
 	ZPREVIOUS_CHAR,		/* C-B */

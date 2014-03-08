@@ -51,6 +51,7 @@
 #endif
 
 int InPaw;
+unsigned Cmd;
 int ring_bell;
 struct wdo *Curwdo;
 
@@ -95,30 +96,35 @@ int main(int argc, char *argv[])
 	}
 
 	/* Spot check keys array */
-	memset(array, ZINSERT, sizeof(array));
-	array[0] = ZUNDO;
-	array[96] = ZDELETE_PREVIOUS_CHAR;
-	if (memcmp(array, Keys + 31, sizeof(array))) {
+	if (sizeof(Keys) != NUMKEYS) {
 		printf("Problems with Keys array\n");
 		err = 1;
-	}
+	} else {
+		memset(array, ZINSERT, sizeof(array));
+		array[0] = ZUNDO;
+		array[96] = ZDELETE_PREVIOUS_CHAR;
+		if (memcmp(array, Keys + 31, sizeof(array))) {
+			printf("Problems with Keys array 1\n");
+			err = 1;
+		}
 
-	if (Keys[CX('1')] != ZONE_WINDOW ||
-	    Keys[CX('=')] != ZPOSITION ||
-	    Keys[CX('O')] != ZNEXT_WINDOW ||
-	    Keys[CX('Z')] != ZEXIT ||
-	    Keys[CX(127)] != ZDELETE_PREVIOUS_WORD) {
-		printf("Problems with Keys array 2\n");
-		err = 1;
-	}
+		if (Keys[CX('1')] != ZONE_WINDOW ||
+		    Keys[CX('=')] != ZPOSITION ||
+		    Keys[CX('O')] != ZNEXT_WINDOW ||
+		    Keys[CX('Z')] != ZEXIT ||
+		    Keys[CX(127)] != ZDELETE_PREVIOUS_WORD) {
+			printf("Problems with Keys array 2\n");
+			err = 1;
+		}
 
-	if (Keys[M('A')] != ZAGAIN ||
-	    Keys[M('Z')] != ZSAVE_AND_EXIT ||
-	    Keys[TC_UP] != ZPREVIOUS_LINE ||
-	    Keys[TC_F12] != ZREVERT_FILE ||
-	    Keys[M(127)] != ZDELETE_PREVIOUS_WORD) {
-		printf("Problems with Keys array 3\n");
-		err = 1;
+		if (Keys[M('A')] != ZAGAIN ||
+		    Keys[M('Z')] != ZSAVE_AND_EXIT ||
+		    Keys[TC_UP] != ZPREVIOUS_LINE ||
+		    Keys[TC_F12] != ZREVERT_FILE ||
+		    Keys[M(127)] != ZDELETE_PREVIOUS_WORD) {
+			printf("Problems with Keys array 3\n");
+			err = 1;
+		}
 	}
 
 #ifdef DOS

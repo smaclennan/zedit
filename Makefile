@@ -15,7 +15,7 @@ CFILES = bcmds.c bind.c buff.c calc.c cnames.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	reg.c shell.c spell.c srch.c tags.c term.c \
-	undo.c vars.c window.c varray.c z.c zgrep.c dosbind2.o
+	undo.c vars.c window.c varray.c z.c zgrep.c
 
 O := $(CFILES:.c=.o)
 

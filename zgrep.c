@@ -98,7 +98,7 @@ static void grepit(char *input, char *files)
 		goto cleanup;
 	}
 
-	while ((ent = readdir(dir)))
+	while ((ent = readdir(dir)) != NULL)
 		if (fnmatch(files, ent->d_name, FNM_FLAGS) == 0)
 			grep_one(ent->d_name, ebuf, inbuff, outbuff);
 

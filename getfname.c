@@ -85,7 +85,8 @@ static bool isext(char *fname, const char *ext)
 {
 	char *ptr;
 #ifdef DOS
-	return fname && (ptr = strrchr(fname, '.')) && stricmp(ptr, ext) == 0;
+	return fname && (ptr = strrchr(fname, '.')) != NULL && 
+		stricmp(ptr, ext) == 0;
 #else
 	return fname && (ptr = strrchr(fname, '.')) && strcmp(ptr, ext) == 0;
 #endif
@@ -112,7 +113,7 @@ static struct llist *fill_list(const char *dir)
 	if (dp == NULL)
 		return Flist;
 
-	while ((dirp = readdir(dp)))
+	while ((dirp = readdir(dp)) != NULL)
 		if (!isext(dirp->d_name, OBJEXT))
 			add(&Flist, fnamelower(dirp->d_name));
 

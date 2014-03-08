@@ -6,17 +6,16 @@ O=bcmds.obj buff.obj calc.obj cnames.obj comment.obj commands.obj \
 	cursor.obj delete.obj display.obj file.obj funcs.obj \
 	getarg.obj help.obj reg.obj shell.obj spell.obj srch.obj \
 	undo.obj vars.obj window.obj varray.obj z.obj \
-	getfname.obj tags.obj term.obj zgrep.obj
-
-O2=dosbind.obj doskbd.obj zwin32.obj fnmatch.obj
+	getfname.obj tags.obj term.obj zgrep.obj dosbind.obj \
+	doskbd.obj zwin32.obj fnmatch.obj
 
 .c.obj:
 	$(CC) -c $(CFLAGS) $<
-	tlib zedit.lib +-$*.obj
+	tlib zedit.lib +-$@
 
 all:    $(ZEXE)
 
-$(ZEXE): $(O) $(O2) z.obj
+$(ZEXE): $(O) z.obj
 	$(CC) z.obj $(O2) zedit.lib $(LIBS)
 
 # Don't call it fcheck.exe. We want to force a rebuild.
@@ -29,18 +28,23 @@ z.obj: z.c
 
 dosbind.obj: win32\dosbind.c
 	$(CC) -c $(CFLAGS) win32\dosbind.c
+	tlib zedit.lib +-$@
 
 doskbd.obj: win32\doskbd.c
 	$(CC) -c $(CFLAGS) win32\doskbd.c
+	tlib zedit.lib +-$@
 
 zwin32.obj: win32\zwin32.c
 	$(CC) -c $(CFLAGS) win32\zwin32.c
+	tlib zedit.lib +-$@
 
 fnmatch.obj: win32\fnmatch.c
 	$(CC) -c $(CFLAGS) win32\fnmatch.c
+	tlib zedit.lib +-$@
 
 clean:
 	del *.obj
 	del zedit.lib
 	del zedit.bak
 	del z.exe
+	del fcheck.exe

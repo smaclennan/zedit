@@ -76,6 +76,7 @@ static void sigwinch(int sig)
 void hang_up(int signal)
 {
 	struct buff *tbuff;
+	((void)signal);
 
 	InPaw = true;	/* Kludge to turn off error */
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next) {

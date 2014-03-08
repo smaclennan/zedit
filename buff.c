@@ -955,7 +955,7 @@ int cntlines(int stop)
 	int lines = 0, end;
 
 	for (p = Cpstart, end = stop;
-	     (n = (Byte *)memchr(p, NL, end));
+	     (n = (Byte *)memchr(p, NL, end)) != NULL;
 	     ++lines, p = n) {
 		++n;
 		end -= n - p;

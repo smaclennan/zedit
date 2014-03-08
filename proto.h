@@ -288,6 +288,7 @@ int nmatch(char *, char *);
 void wswitchto(struct wdo *wdo);
 void wsize(void);
 bool wuseother(const char *);
+struct wdo *wfind(int row);
 
 /* COMMENTBOLD */
 void resetcomments(void);

@@ -52,6 +52,8 @@
 #define TC_C_HOME		CX('w')
 #define TC_C_END		CX('x')
 
+#define TC_MOUSE		CX('y')
+
 /* Unknown key - always bound to Znotimpl */
 #define TC_UNKNOWN		CX('z')
 

@@ -32,6 +32,7 @@ static void dotty(void)
 		Cmd = Cmdpushed;
 		Cmdpushed = -1;
 	}
+	if (Cmd == TC_MOUSE) return;
 	Arg = 1;
 	Argp = false;
 	while (Arg > 0) {

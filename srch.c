@@ -51,6 +51,11 @@ static void doincsrch(const char *prompt, bool forward)
 		putpaw("%s: %s", promptstr, str);
 		cmd = tgetcmd();
 
+		if (cmd == TC_UNKNOWN || cmd == TC_MOUSE) {
+			tbell();
+			continue;
+		}
+
 		if (cmd == 0x13) { /* CTRL-S */
 			struct mark tmark;
 

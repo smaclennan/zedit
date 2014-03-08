@@ -80,6 +80,71 @@ static Byte tgetkb(void)
 	return cstack[cptr];
 }
 
+static int do_mouse(void)
+{
+#ifndef FCHECK
+	Byte button, col, row;
+
+	tgetkb(); tgetkb(); tgetkb(); /* suck up \033[M */
+	button = tgetkb();
+	col = tgetkb() - 33; /* zero based */
+	row = tgetkb() - 33; /* zero based */
+
+	struct wdo *wdo = wfind(row);
+	if (!wdo) {
+		error("Not on a window."); /* XEmacs-ish */
+		return TC_MOUSE;
+	}
+
+	wswitchto(wdo);
+
+	switch (button) {
+	case 96: /* scroll wheel up */
+		Arg = 3;
+		Zprevious_line();
+		return TC_MOUSE;
+	case 97: /* scroll wheel down */
+		Arg = 3;
+		Znext_line();
+		return TC_MOUSE;
+	}
+
+	struct mark *tmark = bcremrk();
+
+	/* Move the point to row */
+	if (row > Prow)
+		while (Prow < row) {
+			bcsearch('\n');
+			++Prow;
+		}
+	else if (row <= Prow) {
+		while (Prow > row) {
+			bcrsearch('\n');
+			--Prow;
+		}
+		tobegline();
+	}
+
+	/* Move the point to col */
+	int atcol = 0;
+	while (col > 0 && !bisend() && *Curcptr != '\n') {
+		int n = chwidth(*Curcptr, atcol, false);
+		bmove1();
+		col -= n;
+		atcol += n;
+	}
+
+	if (button == 34) {
+		Zset_mark(); /* mark to point */
+		bpnttomrk(tmark); /* reset mark */
+	}
+
+	unmark(tmark);
+
+	return TC_MOUSE;
+#endif
+}
+
 static int check_specials(void)
 {
 	int i, j, bit, mask = KEY_MASK;
@@ -99,8 +164,12 @@ static int check_specials(void)
 	cpushed += j;
 
 	/* If it is an unknown CSI string, suck it up */
-	if (cstack[(cptr + 2) & (CSTACK - 1)] == '[')
-		cpushed = 2;
+	if (cstack[(cptr + 2) & (CSTACK - 1)] == '[') {
+		if (cstack[(cptr + 3) & (CSTACK - 1)] == 'M')
+			return do_mouse();
+		else
+			cpushed = 2;
+	}
 
 	return tgetkb() & 0x7f;
 }

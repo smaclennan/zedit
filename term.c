@@ -119,6 +119,8 @@ void tinit(void)
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(fileno(stdin), TCSANOW, &settty);
+
+	fputs("\033[?9h", stdout); // Enable mouse
 #elif defined(HAVE_TERMIO)
 	ioctl(fileno(stdin), TCGETA, &save_tty);
 	ioctl(fileno(stdin), TCGETA, &settty);
@@ -185,6 +187,7 @@ void tfini(void)
 {
 #ifdef HAVE_TERMIOS
 	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
+	fputs("\033[?9l", stdout); // Disable mouse
 #elif defined(HAVE_TERMIO)
 	ioctl(fileno(stdin), TCSETAF, &save_tty);
 #elif defined(HAVE_SGTTY)

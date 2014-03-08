@@ -107,56 +107,42 @@ Byte Keys[NUMKEYS] = {
 	0,			/* C-X C-] */
 	ZGROW_WINDOW,		/* C-X C-^ */
 	0,			/* C-X C-_ */
+	/* makedosbind assumes this ends before C-X space */
 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-
-	0,			/* C-X 0 */
-	ZONE_WINDOW,		/* C-X 1 */
-	ZSPLIT_WINDOW,		/* C-X 2 */
-	0,			/* C-X 3 */
-	0,			/* C-X 4 */
-	0,			/* C-X 5 */
-	0,			/* C-X 6 */
-	0,			/* C-X 7 */
-	0,			/* C-X 8 */
-	0,			/* C-X 9 */
-
-	0, 0, 0,
-	ZPOSITION,		/* C-X = */
-	0, 0, 0,
+	[CX('1')] = ZONE_WINDOW,
+	[CX('2')] = ZSPLIT_WINDOW,
+	[CX('=')] = ZPOSITION,
 
 	/* All lowercase converted to uppercase */
-	ZGLOBAL_SEARCH,		/* C-X A */
-	ZNEXT_BOOKMARK,		/* C-X B */
-	ZCOUNT,			/* C-X C */
-	0,			/* C-X D */
-	ZRE_REPLACE,		/* C-X E */
-	ZNEXT_PARAGRAPH,	/* C-X F */
-	0,			/* C-X G */
-	ZHELP_FUNCTION,		/* C-X H */
-	ZINDENT,		/* C-X I */
-	0,			/* C-X J */
-	ZDELETE_BUFFER,		/* C-X K */
-	ZLIST_BUFFERS,		/* C-X L */
-	ZSET_BOOKMARK,		/* C-X M */
-	ZNEXT_WINDOW,		/* C-X N */
-	ZNEXT_WINDOW,		/* C-X O */
-	0,			/* C-X P */
-	0,			/* C-X Q */
-	0,			/* C-X R */
-	ZSAVE_ALL_FILES,	/* C-X S */
-	ZTRIM_WHITE_SPACE,	/* C-X T */
-	ZUNDENT,		/* C-X U */
-	ZSET_VARIABLE,		/* C-X V */
-	ZWRITE_FILE,		/* C-X W */
-	ZNEXT_BUFFER,		/* C-X X */
-	0,			/* C-X Y */
-	ZEXIT,			/* C-X Z */
-	0, 0, 0,
-	ZGROW_WINDOW,		/* C-X ^ */
+	[CX('A')] = ZGLOBAL_SEARCH,
+	[CX('B')] = ZNEXT_BOOKMARK,
+	[CX('C')] = ZCOUNT,
+	[CX('D')] = 0,
+	[CX('E')] = ZRE_REPLACE,
+	[CX('F')] = ZNEXT_PARAGRAPH,
+	[CX('G')] = 0,
+	[CX('H')] = ZHELP_FUNCTION,
+	[CX('I')] = ZINDENT,
+	[CX('J')] = 0,
+	[CX('K')] = ZDELETE_BUFFER,
+	[CX('L')] = ZLIST_BUFFERS,
+	[CX('M')] = ZSET_BOOKMARK,
+	[CX('N')] = ZNEXT_WINDOW,
+	[CX('O')] = ZNEXT_WINDOW,
+	[CX('P')] = 0,
+	[CX('Q')] = 0,
+	[CX('R')] = 0,
+	[CX('S')] = ZSAVE_ALL_FILES,
+	[CX('T')] = ZTRIM_WHITE_SPACE,
+	[CX('U')] = ZUNDENT,
+	[CX('V')] = ZSET_VARIABLE,
+	[CX('W')] = ZWRITE_FILE,
+	[CX('X')] = ZNEXT_BUFFER,
+	[CX('Y')] = 0,
+	[CX('Z')] = ZEXIT,
+	[CX('^')] = ZGROW_WINDOW,
 
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	ZDELETE_PREVIOUS_WORD,	/* C-X Backspace */
+	[CX(127)] = ZDELETE_PREVIOUS_WORD, /* C-X Backspace */
 
 	/* Init the Meta functions */
 
@@ -209,15 +195,15 @@ Byte Keys[NUMKEYS] = {
 
 	[TC_UP] = ZPREVIOUS_LINE,
 	[TC_DOWN] = ZNEXT_LINE,
-	[TC_LEFT] = ZPREVIOUS_CHAR,
 	[TC_RIGHT] = ZNEXT_CHAR,
+	[TC_LEFT] = ZPREVIOUS_CHAR,
 
-	[TC_PGDOWN] = ZNEXT_PAGE,
-	[TC_PGUP] = ZPREVIOUS_PAGE,
-	[TC_HOME] = ZBEGINNING_OF_LINE,
-	[TC_END] = ZEND_OF_LINE,
 	[TC_INSERT] = ZINSERT_OVERWRITE,
 	[TC_DELETE] = ZDELETE_CHAR,
+	[TC_PGUP] = ZPREVIOUS_PAGE,
+	[TC_PGDOWN] = ZNEXT_PAGE,
+	[TC_HOME] = ZBEGINNING_OF_LINE,
+	[TC_END] = ZEND_OF_LINE,
 
 	[TC_F1] = ZFIND_FILE,
 	[TC_F2] = ZSEARCH,

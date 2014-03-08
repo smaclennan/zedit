@@ -69,6 +69,18 @@ int main(int argc, char **argv)
 		Zexit();
 	}
 
+	{
+		extern Byte Keys2[];
+		int i;
+
+		for (i = 0; i < NUMKEYS; ++i)
+			if (Keys[i] != Keys2[i]) {
+				printf("%d: %d and %d\n", i, Keys[i], Keys2[i]);
+				exit(1);
+			}
+
+	}
+
 	Home = gethomedir();
 	if (!Home) {
 		puts("You don't exist!");

@@ -107,25 +107,16 @@ Byte Keys[NUMKEYS] = {
 	0,			/* C-X C-] */
 	ZGROW_WINDOW,		/* C-X C-^ */
 	0,			/* C-X C-_ */
+	/* makedosbind assumes this ends before C-X space */
 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-
-	0,			/* C-X 0 */
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	ZONE_WINDOW,		/* C-X 1 */
 	ZSPLIT_WINDOW,		/* C-X 2 */
-	0,			/* C-X 3 */
-	0,			/* C-X 4 */
-	0,			/* C-X 5 */
-	0,			/* C-X 6 */
-	0,			/* C-X 7 */
-	0,			/* C-X 8 */
-	0,			/* C-X 9 */
-
-	0, 0, 0,
+	0,0,0,0,0,0,0,0,0,0,
 	ZPOSITION,		/* C-X = */
-	0, 0, 0,
 
 	/* All lowercase converted to uppercase */
+	0,0,0,
 	ZGLOBAL_SEARCH,		/* C-X A */
 	ZNEXT_BOOKMARK,		/* C-X B */
 	ZCOUNT,			/* C-X C */
@@ -152,11 +143,11 @@ Byte Keys[NUMKEYS] = {
 	ZNEXT_BUFFER,		/* C-X X */
 	0,			/* C-X Y */
 	ZEXIT,			/* C-X Z */
-	0, 0, 0,
+	0,0,0,
 	ZGROW_WINDOW,		/* C-X ^ */
 
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	ZDELETE_PREVIOUS_WORD,	/* C-X Backspace */
+	ZDELETE_PREVIOUS_WORD, /* C-X Backspace */
 
 	/* Init the Meta functions */
 
@@ -173,7 +164,7 @@ Byte Keys[NUMKEYS] = {
 	0,0,0,0,
 	ZABORT,		/* M-M */
 	0,0,0,0,
-	ZSEARCH,		/* M-space */
+	ZSEARCH,		/* M-  */
 	0,0,0,0,0,0,0,
 	ZBEGINNING_OF_BUFFER,	/* M-( */
 	ZEND_OF_BUFFER,		/* M-) */
@@ -221,15 +212,15 @@ Byte Keys[NUMKEYS] = {
 	0,0,0,0,0,0,
 	ZPREVIOUS_LINE,		/* TC_UP */
 	ZNEXT_LINE,		/* TC_DOWN */
-	ZPREVIOUS_CHAR,		/* TC_LEFT */
 	ZNEXT_CHAR,		/* TC_RIGHT */
+	ZPREVIOUS_CHAR,		/* TC_LEFT */
 
-	ZNEXT_PAGE,		/* TC_PGDOWN */
-	ZPREVIOUS_PAGE,		/* TC_PGUP */
-	ZBEGINNING_OF_LINE,	/* TC_HOME */
-	ZEND_OF_LINE,		/* TC_END */
 	ZINSERT_OVERWRITE,	/* TC_INSERT */
 	ZDELETE_CHAR,		/* TC_DELETE */
+	ZPREVIOUS_PAGE,		/* TC_PGUP */
+	ZNEXT_PAGE,		/* TC_PGDOWN */
+	ZBEGINNING_OF_LINE,	/* TC_HOME */
+	ZEND_OF_LINE,		/* TC_END */
 
 	ZFIND_FILE,		/* TC_F1 */
 	ZSEARCH,		/* TC_F2 */

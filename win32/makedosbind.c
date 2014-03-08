@@ -60,29 +60,37 @@ int main(int argc, char *argv[])
 		fputs(line, out);
 	}
 
-	int n, cur = 0, meta = 0;
+	int n, cur = 32, meta = 32; /* first 32 done - start at C-X space */
 	do {
 		char ch, rest[128], tc[40];
 
 		if (*line == '}') {
 			fputs(line, out);
 			break;
-		} else if (sscanf(line, " [M('%c')] = %s", &ch, rest) == 2) {
+		} else if (sscanf(line, " [CX('%c')] = %s", &ch, rest) == 2) {
 			if ((p = strchr(line, '\n'))) *p = '\0';
 			cur = ch - ' ' + 32;
 			pad(cur, meta, out);
 			n = fprintf(out, "\t%s", rest);
-			if (ch == ' ')
-				comment(out, n, "/* M-space */\n");
-			else
-				comment(out, n, "/* M-%c */\n", ch);
+			comment(out, n, "/* C-X %c */\n", ch);
+		} else if (sscanf(line, " [CX(%d)] = %s", &cur, rest) == 2) {
+			pad(cur, meta, out);
+			p = strchr(line, ','); assert(p); ++p;
+			fprintf(out, "\t%s%s", rest, p);
+		} else if (sscanf(line, " [M('%c')] = %s", &ch, rest) == 2) {
+			if ((p = strchr(line, '\n'))) *p = '\0';
+			cur = ch - ' ' + 32 + 128;
+			pad(cur, meta, out);
+			n = fprintf(out, "\t%s", rest);
+			comment(out, n, "/* M-%c */\n", ch);
 		} else if (sscanf(line, " [M(%d)] = %s", &cur, rest) == 2) {
+			cur += 128;
 			pad(cur, meta, out);
 			p = strchr(line, ','); assert(p); ++p;
 			fprintf(out, "\t%s%s", rest, p);
 		} else if (sscanf(line, " [TC_%[A-Z0-9_]] = %s", tc, rest) == 2) {
 			if (strcmp(tc, "UP") == 0)
-				cur = 'a';
+				cur = 'a' + 128;
 			else
 				++cur;
 			pad(cur, meta, out);

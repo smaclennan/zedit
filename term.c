@@ -148,6 +148,8 @@ void tinit(void)
 
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT);
+#elif defined(DOS)
+	install_ints();
 #endif
 
 #ifdef SIGHUP

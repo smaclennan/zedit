@@ -54,9 +54,9 @@ int InPaw;
 int ring_bell;
 struct wdo *Curwdo;
 
-void hang_up(int sig) {}
+void hang_up(int sig) { ((void)sig); }
 
-void Dbg(const char *fmt, ...) {}
+void Dbg(const char *fmt, ...) { ((void)fmt); }
 
 int main(int argc, char *argv[])
 {
@@ -106,11 +106,21 @@ int main(int argc, char *argv[])
 	if (Keys[CX('1')] != ZONE_WINDOW ||
 	    Keys[CX('=')] != ZPOSITION ||
 	    Keys[CX('O')] != ZNEXT_WINDOW ||
-	    Keys[CX('Z')] != ZEXIT) {
+	    Keys[CX('Z')] != ZEXIT ||
+	    Keys[CX(127)] != ZDELETE_PREVIOUS_WORD) {
 		printf("Problems with Keys array 2\n");
 		err = 1;
 	}
-	
+
+	if (Keys[M('A')] != ZAGAIN ||
+	    Keys[M('Z')] != ZSAVE_AND_EXIT ||
+	    Keys[TC_UP] != ZPREVIOUS_LINE ||
+	    Keys[TC_F12] != ZREVERT_FILE ||
+	    Keys[M(127)] != ZDELETE_PREVIOUS_WORD) {
+		printf("Problems with Keys array 3\n");
+		err = 1;
+	}
+
 #ifdef DOS
 	if ((sizeof(alts) / sizeof(int)) != 0x86 - 0x10 + 1) {
 		printf("Problems with alts 0x%x\n", 

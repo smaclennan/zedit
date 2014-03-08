@@ -155,6 +155,9 @@ Byte Keys[NUMKEYS] = {
 	0, 0, 0,
 	ZGROW_WINDOW,		/* C-X ^ */
 
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	ZDELETE_PREVIOUS_WORD,	/* C-X Backspace */
+
 	/* Init the Meta functions */
 
 	[M(7)] = ZABORT,			/* M-C-G */
@@ -164,21 +167,16 @@ Byte Keys[NUMKEYS] = {
 	[M(22)] = ZVIEW_LINE,		/* M-C-V */
 	[M(27)] = ZABORT,			/* M-M */
 	[M(' ')] = ZSEARCH,
-/*	[M('!')] = , */
-	[M('@')] = ZCMD_TO_BUFFER,
-/*	[M('#')] = , */
-	[M('*')] = ZUNMODIFY,
 	[M('(')] = ZBEGINNING_OF_BUFFER,
 	[M(')')] = ZEND_OF_BUFFER,
-/*	[M(',')] = , */
-	[M('<')] = ZBEGINNING_OF_BUFFER,
-	[M('>')] = ZEND_OF_BUFFER,
-	[M('.')] = ZTAG,
-/*	[M('/')] = , */
-/*	[M('_')] = , */
-/*	[M('-')] = , */
+	[M('*')] = ZUNMODIFY,
 	[M('+')] = ZAPPEND_KILL,
+	[M('.')] = ZTAG,
+	[M('<')] = ZBEGINNING_OF_BUFFER,
 	[M('=')] = ZAPPEND_KILL,
+	[M('>')] = ZEND_OF_BUFFER,
+	[M('@')] = ZCMD_TO_BUFFER,
+
 	/* All lowercase chars converted to uppercase */
 	[M('A')] = ZAGAIN,
 	[M('B')] = ZPREVIOUS_WORD,
@@ -206,7 +204,6 @@ Byte Keys[NUMKEYS] = {
 	[M('X')] = ZMETA_X,
 	[M('Y')] = ZYANK,
 	[M('Z')] = ZSAVE_AND_EXIT,
-	[M(127)] = ZDELETE_PREVIOUS_WORD,	/* M-DEL */
 
 	/* Special keys */
 
@@ -237,6 +234,8 @@ Byte Keys[NUMKEYS] = {
 
 	[TC_C_HOME] = ZBEGINNING_OF_BUFFER,
 	[TC_C_END] = ZEND_OF_BUFFER,
+
+	[M(127)] = ZDELETE_PREVIOUS_WORD,	/* M-DEL */
 };
 
 static char *key_label[] = {

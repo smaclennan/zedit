@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 			fprintf(out, "\t%s%s", rest, p);
 		} else if (sscanf(line, " [TC_%[A-Z0-9_]] = %s", tc, rest) == 2) {
 			if (strcmp(tc, "UP") == 0)
-				cur = 'a' + 128;
+				cur = 'a';
 			else
 				++cur;
 			pad(cur, meta, out);

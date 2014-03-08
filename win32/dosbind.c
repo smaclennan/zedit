@@ -146,7 +146,38 @@ Byte Keys[] = {
 	0,0,0,
 	ZGROW_WINDOW,		/* C-X ^ */
 
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	/* Special keys */
+
+	0,0,
+	ZPREVIOUS_LINE,		/* TC_UP */
+	ZNEXT_LINE,		/* TC_DOWN */
+	ZNEXT_CHAR,		/* TC_RIGHT */
+	ZPREVIOUS_CHAR,		/* TC_LEFT */
+
+	ZINSERT_OVERWRITE,	/* TC_INSERT */
+	ZDELETE_CHAR,		/* TC_DELETE */
+	ZPREVIOUS_PAGE,		/* TC_PGUP */
+	ZNEXT_PAGE,		/* TC_PGDOWN */
+	ZBEGINNING_OF_LINE,	/* TC_HOME */
+	ZEND_OF_LINE,		/* TC_END */
+
+	ZFIND_FILE,		/* TC_F1 */
+	ZSEARCH,		/* TC_F2 */
+	ZAGAIN,			/* TC_F3 */
+	ZNEXT_ERROR,		/* TC_F4 */
+	ZRE_REPLACE,		/* TC_F5 */
+	ZHELP,			/* TC_F6 */
+	ZMAKE,			/* TC_F7 */
+	ZGREP,			/* TC_F8 */
+	ZWORD_SEARCH,		/* TC_F9 */
+	ZTAG_WORD,		/* TC_F10 */
+	ZNEXT_BOOKMARK,		/* TC_F11 */
+	ZREVERT_FILE,		/* TC_F12 */
+
+	ZBEGINNING_OF_BUFFER,	/* TC_C_HOME */
+	ZEND_OF_BUFFER,		/* TC_C_END */
+
+	0,0,0,0,0,0,
 	ZDELETE_PREVIOUS_WORD, /* C-X Backspace */
 
 	/* Init the Meta functions */
@@ -207,38 +238,7 @@ Byte Keys[] = {
 	ZYANK,			/* M-Y */
 	ZSAVE_AND_EXIT,		/* M-Z */
 
-	/* Special keys */
-
-	0,0,0,0,0,0,
-	ZPREVIOUS_LINE,		/* TC_UP */
-	ZNEXT_LINE,		/* TC_DOWN */
-	ZNEXT_CHAR,		/* TC_RIGHT */
-	ZPREVIOUS_CHAR,		/* TC_LEFT */
-
-	ZINSERT_OVERWRITE,	/* TC_INSERT */
-	ZDELETE_CHAR,		/* TC_DELETE */
-	ZPREVIOUS_PAGE,		/* TC_PGUP */
-	ZNEXT_PAGE,		/* TC_PGDOWN */
-	ZBEGINNING_OF_LINE,	/* TC_HOME */
-	ZEND_OF_LINE,		/* TC_END */
-
-	ZFIND_FILE,		/* TC_F1 */
-	ZSEARCH,		/* TC_F2 */
-	ZAGAIN,			/* TC_F3 */
-	ZNEXT_ERROR,		/* TC_F4 */
-	ZRE_REPLACE,		/* TC_F5 */
-	ZHELP,			/* TC_F6 */
-	ZMAKE,			/* TC_F7 */
-	ZGREP,			/* TC_F8 */
-	ZWORD_SEARCH,		/* TC_F9 */
-	ZTAG_WORD,		/* TC_F10 */
-	ZNEXT_BOOKMARK,		/* TC_F11 */
-	ZREVERT_FILE,		/* TC_F12 */
-
-	ZBEGINNING_OF_BUFFER,	/* TC_C_HOME */
-	ZEND_OF_BUFFER,		/* TC_C_END */
-
-	0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	ZDELETE_PREVIOUS_WORD,	/* M-DEL */
 };
 

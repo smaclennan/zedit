@@ -14,8 +14,9 @@
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 #define strdup _strdup
+#define strlwr _strlwr
 #define unlink _unlink
-#define getcwd zgetcwd
+#define getcwd _getcwd
 
 #define open _open
 #define read _read

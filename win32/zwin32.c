@@ -79,6 +79,13 @@ int pathfixup(char *to, char *from)
 	return 0;
 }
 
+void zgetcwd(char *dir, int len)
+{
+	getcwd(dir, len);
+	psepfixup(dir);
+	strlwr(dir);
+}
+
 #ifdef WIN32
 
 char *gethomedir(void)
@@ -94,12 +101,6 @@ char *gethomedir(void)
 	psepfixup(home);
 
 	return home;
-}
-
-void zgetcwd(char *dir, int len)
-{
-	_getcwd(dir, len);
-	psepfixup(dir);
 }
 
 DIR *opendir(const char *dirname)
@@ -162,13 +163,6 @@ char *gethomedir(void)
 	if (home == NULL) home = "C:/";
 	psepfixup(home);
 	return home;
-}
-
-char *zgetcwd(char *dir, int len)
-{
-	getcwd(dir, len);
-	psepfixup(dir);
-	return strlwr(dir);
 }
 
 #endif

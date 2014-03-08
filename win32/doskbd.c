@@ -67,7 +67,7 @@ int tgetcmd(void)
 	}
 
 	/* Unfortunately DOS uses C-H for backspace */
-	if (cmd == 8) cmd = 127;
+	if (cmd == 8 && Keys[Cmd] != ZCTRL_X) cmd = 127;
 
 	return cmd;
 }

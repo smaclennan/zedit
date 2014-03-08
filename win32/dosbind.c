@@ -83,7 +83,7 @@ Byte Keys[NUMKEYS] = {
 	0,			/* C-X C-E */
 	ZFIND_FILE,		/* C-X C-F */
 	ZABORT,			/* C-X C-G */
-	0,			/* C-X C-H */
+	ZHELP,			/* C-X C-H */
 	0,			/* C-X C-I */
 	0,			/* C-X C-J */
 	ZDELETE_LINE,		/* C-X C-K */
@@ -161,7 +161,7 @@ Byte Keys[NUMKEYS] = {
 	/* Init the Meta functions */
 
 	0,0,0,0,0,0,0,
-	ZABORT,			/* M-C-G */
+	ZABORT,		/* M-C-G */
 	0,0,0,0,0,0,
 	ZSCROLL_DOWN,		/* M-C-N */
 	0,
@@ -171,7 +171,7 @@ Byte Keys[NUMKEYS] = {
 	0,0,
 	ZVIEW_LINE,		/* M-C-V */
 	0,0,0,0,
-	ZABORT,			/* M-M */
+	ZABORT,		/* M-M */
 	0,0,0,0,
 	ZSEARCH,		/* M-space */
 	0,0,0,0,0,0,0,

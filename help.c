@@ -209,32 +209,38 @@ void Zhelp_key(void)
 {
 	char kstr[12];
 	int rc;
-	unsigned raw, key;
+	unsigned key, was = Cmd;
 
 	Arg = 0;
 	putpaw("Key: ");
-	raw = tgetcmd();
-	if (raw == TC_UNKNOWN) {
+	Cmd = tgetcmd();
+	if (Cmd == TC_UNKNOWN) {
 		putpaw("Sorry, I don't recognize that key.");
+		Cmd = was;
 		return;
 	}
-	key = Keys[raw];
+	key = Keys[Cmd];
 	if (key == ZCTRL_X) {
 		putpaw("Key: C-X ");
-		raw = toupper(tgetcmd()) + CX(0);
-		key = Keys[raw];
+		Cmd = toupper(tgetcmd()) + CX(0);
+		key = Keys[Cmd];
 	} else if (key == ZMETA) {
 		putpaw("Key: M-");
-		raw = toupper(tgetcmd()) + M(0);
-		key = Keys[raw];
+		Cmd = toupper(tgetcmd()) + M(0);
+		key = Keys[Cmd];
 	}
 
 	if (key == ZNOTIMPL)
-		putpaw("%s (%03o) Unbound", dispkey(raw, kstr), raw);
+		putpaw("%s (%03o) Unbound", dispkey(Cmd, kstr), Cmd);
 	else
 		for (rc = 0; rc < NUMFUNCS; ++rc)
 			if (Cnames[rc].fnum == key)
 				putpaw("%s (%03o) Bound to %s",
-					dispkey(raw, kstr), raw,
+					dispkey(Cmd, kstr), Cmd,
 					Cnames[rc].name);
+
+	/* We need to set Cmd above since some keystrokes will be wrong if not set.
+	 * Put it back to the original value.
+	 */
+	Cmd = was;
 }

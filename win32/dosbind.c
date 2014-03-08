@@ -155,96 +155,101 @@ Byte Keys[NUMKEYS] = {
 	0, 0, 0,
 	ZGROW_WINDOW,		/* C-X ^ */
 
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	ZDELETE_PREVIOUS_WORD,	/* C-X Backspace */
+
 	/* Init the Meta functions */
 
-};
+	0,0,0,0,0,0,0,
+	ZABORT,			/* M-C-G */
+	0,0,0,0,0,0,
+	ZSCROLL_DOWN,		/* M-C-N */
+	0,
+	ZSCROLL_UP,		/* M-C-P */
+	0,0,
+	ZINCREMENTAL_SEARCH,	/* M-C-S */
+	0,0,
+	ZVIEW_LINE,		/* M-C-V */
+	0,0,0,0,
+	ZABORT,			/* M-M */
+	0,0,0,0,
+	ZSEARCH,		/* M-space */
+	0,0,0,0,0,0,0,
+	ZBEGINNING_OF_BUFFER,	/* M-( */
+	ZEND_OF_BUFFER,		/* M-) */
+	ZUNMODIFY,		/* M-* */
+	ZAPPEND_KILL,		/* M-+ */
+	0,0,
+	ZTAG,			/* M-. */
+	0,0,0,0,0,0,0,0,0,0,0,0,0,
+	ZBEGINNING_OF_BUFFER,	/* M-< */
+	ZAPPEND_KILL,		/* M-= */
+	ZEND_OF_BUFFER,		/* M-> */
+	0,
+	ZCMD_TO_BUFFER,		/* M-@ */
 
-void bind_init(void)
-{
-	Keys[M(7)] = ZABORT;			/* M-C-G */
-	Keys[M(14)] = ZSCROLL_DOWN;		/* M-C-N */
-	Keys[M(16)] = ZSCROLL_UP;		/* M-C-P */
-	Keys[M(19)] = ZINCREMENTAL_SEARCH;	/* M-C-S */
-	Keys[M(22)] = ZVIEW_LINE;		/* M-C-V */
-	Keys[M(27)] = ZABORT;			/* M-M */
-	Keys[M(' ')] = ZSEARCH;
-/*	[M('!')] = , */
-	Keys[M('@')] = ZCMD_TO_BUFFER;
-/*	[M('#')] = , */
-	Keys[M('*')] = ZUNMODIFY;
-	Keys[M('(')] = ZBEGINNING_OF_BUFFER;
-	Keys[M(')')] = ZEND_OF_BUFFER;
-/*	[M(',')] = , */
-	Keys[M('<')] = ZBEGINNING_OF_BUFFER;
-	Keys[M('>')] = ZEND_OF_BUFFER;
-	Keys[M('.')] = ZTAG;
-/*	[M('/')] = , */
-/*	[M('_')] = , */
-/*	[M('-')] = , */
-	Keys[M('+')] = ZAPPEND_KILL;
-	Keys[M('=')] = ZAPPEND_KILL;
 	/* All lowercase chars converted to uppercase */
-	Keys[M('A')] = ZAGAIN;
-	Keys[M('B')] = ZPREVIOUS_WORD;
-	Keys[M('C')] = ZCAPITALIZE_WORD;
-	Keys[M('D')] = ZDELETE_WORD;
-	Keys[M('E')] = ZRE_SEARCH;
-	Keys[M('F')] = ZNEXT_WORD;
-	Keys[M('G')] = ZGOTO_LINE;
-	Keys[M('H')] = ZDELETE_PREVIOUS_WORD;
-	Keys[M('I')] = ZTAB;
-	Keys[M('J')] = ZJOIN;
-	Keys[M('K')] = ZKILL;
-	Keys[M('L')] = ZLOWERCASE_WORD;
-	Keys[M('M')] = ZFILL_PARAGRAPH;
-	Keys[M('N')] = ZNEXT_PARAGRAPH;
-	Keys[M('O')] = ZREVERT_FILE;
-	Keys[M('P')] = ZPREVIOUS_PARAGRAPH;
-	Keys[M('Q')] = ZQUOTE;
-	Keys[M('R')] = ZQUERY_REPLACE;
-	Keys[M('S')] = ZSEARCH;
-	Keys[M('T')] = ZSWAP_WORDS;
-	Keys[M('U')] = ZUPPERCASE_WORD;
-	Keys[M('V')] = ZPREVIOUS_PAGE;
-	Keys[M('W')] = ZCOPY_REGION;
-	Keys[M('X')] = ZMETA_X;
-	Keys[M('Y')] = ZYANK;
-	Keys[M('Z')] = ZSAVE_AND_EXIT;
-	Keys[M(127)] = ZDELETE_PREVIOUS_WORD;	/* M-DEL */
+	ZAGAIN,			/* M-A */
+	ZPREVIOUS_WORD,		/* M-B */
+	ZCAPITALIZE_WORD,	/* M-C */
+	ZDELETE_WORD,		/* M-D */
+	ZRE_SEARCH,		/* M-E */
+	ZNEXT_WORD,		/* M-F */
+	ZGOTO_LINE,		/* M-G */
+	ZDELETE_PREVIOUS_WORD,	/* M-H */
+	ZTAB,			/* M-I */
+	ZJOIN,			/* M-J */
+	ZKILL,			/* M-K */
+	ZLOWERCASE_WORD,	/* M-L */
+	ZFILL_PARAGRAPH,	/* M-M */
+	ZNEXT_PARAGRAPH,	/* M-N */
+	ZREVERT_FILE,		/* M-O */
+	ZPREVIOUS_PARAGRAPH,	/* M-P */
+	ZQUOTE,			/* M-Q */
+	ZQUERY_REPLACE,		/* M-R */
+	ZSEARCH,		/* M-S */
+	ZSWAP_WORDS,		/* M-T */
+	ZUPPERCASE_WORD,	/* M-U */
+	ZPREVIOUS_PAGE,		/* M-V */
+	ZCOPY_REGION,		/* M-W */
+	ZMETA_X,		/* M-X */
+	ZYANK,			/* M-Y */
+	ZSAVE_AND_EXIT,		/* M-Z */
 
 	/* Special keys */
 
-	Keys[TC_UP] = ZPREVIOUS_LINE;
-	Keys[TC_DOWN] = ZNEXT_LINE;
-	Keys[TC_LEFT] = ZPREVIOUS_CHAR;
-	Keys[TC_RIGHT] = ZNEXT_CHAR;
+	0,0,0,0,0,0,
+	ZPREVIOUS_LINE,		/* TC_UP */
+	ZNEXT_LINE,		/* TC_DOWN */
+	ZPREVIOUS_CHAR,		/* TC_LEFT */
+	ZNEXT_CHAR,		/* TC_RIGHT */
 
-	Keys[TC_PGDOWN] = ZNEXT_PAGE;
-	Keys[TC_PGUP] = ZPREVIOUS_PAGE;
-	Keys[TC_HOME] = ZBEGINNING_OF_LINE;
-	Keys[TC_END] = ZEND_OF_LINE;
-	Keys[TC_INSERT] = ZINSERT_OVERWRITE;
-	Keys[TC_DELETE] = ZDELETE_CHAR;
+	ZNEXT_PAGE,		/* TC_PGDOWN */
+	ZPREVIOUS_PAGE,		/* TC_PGUP */
+	ZBEGINNING_OF_LINE,	/* TC_HOME */
+	ZEND_OF_LINE,		/* TC_END */
+	ZINSERT_OVERWRITE,	/* TC_INSERT */
+	ZDELETE_CHAR,		/* TC_DELETE */
 
-	Keys[TC_F1] = ZFIND_FILE;
-	Keys[TC_F2] = ZSEARCH;
-	Keys[TC_F3] = ZAGAIN;
-	Keys[TC_F4] = ZNEXT_ERROR;
-	Keys[TC_F5] = ZRE_REPLACE;
-	Keys[TC_F6] = ZHELP;
-	Keys[TC_F7] = ZMAKE;
-	Keys[TC_F8] = ZGREP;
-	Keys[TC_F9] = ZWORD_SEARCH;
-	Keys[TC_F10] = ZTAG_WORD;
-	Keys[TC_F11] = ZNEXT_BOOKMARK;
-	Keys[TC_F12] = ZREVERT_FILE;
+	ZFIND_FILE,		/* TC_F1 */
+	ZSEARCH,		/* TC_F2 */
+	ZAGAIN,			/* TC_F3 */
+	ZNEXT_ERROR,		/* TC_F4 */
+	ZRE_REPLACE,		/* TC_F5 */
+	ZHELP,			/* TC_F6 */
+	ZMAKE,			/* TC_F7 */
+	ZGREP,			/* TC_F8 */
+	ZWORD_SEARCH,		/* TC_F9 */
+	ZTAG_WORD,		/* TC_F10 */
+	ZNEXT_BOOKMARK,		/* TC_F11 */
+	ZREVERT_FILE,		/* TC_F12 */
 
-	Keys[TC_C_HOME] = ZBEGINNING_OF_BUFFER;
-	Keys[TC_C_END] = ZEND_OF_BUFFER;
+	ZBEGINNING_OF_BUFFER,	/* TC_C_HOME */
+	ZEND_OF_BUFFER,		/* TC_C_END */
 
-	/* HACK. I wanted to keep this in DOS specific code. */
-	install_ints();
-}
+	0,0,0,0,0,0,
+	ZDELETE_PREVIOUS_WORD,	/* M-DEL */
+};
 
 static char *key_label[] = {
 	"up", "down", "right", "left",

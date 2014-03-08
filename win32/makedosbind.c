@@ -1,17 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
+#include <assert.h>
 
 
-static void hack(FILE *out)
+static void pad(int cur, int meta, FILE *out)
 {
-	fputs("\n\t/* HACK. I wanted to keep this in DOS specific code. */\n", out);
-	fputs("\tinstall_ints();\n", out);
+	if (cur == meta) return;
+	assert(cur > meta);
+	fputs("\t", out);
+	while (meta++ < cur)
+		fputs("0,", out);
+	fputs("\n", out);
+}
+
+static void comment(FILE *out, int len, char *fmt, ...)
+{
+	va_list arg_ptr;
+
+	len += 7; /* there is one tab */
+	while (len < 32) {
+		fputs("\t", out);
+		len += 8;
+	}
+
+	va_start(arg_ptr, fmt);
+	vfprintf(out, fmt, arg_ptr);
+	va_end(arg_ptr);
 }
 
 int main(int argc, char *argv[])
@@ -31,30 +52,50 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	char line[128], *p, *s;
+	char line[128], *p;
 	while (fgets(line, sizeof(line), in)) {
 		for (p = line; isspace(*p); ++p) ;
 		if (*p == '[') /* first of array type */
 			break;
 		fputs(line, out);
 	}
-	fputs("};\n\n", out);
 
-	fputs("void bind_init(void)\n{\n", out);
-
+	int n, cur = 0, meta = 0;
 	do {
-		for (p = line; isspace(*p); ++p) ;
-		if (*p == '[') {
-			if ((s = strchr(p, ','))) *s = ';';
-			fprintf(out, "\tKeys%s", p);
-		} else if (*p == '}') {
-			hack(out);
-			fputs("}\n", out);
-			break;
-		} else
-			fputs(line, out);
-	} while (fgets(line, sizeof(line), in));
+		char ch, rest[128], tc[40];
 
+		if (*line == '}') {
+			fputs(line, out);
+			break;
+		} else if (sscanf(line, " [M('%c')] = %s", &ch, rest) == 2) {
+			if ((p = strchr(line, '\n'))) *p = '\0';
+			cur = ch - ' ' + 32;
+			pad(cur, meta, out);
+			n = fprintf(out, "\t%s", rest);
+			if (ch == ' ')
+				comment(out, n, "/* M-space */\n");
+			else
+				comment(out, n, "/* M-%c */\n", ch);
+		} else if (sscanf(line, " [M(%d)] = %s", &cur, rest) == 2) {
+			pad(cur, meta, out);
+			p = strchr(line, ','); assert(p); ++p;
+			fprintf(out, "\t%s%s", rest, p);
+		} else if (sscanf(line, " [TC_%[A-Z0-9_]] = %s", tc, rest) == 2) {
+			if (strcmp(tc, "UP") == 0)
+				cur = 'a';
+			else
+				++cur;
+			pad(cur, meta, out);
+			n = fprintf(out, "\t%s", rest);
+			comment(out, n, "/* TC_%s */\n", tc);
+		} else {
+			for (p = line; isspace(*p); ++p) ;
+			assert(*p != '[');
+			fputs(line, out);
+		}
+
+		meta = cur + 1;
+	} while (fgets(line, sizeof(line), in));
 
 	while (fgets(line, sizeof(line), in))
 		fputs(line, out);

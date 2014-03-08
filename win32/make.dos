@@ -44,5 +44,6 @@ dosint.obj: win32\dosint.asm
 
 clean:
 	del *.obj
-	del *.lib
-	del *.exe
+	del zedit.lib
+	del zedit.bak
+	del z.exe

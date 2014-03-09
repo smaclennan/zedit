@@ -651,6 +651,8 @@ void Zswap_chars(void)
 
 void tobegline(void)
 {
+	if (Curchar > 0 && *(Curcptr - 1) == NL)
+		return;
 	if (bcrsearch(NL))
 		bmove1();
 }

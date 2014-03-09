@@ -82,7 +82,6 @@ static Byte tgetkb(void)
 
 static int do_mouse(void)
 {
-#ifndef FCHECK
 	Byte button, col, row;
 
 	tgetkb(); tgetkb(); tgetkb(); /* suck up \033[M */
@@ -90,59 +89,15 @@ static int do_mouse(void)
 	col = tgetkb() - 33; /* zero based */
 	row = tgetkb() - 33; /* zero based */
 
-	struct wdo *wdo = wfind(row);
-	if (!wdo) {
-		error("Not on a window."); /* XEmacs-ish */
-		return TC_MOUSE;
-	}
-
-	wswitchto(wdo);
-
 	switch (button) {
-	case 96: /* scroll wheel up */
-		Arg = 3;
-		Zprevious_line();
-		return TC_MOUSE;
-	case 97: /* scroll wheel down */
-		Arg = 3;
-		Znext_line();
-		return TC_MOUSE;
+	case 96: mouse_scroll(row, false); break;
+	case 97: mouse_scroll(row, true); break;
+
+	case 94: mouse_point(row, col, true); break;
+	default: mouse_point(row, col, false); break;
 	}
-
-	struct mark *tmark = bcremrk();
-
-	/* Move the point to row */
-	if (row > Prow)
-		while (Prow < row) {
-			bcsearch('\n');
-			++Prow;
-		}
-	else if (row <= Prow) {
-		while (Prow > row) {
-			bcrsearch('\n');
-			--Prow;
-		}
-		tobegline();
-	}
-
-	/* Move the point to col */
-	int atcol = 0;
-	while (col > 0 && !bisend() && *Curcptr != '\n') {
-		int n = chwidth(*Curcptr, atcol, false);
-		bmove1();
-		col -= n;
-		atcol += n;
-	}
-
-	if (button == 34) {
-		Zset_mark(); /* mark to point */
-		bpnttomrk(tmark); /* reset mark */
-	}
-
-	unmark(tmark);
 
 	return TC_MOUSE;
-#endif
 }
 
 static int check_specials(void)

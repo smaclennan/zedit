@@ -290,6 +290,14 @@ void wsize(void);
 bool wuseother(const char *);
 struct wdo *wfind(int row);
 
+#ifdef FCHECK
+#define mouse_scroll(a, b)
+#define mouse_point(a, b, c)
+#else
+void mouse_scroll(int row, bool down);
+void mouse_point(int row, int col, bool set_mark);
+#endif
+
 /* COMMENTBOLD */
 void resetcomments(void);
 void uncomment(struct buff *buff);

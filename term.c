@@ -150,7 +150,7 @@ void tinit(void)
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	/* We want everything else disabled */
-	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT);
+	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 #elif defined(DOS)
 	install_ints();
 #endif
@@ -552,5 +552,68 @@ void tputchar(Byte c)
 {
 	DWORD written;
 	WriteConsole(hstdout, &c, 1, &written, NULL);
+}
+#endif
+
+#if defined(__unix__) || defined(WIN32)
+void mouse_scroll(int row, bool down)
+{
+	struct wdo *wdo = wfind(row);
+	if (!wdo) {
+		error("Not on a window."); /* XEmacs-ish */
+		return;
+	}
+
+	wswitchto(wdo);
+
+	Arg = 3;
+	down ? Znext_line() : Zprevious_line();
+}
+
+void mouse_point(int row, int col, bool set_mark)
+{
+	struct wdo *wdo = wfind(row);
+	if (!wdo) {
+		error("Not on a window."); /* XEmacs-ish */
+		return;
+	}
+
+	if (wdo != Curwdo) {
+		wswitchto(wdo);
+		/* We need Prow and Pcol to be correct. */
+		zrefresh();
+	}
+
+	struct mark *tmark = bcremrk();
+
+	/* Move the point to row */
+	if (row > Prow)
+		while (Prow < row) {
+			bcsearch('\n');
+			++Prow;
+		}
+	else if (row <= Prow) {
+		while (Prow > row) {
+			bcrsearch('\n');
+			--Prow;
+		}
+		tobegline();
+	}
+
+	/* Move the point to col */
+	int atcol = 0;
+	while (col > 0 && !bisend() && *Curcptr != '\n') {
+		int n = chwidth(*Curcptr, atcol, false);
+		bmove1();
+		col -= n;
+		atcol += n;
+	}
+
+	if (set_mark) {
+		Zset_mark(); /* mark to point */
+		bpnttomrk(tmark); /* reset mark */
+	}
+
+	unmark(tmark);
 }
 #endif

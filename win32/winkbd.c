@@ -95,6 +95,20 @@ static short convertKey(KEY_EVENT_RECORD *event)
 	return key;
 }
 
+static int do_mouse(MOUSE_EVENT_RECORD *mouse)
+{
+	if (mouse->dwEventFlags & MOUSE_WHEELED) {
+		mouse_scroll(mouse->dwMousePosition.Y,
+			     mouse->dwButtonState & 0x80000000);
+		zrefresh();
+	} else if (mouse->dwButtonState & 0xffff) {
+		mouse_point(mouse->dwMousePosition.Y,
+			    mouse->dwMousePosition.X,
+			    mouse->dwButtonState & RIGHTMOST_BUTTON_PRESSED);
+		zrefresh();
+	}
+}
+
 int tgetcmd(void)
 {
 	Pending = false;
@@ -130,9 +144,8 @@ again:
 			Zredisplay();		/* update the windows */
 			zrefresh();		/* force a screen update */
 			break;
-		case FOCUS_EVENT:
-		case MENU_EVENT:
 		case MOUSE_EVENT:
+			do_mouse(&input[i].Event.MouseEvent);
 			break;
 		}
 

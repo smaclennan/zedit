@@ -152,6 +152,7 @@ void tinit(void)
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 #elif defined(DOS)
+	init_mouse();
 	install_ints();
 #endif
 
@@ -555,7 +556,6 @@ void tputchar(Byte c)
 }
 #endif
 
-#if defined(__unix__) || defined(WIN32)
 void mouse_scroll(int row, bool down)
 {
 	struct wdo *wdo = wfind(row);
@@ -572,6 +572,8 @@ void mouse_scroll(int row, bool down)
 
 void mouse_point(int row, int col, bool set_mark)
 {
+	int atcol;
+	struct mark *tmark;
 	struct wdo *wdo = wfind(row);
 	if (!wdo) {
 		error("Not on a window."); /* XEmacs-ish */
@@ -584,7 +586,7 @@ void mouse_point(int row, int col, bool set_mark)
 		zrefresh();
 	}
 
-	struct mark *tmark = bcremrk();
+	tmark = bcremrk();
 
 	/* Move the point to row */
 	if (row > Prow)
@@ -601,7 +603,7 @@ void mouse_point(int row, int col, bool set_mark)
 	}
 
 	/* Move the point to col */
-	int atcol = 0;
+	atcol = 0;
 	while (col > 0 && !bisend() && *Curcptr != '\n') {
 		int n = chwidth(*Curcptr, atcol, false);
 		bmove1();
@@ -616,4 +618,3 @@ void mouse_point(int row, int col, bool set_mark)
 
 	unmark(tmark);
 }
-#endif

@@ -19,9 +19,11 @@
 
 #include "z.h"
 #include "keys.h"
+#include <dos.h>
 #include <time.h>
 
 static int kb_hit;
+static int Mouse;
 
 static int alts[] = { /* 0x10 to 0x86 inclusive */
 	M('Q'), M('W'), M('E'), M('R'), M('T'), M('Y'),
@@ -41,16 +43,45 @@ static int alts[] = { /* 0x10 to 0x86 inclusive */
 	M('('), M(')'), M('-'), M('+'), 0, TC_F11, TC_F12,
 };
 
+void init_mouse(void)
+{
+#ifdef MOUSE
+	union REGS inregs, outregs;
+
+	inregs.x.ax = 0; /* init mouse */
+	int86(0x33, &inregs, &outregs);
+	if (outregs.x.ax == 0xffff)
+		Mouse = outregs.x.bx;
+#endif
+}
+
 int tgetcmd(void)
 {
 	extern int ring_bell;
-	int cmd = getch() & 0x7f;
+	int cmd;
 
 	kb_hit = 0;
 	if (ring_bell) {
 		ring_bell = 0;
 		Curwdo->modeflags = INVALID;
 	}
+
+#ifdef MOUSE
+	while (Mouse && !tkbrdy()) {
+		union REGS in, out;
+
+		in.x.ax = 3;
+		int86(0x33, &in, &out);
+		out.x.cx >>= 3; out.x.dx >>= 3;
+
+		if (out.x.bx && out.x.cx != Pcol && out.x.dx != Prow) {
+			mouse_point(out.x.dx, out.x.cx, out.x.bx == 2);
+			zrefresh();
+		}
+	}
+#endif
+
+	cmd = getch() & 0x7f;
 	if (cmd == 0) {
 		cmd = getch();
 		if (cmd >= 0x10 && cmd <= 0x86)

@@ -95,7 +95,7 @@ static short convertKey(KEY_EVENT_RECORD *event)
 	return key;
 }
 
-static int do_mouse(MOUSE_EVENT_RECORD *mouse)
+static _inline void do_mouse(MOUSE_EVENT_RECORD *mouse)
 {
 	if (mouse->dwEventFlags & MOUSE_WHEELED) {
 		mouse_scroll(mouse->dwMousePosition.Y,

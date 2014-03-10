@@ -1166,12 +1166,26 @@ void clear_umark(void)
 
 void Zstats(void)
 {
+	struct buff *b;
+	struct page *p;
+	unsigned long use = 0, total = 0;
+	double usage;
+
+	Curpage->plen = Curplen;
+	for (b = Bufflist; b; b = b->next)
+		for (p = b->firstp; p; p = p->nextp) {
+			use += p->plen;
+			++total;
+		}
+
+	usage = (double)(use + HALFP) / (double)(total * PSIZE) * 100.0;
+
 #if UNDO
-	putpaw("Buffers: %d  Pages: %d  Marks: %d  Undos: %lu%c",
-	       NumBuffs, NumPages, NumMarks, (undo_total + 521) / 1024,
-	       undo_total ? 'K' : ' ');
+	putpaw("Buffers: %d  Pages: %d  Marks: %d  Use: %.0f%%  Undos: %lu%c",
+	       NumBuffs, NumPages, NumMarks, usage,
+	       (undo_total + 521) / 1024, undo_total ? 'K' : ' ');
 #else
-	putpaw("Buffers: %d  Pages: %d  Marks: %d",
-	       NumBuffs, NumPages, NumMarks);
+	putpaw("Buffers: %d  Pages: %d  Marks: %d  Use: %.0f%%",
+	       NumBuffs, NumPages, NumMarks, usage);
 #endif
 }

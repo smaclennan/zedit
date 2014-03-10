@@ -33,7 +33,7 @@ extern jmp_buf zenv;
 #ifdef DOS
 #define PSIZE		512		/* size of page */
 #else
-#define PSIZE		4096		/* size of page */
+#define PSIZE		1024		/* size of page */
 #endif
 #define HALFP		(PSIZE / 2)	/* half the page size */
 

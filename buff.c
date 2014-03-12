@@ -130,7 +130,8 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		Curplen += dstlen;
 		copied += dstlen;
 		for (btmrk = Mrklist; btmrk; btmrk = btmrk->prev)
-			if (btmrk->mpage == Curpage && btmrk->moffset > Curchar)
+			if (btmrk->mpage == Curpage && 
+			    btmrk->moffset > Curchar)
 					btmrk->moffset += dstlen;
 		makeoffset(Curchar + dstlen);
 		vsetmod(false);

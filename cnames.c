@@ -13,12 +13,13 @@
 
 struct cnames Cnames[] = {
 	{"abort",			ZABORT,			AI,
-	 C("Aborts the current command. This is the only way to exit Universal "
-	   "and String Arguments. It will also abort C-X and Meta prefixes.")
+	 C("Aborts the current command. This is the only way to exit "
+	   "Universal and String Arguments. It will also abort C-X and Meta "
+	   "prefixes.")
 	},
 	{"again",			ZAGAIN,			AN,
-	 C("Causes the last search to be executed again. If no search commands "
-	   "have been executed, a search command is executed.")
+	 C("Causes the last search to be executed again. If no search "
+	   "commands have been executed, a search command is executed.")
 	},
 	{"append-kill",			ZAPPEND_KILL,		AI,
 	 C("Sets the delete flag. The next delete command will append to the "
@@ -36,8 +37,8 @@ struct cnames Cnames[] = {
 	 C("Moves the Point to the beginning of the current buffer.")
 	},
 	{"beginning-of-line",		ZBEGINNING_OF_LINE,	AN,
-	 C("Moves the Point to the beginning of the line or to the beginning of "
-	   "the previous line.")
+	 C("Moves the Point to the beginning of the line or to the beginning "
+	   "of the previous line.")
 	},
 	{"c-indent",			ZC_INDENT,		AN,
 	 C("Causes Newline characters to auto-indent to the current tab "
@@ -50,8 +51,8 @@ struct cnames Cnames[] = {
 	   "finds one, tries to put the close brace in the same column as the "
 	   "column of the first non-whitespace character in the matched "
 	   "line. If no match is found, beeps. Bound to close brace in C "
-	   "mode. If bound to a character other than a close brace, performs a "
-	   "Character Insert.")
+	   "mode. If bound to a character other than a close brace, performs "
+	   "a Character Insert.")
 	},
 	{"calc",			ZCALC,			AI,
 	 C("This is a very simple integer calculator. It handles addition, "
@@ -69,13 +70,13 @@ struct cnames Cnames[] = {
 	   "is left at the end of the word.")
 	},
 	{"center",			ZCENTER,		AN,
-	 C("Centers the current line on the screen. It uses fill-width to define "
-	   "the right margin.")
+	 C("Centers the current line on the screen. It uses fill-width to "
+	   "define the right margin.")
 	},
 	{"cmd-to-buffer",		ZCMD_TO_BUFFER,		AI,
 	 C("Prompts for a command and then executes the command in the "
-	   "shell. The output is put in the " SHELLBUFF " buffer. Any previous "
-	   "contents of the " SHELLBUFF " buffer are deleted.")
+	   "shell. The output is put in the " SHELLBUFF " buffer. Any "
+	   "previous contents of the " SHELLBUFF " buffer are deleted.")
 	},
 	{"copy-region",			ZCOPY_REGION,		AI,
 	 C("Copies the region to the kill buffer. The kill buffer is "
@@ -83,9 +84,9 @@ struct cnames Cnames[] = {
 	   "command.")
 	},
 	{"copy-word",			ZCOPY_WORD,		AI,
-	 C("Copies the word the Point is on to the kill buffer. The kill buffer "
-	   "is overwritten unless the the delete flag is set.In the PAW, the "
-	   "Copy Word command takes the word the Point was on in the "
+	 C("Copies the word the Point is on to the kill buffer. The kill "
+	   "buffer is overwritten unless the the delete flag is set. In the "
+	   "PAW, the Copy Word command takes the word the Point was on in the "
 	   "previously active window and inserts it into the PAW.")
 	},
 	{"count",			ZCOUNT,			0,
@@ -96,8 +97,8 @@ struct cnames Cnames[] = {
 	 C("Command prefix.")
 	},
 	{"delete-blanks",		ZDELETE_BLANKS,		AN,
-	 C("Delete all the blank lines around the Point. The lines are not put "
-	   "in the Kill Buffer.")
+	 C("Delete all the blank lines around the Point. The lines are not "
+	   "put in the Kill Buffer.")
 	},
 	{"delete-buffer",		ZDELETE_BUFFER,		0,
 	 C("Deletes the current buffer and goes to a previous buffer. There "
@@ -107,8 +108,8 @@ struct cnames Cnames[] = {
 	},
 	{"delete-char",			ZDELETE_CHAR,		AN,
 	 C("Deletes the character at the Point and leaves the Point on the "
-	   "next character in the buffer. The character is not put in the Kill "
-	   "Buffer.")
+	   "next character in the buffer. The character is not put in the "
+	   "Kill Buffer.")
 	},
 	{"delete-line",			ZDELETE_LINE,		AN,
 	 C("Deletes the entire line, including the Newline, no matter where "
@@ -116,12 +117,12 @@ struct cnames Cnames[] = {
 	   "next line. The deleted line is put in the Kill Buffer.")
 	},
 	{"delete-previous-char",	ZDELETE_PREVIOUS_CHAR,	AN,
-	 C("Deletes the character before the Point and leaves the Point in the "
-	   "same place. The character is not put in the Kill Buffer.")
+	 C("Deletes the character before the Point and leaves the Point in "
+	   "the same place. The character is not put in the Kill Buffer.")
 	},
 	{"delete-previous-word",	ZDELETE_PREVIOUS_WORD,	AN,
-	 C("Deletes the word to the left of the Point. The character the Point "
-	   "is on is not deleted. The word is put in the Kill Buffer.")
+	 C("Deletes the word to the left of the Point. The character the "
+	   "Point is on is not deleted. The word is put in the Kill Buffer.")
 	},
 	{"delete-region",		ZDELETE_REGION,		AI,
 	 C("Deletes the characters in the region. The deleted characters are "
@@ -134,8 +135,8 @@ struct cnames Cnames[] = {
 	   "line. The characters deleted are put in the Kill Buffer.")
 	},
 	{"delete-word",			ZDELETE_WORD,		AN,
-	 C("Deletes the word to the right of and including the Point. The word "
-	   "is put in the Kill Buffer.")
+	 C("Deletes the word to the right of and including the Point. The "
+	   "word is put in the Kill Buffer.")
 	},
 	{"empty-buffer",		ZEMPTY_BUFFER,		AI,
 	 C("Deletes the entire contents of the current buffer.")
@@ -144,8 +145,8 @@ struct cnames Cnames[] = {
 	 C("Moves the Point to the end of the buffer.")
 	},
 	{"end-of-line",			ZEND_OF_LINE,		AN,
-	 C("Moves the Point to the end of the current line or to the end of the "
-	   "next line if already at the end of the current line.")
+	 C("Moves the Point to the end of the current line or to the end of "
+	   "the next line if already at the end of the current line.")
 	},
 	{"exit",			ZEXIT,			0,
 	 C("Exits from the editor. It asks to save all modified buffers. A "
@@ -637,10 +638,10 @@ struct cnames Cnames[] = {
 	},
 	{"write-file",			ZWRITE_FILE,		0,
 	 C("Prompts for a path name and writes out the current buffer to this "
-	   "file name. Supports file name completion. It changes the path name "
-	   "of the current buffer to the new path name. A Universal Argument "
-	   "causes only the Region to be written and does not change the name "
-	   "of the buffer.")
+	   "file name. Supports file name completion. It changes the path "
+	   "name of the current buffer to the new path name. A Universal "
+	   "Argument causes only the Region to be written and does not "
+	   "change the name of the buffer.")
 	},
 	{"yank",			ZYANK,			AN,
 	 C("Inserts the characters from the Kill Buffer before the Point. The "

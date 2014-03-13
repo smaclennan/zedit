@@ -156,51 +156,47 @@ struct cnames Cnames[] = {
 	{"fill-check",			ZFILL_CHECK,		0,
 	 C("Checks if the current column is past the FillWidth column. If it "
 	   "is, the words past or on the FillWidth column are wrapped. This "
-	   "gives some word processing capability to the editor. Normally bound "
-	   "to the space bar and Newline only in Text Mode.")
+	   "gives some word processing capability to the editor. Normally "
+	   "bound to the space bar and Newline only in Text Mode.")
 	},
 	{"fill-paragraph",		ZFILL_PARAGRAPH,	0,
-	 C("Uses the FillWidth to reformat the paragraph the Point is in. This "
-	   "is useful if editing has messed up the right margin. A Universal "
-	   "Argument reformats the next Arg paragraphs. A Universal Argument "
-	   "of 0 reformats the entire buffer. When reformatting the entire "
-	   "buffer, hitting a character will abort the reformat. Not allowed "
-	   "in program mode buffers.")
+	 C("Uses the FillWidth to reformat the paragraph the Point is in. "
+	   "This is useful if editing has messed up the right margin. A "
+	   "Universal Argument reformats the next Arg paragraphs. A "
+	   "Universal Argument of 0 reformats the entire buffer. When "
+	   "reformatting the entire buffer, hitting a character will "
+	   "abort the reformat. Not allowed in program mode buffers.")
 	},
 	{"find-file",			ZFIND_FILE,		AN,
-	 C("Prompts for a path name. If a buffer already exists with this path "
-	   "name, that buffer is switched to. If no buffer is matched, a new "
-	   "buffer is created and the file read into it. Supports file name "
-	   "completion.")
+	 C("Prompts for a path name. If a buffer already exists with this "
+	   "path name, that buffer is switched to. If no buffer is matched, "
+	   "a new buffer is created and the file read into it. "
+	   "Supports file name completion.")
 	},
 	{"global-re-search",		ZGLOBAL_RE_SEARCH,	AN,
-	 C("This command is used to search for a regular expression in all the "
-	   "buffers. It prompts for a search string and then starts searching "
-	   "at the start of the first buffer. If a match is found, it stops "
-	   "and leaves the point at the match. If Again is executed, it starts "
-	   "at the current Point and searches forwards through the buffers. At "
-	   "the last buffer it stops and puts the Point back where it "
-	   "started.")
+	 C("This command is the same as global-search except it is used to "
+	   "search for a regular expression in all the buffers. "
+	   "See global-search for more details.")
 	},
 	{"global-search",		ZGLOBAL_SEARCH,		AN,
-	 C("This command is used to search for a string in all the buffers. It "
-	   "prompts for a search string and then starts searching at the start "
-	   "of the first buffer. If a match is found, it stops and leaves the "
-	   "point at the match. If Again is executed, it starts at the current "
-	   "Point and searches forwards through the buffers. At the last "
-	   "buffer it stops and puts the Point back where it started.")
+	 C("This command is used to search for a string in all the buffers. "
+	   "It prompts for a search string and then starts searching at the "
+	   "start of the first buffer. If a match is found, it stops and "
+	   "leaves the point at the match. If Again is executed, it starts "
+	   "at the current Point and searches forwards through the buffers. "
+	   "At the last buffer it stops and puts the Point back where it "
+	   "started.")
 	},
 	{"goto-line",			ZGOTO_LINE,		0,
 	 C("Moves the point to the start of a given line. If there is a "
 	   "Universal Argument, uses the argument, else prompts for the line "
-	   "number. If the line is past the end of the buffer, moves the Point "
-	   "is left at the end of the buffer.")
+	   "number. If the line is past the end of the buffer, the "
+	   "Point is left at the end of the buffer.")
 	},
 	{"grep",			ZGREP,			0,
-	 C("Prompts for the completion of a grep command and then performs the "
-	   "grep command in the " SHELLBUFF " buffer. A Universal Argument will "
-	   "prompt for the grep command to use. Use next-error to go through the "
-	   "grep output.")
+	 C("Prompts for the completion of a grep command and then performs "
+	   "the grep command in the " SHELLBUFF " buffer. Use next-error "
+	   "to go through the grep output.")
 	},
 	{"grow-window",			ZGROW_WINDOW,		AN,
 	 C("Makes the active window one line bigger, and therefore the "
@@ -217,29 +213,29 @@ struct cnames Cnames[] = {
 	},
 	{"help-function",		ZHELP_FUNCTION,		AI,
 	 C("Displays help on any of the Zedit functions. Prompts for the "
-	   "function with full completion. After the name is an optional set of "
-	   "flags. Currently they are (+-P). A + means a Universal Arg causes "
-	   "the command to repeat. A - means a Universal Arg is ignored. A P "
-	   "means the command works in the PAW. If the command has any key "
-	   "bindings, these are also displayed.")
+	   "function with full completion. After the name is an optional set "
+	   "of flags. Currently they are (+-P). A + means a Universal Arg "
+	   "causes the command to repeat. A - means a Universal Arg is "
+	   "ignored. A P means the command works in the PAW. If the command "
+	   "has any key bindings, these are also displayed.")
 	},
 	{"help-key",			ZHELP_KEY,		AI,
-	 C("Prompts for a key and displays the current command bound to the key "
-	   "in the PAW. Handles C-X and M- prefixes.")
+	 C("Prompts for a key and displays the current command bound to the "
+	   "key in the PAW. Handles C-X and M- prefixes.")
 	},
 	{"help-variable",		ZHELP_VARIABLE,		AI,
 	 C("Displays help on any of the configurable variables. Prompts for "
-	   "the variable with full completion. The current value of the variable "
-	   "is also displayed.")
+	   "the variable with full completion. The current value of the "
+	   "variable is also displayed.")
 	},
 	{"incremental-search",		ZINCREMENTAL_SEARCH,	0,
 	 C("Searches for the string after every character is entered in the "
-	   "PAW. The delete-previous-character command can be used to delete a "
-	   "character and 'back up' the search. The Newline character "
-	   "terminates the search. The Abort command terminates the search and "
-	   "places the Point back where it was. Any other commands terminates "
-	   "the search and performs that command. A Universal Argument causes "
-	   "the search to search backwards.")
+	   "PAW. The delete-previous-character command can be used to delete "
+	   "a character and 'back up' the search. The Newline character "
+	   "terminates the search. The Abort command terminates the search "
+	   "and places the Point back where it was. Any other commands "
+	   "terminates the search and performs that command. A Universal "
+	   "Argument causes the search to search backwards.")
 	},
 	{"indent",			ZINDENT,		AN,
 	 C("Indents the marked region.")
@@ -248,7 +244,7 @@ struct cnames Cnames[] = {
 	 C("Normally bound to all the printable characters.")
 	},
 	{"insert-overwrite",		ZINSERT_OVERWRITE,	AI,
-	 C("Toggles the current buffer's minor mode between insert, the default, "
+	 C("Toggles the current buffer's minor mode between insert "
 	   "and overwrite modes.")
 	},
 	{"join",			ZJOIN,			AN,
@@ -288,10 +284,10 @@ struct cnames Cnames[] = {
 	 C("Command prefix.")
 	},
 	{"meta-x",			ZMETA_X,		0,
-	 C("Prompts for a command to execute. Unbound commands may be executed "
-	   "in this manner. Supports command completion. A '?' will show all "
-	   "the possible matches. A Universal Argument is passed on to the "
-	   "selected command.")
+	 C("Prompts for a command to execute. Unbound commands may be "
+	   "executed in this manner. Supports command completion. A '?' will "
+	   "show all the possible matches. A Universal Argument is passed on "
+	   "to the selected command.")
 	},
 	{"mode",			ZMODE,			AN,
 	 C("Change the mode of the current buffer. Prompts (with command "
@@ -303,15 +299,15 @@ struct cnames Cnames[] = {
 	   "its just inserted.")
 	},
 	{"next-bookmark",		ZNEXT_BOOKMARK,		0,
-	 C("Moves the Point to the last bookmark set in the bookmark ring. The "
-	   "bookmark moved to is displayed in the echo window. A Universal "
-	   "Argument in the range 1 to 10 corresponding to a set bookmark will "
-	   "go to the bookmark.")
+	 C("Moves the Point to the last bookmark set in the bookmark ring. "
+	   "The bookmark moved to is displayed in the echo window. A "
+	   "Universal Argument in the range 1 to 10 corresponding to a set "
+	   "bookmark will go to the bookmark.")
 	},
 	{"next-buffer",			ZNEXT_BUFFER,		AN,
 	 C("Switches to the next buffer in the buffer list. At the end of the "
-	   "list, it switches to the first buffer in the list, i.e. treats the "
-	   "list like a ring.")
+	   "list, it switches to the first buffer in the list, i.e. treats "
+	   "the list like a ring.")
 	},
 	{"next-char",			ZNEXT_CHAR,		AN,
 	 C("Moves the Point forward one character. If the Point is at the end "

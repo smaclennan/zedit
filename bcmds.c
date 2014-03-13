@@ -211,7 +211,8 @@ bool delbname(char *bname)
 {
 	int i;
 
-	for (i = 0; i < Numbuffs && strcmp(bname, Bnames[i]); ++i) ;
+	for (i = 0; i < Numbuffs && strcmp(bname, Bnames[i]); ++i)
+		;
 	if (i == Numbuffs)
 		return false;
 

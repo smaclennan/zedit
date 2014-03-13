@@ -683,7 +683,7 @@ void Zcount(void)
 	l = w = c = 0;
 	putpaw("Counting...");
 	word = false;
-	for (; Argp ? bisbeforemrk(Curbuff->umark): !bisend(); bmove1(), ++c) {
+	for (; Argp ? bisbeforemrk(Curbuff->umark) : !bisend(); bmove1(), ++c) {
 		if (ISNL(*Curcptr))
 			++l;
 		if (!bistoken())

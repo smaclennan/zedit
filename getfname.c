@@ -85,7 +85,7 @@ static bool isext(char *fname, const char *ext)
 {
 	char *ptr;
 #ifdef DOS
-	return fname && (ptr = strrchr(fname, '.')) != NULL && 
+	return fname && (ptr = strrchr(fname, '.')) != NULL &&
 		stricmp(ptr, ext) == 0;
 #else
 	return fname && (ptr = strrchr(fname, '.')) && strcmp(ptr, ext) == 0;

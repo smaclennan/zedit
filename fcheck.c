@@ -66,20 +66,20 @@ int main(int argc, char *argv[])
 
 	((void)argc);
 	((void)argv);
-	
+
 	if (NUMVARS != VARSNUM) {
 		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",
 		       NUMVARS, VARSNUM);
 		err = 1;
 	}
 
-	s1 = sizeof(key_label) / sizeof(char *);	
+	s1 = sizeof(key_label) / sizeof(char *);
 	if (N_KEYS != NUM_SPECIAL || s1 != NUM_SPECIAL) {
 		printf("Mismatch N_KEYS %d NUM_SPECIAL %d labels %d\n",
 		       N_KEYS, NUM_SPECIAL, s1);
 		err = 1;
 	}
-		
+
 	if (NUM_SPECIAL > 32) {
 		printf("Too many special keys\n");
 		err = 1;
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 
 #ifdef DOS
 	if ((sizeof(alts) / sizeof(int)) != 0x86 - 0x10 + 1) {
-		printf("Problems with alts 0x%x\n", 
+		printf("Problems with alts 0x%x\n",
 			sizeof(alts) / sizeof(int));
 		err = 1;
 	}
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
 
 	/* getplete structs must be aligned */
 	if (sizeof(struct cnames) % sizeof(char *)) {
-		printf("struct cnames not aligned [%d/%d]\n", 
+		printf("struct cnames not aligned [%d/%d]\n",
 		       (int)sizeof(struct cnames), (int)sizeof(char *));
 		err = 1;
 	}

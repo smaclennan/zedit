@@ -228,8 +228,9 @@ static int innerdsp(int from, int to, struct mark *pmark)
 				bmove1();
 			}
 			tcleol();
-			if (bisatumark() && (ISNL(Buff()) || bisstart() || bisend()))
-					setmark(false);
+			if (bisatumark() &&
+			    (ISNL(Buff()) || bisstart() || bisend()))
+				setmark(false);
 			if (col >= tmaxcol())
 				extendedlinemarker();
 			memset(lptr, '\376', Colmax - (lptr - tline));

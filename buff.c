@@ -55,7 +55,7 @@ static int NumMarks;
 static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage);
 static void freepage(struct buff *tbuff, struct page *page);
-static bool pagesplit();
+static bool pagesplit(void);
 
 void bfini(void)
 {
@@ -130,7 +130,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		Curplen += dstlen;
 		copied += dstlen;
 		for (btmrk = Mrklist; btmrk; btmrk = btmrk->prev)
-			if (btmrk->mpage == Curpage && 
+			if (btmrk->mpage == Curpage &&
 			    btmrk->moffset > Curchar)
 					btmrk->moffset += dstlen;
 		makeoffset(Curchar + dstlen);

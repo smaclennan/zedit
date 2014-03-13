@@ -29,7 +29,7 @@ static char *dispkey(unsigned key, char *s)
 	if (is_special(key))
 		return strcpy(s, special_label(key));
 	if (key > 127)
-		strcpy(s, key < 256 ? "C-X " : "M-" );
+		strcpy(s, key < 256 ? "C-X " : "M-");
 	j = key & 0x7f;
 	if (j == 27)
 		strcat(s, "ESC");
@@ -239,8 +239,8 @@ void Zhelp_key(void)
 					dispkey(Cmd, kstr), Cmd,
 					Cnames[rc].name);
 
-	/* We need to set Cmd above since some keystrokes will be wrong if not set.
-	 * Put it back to the original value.
+	/* We need to set Cmd above since some keystrokes will be
+	 * wrong if not set. Put it back to the original value.
 	 */
 	Cmd = was;
 }

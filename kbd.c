@@ -22,7 +22,7 @@
 #include <poll.h>
 
 /* Note: We can currently only have 32 specials */
-static const char *Tkeys[] = {
+static const char * const Tkeys[] = {
 	"\033[A",	/* up */
 	"\033[B",	/* down */
 	"\033[C",	/* right */

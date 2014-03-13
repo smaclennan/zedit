@@ -560,14 +560,14 @@ struct cnames Cnames[] = {
 	 C("Swaps the character before the Point with the character at the "
 	   "Point. It leaves the Point after the second character. Successive "
 	   "commands will 'drag' the character that was before the Point "
-	   "towards the end of the line. If the Point was at the end of a line, "
-	   "the two characters before the Point are transposed. If the Point is "
-	   "at the beginning of the buffer, the character at the Point and the "
-	   "character after the Point are transposed.")
+	   "towards the end of the line. If the Point was at the end of a "
+	   "line, the two characters before the Point are transposed. If "
+	   "the Point is at the beginning of the buffer, the character at "
+	   "the Point and the character after the Point are transposed.")
 	},
 	{"swap-mark",			ZSWAP_MARK,		AI,
-	 C("The Mark goes to the current position of the Point and the Point is "
-	   "set where the Mark was.")
+	 C("The Mark goes to the current position of the Point and the Point "
+	   "is set where the Mark was.")
 	},
 	{"swap-words",			ZSWAP_WORDS,		AN,
 	 C("Swaps the words before and after the Point. The Point is left "
@@ -588,17 +588,18 @@ struct cnames Cnames[] = {
 	 C("Handles the tab key.")
 	},
 	{"tag",				ZTAG,			0,
-	 C("The tag command asks for a function and looks for the function in a "
-	   "tagfile. If there is no tagfile specified, then it will prompt for a "
-	   "tagfile. A Universal Argument always prompts for a tagfile.\n\n"
-	   "Only supports etags style tagfiles.")
+	 C("The tag command asks for a function and looks for the function "
+	   "in a tagfile. If there is no tagfile specified, then it will "
+	   "prompt for a tagfile. A Universal Argument always prompts for "
+	   "a tagfile.\n\nOnly supports etags style tagfiles.")
 	},
 	{"tag-word",			ZTAG_WORD,		0,
-	 C("Like the tag command but uses the word at the point for the search tag.")
+	 C("Like the tag command but uses the word at the point for the "
+	 "search tag.")
 	},
 	{"toggle-case",			ZTOGGLE_CASE,		AI,
-	 C("Switches the current buffers minor mode between case sensitive and "
-	   "case insensitive for searches and replacements.")
+	 C("Switches the current buffers minor mode between case sensitive "
+	   "and case insensitive for searches and replacements.")
 	},
 	{"trim-white-space",		ZTRIM_WHITE_SPACE,	AI,
 	 C("Removes all spaces and tabs on both sides of the Point. The Point "
@@ -616,8 +617,8 @@ struct cnames Cnames[] = {
 	 C("EXPERIMENTAL: Undo the previous edit. There is a list of undos.")
 	},
 	{"unmodify",			ZUNMODIFY,		AI,
-	 C("Turns off the modified flag for the current buffer. Does not change "
-	   "the buffer itself.")
+	 C("Turns off the modified flag for the current buffer. Does not "
+	   "change the buffer itself.")
 	},
 	{"uppercase-region",		ZUPPERCASE_REGION,	AI,
 	 C("Convert the Region to uppercase. Not allowed in program mode "

@@ -323,17 +323,18 @@ struct cnames Cnames[] = {
 	   "the error line.")
 	},
 	{"next-line",			ZNEXT_LINE,		AN,
-	 C("Moves the Point up one line in the buffer. It tries to maintain the "
-	   "same column position. If the line is to short the, Point will be "
-	   "the placed at the end of the line. Consecutive Previous/Next Line "
-	   "or Page commands try to maintain the original column position.")
+	 C("Moves the Point up one line in the buffer. It tries to maintain "
+	   "the same column position. If the line is to short the, Point "
+	   "will be placed at the end of the line. Consecutive Previous/Next "
+	   "Line or Page commands try to maintain the original column "
+	   "position.")
 	},
 	{"next-page",			ZNEXT_PAGE,		AN,
-	 C("Moves the Point down one page and tries to center the Point line in "
-	   "the display. It tries to maintain the same column position. If the "
-	   "line is to short the, Point will be the placed at the end of the "
-	   "line. Consecutive Previous/Next Line or Page commands try to "
-	   "maintain the original column position.")
+	 C("Moves the Point down one page and tries to center the Point line "
+	   "in the display. It tries to maintain the same column position. "
+	   "If the line is to short the, Point will be the placed at the "
+	   "end of the line. Consecutive Previous/Next Line or Page commands "
+	   "try to maintain the original column position.")
 	},
 	{"next-paragraph",		ZNEXT_PARAGRAPH,	AN,
 	 C("Moves the Point to the start of the next paragraph.")
@@ -349,8 +350,7 @@ struct cnames Cnames[] = {
 	 C("Used to unbind a key. This is bound to all the unbound keys.")
 	},
 	{"one-window",			ZONE_WINDOW,		AI,
-	 C("Makes the active window a full screen window. If there is only one "
-	   "window, this command has no effect.")
+	 C("Makes the active window a full screen window.")
 	},
 	{"open-line",			ZOPEN_LINE,		AN,
 	 C("Inserts a Newline at the Point but leaves the Point in front of "
@@ -358,22 +358,22 @@ struct cnames Cnames[] = {
 	   "Previous Character command.")
 	},
 	{"other-next-page",		ZOTHER_NEXT_PAGE,	AN,
-	 C("Performs a Next Page command in the bottom window or the top window "
-	   "if you are in the bottom window. It leaves the Point where it is "
-	   "in the active window. If there is only one window, this command "
-	   "is the same as next-page.")
+	 C("Performs a Next Page command in the bottom window or the top "
+	   "window if you are in the bottom window. It leaves the Point "
+	   "where it is in the active window. If there is only one window, "
+	   "this command is the same as next-page.")
 	},
 	{"other-previous-page",		ZOTHER_PREVIOUS_PAGE,	AN,
 	 C("Performs a Previous Page command in the bottom window or the top "
 	   "window if you are in the bottom window. It leaves the Point where "
-	   "it is in the active window. If there is only one window, it performs "
-	   "a previous-page.")
+	   "it is in the active window. If there is only one window, it "
+	   "performs a previous-page.")
 	},
 	{"out-to",			ZOUT_TO,		0,
-	 C("This command moves the Point to an absolute column position. If the "
-	   "line is shorter than the specified column, it is padded with tabs "
-	   "and spaces to the specified column. The command takes either a "
-	   "Universal Argument or prompts for the column to go to.")
+	 C("This command moves the Point to an absolute column position. "
+	   "If the line is shorter than the specified column, it is padded "
+	   "with tabs and spaces to the specified column. The command takes "
+	   "either a Universal Argument or prompts for the column to go to.")
 	},
 	{"position",			ZPOSITION,		AI,
 	 C("Displays the current Point position as a line, column, and byte "
@@ -381,19 +381,20 @@ struct cnames Cnames[] = {
 	   "buffer.")
 	},
 	{"previous-char",		ZPREVIOUS_CHAR,		AN,
-	 C("Moves the Point back one character. If the Point is at the start of "
-	   "the line, it is moved to the end of the previous line.")
+	 C("Moves the Point back one character. If the Point is at the start "
+	   "of the line, it is moved to the end of the previous line.")
 	},
 	{"previous-line",		ZPREVIOUS_LINE,		AN,
-	 C("Moves the Point up one line in the buffer. It tries to maintain the "
-	   "same column position. If the line is to short, the Point will be "
-	   "placed at the end of the line. Consecutive Previous/Next Line or "
-	   "Page commands try to maintain the original column position.")
+	 C("Moves the Point up one line in the buffer. It tries to maintain "
+	   "the same column position. If the line is to short, the Point "
+	   "will be placed at the end of the line. Consecutive Previous/Next "
+	   "Line or Page commands try to maintain the original column "
+	   "position.")
 	},
 	{"previous-page",		ZPREVIOUS_PAGE,		AN,
 	 C("Moves the Point up one page and tries to center the Point line in "
-	   "the display. It tries to maintain the same column position. If the "
-	   "line is to short, the Point will be placed at the end of the "
+	   "the display. It tries to maintain the same column position. If "
+	   "the line is to short, the Point will be placed at the end of the "
 	   "line. Consecutive Previous/Next Line or Page commands try to "
 	   "maintain the original column position.")
 	},
@@ -402,14 +403,14 @@ struct cnames Cnames[] = {
 	   "the previous paragraph.")
 	},
 	{"previous-word",		ZPREVIOUS_WORD,		AN,
-	 C("Moves the Point back to the start of a word or to the start of the "
-	   "previous word.")
+	 C("Moves the Point back to the start of a word or to the start of "
+	   "the previous word.")
 	},
 	{"query-replace",		ZQUERY_REPLACE,		0,
 	 C("Prompts for a search string and a replacement string and searches "
 	   "from the current Point looking for matches of the search string. "
-	   "If it finds a match, it moves the Point to the match and waits for "
-	   "one of the following input characters:\n\n"
+	   "If it finds a match, it moves the Point to the match and waits "
+	   "for one of the following input characters:\n\n"
 	   "  ,              Replace current match and confirm.\n"
 	   "  space          Replace current match and continue.\n"
 	   "  y              Replace current match and continue.\n"
@@ -431,15 +432,15 @@ struct cnames Cnames[] = {
 	   " into the buffer.")
 	},
 	{"re-replace",			ZRE_REPLACE,		0,
-	 C("Works like the Query Replace command except that the search string "
-	   "is a regular expression. The replacement string is a literal with "
-	   "two exceptions. An '&' character causes the matched string to be "
-	   "placed in the buffer. The escape character '\' can be used to turn "
-	   "off this special meaning of '&'. Note that '\\' is required to put "
-	   "a real '\' in the buffer. For each match, a prompt is made for the "
-	   "action to perform. See Query Replace for a list of valid "
-	   "actions. A Universal Argument causes the replacement to be done "
-	   "globally in all the buffers.")
+	 C("Works like the Query Replace command except that the search "
+	   "string is a regular expression. The replacement string is a "
+	   "literal with two exceptions. An '&' character causes the matched "
+	   "string to be placed in the buffer. The escape character '\' can "
+	   "be used to turn off this special meaning of '&'. Note that '\\' "
+	   "is required to put a real '\' in the buffer. For each match, a "
+	   "prompt is made for the action to perform. See Query Replace for "
+	   "a list of valid actions. A Universal Argument causes the "
+	   "replacement to be done globally in all the buffers.")
 	},
 	{"re-search",			ZRE_SEARCH,		AN,
 	 C("Asks for a regular expression search string and searches from the "
@@ -454,8 +455,8 @@ struct cnames Cnames[] = {
 	{"read-file",			ZREAD_FILE,		0,
 	 C("Prompts for a path name, with file name completion, and inserts "
 	   "the file into the current buffer before the Point. If there is a "
-	   "Universal Argument, the current buffer is deleted, first asking to "
-	   "save the file if it is modified, before reading in the new "
+	   "Universal Argument, the current buffer is deleted, first asking "
+	   "to save the file if it is modified, before reading in the new "
 	   "file. The buffers file name is not changed, any writes will be to "
 	   "the old file name.")
 	},
@@ -473,12 +474,12 @@ struct cnames Cnames[] = {
 	},
 	{"reverse-search",		ZREVERSE_SEARCH,	AN,
 	 C("Prompts for a search string and searches from the Point backward "
-	   "for a match in the buffer. If a match is found, the Point is moved "
-	   "to the start of the match. If the string is not found, then 'Not "
-	   "Found' is displayed in the echo window and the Point is not "
-	   "moved. The search string is saved and subsequent search and "
-	   "replace commands will default to the last search string. If the "
-	   "mode Exact is set, the search will be case sensitive.")
+	   "for a match in the buffer. If a match is found, the Point is "
+	   "moved to the start of the match. If the string is not found, "
+	   "then 'Not Found' is displayed in the echo window and the Point "
+	   "is not moved. The search string is saved and subsequent search "
+	   "and replace commands will default to the last search string. If "
+	   "the mode Exact is set, the search will be case sensitive.")
 	},
 	{"revert-file",			ZREVERT_FILE,		AN,
 	 C("Rereads the current file. If the file has changed, asks to "
@@ -495,8 +496,8 @@ struct cnames Cnames[] = {
 	   "files.")
 	},
 	{"save-file",			ZSAVE_FILE,		AI,
-	 C("Saves the current buffer to its file. If the current buffer has no "
-	   "path name, a path name is prompted for (with file name "
+	 C("Saves the current buffer to its file. If the current buffer has "
+	   "no path name, a path name is prompted for (with file name "
 	   "completion).")
 	},
 	{"scroll-down",			ZSCROLL_DOWN,		AN,
@@ -506,13 +507,13 @@ struct cnames Cnames[] = {
 	 C("Scrolls the screen up one line.")
 	},
 	{"search",			ZSEARCH,		AN,
-	 C("Prompts for a search string and searches from the Point forward for "
-	   "a match in the buffer. If a match is found, the Point is moved to "
-	   "the start of the match. If the string is not found, then 'Not "
-	   "Found' is displayed in the echo window and the Point is not "
-	   "moved. The search string is saved and subsequent search or replace "
-	   "commands will default to the last search string. If the mode Exact "
-	   "is set, the search will be case sensitive.")
+	 C("Prompts for a search string and searches from the Point forward "
+	   "for a match in the buffer. If a match is found, the Point is "
+	   "moved to the start of the match. If the string is not found, "
+	   "then 'Not Found' is displayed in the echo window and the Point "
+	   "is not moved. The search string is saved and subsequent search "
+	   "or replace commands will default to the last search string. If "
+	   "the mode Exact is set, the search will be case sensitive.")
 	},
 	{"set-bookmark",		ZSET_BOOKMARK,		AN,
 	 C("Places an invisible 'bookmark' at the Point. There are 10 "
@@ -535,8 +536,8 @@ struct cnames Cnames[] = {
 	},
 	{"show-config",			ZSHOW_CONFIG,		AI,
 	 C("Show the current settings of all the Zedit variables in a "
-	   "buffer. The buffer is suitable for use as a .config.z file and can "
-	   "be saved to a file using Write File.")
+	   "buffer. The buffer is suitable for use as a .config.z file and "
+	   "can be saved to a file using Write File.")
 	},
 	{"size-window",			ZSIZE_WINDOW,		0,
 	 C("Sets the window to Universal Argument lines.")

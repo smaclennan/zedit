@@ -200,13 +200,13 @@ void Zc_insert(void)
 
 void Zc_indent(void)
 {
-	int width;
+	int width = 0;
 	struct mark tmark;
 
 	if ((Curbuff->bmode & OVERWRITE))
 		bcsearch(NL);
 	else {
-		int sawstart = 0;
+		int sawstart = 0, did_indent = 0;
 
 		bmrktopnt(&tmark);
 		do {
@@ -215,11 +215,16 @@ void Zc_indent(void)
 			tobegline();
 		} while (*Curcptr == '#' && !bisstart());
 		movepast(biswhite, FORWARD);
+		if (looking_at("if") || looking_at("while")) {
+			width += Tabsize;
+			did_indent = 1;
+		}
 		if (bisaftermrk(&tmark))
 			bpnttomrk(&tmark);
-		for (width = bgetcol(true, 0); bisbeforemrk(&tmark); bmove1())
+		for (width += bgetcol(true, 0); bisbeforemrk(&tmark); bmove1())
 			if (*Curcptr == '{') {
-				width += Tabsize;
+				if (did_indent == 0 || sawstart > 0)
+					width += Tabsize;
 				++sawstart;
 			} else if (*Curcptr == '}' && sawstart) {
 				width -= Tabsize;

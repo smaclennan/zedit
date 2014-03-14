@@ -204,6 +204,7 @@ bool getarg(const char *, char *, int);
 bool _getarg(const char *, char *, int, bool);
 char *getbtxt(char *, int);
 int getbword(char *, int, int (*)());
+bool looking_at(const char *match);
 int getplete(const char *, const char *, char **, int, int);
 int bisspace(void);
 int bistoken(void);

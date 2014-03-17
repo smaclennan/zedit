@@ -32,7 +32,7 @@
 #include "bind.c"
 #endif
 
-#ifdef __unix__
+#if defined __unix__ || (defined __APPLE__ && defined __MACH__)
 #define OS unix
 #elif defined WIN32
 #define OS win32

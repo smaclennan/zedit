@@ -712,17 +712,17 @@ static int guess_mode(char *fname, char *buf)
 		return fd;
 
 	n = bread(fd, buf, PSIZE / 2);
+	close(fd);
 	if (n > 0) {
 		buf[n] = '\0';
 		text = strchr(buf, '\r') != NULL;
 	}
 
 	if (text) {
-		close(fd);
 		fd = open(fname, READ_MODE);
 		Curbuff->bmode |= TEXT;
 	} else
-		lseek(fd, 0, SEEK_SET);
+		fd = open(fname, READ_MODE | O_BINARY);
 
 	return fd;
 }

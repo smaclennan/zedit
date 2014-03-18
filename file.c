@@ -64,6 +64,7 @@ void Zrevert_file(void)
 	offset = blocation(NULL);
 	breadfile(Curbuff->fname);
 	boffset(offset);
+	uncomment(Curbuff);
 }
 
 /* Read one file, creating the buffer if necessary.

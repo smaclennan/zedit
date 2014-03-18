@@ -70,6 +70,7 @@ void Znext_buffer(void)
 		strcpy(Lbufname, Curbuff->bname);
 		cswitchto(next);
 		reframe();
+		uncomment(Curbuff);
 	} else
 		tbell();
 }

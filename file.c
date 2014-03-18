@@ -43,7 +43,7 @@ void Zfind_file(void)
 {
 	if (get_findfile("Find File: ") == 0)
 		if (findfile(Fname))
-			redisplay();
+			uncomment(NULL);
 }
 
 void Zrevert_file(void)

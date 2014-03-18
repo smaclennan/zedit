@@ -732,7 +732,7 @@ static int guess_mode(char *fname, char *buf)
 Load the file 'fname' into the current buffer.
 Returns  0  successfully opened file
 	 1  no such file
-	-<errno> on error
+	-1  on error
 */
 int breadfile(char *fname)
 {
@@ -746,16 +746,10 @@ int breadfile(char *fname)
 	fd = open(fname, READ_MODE);
 #endif
 	if (fd < 0) {
-		switch (errno) {
-		case EACCES:
-			error("No read access: %s", fname);
-			return -EACCES;
-		case EMFILE:
-			error("Out of File Descriptors.");
-			return -EMFILE;
-		default:
+		if (errno == ENOENT)
 			return 1;
-		}
+		error("%s: %s", fname, strerror(errno));
+		return -1;
 	}
 
 	if (fstat(fd, &sbuf) == 0)

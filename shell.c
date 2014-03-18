@@ -376,7 +376,7 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 	char cmd[PATHMAX];
 	snprintf(cmd, sizeof(cmd), "%s", cmdin);
 
-	fd = open("__ZSH__.OUT", O_WRONLY|O_CREAT|O_TRUNC, 0666);
+	fd = open("__zsh__.out", O_WRONLY|O_CREAT|O_TRUNC, 0666);
 	if (fd < 0) {
 		perror("open");
 		return;
@@ -390,11 +390,11 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 		message(Curbuff, cmdin);
 		putpaw("Please wait...");
 		rc = system(cmd);
-		breadfile("__ZSH__.out");
+		breadfile("__zsh__.out");
 	}
 
 	close(fd);
-	unlink("__ZSH__.out");
+	unlink("__zsh__.out");
 
 	if (rc == 0) {
 		btostart();

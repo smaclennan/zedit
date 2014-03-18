@@ -41,16 +41,17 @@ static void newcomment(struct mark *start)
 }
 
 /* Scan an entire buffer for comments. */
-static void scanbuffer(void)
+static void scanbuffer(struct buff *buff)
 {
 	struct mark tmark, start;
 	int i;
 
-	uncomment(Curbuff);
+	uncomment(buff);
 
 	for (i = 0; i < tmaxrow() - 2; ++i)
 		Scrnmarks[i].modf = 1;
 
+	bswitchto(buff);
 	bmrktopnt(&tmark);
 
 	btostart();
@@ -132,7 +133,14 @@ void cprntchar(Byte ch)
 	int style = T_NORMAL;
 
 	if (!Comstate) {
-		scanbuffer();
+		struct wdo *wdo;
+		struct buff *was = Curbuff;
+
+		scanbuffer(Curbuff);
+		for (wdo = Whead; wdo; wdo = wdo->next)
+			if (wdo->wbuff != Curbuff)
+				scanbuffer(wdo->wbuff);
+		bswitchto(was);
 		start = Curbuff->chead;
 	}
 

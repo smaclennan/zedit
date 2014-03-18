@@ -54,8 +54,8 @@ void Zswitch_to_buffer(void)
 	if (rc == -1)
 		return;
 	strcpy(Lbufname, was);
-	cswitchto(cfindbuff(Bnames[rc]));
 	uncomment(Curbuff);
+	cswitchto(cfindbuff(Bnames[rc]));
 }
 
 void Znext_buffer(void)
@@ -68,9 +68,9 @@ void Znext_buffer(void)
 			;
 	if (next) {
 		strcpy(Lbufname, Curbuff->bname);
+		uncomment(Curbuff);
 		cswitchto(next);
 		reframe();
-		uncomment(Curbuff);
 	} else
 		tbell();
 }

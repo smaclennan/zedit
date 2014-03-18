@@ -704,6 +704,30 @@ void btostart(void)
 	makeoffset(0);
 }
 
+#ifdef DOS
+static int guess_mode(char *fname, char *buf)
+{
+	int text = 0, n, fd = open(fname, READ_MODE | O_BINARY);
+	if (fd < 0)
+		return fd;
+
+	n = bread(fd, buf, PSIZE / 2);
+	if (n > 0) {
+		buf[n] = '\0';
+		text = strchr(buf, '\r') != NULL;
+	}
+
+	if (text) {
+		close(fd);
+		fd = open(fname, READ_MODE);
+		Curbuff->bmode |= TEXT;
+	} else
+		lseek(fd, 0, SEEK_SET);
+
+	return fd;
+}
+#endif
+
 /*
 Load the file 'fname' into the current buffer.
 Returns  0  successfully opened file
@@ -716,7 +740,11 @@ int breadfile(char *fname)
 	struct stat sbuf;
 	int fd, len;
 
+#ifdef DOS
+	fd = guess_mode(fname, buf);
+#else
 	fd = open(fname, READ_MODE);
+#endif
 	if (fd < 0) {
 		switch (errno) {
 		case EACCES:
@@ -907,7 +935,10 @@ int bwritefile(char *fname)
 		bak = rename(fname, bakname);
 
 	/* Write the output file */
-	fd = open(fname, WRITE_MODE, mode);
+	if (Curbuff->bmode & TEXT)
+		fd = open(fname, WRITE_MODE, mode);
+	else
+		fd = open(fname, WRITE_MODE | O_BINARY, mode);
 	if (fd != EOF) {
 #if ZLIB
 		if (Curbuff->bmode & COMPRESSED)

@@ -74,19 +74,20 @@
  * BUFFER MODES
  */
 /* minor modes - 0 to all allowed */
-#define OVERWRITE			0x001
-#define EXACT				0x002
-#define VIEW				0x004
-#define COMPRESSED			0x008
+#define OVERWRITE			0x0001
+#define EXACT				0x0002
+#define VIEW				0x0004
+#define COMPRESSED			0x0008
+#define TEXT				0x0010
 /* majour modes - only one allowed */
-#define NORMAL				0x010
-#define CMODE				0x020
-#define TXTMODE				0x040
-#define SHMODE				0x080
+#define NORMAL				0x0100
+#define CMODE				0x0200
+#define TXTMODE				0x0400
+#define SHMODE				0x0800
 /* super modes - 0 to all allowed */
 #define SYSBUFF				0x1000
 /* some handy macro for buffer modes */
-#define MAJORMODE			(0xff0)
+#define MAJORMODE			0x0f00
 #define PROGMODE			(CMODE | SHMODE)
 
 /* System buffer names */
@@ -211,5 +212,9 @@ extern int Colmax, Rowmax;		/* Row and column maximums */
 extern int Tlrow;			/* Last row displayed (-1 for none) */
 
 #define ISNL(c)			((c) == '\n')
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 #endif /* _Z_H_ */

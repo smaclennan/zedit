@@ -23,10 +23,13 @@
 
 #define is_insert(u) ((u)->data == NULL)
 
+/* We cannot use marks here since pages may come and go and the marks
+ * become useless. Use an offset instead.
+ */
 struct undo {
 	struct undo *prev;
-	struct mark *end;
 	Byte *data;
+	unsigned long offset;
 	int size;
 };
 
@@ -41,27 +44,19 @@ static struct undo *new_undo(struct buff *buff, bool insert, int size)
 		return NULL;
 
 	undo->size = size;
-	if (insert)
-		undo->end = bcremrk();
-	else {
+	undo->offset = blocation(NULL);
+	if (!insert) {
 		undo->data = (Byte *)malloc(size);
 		if (!undo->data) {
 			free(undo);
 			return NULL;
 		}
-
-		undo->end = (struct mark *)calloc(1, sizeof(struct mark));
-		if (!undo->end) {
-			free(undo->data);
-			free(undo);
-			return NULL;
-		}
-		bmrktopnt(undo->end);
+		undo_total += size;
 	}
 	undo->prev = (struct undo *)buff->undo_tail;
 	buff->undo_tail = undo;
 
-	undo_total += sizeof(struct undo) + sizeof(struct mark);
+	undo_total += sizeof(struct undo);
 
 	return undo;
 }
@@ -72,18 +67,11 @@ static void free_undo(struct buff *buff)
 	if (undo) {
 		buff->undo_tail = undo->prev;
 
-		if (is_insert(undo))
-			unmark(undo->end);
-		else
-			free(undo->end);
+		undo_total -= sizeof(struct undo) + undo->size;
+
 		if (undo->data)
 			free(undo->data);
-
-		undo_total -= sizeof(struct undo) + sizeof(struct mark) +
-			undo->size;
-
 		free(undo);
-
 	}
 }
 
@@ -101,11 +89,13 @@ void undo_add(int size)
 	if (no_undo(Curbuff))
 		return;
 
+#ifdef SAM_FIXME
 	if (undo && is_insert(undo) && bisatmrk(undo->end)) {
 		undo->size += size;
 		bmrktopnt(undo->end);
 		return;
 	}
+#endif
 
 	/* need a new undo */
 	undo = new_undo(Curbuff, true, size);
@@ -113,6 +103,7 @@ void undo_add(int size)
 		return;
 }
 
+#ifdef SAM_FIXME
 static void undo_append(struct undo *undo, Byte *data)
 {
 	Byte *buf = (Byte *)realloc(undo->data, undo->size + 1);
@@ -142,6 +133,7 @@ static void undo_prepend(struct undo *undo, Byte *data)
 
 	undo_total++;
 }
+#endif
 
 /* Size is always within the current page. */
 void undo_del(int size)
@@ -154,6 +146,7 @@ void undo_del(int size)
 	if (size == 0) /* this can happen on page boundaries */
 		return;
 
+#ifdef SAM_FIXME
 	/* We are not going to deal with page boundaries for now */
 	/* We also only merge simple deletes */
 	if (undo && !is_insert(undo) && undo->end->mpage == Curpage && size == 1) {
@@ -173,6 +166,9 @@ void undo_del(int size)
 			break;
 		}
 	}
+#endif
+
+	zrefresh(); // SAM DBG
 
 	/* need a new undo */
 	undo = new_undo(Curbuff, false, size);
@@ -180,8 +176,6 @@ void undo_del(int size)
 		return;
 
 	memcpy(undo->data, Curcptr, size);
-
-	undo_total += size;
 }
 
 void undo_clear(struct buff *buff)
@@ -201,16 +195,21 @@ void Zundo(void)
 	}
 
 	InUndo = true;
-	bpnttomrk(undo->end);
+	boffset(undo->offset);
 
 	zrefresh(); // SAM DBG
 
 	if (is_insert(undo)) {
 		bmove(-undo->size - 1);
 		bdelete(undo->size);
-	} else
+	} else {
+		struct mark *tmark = bcremrk();
 		for (i = 0; i < undo->size; ++i)
 			binsert(undo->data[i]);
+		bpnttomrk(tmark);
+		unmark(tmark);
+	}
+
 	InUndo = false;
 
 	free_undo(Curbuff);

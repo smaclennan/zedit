@@ -95,6 +95,8 @@ static short convertKey(KEY_EVENT_RECORD *event)
 	return key;
 }
 
+void set_mouse(bool enable) {}
+
 static _inline void do_mouse(MOUSE_EVENT_RECORD *mouse)
 {
 	if (mouse->dwEventFlags & MOUSE_WHEELED) {

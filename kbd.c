@@ -80,6 +80,17 @@ static Byte tgetkb(void)
 	return cstack[cptr];
 }
 
+void set_mouse(bool enable)
+{
+#ifdef MOUSE
+	if (enabled)
+		fputs("\033[?9h", stdout);
+	else
+		fputs("\033[?9l", stdout);
+#endif
+}
+
+
 static int do_mouse(void)
 {
 	Byte button, col, row;

@@ -23,7 +23,9 @@
 #include <time.h>
 
 static int kb_hit;
+#ifdef MOUSE
 static int Mouse;
+#endif
 
 static int alts[] = { /* 0x10 to 0x86 inclusive */
 	M('Q'), M('W'), M('E'), M('R'), M('T'), M('Y'),
@@ -43,15 +45,19 @@ static int alts[] = { /* 0x10 to 0x86 inclusive */
 	M('('), M(')'), M('-'), M('+'), 0, TC_F11, TC_F12,
 };
 
-void init_mouse(void)
+void set_mouse(bool enable)
 {
 #ifdef MOUSE
-	union REGS inregs, outregs;
+	if (enable) {
+		union REGS inregs, outregs;
 
-	inregs.x.ax = 0; /* init mouse */
-	int86(0x33, &inregs, &outregs);
-	if (outregs.x.ax == 0xffff)
-		Mouse = outregs.x.bx;
+		inregs.x.ax = 0; /* init mouse */
+		int86(0x33, &inregs, &outregs);
+		if (outregs.x.ax == 0xffff)
+			Mouse = outregs.x.bx;
+	}
+#else
+	((void)enable);
 #endif
 }
 

@@ -119,8 +119,6 @@ void tinit(void)
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(fileno(stdin), TCSANOW, &settty);
-
-	fputs("\033[?9h", stdout); /* Enable mouse */
 #elif defined(HAVE_TERMIO)
 	ioctl(fileno(stdin), TCGETA, &save_tty);
 	ioctl(fileno(stdin), TCGETA, &settty);
@@ -152,9 +150,10 @@ void tinit(void)
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 #elif defined(DOS)
-	init_mouse();
 	install_ints();
 #endif
+
+	set_mouse(true);
 
 #ifdef SIGHUP
 	signal(SIGHUP,  hang_up);
@@ -188,7 +187,6 @@ void tfini(void)
 {
 #ifdef HAVE_TERMIOS
 	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
-	fputs("\033[?9l", stdout); /* Disable mouse */
 #elif defined(HAVE_TERMIO)
 	ioctl(fileno(stdin), TCSETAF, &save_tty);
 #elif defined(HAVE_SGTTY)
@@ -196,6 +194,8 @@ void tfini(void)
 	ioctl(fileno(stdin), TIOCSETC, &savechars);
 	ioctl(fileno(stdin), TIOCSLTC, &savelchars);
 #endif
+
+	set_mouse(false);
 
 	clrpaw();
 	t_goto(Rowmax - 1, 0);

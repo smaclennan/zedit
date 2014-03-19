@@ -292,6 +292,7 @@ void wsize(void);
 bool wuseother(const char *);
 struct wdo *wfind(int row);
 
+void set_mouse(bool enable);
 #ifdef FCHECK
 #define mouse_scroll(a, b)
 #define mouse_point(a, b, c)

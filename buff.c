@@ -312,9 +312,10 @@ void bdelete(int quantity)
 			quan = quantity;
 		if (quan < 0)
 			quan = 0; /* May need to switch pages */
-		Curplen -= quan;
 
 		undo_del(quan);
+
+		Curplen -= quan;
 
 		memmove(Curcptr, Curcptr + quan, Curplen - Curchar);
 		if (Curpage == Curbuff->lastp)
@@ -496,6 +497,25 @@ unsigned long blocation(unsigned *lines)
 }
 
 
+#ifdef INT_IS_16BITS
+#define MAXMOVE		(0x7fff - 1024)
+
+void boffset(unsigned long off)
+{
+	btostart();
+	for (; off > MAXMOVE; off -= MAXMOVE)
+		bmove(MAXMOVE);
+	bmove(off);
+}
+#else
+void boffset(unsigned long off)
+{
+	btostart();
+	bmove(off);
+}
+#endif
+
+
 /* Number of lines in buffer */
 long blines(struct buff *buff)
 {
@@ -601,18 +621,6 @@ bool bmove(int dist)
 	}
 	return true;
 }
-
-#ifdef INT_IS_16BITS
-#define MAXMOVE		(0x7fff - 1024)
-
-void boffset(unsigned long off)
-{
-	btostart();
-	for (; off > MAXMOVE; off -= MAXMOVE)
-		bmove(MAXMOVE);
-	bmove(off);
-}
-#endif
 
 /* Put the mark where the point is. */
 void bmrktopnt(struct mark *tmark)

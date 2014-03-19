@@ -112,11 +112,7 @@ int batoi(void);
 
 bool bmove(int);
 void bmove1(void);
-#ifdef INT_IS_16BITS
 void boffset(unsigned long off);
-#else
-static inline void boffset(unsigned long offset) { bmove((int)offset); }
-#endif
 
 /* Return the character a mark points to. */
 #define markch(mrk)	((mrk)->mpage->pdata[(mrk)->moffset])

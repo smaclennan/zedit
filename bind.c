@@ -109,6 +109,7 @@ Byte Keys[] = {
 	0,			/* C-X C-_ */
 	/* makedosbind assumes this ends before C-X space */
 
+	[CX('/')] = ZUNDO,
 	[CX('1')] = ZONE_WINDOW,
 	[CX('2')] = ZSPLIT_WINDOW,
 	[CX('=')] = ZPOSITION,
@@ -224,7 +225,7 @@ Byte Keys[] = {
 	[M(127)] = ZDELETE_PREVIOUS_WORD,	/* M-DEL */
 };
 
-static char *key_label[] = {
+static const char *key_label[] = {
 	"up", "down", "right", "left",
 	"insert", "delete", "page up", "page down", "home", "end",
 	"f1", "f2", "f3", "f4", "f5", "f6",

@@ -2,12 +2,6 @@
 
 #define V(n) {(char *)n}
 
-#ifdef DOS
-#define COMMENT_DEF 0
-#else
-#define COMMENT_DEF 1
-#endif
-
 struct avar Vars[] = {
 	{ "backup",		V_FLAG,		V(0),
 	  "If set, a backup file is created when a file is written."
@@ -19,7 +13,7 @@ struct avar Vars[] = {
 	  "This variable defines the number of spaces displayed per tab in "
 	  "C mode buffers. See also tabs."
 	},
-	{ "comments",		V_FLAG,		V(COMMENT_DEF),
+	{ "comments",		V_FLAG,		V(1),
 	  "If set then Zedit tries to bold (display in red) comments in C "
 	  "and shell mode buffers."
 	},
@@ -69,5 +63,11 @@ struct avar Vars[] = {
 	  "spaces on the screen. This variable defines the number of "
 	  "space characters displayed per tab in buffers that are not in "
 	  "a program mode."
+	},
+	{ "undo",		V_FLAG,		V(1),
+#if !UNDO
+	  "Note: Disabled in this version of Zedit.\n\n"
+#endif
+	  "If set undo is enabled. Saves memory if undo is off."
 	},
 };

@@ -124,12 +124,9 @@ static void do_var_match(int i, const char *vin)
 			setit(i, ptr);
 	}
 
-	/* This block handles the Wordprocessing variables */
-	if (i == VFILLWIDTH) {
-		/* Fillwidth must be > 0 */
-		if (VAR(VFILLWIDTH) == 0)
-			VAR(VFILLWIDTH) = 1;
-	}
+	/* Fillwidth must be > 0 */
+	if (VAR(VFILLWIDTH) == 0)
+		VAR(VFILLWIDTH) = 1;
 }
 
 static void setavar(const char *vin, bool display)
@@ -208,34 +205,24 @@ void Zshow_config(void)
 		return;
 
 	bempty();
-	binstr("# String variables:\n");
-	for (i = 0; i < NUMVARS; ++i)
+	for (i = 0; i < NUMVARS; ++i) {
 		if (Vars[i].vtype == V_STRING) {
 			if (VARSTR(i))
 				snprintf(line, sizeof(line), "%-15s %s\n",
 					 Vars[i].vname, VARSTR(i));
 			else
-				snprintf(line, sizeof(line), "%-15s 0\n",
+				snprintf(line, sizeof(line), "#%-15s\n",
 					 Vars[i].vname);
-			binstr(line);
-		}
-
-	binstr("\n# Decimal variables:\n");
-	for (i = 0; i < NUMVARS; ++i)
-		if (Vars[i].vtype == V_DECIMAL) {
+		} else if (Vars[i].vtype == V_DECIMAL)
 			snprintf(line, sizeof(line), "%-15s %d\n",
 				 Vars[i].vname, VAR(i));
-			binstr(line);
-		}
-
-	binstr("\n# Flag variables:\n");
-	for (i = 0; i < NUMVARS; ++i)
-		if (Vars[i].vtype == V_FLAG) {
+		else if (Vars[i].vtype == V_FLAG)
 			snprintf(line, sizeof(line), "%-15s %s\n",
 				 Vars[i].vname,
-				 VAR(i) ? "True" : "False");
-			binstr(line);
-		}
+				 VAR(i) ? "true" : "false");
+
+		binstr(line);
+	}
 
 	tbuff->bmodf = false;
 	btostart();

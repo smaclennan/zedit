@@ -6,8 +6,9 @@
 #define HAVE_TERMIOS	1
 #define ZLIB		1	/* Requires zlib -lz */
 #define SPELL		1	/* Requires libaspell */
-#define UNDO		0	/* EXPERIMENTAL */
 #endif
+
+#define UNDO		1	/* EXPERIMENTAL, but portable! */
 
 /* DOPIPES: Output in real time and you can continue editing.
  * DOPOPEN: Output in real time but you must wait until command complete.

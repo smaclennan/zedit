@@ -17,43 +17,42 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/* BUGS:
- *
- * SERIOUS: Currently the changes cannot span page boundaries
- */
-
 #include "z.h"
 
 #if UNDO
 
-#define ACT_INSERT 1
-#define ACT_DELETE 2
+#define is_insert(u) ((u)->data == NULL)
 
 struct undo {
-	int action;
+	struct undo *prev;
 	struct mark *end;
 	Byte *data;
 	int size;
-	struct undo *prev, *next;
 };
 
 static bool InUndo;
 
 unsigned long undo_total; /* stats only */
 
-static struct undo *new_undo(struct buff *buff, int action, int size)
+static struct undo *new_undo(struct buff *buff, bool insert, int size)
 {
 	struct undo *undo = (struct undo *)calloc(1, sizeof(struct undo));
 	if (!undo)
 		return NULL;
 
-	undo->action = action;
 	undo->size = size;
-	if (action == ACT_INSERT)
+	if (insert)
 		undo->end = bcremrk();
 	else {
+		undo->data = (Byte *)malloc(size);
+		if (!undo->data) {
+			free(undo);
+			return NULL;
+		}
+
 		undo->end = (struct mark *)calloc(1, sizeof(struct mark));
 		if (!undo->end) {
+			free(undo->data);
 			free(undo);
 			return NULL;
 		}
@@ -73,7 +72,7 @@ static void free_undo(struct buff *buff)
 	if (undo) {
 		buff->undo_tail = undo->prev;
 
-		if (undo->action == ACT_INSERT)
+		if (is_insert(undo))
 			unmark(undo->end);
 		else
 			free(undo->end);
@@ -102,47 +101,46 @@ void undo_add(int size)
 	if (no_undo(Curbuff))
 		return;
 
-	if (undo && undo->action == ACT_INSERT && bisatmrk(undo->end)) {
+	if (undo && is_insert(undo) && bisatmrk(undo->end)) {
 		undo->size += size;
 		bmrktopnt(undo->end);
 		return;
 	}
 
 	/* need a new undo */
-	undo = new_undo(Curbuff, ACT_INSERT, size);
+	undo = new_undo(Curbuff, true, size);
 	if (undo == NULL)
 		return;
 }
 
-static void undo_append(struct undo *undo, Byte *data, int size)
+static void undo_append(struct undo *undo, Byte *data)
 {
-	Byte *buf = (Byte *)realloc(undo->data, undo->size + size);
+	Byte *buf = (Byte *)realloc(undo->data, undo->size + 1);
 	if (!buf)
 		return;
 
-	memcpy(buf + undo->size, data, size);
+	buf[undo->size++] = *data;
 
 	undo->data = buf;
-	undo->size += size;
 
-	undo_total += size;
+	undo_total++;
 }
 
-static void undo_prepend(struct undo *undo, Byte *data, int size)
+static void undo_prepend(struct undo *undo, Byte *data)
 {
-	Byte *buf = (Byte *)realloc(undo->data, undo->size + size);
+	Byte *buf = (Byte *)realloc(undo->data, undo->size + 1);
 	if (!buf)
 		return;
 
 	/* Shift the old */
-	memmove(buf + size, buf, undo->size);
+	memmove(buf + 1, buf, undo->size);
 	/* Move in the new */
-	memcpy(buf, data, size);
+	*buf = *data;
 
 	undo->data = buf;
-	undo->size += size;
+	undo->size++;
 
-	undo_total += size;
+	undo_total++;
 }
 
 /* Size is always within the current page. */
@@ -158,17 +156,17 @@ void undo_del(int size)
 
 	/* We are not going to deal with page boundaries for now */
 	/* We also only merge simple deletes */
-	if (undo && undo->action == ACT_DELETE && undo->end->mpage == Curpage) {
+	if (undo && !is_insert(undo) && undo->end->mpage == Curpage && size == 1) {
 		switch (Lfunc) {
 		case ZDELETE_CHAR:
 			if (Curchar == undo->end->moffset) {
-				undo_append(undo, Curcptr, size);
+				undo_append(undo, Curcptr);
 				return;
 			}
 			break;
 		case ZDELETE_PREVIOUS_CHAR:
 			if (Curchar == undo->end->moffset - 1) {
-				undo_prepend(undo, Curcptr, size);
+				undo_prepend(undo, Curcptr);
 				--undo->end->moffset;
 				return;
 			}
@@ -177,15 +175,9 @@ void undo_del(int size)
 	}
 
 	/* need a new undo */
-	undo = new_undo(Curbuff, ACT_DELETE, size);
+	undo = new_undo(Curbuff, false, size);
 	if (undo == NULL)
 		return;
-
-	undo->data = (Byte *)malloc(size);
-	if (!undo->data) {
-		free_undo(Curbuff);
-		return;
-	}
 
 	memcpy(undo->data, Curcptr, size);
 
@@ -211,15 +203,14 @@ void Zundo(void)
 	InUndo = true;
 	bpnttomrk(undo->end);
 
-	switch (undo->action) {
-	case ACT_INSERT:
+	zrefresh(); // SAM DBG
+
+	if (is_insert(undo)) {
 		bmove(-undo->size - 1);
 		bdelete(undo->size);
-		break;
-	case ACT_DELETE:
+	} else
 		for (i = 0; i < undo->size; ++i)
 			binsert(undo->data[i]);
-	}
 	InUndo = false;
 
 	free_undo(Curbuff);

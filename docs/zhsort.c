@@ -14,6 +14,14 @@ int InPaw;
 static char *heading[] = { "Appendix A: Commands", "Appendix B: Variables" };
 static char *fnames[] = { "app-a.html", "app-b.html" };
 
+static char *appanotes =
+"<p>After the command there may be letters in brackets. For example (+p).\n"
+"A plus sign (+) means a Universal Argument works normally. i.e. It runs \n"
+"the command Arg times. A minus sign (-) means that a Universal Argument is\n"
+"ignored. A p means that the command works in the PAW\n"
+"<p>Note: The bindings shown are the Zedit defaults and may be overridden\n"
+"by a bindings file or the bind command.\n";
+
 static void header(FILE *out, char *heading)
 {
 	fputs("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n", out);
@@ -152,8 +160,7 @@ int main(int argc, char *argv[])
 		header(out, heading[j]);
 
 		if (j == 0) {
-			fputs("<p>Note: The bindings shown are the Zedit defaults and may be "
-			      "overridden by a bindings file or the bind command.\n", out);
+			fputs(appanotes, out);
 
 			for( i = 0; i < NUMFUNCS; ++i ) {
 				char flags[20];

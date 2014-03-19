@@ -80,6 +80,20 @@ static inline int no_undo(struct buff *buff)
 	return InUndo || buff->bname == NULL || *buff->bname == '*';
 }
 
+static inline bool clump(void)
+{	/* commands we clump together */
+	switch (Lfunc) {
+	case ZINSERT:
+	case ZNEWLINE:
+	case ZTAB:
+	case ZC_INSERT:
+	case ZC_INDENT:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /* Exports */
 
 void undo_add(int size)
@@ -89,21 +103,15 @@ void undo_add(int size)
 	if (no_undo(Curbuff))
 		return;
 
-#ifdef SAM_FIXME
-	if (undo && is_insert(undo) && bisatmrk(undo->end)) {
+	if (undo && is_insert(undo) && clump()) {
+		/* clump with last undo */
 		undo->size += size;
-		bmrktopnt(undo->end);
-		return;
-	}
-#endif
-
-	/* need a new undo */
-	undo = new_undo(Curbuff, true, size);
-	if (undo == NULL)
-		return;
+		undo->offset += size;
+	} else
+		/* need a new undo */
+		undo = new_undo(Curbuff, true, size);
 }
 
-#ifdef SAM_FIXME
 static void undo_append(struct undo *undo, Byte *data)
 {
 	Byte *buf = (Byte *)realloc(undo->data, undo->size + 1);
@@ -133,7 +141,6 @@ static void undo_prepend(struct undo *undo, Byte *data)
 
 	undo_total++;
 }
-#endif
 
 /* Size is always within the current page. */
 void undo_del(int size)
@@ -146,29 +153,18 @@ void undo_del(int size)
 	if (size == 0) /* this can happen on page boundaries */
 		return;
 
-#ifdef SAM_FIXME
-	/* We are not going to deal with page boundaries for now */
-	/* We also only merge simple deletes */
-	if (undo && !is_insert(undo) && undo->end->mpage == Curpage && size == 1) {
+	/* We only merge simple deletes */
+	if (undo && !is_insert(undo) && size == 1) {
 		switch (Lfunc) {
 		case ZDELETE_CHAR:
-			if (Curchar == undo->end->moffset) {
-				undo_append(undo, Curcptr);
-				return;
-			}
-			break;
+			undo_append(undo, Curcptr);
+			return;
 		case ZDELETE_PREVIOUS_CHAR:
-			if (Curchar == undo->end->moffset - 1) {
-				undo_prepend(undo, Curcptr);
-				--undo->end->moffset;
-				return;
-			}
-			break;
+			undo_prepend(undo, Curcptr);
+			undo->offset--;
+			return;
 		}
 	}
-#endif
-
-	zrefresh(); // SAM DBG
 
 	/* need a new undo */
 	undo = new_undo(Curbuff, false, size);
@@ -197,22 +193,24 @@ void Zundo(void)
 	InUndo = true;
 	boffset(undo->offset);
 
-	zrefresh(); // SAM DBG
-
 	if (is_insert(undo)) {
-		bmove(-undo->size - 1);
+		bmove(-undo->size);
 		bdelete(undo->size);
+		free_undo(Curbuff);
 	} else {
-		struct mark *tmark = bcremrk();
-		for (i = 0; i < undo->size; ++i)
-			binsert(undo->data[i]);
-		bpnttomrk(tmark);
-		unmark(tmark);
+		unsigned long offset = undo->offset;
+		do {
+			struct mark *tmark = bcremrk();
+			for (i = 0; i < undo->size; ++i)
+				binsert(undo->data[i]);
+			bpnttomrk(tmark);
+			unmark(tmark);
+			free_undo(Curbuff);
+			undo = (struct undo *)Curbuff->undo_tail;
+		} while (undo && !is_insert(undo) && undo->offset == offset);
 	}
 
 	InUndo = false;
-
-	free_undo(Curbuff);
 
 	if (!Curbuff->undo_tail)
 		/* Last undo */

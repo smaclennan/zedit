@@ -172,6 +172,17 @@ void Dbg(const char *fmt, ...)
 	}
 }
 
+/* For debugging */
+const char *func2name(Byte func)
+{
+	int i;
+
+	for (i = 0; i < NUMFUNCS; ++i)
+		if (Cnames[i].fnum == func)
+			return Cnames[i].name;
+	return "???";
+}
+
 /* ask Yes/No question.
  * Returns YES, NO, BANG, or ABORT
  */

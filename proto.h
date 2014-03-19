@@ -281,6 +281,7 @@ void siginit(void);
 void unvoke(struct buff *, bool);
 
 void Dbg(const char *fmt, ...);
+const char *func2name(Byte func);
 
 /* for getfname */
 int getfname(const char *, char *);

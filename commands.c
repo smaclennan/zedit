@@ -232,6 +232,7 @@ void Zc_indent(void)
 			}
 		bpnttomrk(&tmark);
 		binsert(NL);
+		Lfunc = ZINSERT; /* for undo */
 		tindent(width);
 	}
 }

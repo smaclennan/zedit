@@ -197,7 +197,6 @@ bool delbname(char *);
 void delbuff(struct buff *);
 bool delcmd(void);
 void execute(void);
-void dotty(void);
 void readpipes(void);
 bool filesave(void);
 bool findfile(char *);

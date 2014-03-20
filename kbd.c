@@ -56,7 +56,7 @@ static const char * const Tkeys[] = {
 #define CSTACK 16 /* must be power of 2 */
 static Byte cstack[CSTACK];
 static int cptr = -1;
-int cpushed;	/* needed in shell.c */
+static int cpushed;
 static bool Pending;
 
 static Byte tgetkb(void)
@@ -153,7 +153,7 @@ int tgetcmd(void)
 	return cmd;
 }
 
-static struct pollfd stdin_fd = { .fd = 1, .events = POLLIN };
+static struct pollfd stdin_fd = { .fd = 0, .events = POLLIN };
 
 bool tkbrdy(void)
 {

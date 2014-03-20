@@ -125,8 +125,7 @@ void readpipes(void)
 	if (npipes == 0)
 		NumFDs = 1;
 
-	if (FD_ISSET(0, &fds))
-		dotty();
+	/* If stdin set then tkbrdy() will catch it */
 }
 
 static void exit_status(struct buff *tbuff, int status)

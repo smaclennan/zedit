@@ -60,7 +60,7 @@ static void findpath(char *path, const char *f, void (*action)(const char *))
 }
 
 /* NOTE: Dotty blocks */
-void dotty(void)
+static void dotty(void)
 {
 	if (Cmdpushed == -1)
 		Cmd = tgetcmd();
@@ -84,7 +84,7 @@ void execute(void)
 	zrefresh();
 
 #if DOPIPES
-	if (npipes == 0 || cpushed || Cmdpushed != -1)
+	if (npipes == 0 || tkbrdy() || Cmdpushed != -1)
 		dotty();
 	else
 		readpipes();

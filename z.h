@@ -135,7 +135,6 @@ extern bool First;
 
 #define CMD(n) (*Cmds[n][Curcmds])()
 
-extern int cpushed;
 extern bool Sendp;
 extern struct buff *Killbuff;
 extern char Lbufname[];

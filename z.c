@@ -165,8 +165,6 @@ int main(int argc, char **argv)
 
 		strcpy(Lbufname,
 		       Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
-
-		clrpaw();
 	}
 
 	winit();
@@ -175,8 +173,6 @@ int main(int argc, char **argv)
 
 	if (!Curbuff->mtime && Curbuff->fname)
 		putpaw("New File");
-
-	Curwdo->modeflags = INVALID;
 
 	if (line) {
 		Argp = true;

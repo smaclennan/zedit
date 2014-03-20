@@ -1,13 +1,13 @@
 ZEXE = z.exe
 CC = tcc -ml
-CFLAGS=-DDOS -I. -Iwin32
+CFLAGS=-DDOS -DDOS_EMS -I. -Iwin32
 
 O=bcmds.obj buff.obj calc.obj cnames.obj comment.obj commands.obj \
 	cursor.obj delete.obj display.obj file.obj funcs.obj \
 	getarg.obj help.obj reg.obj shell.obj spell.obj srch.obj \
 	undo.obj vars.obj window.obj varray.obj z.obj \
 	getfname.obj tags.obj term.obj zgrep.obj dosbind.obj \
-	doskbd.obj zwin32.obj fnmatch.obj
+	doskbd.obj zwin32.obj fnmatch.obj ems.obj
 
 .c.obj:
 	$(CC) -c $(CFLAGS) $<
@@ -40,6 +40,10 @@ zwin32.obj: win32\zwin32.c
 
 fnmatch.obj: win32\fnmatch.c
 	$(CC) -c $(CFLAGS) win32\fnmatch.c
+	tlib zedit.lib +-$@
+
+ems.obj: win32\ems.c
+	$(CC) -c $(CFLAGS) win32\ems.c
 	tlib zedit.lib +-$@
 
 clean:

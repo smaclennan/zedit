@@ -57,6 +57,13 @@ static struct page *newpage(struct buff *tbuff,
 static void freepage(struct buff *tbuff, struct page *page);
 static bool pagesplit(void);
 
+void binit(void)
+{
+#ifdef DOS_EMS
+	ems_init();
+#endif
+}
+
 void bfini(void)
 {
 	struct mark *mhead = &Scrnmarks[ROWMAX - 1];
@@ -81,6 +88,10 @@ void bfini(void)
 
 	if (freemark)
 		free(freemark);
+
+#ifdef DOS_EMS
+	ems_free();
+#endif
 }
 
 /* Copy from Point to tmark to tbuff. Returns number of bytes
@@ -1056,6 +1067,13 @@ static struct page *newpage(struct buff *tbuff,
 	if (!page)
 		return NULL;
 
+#ifdef DOS_EMS
+	if (!ems_newpage(page)) {
+		free(page);
+		return NULL;
+	}
+#endif
+
 	page->nextp = npage;
 	page->prevp = ppage;
 	npage ? (npage->prevp = page) : (tbuff->lastp = page);
@@ -1069,6 +1087,10 @@ static struct page *newpage(struct buff *tbuff,
 /* Free a memory page */
 static void freepage(struct buff *tbuff, struct page *page)
 {
+#ifdef DOS_EMU
+	ems_freepage(page);
+#endif
+
 	if (page->nextp)
 		page->nextp->prevp = page->prevp;
 	else
@@ -1091,6 +1113,11 @@ void makecur(struct page *page)
 		if (Curmodf || Curpage->plines == EOF)
 			Curpage->plines = cntlines(Curplen);
 	}
+
+#ifdef DOS_EMS
+	ems_makecur(page);
+#endif
+
 	Curpage = page;
 	Cpstart = page->pdata;
 	Curmodf = false;
@@ -1200,10 +1227,13 @@ void clear_umark(void)
 
 void Zstats(void)
 {
+#ifdef DOS_EMS
+	extern int ems_pages;
+#endif
 	struct buff *b;
 	struct page *p;
 	unsigned long use = 0, total = 0;
-	double usage;
+	int n;
 
 	Curpage->plen = Curplen;
 	for (b = Bufflist; b; b = b->next)
@@ -1212,14 +1242,15 @@ void Zstats(void)
 			++total;
 		}
 
-	usage = (double)(use + HALFP) / (double)(total * PSIZE) * 100.0;
-
-#if UNDO
-	putpaw("Buffers: %d  Pages: %d  Marks: %d  Use: %.0f%%  Undos: %lu%c",
-	       NumBuffs, NumPages, NumMarks, usage,
-	       (undo_total + 521) / 1024, undo_total ? 'K' : ' ');
-#else
-	putpaw("Buffers: %d  Pages: %d  Marks: %d  Use: %.0f%%",
-	       NumBuffs, NumPages, NumMarks, usage);
+	n = snprintf(PawStr, Colmax,
+		     "Buffers: %d  Pages: %d  Marks: %d",
+		     NumBuffs, NumPages, NumMarks);
+#ifdef DOS_EMS
+	n += snprintf(PawStr + n, Colmax - n, "  EMS: %d", ems_pages);
 #endif
+#if UNDO
+	n += snprintf(PawStr + n, Colmax - n, "  Undos: %lu%c",
+		      (undo_total + 521) / 1024, undo_total ? 'K' : ' ');
+#endif
+	_putpaw(PawStr);
 }

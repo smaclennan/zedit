@@ -155,6 +155,7 @@ Z(pnewline);
 void initscrnmarks(void);
 int ask(const char *);
 int ask2(const char *, bool);
+void binit(void);
 void bfini(void);
 int bcopyrgn(struct mark *, struct buff*);
 struct buff *bcreate(void);

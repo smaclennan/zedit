@@ -785,7 +785,7 @@ int breadfile(char *fname)
 		if (Curplen) {
 			if (!newpage(Curbuff, Curpage, NULL)) {
 				bempty();
-				error("Out of memory!");
+				error("Out of page memory!");
 				bclose(fd);
 				return -ENOMEM;
 			}
@@ -1053,15 +1053,15 @@ static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage)
 {
 	struct page *page = (struct page *)calloc(1, sizeof(struct page));
+	if (!page)
+		return NULL;
 
-	if (page) {
-		page->nextp = npage;
-		page->prevp = ppage;
-		npage ? (npage->prevp = page) : (tbuff->lastp = page);
-		ppage ? (ppage->nextp = page) : (tbuff->firstp = page);
-		page->plines = EOF;	/* undefined */
-		++NumPages;
-	}
+	page->nextp = npage;
+	page->prevp = ppage;
+	npage ? (npage->prevp = page) : (tbuff->lastp = page);
+	ppage ? (ppage->nextp = page) : (tbuff->firstp = page);
+	page->plines = EOF;	/* undefined */
+	++NumPages;
 
 	return page;
 }

@@ -22,11 +22,10 @@
 
 bool Initializing = true;
 char *Home;
-unsigned Cmd;
 jmp_buf	zenv;
 
-/* Search pushed a key */
-int Cmdpushed = -1;
+unsigned Cmd;
+int Cmdpushed = -1; /* Search pushed a key */
 
 static char dbgfname[PATHMAX];
 

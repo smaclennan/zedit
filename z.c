@@ -25,6 +25,9 @@ char *Home;
 unsigned Cmd;
 jmp_buf	zenv;
 
+/* Search pushed a key */
+int Cmdpushed = -1;
+
 static char dbgfname[PATHMAX];
 
 #ifndef CONFIGDIR
@@ -54,6 +57,40 @@ static void findpath(char *path, const char *f, void (*action)(const char *))
 		action(path);
 	if (access(f, F_OK) == 0)
 		action(f);
+}
+
+/* NOTE: Dotty blocks */
+void dotty(void)
+{
+	if (Cmdpushed == -1)
+		Cmd = tgetcmd();
+	else {
+		Cmd = Cmdpushed;
+		Cmdpushed = -1;
+	}
+	if (Cmd == TC_MOUSE) return;
+	Arg = 1;
+	Argp = false;
+	while (Arg > 0) {
+		CMD(Keys[Cmd]);
+		--Arg;
+		Lfunc = Keys[Cmd]; /* for undo + delcmd */
+	}
+	First = false; /* used by pinsert when InPaw */
+}
+
+void execute(void)
+{
+	zrefresh();
+
+#if DOPIPES
+	if (npipes == 0 || cpushed || Cmdpushed != -1)
+		dotty();
+	else
+		readpipes();
+#else
+	dotty();
+#endif
 }
 
 int main(int argc, char **argv)

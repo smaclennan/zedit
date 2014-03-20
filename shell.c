@@ -19,29 +19,6 @@
 
 #include "z.h"
 
-/* Search pushed a key */
-int Cmdpushed = -1;
-
-
-/* NOTE: Dotty blocks */
-static void dotty(void)
-{
-	if (Cmdpushed == -1)
-		Cmd = tgetcmd();
-	else {
-		Cmd = Cmdpushed;
-		Cmdpushed = -1;
-	}
-	if (Cmd == TC_MOUSE) return;
-	Arg = 1;
-	Argp = false;
-	while (Arg > 0) {
-		CMD(Keys[Cmd]);
-		--Arg;
-	}
-	Lfunc = Keys[Cmd];
-	First = false; /* used by pinsert when InPaw */
-}
 
 static void do_chdir(struct buff *buff)
 {
@@ -75,7 +52,7 @@ static void message(struct buff *buff, const char *str)
 #include <signal.h>
 #include <sys/wait.h>
 
-static int npipes;
+int npipes;
 static int Waiting;
 static fd_set SelectFDs;
 static int NumFDs;
@@ -124,43 +101,32 @@ static int readapipe(struct buff *tbuff)
 	return cnt;
 }
 
-void execute(void)
+void readpipes(void)
 {
-	if (NumFDs == 0) {
-		FD_SET(1, &SelectFDs);
-		NumFDs = 2;
+	struct buff *tbuff;
+	fd_set fds = SelectFDs;
+
+	/* select returns -1 if a child dies (SIGPIPE) -
+	 * sigchild handles it */
+	while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
+		checkpipes(1);
+		zrefresh();
+		fds = SelectFDs;
 	}
 
-	zrefresh();
-
-	if (cpushed || npipes == 0)
-		dotty();
-	else {
-		struct buff *tbuff;
-		fd_set fds = SelectFDs;
-
-		/* select returns -1 if a child dies (SIGPIPE) -
-		 * sigchild handles it */
-		while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
-			checkpipes(1);
-			zrefresh();
-			fds = SelectFDs;
+	npipes = 0;
+	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+		if (tbuff->child != EOF) {
+			++npipes;
+			if (FD_ISSET(tbuff->in_pipe, &fds))
+				readapipe(tbuff);
 		}
 
-		npipes = 0;
-		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-			if (tbuff->child != EOF) {
-				++npipes;
-				if (FD_ISSET(tbuff->in_pipe, &fds))
-					readapipe(tbuff);
-			}
+	if (npipes == 0)
+		NumFDs = 1;
 
-		if (npipes == 0)
-			NumFDs = 2;
-
-		if (FD_ISSET(1, &fds))
-			dotty();
-	}
+	if (FD_ISSET(0, &fds))
+		dotty();
 }
 
 static void exit_status(struct buff *tbuff, int status)
@@ -278,6 +244,7 @@ static bool dopipe(struct buff *tbuff, const char *icmd)
 		if (tbuff->child != EOF) {
 			/* SUCCESS! */
 			tbuff->in_pipe = from[0];
+			FD_SET(0, &SelectFDs);
 			FD_SET(from[0], &SelectFDs);
 			if (from[0] >= NumFDs)
 				NumFDs = from[0] + 1;
@@ -327,12 +294,6 @@ void Zkill(void)
 void Zkill(void) { tbell(); }
 void unvoke(struct buff *child, bool check) { ((void)child); ((void)check); }
 int checkpipes(int type) { ((void)type); return 0; }
-
-void execute(void)
-{
-	zrefresh();
-	dotty();
-}
 
 #if DOPOPEN
 static void cmdtobuff(const char *bname, const char *cmdin)

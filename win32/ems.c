@@ -154,23 +154,6 @@ static int EMMwrite(int lpage, Byte *data)
 	return regs.h.ah;
 }
 
-#ifdef __TURBOC__
-int find_bit(unsigned mask)
-{
-	asm {
-		sub ax, ax;
-		mov dx, mask;
-		/* bsr ax, dx */
-		db 66h, 0fh, 0bdh, 0c2h;
-		je done; /* ZF clear if no bits found */
-		inc ax; /* off by one */
-	}
-done:
-}
-#else
-#error find_bit not defined
-#endif
-
 /***************************************************************
  * BUFFER LEVEL ROUTINES
  ***************************************************************/
@@ -204,17 +187,17 @@ bool ems_newpage(struct page *page)
 		return page->pdata != NULL;
 	}
 	
-	/* Find a free page - start at pim */
+	/* Find a free page */
 	for (i = pim; i < ems_pages; ++i)
-		if (page_masks[i] != 0xffff) {
-			j = find_bit(page_masks[i]);
-			goto found;
-		}
+		if (page_masks[i] != 0xffff)
+			for (j = 0; j < 16; ++j)
+				if ((page_masks[i] & (1 << j)) == 0)
+					goto found;
 	for (i = 0; i < pim; ++i)
-		if (page_masks[i] != 0xffff) {
-			j = find_bit(page_masks[i]);
-			goto found;
-		}
+		if (page_masks[i] != 0xffff)
+			for (j = 0; j < 16; ++j)
+				if ((page_masks[i] & (1 << j)) == 0)
+					goto found;
 	return false; /* out of pages */
 
 found:

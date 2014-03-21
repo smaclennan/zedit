@@ -197,6 +197,7 @@ int delayprompt(const char *);
 bool delbname(char *);
 void delbuff(struct buff *);
 bool delcmd(void);
+void do_chdir(struct buff *buff);
 void execute(void);
 void readpipes(void);
 bool filesave(void);

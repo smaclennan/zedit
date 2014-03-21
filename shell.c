@@ -20,7 +20,7 @@
 #include "z.h"
 
 
-static void do_chdir(struct buff *buff)
+void do_chdir(struct buff *buff)
 {
 	if (buff->fname) {
 		char dir[PATHMAX + 1], *p;

@@ -70,7 +70,6 @@ static void grepit(char *input, char *files)
 {
 	Byte ebuf[ESIZE];
 	DIR *dir;
-	char *p;
 	struct dirent *ent;
 	struct buff *inbuff, *outbuff = Curbuff;
 
@@ -80,13 +79,7 @@ static void grepit(char *input, char *files)
 		return;
 	}
 
-	p = strrchr(files, '/');
-	if (p) {
-		*p++ = '\0';
-		dir = opendir(files);
-		files = p;
-	} else
-		dir = opendir(".");
+	dir = opendir(".");
 	if (!dir) {
 		error("Unable to open directory");
 		return;
@@ -111,7 +104,7 @@ cleanup:
 
 void Zgrep(void)
 {
-	char input[STRMAX + 1], files[STRMAX + 1];
+	char input[STRMAX + 1], files[STRMAX + 1], *p;
 	struct wdo *save = Curwdo;
 
 	getbword(input, STRMAX, bistoken);
@@ -126,6 +119,14 @@ void Zgrep(void)
 		strcpy(files, "*");
 	if (getarg("File(s): ", files, STRMAX))
 		return;
+
+	p = strrchr(files, '/');
+	if (p) {
+		*p++ = '\0';
+		chdir(files);
+		strcpy(files, p);
+	} else
+		do_chdir(Curbuff);
 
 	if (wuseother(SHELLBUFF)) {
 		set_umark(NULL);

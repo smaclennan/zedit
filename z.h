@@ -78,7 +78,7 @@
 #define EXACT				0x0002
 #define VIEW				0x0004
 #define COMPRESSED			0x0008
-#define TEXT				0x0010
+#define CRLF				0x0010
 /* majour modes - only one allowed */
 #define NORMAL				0x0100
 #define CMODE				0x0200

@@ -739,7 +739,7 @@ static int guess_mode(char *fname, char *buf)
 
 	if (text) {
 		fd = open(fname, READ_MODE);
-		Curbuff->bmode |= TEXT;
+		Curbuff->bmode |= CRLF;
 	} else
 		fd = open(fname, READ_MODE | O_BINARY);
 
@@ -948,7 +948,7 @@ int bwritefile(char *fname)
 		bak = rename(fname, bakname);
 
 	/* Write the output file */
-	if (Curbuff->bmode & TEXT)
+	if (Curbuff->bmode & CRLF)
 		fd = open(fname, WRITE_MODE, mode);
 	else
 		fd = open(fname, WRITE_MODE | O_BINARY, mode);

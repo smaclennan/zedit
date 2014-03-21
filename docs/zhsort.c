@@ -8,7 +8,6 @@ int InPaw;
 #include "../bind.c"
 #include "../cnames.c"
 #include "../funcs.c"
-#include "../kbd.c"
 #include "../varray.c"
 
 static char *heading[] = { "Appendix A: Commands", "Appendix B: Variables" };

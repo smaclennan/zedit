@@ -59,6 +59,9 @@ void hang_up(int sig) { ((void)sig); }
 
 void Dbg(const char *fmt, ...) { ((void)fmt); }
 
+void mouse_scroll(int row, bool down) {}
+void mouse_point(int row, int col, bool set_mark) {}
+
 int main(int argc, char *argv[])
 {
 	int i, s1, s2, err = 0;

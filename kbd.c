@@ -142,9 +142,7 @@ static int check_specials(void)
 
 int tgetcmd(void)
 {
-	int cmd;
-
-	cmd = tgetkb() & 0x7f;
+	int cmd = tgetkb() & 0x7f;
 
 	/* All special keys start with ESC */
 	if (cmd == '\033' && tkbrdy())

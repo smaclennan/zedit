@@ -68,6 +68,12 @@ static void dotty(void)
 		Cmdpushed = -1;
 	}
 	if (Cmd == TC_MOUSE) return;
+
+	if (ring_bell) {
+		ring_bell = 0;
+		Curwdo->modeflags = INVALID;
+	}
+
 	Arg = 1;
 	Argp = false;
 	while (Arg > 0) {

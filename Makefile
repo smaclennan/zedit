@@ -56,7 +56,7 @@ check:
 	@sparse -D__unix__ $(CFILES)
 	@sparse -D__unix__ fcheck.c
 
-install:
+install: all
 	mkdir -p $(DESTDIR)/bin
 	install -s ze $(DESTDIR)/bin/z
 

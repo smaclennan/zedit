@@ -39,8 +39,9 @@ static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 #elif defined(WIN32)
 HANDLE hstdin, hstdout;	/* Console in and out handles */
 
-#define WHITE_ON_BLACK (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
-#define BLACK_ON_WHITE (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
+#define WHITE_ON_BLACK	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
+#define BLACK_ON_WHITE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
+#define BLACK_ON_RED	(BACKGROUND_RED)
 #elif defined(DOS)
 #include <conio.h>
 #else
@@ -451,7 +452,12 @@ void tstyle(int style)
 	case T_NORMAL:
 		SetConsoleTextAttribute(hstdout, WHITE_ON_BLACK);
 		break;
-	case T_STANDOUT:
+	case T_STANDOUT: /* modeline */
+		if (ring_bell)
+			SetConsoleTextAttribute(hstdout, BLACK_ON_RED);
+		else
+			SetConsoleTextAttribute(hstdout, BLACK_ON_WHITE);
+		break;
 	case T_REVERSE:
 		SetConsoleTextAttribute(hstdout, BLACK_ON_WHITE);
 		break;
@@ -491,7 +497,8 @@ void tstyle(int style)
 	switch (style) {
 	case T_NORMAL:
 		fputs("\033[0m", stdout); break;
-	case T_STANDOUT:
+	case T_STANDOUT: /* modeline */
+		fputs(ring_bell ? "\033[41m" : "\033[7m", stdout); break;
 	case T_REVERSE:
 		fputs("\033[7m", stdout); break;
 	case T_BOLD:
@@ -507,26 +514,8 @@ void tstyle(int style)
 
 void tbell(void)
 {
-#ifdef WIN32
-	COORD where;
-	DWORD written;
-	where.X = 0;
-	where.Y = Rowmax - 2;
-	FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax,
-				   where, &written);
-	Beep(440, 250);
-	FillConsoleOutputAttribute(hstdout, BLACK_ON_WHITE, Colmax,
-				   where, &written);
-#elif defined(DOS)
-	Curwdo->modeflags = INVALID;
-#else
-	fputs("\033[?5h", stdout);
-	fflush(stdout);
-	usleep(100000);
-	fputs("\033[?5l", stdout);
-#endif
-
 	ring_bell = 1;
+	Curwdo->modeflags = INVALID;
 }
 
 void tsetcursor(void)

@@ -63,14 +63,9 @@ void set_mouse(bool enable)
 
 int tgetcmd(void)
 {
-	extern int ring_bell;
 	int cmd;
 
 	kb_hit = 0;
-	if (ring_bell) {
-		ring_bell = 0;
-		Curwdo->modeflags = INVALID;
-	}
 
 #ifdef MOUSE
 	while (Mouse && !tkbrdy()) {

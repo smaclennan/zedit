@@ -132,6 +132,7 @@ extern void (*Cmds[][2])();
 extern int Curcmds;
 extern Byte Keys[], Lfunc;
 extern bool First;
+extern int ring_bell;
 
 #define CMD(n) (*Cmds[n][Curcmds])()
 

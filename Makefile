@@ -1,10 +1,15 @@
 .PHONY: all check install clean
 
 ZEXE = ze
+
 CC = gcc
 #CC = g++
 #CC = clang -fno-color-diagnostics
-CFLAGS += -Wall -g
+
+# If you set D=1 on the command line then $(D:1=-g)
+# returns -g, else it returns the default (-O2).
+D = -O2
+CFLAGS += -Wall $(D:1=-g)
 
 LIBS += -lz
 LIBS += -ldl
@@ -57,4 +62,4 @@ install:
 
 clean:
 	rm -f *.o ze fcheck core* TAGS valgrind.out
-	@make -C docs clean
+	@$(MAKE) -C docs clean

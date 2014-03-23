@@ -184,6 +184,7 @@ Byte Keys[] = {
 	[M(22)] = ZVIEW_LINE,		/* M-C-V */
 	[M(27)] = ZABORT,		/* M-M */
 	[M(' ')] = ZSEARCH,
+	[M('#')] = ZCALC,
 	[M('(')] = ZBEGINNING_OF_BUFFER,
 	[M(')')] = ZEND_OF_BUFFER,
 	[M('*')] = ZUNMODIFY,

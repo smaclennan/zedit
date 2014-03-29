@@ -187,19 +187,17 @@ extern void (*Nextpart)(void);
 #define tmaxcol()		Colmax
 extern int Tabsize;
 
+char *zgetcwd(char *cwd, int len);
 #ifdef WIN32
 char *gethomedir(void);
-void zgetcwd(char *cwd, int len);
 void tputchar(Byte c);
 #define tflush()
 #elif defined(DOS)
 char *gethomedir(void);
-void zgetcwd(char *cwd, int len);
 #define tputchar(c)		putch(c)
 #define tflush()
 #else
 #define gethomedir()		getenv("HOME")
-#define zgetcwd			getcwd
 #define tputchar(c)		putchar(c)
 #define tflush()		fflush(stdout)
 #endif

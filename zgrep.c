@@ -105,6 +105,7 @@ cleanup:
 void Zgrep(void)
 {
 	char input[STRMAX + 1], files[STRMAX + 1], *p;
+	int rc;
 	struct wdo *save = Curwdo;
 
 	getbword(input, STRMAX, bistoken);
@@ -123,10 +124,14 @@ void Zgrep(void)
 	p = strrchr(files, '/');
 	if (p) {
 		*p++ = '\0';
-		chdir(files);
+		rc = chdir(files);
 		strcpy(files, p);
 	} else
-		do_chdir(Curbuff);
+		rc = do_chdir(Curbuff);
+	if (rc) {
+		error("Unable to chdir");
+		return;
+	}
 
 	if (wuseother(SHELLBUFF)) {
 		set_umark(NULL);

@@ -79,11 +79,16 @@ int pathfixup(char *to, char *from)
 	return 0;
 }
 
-void zgetcwd(char *dir, int len)
+char *zgetcwd(char *dir, int len)
 {
-	getcwd(dir, len);
+	*dir = '\0';
+
+	if (!getcwd(dir, len))
+		return NULL;
+
 	psepfixup(dir);
 	strlwr(dir);
+	return dir;
 }
 
 #ifdef WIN32

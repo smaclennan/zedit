@@ -302,6 +302,12 @@ void Zfname(void)
 #if !defined(WIN32) && !defined(DOS)
 #include <pwd.h>
 
+char *zgetcwd(char *cwd, int len)
+{
+	*cwd = '\0';
+	return getcwd(cwd, len);
+}
+
 /* Get users directory - handles partial matches. */
 static bool zgetpwdir(char *name, char *to)
 {

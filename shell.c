@@ -20,7 +20,7 @@
 #include "z.h"
 
 
-void do_chdir(struct buff *buff)
+int do_chdir(struct buff *buff)
 {
 	if (buff->fname) {
 		char dir[PATHMAX + 1], *p;
@@ -29,9 +29,10 @@ void do_chdir(struct buff *buff)
 		p = strrchr(dir, '/');
 		if (p) {
 			*p = '\0';
-			chdir(dir);
+			return chdir(dir);
 		}
 	}
+	return 0;
 }
 
 /* echo 'str' to the paw and as the filename for 'buff' */

@@ -2,7 +2,8 @@
 
 ZEXE = ze
 
-CC = gcc
+CC = cc
+#CC = gcc
 #CC = g++
 #CC = clang -fno-color-diagnostics
 

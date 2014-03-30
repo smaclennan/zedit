@@ -285,7 +285,7 @@ void Zkill(void)
 #else
 void Zkill(void) { tbell(); }
 void unvoke(struct buff *child) { ((void)child); }
-int checkpipes(int type) { ((void)type); return 0; }
+void checkpipes(int type) { ((void)type); }
 
 #if DOPOPEN
 static void cmdtobuff(const char *bname, const char *cmdin)
@@ -322,12 +322,10 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 	wswitchto(save);
 }
 #else
-static void cmdtobuff(const char *bname, const char *cmdin)
+static void cmdtobuff(const char *bname, const char *cmd)
 {
 	int fd, rc;
 	struct wdo *save = Curwdo;
-	char cmd[PATHMAX];
-	snprintf(cmd, sizeof(cmd), "%s", cmdin);
 
 	fd = open("__zsh__.out", O_WRONLY|O_CREAT|O_TRUNC, 0666);
 	if (fd < 0) {
@@ -340,20 +338,21 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 	do_chdir(Curbuff);
 	if (wuseother(bname)) {
 		set_umark(NULL);
-		message(Curbuff, cmdin);
+		message(Curbuff, cmd);
 		putpaw("Please wait...");
 		rc = system(cmd);
+		close(fd);
 		breadfile("__zsh__.out");
-	}
 
-	close(fd);
+		if (rc == 0) {
+			btostart();
+			putpaw("Done.");
+		} else
+			putpaw("Returned %d", rc);
+	} else
+		close(fd);
 	unlink("__zsh__.out");
 
-	if (rc == 0) {
-		btostart();
-		putpaw("Done.");
-	} else
-		putpaw("Returned %d", rc);
 	wswitchto(save);
 }
 #endif /* DOPOPEN */

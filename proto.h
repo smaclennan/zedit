@@ -279,9 +279,9 @@ void clear_umark(void);
 void winit(void);
 void wfini(void);
 
-int checkpipes(int type);
+void checkpipes(int type);
 void siginit(void);
-void unvoke(struct buff *, bool);
+void unvoke(struct buff *);
 
 void Dbg(const char *fmt, ...);
 const char *func2name(Byte func);

@@ -286,8 +286,10 @@ bool bdelbuff(struct buff *tbuff)
 		}
 	}
 
-	if (tbuff->child != EOF)
-		unvoke(tbuff, true);
+	while (tbuff->child != EOF) {
+		unvoke(tbuff);
+		checkpipes(1);
+	}
 
 	uncomment(tbuff);
 	undo_clear(tbuff);

@@ -88,7 +88,7 @@ void hang_up(int signal)
 			bwritefile(bfname());
 		}
 		if (tbuff->child != EOF)
-			unvoke(tbuff, false);
+			unvoke(tbuff);
 	}
 	checkpipes(0);
 	tfini();

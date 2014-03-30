@@ -416,7 +416,7 @@ void Zexit(void)
 
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
 		if (tbuff->child != EOF)
-			unvoke(tbuff, false);
+			unvoke(tbuff);
 	checkpipes(0);		/* make sure waited for ALL children */
 
 	tfini();

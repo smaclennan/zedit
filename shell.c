@@ -148,18 +148,12 @@ static void exit_status(struct buff *tbuff, int status)
 	    tbell();
 }
 
-/* Wait for dead children and cleanup.
- *		type == 0 on exit
- *		type == 1 on normal
- *		type == 2 on blocking
- */
-int checkpipes(int type)
+/* Wait for dead children and cleanup. Type == 0 on exit. */
+void checkpipes(int type)
 {
 	struct buff *tbuff;
 	int pid = 0, status;
 
-	if (type == 2)
-		waitpid((pid_t)-1, &status, WNOWAIT);
 	while ((pid = waitpid((pid_t)-1, &status, WNOHANG)) > 0) {
 		--Waiting;		/* one less to wait for */
 		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
@@ -170,15 +164,14 @@ int checkpipes(int type)
 				 *	will not block if nothing to
 				 *	read
 				 */
-				if (type)
-					while (readapipe(tbuff) > 0)
-						;
+				if (type) {
+					while (readapipe(tbuff) > 0) ;
+					exit_status(tbuff, status);
+				}
 				FD_CLR(tbuff->in_pipe, &SelectFDs);
 				(void)close(tbuff->in_pipe);
 				tbuff->in_pipe = EOF;
 				tbuff->child = EOF;
-				if (type)
-					exit_status(tbuff, status);
 				break;
 			}
 	}
@@ -186,7 +179,6 @@ int checkpipes(int type)
 #ifdef SYSV4
 	siginit();
 #endif
-	return pid;
 }
 
 /* Split a string up into words.
@@ -262,15 +254,10 @@ static bool dopipe(struct buff *tbuff, const char *icmd)
 }
 
 /* Try to kill a child process */
-void unvoke(struct buff *child, bool check)
+void unvoke(struct buff *child)
 {
-	if (child && child->child != EOF) {
+	if (child && child->child != EOF)
 		kill(child->child, SIGKILL);
-		if (check)
-			while (child->child != EOF && checkpipes(1) != -1)
-				;
-	} else
-		tbell();
 }
 
 static void cmdtobuff(const char *bname, const char *cmd)
@@ -289,11 +276,15 @@ static void cmdtobuff(const char *bname, const char *cmd)
 
 void Zkill(void)
 {
-	unvoke(cfindbuff(SHELLBUFF), false);
+	struct buff *buff = cfindbuff(SHELLBUFF);
+	if (buff)
+		unvoke(buff);
+	else
+		tbell();
 }
 #else
 void Zkill(void) { tbell(); }
-void unvoke(struct buff *child, bool check) { ((void)child); ((void)check); }
+void unvoke(struct buff *child) { ((void)child); }
 int checkpipes(int type) { ((void)type); return 0; }
 
 #if DOPOPEN

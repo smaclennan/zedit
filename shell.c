@@ -144,7 +144,8 @@ static void exit_status(struct buff *tbuff, int status)
 			message(tbuff, PawStr);
 		}
 	}
-	tbell();
+	if (status)
+	    tbell();
 }
 
 /* Wait for dead children and cleanup.

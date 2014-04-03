@@ -361,21 +361,24 @@ static void cmdtobuff(const char *bname, const char *cmd)
 
 void Zmake(void)
 {
-	if (Argp) {
-		char cmd[STRMAX + 1];
+	static char mkcmd[STRMAX + 1];
 
+	if (!*mkcmd) {
+		snprintf(mkcmd, sizeof(mkcmd), VARSTR(VMAKE));
+		VARSTR(VMAKE) = mkcmd;
+	}
+
+	if (Argp) {
 		Argp = false;
-		strcpy(cmd, VARSTR(VMAKE));
-		if (_getarg("Make: ", cmd, STRMAX, false))
+		if (_getarg("Make: ", mkcmd, STRMAX, false))
 			return;
-		VARSTR(VMAKE) = strdup(cmd);
 	}
 
 	NexterrorCalled = 0;	/* reset it */
 	Arg = 0;
 
 	saveall(true);
-	cmdtobuff(SHELLBUFF, VARSTR(VMAKE));
+	cmdtobuff(SHELLBUFF, mkcmd);
 }
 
 void Zcmd_to_buffer(void)

@@ -843,17 +843,27 @@ static bool bwritegzip(int fd)
 
 static bool bwritefd(int fd)
 {
+#ifdef DOS_EMS
+	struct page *cur = Curpage;
+#endif
 	struct page *tpage;
-	int status = true;
+	int n, status = true;
 
 	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
-			int n = write(fd, tpage->pdata, tpage->plen);
+#ifdef DOS_EMS
+			makecur(tpage);
+#endif
+			n = write(fd, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
 		}
 
 	close(fd);
+
+#ifdef DOS_EMS
+	makecur(cur);
+#endif
 
 	return status;
 }

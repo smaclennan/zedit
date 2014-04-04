@@ -19,6 +19,7 @@
  ***************************************************************/
 
 #define EMMPAGESZ 16384 /* EMM pages are 16k */
+#define PSHIFT 10
 
 static int EMMhandle;
 
@@ -186,7 +187,7 @@ bool ems_newpage(struct page *page)
 		page->pdata = malloc(PSIZE);
 		return page->pdata != NULL;
 	}
-	
+
 	/* Find a free page */
 	for (i = pim; i < ems_pages; ++i)
 		if (page_masks[i] != 0xffff)
@@ -217,10 +218,10 @@ void ems_makecur(struct page *page)
 {
 	if (EMMhandle == 0)
 		return;
-	
+
 	if (Curpage && Curmodf)
 		pim_modf = true;
-	
+
 	if (page->emmpage != pim) {
 		if (pim_modf) {
 			EMMwrite(pim, emmpage);
@@ -229,9 +230,9 @@ void ems_makecur(struct page *page)
 		pim = page->emmpage;
 		EMMread(pim, emmpage);
 	}
-	
+
 	/* Even if in memory it may not be assigned */
-	page->pdata = emmpage + (page->emmoff * PSIZE);
+	page->pdata = emmpage + (page->emmoff << PSHIFT);
 }
 
 void ems_pagesplit(struct page *newp)
@@ -244,9 +245,9 @@ void ems_pagesplit(struct page *newp)
 		Byte jump[HALFP];
 		struct page *cur = Curpage;
 
-		memmove(jump, Cpstart + HALFP, HALFP);
+		memcpy(jump, Cpstart + HALFP, HALFP);
 		ems_makecur(newp);
-		memmove(newp->pdata, jump, HALFP);
+		memcpy(newp->pdata, jump, HALFP);
 		pim_modf = true;
 		ems_makecur(cur);
 	}

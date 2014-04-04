@@ -234,4 +234,22 @@ void ems_makecur(struct page *page)
 	page->pdata = emmpage + (page->emmoff * PSIZE);
 }
 
+void ems_pagesplit(struct page *newp)
+{
+	if (newp->emmpage == pim)
+		/* both pages in same emm page */
+		memmove(newp->pdata, Cpstart + HALFP, HALFP);
+	else {
+		/* Need jump buffer to span emm pages */
+		Byte jump[HALFP];
+		struct page *cur = Curpage;
+
+		memmove(jump, Cpstart + HALFP, HALFP);
+		ems_makecur(newp);
+		memmove(newp->pdata, jump, HALFP);
+		pim_modf = true;
+		ems_makecur(cur);
+	}
+}
+
 #endif /* DOS_EMS */

@@ -1136,7 +1136,11 @@ static bool pagesplit(void)
 	if (newp == NULL)
 		return false;
 
+#ifdef DOS_EMS
+	ems_pagesplit(newp);
+#else
 	memmove(newp->pdata, Cpstart + HALFP, HALFP);
+#endif
 	Curmodf = true;
 	Curplen = HALFP;
 	newp->plen = HALFP;

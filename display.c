@@ -325,7 +325,7 @@ static void modeflags(struct wdo *wdo)
 	if (VAR(VLINES)) {
 		struct buff *was = Curbuff;
 		bswitchto(wdo->wbuff);
-		blocation(&line);
+		line = bline();
 		col = bgetcol(false, 0) + 1;
 		if (col > 999)
 			sprintf(PawStr, "%5u:???", line);

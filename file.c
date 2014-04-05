@@ -61,7 +61,7 @@ void Zrevert_file(void)
 	/* Lose the undo history */
 	undo_clear(Curbuff);
 
-	offset = blocation(NULL);
+	offset = blocation();
 	breadfile(Curbuff->fname);
 	boffset(offset);
 	uncomment(Curbuff);

@@ -375,21 +375,17 @@ void Zprevious_paragraph(void)
 
 void Zposition(void)
 {
-	unsigned long mark, point;
-	unsigned line;
+	unsigned long mark, point = blocation();
 
 	if (Curbuff->umark) {
 		bswappnt(Curbuff->umark);
-		mark = blocation(&line);
+		mark = blocation();
 		bswappnt(Curbuff->umark);
-		point = blocation(&line);
 		putpaw("Line: %u  Column: %u  Point: %lu  Mark: %lu  Length: %lu",
-		       line, bgetcol(false, 0) + 1, point, mark, blength(Curbuff));
-	} else {
-		point = blocation(&line);
+		       bline(), bgetcol(false, 0) + 1, point, mark, blength(Curbuff));
+	} else
 		putpaw("Line: %u  Column: %u  Point: %lu  Mark: unset  Length: %lu",
-		       line, bgetcol(false, 0) + 1, point, blength(Curbuff));
-	}
+		       bline(), bgetcol(false, 0) + 1, point, blength(Curbuff));
 }
 
 void Znotimpl(void) { tbell(); }

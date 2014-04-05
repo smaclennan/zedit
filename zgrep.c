@@ -48,12 +48,10 @@ static void grep_one(char *fname, Byte *ebuf,
 
 	while (step(ebuf)) {
 		struct mark *start;
-		unsigned line;
-
-		blocation(&line);
+		unsigned long line = bline();
 
 		bswitchto(outbuff);
-		snprintf(PawStr, STRMAX, "%s:%d: ", fname, line);
+		snprintf(PawStr, STRMAX, "%s:%ld: ", fname, line);
 		binstr(PawStr);
 		bswitchto(inbuff);
 

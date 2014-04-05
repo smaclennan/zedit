@@ -44,7 +44,7 @@ static struct undo *new_undo(struct buff *buff, bool insert, int size)
 		return NULL;
 
 	undo->size = size;
-	undo->offset = blocation(NULL);
+	undo->offset = blocation();
 	if (!insert) {
 		undo->data = (Byte *)malloc(size);
 		if (!undo->data) {

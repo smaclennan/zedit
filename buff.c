@@ -467,16 +467,13 @@ bool bisbeforemrk(struct mark *tmark)
 
 
 /* Returns the length of the buffer. */
-long blength(struct buff *tbuff)
+unsigned long blength(struct buff *tbuff)
 {
-	struct page *tpage, *spage;
-	long len;
+	struct page *tpage, *spage = Curpage;
+	long len = 0;
 
-	Curpage->plen = Curplen;
-	spage = Curpage;
-	for (len = 0, tpage = tbuff->firstp; tpage; tpage = tpage->nextp) {
-		if (tpage->plines == EOF)
-			makecur(tpage);
+	for (tpage = tbuff->firstp; tpage; tpage = tpage->nextp) {
+		makecur(tpage);
 		len += tpage->plen;
 	}
 	makecur(spage);
@@ -485,30 +482,51 @@ long blength(struct buff *tbuff)
 
 
 /* Return the current position of the point. */
-unsigned long blocation(unsigned *lines)
+unsigned long blocation(void)
 {
-	unsigned long len;
+	struct page *tpage, *spage = Curpage;
+	unsigned long len = 0;
+
+	for (tpage = Curbuff->firstp; tpage != spage; tpage = tpage->nextp) {
+		makecur(tpage);
+		len += tpage->plen;
+	}
+	makecur(spage);
+	return len + Curchar;
+}
+
+/* Return the current line of the point. */
+unsigned long bline(void)
+{
+#if 1
+	unsigned long lines = 1;
 	struct page *tpage, *spage;
 
 	spage = Curpage;
-	len = 0l;
-	if (lines)
-		*lines = 1;
 	for (tpage = Curbuff->firstp; tpage != spage; tpage = tpage->nextp) {
 		if (tpage->plines == EOF) {
 			makecur(tpage);
 			tpage->plines = cntlines(Curplen);
 		}
-		if (lines)
-			*lines += tpage->plines;
-		len += tpage->plen;
+		lines += tpage->plines;
 	}
 	makecur(spage);
-	if (lines)
-		*lines += cntlines(Curchar);
-	return len + Curchar;
-}
+	lines += cntlines(Curchar);
+	return lines;
+#else
+	struct mark tmark;
+	unsigned long line = 1;
 
+	bmrktopnt(&tmark);
+	btostart();
+	while (bcsearch(NL) && bisbeforemrk(&tmark))
+		++line;
+	if (bisatmrk(&tmark))
+		++line;
+	bpnttomrk(&tmark);
+	return line;
+#endif
+}
 
 #ifdef INT_IS_16BITS
 #define MAXMOVE		(0x7fff - 1024)

@@ -165,8 +165,7 @@ static long getnum(const char *prompt)
 
 void Zgoto_line(void)
 {
-	long line, cnt = 0;
-	struct page *tpage;
+	long line;
 
 	if (Argp)
 		line = Arg;
@@ -176,23 +175,8 @@ void Zgoto_line(void)
 			return;
 	}
 
-	/* find the correct page */
-	for (tpage = Curbuff->firstp; tpage->nextp; tpage = tpage->nextp) {
-		if (tpage->plines == EOF) {
-			makecur(tpage);
-			tpage->plines = cntlines(Curplen);
-		}
-		cnt += tpage->plines;
-		if (cnt >= line) {
-			cnt -= tpage->plines;
-			break;
-		}
-	}
-	makecur(tpage);
-	makeoffset(0);
-
-	/* go to the correct offset */
-	for (cnt = line - cnt - 1; cnt > 0; --cnt)
+	btostart();
+	while (--line > 0)
 		bcsearch(NL);
 }
 

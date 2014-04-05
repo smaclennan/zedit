@@ -174,7 +174,6 @@ void binstr(const char *);
 bool bisaftermrk(struct mark *);
 bool bisbeforemrk(struct mark *);
 long blength(struct buff *);
-long blines(struct buff *);
 unsigned long blocation(unsigned *);
 int bmakecol(int, bool);
 void bmrktopnt(struct mark *);

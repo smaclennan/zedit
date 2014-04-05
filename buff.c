@@ -528,31 +528,6 @@ void boffset(unsigned long off)
 }
 #endif
 
-
-/* Number of lines in buffer */
-long blines(struct buff *buff)
-{
-	unsigned long lines;
-	struct page *tpage, *spage;
-
-	if (Curmodf)
-		Curpage->plines = EOF;
-	spage = Curpage;
-	lines = 1;
-
-	for (tpage = buff->firstp; tpage; tpage = tpage->nextp) {
-		if (tpage->plines == EOF) {
-			makecur(tpage);
-			tpage->plines = cntlines(Curplen);
-		}
-		lines += tpage->plines;
-	}
-
-	makecur(spage);
-	return lines;
-}
-
-
 /* Try to put Point in a specific column.
  * Returns actual Point column.
  */

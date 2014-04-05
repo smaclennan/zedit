@@ -297,7 +297,7 @@ static void modeline(struct wdo *wdo)
 		setmodes(wdo->wbuff), wdo->wbuff->bname);
 	tprntstr(str);
 	if (wdo->wbuff->fname) {
-		len = (VAR(VLINES) ? 13 : 3) + strlen(str);
+		len = strlen(str) + 3;
 		tprntstr(limit(wdo->wbuff->fname, len));
 	}
 	wdo->modecol = tgetcol();
@@ -311,7 +311,7 @@ static void modeline(struct wdo *wdo)
 /* This routine will call modeline if wdo->modeflags == INVALID */
 static void modeflags(struct wdo *wdo)
 {
-	unsigned trow, tcol, line, col;
+	unsigned trow, tcol;
 	int mask;
 
 	trow = tgetrow();
@@ -321,21 +321,6 @@ static void modeflags(struct wdo *wdo)
 		modeline(wdo);
 
 	tstyle(T_STANDOUT);
-
-	if (VAR(VLINES)) {
-		struct buff *was = Curbuff;
-		bswitchto(wdo->wbuff);
-		line = bline();
-		col = bgetcol(false, 0) + 1;
-		if (col > 999)
-			sprintf(PawStr, "%5u:???", line);
-		else
-			sprintf(PawStr, "%5u:%-3u", line, col);
-		PawStr[9] = '\0';
-		tsetpoint(wdo->last, tmaxcol() - 9);
-		tprntstr(PawStr);
-		bswitchto(was);
-	}
 
 	mask = delcmd() | (wdo->wbuff->bmodf ? 2 : 0);
 	if (!InPaw && wdo->modeflags != mask) {

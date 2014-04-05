@@ -26,11 +26,6 @@ struct avar Vars[] = {
 	  "This is the column at which the text mode commands wrap the "
 	  "right margin."
 	},
-	{ "lines",		V_FLAG,		V(0),
-	  "This variable turns on a line:column indicator on the mode line. "
-	  "This can cause a lot of cursor movement and can be irritating on "
-	  "slow terminals."
-	},
 	{ "make-cmd",		V_STRING,	V("make "),
 	  "The command to use for the make command."
 	},

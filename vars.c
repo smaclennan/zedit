@@ -161,9 +161,7 @@ static void setavar(const char *vin, bool display)
 				} else
 					putpaw("%s = %d",
 						Vars[i].vname, VAR(i));
-				if (i == VLINES)
-					Curwdo->modeflags = INVALID;
-				else if (i == VCOMMENTS)
+				if (i == VCOMMENTS)
 					redisplay();
 			}
 			break;

@@ -498,34 +498,15 @@ unsigned long blocation(void)
 /* Return the current line of the point. */
 unsigned long bline(void)
 {
-#if 1
-	unsigned long lines = 1;
-	struct page *tpage, *spage;
-
-	spage = Curpage;
-	for (tpage = Curbuff->firstp; tpage != spage; tpage = tpage->nextp) {
-		if (tpage->plines == EOF) {
-			makecur(tpage);
-			tpage->plines = cntlines(Curplen);
-		}
-		lines += tpage->plines;
-	}
-	makecur(spage);
-	lines += cntlines(Curchar);
-	return lines;
-#else
 	struct mark tmark;
 	unsigned long line = 1;
 
 	bmrktopnt(&tmark);
 	btostart();
-	while (bcsearch(NL) && bisbeforemrk(&tmark))
-		++line;
-	if (bisatmrk(&tmark))
+	while (bcsearch(NL) && !bisaftermrk(&tmark))
 		++line;
 	bpnttomrk(&tmark);
 	return line;
-#endif
 }
 
 #ifdef INT_IS_16BITS
@@ -998,21 +979,6 @@ int bwritefile(char *fname)
 	return status;
 }
 
-/* count the lines (NLs) in the current page up to offset 'stop' */
-int cntlines(int stop)
-{
-	Byte *p, *n;
-	int lines = 0, end;
-
-	for (p = Cpstart, end = stop;
-	     (n = (Byte *)memchr(p, NL, end)) != NULL;
-	     ++lines, p = n) {
-		++n;
-		end -= n - p;
-	}
-	return lines;
-}
-
 /* Make the point be dist chars into the page. */
 void makeoffset(int dist)
 {
@@ -1083,7 +1049,6 @@ static struct page *newpage(struct buff *tbuff,
 	page->prevp = ppage;
 	npage ? (npage->prevp = page) : (tbuff->lastp = page);
 	ppage ? (ppage->nextp = page) : (tbuff->firstp = page);
-	page->plines = EOF;	/* undefined */
 	++NumPages;
 
 	return page;
@@ -1113,11 +1078,8 @@ void makecur(struct page *page)
 {
 	if (Curpage == page)
 		return;
-	if (Curpage) {
+	if (Curpage)
 		Curpage->plen = Curplen;
-		if (Curmodf || Curpage->plines == EOF)
-			Curpage->plines = cntlines(Curplen);
-	}
 
 #ifdef DOS_EMS
 	ems_makecur(page);

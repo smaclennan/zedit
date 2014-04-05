@@ -43,7 +43,6 @@ struct page {
 	Byte pdata[PSIZE];		/* the page data */
 #endif
 	int plen;			/* current length of the page */
-	int plines;			/* number of lines in page */
 	struct page *nextp, *prevp;	/* list of pages in buffer */
 };
 

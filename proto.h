@@ -189,7 +189,6 @@ void btostart(void);
 int bwritefile(char *);
 struct buff *cfindbuff(const char *);
 struct buff *cmakebuff(const char *, char *);
-int cntlines(int);
 int compile(Byte*, Byte*, Byte*);
 void cswitchto(struct buff *);
 bool tdelay(int ms);

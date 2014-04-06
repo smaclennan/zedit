@@ -1095,7 +1095,7 @@ void makecur(struct page *page)
 		Curpage->plen = Curplen;
 
 #ifdef DOS_EMS
-	ems_makecur(page);
+	ems_makecur(page, Curmodf);
 #endif
 
 	Curpage = page;
@@ -1115,7 +1115,7 @@ static bool pagesplit(void)
 		return false;
 
 #ifdef DOS_EMS
-	ems_pagesplit(newp);
+	ems_pagesplit(newp, Curmodf);
 #else
 	memmove(newp->pdata, Cpstart + HALFP, HALFP);
 #endif

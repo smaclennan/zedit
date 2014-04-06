@@ -214,12 +214,12 @@ void ems_freepage(struct page *page)
 		page_masks[page->emmpage] &= ~(1 << page->emmoff);
 }
 
-void ems_makecur(struct page *page)
+void ems_makecur(struct page *page, bool curmodf)
 {
 	if (EMMhandle == 0)
 		return;
 
-	if (Curpage && Curmodf)
+	if (curmodf)
 		pim_modf = true;
 
 	if (page->emmpage != pim) {
@@ -235,21 +235,20 @@ void ems_makecur(struct page *page)
 	page->pdata = emmpage + (page->emmoff << PSHIFT);
 }
 
-void ems_pagesplit(struct page *newp)
+void ems_pagesplit(struct page *newp, bool curmodf)
 {
 	if (newp->emmpage == pim)
 		/* both pages in same emm page */
-		memmove(newp->pdata, Cpstart + HALFP, HALFP);
+		memmove(newp->pdata, Curpage->pdata + HALFP, HALFP);
 	else {
 		/* Need jump buffer to span emm pages */
 		Byte jump[HALFP];
 		struct page *cur = Curpage;
 
-		memcpy(jump, Cpstart + HALFP, HALFP);
-		ems_makecur(newp);
+		memcpy(jump, Curpage->pdata + HALFP, HALFP);
+		ems_makecur(newp, curmodf);
 		memcpy(newp->pdata, jump, HALFP);
-		pim_modf = true;
-		ems_makecur(cur);
+		ems_makecur(cur, true);
 	}
 }
 

@@ -72,8 +72,8 @@ void ems_init(void);
 void ems_free(void);
 bool ems_newpage(struct page *page);
 void ems_freepage(struct page *page);
-void ems_makecur(struct page *page);
-void ems_pagesplit(struct page *newp);
+void ems_makecur(struct page *page, bool curmodf);
+void ems_pagesplit(struct page *newp, bool curmodf);
 #endif /* DOS_EMS */
 
 #endif /* DOS */

@@ -170,6 +170,7 @@ int bgetcol(bool, int);
 void bgoto(struct buff *);
 void bgoto_char(long offset);
 void binsert(Byte);
+void bconvert(int (*to)(int));
 void binstr(const char *);
 bool bisaftermrk(struct mark *);
 bool bisbeforemrk(struct mark *);

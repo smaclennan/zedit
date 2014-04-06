@@ -127,7 +127,7 @@ static struct llist *getfill(char *dir, char **fname, int *len, bool *update)
 	char txt[PATHMAX + 1];
 
 	if (First) {
-		bdelete(Curplen);
+		bempty();
 		First = false;
 	}
 	getbtxt(txt, PATHMAX);

@@ -102,7 +102,7 @@ void Zyank(void)
 	struct mark *tmark, save;	/* save must NOT be a pointer */
 
 	if (InPaw && First) {
-		bdelete(Curplen);
+		bempty();
 		First = false;
 	}
 

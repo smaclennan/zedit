@@ -32,8 +32,8 @@
 #define bclose(a) close(a)
 #endif
 
-bool Curmodf;			/* page modified?? */
-Byte *Cpstart;			/* pim data start */
+static bool Curmodf;		/* page modified?? */
+static Byte *Cpstart;		/* pim data start */
 Byte *Curcptr;			/* current character */
 int Curchar;			/* current offset in Cpstart */
 int Curplen;			/* current page length */
@@ -430,6 +430,11 @@ void binsert(Byte byte)
 	vsetmod(false);
 }
 
+void bconvert(int (*to)(int c))
+{
+	*Curcptr = to(*Curcptr);
+	Curbuff->bmodf = Curmodf = true;
+}
 
 /* Insert a string into the current buffer. */
 void binstr(const char *str)

@@ -48,9 +48,7 @@ static bool umarkmoved(struct mark *tmark)
 /* True if buffer at user mark */
 static bool bisatumark(void)
 {
-	return  Curbuff->umark &&
-		Curpage == Curbuff->umark->mpage &&
-		Curchar == Curbuff->umark->moffset;
+	return  Curbuff->umark && bisatmrk(Curbuff->umark);
 }
 
 /* Mark screen invalid */
@@ -548,8 +546,7 @@ void initscrnmarks(void)
 void makepaw(char *word, bool start)
 {
 	bswitchto(Paw);
-	btostart();
-	bdelete(Curplen);
+	bempty();
 	binstr(word);
 	tcleol();
 	memset(tline, '\376', COLMAX);	/* invalidate it */

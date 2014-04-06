@@ -224,7 +224,7 @@ void pinsert(void)
 	}
 
 	if (First) {
-		bdelete(Curplen);
+		bempty();
 		First = false;
 		Tlrow = -1;
 	}

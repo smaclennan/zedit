@@ -93,13 +93,12 @@ struct wdo {
 #define foreachwdo(wdo) for (wdo = Whead; wdo; wdo = wdo->next)
 #define wheight() (Curwdo->last - Curwdo->first)
 
-extern Byte *Curcptr, *Cpstart;
+extern Byte *Curcptr;
 extern int Curchar, Curplen;
 extern struct buff *Curbuff;
 extern struct page *Curpage;
 extern struct mark *Mrklist;
 extern struct wdo *Curwdo, *Whead;
-extern bool Curmodf;
 
 #define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
 

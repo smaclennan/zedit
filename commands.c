@@ -37,10 +37,9 @@ static bool Findstart(void)
 void Zcapitalize_word(void)
 {
 	if (Findstart()) {
-		*Curcptr = toupper(*Curcptr);
-		Curbuff->bmodf = Curmodf = true;
+		bconvert(toupper);
 		for (bmove1(); !bisend() && bistoken(); bmove1())
-			*Curcptr = tolower(*Curcptr);
+			bconvert(tolower);
 		vsetmod(false);
 	}
 }
@@ -49,10 +48,8 @@ void Zcapitalize_word(void)
 void Zlowercase_word(void)
 {
 	if (Findstart()) {
-		for (; !bisend() && bistoken(); bmove1()) {
-			Curbuff->bmodf = Curmodf = true;
-			*Curcptr = tolower(*Curcptr);
-		}
+		for (; !bisend() && bistoken(); bmove1())
+			bconvert(tolower);
 		vsetmod(false);
 	}
 }
@@ -60,10 +57,8 @@ void Zlowercase_word(void)
 void Zuppercase_word(void)
 {
 	if (Findstart()) {
-		for (; !bisend() && bistoken(); bmove1()) {
-			Curbuff->bmodf = Curmodf = true;
-			*Curcptr = toupper(*Curcptr);
-		}
+		for (; !bisend() && bistoken(); bmove1())
+			bconvert(toupper);
 		vsetmod(false);
 	}
 }

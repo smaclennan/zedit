@@ -1211,9 +1211,6 @@ void clear_umark(void)
 
 void Zstats(void)
 {
-#ifdef DOS_EMS
-	extern int ems_pages;
-#endif
 	struct buff *b;
 	struct page *p;
 	unsigned long use = 0, total = 0;

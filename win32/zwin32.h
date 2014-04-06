@@ -47,7 +47,7 @@ DIR *opendir(const char *dirname);
 struct dirent *readdir(DIR *dir);
 void closedir(DIR *dir);
 
-#endif
+#endif /* WIN32 */
 
 #ifdef DOS
 #include <time.h>
@@ -64,7 +64,19 @@ typedef int bool;
 #define strncasecmp strnicmp
 
 #define usleep(us) delay((us) / 1000)
-#endif
+
+#ifdef DOS_EMS
+extern int ems_pages;
+
+void ems_init(void);
+void ems_free(void);
+bool ems_newpage(struct page *page);
+void ems_freepage(struct page *page);
+void ems_makecur(struct page *page);
+void ems_pagesplit(struct page *newp);
+#endif /* DOS_EMS */
+
+#endif /* DOS */
 
 /* COMMON */
 

@@ -364,7 +364,7 @@ void Zmake(void)
 	static char mkcmd[STRMAX + 1];
 
 	if (!*mkcmd) {
-		snprintf(mkcmd, sizeof(mkcmd), VARSTR(VMAKE));
+		snprintf(mkcmd, sizeof(mkcmd), "%s", VARSTR(VMAKE));
 		VARSTR(VMAKE) = mkcmd;
 	}
 

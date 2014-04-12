@@ -302,10 +302,14 @@ void Zfname(void)
 #if !defined(WIN32) && !defined(DOS)
 #include <pwd.h>
 
+/* Must always end in /. Must always return something sane. */
 char *zgetcwd(char *cwd, int len)
 {
-	*cwd = '\0';
-	return getcwd(cwd, len);
+	if (!getcwd(cwd, len - 1))
+		snprintf(cwd, len, "%s", Home);
+	if (*(cwd + strlen(cwd) - 1) != '/')
+		strcat(cwd, "/");
+	return cwd;
 }
 
 /* Get users directory - handles partial matches. */
@@ -389,7 +393,6 @@ int pathfixup(char *to, char *from)
 			/* add the current directory */
 			zgetcwd(to, PATHMAX);
 			to += strlen(to);
-			*to++ = PSEP;
 		}
 	}
 

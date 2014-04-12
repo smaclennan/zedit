@@ -83,11 +83,15 @@ char *zgetcwd(char *dir, int len)
 {
 	*dir = '\0';
 
-	if (!getcwd(dir, len))
+	if (!getcwd(dir, len - 1))
 		return NULL;
 
 	psepfixup(dir);
 	strlwr(dir);
+
+	if (*(dir + strlen(dir) - 1) != '/')
+		strcat(dir, "/");
+
 	return dir;
 }
 

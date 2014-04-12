@@ -29,8 +29,6 @@
 #define popen _popen
 #define pclose _pclose
 
-void zgetcwd(char *path, int len);
-
 extern HANDLE hstdin, hstdout;
 
 struct dirent {

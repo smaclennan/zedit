@@ -60,9 +60,10 @@ bool _getarg(const char *prompt, char *arg, int max, bool tostart)
 	Pshift = 0;
 	Pawlen = max;
 	makepaw(arg, false);
-	if (tostart)
+	if (tostart) {
 		btostart();
-	First = true;
+		First = true;
+	}
 	while (InPaw == true)
 		execute();
 	if (InPaw != ABORT) {

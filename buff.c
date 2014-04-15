@@ -1070,7 +1070,7 @@ static struct page *newpage(struct buff *tbuff,
 /* Free a memory page */
 static void freepage(struct buff *tbuff, struct page *page)
 {
-#ifdef DOS_EMU
+#ifdef DOS_EMS
 	ems_freepage(page);
 #endif
 

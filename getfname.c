@@ -19,10 +19,6 @@
 
 #include "z.h"
 
-#define PSEP		'/'
-#define Psep(c)		(c == PSEP)
-
-
 /* general linked list structure */
 struct llist {
 	char fname[STRMAX];
@@ -249,7 +245,7 @@ void Zfname(void)
 				tbell();
 		}
 		if (f == 0 && isdir(getbtxt(txt, PATHMAX)) && Curplen < Pawlen)
-			binsert(PSEP);
+			binsert('/');
 	} else if (!update)
 		tbell();
 
@@ -259,7 +255,7 @@ void Zfname(void)
 	/* show possible matches */
 	list = head; /* reset */
 	p = dir + strlen(dir);
-	*p++ = PSEP;
+	*p++ = '/';
 	Didmatch = true;
 	t_goto(0, 0);
 	tprntstr("Choose one of:");
@@ -273,7 +269,7 @@ void Zfname(void)
 				list->fname[23] = '\0';
 			tprntstr(list->fname);
 			if (isdir(dir))
-				tputchar(PSEP);
+				tputchar('/');
 			tcleol();
 			col += 25;
 			if (col > 72) {
@@ -340,6 +336,7 @@ Returns -1 if the 'from' is a directory
 		 0 if all is well
 NOTE: assumes a valid path (in particular /.. would not work)
 */
+#define Psep(c)		((c) == '/')
 
 int pathfixup(char *to, char *from)
 {
@@ -367,7 +364,7 @@ int pathfixup(char *to, char *from)
 		to += strlen(to);
 
 		if (*from && !Psep(*from) && !Psep(*(to - 1)))
-			*to++ = PSEP;
+			*to++ = '/';
 	} else if (*from == '$') {
 		for (p = dir, ++from; *from && !Psep(*from); ++from, ++p)
 			*p = *from;
@@ -379,7 +376,7 @@ int pathfixup(char *to, char *from)
 		to += strlen(to);
 
 		if (*from && !Psep(*from) && !Psep(*(to - 1)))
-			*to++ = PSEP;
+			*to++ = '/';
 	} else {
 		if (!Psep(*from)) {
 			/* add the current directory */
@@ -407,7 +404,7 @@ int pathfixup(char *to, char *from)
 		} else if (Psep(*from)) {
 			/* strip redundant seperators */
 			if (to == start || !Psep(*(to - 1)))
-				*to++ = PSEP;
+				*to++ = '/';
 		} else
 			*to++ = *from;
 	*to = '\0';
@@ -415,7 +412,7 @@ int pathfixup(char *to, char *from)
 	/* validate the filename */
 	if (stat(start, &sbuf) == EOF) {
 		/* file does not exit - validate the path */
-		to = strrchr(start, PSEP);
+		to = strrchr(start, '/');
 		if (to) {
 			save = *to;
 			*to = '\0';

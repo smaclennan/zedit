@@ -67,8 +67,18 @@ int main(int argc, char *argv[])
 	int i, s1, s2, err = 0;
 	Byte array[97];
 
-	((void)argc);
-	((void)argv);
+	while ((i = getopt(argc, argv, "v")) != EOF)
+		if (i == 'v')
+			printf("wdo %d buff %d page %d mark %d comment %d\n",
+			       sizeof(struct wdo),
+			       sizeof(struct buff),
+			       sizeof(struct page),
+			       sizeof(struct mark),
+			       sizeof(struct comment));
+		else {
+			puts("Sorry");
+			exit(1);
+		}
 
 	if (NUMVARS != VARSNUM) {
 		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",

@@ -902,8 +902,8 @@ void Zsetenv(void)
 	if (getarg(env, set, STRMAX))
 		return;
 
-	/* putenv cannot be passed an automatic: malloc the space */
-	p = (char *)malloc(strlen(env) + strlen(set));
+	/* putenv cannot be passed an automatic: alloc the space */
+	p = (char *)calloc(1, strlen(env) + strlen(set));
 	if (p) {
 		strcpy(p, env);
 		strcat(p, set);

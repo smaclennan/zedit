@@ -18,14 +18,6 @@
  */
 
 #include "z.h"
-#ifndef WIN32
-#ifdef HAVE_DIRECT
-#include <sys/dir.h>
-#define dirent direct
-#else
-#include <dirent.h>
-#endif
-#endif
 
 #define PSEP		'/'
 #define Psep(c)		(c == PSEP)

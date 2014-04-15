@@ -18,18 +18,7 @@
  */
 
 #include "z.h"
-
-#ifndef WIN32
-#ifdef HAVE_DIRECT
-#include <sys/dir.h>
-#define dirent direct
-#else
-#include <dirent.h>
-#endif
-#endif
-
 #include <fnmatch.h>
-
 
 #if defined(WIN32) || defined(DOS)
 #define FNM_FLAGS FNM_CASEFOLD

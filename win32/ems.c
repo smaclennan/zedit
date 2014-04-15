@@ -237,10 +237,11 @@ void ems_makecur(struct page *page, bool curmodf)
 
 void ems_pagesplit(struct page *newp, bool curmodf)
 {
-	if (newp->emmpage == pim)
+	if (newp->emmpage == pim) {
 		/* both pages in same emm page */
+		ems_makecur(newp, false); /* need to init pdata */
 		memmove(newp->pdata, Curpage->pdata + HALFP, HALFP);
-	else {
+	} else {
 		/* Need jump buffer to span emm pages */
 		Byte jump[HALFP];
 		struct page *cur = Curpage;

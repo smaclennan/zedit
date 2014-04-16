@@ -59,8 +59,11 @@
 
 #define INVALID		-1
 
-#define READ_MODE	O_RDONLY
-#define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC)
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+#define READ_MODE	(O_RDONLY | O_BINARY)
+#define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
 
 #define ZCFILE		".config.z"
 
@@ -142,6 +145,7 @@ extern int Curcmds;
 extern Byte Keys[], Lfunc;
 extern bool First;
 extern int ring_bell;
+extern int raw_mode;
 
 #define CMD(n) (*Cmds[n][Curcmds])()
 
@@ -221,9 +225,5 @@ extern int Colmax, Rowmax;		/* Row and column maximums */
 extern int Tlrow;			/* Last row displayed (-1 for none) */
 
 #define ISNL(c)			((c) == '\n')
-
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
 
 #endif /* _Z_H_ */

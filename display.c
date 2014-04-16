@@ -374,7 +374,7 @@ static char *setmodes(struct buff *buff)
 	if (buff->bmode & COMPRESSED)
 		strcat(PawStr, " Z");
 	if (buff->bmode & CRLF)
-		strcat(PawStr, " Txt");
+		strcat(PawStr, " CR");
 	if (buff->bmode & OVERWRITE)
 		strcat(PawStr, " OVWRT");
 

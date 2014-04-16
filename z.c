@@ -26,6 +26,7 @@ jmp_buf	zenv;
 
 unsigned Cmd;
 int Cmdpushed = -1; /* Search pushed a key */
+int raw_mode;
 
 static char dbgfname[PATHMAX];
 
@@ -36,8 +37,9 @@ static char dbgfname[PATHMAX];
 static void usage(char *prog)
 {
 	printf(
-		"usage: %s [-ht] [-l line] [fname ...]\n"
+		"usage: %s [-hrt] [-l line] [fname ...]\n"
 		"where:\t-h  displays this message.\n"
+		"\t-r  do not do CR/LF conversion.\n"
 		"\t-t  default to text mode.\n"
 		"\t-l  goto specified line number. (First file only)\n"
 		, prog);
@@ -120,10 +122,13 @@ int main(int argc, char **argv)
 	snprintf(dbgfname, sizeof(dbgfname), "%s/z.out", Home);
 	unlink(dbgfname);
 
-	while ((arg = getopt(argc, argv, "hl:tE")) != EOF)
+	while ((arg = getopt(argc, argv, "hl:rtE")) != EOF)
 		switch (arg) {
 		case 'l':
 			line = atoi(optarg);
+			break;
+		case 'r':
+			raw_mode = 1;
 			break;
 		case 't':
 			textMode = 1;

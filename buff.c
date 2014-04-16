@@ -719,29 +719,28 @@ void btostart(void)
 	makeoffset(0);
 }
 
-#ifdef DOS
-static int guess_mode(char *fname, char *buf)
+static void crfixup(void)
 {
-	int text = 0, n, fd = open(fname, READ_MODE | O_BINARY);
-	if (fd < 0)
-		return fd;
+	char *p = memchr(Cpstart + 1, '\n', Curplen - 1);
+	if (!p)
+		return;
 
-	n = bread(fd, buf, PSIZE / 2);
-	close(fd);
-	if (n > 0) {
-		buf[n] = '\0';
-		text = strchr(buf, '\r') != NULL;
-	}
+	if (*(p - 1) != '\r')
+		return;
 
-	if (text) {
-		fd = open(fname, READ_MODE);
-		Curbuff->bmode |= CRLF;
-	} else
-		fd = open(fname, READ_MODE | O_BINARY);
+	if (raw_mode)
+		return;
+	
+	Curbuff->bmode |= CRLF;
 
-	return fd;
+	while (bcsearch('\r'))
+		if (*Curcptr == '\n') {
+			bmove(-1);
+			bdelete(1);
+		}
+
+	btostart();
 }
-#endif
 
 /*
 Load the file 'fname' into the current buffer.
@@ -755,11 +754,7 @@ int breadfile(char *fname)
 	struct stat sbuf;
 	int fd, len;
 
-#ifdef DOS
-	fd = guess_mode(fname, buf);
-#else
 	fd = open(fname, READ_MODE);
-#endif
 	if (fd < 0) {
 		if (errno == ENOENT)
 			return 1;
@@ -805,6 +800,10 @@ int breadfile(char *fname)
 	(void)bclose(fd);
 
 	btostart();
+
+	if (Curplen && !(Curbuff->bmode & COMPRESSED))
+		crfixup();
+
 	Curbuff->bmodf = false;
 	clrpaw();
 
@@ -852,6 +851,44 @@ static bool bwritefd(int fd)
 #endif
 			n = write(fd, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
+		}
+
+	close(fd);
+
+#ifdef DOS_EMS
+	makecur(cur);
+#endif
+
+	return status;
+}
+
+static bool bwritedos(int fd)
+{
+#ifdef DOS_EMS
+	struct page *cur = Curpage;
+#endif
+	struct page *tpage;
+	int i, n, status = true;
+	Byte buf[PSIZE * 2], *p;
+
+	Curpage->plen = Curplen;
+	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
+		if (tpage->plen) {
+			int len = tpage->plen;
+#ifdef DOS_EMS
+			makecur(tpage);
+#endif
+			p = buf;
+			for (i = 0; i < tpage->plen; ++i) {
+				if (tpage->pdata[i] == '\n') {
+					*p++ = '\r';
+					++len;
+				}
+				*p++ = tpage->pdata[i];
+			}
+			
+			n = write(fd, buf, len);
+			status = n == len;
 		}
 
 	close(fd);
@@ -955,17 +992,17 @@ int bwritefile(char *fname)
 		bak = rename(fname, bakname);
 
 	/* Write the output file */
-	if (Curbuff->bmode & CRLF)
-		fd = open(fname, WRITE_MODE, mode);
-	else
-		fd = open(fname, WRITE_MODE | O_BINARY, mode);
+	fd = open(fname, WRITE_MODE, mode);
 	if (fd != EOF) {
 #if ZLIB
 		if (Curbuff->bmode & COMPRESSED)
 			status = bwritegzip(fd);
 		else
 #endif
-			status = bwritefd(fd);
+			if (Curbuff->bmode & CRLF)
+				status = bwritedos(fd);
+			else
+				status = bwritefd(fd);
 	} else {
 		if (errno == EACCES)
 			error("File is read only.");

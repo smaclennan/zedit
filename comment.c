@@ -78,10 +78,8 @@ static void scanbuffer(struct buff *buff)
 			if (Buff() == '*') {
 				bmove(-1);
 				bmrktopnt(&start);
-				if (bstrsearch("*/", FORWARD)) {
-					bmove1();
+				if (bstrsearch("*/", FORWARD))
 					newcomment(&start);
-				}
 			} else if (Buff() == '/') {
 				bmove(-1);
 				bmrktopnt(&start);

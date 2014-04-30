@@ -71,17 +71,17 @@ static void doincsrch(const char *prompt, bool forward)
 
 			bmrktopnt(&tmark); /* save in case search fails */
 again:
-			if (bstrsearch(str, forward))
-				bmove(i);
-			else if (++count == 2) {
-				if (strstr(promptstr, "Wrap") == NULL)
-					strcat(promptstr, " (Wrapped)");
-				count = 0;
-				btostart();
-				goto again;
-			} else {
-				bpnttomrk(&tmark);
-				tbell();
+			if (!bstrsearch(str, forward)) {
+				if (++count == 2) {
+					if (strstr(promptstr, "Wrap") == NULL)
+						strcat(promptstr, " (Wrapped)");
+					count = 0;
+					btostart();
+					goto again;
+				} else {
+					bpnttomrk(&tmark);
+					tbell();
+				}
 			}
 
 			continue;
@@ -92,9 +92,7 @@ again:
 				bmrktopnt(&marks[i]);
 				str[i++] = cmd;
 				bmove(-i);
-				if (bstrsearch(str, forward)) {
-					bmove(i);
-				} else {
+				if (!bstrsearch(str, forward)) {
 					bpnttomrk(&marks[--i]);
 					str[i] = '\0';
 					tbell();
@@ -125,11 +123,7 @@ again:
 
 void Zincremental_search(void)
 {
-	Arg = 0;
-	if (Argp)
-		doincsrch("Reverse I-search", BACKWARD);
-	else
-		doincsrch("I-search", FORWARD);
+	doincsrch("I-search", FORWARD);
 }
 
 void Zsearch(void)
@@ -288,6 +282,18 @@ static void promptreplace(int type)
 	doreplace(type);
 }
 
+static bool next_replace(Byte *ebuf, int type)
+{
+	if (type == REGEXP)
+		return step(ebuf);
+
+	if (bstrsearch(olds, FORWARD)) {
+		bmove(-strlen(olds));
+		return true;
+	}
+
+	return false;
+}
 static bool replaceone(int type, bool *query, bool *exit, Byte *ebuf,
 			  bool crgone)
 {
@@ -298,8 +304,7 @@ static bool replaceone(int type, bool *query, bool *exit, Byte *ebuf,
 
 	prevmatch = bcremrk();
 	putpaw("Searching...");
-	while (!*exit &&
-	       (type == REGEXP ? step(ebuf) : bstrsearch(olds, FORWARD))) {
+	while (!*exit && next_replace(ebuf, type)) {
 		found = true;
 		if (*query) {
 replace:
@@ -454,7 +459,6 @@ static bool dosearch(void)
 	} else
 		while (Arg-- > 0)
 			if (bstrsearch(olds, searchdir[0])) {
-				bmove(strlen(olds));
 				bmrktopnt(&fmark);
 				++fcnt;
 			} else
@@ -471,8 +475,7 @@ static bool dosearch(void)
 
 /* This is an implementation of the Boyer-Moore Search.
  * It uses the delta1 only with the fast/slow loops.
- * It searchs for the string 'str' starting at the current buffer location. If
- * forward is true, it searches forward, else it searches backwards.
+ * It searches for the string 'str' starting at the current buffer location.
  * The search will be case insensitive if the buffers current mode is so set.
  */
 static bool bm_search(const char *str)
@@ -501,7 +504,6 @@ static bool bm_search(const char *str)
 		}
 
 	/* search forward*/
-	bmove(len);
 	while (!bisend()) {
 		/* fast loop - delta will be 0 if matched */
 		while (!bisend() && delta[Buff()])
@@ -511,8 +513,10 @@ static bool bm_search(const char *str)
 		     (char)Buff() == str[i] ||
 			     (!exact && tolower(Buff()) == tolower(str[i]));
 		     bmove(-1), --i)
-			if (i == 0)
+			if (i == 0) {
+				bmove(len + 1);
 				return true;
+			}
 		/* compute shift. shift must be forward! */
 		if (i + delta[Buff()] > len)
 			shift = delta[Buff()];

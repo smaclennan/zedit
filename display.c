@@ -72,7 +72,7 @@ void redisplay(void)
 /* Do the actual display update from the buffer */
 void zrefresh(void)
 {
-	int pntrow, col, bcol;
+	int pntrow, col;
 	struct mark *pmark;
 	struct wdo *wdo;
 	int tsave;
@@ -135,17 +135,15 @@ void zrefresh(void)
 		}
 	Tabsize = tsave;
 
-	bpnttomrk(pmark);
-	unmark(pmark);
-	bcol = bgetcol(true, 0);
 	/* position the cursor */
-	col = bcol % (tmaxcol() - 1);
-	/* special case for NL or bisend at column 80 */
-	if (col == 0 && bcol && (ISNL(Buff()) || bisend()))
-		col = tmaxcol() - 1;
-	else if (!bisend() && (col + chwidth(Buff(), col, false) >= tmaxcol()))
-		col = 0;
+	col = 0;
+	bpnttomrk(&Scrnmarks[pntrow]);
+	while (bisbeforemrk(pmark)) {
+		col += chwidth(Buff(), col, false);
+		bmove1();
+	}
 	t_goto(pntrow, col);
+	unmark(pmark);
 
 	/*
 	 * If we display the cursor on the mark, they both disappear.

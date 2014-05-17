@@ -228,14 +228,13 @@ struct cnames Cnames[] = {
 	   "the variable with full completion. The current value of the "
 	   "variable is also displayed.")
 	},
-	{"incremental-search",		ZINCREMENTAL_SEARCH,	0,
+	{"incremental-search",		ZINCREMENTAL_SEARCH,	AN,
 	 C("Searches for the string after every character is entered in the "
 	   "PAW. The delete-previous-character command can be used to delete "
 	   "a character and 'back up' the search. The Newline character "
 	   "terminates the search. The Abort command terminates the search "
 	   "and places the Point back where it was. Any other commands "
-	   "terminates the search and performs that command. A Universal "
-	   "Argument causes the search to search backwards.")
+	   "terminates the search and performs that command.")
 	},
 	{"indent",			ZINDENT,		AN,
 	 C("Indents the marked region.")

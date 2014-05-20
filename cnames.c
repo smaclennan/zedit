@@ -644,4 +644,9 @@ struct cnames Cnames[] = {
 	 C("Inserts the characters from the Kill Buffer before the Point. The "
 	   "characters are inserted, even in overwrite mode.")
 	},
+	{"zap-to-char",			ZZAP_TO_CHAR,		AN,
+	 C("Waits for a character and moves the Point to that character. The Mark "
+	   "is set where the Point was. Unlike the Emacs zap-to-char does not "
+	   "actually delete the text.")
+	},
 };

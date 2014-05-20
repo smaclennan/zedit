@@ -140,7 +140,7 @@ Byte Keys[] = {
 	[CX('W')] = ZWRITE_FILE,
 	[CX('X')] = ZNEXT_BUFFER,
 	[CX('Y')] = 0,
-	[CX('Z')] = ZEXIT,
+	[CX('Z')] = ZZAP_TO_CHAR,
 	[CX('^')] = ZGROW_WINDOW,
 
 	/* Special keys */

@@ -54,11 +54,12 @@ void bmove1(void)
 }
 
 /* The char *past* the match. If not found leaves at EOB.
- * If we are on a match... don't move.
+ * If we are on a match find the next one.
  */
 bool bcsearch(Byte what)
 {
 	char *is = (char *)Curcptr;
+	if (*is == what) ++is;
 	char *p = strchr(is, what);
 	if (p) {
 		++p;

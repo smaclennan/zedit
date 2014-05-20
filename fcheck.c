@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 		if (Keys[CX('1')] != ZONE_WINDOW ||
 		    Keys[CX('=')] != ZPOSITION ||
 		    Keys[CX('O')] != ZNEXT_WINDOW ||
-		    Keys[CX('Z')] != ZEXIT ||
+		    Keys[CX('Z')] != ZZAP_TO_CHAR ||
 		    Keys[CX(127)] != ZDELETE_PREVIOUS_WORD) {
 			printf("Problems with Keys array 2\n");
 			err = 1;

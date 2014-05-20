@@ -140,6 +140,7 @@ void (*Cmds[][2])() = {
 	{ Ztag,				Znotimpl },
 	{ Ztag_word,			Znotimpl },
 	{ Zhelp,			Znotimpl },
+	{ Zzap_to_char,			Zzap_to_char },
 	/* only in the PAW you say? pity... */
 	{ Znotimpl,			Zfname },
 };

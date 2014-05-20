@@ -912,3 +912,22 @@ void Zsetenv(void)
 	} else
 		error("Out of memory.");
 }
+
+void Zzap_to_char(void)
+{
+	Cmd = tgetcmd();
+	if (Keys[Cmd] == ZABORT) {
+		tbell();
+		return;
+	}
+
+	set_umark(NULL); /* set to point */
+	do
+		if (!bcsearch(Cmd)) {
+			bpnttomrk(Curbuff->umark);
+			clear_umark();
+			tbell();
+			return;
+		}
+	while (Arg-- > 0);
+}

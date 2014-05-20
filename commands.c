@@ -922,12 +922,11 @@ void Zzap_to_char(void)
 	}
 
 	set_umark(NULL); /* set to point */
-	do
+	while (Arg-- > 0)
 		if (!bcsearch(Cmd)) {
 			bpnttomrk(Curbuff->umark);
 			clear_umark();
 			tbell();
 			return;
 		}
-	while (Arg-- > 0);
 }

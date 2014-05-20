@@ -929,4 +929,6 @@ void Zzap_to_char(void)
 			tbell();
 			return;
 		}
+
+	redisplay();
 }

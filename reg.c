@@ -209,7 +209,8 @@ star:
 				if (advance(ep)) /* try to match */
 					return true;
 				bpnttomrk(&tmark);
-				bmove(-1); /* go back and try again */
+				if (!bmove(-1)) /* go back and try again */
+					break;
 			} while (!bisbeforemrk(&curlp)); /* till back to start */
 			bpnttomrk(&curlp); /* Don't slip backwards */
 			return false;

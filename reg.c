@@ -124,8 +124,6 @@ static bool advance(Byte *ep)
 			bmrktopnt(&curlp);
 			while (size-- && Buff() == c)
 				bmove1();
-			if (size < 0 || Buff() != c)
-				bmove1();
 			ep += 2;
 			goto star;
 

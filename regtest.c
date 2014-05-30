@@ -24,6 +24,7 @@ int pdatalen;
 
 int Curchar, Curplen;
 Byte *Curcptr;
+Byte *Cpstart;
 
 void bmrktopnt(struct mark *tmark) { tmark->moffset = Curchar; }
 
@@ -31,6 +32,13 @@ void bpnttomrk(struct mark *tmark)
 {
 	Curchar = tmark->moffset;
 	Curcptr = pdata + tmark->moffset;
+}
+
+/* Make the point be dist chars into the page. */
+void makeoffset(int dist)
+{
+	Curchar = dist;
+	Curcptr = Cpstart + dist;
 }
 
 void bswappnt(struct mark *tmark)
@@ -53,26 +61,49 @@ void bmove1(void)
 	}
 }
 
-/* The char *past* the match. If not found leaves at EOB.
- * If we are on a match find the next one.
- */
+/* The char *past* the match. If not found leaves at EOB. */
 bool bcsearch(Byte what)
 {
-	char *is = (char *)Curcptr;
-	if (*is == what) ++is;
-	char *p = strchr(is, what);
-	if (p) {
-		++p;
-		int len = p - is;
-		Curcptr = (Byte *)p;
-		Curchar += len;
-		return true;
+	Byte *n;
+
+	if (bisend())
+		return false;
+
+	if ((n = (Byte *)memchr(Curcptr, what, Curplen - Curchar)) == NULL) {
+		makeoffset(Curplen);
+		return false;
 	}
 
-	Curcptr = pdata + Curplen;
-	Curchar = Curplen;
+	makeoffset(n - Cpstart);
+	bmove1();
+	return true;
+}
+
+bool bcrsearch(Byte what)
+{
+	while (Curchar >= 0) {
+		if (*Curcptr == what)
+			return true;
+		if (!bmove(-1))
+			return false;
+	}
 
 	return false;
+}
+
+void tobegline(void)
+{
+	if (Curchar > 0 && *(Curcptr - 1) == NL)
+		return;
+	if (bcrsearch(NL))
+		bmove1();
+}
+
+/* Leaves us on the NL */
+void toendline(void)
+{
+	if (bcsearch(NL))
+		bmove(-1);
 }
 
 bool bmove(int dist)
@@ -99,14 +130,6 @@ bool bmove(int dist)
 			return false;
 		}
 	}
-}
-
-
-/* Leaves us on the NL */
-void toendline(void)
-{
-	if (bcsearch(NL))
-		bmove(-1);
 }
 
 Byte bpeek(void)
@@ -160,8 +183,9 @@ static bool readfile(char *fname)
 
 	Curchar = 0;
 	Curcptr = pdata;
+	Cpstart = pdata;
 
-	printf("Processing: %s [%d]\n", fname, Curplen);
+	// printf("Processing: %s [%d]\n", fname, Curplen);
 
 	return true;
 
@@ -180,9 +204,35 @@ static void grepit(Byte *ebuf)
 	}
 }
 
+static void zgrepit(Byte *ebuf, const char *fname)
+{
+	while (step(ebuf)) {
+		printf("%s:", fname);
+		tobegline();
+		while (*Curcptr != '\n' && !bisend()) {
+			putchar(*Curcptr);
+			bmove(1);
+		}
+		putchar('\n');
+		bmove1();
+	}
+}
+
+static bool is_zgrep(char *prog)
+{
+	char *p = strrchr(prog, '/');
+	if (p)
+		++p;
+	else
+		p = prog;
+	return strcmp(p, "zgrep") == 0;
+}
+
 /* Poor man's grep using Zedit regex functions. */
 int main(int argc, char *argv[])
 {
+	bool zgrep = is_zgrep(argv[0]);
+
 	if (argc < 2) {
 		puts("I need a regular expression and a file.");
 		exit(1);
@@ -201,10 +251,13 @@ int main(int argc, char *argv[])
 	}
 
 	int arg;
-
 	for (arg = 2; arg < argc; ++arg)
-		if (readfile(argv[arg]))
-		    grepit(ebuf);
+		if (readfile(argv[arg])) {
+			if (zgrep)
+				zgrepit(ebuf, argv[arg]);
+			else
+				grepit(ebuf);
+		}
 
 	return 0;
 }

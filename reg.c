@@ -114,14 +114,13 @@ static bool advance(Byte *ep)
 			continue;
 
 		case CCHR | RNGE:
-			c = Buff();
-			bmove1();
+			c = *ep++;
 			getrnge(ep);
-			while (low--)
+			while (low--) {
 				if (Buff() != c)
 					return false;
-				else
-					bmove1();
+				bmove1();
+			}
 			bmrktopnt(&curlp);
 			while (size-- && Buff() == c)
 				bmove1();
@@ -220,7 +219,7 @@ star:
 	return *ep == CCEOF;
 }
 
-/* Called by advance to match [] type ranges. */
+/* Called by advance to match \{\} type ranges. */
 static void getrnge(Byte *str)
 {
 	low = *str++ & 0377;
@@ -292,7 +291,7 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 		if (ep >= endbuf)
 			return 50;
 		c = GETC();
-		if (c != '*' && ((c != '\\') || (PEEKC() != '{')))
+		if (c != '*' && ((c != '\\') || (PEEKC() != '{')) && c != '?')
 			lastep = ep;
 		if (c == EOFCH) {
 			*ep++ = CCEOF;
@@ -364,6 +363,14 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 
 			ep += 16;
 
+			continue;
+
+		case '?': /* \{0,1\} */
+			if (lastep == NULL)
+				goto defchar;
+			*lastep |= RNGE;
+			*ep++ = 0;
+			*ep++ = 1;
 			continue;
 
 		case '\\':

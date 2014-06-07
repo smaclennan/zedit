@@ -144,7 +144,7 @@ Byte Keys[] = {
 	ZWRITE_FILE,		/* C-X W */
 	ZNEXT_BUFFER,		/* C-X X */
 	0,			/* C-X Y */
-	ZEXIT,			/* C-X Z */
+	ZZAP_TO_CHAR,		/* C-X Z */
 	0,0,0,
 	ZGROW_WINDOW,		/* C-X ^ */
 
@@ -198,7 +198,9 @@ Byte Keys[] = {
 	ZABORT,		/* M-M */
 	0,0,0,0,
 	ZSEARCH,		/* M-  */
-	0,0,0,0,0,0,0,
+	0,0,
+	ZCALC,			/* M-# */
+	0,0,0,0,
 	ZBEGINNING_OF_BUFFER,	/* M-( */
 	ZEND_OF_BUFFER,		/* M-) */
 	ZUNMODIFY,		/* M-* */

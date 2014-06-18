@@ -116,9 +116,6 @@ bool bmove(int);
 void bmove1(void);
 void boffset(unsigned long off);
 
-/* Return the character a mark points to. */
-#define markch(mrk)	((mrk)->mpage->pdata[(mrk)->moffset])
-
 #define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)
 /* This does not need to be a macro... just makes it easier to see */
 #define CLEAR_UMARK clear_umark()

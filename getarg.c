@@ -47,7 +47,7 @@ bool _getarg(const char *prompt, char *arg, int max, bool tostart)
 	int tcol, trow;
 
 	tcol = Pcol; trow = Prow;
-	t_goto(tmaxrow() - 1 , 0);			/* display the prompt */
+	t_goto(Rowmax - 1 , 0);			/* display the prompt */
 	tprntstr(prompt);
 	Pawcol = Pcol = strlen(prompt); /* prompts are always simple ascii */
 
@@ -146,7 +146,7 @@ void pout(char *str, bool check)
 {
 	tsetpoint(p_row, p_col * PCOLSIZE);
 	Scrnmarks[p_row].modf = true;
-	if (!check || p_row < tmaxrow() - 2) {
+	if (!check || p_row < Rowmax - 2) {
 		tprntstr(str);
 		tcleol();
 	}
@@ -160,10 +160,10 @@ static void dline(int trow)
 {
 	int i;
 
-	if (trow < tmaxrow() - 2) {
+	if (trow < Rowmax - 2) {
 		tsetpoint(trow, 0);
 		Scrnmarks[trow].modf = true;
-		for (i = 0; i < tmaxcol(); ++i)
+		for (i = 0; i < Colmax; ++i)
 			tprntchar('-');
 	}
 }

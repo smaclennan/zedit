@@ -310,7 +310,7 @@ void Zone_window(void)
 	}
 
 	Curwdo->first = 0;
-	Curwdo->last = tmaxrow() - 2;
+	Curwdo->last = Rowmax - 2;
 	Curwdo->modeflags = INVALID;
 	Curwdo->next = NULL;
 	Whead = Curwdo;

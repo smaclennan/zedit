@@ -328,15 +328,15 @@ int chwidth(Byte ch, int col, bool adjust)
 		return InPaw ? 2 : 0;
 	case '\t':
 		wid = tabsize(col);
-		if (col + wid >= tmaxcol())
-			wid = tmaxcol() - col + Tabsize - 1;
+		if (col + wid >= Colmax)
+			wid = Colmax - col + Tabsize - 1;
 		if (!adjust)
 			wid = MIN(wid, Tabsize);
 		return InPaw ? 2 : wid;
 	default:
 		wid = ((ch & 0x80) && !isprint(ch & 0x7f)) ? 3 : 2;
 		if (adjust) {
-			int delta = col + wid - tmaxcol();
+			int delta = col + wid - Colmax;
 			if (delta >= 0)
 				wid += delta + 1;
 		}

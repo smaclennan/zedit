@@ -194,11 +194,6 @@ extern void (*Nextpart)(void);
 #define T_COMMENT			4
 
 #define tsetpoint(r, c)		(Prow = r, Pcol = c)
-#define tgetrow()		Prow
-#define tgetcol()		Pcol
-#define tmaxrow()		Rowmax
-#define tmaxcol()		Colmax
-extern int Tabsize;
 
 char *zgetcwd(char *cwd, int len);
 #ifdef WIN32
@@ -223,6 +218,7 @@ extern int Clrcol[ROWMAX + 1];		/* Clear if past this - must be Byte */
 extern int Prow, Pcol;			/* Point row and column */
 extern int Colmax, Rowmax;		/* Row and column maximums */
 extern int Tlrow;			/* Last row displayed (-1 for none) */
+extern int Tabsize;
 
 #define ISNL(c)			((c) == '\n')
 

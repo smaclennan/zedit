@@ -87,7 +87,7 @@ void Zprevious_page(void)
 
 	bpnttomrk(Sstart);
 	for (i = wheight() - prefline() - 2; i > 0 && bcrsearch(NL); --i)
-		i -= bgetcol(true, 0) / tmaxcol();
+		i -= bgetcol(true, 0) / Colmax;
 	bmakecol(col, false);
 	reframe();
 }
@@ -99,7 +99,7 @@ void Znext_page(void)
 	bpnttomrk(Sstart);
 	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(NL); --i) {
 		bmove(-1);
-		i -= bgetcol(true, 0) / tmaxcol();
+		i -= bgetcol(true, 0) / Colmax;
 		bmove1();
 	}
 	bmakecol(col, false);

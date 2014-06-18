@@ -61,7 +61,7 @@ void redisplay(void)
 		wdo->modeflags = INVALID;
 
 	tclrwind();
-	for (i = 0; i < tmaxrow() - 2; ++i)
+	for (i = 0; i < Rowmax - 2; ++i)
 		Scrnmarks[i].modf = true;
 	Tlrow = -1;
 
@@ -175,7 +175,7 @@ static void extendedlinemarker(void)
 {
 	int col;
 
-	for (col = tgetcol(); col < tmaxcol() - 1; ++col)
+	for (col = Pcol; col < Colmax - 1; ++col)
 		tprntchar(' ');
 	tstyle(T_BOLD);
 	tprntchar('>');
@@ -204,11 +204,11 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			col = 0;
 			tsetpoint(trow, col);
 			while (!bisend() && !ISNL(Buff()) &&
-			       (col = buff_col()) < tmaxcol()) {
+			       (col = buff_col()) < Colmax) {
 				if (trow == Tlrow &&
 				    Buff() == *lptr &&
 				    Buff() != (Byte)'\376')
-					tgetcol() = col;
+					Pcol = col;
 				else {
 					if (bisatumark())
 						setmark(true);
@@ -227,11 +227,11 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			if (bisatumark() &&
 			    (ISNL(Buff()) || bisstart() || bisend()))
 				setmark(false);
-			if (col >= tmaxcol())
+			if (col >= Colmax)
 				extendedlinemarker();
 			memset(lptr, '\376', Colmax - (lptr - tline));
 			Tlrow = trow;
-			if (tgetcol() < tmaxcol()) {
+			if (Pcol < Colmax) {
 				if (bisend())
 					bshoveit();
 				else if (ISNL(Buff()))
@@ -268,9 +268,9 @@ void reframe(void)
 
 	pmark = bcremrk();
 	for (cnt = prefline(); cnt > 0 && bcrsearch(NL); --cnt)
-			cnt -= bgetcol(true, 0) / tmaxcol();
+			cnt -= bgetcol(true, 0) / Colmax;
 	if (cnt < 0)
-		bmakecol((-cnt) * tmaxcol(), false);
+		bmakecol((-cnt) * Colmax, false);
 	else
 		tobegline();
 	bmrktopnt(Sstart);
@@ -296,10 +296,10 @@ static void modeline(struct wdo *wdo)
 		len = strlen(str) + 3;
 		tprntstr(limit(wdo->wbuff->fname, len));
 	}
-	wdo->modecol = tgetcol();
+	wdo->modecol = Pcol;
 
 	/* space pad the line */
-	for (len = tmaxcol() - tgetcol(); len > 0; --len)
+	for (len = Colmax - Pcol; len > 0; --len)
 		tprntchar(' ');
 	tstyle(T_NORMAL);
 }
@@ -310,8 +310,8 @@ static void modeflags(struct wdo *wdo)
 	unsigned trow, tcol;
 	int mask;
 
-	trow = tgetrow();
-	tcol = tgetcol();
+	trow = Prow;
+	tcol = Pcol;
 
 	if (wdo->modeflags == INVALID)
 		modeline(wdo);
@@ -432,7 +432,7 @@ void vsetmrk(struct mark *mrk)
 
 	Tlrow = -1; /* Needed if mark and point on same row */
 
-	for (row = 0; row < tmaxrow() - 1; ++row)
+	for (row = 0; row < Rowmax - 1; ++row)
 		if (mrkaftermrk(&Scrnmarks[row], mrk)) {
 			if (row > 0)
 				Scrnmarks[row - 1].modf = true;

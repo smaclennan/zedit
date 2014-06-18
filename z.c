@@ -309,7 +309,7 @@ void _putpaw(const char *str)
 	if (InPaw)
 		return;
 
-	tsetpoint(tmaxrow() - 1, 0);
+	tsetpoint(Rowmax - 1, 0);
 	tprntstr(str);
 	tcleol();
 	tsetpoint(trow, tcol);
@@ -447,10 +447,10 @@ int biswhite(void)
 	return Buff() == ' ' || Buff() == '\t';
 }
 
-/* Limit a filename to at most tmaxcol() - 'num' cols */
+/* Limit a filename to at most Colmax - 'num' cols */
 char *limit(char *fname, int num)
 {
-	int off = strlen(fname) - (tmaxcol() - num);
+	int off = strlen(fname) - (Colmax - num);
 	return off > 0 ? fname + off : fname;
 }
 

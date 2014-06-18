@@ -107,7 +107,6 @@ extern struct wdo *Curwdo, *Whead;
 #define bisend()	((Curpage == Curbuff->lastp) && (Curchar >= Curplen))
 #define bisatmrk(m)	((Curpage == (m)->mpage) && (Curchar == (m)->moffset))
 #define mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)
-#define bfname()	(Curbuff->fname)
 
 Byte bpeek(void);
 int batoi(void);

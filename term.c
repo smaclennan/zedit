@@ -83,9 +83,9 @@ void hang_up(int signal)
 
 	InPaw = true;	/* Kludge to turn off error */
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next) {
-		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF) && bfname()) {
+		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF) && Curbuff->fname) {
 			bswitchto(tbuff);
-			bwritefile(bfname());
+			bwritefile(Curbuff->fname);
 		}
 		if (tbuff->child != EOF)
 			unvoke(tbuff);

@@ -747,7 +747,7 @@ static bool matchit(char *extstr, char *str)
 void toggle_mode(int mode)
 {
 	char tmp[PATHMAX], *ext;
-	strcpy(tmp, bfname());
+	strcpy(tmp, Curbuff->fname);
 
 	ext = strrchr(tmp, '.');
 #if ZLIB

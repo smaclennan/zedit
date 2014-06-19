@@ -38,14 +38,8 @@
 #else
 #include <unistd.h>
 #endif
-
 #ifndef WIN32
-#ifdef HAVE_DIRECT
-#include <sys/dir.h>
-#define dirent direct
-#else
 #include <dirent.h>
-#endif
 #endif
 
 #include "buff.h"

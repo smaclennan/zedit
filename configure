@@ -61,8 +61,6 @@ else
     echo "WARNING: No terminal setup found."
 fi
 
-[ -f /usr/include/dirent.h ] || echo "#define HAVE_DIRECT 1" >> config.h
-
 [ "$int16" = 1 ] && echo "#define INT_IS_16BITS" >> config.h
 
 [ "$sysv4" = 1 ] && echo "#define SYSV4" >> config.h

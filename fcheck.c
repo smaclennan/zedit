@@ -20,6 +20,16 @@
 #define FCHECK
 #include "z.h"
 
+#if ZLIB
+#undef Byte
+#include <zlib.h>
+#endif
+#if SPELL
+#include <aspell.h>
+#include <dlfcn.h>
+#endif
+
+
 #include "varray.c"
 #include "funcs.c"
 #include "cnames.c"

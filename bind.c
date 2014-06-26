@@ -185,6 +185,7 @@ Byte Keys[] = {
 	[M(27)] = ZABORT,		/* M-M */
 	[M(' ')] = ZSEARCH,
 	[M('#')] = ZCALC,
+	[M('$')] = ZSPELL_WORD,
 	[M('(')] = ZBEGINNING_OF_BUFFER,
 	[M(')')] = ZEND_OF_BUFFER,
 	[M('*')] = ZUNMODIFY,

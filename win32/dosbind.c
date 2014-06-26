@@ -200,7 +200,8 @@ Byte Keys[] = {
 	ZSEARCH,		/* M-  */
 	0,0,
 	ZCALC,			/* M-# */
-	0,0,0,0,
+	ZSPELL_WORD,		/* M-$ */
+	0,0,0,
 	ZBEGINNING_OF_BUFFER,	/* M-( */
 	ZEND_OF_BUFFER,		/* M-) */
 	ZUNMODIFY,		/* M-* */

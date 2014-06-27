@@ -20,6 +20,9 @@
 #include "z.h"
 #include "keys.h"
 
+#ifdef __cplusplus
+#include "win32/dosbind.c"
+#else
 Byte Lfunc;
 Byte CRdefault = ZNEWLINE;
 
@@ -242,3 +245,4 @@ const char *special_label(int key)
 	else
 		return "???";
 }
+#endif

@@ -229,8 +229,6 @@ char *nocase(const char *);
 int pathfixup(char *, char *);
 bool promptsave(struct buff *tbuff, bool must);
 void pntmove(int, int);
-void pout(char *, bool);
-void pset(int, int, int);
 int prefline(void);
 void _putpaw(const char *str);
 void putpaw(const char *fmt, ...);

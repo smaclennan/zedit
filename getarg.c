@@ -116,7 +116,6 @@ int getplete(const char *prompt, const char *def, char **array,
 }
 
 static int p_row, p_col;
-static int p_ncols = PNUMCOLS;
 
 static void pclear(void)
 {
@@ -132,25 +131,18 @@ static void pclear(void)
 		tcleol();
 		Scrnmarks[i].modf = true;
 	}
-	pset(0, 0, PNUMCOLS);
+	p_row = p_col = 0;
 }
 
-void pset(int row, int col, int ncols)
-{
-	p_row = row;
-	p_col = col;
-	p_ncols = ncols;
-}
-
-void pout(char *str, bool check)
+static void pout(char *str)
 {
 	tsetpoint(p_row, p_col * PCOLSIZE);
 	Scrnmarks[p_row].modf = true;
-	if (!check || p_row < Rowmax - 2) {
+	if (p_row < Rowmax - 2) {
 		tprntstr(str);
 		tcleol();
 	}
-	if (++p_col >= p_ncols) {
+	if (++p_col >= PNUMCOLS) {
 		++p_row;
 		p_col = 0;
 	}
@@ -167,13 +159,13 @@ static void pcmdplete(bool show)
 	cca = Carray;
 	if (show && !len)
 		for (; i < Cnum; ++i, cca += Csize)
-			pout(*cca, true);
+			pout(*cca);
 	else
 		for (; i < Cnum && (rc = strncasecmp(*cca, cmd, len)) <= 0;
 				++i, cca += Csize)
 			if (rc == 0) {
 				if (show)
-					pout(*cca, true);
+					pout(*cca);
 				else if (mstr) {
 					Cret = -1;
 					len1 = nmatch(mstr, *cca);

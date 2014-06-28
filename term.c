@@ -50,7 +50,7 @@ HANDLE hstdin, hstdout;	/* Console in and out handles */
 #error No term driver
 #endif
 
-int Clrcol[ROWMAX + 1];		/* Clear if past this */
+static int Clrcol[ROWMAX + 1];		/* Clear if past this */
 
 int Prow, Pcol;			/* Point row and column */
 static int Srow, Scol;		/* Saved row and column */

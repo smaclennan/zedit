@@ -156,18 +156,6 @@ void pout(char *str, bool check)
 	}
 }
 
-static void dline(int trow)
-{
-	int i;
-
-	if (trow < Rowmax - 2) {
-		tsetpoint(trow, 0);
-		Scrnmarks[trow].modf = true;
-		for (i = 0; i < Colmax; ++i)
-			tprntchar('-');
-	}
-}
-
 static void pcmdplete(bool show)
 {
 	char cmd[STRMAX + 1], **cca, *mstr = NULL;
@@ -203,7 +191,6 @@ static void pcmdplete(bool show)
 			/* Help!!!!*/
 			pclear();
 			pcmdplete(true);
-			dline(p_col ? ++p_row : p_row);
 			return;
 		}
 		strncpy(cmd, mstr, len1);

@@ -20,24 +20,20 @@
 #include "z.h"
 #include <signal.h>
 
-#if defined(HAVE_TERMIOS)
-#include <termios.h>
-static struct termios save_tty;
-static struct termios settty;
-#elif defined(HAVE_TERMIO)
+#ifdef __unix__
+# ifdef HAVE_TERMIO
 #include <termio.h>
 static struct termio save_tty;
 static struct termio settty;
 #define tcgetattr(fd, tty) ioctl(fd, TCGETA, tty)
 #define tcsetattr(fd, type, tty) ioctl(fd, TCSETAW, tty)
-#elif defined(HAVE_SGTTY)
-#include <sgtty.h>
-static struct sgttyb save_tty;
-static struct sgttyb settty;
-static struct tchars savechars;
-static struct tchars setchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-static struct ltchars savelchars;
-static struct ltchars setlchars = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+#undef TCSAFLUSH
+#define TCSAFLUSH TCSETAF
+# else
+#include <termios.h>
+static struct termios save_tty;
+static struct termios settty;
+# endif
 #elif defined(WIN32)
 HANDLE hstdin, hstdout;	/* Console in and out handles */
 
@@ -113,7 +109,7 @@ static void initline(void)
 /* Initalize the terminal. */
 void tinit(void)
 {
-#if defined(HAVE_TERMIOS) || defined(HAVE_TERMIO)
+#if defined(__unix__)
 	tcgetattr(fileno(stdin), &save_tty);
 	tcgetattr(fileno(stdin), &settty);
 	settty.c_iflag = 0;
@@ -122,21 +118,6 @@ void tinit(void)
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(fileno(stdin), TCSANOW, &settty);
-#elif defined(HAVE_SGTTY)
-	gtty(fileno(stdin), &save_tty);
-	gtty(fileno(stdin), &settty);
-
-	/* set CBREAK (raw) mode no ECHO, leave C-Ms alone so we can
-	 * read them */
-	settty.sg_flags |= CBREAK;
-	settty.sg_flags &= ~(ECHO | CRMOD);
-	stty(fileno(stdin), &settty);
-
-	ioctl(fileno(stdin), TIOCGETC, &savechars);
-	ioctl(fileno(stdin), TIOCSETC, &setchars);
-
-	ioctl(fileno(stdin), TIOCGLTC, &savelchars);
-	ioctl(fileno(stdin), TIOCSLTC, &setlchars);
 #elif defined(WIN32)
 	hstdin = GetStdHandle(STD_INPUT_HANDLE);
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -179,14 +160,8 @@ void tinit(void)
 
 void tfini(void)
 {
-#ifdef HAVE_TERMIOS
+#ifdef __unix__
 	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
-#elif defined(HAVE_TERMIO)
-	ioctl(fileno(stdin), TCSETAF, &save_tty);
-#elif defined(HAVE_SGTTY)
-	stty(fileno(stdin), &save_tty);
-	ioctl(fileno(stdin), TIOCSETC, &savechars);
-	ioctl(fileno(stdin), TIOCSLTC, &savelchars);
 #endif
 
 	set_mouse(false);

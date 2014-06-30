@@ -3,7 +3,6 @@
 #if defined(DOS)
 #define INT_IS_16BITS	1
 #elif !defined(WIN32)
-#define HAVE_TERMIOS	1
 #define ZLIB		1	/* Requires zlib -lz */
 #define SPELL		1	/* Requires libaspell */
 #endif

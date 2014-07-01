@@ -48,11 +48,11 @@ HANDLE hstdin, hstdout;	/* Console in and out handles */
 
 static int Clrcol[ROWMAX + 1];		/* Clear if past this */
 
-int Prow, Pcol;			/* Point row and column */
-static int Srow, Scol;		/* Saved row and column */
-int Colmax = EOF, Rowmax;	/* Row and column maximums */
+int Prow, Pcol;				/* Point row and column */
+static int Srow = -1 , Scol = -1;	/* Saved row and column */
+int Colmax = EOF, Rowmax;		/* Row and column maximums */
 
-int ring_bell;			/* tbell called */
+int ring_bell;				/* tbell called */
 
 #ifdef SIGWINCH
 /* This is called if the window has changed size. */
@@ -154,7 +154,6 @@ void tinit(void)
 
 	tsetcursor();
 
-	Srow = Scol = -1;	/* undefined */
 	initline();		/* Curwdo not defined yet */
 }
 

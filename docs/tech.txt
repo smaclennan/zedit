@@ -2,20 +2,33 @@ Minimal stats:
 
 3 buffers with 1 page each:
 
-* kill buffer
-* PAW
-* scratch
+ * kill buffer
+ * PAW
+ * scratch
 
 Marks:
 
-* display
-  * REstart
-  * Sstart
-  * Psstart
-  * Send
-  * was (local to zrefresh)
+ * display
+   * REstart
+   * Sstart
+   * Psstart
+   * Send
+   * was (local to zrefresh)
 
-* window
-  * point
-  * mark
-  * start (display)
+ * window
+   * point
+   * mark
+   * start (display)
+
+
+Page overhead:
+
+page size (currently 1k)
+
+64bit:
+	+ 3 * 8
+32bit:
+	+ 3 * 4
+
+DOS adds 4 bytes
+

@@ -112,6 +112,7 @@ Byte Keys[] = {
 	0,			/* C-X C-_ */
 	/* makedosbind assumes this ends before C-X space */
 
+	[CX('+')] = ZSTATS,
 	[CX('/')] = ZUNDO,
 	[CX('1')] = ZONE_WINDOW,
 	[CX('2')] = ZSPLIT_WINDOW,

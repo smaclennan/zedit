@@ -162,8 +162,7 @@ struct cnames Cnames[] = {
 	{"fill-paragraph",		ZFILL_PARAGRAPH,	0,
 	 C("Uses the FillWidth to reformat the paragraph the Point is in. "
 	   "This is useful if editing has messed up the right margin. A "
-	   "Universal Argument reformats the next Arg paragraphs. A "
-	   "Universal Argument of 0 reformats the entire buffer. When "
+	   "Universal Argument reformats the rest of the buffer. When "
 	   "reformatting the entire buffer, hitting a character will "
 	   "abort the reformat. Not allowed in program mode buffers.")
 	},

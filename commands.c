@@ -277,7 +277,6 @@ void Ztrim_white_space(void)
 
 void Zfill_paragraph(void)
 {	/* Not reentrant - must iterate for arg */
-	bool all;
 	struct mark *tmark, *tmp;
 
 	if (Curbuff->bmode & PROGMODE) {
@@ -286,9 +285,6 @@ void Zfill_paragraph(void)
 		return;
 	}
 	tmark = bcremrk();		/* save the current point */
-	all = Arg == 0;
-	if (all == true)
-		btostart();
 	putpaw("Reformatting...");
 	do {
 		/* mark the end of the paragraph and move the point to
@@ -319,10 +315,10 @@ void Zfill_paragraph(void)
 
 		unmark(tmp);
 		movepast(bisspace, FORWARD); /* setup for next iteration */
-	} while ((all || --Arg > 0) && !bisend() && !tkbrdy());
+	} while (Argp && !bisend() && !tkbrdy());
 
 	clrpaw();
-	if (Arg > 0 || (all && !bisend())) {
+	if (Argp && !bisend()) {
 		putpaw("Aborted");
 		tgetcmd();
 	}

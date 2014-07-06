@@ -134,7 +134,6 @@ Z(Zundo);
 Z(Zunmodify);
 Z(Zuppercase_region);
 Z(Zuppercase_word);
-Z(Zview_line);
 Z(Zyank);
 Z(Zhelp);
 Z(Zhelp_apropos);

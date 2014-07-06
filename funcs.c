@@ -109,7 +109,6 @@ void (*Cmds[][2])() = {
 	{ Zmark_paragraph,		Znotimpl },
 	{ Zuppercase_region,		Zuppercase_region },
 	{ Zlowercase_region,		Zlowercase_region },
-	{ Zview_line,			Znotimpl },
 	{ Zjoin,			Znotimpl },
 	{ Zout_to,			Znotimpl },
 	{ Zmake,			Znotimpl },

@@ -185,7 +185,6 @@ Byte Keys[] = {
 	[M(14)] = ZSCROLL_DOWN,		/* M-C-N */
 	[M(16)] = ZSCROLL_UP,		/* M-C-P */
 	[M(19)] = ZINCREMENTAL_SEARCH,	/* M-C-S */
-	[M(22)] = ZVIEW_LINE,		/* M-C-V */
 	[M(27)] = ZABORT,		/* M-M */
 	[M(' ')] = ZSEARCH,
 	[M('#')] = ZCALC,

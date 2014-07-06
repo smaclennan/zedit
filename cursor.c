@@ -263,19 +263,6 @@ void cleanup_bookmarks(void)
 			free(Bookname[i]);
 }
 
-void Zview_line(void)
-{
-	struct mark pmark;
-
-	bmrktopnt(&pmark);
-	tobegline();
-	bmrktopnt(Sstart);
-	bmove(-1);
-	bmrktopnt(Psstart);
-	Sendp = false;
-	bpnttomrk(&pmark);
-}
-
 void Zredisplay(void)
 {
 	struct buff *buff;

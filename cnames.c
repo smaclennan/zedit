@@ -626,9 +626,6 @@ struct cnames Cnames[] = {
 	 C("Converts the current word starting at the Point to uppercase. It "
 	   "leaves the Point at the end of the word.")
 	},
-	{"view-line",			ZVIEW_LINE,		AN,
-	 C("Makes the Point line the top line in the window.")
-	},
 	{"word-search",			ZWORD_SEARCH,		AN,
 	 C("Search for the word at the point.")
 	},

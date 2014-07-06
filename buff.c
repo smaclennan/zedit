@@ -661,14 +661,6 @@ void bempty(void)
 	undo_clear(Curbuff);
 }
 
-/* Point to off the end of the buffer */
-void bshoveit(void)
-{
-	makecur(Curbuff->lastp);
-	makeoffset(Curplen + 1);
-}
-
-
 /* Swap the point and the mark. */
 void bswappnt(struct mark *tmark)
 {

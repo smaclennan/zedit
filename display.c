@@ -232,9 +232,10 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			memset(lptr, '\376', Colmax - (lptr - tline));
 			Tlrow = trow;
 			if (Pcol < Colmax) {
-				if (bisend())
-					bshoveit();
-				else if (ISNL(Buff()))
+				if (bisend()) {
+					makecur(Curbuff->lastp);
+					makeoffset(Curplen + 1);
+				} else if (ISNL(Buff()))
 					bmove1();
 			}
 		} else

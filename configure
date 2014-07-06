@@ -13,7 +13,6 @@ do_help() {
 	echo "  --enable-dopipes	Enable non-blocking shell commands"
 	echo "  --enable-spell	Enable spell commands"
 	echo "  --enable-zlib		Enable gzip compression support"
-	echo "  --enable-16bitints	Enable if sizeof(int) = 2"
 	echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
 	echo "  --enable-undo		Enable UNDO"
 	echo "  --config-dir <dir>	Default config directory."
@@ -38,7 +37,6 @@ while [ -n "$1" ]; do
 	*-dopipes) dopipes=$enable;;
 	*-spell) spell=$enable;;
 	*-zlib) zlib=$enable;;
-	*-16bitints) int16=$enable;;
 	*-sysv4) sysv4=$enable;;
 	--config-dir) shift; confdir=$1;;
 	*) echo "Unknown arg '$1' ignored";;
@@ -58,8 +56,6 @@ elif [ -f /usr/include/termio.h ]; then
 else
     echo "WARNING: No terminal setup found."
 fi
-
-[ "$int16" = 1 ] && echo "#define INT_IS_16BITS" >> config.h
 
 [ "$sysv4" = 1 ] && echo "#define SYSV4" >> config.h
 

@@ -1,8 +1,6 @@
 /* config.h - Zedit user configurable defines */
 
-#if defined(DOS)
-#define INT_IS_16BITS	1
-#elif !defined(WIN32)
+#if !defined(WIN32) && !defined(DOS)
 #define ZLIB		1	/* Requires zlib -lz */
 #define SPELL		1	/* Requires libaspell */
 #endif

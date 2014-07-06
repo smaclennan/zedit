@@ -528,23 +528,15 @@ unsigned long bline(void)
 	return line;
 }
 
-#ifdef INT_IS_16BITS
 #define MAXMOVE		(0x7fff - 1024)
 
 void boffset(unsigned long off)
-{
+{	/* This works even if int is 16 bits */
 	btostart();
 	for (; off > MAXMOVE; off -= MAXMOVE)
 		bmove(MAXMOVE);
 	bmove(off);
 }
-#else
-void boffset(unsigned long off)
-{
-	btostart();
-	bmove(off);
-}
-#endif
 
 /* Try to put Point in a specific column.
  * Returns actual Point column.

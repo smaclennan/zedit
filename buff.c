@@ -569,23 +569,6 @@ int bmakecol(int col, bool must)
  *
  * Since bmove(1) is used the most, a special call has been made.
  */
-void bmove1(void)
-{
-	if (++Curchar < Curplen)
-		/* within current page */
-		++Curcptr;
-	else if (Curpage->nextp) {
-		/* goto start of next page */
-		makecur(Curpage->nextp);
-		Curchar = 0;
-		Curcptr = Cpstart;
-	} else {
-		/* At EOB */
-		Curchar = Curplen;
-		Curcptr = Cpstart + Curplen;
-	}
-}
-
 bool bmove(int dist)
 {
 	while (dist) {
@@ -618,6 +601,23 @@ bool bmove(int dist)
 		}
 	}
 	return true;
+}
+
+void bmove1(void)
+{
+	if (++Curchar < Curplen)
+		/* within current page */
+		++Curcptr;
+	else if (Curpage->nextp) {
+		/* goto start of next page */
+		makecur(Curpage->nextp);
+		Curchar = 0;
+		Curcptr = Cpstart;
+	} else {
+		/* At EOB */
+		Curchar = Curplen;
+		Curcptr = Cpstart + Curplen;
+	}
 }
 
 /* Put the mark where the point is. */

@@ -11,16 +11,16 @@
 #include "z.h"
 
 /* Dummy's */
-struct buff thebuff;
-struct page thepage;
-struct mark themark;
+static struct buff thebuff;
+static struct page thepage;
+static struct mark themark;
 
 struct buff *Curbuff = &thebuff;
 struct page *Curpage = &thepage;
 
 /* Needed */
-Byte *pdata; /* What Curcptr points into */
-int pdatalen;
+static Byte *pdata; /* What Curcptr points into */
+static int pdatalen;
 
 int Curchar, Curplen;
 Byte *Curcptr;

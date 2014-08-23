@@ -288,7 +288,7 @@ static bool next_replace(Byte *ebuf, int type)
 		return step(ebuf);
 
 	if (bstrsearch(olds, FORWARD)) {
-		bmove(-strlen(olds));
+		bmove(-(int)strlen(olds));
 		return true;
 	}
 

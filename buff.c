@@ -1070,51 +1070,6 @@ bool mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 }
 
 
-/* Low level memory buffer routines */
-
-/* Create a new memory page and link into chain */
-static struct page *newpage(struct buff *tbuff,
-			    struct page *ppage, struct page *npage)
-{
-	struct page *page = (struct page *)calloc(1, sizeof(struct page));
-	if (!page)
-		return NULL;
-
-#ifdef DOS_EMS
-	if (!ems_newpage(page)) {
-		free(page);
-		return NULL;
-	}
-#endif
-
-	page->nextp = npage;
-	page->prevp = ppage;
-	npage ? (npage->prevp = page) : (tbuff->lastp = page);
-	ppage ? (ppage->nextp = page) : (tbuff->firstp = page);
-	++NumPages;
-
-	return page;
-}
-
-/* Free a memory page */
-static void freepage(struct buff *tbuff, struct page *page)
-{
-#ifdef DOS_EMS
-	ems_freepage(page);
-#endif
-
-	if (page->nextp)
-		page->nextp->prevp = page->prevp;
-	else
-		tbuff->lastp = page->prevp;
-	if (page->prevp)
-		page->prevp->nextp = page->nextp;
-	else
-		tbuff->firstp = page->nextp;
-	free((char *)page);
-	--NumPages;
-}
-
 /* Make page current*/
 void makecur(struct page *page)
 {
@@ -1131,37 +1086,6 @@ void makecur(struct page *page)
 	Cpstart = page->pdata;
 	Curmodf = false;
 	Curplen = Curpage->plen;
-}
-
-/* Split the current (full) page. */
-static bool pagesplit(void)
-{
-	struct page *newp;
-	struct mark *btmark;
-
-	newp = newpage(Curbuff, Curpage, Curpage->nextp);
-	if (newp == NULL)
-		return false;
-
-#ifdef DOS_EMS
-	ems_pagesplit(newp, Curmodf);
-#else
-	memmove(newp->pdata, Cpstart + HALFP, HALFP);
-#endif
-	Curmodf = true;
-	Curplen = HALFP;
-	newp->plen = HALFP;
-	for (btmark = Mrklist; btmark; btmark = btmark->prev)
-		if (btmark->mpage == Curpage && btmark->moffset >= HALFP) {
-			btmark->mpage = newp;
-			btmark->moffset -= HALFP;
-		}
-	if (Curchar >= HALFP) {
-		/* new page has Point in it */
-		makecur(newp);
-		makeoffset(Curchar - HALFP);
-	}
-	return true;
 }
 
 /* Peek the previous byte */
@@ -1263,4 +1187,80 @@ void Zstats(void)
 		      (undo_total + 521) / 1024, undo_total ? 'K' : ' ');
 #endif
 	_putpaw(PawStr);
+}
+
+/* Low level memory page routines */
+
+/* Create a new memory page and link into chain */
+static struct page *newpage(struct buff *tbuff,
+			    struct page *ppage, struct page *npage)
+{
+	struct page *page = (struct page *)calloc(1, sizeof(struct page));
+	if (!page)
+		return NULL;
+
+#ifdef DOS_EMS
+	if (!ems_newpage(page)) {
+		free(page);
+		return NULL;
+	}
+#endif
+
+	page->nextp = npage;
+	page->prevp = ppage;
+	npage ? (npage->prevp = page) : (tbuff->lastp = page);
+	ppage ? (ppage->nextp = page) : (tbuff->firstp = page);
+	++NumPages;
+
+	return page;
+}
+
+/* Split the current (full) page. */
+static bool pagesplit(void)
+{
+	struct page *newp;
+	struct mark *btmark;
+
+	newp = newpage(Curbuff, Curpage, Curpage->nextp);
+	if (newp == NULL)
+		return false;
+
+#ifdef DOS_EMS
+	ems_pagesplit(newp, Curmodf);
+#else
+	memmove(newp->pdata, Cpstart + HALFP, HALFP);
+#endif
+	Curmodf = true;
+	Curplen = HALFP;
+	newp->plen = HALFP;
+	for (btmark = Mrklist; btmark; btmark = btmark->prev)
+		if (btmark->mpage == Curpage && btmark->moffset >= HALFP) {
+			btmark->mpage = newp;
+			btmark->moffset -= HALFP;
+		}
+	if (Curchar >= HALFP) {
+		/* new page has Point in it */
+		makecur(newp);
+		makeoffset(Curchar - HALFP);
+	}
+	return true;
+}
+
+/* Free a memory page */
+static void freepage(struct buff *tbuff, struct page *page)
+{
+#ifdef DOS_EMS
+	ems_freepage(page);
+#endif
+
+	if (page->nextp)
+		page->nextp->prevp = page->prevp;
+	else
+		tbuff->lastp = page->prevp;
+	if (page->prevp)
+		page->prevp->nextp = page->nextp;
+	else
+		tbuff->firstp = page->nextp;
+	free((char *)page);
+	--NumPages;
 }

@@ -32,16 +32,18 @@ extern jmp_buf zenv;
  * NOTE: DOS *requires* 1k pages for DOS_EMS.
  */
 #define PSIZE		1024		/* size of page */
-#define HALFP		(PSIZE / 2)	/* half the page size */
 
 struct page {
 #ifdef DOS_EMS
 	Byte *pdata;			/* the page data */
 	Byte emmpage;			/* 16k page */
 	Byte emmoff;			/* offset in page */
+#elif defined(ONE_PAGE)
+	Byte *pdata;			/* the page data */
 #else
 	Byte pdata[PSIZE];		/* the page data */
 #endif
+	int psize;			/* allocated page size */
 	int plen;			/* current length of the page */
 	struct page *nextp, *prevp;	/* list of pages in buffer */
 };

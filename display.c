@@ -155,7 +155,7 @@ void zrefresh(void)
 		tstyle(T_NORMAL);
 		tprntchar((bisend() || ISNL(Buff())) ? ' ' : Buff());
 		t_goto(pntrow, col);
-		was->moffset = PSIZE + 1; /* Invalidate it */
+		was->moffset = Curpage->psize + 1; /* Invalidate it */
 	}
 
 	modeflags(Curwdo);
@@ -516,7 +516,7 @@ pawshift:
 		i = Pcol;
 		tprntchar(bisend() ? ' ' : Buff());
 		Pcol = i;
-		was->moffset = PSIZE + 1;		/* Invalidate it */
+		was->moffset = Curpage->psize + 1;		/* Invalidate it */
 	}
 
 	unmark(pmark);

@@ -168,8 +168,6 @@ int main(int argc, char **argv)
 	Send	= bcremrk();
 	Sendp	= false;
 
-	getchar(); // SAM DBG
-
 	for (; optind < argc; ++optind, ++files)
 		if (pathfixup(path, argv[optind]) == 0)
 			if (findfile(path) && !tbuff)

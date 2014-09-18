@@ -32,7 +32,6 @@ extern jmp_buf zenv;
  * NOTE: DOS *requires* 1k pages for DOS_EMS.
  */
 #define PSIZE		1024		/* size of page */
-#define HALFP		(PSIZE / 2)	/* half the page size */
 
 struct page {
 #ifdef DOS_EMS

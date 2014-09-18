@@ -1191,6 +1191,8 @@ void Zstats(void)
 
 /* Low level memory page routines */
 
+#define HALFP		(PSIZE / 2)	/* half the page size */
+
 /* Create a new memory page and link into chain */
 static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage)

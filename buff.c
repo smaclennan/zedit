@@ -821,36 +821,27 @@ static bool bwritegzip(int fd)
 
 static bool bwritefd(int fd)
 {
-#ifdef DOS_EMS
 	struct page *cur = Curpage;
-#endif
 	struct page *tpage;
 	int n, status = true;
 
 	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
-#ifdef DOS_EMS
-			makecur(tpage);
-#endif
+			makecur(tpage); /* DOS_EMS requires */
 			n = write(fd, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
 		}
 
 	close(fd);
 
-#ifdef DOS_EMS
 	makecur(cur);
-#endif
-
 	return status;
 }
 
 static bool bwritedos(int fd)
 {
-#ifdef DOS_EMS
 	struct page *cur = Curpage;
-#endif
 	struct page *tpage;
 	int i, n, status = true;
 	Byte buf[PSIZE * 2], *p;
@@ -859,9 +850,7 @@ static bool bwritedos(int fd)
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int len = tpage->plen;
-#ifdef DOS_EMS
-			makecur(tpage);
-#endif
+			makecur(tpage); /* DOS_EMS requires */
 			p = buf;
 			for (i = 0; i < tpage->plen; ++i) {
 				if (tpage->pdata[i] == '\n') {
@@ -877,10 +866,7 @@ static bool bwritedos(int fd)
 
 	close(fd);
 
-#ifdef DOS_EMS
 	makecur(cur);
-#endif
-
 	return status;
 }
 

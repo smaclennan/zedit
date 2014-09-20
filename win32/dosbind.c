@@ -20,6 +20,9 @@
 #include "z.h"
 #include "keys.h"
 
+#ifdef __cplusplus
+#include "win32/dosbind.c"
+#else
 Byte Lfunc;
 Byte CRdefault = ZNEWLINE;
 
@@ -109,7 +112,9 @@ Byte Keys[] = {
 	0,			/* C-X C-_ */
 	/* makedosbind assumes this ends before C-X space */
 
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,
+	ZSTATS,			/* C-X + */
+	0,0,0,
 	ZUNDO,			/* C-X / */
 	0,
 	ZONE_WINDOW,		/* C-X 1 */
@@ -192,9 +197,7 @@ Byte Keys[] = {
 	ZSCROLL_UP,		/* M-C-P */
 	0,0,
 	ZINCREMENTAL_SEARCH,	/* M-C-S */
-	0,0,
-	ZVIEW_LINE,		/* M-C-V */
-	0,0,0,0,
+	0,0,0,0,0,0,0,
 	ZABORT,		/* M-M */
 	0,0,0,0,
 	ZSEARCH,		/* M-  */
@@ -262,3 +265,4 @@ const char *special_label(int key)
 	else
 		return "???";
 }
+#endif

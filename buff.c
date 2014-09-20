@@ -52,6 +52,27 @@ static int NumBuffs;
 static int NumPages;
 static int NumMarks;
 
+/* Generally, the bigger the page size the faster the editor however
+ * the more wasted memory. A page size of 1k seems to be a very good trade off.
+ * NOTE: DOS *requires* 1k pages for DOS_EMS.
+ */
+#define PSIZE		1024		/* size of page */
+
+struct page {
+#ifdef DOS_EMS
+	Byte *pdata;			/* the page data */
+	Byte emmpage;			/* 16k page */
+	Byte emmoff;			/* offset in page */
+#elif defined(ONE_PAGE)
+	Byte *pdata;			/* the page data */
+#else
+	Byte pdata[PSIZE];		/* the page data */
+#endif
+	int psize;			/* allocated page size */
+	int plen;			/* current length of the page */
+	struct page *nextp, *prevp;	/* list of pages in buffer */
+};
+
 static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage);
 static void freepage(struct buff *tbuff, struct page *page);
@@ -1308,4 +1329,9 @@ static void freepage(struct buff *tbuff, struct page *page)
 	free((char *)page);
 	--NumPages;
 }
+
+#ifdef DOS_EMS
+/* ems.c needs to know the page structure */
+#include "win32/ems.c"
+#endif
 #endif

@@ -52,6 +52,27 @@ static int NumBuffs;
 static int NumPages;
 static int NumMarks;
 
+/* Generally, the bigger the page size the faster the editor however
+ * the more wasted memory. A page size of 1k seems to be a very good trade off.
+ * NOTE: DOS *requires* 1k pages for DOS_EMS.
+ */
+#define PSIZE		1024		/* size of page */
+
+struct page {
+#ifdef DOS_EMS
+	Byte *pdata;			/* the page data */
+	Byte emmpage;			/* 16k page */
+	Byte emmoff;			/* offset in page */
+#elif defined(ONE_PAGE)
+	Byte *pdata;			/* the page data */
+#else
+	Byte pdata[PSIZE];		/* the page data */
+#endif
+	int psize;			/* allocated page size */
+	int plen;			/* current length of the page */
+	struct page *nextp, *prevp;	/* list of pages in buffer */
+};
+
 static struct page *newpage(struct buff *tbuff,
 			    struct page *ppage, struct page *npage);
 static void freepage(struct buff *tbuff, struct page *page);
@@ -420,7 +441,7 @@ void binsert(Byte byte)
 {
 	struct mark *btmark;
 
-	if (Curplen == PSIZE && !pagesplit())
+	if (Curplen == Curpage->psize && !pagesplit())
 		return;
 	memmove(Curcptr + 1, Curcptr, Curplen - Curchar);
 	*Curcptr++ = byte;
@@ -714,7 +735,7 @@ static void crfixup(void)
 
 	if (raw_mode)
 		return;
-	
+
 	Curbuff->bmode |= CRLF;
 
 	while (bcsearch('\r'))
@@ -775,10 +796,15 @@ int breadfile(char *fname)
 				bclose(fd);
 				return -ENOMEM;
 			}
+#ifndef ONE_PAGE
 			makecur(Curpage->nextp);
+			makeoffset(0);
+#endif
 		}
-		memcpy(Cpstart, buf, len);
-		Curplen = len;
+		memcpy(Curcptr, buf, len);
+		Curcptr += len;
+		Curchar += len;
+		Curplen += len;
 		Curbuff->blen += len;
 	}
 	(void)bclose(fd);
@@ -859,7 +885,7 @@ static bool bwritedos(int fd)
 				}
 				*p++ = tpage->pdata[i];
 			}
-			
+
 			n = write(fd, buf, len);
 			status = n == len;
 		}
@@ -1177,6 +1203,56 @@ void Zstats(void)
 
 /* Low level memory page routines */
 
+#ifdef ONE_PAGE
+/* Create a new memory page or resize old page. */
+static struct page *newpage(struct buff *tbuff,
+			    struct page *ppage, struct page *npage)
+{
+	if (ppage)
+		/* For breadfile: we just want a bigger page */
+		return pagesplit() ? Curpage : NULL;
+
+	/* Brand new page. */
+	struct page *page = (struct page *)calloc(1, sizeof(struct page));
+	if (!page)
+		return NULL;
+	page->pdata = malloc(PSIZE);
+	if (!page->pdata) {
+		free(page);
+		return NULL;
+	}
+	tbuff->firstp = tbuff->lastp = page;
+	page->psize = PSIZE;
+
+	++NumPages;
+
+	return page;
+}
+
+/* Make a full page larger. */
+static bool pagesplit(void)
+{
+	Byte *newp = realloc(Curpage->pdata, Curpage->psize + PSIZE);
+	if (!newp)
+		return false;
+	Curpage->pdata = newp;
+	Curpage->psize += PSIZE;
+	Cpstart = newp;
+	Curcptr = newp + Curchar;
+	++NumPages;
+	return true;
+}
+
+/* Free a memory page */
+static void freepage(struct buff *tbuff, struct page *page)
+{
+	NumPages -= page->psize / PSIZE;
+	free(page->pdata);
+	free(page);
+	tbuff->firstp = tbuff->lastp = NULL;
+	--NumPages;
+}
+#else
 #define HALFP		(PSIZE / 2)	/* half the page size */
 
 /* Create a new memory page and link into chain */
@@ -1187,6 +1263,7 @@ static struct page *newpage(struct buff *tbuff,
 	if (!page)
 		return NULL;
 
+	page->psize = PSIZE;
 #ifdef DOS_EMS
 	if (!ems_newpage(page)) {
 		free(page);
@@ -1252,3 +1329,9 @@ static void freepage(struct buff *tbuff, struct page *page)
 	free((char *)page);
 	--NumPages;
 }
+
+#ifdef DOS_EMS
+/* ems.c needs to know the page structure */
+#include "win32/ems.c"
+#endif
+#endif

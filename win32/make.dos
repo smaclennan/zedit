@@ -7,7 +7,7 @@ O=bcmds.obj buff.obj calc.obj cnames.obj comment.obj commands.obj \
 	getarg.obj help.obj reg.obj shell.obj spell.obj srch.obj \
 	undo.obj vars.obj window.obj varray.obj z.obj \
 	getfname.obj tags.obj term.obj zgrep.obj dosbind.obj \
-	doskbd.obj zwin32.obj fnmatch.obj ems.obj
+	doskbd.obj zwin32.obj fnmatch.obj
 
 .c.obj:
 	$(CC) -c $(CFLAGS) $<

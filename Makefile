@@ -12,6 +12,9 @@ CC = cc
 D = -O2
 CFLAGS += -Wall $(D:1=-g)
 
+# Enable and all buffers have only one contiguous page.
+#CFLAGS += -DONE_PAGE
+
 LIBS += -lz
 LIBS += -ldl
 

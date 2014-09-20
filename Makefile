@@ -7,13 +7,13 @@ CC = cc
 #CC = g++
 #CC = clang -fno-color-diagnostics
 
-# Enable and all buffers have only one contiguous page.
-#CFLAGS += -DONE_PAGE
-
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
 D = -O2
 CFLAGS += -Wall $(D:1=-g)
+
+# Enable and all buffers have only one contiguous page.
+#CFLAGS += -DONE_PAGE
 
 LIBS += -lz
 LIBS += -ldl

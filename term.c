@@ -435,6 +435,9 @@ void tstyle(int style)
 	case T_COMMENT:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_RED);
 		break;
+	case T_REGION:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_BLUE);
+		break;
 	}
 #elif defined(DOS)
 	if (cur_style == T_BOLD)
@@ -459,6 +462,10 @@ void tstyle(int style)
 	case T_COMMENT:
 		textcolor(RED);
 		break;
+	case T_REGION:
+		textcolor(WHITE);
+		textbackground(BLUE);
+		break;
 	}
 #else
 	switch (style) {
@@ -472,6 +479,8 @@ void tstyle(int style)
 		fputs("\033[1m", stdout); break;
 	case T_COMMENT:
 		fputs("\033[31m", stdout); break; /* red */
+	case T_REGION:
+		fputs("\033[0;47m", stdout); break;
 	}
 #endif
 

@@ -182,6 +182,28 @@ static void extendedlinemarker(void)
 	tstyle(T_NORMAL);
 }
 
+static bool in_region(struct mark *umark, struct mark *pmark)
+{
+#if SHOW_REGION
+	if (!umark || !pmark)
+		return false;
+
+	if (bisaftermrk(umark) && bisbeforemrk(pmark))
+		return true;
+
+	if (bisaftermrk(pmark) && bisbeforemrk(umark))
+		return true;
+#endif
+
+	return false;
+}
+
+#if SHOW_REGION
+#define REGION_ON Curbuff->umark
+#else
+#define REGION_ON false
+#endif
+
 /*
  * Do the acutal screen update.
  * Curwdo is not valid.
@@ -197,7 +219,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 		resetcomments();
 
 	for (trow = from; trow < to; ++trow) {
-		if (Scrnmarks[trow].modf || !bisatmrk(&Scrnmarks[trow])) {
+		if (Scrnmarks[trow].modf || !bisatmrk(&Scrnmarks[trow]) || REGION_ON) {
 			Scrnmarks[trow].modf = false;
 			bmrktopnt(&Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
@@ -205,7 +227,11 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			tsetpoint(trow, col);
 			while (!bisend() && !ISNL(Buff()) &&
 			       (col = buff_col()) < Colmax) {
-				if (trow == Tlrow &&
+				if (in_region(Curbuff->umark, pmark)) {
+					tstyle(T_REGION);
+					tprntchar(Buff());
+					tstyle(T_NORMAL);
+				} else if (trow == Tlrow &&
 				    Buff() == *lptr &&
 				    Buff() != (Byte)'\376')
 					Pcol = col;

@@ -1165,7 +1165,14 @@ void set_umark(struct mark *tmark)
 void clear_umark(void)
 {
 	if (Curbuff->umark) {
+#if SHOW_REGION
+		int i;
+		for (i = 0; i < ROWMAX; ++i)
+			Scrnmarks[i].modf = true;
+		Tlrow = -1;
+#else
 		vsetmrk(Curbuff->umark);
+#endif
 		if (freeumark)
 			unmark(Curbuff->umark);
 		else

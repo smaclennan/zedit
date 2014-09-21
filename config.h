@@ -13,6 +13,7 @@
  */
 #if defined(__unix__)
 #define DOPIPES 1
+#define SHOW_REGION 1
 #elif !defined(DOS)
 #define DOPOPEN 1
 #endif

@@ -186,6 +186,7 @@ extern void (*Nextpart)(void);
 #define T_REVERSE			2
 #define T_BOLD				3
 #define T_COMMENT			4
+#define T_REGION			5
 
 #define tsetpoint(r, c)		(Prow = r, Pcol = c)
 

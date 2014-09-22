@@ -491,7 +491,8 @@ void tstyle(int style)
 void tbell(void)
 {
 	ring_bell = 1;
-	Curwdo->modeflags = INVALID;
+	if (Curwdo)
+		Curwdo->modeflags = INVALID;
 }
 
 void tsetcursor(bool hide)

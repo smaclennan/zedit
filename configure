@@ -6,6 +6,7 @@ zlib=notset
 
 undo=1
 dopipes=1
+show_region=1
 
 do_help() {
 	echo "Optional features:"
@@ -15,6 +16,7 @@ do_help() {
 	echo "  --enable-zlib		Enable gzip compression support"
 	echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
 	echo "  --enable-undo		Enable UNDO"
+	echo "  --enable-show-region	Enable show region"
 	echo "  --config-dir <dir>	Default config directory."
 	echo
 	echo "To disable a feature replace --enable with --disable."
@@ -38,6 +40,8 @@ while [ -n "$1" ]; do
 	*-spell) spell=$enable;;
 	*-zlib) zlib=$enable;;
 	*-sysv4) sysv4=$enable;;
+	*-undo) undo=$enable;;
+	*-show-region) show_region=$enable;;
 	--config-dir) shift; confdir=$1;;
 	*) echo "Unknown arg '$1' ignored";;
 	esac
@@ -73,6 +77,7 @@ fi
 set_one SPELL $spell
 set_one ZLIB $zlib
 set_one UNDO $undo
+set_one SHOW_REGION $show_region
 
 if [ "$spell" = 1 ]; then
     sed 's/^#LIBS += -ldl/LIBS += -ldl/' Makefile > Makefile.tmp

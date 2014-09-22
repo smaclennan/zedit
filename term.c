@@ -37,9 +37,9 @@ static struct termios settty;
 #elif defined(WIN32)
 HANDLE hstdin, hstdout;	/* Console in and out handles */
 
-#define WHITE_ON_BLACK	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED)
-#define BLACK_ON_WHITE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
-#define BLACK_ON_RED	(BACKGROUND_RED)
+#define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
+#define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
+#define ATTR_REGION	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
 #elif defined(DOS)
 #include <conio.h>
 #else
@@ -373,7 +373,7 @@ void tcleol(void)
 		/* This is to clear a possible mark */
 		if (Clrcol[Prow])
 			where.X = Clrcol[Prow] - 1;
-		FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, 1,
+		FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, 1,
 					   where, &written);
 #elif defined(DOS)
 		tforce();
@@ -392,7 +392,7 @@ void tclrwind(void)
 	COORD where;
 	DWORD written;
 	where.X = where.Y = 0;
-	FillConsoleOutputAttribute(hstdout, WHITE_ON_BLACK, Colmax * Rowmax,
+	FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, Colmax * Rowmax,
 				   where, &written);
 	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
 				   where, &written);
@@ -417,26 +417,26 @@ void tstyle(int style)
 #ifdef WIN32
 	switch (style) {
 	case T_NORMAL:
-		SetConsoleTextAttribute(hstdout, WHITE_ON_BLACK);
+		SetConsoleTextAttribute(hstdout, ATTR_NORMAL);
 		break;
 	case T_STANDOUT: /* modeline */
 		if (ring_bell)
-			SetConsoleTextAttribute(hstdout, BLACK_ON_RED);
+			SetConsoleTextAttribute(hstdout, BACKGROUND_RED);
 		else
-			SetConsoleTextAttribute(hstdout, BLACK_ON_WHITE);
+			SetConsoleTextAttribute(hstdout, ATTR_REVERSE);
 		break;
 	case T_REVERSE:
-		SetConsoleTextAttribute(hstdout, BLACK_ON_WHITE);
+		SetConsoleTextAttribute(hstdout, ATTR_REVERSE);
 		break;
 	case T_BOLD:
 		SetConsoleTextAttribute(hstdout,
-					WHITE_ON_BLACK | FOREGROUND_INTENSITY);
+					ATTR_NORMAL | FOREGROUND_INTENSITY);
 		break;
 	case T_COMMENT:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_RED);
 		break;
 	case T_REGION:
-		SetConsoleTextAttribute(hstdout, BACKGROUND_BLUE);
+		SetConsoleTextAttribute(hstdout, ATTR_REGION);
 		break;
 	}
 #elif defined(DOS)

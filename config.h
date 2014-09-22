@@ -6,6 +6,7 @@
 #endif
 
 #define UNDO		1	/* EXPERIMENTAL, but portable! */
+#define SHOW_REGION	1
 
 /* DOPIPES: Output in real time and you can continue editing.
  * DOPOPEN: Output in real time but you must wait until command complete.
@@ -13,7 +14,6 @@
  */
 #if defined(__unix__)
 #define DOPIPES 1
-#define SHOW_REGION 1
 #elif !defined(DOS)
 #define DOPOPEN 1
 #endif

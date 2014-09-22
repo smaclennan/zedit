@@ -152,7 +152,7 @@ void tinit(void)
 		exit(1);
 	}
 
-	tsetcursor();
+	tsetcursor(false);
 
 	initline();		/* Curwdo not defined yet */
 }
@@ -494,10 +494,12 @@ void tbell(void)
 	Curwdo->modeflags = INVALID;
 }
 
-void tsetcursor(void)
+void tsetcursor(bool hide)
 {
 #ifdef DOS
-	if (Curbuff->bmode & OVERWRITE)
+	if (hide)
+		_setcursortype(_NOCURSOR);
+	else if (Curbuff->bmode & OVERWRITE)
 		_setcursortype(_NORMALCURSOR);
 	else
 		_setcursortype(_SOLIDCURSOR);

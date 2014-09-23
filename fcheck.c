@@ -81,6 +81,50 @@ static int noinclude(int argc, char *argv[], const char *inc)
 	return 1; /* not found */
 }
 
+static int build_zversion_h(void)
+{
+	int mods = 0;
+	char version[42];
+	strcpy(version, "N/A");
+
+	FILE *fp = fopen(".git/refs/heads/master", "r");
+	if (fp) {
+		if (fgets(version, sizeof(version), fp))
+			strtok(version, "\r\n");
+		fclose(fp);
+
+		fp = popen("git status --porcelain", "r");
+		if (fp) {
+			char line[80];
+
+			while (fgets(line, sizeof(line), fp))
+				if (strncmp(line, "??", 2))
+					++mods;
+			fclose(fp);
+		}
+#ifdef __unix__
+		else
+			puts("Warning: git status failed.");
+#endif
+	} else if (errno == ENOENT)
+		puts("Warning: .git does not exist or is incomplete.");
+	else
+		perror(".git/refs/heads/master");
+
+	fp = fopen("zversion.h", "w");
+	if (!fp) {
+		perror("zversion.h");
+		return 1;
+	}
+
+	fprintf(fp, "#define ZEDIT_VERSION\t\"%s\"\n", VERSION);
+	fprintf(fp, "#define GIT_COMMIT\t\"%s\"\n", version);
+	fprintf(fp, "#define GIT_MOD\t\t%d\n", mods);
+	fclose(fp);
+
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	int i, s1, s2, err = 0;
@@ -201,6 +245,9 @@ int main(int argc, char *argv[])
 		       (int)sizeof(struct avar), (int)sizeof(char *));
 		err = 1;
 	}
+
+	if (err == 0)
+		err = build_zversion_h();
 
 #if ZLIB
 	if (noinclude(argc, argv, "zlib.h")) {

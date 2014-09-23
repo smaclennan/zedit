@@ -18,6 +18,7 @@
  */
 
 #include "z.h"
+#include "zversion.h"
 #include <stdarg.h>
 
 bool Initializing = true;

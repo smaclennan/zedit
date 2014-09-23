@@ -71,5 +71,5 @@ install: all
 	install -s ze $(DESTDIR)/bin/z
 
 clean:
-	rm -f *.o ze fcheck core* TAGS valgrind.out
+	rm -f *.o zversion.h ze fcheck core* TAGS valgrind.out
 	@$(MAKE) -C docs clean

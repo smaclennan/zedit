@@ -68,6 +68,7 @@ void Dbg(const char *fmt, ...) { ((void)fmt); }
 void mouse_scroll(int row, bool down) {}
 void mouse_point(int row, int col, bool set_mark) {}
 
+#if ZLIB || SPELL
 static int noinclude(int argc, char *argv[], const char *inc)
 {
 	char path[PATHMAX];
@@ -86,6 +87,7 @@ static int noinclude(int argc, char *argv[], const char *inc)
 
 	return 1; /* not found */
 }
+#endif
 
 static int build_zversion_h(void)
 {
@@ -94,7 +96,9 @@ static int build_zversion_h(void)
 	char version[42];
 	strcpy(version, "N/A");
 
-#ifdef WIN32
+#ifdef DOS
+	fp = fopen("git~00.___/refs/heads/master", "r");
+#elif defined(WIN32)
 	fp = fopen("../.git/refs/heads/master", "r");
 #else
 	fp = fopen(".git/refs/heads/master", "r");

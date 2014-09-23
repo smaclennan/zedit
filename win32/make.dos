@@ -13,17 +13,21 @@ O=bcmds.obj buff.obj calc.obj cnames.obj comment.obj commands.obj \
 	$(CC) -c $(CFLAGS) $<
 	tlib zedit.lib +-$@
 
-all:    $(ZEXE)
+all:    fcheck.exe $(ZEXE)
 
 $(ZEXE): $(O) z.obj
-	$(CC) z.obj $(O2) zedit.lib $(LIBS)
+	$(CC) z.obj zedit.lib $(LIBS)
 
 # Don't call it fcheck.exe. We want to force a rebuild.
 fcheck: fcheck.c
 	$(CC) $(CFLAGS) fcheck.c
 	fcheck.exe
 
-z.obj: z.c
+fcheck.exe: fcheck.c
+	$(CC) $(CFLAGS) fcheck.c
+	fcheck.exe
+
+z.obj: z.c zversion.h
 	$(CC) -c $(CFLAGS) z.c
 
 dosbind.obj: win32\dosbind.c
@@ -52,3 +56,4 @@ clean:
 	del zedit.bak
 	del z.exe
 	del fcheck.exe
+	del zversion.h

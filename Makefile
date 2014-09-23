@@ -7,10 +7,16 @@ CC = cc
 #CC = g++
 #CC = clang -fno-color-diagnostics
 
+# Set this if zlib.h is not in /usr/include
+#ZLIBINC=-I/usr/include
+
+# Set this if aspell.h is not in /usr/include
+#ASPELLINC=-I/usr/include
+
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
 D = -O2
-CFLAGS += -Wall $(D:1=-g)
+CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
 
 # Enable and all buffers have only one contiguous page.
 #CFLAGS += -DONE_PAGE
@@ -51,7 +57,7 @@ $(ZEXE): $O
 
 fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c vars.h keys.h
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
-	@./fcheck
+	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
 # Make all c files depend on all .h files
 *.o: *.h

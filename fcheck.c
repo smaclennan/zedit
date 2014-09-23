@@ -20,16 +20,6 @@
 #define FCHECK
 #include "z.h"
 
-#if ZLIB
-#undef Byte
-#include <zlib.h>
-#endif
-#if SPELL
-#include <aspell.h>
-#include <dlfcn.h>
-#endif
-
-
 #include "varray.c"
 #include "funcs.c"
 #include "cnames.c"
@@ -71,6 +61,25 @@ void Dbg(const char *fmt, ...) { ((void)fmt); }
 
 void mouse_scroll(int row, bool down) {}
 void mouse_point(int row, int col, bool set_mark) {}
+
+static int noinclude(int argc, char *argv[], const char *inc)
+{
+	char path[PATHMAX];
+	int arg;
+
+	snprintf(path, sizeof(path), "/usr/include/%s", inc);
+	if (access(path, F_OK) == 0)
+		return 0; /* found it */
+
+	for (arg = 1; arg < argc; ++arg)
+		if (strncmp(argv[arg], "-I", 2) == 0) {
+			snprintf(path, sizeof(path), "%s/%s", argv[arg] + 2, inc);
+			if (access(path, F_OK) == 0)
+				return 0; /* found it */
+		}
+
+	return 1; /* not found */
+}
 
 int main(int argc, char *argv[])
 {
@@ -192,6 +201,25 @@ int main(int argc, char *argv[])
 		       (int)sizeof(struct avar), (int)sizeof(char *));
 		err = 1;
 	}
+
+#if ZLIB
+	if (noinclude(argc, argv, "zlib.h")) {
+		puts("Cound not find zlib.h... disabling zlib support.");
+		puts("Maybe set ZLIBINC in Makefile?");
+		system("sed -i 's:^#define ZLIB://#define ZLIB:' config.h");
+		system("sed -i 's/^LIBS += -lz/#LIBS += -lz/' Makefile");
+	}
+#endif
+#if SPELL
+	if (noinclude(argc, argv, "aspell.h") ||
+	    noinclude(argc, argv, "dlfcn.h")) {
+		puts("Cound not find aspell.h and/or dlfcn.h..."
+		     "disabling spell support.");
+		puts("Maybe set ASPELLINC in Makefile?");
+		system("sed -i 's:^#define SPELL://#define SPELL:' config.h");
+		system("sed -i 's/^LIBS += -ldl/#LIBS += -ldl/' Makefile");
+	}
+#endif
 
 	return err;
 }

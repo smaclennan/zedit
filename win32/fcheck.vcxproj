@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{58387939-E9D2-4F26-9452-6B25943EB75E}</ProjectGuid>
+    <ProjectGuid>{9AF9DCE2-D332-44E7-9CF7-79A87199B54C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>zedit</RootNamespace>
+    <RootNamespace>fcheck</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -41,7 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <CustomBuildBeforeTargets>Build</CustomBuildBeforeTargets>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -52,16 +53,20 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\win32</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <CustomBuildStep>
-      <Command>c:/users/sam/source/zedit/win32/debug/fcheck.exe</Command>
-      <Outputs>zversion.h</Outputs>
+      <Command>
+      </Command>
+      <Inputs>
+      </Inputs>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -72,8 +77,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -83,42 +87,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\bcmds.c" />
-    <ClCompile Include="..\bind.c" />
-    <ClCompile Include="..\buff.c" />
-    <ClCompile Include="..\calc.c" />
-    <ClCompile Include="..\cnames.c" />
-    <ClCompile Include="..\commands.c" />
-    <ClCompile Include="..\comment.c" />
-    <ClCompile Include="..\cursor.c" />
-    <ClCompile Include="..\delete.c" />
-    <ClCompile Include="..\display.c" />
-    <ClCompile Include="..\file.c" />
-    <ClCompile Include="..\funcs.c" />
-    <ClCompile Include="..\getarg.c" />
-    <ClCompile Include="..\getfname.c" />
-    <ClCompile Include="..\help.c" />
-    <ClCompile Include="..\reg.c" />
-    <ClCompile Include="..\shell.c" />
-    <ClCompile Include="..\spell.c" />
-    <ClCompile Include="..\srch.c" />
-    <ClCompile Include="..\tags.c" />
-    <ClCompile Include="..\term.c" />
-    <ClCompile Include="..\undo.c" />
-    <ClCompile Include="..\varray.c" />
-    <ClCompile Include="..\vars.c" />
-    <ClCompile Include="..\window.c" />
-    <ClCompile Include="..\z.c" />
-    <ClCompile Include="..\zgrep.c" />
-    <ClCompile Include="fnmatch.c" />
-    <ClCompile Include="winkbd.c" />
-    <ClCompile Include="zwin32.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\config.h" />
-    <ClInclude Include="..\z.h" />
-    <ClInclude Include="winkeys.h" />
-    <ClInclude Include="zwin32.h" />
+    <ClCompile Include="..\fcheck.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zedit", "zedit.vcxproj", "{58387939-E9D2-4F26-9452-6B25943EB75E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9AF9DCE2-D332-44E7-9CF7-79A87199B54C} = {9AF9DCE2-D332-44E7-9CF7-79A87199B54C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fcheck", "fcheck.vcxproj", "{9AF9DCE2-D332-44E7-9CF7-79A87199B54C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{58387939-E9D2-4F26-9452-6B25943EB75E}.Debug|Win32.Build.0 = Debug|Win32
 		{58387939-E9D2-4F26-9452-6B25943EB75E}.Release|Win32.ActiveCfg = Release|Win32
 		{58387939-E9D2-4F26-9452-6B25943EB75E}.Release|Win32.Build.0 = Release|Win32
+		{9AF9DCE2-D332-44E7-9CF7-79A87199B54C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9AF9DCE2-D332-44E7-9CF7-79A87199B54C}.Debug|Win32.Build.0 = Debug|Win32
+		{9AF9DCE2-D332-44E7-9CF7-79A87199B54C}.Release|Win32.ActiveCfg = Release|Win32
+		{9AF9DCE2-D332-44E7-9CF7-79A87199B54C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -463,3 +463,20 @@ char *lastpart(char *fname)
 	else
 		return fname;
 }
+
+void Zversion(void)
+{
+#ifdef __unix__
+	/* With the Linux 3.17 kernel the longest sha1 commit needed
+	 * to be unique is 11 chars. Zedit only needs 9. So 12 chars
+	 * should be safe.
+	 */
+	char commit[13];
+
+	snprintf(commit, sizeof(commit), GIT_COMMIT);
+	putpaw("Zedit %s %s %c", VERSION, commit, GIT_MOD > 0 ? '+' : ' ');
+#else
+	putpaw("Zedit %s", VERSION); /* Not very useful :( */
+#endif
+	Arg = 0;
+}

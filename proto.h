@@ -145,6 +145,7 @@ Z(Zword_search);
 Z(Zspell_word);
 Z(Ztag);
 Z(Ztag_word);
+Z(Zversion);
 Z(Zzap_to_char);
 
 Z(pinsert);

@@ -626,6 +626,11 @@ struct cnames Cnames[] = {
 	 C("Converts the current word starting at the Point to uppercase. It "
 	   "leaves the Point at the end of the word.")
 	},
+	{"version",			ZVERSION,		AI,
+	 C("Display the current version including git commit on Unix systems. "
+	   "A + after the git commit means that the code was modified after the "
+	   "commit.")
+	},
 	{"word-search",			ZWORD_SEARCH,		AN,
 	 C("Search for the word at the point.")
 	},

@@ -34,6 +34,9 @@ CFILES = bcmds.c bind.c buff.c calc.c cnames.c \
 
 O := $(CFILES:.c=.o)
 
+GIT_COMMIT=$(shell cat .git/refs/heads/master)
+GIT_MOD=$(shell git status --porcelain | fgrep -v '??' | wc -l)
+
 #################
 
 #
@@ -54,6 +57,9 @@ all:	fcheck $(ZEXE)
 $(ZEXE): $O
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
+
+z.o:	z.c
+	$(QUIET_CC)$(CC) -c $(CFLAGS) -DGIT_COMMIT=\"$(GIT_COMMIT)\" -DGIT_MOD=$(GIT_MOD) $<
 
 fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c vars.h keys.h
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)

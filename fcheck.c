@@ -27,6 +27,12 @@
 #define install_ints()
 #include "doskbd.c"
 #include "dosbind.c"
+#elif defined(WIN32)
+#define zrefresh()
+HANDLE hstdin;
+int Colmax, Rowmax;
+#include "winkbd.c"
+#include "bind.c"
 #else
 #include "kbd.c"
 #include "bind.c"
@@ -83,16 +89,22 @@ static int noinclude(int argc, char *argv[], const char *inc)
 
 static int build_zversion_h(void)
 {
+	FILE *fp;
 	int mods = 0;
 	char version[42];
 	strcpy(version, "N/A");
 
-	FILE *fp = fopen(".git/refs/heads/master", "r");
+#ifdef WIN32
+	fp = fopen("../.git/refs/heads/master", "r");
+#else
+	fp = fopen(".git/refs/heads/master", "r");
+#endif
 	if (fp) {
 		if (fgets(version, sizeof(version), fp))
 			strtok(version, "\r\n");
 		fclose(fp);
 
+#ifdef __unix__
 		fp = popen("git status --porcelain", "r");
 		if (fp) {
 			char line[80];
@@ -101,9 +113,7 @@ static int build_zversion_h(void)
 				if (strncmp(line, "??", 2))
 					++mods;
 			fclose(fp);
-		}
-#ifdef __unix__
-		else
+		} else
 			puts("Warning: git status failed.");
 #endif
 	} else if (errno == ENOENT)

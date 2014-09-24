@@ -109,12 +109,13 @@ static int build_zversion_h(void)
 		fclose(fp);
 
 #ifdef __unix__
-		fp = popen("git status --porcelain", "r");
+		/* Suse doesn't support -s + others */
+		fp = popen("git status --untracked-files=no", "r");
 		if (fp) {
 			char line[80];
 
 			while (fgets(line, sizeof(line), fp))
-				if (strncmp(line, "??", 2))
+				if (strncmp(line, "#\t", 2) == 0)
 					++mods;
 			fclose(fp);
 		} else

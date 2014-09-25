@@ -80,14 +80,30 @@ static Byte tgetkb(void)
 	return cstack[cptr];
 }
 
+/* xterm supports motion events but rxvt does not */
 void set_mouse(bool enable)
 {
-#ifdef MOUSE
-	if (enabled)
-		fputs("\033[?9h", stdout);
-	else
-		fputs("\033[?9l", stdout);
-#endif
+	static int is_real_xterm = -1;
+
+	if (enable) {
+		char *term = getenv("TERM");
+		if (term &&
+		    (strncmp(term, "xterm", 5) == 0 ||
+		     strncmp(term, "rxvt", 4) == 0)) {
+			if (getenv("XTERM_VERSION") || getenv("XTERM_LOCALE")) {
+				is_real_xterm = 1;
+				write(1, "\033[?1002h", 8);
+			} else {
+				is_real_xterm = 0;
+				write(1, "\033[?1000h", 8);
+			}
+		}
+	} else {
+		if (is_real_xterm == 1)
+			write(1, "\033[?1002l", 8);
+		else if (is_real_xterm == 0)
+			write(1, "\033[?1000l", 8);
+	}
 }
 
 
@@ -100,12 +116,32 @@ static int do_mouse(void)
 	col = tgetkb() - 33; /* zero based */
 	row = tgetkb() - 33; /* zero based */
 
-	switch (button) {
-	case 96: mouse_scroll(row, false); break;
-	case 97: mouse_scroll(row, true); break;
-
-	case 94: mouse_point(row, col, true); break;
-	default: mouse_point(row, col, false); break;
+	switch (button & 0x60) {
+	case 0x20:
+		/* button event */
+		switch (button & 3) {
+		case 0:
+		case 1:
+			mouse_point(row, col, false);
+			break;
+		case 2:
+			mouse_point(row, col, true);
+			break;
+		case 3:
+			/* release */
+			break;
+		}
+		break;
+	case 0x40:
+		/* motion event */
+		mouse_point(row, col, true);
+		break;
+	case 0x60:
+		/* scroll wheel */
+		mouse_scroll(row, button & 1);
+		break;
+	default:
+		printf("Unknown event\n");
 	}
 
 	return TC_MOUSE;

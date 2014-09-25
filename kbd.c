@@ -170,10 +170,11 @@ static int do_mouse(void)
 }
 
 #if GPM_MOUSE
+static Gpm_Event event;
+Gpm_Event *need_mouse_cursor;
+
 void handle_gpm_mouse(void)
 {
-	Gpm_Event event;
-
 	Gpm_GetEvent(&event);
 	
 	switch (GPM_BARE_EVENTS(event.type)) {
@@ -188,7 +189,7 @@ void handle_gpm_mouse(void)
 	case GPM_UP: break;
 	case GPM_MOVE:
 		switch (event.wdy) {
-		case 0:  GPM_DRAWPOINTER(&event); break;
+		case 0:  need_mouse_cursor = &event; break;
 		case -1: mouse_scroll(event.y, true); break;
 		case 1:  mouse_scroll(event.y, false); break;
 		}

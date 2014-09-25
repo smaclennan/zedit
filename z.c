@@ -137,8 +137,17 @@ static void fd_init(void) {}
 void execute(void)
 {
 	zrefresh();
-
+	
 #if DOPIPES
+#if GPM_MOUSE
+	extern Gpm_Event *need_mouse_cursor;
+	
+	if (need_mouse_cursor) {
+		GPM_DRAWPOINTER(need_mouse_cursor);
+		need_mouse_cursor = NULL;
+	}
+#endif	
+
 	if (tkbrdy() || Cmdpushed != -1)
 		dotty();
 	else {

@@ -115,8 +115,10 @@ static int build_zversion_h(void)
 			char line[80];
 
 			while (fgets(line, sizeof(line), fp))
-				if (strncmp(line, "#\t", 2) == 0)
-					++mods;
+				if (strncmp(line, "#\t", 2) == 0) {
+					mods = 1;
+					break;
+				}
 			fclose(fp);
 		} else
 			puts("Warning: git status failed.");
@@ -125,8 +127,8 @@ static int build_zversion_h(void)
 		puts("Warning: .git does not exist or is incomplete.");
 	else
 		perror(".git/refs/heads/master");
-
-	fp = fopen("zversion.h", "w");
+	
+	fp = fopen("zversion.h.new", "w");
 	if (!fp) {
 		perror("zversion.h.new");
 		return 1;
@@ -137,7 +139,14 @@ static int build_zversion_h(void)
 	fprintf(fp, "#define GIT_MOD\t\t%d\n", mods);
 	fclose(fp);
 
-	return 0;
+#ifdef __unix__
+	if (system("cmp -s zversion.h.new zversion.h"))
+		rename("zversion.h.new", "zversion.h");
+	else
+		unlink("zversion.h.new");
+#endif
+
+	return 0;	
 }
 
 int main(int argc, char *argv[])

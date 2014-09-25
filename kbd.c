@@ -105,7 +105,7 @@ void set_mouse(bool enable)
 		else {
 			Gpm_Connect conn;
 			memset(&conn, 0, sizeof(conn));
-			conn.eventMask  = GPM_DOWN | GPM_UP | GPM_DRAG;
+			conn.eventMask  = GPM_DOWN | GPM_UP | GPM_DRAG; // | GPM_MOVE;
 			conn.defaultMask = GPM_MOVE; /* so that mouse cursor displayed */
 
 			if (Gpm_Open(&conn, 0) < 0) {
@@ -120,6 +120,10 @@ void set_mouse(bool enable)
 			write(1, "\033[?1002l", 8);
 		else if (is_real_xterm == 0)
 			write(1, "\033[?1000l", 8);
+#if GPM_MOUSE
+		else if (gpm_fd	> 0)
+			Gpm_Close();
+#endif
 	}
 }
 
@@ -183,6 +187,12 @@ void handle_gpm_mouse(void)
 		break;
 	case GPM_DRAG: mouse_point(event.y, event.x, true); break;
 	case GPM_UP: break;
+	case GPM_MOVE:
+		switch (event.wdy) {
+		case 0: /* display mouse cursor */ break;
+		case -1: mouse_scroll(event.y, true); break;
+		case 1:  mouse_scroll(event.y, false); break;
+		}
 	}
 }
 #endif

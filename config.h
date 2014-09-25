@@ -3,6 +3,8 @@
 #if !defined(WIN32) && !defined(DOS)
 #define ZLIB		1	/* Requires zlib -lz */
 #define SPELL		1	/* Requires libaspell */
+#endif
+#if defined(__linux__)
 #define GPM_MOUSE	1	/* Requires libgpm */
 #endif
 

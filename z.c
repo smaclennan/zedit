@@ -20,6 +20,9 @@
 #include "z.h"
 #include "zversion.h"
 #include <stdarg.h>
+#if GPM_MOUSE
+#include <gpm.h>
+#endif
 
 bool Initializing = true;
 char *Home;
@@ -90,8 +93,8 @@ static void dotty(void)
 #if DOPIPES
 #include <poll.h>
 
-#define MAX_FDS 2
-#define PIPEFD 1
+#define MAX_FDS 3
+#define PIPEFD 2
 
 static struct pollfd fds[MAX_FDS];
 static struct buff *pipebuff;
@@ -105,6 +108,9 @@ static void fd_init(void)
 	}
 
 	fds[0].fd = 0; /* stdin */
+#if GPM_MOUSE
+	fds[1].fd = gpm_fd;
+#endif
 }
 
 bool fd_add(int fd, struct buff *buff)
@@ -146,7 +152,10 @@ void execute(void)
 
 		if (fds[0].revents)
 			dotty();
-
+#if GPM_MOUSE
+		if (fds[1].revents)
+			handle_gpm_mouse();
+#endif
 		if (fds[PIPEFD].revents && pipebuff)
 			readapipe(pipebuff);
 	}
@@ -206,7 +215,6 @@ int main(int argc, char **argv)
 	initscrnmarks(); /* init the screen marks and mark list */
 
 	binit();
-	fd_init();
 
 	/* create the needed buffers */
 	Killbuff = bcreate();
@@ -217,6 +225,7 @@ int main(int argc, char **argv)
 	}
 
 	tinit();
+	fd_init();
 
 	REstart	= bcremrk();
 	Sstart	= bcremrk();

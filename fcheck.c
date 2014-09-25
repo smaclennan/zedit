@@ -128,7 +128,7 @@ static int build_zversion_h(void)
 
 	fp = fopen("zversion.h", "w");
 	if (!fp) {
-		perror("zversion.h");
+		perror("zversion.h.new");
 		return 1;
 	}
 
@@ -280,6 +280,13 @@ int main(int argc, char *argv[])
 		puts("Maybe set ASPELLINC in Makefile?");
 		system("sed -i 's:^#define SPELL://#define SPELL:' config.h");
 		system("sed -i 's/^LIBS += -ldl/#LIBS += -ldl/' Makefile");
+	}
+#endif
+#if GPM_MOUSE
+	if (noinclude(argc, argv, "gpm.h")) {
+		puts("Cound not find gpm.h...disabling gpm support");
+		system("sed -i 's:^#define GPM_MOUSE://#define GPM_MOUSE:' config.h");
+		system("sed -i 's/^LIBS += -lgpm/#LIBS += -lgpm/' Makefile");
 	}
 #endif
 

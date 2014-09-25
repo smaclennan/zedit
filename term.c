@@ -480,7 +480,7 @@ void tstyle(int style)
 	case T_COMMENT:
 		fputs("\033[31m", stdout); break; /* red */
 	case T_REGION:
-		fputs("\033[0;47m", stdout); break;
+		fputs("\033[7m", stdout); break;
 	}
 #endif
 

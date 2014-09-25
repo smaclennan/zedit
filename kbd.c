@@ -20,6 +20,9 @@
 #include "z.h"
 #include "keys.h"
 #include <poll.h>
+#if GPM_MOUSE
+#include <gpm.h>
+#endif
 
 /* Note: We can currently only have 32 specials */
 static const char * const Tkeys[] = {
@@ -98,6 +101,20 @@ void set_mouse(bool enable)
 				write(1, "\033[?1000h", 8);
 			}
 		}
+#if GPM_MOUSE
+		else {
+			Gpm_Connect conn;
+			memset(&conn, 0, sizeof(conn));
+			conn.eventMask  = GPM_DOWN | GPM_UP | GPM_DRAG;
+			conn.defaultMask = GPM_MOVE; /* so that mouse cursor displayed */
+
+			if (Gpm_Open(&conn, 0) < 0) {
+				error("Cannot connect to mouse server\n");
+				gpm_fd = -1; /* paranoia */
+				return;
+			}
+		}
+#endif
 	} else {
 		if (is_real_xterm == 1)
 			write(1, "\033[?1002l", 8);
@@ -146,6 +163,29 @@ static int do_mouse(void)
 
 	return TC_MOUSE;
 }
+
+#if GPM_MOUSE
+void handle_gpm_mouse(void)
+{
+	Gpm_Event event;
+
+	Gpm_GetEvent(&event);
+	
+	event.y--; event.x--; /* we want 0 based */
+
+	switch (GPM_BARE_EVENTS(event.type)) {
+	case GPM_DOWN:
+		switch (event.buttons) {
+		case 1: mouse_point(event.y, event.x, true); break;
+		case 2:
+		case 4: mouse_point(event.y, event.x, false); break;
+		}
+		break;
+	case GPM_DRAG: mouse_point(event.y, event.x, true); break;
+	case GPM_UP: break;
+	}
+}
+#endif
 
 static int check_specials(void)
 {

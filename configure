@@ -7,6 +7,7 @@ zlib=notset
 undo=1
 dopipes=1
 show_region=1
+gpm=1
 
 do_help() {
 	echo "Optional features:"
@@ -17,6 +18,7 @@ do_help() {
 	echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
 	echo "  --enable-undo		Enable UNDO"
 	echo "  --enable-show-region	Enable show region"
+	echo "  --enable-gpm		Enable gpm mouse"
 	echo "  --config-dir <dir>	Default config directory."
 	echo
 	echo "To disable a feature replace --enable with --disable."
@@ -42,6 +44,7 @@ while [ -n "$1" ]; do
 	*-sysv4) sysv4=$enable;;
 	*-undo) undo=$enable;;
 	*-show-region) show_region=$enable;;
+	*-gpm) gpm=$enable;;
 	--config-dir) shift; confdir=$1;;
 	*) echo "Unknown arg '$1' ignored";;
 	esac
@@ -78,6 +81,7 @@ set_one SPELL $spell
 set_one ZLIB $zlib
 set_one UNDO $undo
 set_one SHOW_REGION $show_region
+set_one GPM_MOUSE $gpm
 
 if [ "$spell" = 1 ]; then
     sed 's/^#LIBS += -ldl/LIBS += -ldl/' Makefile > Makefile.tmp
@@ -90,6 +94,13 @@ if [ "$zlib" = 1 ]; then
     sed 's/^#LIBS += -lz/LIBS += -lz/' Makefile > Makefile.tmp
 else
     sed 's/^LIBS += -lz/#LIBS += -lz/' Makefile > Makefile.tmp
+fi
+mv Makefile.tmp Makefile
+
+if [ "$gpm" = 1 ]; then
+    sed 's/^#LIBS += -lgpm/LIBS += -lgpm/' Makefile > Makefile.tmp
+else
+    sed 's/^LIBS += -lgpm/#LIBS += -lgpm/' Makefile > Makefile.tmp
 fi
 mv Makefile.tmp Makefile
 

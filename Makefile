@@ -23,6 +23,7 @@ CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
 
 LIBS += -lz
 LIBS += -ldl
+LIBS += -lgpm
 
 ETAGS=`which etags || echo true`
 

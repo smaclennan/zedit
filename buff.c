@@ -515,8 +515,6 @@ unsigned long blength(struct buff *tbuff)
 	}
 	makecur(spage);
 
-	if (len != tbuff->blen) Dbg("PROBLEMS: %lu != %lu\n", len, tbuff->blen); // SAM DBG
-
 	return len;
 }
 

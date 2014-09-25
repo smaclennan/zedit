@@ -269,6 +269,7 @@ void dump_doc(const char *doc);
 int set_bookmark(char *bookname);
 void cleanup_bookmarks(void);
 const char *special_label(int key);
+void handle_gpm_mouse(void);
 
 /* umark routines */
 void set_umark(struct mark *tmark); /* tmark == NULL means set to point */

@@ -57,7 +57,7 @@ $(ZEXE): $O
 	@$(ETAGS) $(CFILES) *.h
 
 fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c vars.h keys.h
-	$(QUIET_LINK)$(CC) -o $@ fcheck.c $(LIBS)
+	$(QUIET_LINK)$(CC) -o $@ fcheck.c
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
 # Make all c files depend on all .h files

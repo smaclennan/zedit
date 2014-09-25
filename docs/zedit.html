@@ -563,6 +563,27 @@ re-loaded if the file is modified.
 it is not found, Zedit will prompt for the filename.  A Universal
 Argument will always prompt for the tag file to read.
 
+<h2>Mouse Support</h2>
+
+<p>Zedit is finally getting some mouse support.
+
+<ol>
+<li>The left button sets the point
+<li>The right button sets the mark
+<li>You can drag to set the region
+<li>The scroll wheel should scroll
+</ol>
+
+<p>Now what is supported where:
+
+<ul>
+<li>Xterm supports everything and requires no libraries.
+<li>Rxvt supports everything except drag (3) and requires no libraries.
+<li>The Linux console supports everything but requires gpm.
+<li>Win32 supports everything except drag (3). Drag is probably doable.
+<li>DOS supports only simple button presses (1 & 2).
+</ul>
+
  <hr>
 <h2><a href="app-a.html">Appendix A: Commands</a></h2>
 <h2><a href="app-b.html">Appendix B: Variables</a></h2>

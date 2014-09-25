@@ -53,10 +53,7 @@ static void message(struct buff *buff, const char *str)
 #include <signal.h>
 #include <sys/wait.h>
 
-int npipes;
 static int Waiting;
-static fd_set SelectFDs;
-static int NumFDs;
 
 /* Come here when a child dies or exits.
  *
@@ -78,7 +75,7 @@ void siginit(void)
 }
 
 /* pipe has something for us */
-static int readapipe(struct buff *tbuff)
+int readapipe(struct buff *tbuff)
 {
 	char buff[BUFSIZ], *ptr;
 	int cnt, i;
@@ -100,33 +97,6 @@ static int readapipe(struct buff *tbuff)
 		/* pipe died */
 		checkpipes(1);
 	return cnt;
-}
-
-void readpipes(void)
-{
-	struct buff *tbuff;
-	fd_set fds = SelectFDs;
-
-	/* select returns -1 if a child dies (SIGPIPE) -
-	 * sigchild handles it */
-	while (select(NumFDs, &fds, NULL, NULL, NULL) == -1) {
-		checkpipes(1);
-		zrefresh();
-		fds = SelectFDs;
-	}
-
-	npipes = 0;
-	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-		if (tbuff->child != EOF) {
-			++npipes;
-			if (FD_ISSET(tbuff->in_pipe, &fds))
-				readapipe(tbuff);
-		}
-
-	if (npipes == 0)
-		NumFDs = 1;
-
-	/* If stdin set then tkbrdy() will catch it */
 }
 
 static void exit_status(struct buff *tbuff, int status)
@@ -168,7 +138,7 @@ void checkpipes(int type)
 					while (readapipe(tbuff) > 0) ;
 					exit_status(tbuff, status);
 				}
-				FD_CLR(tbuff->in_pipe, &SelectFDs);
+				fd_remove(tbuff->in_pipe);
 				(void)close(tbuff->in_pipe);
 				tbuff->in_pipe = EOF;
 				tbuff->child = EOF;
@@ -237,11 +207,7 @@ static bool dopipe(struct buff *tbuff, const char *icmd)
 		if (tbuff->child != EOF) {
 			/* SUCCESS! */
 			tbuff->in_pipe = from[0];
-			FD_SET(0, &SelectFDs);
-			FD_SET(from[0], &SelectFDs);
-			if (from[0] >= NumFDs)
-				NumFDs = from[0] + 1;
-			++npipes;
+			fd_add(tbuff->in_pipe, tbuff);
 			return true;
 		} else {
 			/* fork failed - clean up */

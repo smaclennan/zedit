@@ -87,15 +87,69 @@ static void dotty(void)
 	First = false; /* used by pinsert when InPaw */
 }
 
+#if DOPIPES
+#include <poll.h>
+
+#define MAX_FDS 2
+#define PIPEFD 1
+
+static struct pollfd fds[MAX_FDS];
+static struct buff *pipebuff;
+
+static void fd_init(void)
+{
+	int i;
+	for (i = 0; i < MAX_FDS; ++i) {
+		fds[i].fd = -1;
+		fds[i].events = POLLIN;
+	}
+
+	fds[0].fd = 0; /* stdin */
+}
+
+bool fd_add(int fd, struct buff *buff)
+{
+	if (fds[PIPEFD].fd == -1) {
+		fds[PIPEFD].fd = fd;
+		pipebuff = buff;
+		return true;
+	}
+	return false;
+}
+
+void fd_remove(int fd)
+{
+	if (fds[PIPEFD].fd == fd) {
+		fds[PIPEFD].fd = -1;
+		pipebuff = NULL;
+	}
+}
+#else
+static void fd_init(void) {}
+#endif
+
 void execute(void)
 {
 	zrefresh();
 
 #if DOPIPES
-	if (npipes == 0 || tkbrdy() || Cmdpushed != -1)
+	if (tkbrdy() || Cmdpushed != -1)
 		dotty();
-	else
-		readpipes();
+	else {
+		/* select returns -1 if a child dies (SIGPIPE) -
+		 * sigchild handles it
+		 */
+		while (poll(fds, MAX_FDS, -1) == -1) {
+			checkpipes(1);
+			zrefresh();
+		}
+
+		if (fds[0].revents)
+			dotty();
+
+		if (fds[PIPEFD].revents && pipebuff)
+			readapipe(pipebuff);
+	}
 #else
 	dotty();
 #endif
@@ -152,6 +206,7 @@ int main(int argc, char **argv)
 	initscrnmarks(); /* init the screen marks and mark list */
 
 	binit();
+	fd_init();
 
 	/* create the needed buffers */
 	Killbuff = bcreate();

@@ -155,8 +155,6 @@ extern bool Insearch;
 extern Byte CRdefault;
 extern int circf;
 
-extern int npipes;
-
 extern int NexterrorCalled;
 
 extern void (*Nextpart)(void);

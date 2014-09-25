@@ -107,6 +107,7 @@ void set_mouse(bool enable)
 			memset(&conn, 0, sizeof(conn));
 			conn.eventMask  = GPM_DOWN | GPM_UP | GPM_DRAG; // | GPM_MOVE;
 			conn.defaultMask = GPM_MOVE; /* so that mouse cursor displayed */
+			gpm_zerobased = 1;
 
 			if (Gpm_Open(&conn, 0) < 0) {
 				error("Cannot connect to mouse server\n");
@@ -175,8 +176,6 @@ void handle_gpm_mouse(void)
 
 	Gpm_GetEvent(&event);
 	
-	event.y--; event.x--; /* we want 0 based */
-
 	switch (GPM_BARE_EVENTS(event.type)) {
 	case GPM_DOWN:
 		switch (event.buttons) {
@@ -189,7 +188,7 @@ void handle_gpm_mouse(void)
 	case GPM_UP: break;
 	case GPM_MOVE:
 		switch (event.wdy) {
-		case 0: /* display mouse cursor */ break;
+		case 0:  GPM_DRAWPOINTER(&event); break;
 		case -1: mouse_scroll(event.y, true); break;
 		case 1:  mouse_scroll(event.y, false); break;
 		}

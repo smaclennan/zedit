@@ -87,6 +87,7 @@ static Byte tgetkb(void)
 void set_mouse(bool enable)
 {
 	static int is_real_xterm = -1;
+	int n = 0;
 
 	if (enable) {
 		char *term = getenv("TERM");
@@ -95,10 +96,10 @@ void set_mouse(bool enable)
 		     strncmp(term, "rxvt", 4) == 0)) {
 			if (getenv("XTERM_VERSION") || getenv("XTERM_LOCALE")) {
 				is_real_xterm = 1;
-				write(1, "\033[?1002h", 8);
+				n = write(1, "\033[?1002h", 8);
 			} else {
 				is_real_xterm = 0;
-				write(1, "\033[?1000h", 8);
+				n = write(1, "\033[?1000h", 8);
 			}
 		}
 #if GPM_MOUSE
@@ -118,14 +119,16 @@ void set_mouse(bool enable)
 #endif
 	} else {
 		if (is_real_xterm == 1)
-			write(1, "\033[?1002l", 8);
+			n = write(1, "\033[?1002l", 8);
 		else if (is_real_xterm == 0)
-			write(1, "\033[?1000l", 8);
+			n = write(1, "\033[?1000l", 8);
 #if GPM_MOUSE
 		else if (gpm_fd	> 0)
 			Gpm_Close();
 #endif
 	}
+
+	if (n < 0) Dbg("Unable to set mouse mode.\n");
 }
 
 

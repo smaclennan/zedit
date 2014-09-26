@@ -83,7 +83,9 @@ static Byte tgetkb(void)
 	return cstack[cptr];
 }
 
-/* xterm supports motion events but rxvt does not */
+/* Xterm supports motion events but rxvt does not.
+ * Hint: Rxvt*termName: rxvt
+ */
 void set_mouse(bool enable)
 {
 	static int is_real_xterm = -1;
@@ -91,13 +93,11 @@ void set_mouse(bool enable)
 
 	if (enable) {
 		char *term = getenv("TERM");
-		if (term &&
-		    (strncmp(term, "xterm", 5) == 0 ||
-		     strncmp(term, "rxvt", 4) == 0)) {
-			if (getenv("XTERM_VERSION") || getenv("XTERM_LOCALE")) {
+		if (term) {
+			if (strncmp(term, "xterm", 5) == 0) {
 				is_real_xterm = 1;
 				n = write(1, "\033[?1002h", 8);
-			} else {
+			} else if (strncmp(term, "rxvt", 4) == 0) {
 				is_real_xterm = 0;
 				n = write(1, "\033[?1000h", 8);
 			}

@@ -37,22 +37,28 @@ static void comment(FILE *out, int len, char *fmt, ...)
 
 int main(int argc, char *argv[])
 {
-	FILE *in = fopen("bind.c", "r");
-	if (!in) {
+	FILE *in, *out;
+
+	if (access("win32", F_OK) == 0) {
+		in = fopen("bind.c", "r");
+		out = fopen("win32/dosbind.c", "w");
+	} else {
 		in = fopen("../bind.c", "r");
-		if (!in) {
-			perror("bind.c");
-			exit(1);
-		}
+		out = fopen("dosbind.c", "w");
 	}
 
-	FILE *out = fopen("dosbind.c", "w");
-	if (!out) {
-		perror("dosbind.c");
+	if (!in || !out) {
+		perror("bind.c and/or dosbind.c");
 		exit(1);
 	}
 
 	char line[128], *p;
+	while (fgets(line, sizeof(line), in))
+		if (strncmp(line, "Byte Keys", 9) == 0) {
+			fputs(line, out);
+			break;
+		}
+
 	while (fgets(line, sizeof(line), in)) {
 		for (p = line; isspace(*p); ++p) ;
 		if (*p == '[') /* first of array type */
@@ -104,9 +110,6 @@ int main(int argc, char *argv[])
 
 		meta = cur + 1;
 	} while (fgets(line, sizeof(line), in));
-
-	while (fgets(line, sizeof(line), in))
-		fputs(line, out);
 
 	int rc = 0;
 	if (ferror(in)) rc = 1;

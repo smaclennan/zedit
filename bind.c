@@ -20,12 +20,12 @@
 #include "z.h"
 #include "keys.h"
 
-#ifdef __cplusplus
-#include "win32/dosbind.c"
-#else
 Byte Lfunc;
 Byte CRdefault = ZNEWLINE;
 
+#if defined(DOS) || defined(__cplusplus)
+#include "win32/dosbind.c"
+#else
 Byte Keys[] = {
 	ZSET_MARK,		/* C-@ */
 	ZBEGINNING_OF_LINE,	/* C-A */
@@ -229,6 +229,7 @@ Byte Keys[] = {
 
 	[M(127)] = ZDELETE_PREVIOUS_WORD,	/* M-DEL */
 };
+#endif
 
 static const char *key_label[] = {
 	"up", "down", "right", "left",
@@ -245,4 +246,3 @@ const char *special_label(int key)
 	else
 		return "???";
 }
-#endif

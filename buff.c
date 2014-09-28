@@ -724,7 +724,7 @@ void btostart(void)
 
 static void crfixup(void)
 {
-	char *p = memchr(Cpstart + 1, '\n', Curplen - 1);
+	char *p = (char *)memchr(Cpstart + 1, '\n', Curplen - 1);
 	if (!p)
 		return;
 

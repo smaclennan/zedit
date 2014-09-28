@@ -73,7 +73,7 @@ void Dbg(const char *fmt, ...) { ((void)fmt); }
 void mouse_scroll(int row, bool down) {}
 void mouse_point(int row, int col, bool set_mark) {}
 
-#if ZLIB || SPELL
+#if ZLIB || SPELL || defined(GPM_HACK)
 static int noinclude(int argc, char *argv[], const char *inc)
 {
 	char path[PATHMAX];

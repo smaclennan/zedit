@@ -40,12 +40,15 @@ int Colmax, Rowmax;
 #include "kbd.c"
 #endif
 
-#if defined __unix__ || (defined __APPLE__ && defined __MACH__)
+#if defined __unix__
 #define OS unix
+#define GITFILE ".git/refs/heads/master"
 #elif defined WIN32
 #define OS win32
+#define GITFILE "../.git/refs/heads/master"
 #elif defined DOS
 #define OS dos
+#define GITFILE "git~00.___/refs/heads/master"
 #else
 #error Unknown OS
 #endif
@@ -91,20 +94,37 @@ static int noinclude(int argc, char *argv[], const char *inc)
 }
 #endif
 
+static int cmp(char *new, char *old)
+{
+	FILE *new_fp = fopen(new, "r");
+	FILE *old_fp = fopen(old, "r");
+	if (!new_fp || !old_fp) {
+		printf("Unable to open %s and/or %s\n", new, old);
+		return 1;
+	}
+
+	int rc = 0;
+	char new_line[128], old_line[128];
+	while (fgets(new_line, sizeof(new_line), new_fp))
+		if (!fgets(old_line, sizeof(old_line), old_fp) ||
+		    strcmp(new_line, old_line)) {
+			rc = 1;
+			break;
+		}
+
+	fclose(new_fp);
+	fclose(old_fp);
+
+	return rc;
+}
+
 static int build_zversion_h(void)
 {
-	FILE *fp;
 	int mods = 0;
 	char version[42];
 	strcpy(version, "N/A");
 
-#ifdef DOS
-	fp = fopen("git~00.___/refs/heads/master", "r");
-#elif defined(WIN32)
-	fp = fopen("../.git/refs/heads/master", "r");
-#else
-	fp = fopen(".git/refs/heads/master", "r");
-#endif
+	FILE *fp = fopen(GITFILE, "r");
 	if (fp) {
 		if (fgets(version, sizeof(version), fp))
 			strtok(version, "\r\n");
@@ -128,7 +148,7 @@ static int build_zversion_h(void)
 	} else if (errno == ENOENT)
 		puts("Warning: .git does not exist or is incomplete.");
 	else
-		perror(".git/refs/heads/master");
+		perror(GITFILE);
 	
 	fp = fopen("zversion.new", "w");
 	if (!fp) {
@@ -141,14 +161,11 @@ static int build_zversion_h(void)
 	fprintf(fp, "#define GIT_MOD\t\t%d\n", mods);
 	fclose(fp);
 
-#ifdef __unix__
-	if (system("cmp -s zversion.h.new zversion.h"))
+	if (cmp("zversion.new", "zversion.h")) {
+		puts("Update zversion.h");
 		rename("zversion.new", "zversion.h");
-	else
+	} else
 		unlink("zversion.new");
-#else
-	rename("zversion.new", "zversion.h");
-#endif
 
 	return 0;	
 }

@@ -23,23 +23,21 @@
 #include "varray.c"
 #include "funcs.c"
 #include "cnames.c"
+#include "bind.c"
 #ifdef DOS
 #define install_ints()
 #include "doskbd.c"
-#include "dosbind.c"
 #elif defined(WIN32)
 #define zrefresh()
 HANDLE hstdin;
 int Colmax, Rowmax;
 #include "winkbd.c"
-#include "bind.c"
 #else
 #if GPM_MOUSE
 #undef GPM_MOUSE
 #define GPM_HACK
 #endif
 #include "kbd.c"
-#include "bind.c"
 #endif
 
 #if defined __unix__ || (defined __APPLE__ && defined __MACH__)
@@ -132,9 +130,9 @@ static int build_zversion_h(void)
 	else
 		perror(".git/refs/heads/master");
 	
-	fp = fopen("zversion.h.new", "w");
+	fp = fopen("zversion.new", "w");
 	if (!fp) {
-		perror("zversion.h.new");
+		perror("zversion.new");
 		return 1;
 	}
 
@@ -145,9 +143,11 @@ static int build_zversion_h(void)
 
 #ifdef __unix__
 	if (system("cmp -s zversion.h.new zversion.h"))
-		rename("zversion.h.new", "zversion.h");
+		rename("zversion.new", "zversion.h");
 	else
-		unlink("zversion.h.new");
+		unlink("zversion.new");
+#else
+	rename("zversion.new", "zversion.h");
 #endif
 
 	return 0;	

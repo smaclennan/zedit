@@ -33,6 +33,8 @@ CFILES = bcmds.c bind.c buff.c calc.c cnames.c \
 	reg.c shell.c spell.c srch.c tags.c term.c \
 	undo.c vars.c window.c varray.c z.c zgrep.c
 
+HFILES = buff.h config.h funcs.h keys.h proto.h vars.h z.h
+
 O := $(CFILES:.c=.o)
 
 #################
@@ -65,7 +67,9 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
 # Make all c files depend on all .h files
-*.o: *.h
+*.o: $(HFILES)
+
+z.o: zversion.h
 
 check:
 	@sparse -D__unix__ $(CFILES)

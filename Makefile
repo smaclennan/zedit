@@ -50,11 +50,15 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 
 #################
 
-all:	fcheck $(ZEXE)
+all:	fcheck $(ZEXE) win32/dosbind.c
 
 $(ZEXE): $O
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
+
+win32/dosbind.c: bind.c
+	$(QUIET_LINK)$(CC) $(CFLAGS) -o makedosbind win32/makedosbind.c
+	@./makedosbind
 
 fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c
@@ -73,5 +77,5 @@ install: all
 
 clean:
 	rm -f *.o zversion.h ze fcheck core* TAGS valgrind.out
-	rm -f win32/makedosbind
+	rm -f makedosbind win32/makedosbind
 	@$(MAKE) -C docs clean

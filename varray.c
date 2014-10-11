@@ -9,7 +9,7 @@ struct avar Vars[] = {
 	{ "c-extends",		V_STRING,	V(".c.h.cpp.cc.cxx.y.l"),
 	  "This variable defines the extensions that turn on C mode."
 	},
-	{ "c-tabs",		V_DECIMAL,	V(8),
+	{ "c-tabs",		V_DECIMAL,	V(4),
 	  "This variable defines the number of spaces displayed per tab in "
 	  "C mode buffers. See also tabs."
 	},

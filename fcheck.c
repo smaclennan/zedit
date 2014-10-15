@@ -94,12 +94,18 @@ static int noinclude(int argc, char *argv[], const char *inc)
 }
 #endif
 
-static int cmp(char *new, char *old)
+static int compare(char *new, char *old)
 {
-	FILE *new_fp = fopen(new, "r");
 	FILE *old_fp = fopen(old, "r");
-	if (!new_fp || !old_fp) {
-		printf("Unable to open %s and/or %s\n", new, old);
+	if (!old_fp) {
+		if (errno != ENOENT)
+			perror(old);
+		return 1;
+	}
+	FILE *new_fp = fopen(new, "r");
+	if (!new_fp) {
+		fclose(old_fp);
+		perror(new);
 		return 1;
 	}
 
@@ -161,8 +167,8 @@ static int build_zversion_h(void)
 	fprintf(fp, "#define GIT_MOD\t\t%d\n", mods);
 	fclose(fp);
 
-	if (cmp("zversion.new", "zversion.h")) {
-		puts("Update zversion.h");
+	if (compare("zversion.new", "zversion.h")) {
+		puts("     UPDATE   zversion.h");
 		rename("zversion.new", "zversion.h");
 	} else
 		unlink("zversion.new");

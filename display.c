@@ -557,23 +557,6 @@ pawshift:
 	tflush();
 }
 
-void initscrnmarks(void)
-{
-	int cnt;
-
-	/* Set the screen marks */
-	memset((char *)Scrnmarks, 0, sizeof(Scrnmarks));
-	Scrnmarks[0].next = &Scrnmarks[1];
-	for (cnt = 1; cnt < ROWMAX; ++cnt) {
-		Scrnmarks[cnt].prev  = &Scrnmarks[cnt - 1];
-		Scrnmarks[cnt].next  = &Scrnmarks[cnt + 1];
-	}
-	Scrnmarks[ROWMAX - 1].next = NULL;
-
-	/* init the Mrklist */
-	Mrklist = &Scrnmarks[ROWMAX - 1];
-}
-
 void makepaw(char *word, bool start)
 {
 	bswitchto(Paw);

@@ -80,6 +80,19 @@ static bool pagesplit(void);
 
 void binit(void)
 {
+	int cnt;
+
+	/* Set the screen marks */
+	Scrnmarks[0].next = &Scrnmarks[1];
+	for (cnt = 1; cnt < ROWMAX; ++cnt) {
+		Scrnmarks[cnt].prev  = &Scrnmarks[cnt - 1];
+		Scrnmarks[cnt].next  = &Scrnmarks[cnt + 1];
+	}
+	Scrnmarks[ROWMAX - 1].next = NULL;
+
+	/* init the Mrklist */
+	Mrklist = &Scrnmarks[ROWMAX - 1];
+
 #ifdef DOS_EMS
 	ems_init();
 #endif

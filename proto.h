@@ -153,7 +153,6 @@ Z(pnewline);
 
 /* General routines */
 
-void initscrnmarks(void);
 int ask(const char *);
 int ask2(const char *, bool);
 void binit(void);

@@ -221,8 +221,6 @@ int main(int argc, char **argv)
 	if (textMode)
 		VAR(VNORMAL) = 0;
 
-	initscrnmarks(); /* init the screen marks and mark list */
-
 	binit();
 
 	/* create the needed buffers */

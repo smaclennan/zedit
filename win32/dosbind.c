@@ -112,7 +112,7 @@ Byte Keys[] = {
 	ZNEXT_WINDOW,		/* C-X N */
 	ZNEXT_WINDOW,		/* C-X O */
 	0,			/* C-X P */
-	0,			/* C-X Q */
+	ZQUOTE,			/* C-X Q */
 	0,			/* C-X R */
 	ZSAVE_ALL_FILES,	/* C-X S */
 	ZTRIM_WHITE_SPACE,	/* C-X T */
@@ -207,7 +207,7 @@ Byte Keys[] = {
 	ZNEXT_PARAGRAPH,	/* M-N */
 	ZREVERT_FILE,		/* M-O */
 	ZPREVIOUS_PARAGRAPH,	/* M-P */
-	ZQUOTE,			/* M-Q */
+	ZFILL_PARAGRAPH,	/* M-Q */
 	ZQUERY_REPLACE,		/* M-R */
 	ZSEARCH,		/* M-S */
 	ZSWAP_WORDS,		/* M-T */

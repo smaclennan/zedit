@@ -49,7 +49,7 @@ static void scanbuffer(struct buff *buff)
 	uncomment(buff);
 
 	for (i = 0; i < Rowmax - 2; ++i)
-		Scrnmarks[i].modf = 1;
+		Scrnmarks[i].modf = true;
 
 	bswitchto(buff);
 	bmrktopnt(&tmark);

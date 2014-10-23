@@ -794,7 +794,10 @@ int breadfile(char *fname)
 		return -1;
 	}
 
-	if (gzdirect(gz) == 0)
+	/* Ubuntu 12.04 has a bug where zero length files are reported as
+	 * compressed.
+	 */
+	if (sbuf.st_size && gzdirect(gz) == 0)
 		Curbuff->bmode |= COMPRESSED;
 #endif
 

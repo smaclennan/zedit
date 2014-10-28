@@ -18,8 +18,6 @@
  */
 
 #include "z.h"
-#include <setjmp.h>
-#include <time.h>
 
 #if ZLIB
 #undef Byte

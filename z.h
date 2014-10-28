@@ -20,12 +20,19 @@
 #ifndef _Z_H_
 #define _Z_H_
 
+#ifdef __STRICT_ANSI__
+#define _XOPEN_SOURCE
+#define _POSIX_SOURCE
+#define _SVID_SOURCE
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #ifndef DOS
 #include <stdbool.h>
 #endif
 #include <string.h>
+#include <strings.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>

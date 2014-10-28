@@ -22,6 +22,8 @@
 #include <setjmp.h>
 extern jmp_buf zenv;
 
+#include <time.h>
+
 #define Byte unsigned char
 
 

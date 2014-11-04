@@ -101,22 +101,22 @@ void set_mouse(bool enable)
 				is_real_xterm = 0;
 				n = write(1, "\033[?1000h", 8);
 			}
-		}
 #if GPM_MOUSE
-		else {
-			Gpm_Connect conn;
-			memset(&conn, 0, sizeof(conn));
-			conn.eventMask  = GPM_DOWN | GPM_UP | GPM_DRAG; // | GPM_MOVE;
-			conn.defaultMask = GPM_MOVE; /* so that mouse cursor displayed */
-			gpm_zerobased = 1;
+			else {
+				Gpm_Connect conn;
+				memset(&conn, 0, sizeof(conn));
+				conn.eventMask  = GPM_DOWN | GPM_UP | GPM_DRAG;
+				conn.defaultMask = GPM_MOVE; /* so that mouse cursor displayed */
+				gpm_zerobased = 1;
 
-			if (Gpm_Open(&conn, 0) < 0) {
-				error("Cannot connect to mouse server\n");
-				gpm_fd = -1; /* paranoia */
-				return;
+				if (Gpm_Open(&conn, 0) < 0) {
+					error("Cannot connect to mouse server\n");
+					gpm_fd = -1; /* paranoia */
+					return;
+				}
 			}
-		}
 #endif
+		}
 	} else {
 		if (is_real_xterm == 1)
 			n = write(1, "\033[?1002l", 8);
@@ -174,7 +174,7 @@ static int do_mouse(void)
 
 #if GPM_MOUSE
 static Gpm_Event event;
-Gpm_Event *need_mouse_cursor;
+static int need_mouse_cursor;
 
 void handle_gpm_mouse(void)
 {
@@ -192,10 +192,18 @@ void handle_gpm_mouse(void)
 	case GPM_UP: break;
 	case GPM_MOVE:
 		switch (event.wdy) {
-		case 0:  need_mouse_cursor = &event; break;
+		case 0:  need_mouse_cursor = 1; break;
 		case -1: mouse_scroll(event.y, true); break;
 		case 1:  mouse_scroll(event.y, false); break;
 		}
+	}
+}
+
+void handle_mouse_cursor(void)
+{
+	if (need_mouse_cursor) {
+		GPM_DRAWPOINTER(&event);
+		need_mouse_cursor = 0;
 	}
 }
 #endif

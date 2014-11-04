@@ -20,9 +20,6 @@
 #include "z.h"
 #include "zversion.h"
 #include <stdarg.h>
-#if GPM_MOUSE
-#include <gpm.h>
-#endif
 
 bool Initializing = true;
 char *Home;
@@ -109,6 +106,7 @@ static void fd_init(void)
 
 	fds[0].fd = 0; /* stdin */
 #if GPM_MOUSE
+	extern int gpm_fd;
 	fds[1].fd = gpm_fd;
 #endif
 }
@@ -140,13 +138,8 @@ void execute(void)
 	
 #if DOPIPES
 #if GPM_MOUSE
-	extern Gpm_Event *need_mouse_cursor;
-	
-	if (need_mouse_cursor) {
-		GPM_DRAWPOINTER(need_mouse_cursor);
-		need_mouse_cursor = NULL;
-	}
-#endif	
+	handle_mouse_cursor();
+#endif
 
 	if (tkbrdy() || Cmdpushed != -1)
 		dotty();

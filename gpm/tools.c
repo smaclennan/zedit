@@ -25,8 +25,7 @@
 #include <sys/stat.h>   /* needed for      */
 #include <unistd.h>     /* stat() */
 
-#include "headers/gpmInt.h"
-#include "headers/message.h"
+#include "gpmInt.h"
 
 
 /*****************************************************************************

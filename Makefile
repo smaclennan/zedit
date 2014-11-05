@@ -5,7 +5,7 @@ ZEXE = ze
 CC = cc
 #CC = gcc
 #CC = g++
-#CC = clang -fno-color-diagnostics
+CC = clang -fno-color-diagnostics
 
 # Set this if zlib.h is not in /usr/include
 #ZLIBINC=-I/usr/include

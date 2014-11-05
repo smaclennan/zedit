@@ -18,12 +18,16 @@ CC = cc
 D = -O2
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
 
+MAKEFLAGS += --no-print-directory
+
+export CC
+export CFLAGS
+
 # Enable and all buffers have only one contiguous page.
 #CFLAGS += -DONE_PAGE
 
 LIBS += -lz
 LIBS += -ldl
-LIBS += -lgpm
 
 ETAGS=`which etags || echo true`
 
@@ -54,9 +58,12 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 
 all:	fcheck $(ZEXE) win32/dosbind.c
 
-$(ZEXE): $O
-	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
+$(ZEXE): $O gpm/libgpm.a
+	$(QUIET_LINK)$(CC) -o $@ $+ $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
+
+gpm/libgpm.a:
+	@+make -C gpm
 
 win32/dosbind.c: bind.c
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o makedosbind win32/makedosbind.c
@@ -82,4 +89,5 @@ install: all
 clean:
 	rm -f *.o zversion.h ze fcheck core* TAGS valgrind.out
 	rm -f makedosbind win32/makedosbind
+	@$(MAKE) -C gpm clean
 	@$(MAKE) -C docs clean

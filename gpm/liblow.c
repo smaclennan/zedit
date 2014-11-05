@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <ctype.h>
 #include <string.h>        /* strncmp */
 #include <unistd.h>        /* select(); */
@@ -89,13 +90,11 @@ static void gpm_report(int stat, char *fmt, ... )
 	char string[STRMAX];
 	va_list ap;
 
-	if (stat == GPM_STAT_DEBUG) return;
-
 	va_start(ap, fmt);
 	vsnprintf(string, sizeof(string), fmt, ap);
 	va_end(ap);
 
-	if (stat == GPM_STAT_DEBUG)
+	if (stat == GPM_PR_DEBUG)
 		  Dbg("%s\n", string);
 	else
 		_putpaw(string);

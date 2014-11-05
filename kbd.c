@@ -21,7 +21,7 @@
 #include "keys.h"
 #include <poll.h>
 #if GPM_MOUSE
-#include <gpm.h>
+#include "gpm/gpm.h"
 #endif
 
 /* Note: We can currently only have 32 specials */

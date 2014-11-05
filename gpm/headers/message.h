@@ -225,9 +225,6 @@
 #define GPM_MESS_SCREEN_SIZE        "Screen size: %d - %d"
 /* #define GPM_MESS_                   "" */
 
-/* functions */
-void gpm_report(int line, char *file, int stat, char *text, ... );
-
 /* rest of wd.h */
 #ifdef HAVE_SYSLOG_H
 #include <syslog.h>

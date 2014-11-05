@@ -282,9 +282,6 @@ int Gpm_x_high_y(int base, int pot_y);
 int Gpm_cnt_digits(int number);
 void gpm_oops(int line, char *file, char *text, ... );
 
-/* report.c / report-lib.c */
-void gpm_report(int line, char *file, int stat, char *text, ... );
-
 #ifdef __cplusplus
   };
 #endif

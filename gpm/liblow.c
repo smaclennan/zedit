@@ -46,6 +46,7 @@
 #include <sys/kd.h>        /* KDGETMODE */
 #include <termios.h>       /* winsize */
 
+#include "../z.h"
 #include "headers/gpmInt.h"
 #include "headers/message.h"
 
@@ -81,6 +82,24 @@ int gpm_consolefd=-1;  /* used to invoke ioctl() */
 int gpm_morekeys=0;
 
 int gpm_convert_event(unsigned char *mdata, Gpm_Event *ePtr);
+
+/* gpm_report rewritten for Zedit */
+static void gpm_report(int stat, char *fmt, ... )
+{
+	char string[STRMAX];
+	va_list ap;
+
+	if (stat == GPM_STAT_DEBUG) return;
+
+	va_start(ap, fmt);
+	vsnprintf(string, sizeof(string), fmt, ap);
+	va_end(ap);
+
+	if (stat == GPM_STAT_DEBUG)
+		  Dbg("%s\n", string);
+	else
+		_putpaw(string);
+}
 
 /*----------------------------------------------------------------------------*
  * nice description

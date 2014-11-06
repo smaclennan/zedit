@@ -48,8 +48,7 @@
 #include <termios.h>       /* winsize */
 
 #include "../z.h"
-#include "gpmInt.h"
-#include "message.h"
+#include "gpm.h"
 
 #ifndef min
 #define min(a,b) ((a)<(b) ? (a) : (b))
@@ -85,20 +84,40 @@ int gpm_morekeys=0;
 int gpm_convert_event(unsigned char *mdata, Gpm_Event *ePtr);
 
 /* gpm_report rewritten for Zedit */
-static void gpm_report(int stat, char *fmt, ... )
+#define gpm_report putpaw
+
+/* Zedit: This was in tools.c */
+/*****************************************************************************
+ * check, whether devfs is used or not.
+ * See /usr/src/linux/Documentation/filesystems/devfs/ for details.
+ * Returns: the name of the console (/dev/tty0 or /dev/vc/0)
+ *****************************************************************************/
+#define GPM_DEVFS_CONSOLE    "/dev/vc/0"
+#define GPM_OLD_CONSOLE      "/dev/tty0"
+char *Gpm_get_console( void )
 {
-	char string[STRMAX];
-	va_list ap;
 
-	va_start(ap, fmt);
-	vsnprintf(string, sizeof(string), fmt, ap);
-	va_end(ap);
+   char *back = NULL, *tmp = NULL;
+   struct stat buf;
 
-	if (stat == GPM_PR_DEBUG)
-		  Dbg("%s\n", string);
-	else
-		_putpaw(string);
+   /* first try the devfs device, because in the next time this will be
+    * the preferred one. If that fails, take the old console */
+   
+   /* Check for open new console */
+   if (stat(GPM_DEVFS_CONSOLE,&buf) == 0)
+      tmp = GPM_DEVFS_CONSOLE;
+  
+   /* Failed, try OLD console */
+   else if(stat(GPM_OLD_CONSOLE,&buf) == 0)
+      tmp = GPM_OLD_CONSOLE;
+  
+   if(tmp != NULL)
+      if((back = malloc(strlen(tmp) + sizeof(char)) ) != NULL)
+         strcpy(back,tmp);
+
+   return(back);
 }
+
 
 /*----------------------------------------------------------------------------*
  * nice description
@@ -109,13 +128,13 @@ static inline int putdata(int where,  Gpm_Connect *what)
   static int magic=GPM_MAGIC;
 
   if (write(where,&magic,sizeof(int))!=sizeof(int)) {
-      gpm_report(GPM_PR_ERR,GPM_MESS_WRITE_ERR,strerror(errno));
+      gpm_report(GPM_MESS_WRITE_ERR,strerror(errno));
       return -1;
     }
 #endif
   if (write(where,what,sizeof(Gpm_Connect))!=sizeof(Gpm_Connect))
     {
-      gpm_report(GPM_PR_ERR,GPM_MESS_WRITE_ERR,strerror(errno));
+		gpm_report("write(): %s", strerror(errno));
       return -1;
     }
   return 0;
@@ -232,7 +251,7 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
    if(!consolename) {
       consolename = Gpm_get_console();
 	   if(!consolename) {
-		   gpm_report(GPM_PR_ERR,"unable to open gpm console, check your /dev filesystem!\n");
+		   gpm_report("unable to open gpm console, check your /dev filesystem!\n");
 		   goto err;
 	   }
    }   
@@ -262,8 +281,10 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
       conn->vc=0;                 /* default handler */
       if (flag > 0) {  /* forced vc number */
          conn->vc=flag;
-         if((tty = malloc(strlen(consolename) + Gpm_cnt_digits(flag))) == NULL)
-            gpm_report(GPM_PR_OOPS,GPM_MESS_NO_MEM);
+		 if((tty = malloc(strlen(consolename) + 6)) == NULL) {
+			 gpm_report("I couln't get any memory! I die! :(");
+			return -1;
+		 }
          memcpy(tty, consolename, strlen(consolename)-1);
          sprintf(&tty[strlen(consolename) - 1], "%i", flag);
       } else if (flag==0) { /* use your current vc */ 
@@ -271,7 +292,7 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
          if (!tty && isatty(1)) tty = ttyname(1);     /* stdout */
          if (!tty && isatty(2)) tty = ttyname(2);     /* stderr */
          if (tty == NULL) {
-            gpm_report(GPM_PR_ERR,"checking tty name failed");
+			gpm_report("checking tty name failed");
             goto err;
          }   
           
@@ -281,7 +302,7 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
 
       if (gpm_consolefd == -1)
          if ((gpm_consolefd=open(tty,O_WRONLY)) < 0) {
-            gpm_report(GPM_PR_ERR,GPM_MESS_DOUBLE_S,tty,strerror(errno));
+			gpm_report("%s: %s",tty,strerror(errno));
             goto err;
          }
    }
@@ -303,7 +324,7 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
 
    if (!(gpm_flag++)) {
       if ( (gpm_fd=socket(AF_UNIX,SOCK_STREAM,0))<0 ) {
-         gpm_report(GPM_PR_ERR,GPM_MESS_SOCKET,strerror(errno));
+		 gpm_report("socket(): %s",strerror(errno));
          goto err;
       }
 
@@ -311,13 +332,13 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
       bzero((char *)&addr,sizeof(addr));
       addr.sun_family=AF_UNIX;
       if (!(sock_name = tempnam (0, "gpm"))) {
-         gpm_report(GPM_PR_ERR,GPM_MESS_TEMPNAM,strerror(errno));
+		 gpm_report(GPM_MESS_TEMPNAM,strerror(errno));
          goto err;
       }
       strncpy (addr.sun_path, sock_name, sizeof (addr.sun_path));
       if (bind (gpm_fd, (struct sockaddr*)&addr,
                 sizeof (addr.sun_family) + strlen (addr.sun_path))==-1) {
-         gpm_report(GPM_PR_ERR,GPM_MESS_DOUBLE_S, sock_name, strerror(errno));
+		 gpm_report("%s: %s", sock_name, strerror(errno));
          goto err;
       }
 #endif
@@ -331,11 +352,11 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
          struct stat stbuf;
 
          if (errno == ENOENT) {
-            gpm_report(GPM_PR_DEBUG,"cannot find %s; ignoring (gpm disabled?)",
+			gpm_report("cannot find %s; ignoring (gpm disabled?)",
                             GPM_NODE_CTL);
             gpm_is_disabled++;
          } else {
-            gpm_report(GPM_PR_INFO,GPM_MESS_DOUBLE_S,GPM_NODE_CTL,
+			gpm_report("%s: %s",GPM_NODE_CTL,
                             strerror(errno));
          }
           /*
@@ -345,12 +366,11 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
           close(gpm_fd); /* the socket */
           if ((gpm_fd=open(GPM_NODE_DEV,O_RDWR))==-1) {
             if (errno == ENOENT) {
-               gpm_report(GPM_PR_DEBUG,"Cannot find %s; ignoring (gpm disabled?)",
+			   gpm_report("Cannot find %s; ignoring (gpm disabled?)",
                                GPM_NODE_DEV);
                gpm_is_disabled++;
             } else {
-               gpm_report(GPM_PR_ERR,GPM_MESS_DOUBLE_S,GPM_NODE_DEV
-                                                   ,strerror(errno));
+			   gpm_report("%s: %s",GPM_NODE_DEV,strerror(errno));
             }
             goto err;
           }
@@ -395,7 +415,7 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
   /*....................................... Error: free all memory */
    err:
    if (gpm_is_disabled < 2) /* be quiet if no gpmctl socket found */
-      gpm_report(GPM_PR_ERR,"Oh, oh, it's an error! possibly I die! ");
+	  gpm_report("Oh, oh, it's an error! possibly I die! ");
    while(gpm_stack) {
       new=gpm_stack->next;
       free(gpm_stack);
@@ -448,7 +468,6 @@ int Gpm_Close(void)
 int Gpm_GetEvent(Gpm_Event *event)
 {
   int count;
-  MAGIC_P((int magic));
 
   if (!gpm_flag) return 0;
 
@@ -457,11 +476,11 @@ int Gpm_GetEvent(Gpm_Event *event)
     {
       if (count==0)
         {
-          gpm_report(GPM_PR_INFO,"Warning: closing connection");
+		  gpm_report("Warning: closing connection");
           Gpm_Close();
           return 0;
         }
-      gpm_report(GPM_PR_INFO,"Read too few bytes (%i) at %s:%d",count,__FILE__,__LINE__);
+	  gpm_report("Read too few bytes (%i) at %s:%d",count,__FILE__,__LINE__);
       return -1;
     }
 #endif
@@ -471,7 +490,7 @@ int Gpm_GetEvent(Gpm_Event *event)
 #ifndef GPM_USE_MAGIC
       if (count==0)
         {
-          gpm_report(GPM_PR_INFO,"Warning: closing connection");
+		  gpm_report("Warning: closing connection");
           Gpm_Close();
           return 0;
         }
@@ -482,7 +501,7 @@ int Gpm_GetEvent(Gpm_Event *event)
        * non-blocking descriptor
        */
       if (count != -1 || errno != EAGAIN)
-	  gpm_report(GPM_PR_INFO,"Read too few bytes (%i) at %s:%d",
+	  gpm_report("Read too few bytes (%i) at %s:%d",
 			count,__FILE__,__LINE__);
       return -1;
     }

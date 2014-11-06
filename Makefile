@@ -35,7 +35,8 @@ CFILES = bcmds.c bind.c buff.c calc.c cnames.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	reg.c shell.c spell.c srch.c tags.c term.c \
-	undo.c vars.c window.c varray.c z.c zgrep.c
+	undo.c vars.c window.c varray.c z.c zgrep.c \
+	gpm/liblow.c
 
 HFILES = buff.h config.h funcs.h keys.h proto.h vars.h z.h
 
@@ -58,12 +59,9 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 
 all:	fcheck $(ZEXE) win32/dosbind.c
 
-$(ZEXE): $O gpm/libgpm.a
+$(ZEXE): $O
 	$(QUIET_LINK)$(CC) -o $@ $+ $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
-
-gpm/libgpm.a:
-	@+make -C gpm
 
 win32/dosbind.c: bind.c
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o makedosbind win32/makedosbind.c
@@ -87,7 +85,6 @@ install: all
 	install -s ze $(DESTDIR)/bin/z
 
 clean:
-	rm -f *.o zversion.h ze fcheck core* TAGS valgrind.out
+	rm -f *.o gpm/*.o zversion.h ze fcheck core* TAGS valgrind.out
 	rm -f makedosbind win32/makedosbind
-	@$(MAKE) -C gpm clean
 	@$(MAKE) -C docs clean

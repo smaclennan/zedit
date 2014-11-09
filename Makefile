@@ -76,7 +76,7 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 
 z.o: zversion.h
 
-check:
+checkit:
 	@sparse -D__unix__ $(CFILES)
 	@sparse -D__unix__ fcheck.c
 

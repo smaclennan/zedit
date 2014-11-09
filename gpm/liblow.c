@@ -1,11 +1,11 @@
-/* 
+/*
  *
  * liblow.c - client library - low level (gpm)
  *
  * Copyright 1994,1995   rubini@linux.it (Alessandro Rubini)
  * Copyright (C) 1998    Ian Zimmerman <itz@rahul.net>
  * Copyright 2001-2008   Nico Schottelius (nico-gpm2008 at schottelius.org)
- * 
+ *
  * xterm management is mostly by jtklehto@stekt.oulu.fi (Janne Kukonlehto)
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -64,10 +64,10 @@ typedef struct Gpm_Stst {
 /*....................................... Global variables */
 int gpm_flag=0; /* almost unuseful now -- where was it used for ? can
                    we remove it now ? FIXME */
-int gpm_tried=0;
+static int gpm_tried=0;
 int gpm_fd=-1;
 int gpm_hflag=0;
-Gpm_Stst *gpm_stack=NULL;
+static Gpm_Stst *gpm_stack=NULL;
 struct timeval gpm_timeout={10,0};
 Gpm_Handler *gpm_handler=NULL;
 void *gpm_data=NULL;
@@ -201,8 +201,8 @@ static void gpm_suspend_hook (int signum)
   success = (Gpm_Open (&gpm_connect, 0) >= 0);
 
   /* take the default action, whatever it is (probably a stop :) */
-  sigprocmask (SIG_SETMASK, &old_sigset, 0);
-  sigaction (SIGTSTP, &gpm_saved_suspend_hook, 0);
+  sigprocmask (SIG_SETMASK, &old_sigset, NULL);
+  sigaction (SIGTSTP, &gpm_saved_suspend_hook, NULL);
   kill (getpid (), SIGTSTP);
 
   /* in bardo here */
@@ -211,7 +211,7 @@ static void gpm_suspend_hook (int signum)
   sigemptyset(&sa.sa_mask);
   sa.sa_handler = gpm_suspend_hook;
   sa.sa_flags = SA_NOMASK;
-  sigaction (SIGTSTP, &sa, 0);
+  sigaction (SIGTSTP, &sa, NULL);
 
   /* Pop the gpm stack by closing the useless connection */
   /* but do it only when we know we opened one.. */
@@ -232,7 +232,7 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
    struct sockaddr_un addr;
    struct winsize win;
    Gpm_Stst *new = NULL;
-   char* sock_name = 0;
+   char* sock_name = NULL;
    static char *consolename = NULL;
    int gpm_is_disabled = 0;
 
@@ -404,7 +404,7 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
          if (gpm_saved_suspend_hook.sa_handler != SIG_IGN) {
             sa.sa_flags = SA_NOMASK;
             sa.sa_handler = gpm_suspend_hook;
-            sigaction(SIGTSTP, &sa, 0);
+			sigaction(SIGTSTP, &sa, NULL);
          }
       }
 #endif
@@ -425,7 +425,7 @@ int Gpm_Open(Gpm_Connect *conn, int flag)
    if (sock_name) {
       unlink(sock_name);
       free(sock_name);
-      sock_name = 0;
+	  sock_name = NULL;
    }
    gpm_flag=0;
    return -1;
@@ -454,10 +454,10 @@ int Gpm_Close(void)
   if (gpm_fd>=0) close(gpm_fd);
   gpm_fd=-1;
 #ifdef SIGTSTP
-  sigaction(SIGTSTP, &gpm_saved_suspend_hook, 0);
+  sigaction(SIGTSTP, &gpm_saved_suspend_hook, NULL);
 #endif
 #ifdef SIGWINCH
-  sigaction(SIGWINCH, &gpm_saved_winch_hook, 0);
+  sigaction(SIGWINCH, &gpm_saved_winch_hook, NULL);
 #endif
   close(gpm_consolefd);
   gpm_consolefd=-1;

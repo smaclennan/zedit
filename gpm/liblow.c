@@ -23,6 +23,9 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  ********/
 
+#include "../z.h"
+#if GPM_MOUSE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -47,7 +50,6 @@
 #include <sys/kd.h>        /* KDGETMODE */
 #include <termios.h>       /* winsize */
 
-#include "../z.h"
 #include "gpm.h"
 
 #ifndef min
@@ -511,6 +513,8 @@ int Gpm_GetEvent(Gpm_Event *event)
 
   return 1;
 }
+
+#endif /* GPM_MOUSE */
 
 /* Local Variables: */
 /* c-indent-level: 3 */

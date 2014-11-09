@@ -97,13 +97,6 @@ else
 fi
 mv Makefile.tmp Makefile
 
-if [ "$gpm" = 1 ]; then
-    sed 's/^#LIBS += -lgpm/LIBS += -lgpm/' Makefile > Makefile.tmp
-else
-    sed 's/^LIBS += -lgpm/#LIBS += -lgpm/' Makefile > Makefile.tmp
-fi
-mv Makefile.tmp Makefile
-
 if [ "$clang" = 1 ]; then
     sed 's/^#CC = clang/CC = clang/' Makefile > Makefile.tmp
 else

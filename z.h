@@ -221,4 +221,9 @@ extern int Tabsize;
 
 #define ISNL(c)			((c) == '\n')
 
+#if 0
+void tbell_dbg(char *func, int line);
+#define tbell() tbell_dbg(__FILE__, __LINE__)
+#endif
+
 #endif /* _Z_H_ */

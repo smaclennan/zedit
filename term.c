@@ -488,13 +488,6 @@ void tstyle(int style)
 	tflush();
 }
 
-void tbell(void)
-{
-	ring_bell = 1;
-	if (Curwdo)
-		Curwdo->modeflags = INVALID;
-}
-
 void tsetcursor(bool hide)
 {
 #ifdef DOS
@@ -585,4 +578,18 @@ void mouse_point(int row, int col, bool set_mark)
 	}
 
 	unmark(tmark);
+}
+
+#undef tbell
+void tbell(void)
+{
+	ring_bell = 1;
+	if (Curwdo)
+		Curwdo->modeflags = INVALID;
+}
+
+void tbell_dbg(char *func, int line)
+{
+	Dbg("tbell %s:%d\n", func, line);
+	tbell();
 }

@@ -56,7 +56,7 @@
 #include "keys.h"
 
 #define ZSTR	"Zedit"
-#define VERSION	"5.2"
+#define VERSION	"6"
 
 #define INVALID		-1
 

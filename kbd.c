@@ -110,7 +110,7 @@ void set_mouse(bool enable)
 				gpm_zerobased = 1;
 
 				if (Gpm_Open(&conn, 0) < 0) {
-					error("Cannot connect to mouse server\n");
+					/* Cannot connect to gpm server */
 					gpm_fd = -1; /* paranoia */
 					return;
 				}

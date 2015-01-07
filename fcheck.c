@@ -70,7 +70,7 @@ void Dbg(const char *fmt, ...) { ((void)fmt); }
 void mouse_scroll(int row, bool down) { ((void)row); ((void)down); }
 void mouse_point(int row, int col, bool set_mark) {}
 
-#if ZLIB || SPELL || defined(GPM_HACK)
+#if ZLIB || SPELL
 static int noinclude(int argc, char *argv[], const char *inc)
 {
 	char path[PATHMAX];
@@ -300,12 +300,15 @@ int main(int argc, char *argv[])
 	if (err == 0)
 		err = build_zversion_h();
 
+		/* Freebsd does not support sed -i */
 #if ZLIB
 	if (noinclude(argc, argv, "zlib.h")) {
 		puts("Cound not find zlib.h... disabling zlib support.");
 		puts("Maybe set ZLIBINC in Makefile?");
-		system("sed -i 's:^#define ZLIB://#define ZLIB:' config.h");
-		system("sed -i 's/^LIBS += -lz/#LIBS += -lz/' Makefile");
+		system("sed 's:^#define ZLIB://#define ZLIB:' config.h > config.h.new");
+		system("sed 's/^LIBS += -lz/#LIBS += -lz/' Makefile > Makefile.new");
+		rename("config.h.new", "config.h");
+		rename("Makefile.new", "Makefile");
 	}
 #endif
 #if SPELL
@@ -314,8 +317,10 @@ int main(int argc, char *argv[])
 		puts("Cound not find aspell.h and/or dlfcn.h..."
 		     "disabling spell support.");
 		puts("Maybe set ASPELLINC in Makefile?");
-		system("sed -i 's:^#define SPELL://#define SPELL:' config.h");
-		system("sed -i 's/^LIBS += -ldl/#LIBS += -ldl/' Makefile");
+		system("sed 's:^#define SPELL://#define SPELL:' config.h > config.h.new");
+		system("sed 's/^LIBS += -ldl/#LIBS += -ldl/' Makefile > Makefile.new");
+		rename("config.h.new", "config.h");
+		rename("Makefile.new", "Makefile");
 	}
 #endif
 

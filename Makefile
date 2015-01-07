@@ -12,10 +12,10 @@ CC = cc
 #CC = pcc -D__unix__ -L$(LIBDIR)
 
 # Set this if zlib.h is not in /usr/include
-#ZLIBINC=-I/usr/include
+#ZLIBINC=-I/usr/local/include
 
 # Set this if aspell.h is not in /usr/include
-#ASPELLINC=-I/usr/include
+#ASPELLINC=-I/usr/local/include
 
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
@@ -23,9 +23,6 @@ D = -O2
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
 
 MAKEFLAGS += --no-print-directory
-
-export CC
-export CFLAGS
 
 # Enable and all buffers have only one contiguous page.
 #CFLAGS += -DONE_PAGE
@@ -64,7 +61,7 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 all:	fcheck $(ZEXE) win32/dosbind.c
 
 $(ZEXE): $O
-	$(QUIET_LINK)$(CC) -o $@ $+ $(LIBS)
+	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
 
 win32/dosbind.c: bind.c

@@ -40,6 +40,9 @@ int Colmax, Rowmax;
 #if defined __unix__
 #define OS unix
 #define GITFILE ".git/refs/heads/master"
+
+#include <sys/utsname.h>
+static struct utsname utsname;
 #elif defined WIN32
 #define OS win32
 #define GITFILE "../.git/refs/heads/master"
@@ -184,6 +187,10 @@ int main(int argc, char *argv[])
 	((void)argc);
 	((void)argv);
 
+#ifdef __unix__
+	uname(&utsname);
+#endif
+
 	if (NUMVARS != VARSNUM) {
 		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",
 		       NUMVARS, VARSNUM);
@@ -321,6 +328,12 @@ int main(int argc, char *argv[])
 		system("sed 's/^LIBS += -ldl/#LIBS += -ldl/' Makefile > Makefile.new");
 		rename("config.h.new", "config.h");
 		rename("Makefile.new", "Makefile");
+	} else {
+		if (strcmp(utsname.sysname, "FreeBSD") == 0) {
+			/* FreeBSD does not need -ldl */
+			system("sed 's/^LIBS += -ldl/#LIBS += -ldl/' Makefile > Makefile.new");
+			rename("Makefile.new", "Makefile");
+		}
 	}
 #endif
 

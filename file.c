@@ -242,7 +242,7 @@ void Zread_file(void)
 		rc = breadfile(Fname);
 		if (rc == 0) {
 			btoend();
-			tmark = bcremrk();
+			tmark = zcreatemrk();
 			btostart();
 			bcopyrgn(tmark, save);
 			unmark(tmark);

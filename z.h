@@ -40,14 +40,12 @@
 
 #include "config.h"
 
-#if defined(WIN32) || defined(DOS)
-#include "zwin32.h"
-#else
-#include <unistd.h>
-#endif
 #ifndef WIN32
 #include <dirent.h>
 #endif
+
+#include <setjmp.h>
+extern jmp_buf zenv;
 
 #include "buff.h"
 #include "vars.h"
@@ -60,9 +58,6 @@
 
 #define INVALID		-1
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
 #define READ_MODE	(O_RDONLY | O_BINARY)
 #define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
 
@@ -151,7 +146,6 @@ extern int raw_mode;
 #define CMD(n) (*Cmds[n][Curcmds])()
 
 extern bool Sendp;
-extern struct buff *Killbuff;
 extern char Lbufname[];
 extern struct buff *Bufflist, *Paw;
 extern struct buff *Buff_save;
@@ -225,5 +219,8 @@ extern int Tabsize;
 void tbell_dbg(char *func, int line);
 #define tbell() tbell_dbg(__FILE__, __LINE__)
 #endif
+
+/* Use zcreatemrk */
+#define bcremrk bogus
 
 #endif /* _Z_H_ */

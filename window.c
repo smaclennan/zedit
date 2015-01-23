@@ -30,9 +30,9 @@ static struct wdo *wcreate(int first, int last)
 
 	if (wdo) {
 		wdo->wbuff	= Curbuff;
-		wdo->wpnt	= bcremrk();
-		wdo->wmrk	= bcremrk();
-		wdo->wstart	= bcremrk();
+		wdo->wpnt	= zcreatemrk();
+		wdo->wmrk	= zcreatemrk();
+		wdo->wstart	= zcreatemrk();
 		wdo->modeflags	= INVALID;
 		wdo->first	= first;
 		wdo->last	= last;

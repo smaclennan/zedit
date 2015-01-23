@@ -28,8 +28,8 @@ static void newcomment(struct mark *start)
 	com = (struct comment *)calloc(sizeof(struct comment), 1);
 	if (!com)
 		return;
-	com->start = bcremrk();
-	com->end   = bcremrk();
+	com->start = zcreatemrk();
+	com->end   = zcreatemrk();
 
 	mrktomrk(com->start, start);
 

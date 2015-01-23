@@ -176,7 +176,7 @@ void Zagain(void)
 {
 	if (searchdir[1] == SGLOBAL) {
 		if (!Gmark)
-			Gmark = bcremrk(); /* set here in case exit/reload */
+			Gmark = zcreatemrk(); /* set here in case exit/reload */
 		while (!promptsearch("", AGAIN)) {
 			Curbuff = Curbuff->next;
 			if (Curbuff) {
@@ -231,7 +231,7 @@ static void doreplace(int type)
 	query = type == FORWARD ? false : true;
 
 	crgone = *olds && *(olds + strlen(olds) - 1) == '\n';
-	pmark = bcremrk();
+	pmark = zcreatemrk();
 
 	if (type == REGEXP)
 		rc = compile((Byte *)olds, ebuf, &ebuf[ESIZE]);
@@ -243,7 +243,7 @@ static void doreplace(int type)
 			bmrktopnt(&tmark);
 			btostart();
 			while (replaceone(type, &query, &exit, ebuf, crgone) &&
-			       !exit)
+				   !exit)
 				;
 			bpnttomrk(&tmark);
 		}
@@ -302,7 +302,7 @@ static bool replaceone(int type, bool *query, bool *exit, Byte *ebuf,
 	int dist, changeprev = 0;
 	struct mark *prevmatch;
 
-	prevmatch = bcremrk();
+	prevmatch = zcreatemrk();
 	putpaw("Searching...");
 	while (!*exit && next_replace(ebuf, type)) {
 		found = true;

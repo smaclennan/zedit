@@ -200,7 +200,7 @@ void Zundo(void)
 	} else {
 		unsigned long offset = undo->offset;
 		do {
-			struct mark *tmark = bcremrk();
+			struct mark *tmark = zcreatemrk();
 			for (i = 0; i < undo->size; ++i)
 				binsert(undo->data[i]);
 			bpnttomrk(tmark);

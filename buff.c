@@ -17,7 +17,23 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "z.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifndef DOS
+#include <stdbool.h>
+#include <strings.h>
+#endif
+#include <ctype.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include "buff.h"
+
+#ifdef ZEDIT
+#include "z.h" /* SAM fixme config.h */
+#undef bcremrk /* SAM */
+#endif
 
 #if ZLIB
 #undef Byte
@@ -78,32 +94,14 @@ static bool pagesplit(void);
 
 void binit(void)
 {
-	int cnt;
-
-	/* Set the screen marks */
-	Scrnmarks[0].next = &Scrnmarks[1];
-	for (cnt = 1; cnt < ROWMAX; ++cnt) {
-		Scrnmarks[cnt].prev  = &Scrnmarks[cnt - 1];
-		Scrnmarks[cnt].next  = &Scrnmarks[cnt + 1];
-	}
-	Scrnmarks[ROWMAX - 1].next = NULL;
-
-	/* init the Mrklist */
-	Mrklist = &Scrnmarks[ROWMAX - 1];
-
 #ifdef DOS_EMS
 	ems_init();
 #endif
 }
 
-void bfini(void)
+void bfini(struct mark *mhead)
 {
-	struct mark *mhead = &Scrnmarks[ROWMAX - 1];
-
 	Curbuff = NULL;
-
-	bdelbuff(Killbuff);
-	bdelbuff(Paw);
 
 	while (Bufflist) {
 		if (Bufflist->fname)
@@ -148,7 +146,9 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 	if (flip)
 		bswappnt(tmark);
 
-	ltmrk = bcremrk();
+	if (!(ltmrk = bcremrk()))
+		return 0;
+
 	sbuff = Curbuff;
 	while (bisbeforemrk(tmark)) {
 		if (Curpage == tmark->mpage)
@@ -237,7 +237,7 @@ struct mark *bcremrk(void)
 	} else {
 		mrk = (struct mark *)calloc(1, sizeof(struct mark));
 		if (!mrk)
-			longjmp(zenv, -1);	/* ABORT */
+			return NULL;
 	}
 
 	bmrktopnt(mrk);
@@ -327,6 +327,7 @@ bool bdelbuff(struct buff *tbuff)
 		}
 	}
 
+#ifdef ZEDIT
 	while (tbuff->child != EOF) {
 		unvoke(tbuff);
 		checkpipes(1);
@@ -334,6 +335,7 @@ bool bdelbuff(struct buff *tbuff)
 
 	uncomment(tbuff);
 	undo_clear(tbuff);
+#endif
 
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);
@@ -437,7 +439,7 @@ int bgetcol(bool flag, int col)
 	struct mark pmark;
 
 	bmrktopnt(&pmark);
-	if (bcrsearch(NL))
+	if (bcrsearch('\n'))
 		bmove1();
 	while (!bisatmrk(&pmark) && !bisend()) {
 		col += chwidth(*Curcptr, col, flag);
@@ -462,7 +464,9 @@ void binsert(Byte byte)
 	Curbuff->bmodf = true;
 	Curmodf = true;
 
+#ifdef ZEDIT
 	undo_add(1);
+#endif
 
 	for (btmark = Mrklist; btmark; btmark = btmark->prev)
 		if (btmark->mpage == Curpage && btmark->moffset >= Curchar)
@@ -552,7 +556,7 @@ unsigned long bline(void)
 
 	bmrktopnt(&tmark);
 	btostart();
-	while (bcsearch(NL) && !bisaftermrk(&tmark))
+	while (bcsearch('\n') && !bisaftermrk(&tmark))
 		++line;
 	bpnttomrk(&tmark);
 	return line;
@@ -575,9 +579,9 @@ int bmakecol(int col, bool must)
 {
 	int tcol = 0;
 
-	if (bcrsearch(NL))
+	if (bcrsearch('\n'))
 		bmove1();
-	while (tcol < col && !ISNL(*Curcptr) && !bisend()) {
+	while (tcol < col && *Curcptr != '\n' && !bisend()) {
 		tcol += chwidth(*Curcptr, tcol, !must);
 		bmove1();
 	}
@@ -688,7 +692,9 @@ void bempty(void)
 	Curcptr = Cpstart;
 	Curmodf = true;
 
+#ifdef ZEDIT
 	undo_clear(Curbuff);
+#endif
 }
 
 /* Swap the point and the mark. */
@@ -768,7 +774,7 @@ int breadfile(char *fname)
 	struct stat sbuf;
 	int fd, len;
 
-	fd = open(fname, READ_MODE);
+	fd = open(fname, O_RDONLY | O_BINARY);
 	if (fd < 0) {
 		if (errno == ENOENT)
 			return 1;
@@ -1120,7 +1126,7 @@ Byte bpeek(void)
 	else if (bisstart())
 		/* Pretend we are at the start of a line.
 		 * Needed for delete-to-eol and step in reg.c. */
-		return NL;
+		return '\n';
 	else {
 		Byte ch;
 		bmove(-1);
@@ -1164,8 +1170,8 @@ void set_umark(struct mark *tmark)
 		if (freeumark) {
 			Curbuff->umark = freeumark;
 			freeumark = NULL;
-		} else
-			Curbuff->umark = bcremrk();
+		} else if (!(Curbuff->umark = bcremrk()))
+			return;
 	}
 
 	if (tmark)
@@ -1193,31 +1199,11 @@ void clear_umark(void)
 	}
 }
 
-void Zstats(void)
+int bgetstats(char *str, int len)
 {
-	struct buff *b;
-	struct page *p;
-	unsigned long use = 0, total = 0;
-	int n;
-
-	Curpage->plen = Curplen;
-	for (b = Bufflist; b; b = b->next)
-		for (p = b->firstp; p; p = p->nextp) {
-			use += p->plen;
-			++total;
-		}
-
-	n = snprintf(PawStr, Colmax,
-		     "Buffers: %d  Pages: %d  Marks: %d",
-		     NumBuffs, NumPages, NumMarks);
-#ifdef DOS_EMS
-	n += snprintf(PawStr + n, Colmax - n, "  EMS: %d", ems_pages);
-#endif
-#if UNDO
-	n += snprintf(PawStr + n, Colmax - n, "  Undos: %lu%c",
-		      (undo_total + 521) / 1024, undo_total ? 'K' : ' ');
-#endif
-	_putpaw(PawStr);
+	return snprintf(str, len,
+					"Buffers: %d  Pages: %d  Marks: %d",
+					NumBuffs, NumPages, NumMarks);
 }
 
 /* Low level memory page routines */

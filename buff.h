@@ -18,9 +18,15 @@
  */
 
 #ifndef _buff_h
+#define _buff_h
 
-#include <setjmp.h>
-extern jmp_buf zenv;
+#include <stdbool.h>
+
+#if defined(WIN32) || defined(DOS)
+#include "zwin32.h"
+#else
+#include <unistd.h>
+#endif
 
 #include <time.h>
 
@@ -100,8 +106,50 @@ bool bmove(int);
 void bmove1(void);
 void boffset(unsigned long off);
 
+void binit(void);
+void bfini(struct mark *mhead);
+int bcopyrgn(struct mark *, struct buff*);
+struct buff *bcreate(void);
+struct mark *bcremrk(void);
+bool bcrsearch(Byte);
+bool bcsearch(Byte);
+bool bdelbuff(struct buff *);
+void bdelete(int);
+void bdeltomrk(struct mark *);
+void bempty(void);
+int bgetcol(bool, int);
+void bgoto(struct buff *);
+void bgoto_char(long offset);
+void binsert(Byte);
+void bconvert(int (*to)(int));
+void binstr(const char *);
+bool bisaftermrk(struct mark *);
+bool bisbeforemrk(struct mark *);
+unsigned long blength(struct buff *);
+unsigned long blocation(void);
+unsigned long bline(void);
+int bmakecol(int, bool);
+void bmrktopnt(struct mark *);
+void bpnttomrk(struct mark *);
+int breadfile(char *);
+bool bstrsearch(const char *, bool);
+void bswappnt(struct mark *);
+void bswitchto(struct buff *);
+void btoend(void);
+void btostart(void);
+int bwritefile(char *);
+void unmark(struct mark *);
+void makecur(struct page *);
+void makeoffset(int);
+
+int bgetstats(char *str, int len);
+
 #define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)
 /* This does not need to be a macro... just makes it easier to see */
 #define CLEAR_UMARK clear_umark()
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 #endif

@@ -204,7 +204,7 @@ int set_bookmark(char *bookname)
 
 	if (Bookmark > Lastbook) {
 		Lastbook = Bookmark;
-		Bookmrks[Bookmark] = bcremrk();
+		Bookmrks[Bookmark] = zcreatemrk();
 	} else
 		bmrktopnt(Bookmrks[Bookmark]);
 	return Bookmark;
@@ -218,7 +218,7 @@ void Zset_bookmark(void)
 		if (getarg("Bookmark name: ", PawStr, STRMAX) == 0) {
 			set_bookmark(PawStr);
 			putpaw("Book Mark %s(%d) Set",
-			       Bookname[Bookmark], Bookmark + 1);
+				   Bookname[Bookmark], Bookmark + 1);
 		}
 	} else {
 		set_bookmark(NULL);
@@ -238,7 +238,7 @@ void Znext_bookmark(void)
 
 		Arg = 0;
 		b = getplete("Bookmark name: ", NULL, Bookname, sizeof(char *),
-			     Lastbook + 1);
+				 Lastbook + 1);
 		if (b == -1)
 			return;
 	}
@@ -276,7 +276,7 @@ void Zredisplay(void)
 
 static void scroll(bool (*search)(Byte what))
 {
-	struct mark *pmark = bcremrk();
+	struct mark *pmark = zcreatemrk();
 
 	bpnttomrk(Sstart);
 	while (Arg-- > 0 && search(NL))

@@ -20,7 +20,17 @@
 #include "z.h"
 
 
-struct buff *Killbuff;
+static struct buff *Killbuff;
+
+void delinit(void)
+{
+	Killbuff = bcreate();
+}
+
+void delfini(void)
+{
+	bdelbuff(Killbuff);
+}
 
 static void copytomrk(struct mark *tmark)
 {
@@ -61,7 +71,7 @@ void Zdelete_to_eol(void)
 		bdelete(1);
 	else {
 		bool atstart = bpeek() == NL;
-		struct mark *tmark = bcremrk();
+		struct mark *tmark = zcreatemrk();
 		toendline();
 		if (atstart)
 			bmove1(); /* delete the NL */
@@ -75,7 +85,7 @@ void Zdelete_line(void)
 	struct mark *tmark;
 
 	tobegline();
-	tmark = bcremrk();
+	tmark = zcreatemrk();
 	bcsearch(NL);
 	killtomrk(tmark);
 	unmark(tmark);
@@ -115,7 +125,7 @@ void Zyank(void)
 #endif
 	bswitchto(Killbuff);
 	btoend();
-	tmark = bcremrk();
+	tmark = zcreatemrk();
 	btostart();
 #if UNDO
 	undo_add(bcopyrgn(tmark, tbuff));
@@ -132,7 +142,7 @@ void Zdelete_word(void)
 {
 	struct mark *tmark;
 
-	tmark = bcremrk();
+	tmark = zcreatemrk();
 	moveto(bisword, FORWARD);
 	movepast(bisword, FORWARD);
 	killtomrk(tmark);
@@ -143,7 +153,7 @@ void Zdelete_previous_word(void)
 {
 	struct mark *tmark;
 
-	tmark = bcremrk();
+	tmark = zcreatemrk();
 	Zprevious_word();
 	killtomrk(tmark);
 	unmark(tmark);
@@ -163,10 +173,10 @@ void Zcopy_word(void)
 			pinsert();
 		}
 	} else {
-		tmark = bcremrk();	/* save current Point */
+		tmark = zcreatemrk();	/* save current Point */
 		moveto(bistoken, FORWARD); /* find start of word */
 		movepast(bistoken, BACKWARD);
-		start = bcremrk();
+		start = zcreatemrk();
 		movepast(bistoken, FORWARD); /* move Point to end of word */
 		copytomrk(start); /* copy to Kill buffer */
 		bpnttomrk(tmark); /* move Point back */
@@ -180,10 +190,10 @@ void Zdelete_blanks(void)
 {
 	struct mark *tmark, *pmark;
 
-	pmark = bcremrk();
+	pmark = zcreatemrk();
 	if (bcrsearch(NL)) {
 		bmove1();
-		tmark = bcremrk();
+		tmark = zcreatemrk();
 		movepast(bisspace, BACKWARD);
 		if (!bisstart())
 			bcsearch(NL);
@@ -192,7 +202,7 @@ void Zdelete_blanks(void)
 		unmark(tmark);
 	}
 	if (bcsearch(NL)) {
-		tmark = bcremrk();
+		tmark = zcreatemrk();
 		movepast(bisspace, FORWARD);
 		if (bcrsearch(NL))
 			bmove1();

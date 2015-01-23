@@ -172,7 +172,7 @@ int main(int argc, char **argv)
 	int arg, files = 0, textMode = 0, exitflag = 0, line = 0;
 	struct buff *tbuff = NULL;
 
-	/* A longjmp is called if bcremrk runs out of memory */
+	/* A longjmp is called if zcreatemrk runs out of memory */
 	if (setjmp(zenv) != 0) {
 		error("FATAL ERROR: Out of memory");
 		Argp = false;	/* so Zexit will not default to save */
@@ -215,9 +215,10 @@ int main(int argc, char **argv)
 		VAR(VNORMAL) = 0;
 
 	binit();
+	display_init();
 
 	/* create the needed buffers */
-	Killbuff = bcreate();
+	delinit();
 	Paw = bcreate();
 	if (!cmakebuff(MAINBUFF, NULL)) {
 		puts("Not enough memory.");
@@ -227,10 +228,10 @@ int main(int argc, char **argv)
 	tinit();
 	fd_init();
 
-	REstart	= bcremrk();
-	Sstart	= bcremrk();
-	Psstart	= bcremrk();
-	Send	= bcremrk();
+	REstart	= zcreatemrk();
+	Sstart	= zcreatemrk();
+	Psstart	= zcreatemrk();
+	Send	= zcreatemrk();
 	Sendp	= false;
 
 	for (; optind < argc; ++optind, ++files)
@@ -242,7 +243,7 @@ int main(int argc, char **argv)
 		bswitchto(tbuff);
 
 		strcpy(Lbufname,
-		       Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
+			   Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
 	}
 
 	winit();
@@ -544,3 +545,26 @@ void Zversion(void)
 
 	Arg = 0;
 }
+
+void Zstats(void)
+{
+	int n = bgetstats(PawStr, Colmax);
+#ifdef DOS_EMS
+	n += snprintf(PawStr + n, Colmax - n, "  EMS: %d", ems_pages);
+#endif
+#if UNDO
+	n += snprintf(PawStr + n, Colmax - n, "  Undos: %lu%c",
+			  (undo_total + 521) / 1024, undo_total ? 'K' : ' ');
+#endif
+	_putpaw(PawStr);
+}
+
+#undef bcremrk
+struct mark *zcreatemrk(void)
+{
+	struct mark *mrk = bcremrk();
+	if (!mrk)
+		longjmp(zenv, -1);	/* ABORT */
+	return mrk;
+}
+#define bcremrk bogus

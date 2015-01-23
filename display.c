@@ -36,6 +36,22 @@ static Byte tline[COLMAX + 1];
 
 static void (*printchar)(Byte ichar) = tprntchar;
 
+void display_init(void)
+{
+	int cnt;
+
+	/* Set the screen marks */
+	Scrnmarks[0].next = &Scrnmarks[1];
+	for (cnt = 1; cnt < ROWMAX; ++cnt) {
+		Scrnmarks[cnt].prev  = &Scrnmarks[cnt - 1];
+		Scrnmarks[cnt].next  = &Scrnmarks[cnt + 1];
+	}
+	Scrnmarks[ROWMAX - 1].next = NULL;
+
+	/* init the Mrklist */
+	Mrklist = &Scrnmarks[ROWMAX - 1];
+}
+
 /* True if user mark moved */
 static bool umarkmoved(struct mark *tmark)
 {
@@ -79,8 +95,8 @@ void zrefresh(void)
 	static struct mark *was;	/* last location of user mark */
 
 	if (was == NULL)
-		was = bcremrk();
-	pmark = bcremrk();
+		was = zcreatemrk();
+	pmark = zcreatemrk();
 	if (InPaw) {
 		pawdisplay(pmark, was);
 		return;
@@ -125,7 +141,7 @@ void zrefresh(void)
 			struct mark *point;
 			bswitchto(wdo->wbuff);
 			settabsize(Curbuff->bmode);
-			point = bcremrk();
+			point = zcreatemrk();
 			bpnttomrk(wdo->wstart);
 			innerdsp(wdo->first, wdo->last, NULL);
 			modeflags(wdo);
@@ -229,14 +245,14 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			col = 0;
 			tsetpoint(trow, col);
 			while (!bisend() && !ISNL(Buff()) &&
-			       (col = buff_col()) < Colmax) {
+				   (col = buff_col()) < Colmax) {
 				if (in_region(Curbuff->umark, pmark)) {
 					tstyle(T_REGION);
 					tprntchar(Buff());
 					tstyle(T_NORMAL);
 				} else if (trow == Tlrow &&
-				    Buff() == *lptr &&
-				    Buff() != (Byte)'\376')
+					Buff() == *lptr &&
+					Buff() != (Byte)'\376')
 					Pcol = col;
 				else {
 					if (bisatumark())
@@ -245,8 +261,8 @@ static int innerdsp(int from, int to, struct mark *pmark)
 						/* usually tprntchar */
 						printchar(Buff());
 					if (trow == Tlrow &&
-					    (!ZISPRINT(*lptr) ||
-					     !ZISPRINT(Buff())))
+						(!ZISPRINT(*lptr) ||
+						 !ZISPRINT(Buff())))
 						Tlrow = -1;
 				}
 				*lptr++ = Buff();
@@ -254,7 +270,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			}
 			tcleol();
 			if (bisatumark() &&
-			    (ISNL(Buff()) || bisstart() || bisend()))
+				(ISNL(Buff()) || bisstart() || bisend()))
 				setmark(false);
 			if (col >= Colmax)
 				extendedlinemarker();
@@ -299,7 +315,7 @@ void reframe(void)
 	int cnt;
 	struct mark *pmark;
 
-	pmark = bcremrk();
+	pmark = zcreatemrk();
 	for (cnt = prefline(); cnt > 0 && bcrsearch(NL); --cnt)
 			cnt -= bgetcol(true, 0) / Colmax;
 	if (cnt < 0)

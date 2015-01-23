@@ -45,7 +45,7 @@ static void grep_one(char *fname, Byte *ebuf,
 		bswitchto(inbuff);
 
 		tobegline();
-		start = bcremrk();
+		start = zcreatemrk();
 		toendline();
 		bmove1(); /* grab NL */
 		bcopyrgn(start, outbuff);

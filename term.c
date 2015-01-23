@@ -547,7 +547,7 @@ void mouse_point(int row, int col, bool set_mark)
 		zrefresh();
 	}
 
-	tmark = bcremrk();
+	tmark = zcreatemrk();
 
 	/* Move the point to row */
 	if (row > Prow)

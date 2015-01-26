@@ -46,6 +46,11 @@
 #define bclose(a) close(a)
 #endif
 
+#ifndef CRLF
+#define COMPRESSED			0x0008
+#define CRLF				0x0010
+#endif
+
 static bool Curmodf;		/* page modified?? */
 static Byte *Cpstart;		/* pim data start */
 Byte *Curcptr;			/* current character */
@@ -55,6 +60,8 @@ struct buff *Bufflist;		/* the buffer list */
 struct buff *Curbuff;		/* the current buffer */
 struct mark *Mrklist;		/* the marks list tail */
 struct page *Curpage;		/* the current page */
+
+int raw_mode;
 
 /* Keeping just one mark around is a HUGE win for a trivial amount of code. */
 static struct mark *freemark;
@@ -215,8 +222,7 @@ struct buff *bcreate(void)
 			return NULL;
 		}
 		buf->pnt_page = fpage;
-		buf->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
-			(VAR(VEXACT) ? EXACT     : 0);
+		buf->bmode = bsetmode();
 		buf->child = EOF;
 		++NumBuffs;
 	}
@@ -321,10 +327,8 @@ bool bdelbuff(struct buff *tbuff)
 			bswitchto(tbuff->next);
 		else if (tbuff->prev)
 			bswitchto(tbuff->prev);
-		else {
-			error("Last Buffer.");
+		else
 			return false;
-		}
 	}
 
 #ifdef ZEDIT
@@ -369,7 +373,9 @@ void bdelete(int quantity)
 		if (quan < 0)
 			quan = 0; /* May need to switch pages */
 
+#if UNDO
 		undo_del(quan);
+#endif
 
 		Curplen -= quan;
 		Curbuff->blen -= quan;
@@ -430,22 +436,6 @@ void bdeltomrk(struct mark *tmark)
 			bdelete(tmark->moffset - Curchar);
 		else
 			bdelete(Curplen - Curchar);
-}
-
-
-/* Return current screen col of point. */
-int bgetcol(bool flag, int col)
-{
-	struct mark pmark;
-
-	bmrktopnt(&pmark);
-	if (bcrsearch('\n'))
-		bmove1();
-	while (!bisatmrk(&pmark) && !bisend()) {
-		col += chwidth(*Curcptr, col, flag);
-		bmove1();
-	}
-	return col;
 }
 
 
@@ -571,29 +561,6 @@ void boffset(unsigned long off)
 		bmove(MAXMOVE);
 	bmove(off);
 }
-
-/* Try to put Point in a specific column.
- * Returns actual Point column.
- */
-int bmakecol(int col, bool must)
-{
-	int tcol = 0;
-
-	if (bcrsearch('\n'))
-		bmove1();
-	while (tcol < col && *Curcptr != '\n' && !bisend()) {
-		tcol += chwidth(*Curcptr, tcol, !must);
-		bmove1();
-	}
-	if (must && tcol < col) {
-		int wid = chwidth('\t', tcol, true);
-		if (tcol + wid < col)
-			tcol -= Tabsize - wid;
-		tindent(col - tcol);
-	}
-	return tcol;
-}
-
 
 /* Move the point relative to its current position.
  *
@@ -787,7 +754,6 @@ int breadfile(char *fname)
 	else
 		Curbuff->mtime = -1;
 
-	putpaw("Reading %s", lastpart(fname));
 	bempty();
 
 #if ZLIB
@@ -914,50 +880,16 @@ static bool bwritedos(int fd)
 	return status;
 }
 
-static char *make_bakname(char *bakname, char *fname)
-{
-	strcpy(bakname, fname);
-	strcat(bakname, "~");
-	return bakname;
-}
-
-static bool cp(char *from, char *to)
-{
-	FILE *in, *out;
-	char buf[1024];
-	int rc = true;
-	size_t n;
-
-	in = fopen(from, "r");
-	out = fopen(to, "w");
-	if (!in || !out) {
-		if (!in)
-			fclose(in);
-		return false;
-	}
-	while ((n = fread(buf, 1, 1024, in)) > 0)
-		if (fwrite(buf, 1, n, out) != n) {
-			rc = false;
-			break;
-		}
-	fclose(in);
-	fclose(out);
-	return rc;
-}
-
 /*	Write the current buffer to the file 'fname'.
  *	Handles the backup scheme according to VAR(VBACKUP).
  *	Returns:	true	if write successful
  *				false	if write failed
- *				ABORT	if user didn't want to overwrite
  */
-int bwritefile(char *fname)
+bool bwritefile(char *fname)
 {
 	static int Cmask;
-	char bakname[PATHMAX + 1];
-	int fd, mode, status = true, bak = false;
+	int fd, mode, status = true;
 	struct stat sbuf;
-	int nlink;
 
 	if (!fname)
 		return true;
@@ -965,14 +897,9 @@ int bwritefile(char *fname)
 	/* If the file existed, check to see if it has been modified. */
 	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
 		if (sbuf.st_mtime > Curbuff->mtime) {
-			sprintf(PawStr,
-				"WARNING: %s has been modified. Overwrite? ",
-				lastpart(fname));
-			if (ask(PawStr) != YES)
-				return ABORT;
+			/* file has been modified */
 		}
 		mode  = sbuf.st_mode;
-		nlink = sbuf.st_nlink;
 	} else {
 		if (Cmask == 0) {
 			Cmask = umask(0);	/* get the current umask */
@@ -980,30 +907,7 @@ int bwritefile(char *fname)
 			Cmask = ~Cmask & 0666;	/* make it usable */
 		}
 		mode  = Cmask;
-		nlink = 1;
 	}
-
-	/* check for links and handle backup file */
-	make_bakname(bakname, fname);
-	if (nlink > 1) {
-		sprintf(PawStr, "WARNING: %s is linked. Preserve? ",
-			lastpart(fname));
-		switch (ask(PawStr)) {
-		case YES:
-			if (VAR(VBACKUP))
-				bak = cp(fname, bakname);
-			break;
-		case NO:
-			if (VAR(VBACKUP))
-				bak = rename(fname, bakname);
-			else
-				unlink(fname);	/* break link */
-			break;
-		case ABORT:
-			return ABORT;
-		}
-	} else if (VAR(VBACKUP))
-		bak = rename(fname, bakname);
 
 	/* Write the output file */
 	fd = open(fname, WRITE_MODE, mode);
@@ -1017,35 +921,18 @@ int bwritefile(char *fname)
 				status = bwritedos(fd);
 			else
 				status = bwritefd(fd);
-	} else {
-		if (errno == EACCES)
-			error("File is read only.");
-		else
-			error("Unable to open file.");
+	} else
 		status = false;
-	}
 
 	/* cleanup */
 	if (status) {
-		struct stat sbuf;
-
 		if (stat(fname, &sbuf) == 0)
 			Curbuff->mtime = sbuf.st_mtime;
 		else
 			Curbuff->mtime = -1;
-		clrpaw();
 		/* If we saved the file... it isn't read-only */
 		Curbuff->bmode &= ~VIEW;
 		Curbuff->bmodf = false;
-	} else {
-		error("Unable to write file.");
-		if (bak) {
-			if (sbuf.st_nlink) {
-				cp(bakname, fname);
-				unlink(bakname);
-			} else
-				rename(bakname, fname);
-		}
 	}
 
 	return status;
@@ -1141,7 +1028,7 @@ int batoi(void)
 {
 	int num;
 
-	while (biswhite())
+	while (Buff() == ' ' || Buff() == '\t')
 		bmove1();
 	for (num = 0; isdigit(Buff()); bmove1())
 		num = num * 10 + Buff() - '0';
@@ -1188,7 +1075,7 @@ void clear_umark(void)
 		for (i = 0; i < ROWMAX; ++i)
 			Scrnmarks[i].modf = true;
 		Tlrow = -1;
-#else
+#elif defined(ZEDIT)
 		vsetmrk(Curbuff->umark);
 #endif
 		if (freeumark)
@@ -1339,4 +1226,12 @@ static void freepage(struct buff *tbuff, struct page *page)
 /* ems.c needs to know the page structure */
 #include "win32/ems.c"
 #endif
+#endif
+
+#ifndef ZEDIT
+bool delbname(char *bname) { return true; }
+
+void vsetmod(bool flag) {}
+
+int bsetmode(void) { return 0; }
 #endif

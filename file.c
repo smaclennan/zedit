@@ -78,6 +78,7 @@ static bool readone(char *bname, char *path)
 		return true;
 
 	if (cmakebuff(bname, path)) {
+		putpaw("Reading %s", lastpart(path));
 		int rc = breadfile(path);
 		if (rc >= 0) {
 			toggle_mode(0);
@@ -186,7 +187,7 @@ bool filesave(void)
 		Curwdo->modeflags = INVALID;
 	}
 	putpaw("Writing %s", lastpart(Curbuff->fname));
-	return bwritefile(Curbuff->fname);
+	return zwritefile(Curbuff->fname);
 }
 
 void Zwrite_file(void)
@@ -208,7 +209,7 @@ void Zwrite_file(void)
 				bcopyrgn(Curbuff->umark, tbuff);
 				bswitchto(tbuff);
 				Curbuff->bmode = save->bmode;
-				bwritefile(path);
+				zwritefile(path);
 				bswitchto(save);
 				bdelbuff(tbuff);
 				clrpaw();
@@ -239,6 +240,7 @@ void Zread_file(void)
 	if (tbuff) {
 		bswitchto(tbuff);
 		Curbuff->bmode = save->bmode;
+		putpaw("Reading %s", lastpart(Fname));
 		rc = breadfile(Fname);
 		if (rc == 0) {
 			btoend();

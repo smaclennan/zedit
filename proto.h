@@ -155,6 +155,8 @@ Z(pnewline);
 
 int ask(const char *);
 int ask2(const char *, bool);
+int bgetcol(bool, int);
+int bmakecol(int, bool);
 struct buff *cfindbuff(const char *);
 struct buff *cmakebuff(const char *, char *);
 int compile(Byte*, Byte*, Byte*);
@@ -164,7 +166,6 @@ bool tdelay(int ms);
 int delayprompt(const char *);
 void delinit(void);
 void delfini(void);
-bool delbname(char *);
 void delbuff(struct buff *);
 bool delcmd(void);
 int do_chdir(struct buff *buff);
@@ -228,7 +229,6 @@ void toggle_mode(int);
 void tprntchar(Byte);
 void tprntstr(const char *);
 void tstyle(int);
-void vsetmod(bool);
 void vsetmrk(struct mark *);
 int chwidth(Byte, int, bool);
 void hang_up(int);
@@ -237,6 +237,7 @@ int set_bookmark(char *bookname);
 void cleanup_bookmarks(void);
 const char *special_label(int key);
 struct mark *zcreatemrk(void);
+bool zwritefile(char *fname);
 
 #if GPM_MOUSE
 void handle_gpm_mouse(void);

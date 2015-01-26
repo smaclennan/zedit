@@ -81,6 +81,43 @@ void Znext_char(void)
 	Arg = 0;
 }
 
+/* Return current screen col of point. */
+int bgetcol(bool flag, int col)
+{
+	struct mark pmark;
+
+	bmrktopnt(&pmark);
+	if (bcrsearch('\n'))
+		bmove1();
+	while (!bisatmrk(&pmark) && !bisend()) {
+		col += chwidth(*Curcptr, col, flag);
+		bmove1();
+	}
+	return col;
+}
+
+/* Try to put Point in a specific column.
+ * Returns actual Point column.
+ */
+int bmakecol(int col, bool must)
+{
+	int tcol = 0;
+
+	if (bcrsearch('\n'))
+		bmove1();
+	while (tcol < col && *Curcptr != '\n' && !bisend()) {
+		tcol += chwidth(*Curcptr, tcol, !must);
+		bmove1();
+	}
+	if (must && tcol < col) {
+		int wid = chwidth('\t', tcol, true);
+		if (tcol + wid < col)
+			tcol -= Tabsize - wid;
+		tindent(col - tcol);
+	}
+	return tcol;
+}
+
 void Zprevious_page(void)
 {
 	int i, col = forcecol();

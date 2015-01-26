@@ -135,7 +135,8 @@ void delbuff(struct buff *buff)
 				bmrktopnt(wdo->wstart);
 				wdo->modeflags = INVALID;
 			}
-	}
+	} else
+		error("Last Buffer.");
 }
 
 #define WASTED		(BUFNAMMAX + 14)

@@ -117,7 +117,6 @@ bool bdelbuff(struct buff *);
 void bdelete(int);
 void bdeltomrk(struct mark *);
 void bempty(void);
-int bgetcol(bool, int);
 void bgoto(struct buff *);
 void bgoto_char(long offset);
 void binsert(Byte);
@@ -128,7 +127,6 @@ bool bisbeforemrk(struct mark *);
 unsigned long blength(struct buff *);
 unsigned long blocation(void);
 unsigned long bline(void);
-int bmakecol(int, bool);
 void bmrktopnt(struct mark *);
 void bpnttomrk(struct mark *);
 int breadfile(char *);
@@ -137,12 +135,16 @@ void bswappnt(struct mark *);
 void bswitchto(struct buff *);
 void btoend(void);
 void btostart(void);
-int bwritefile(char *);
+bool bwritefile(char *);
 void unmark(struct mark *);
 void makecur(struct page *);
 void makeoffset(int);
 
 int bgetstats(char *str, int len);
+int bsetmode(void);
+
+bool delbname(char *);
+void vsetmod(bool);
 
 #define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)
 /* This does not need to be a macro... just makes it easier to see */

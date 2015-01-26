@@ -27,7 +27,6 @@ jmp_buf	zenv;
 
 unsigned Cmd;
 int Cmdpushed = -1; /* Search pushed a key */
-int raw_mode;
 
 static char dbgfname[PATHMAX];
 
@@ -568,3 +567,95 @@ struct mark *zcreatemrk(void)
 	return mrk;
 }
 #define bcremrk bogus
+
+static bool cp(char *from, char *to)
+{
+	FILE *in, *out;
+	char buf[1024];
+	int rc = true;
+	size_t n;
+
+	in = fopen(from, "r");
+	out = fopen(to, "w");
+	if (!in || !out) {
+		if (!in)
+			fclose(in);
+		return false;
+	}
+	while ((n = fread(buf, 1, 1024, in)) > 0)
+		if (fwrite(buf, 1, n, out) != n) {
+			rc = false;
+			break;
+		}
+	fclose(in);
+	fclose(out);
+	return rc;
+}
+
+static char *make_bakname(char *bakname, char *fname)
+{
+	strcpy(bakname, fname);
+	strcat(bakname, "~");
+	return bakname;
+}
+
+bool zwritefile(char *fname)
+{
+	char bakname[PATHMAX + 1];
+	struct stat sbuf;
+	int nlink = 1, rc;
+	bool bak = false;
+
+	/* If the file existed, check to see if it has been modified. */
+	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
+		if (sbuf.st_mtime > Curbuff->mtime) {
+			sprintf(PawStr,
+					"WARNING: %s has been modified. Overwrite? ",
+					lastpart(fname));
+			if (ask(PawStr) != YES)
+				return ABORT;
+		}
+		nlink = sbuf.st_nlink;
+	}
+
+	/* check for links and handle backup file */
+	make_bakname(bakname, fname);
+	if (nlink > 1) {
+		sprintf(PawStr, "WARNING: %s is linked. Preserve? ",
+			lastpart(fname));
+		switch (ask(PawStr)) {
+		case YES:
+			if (VAR(VBACKUP))
+				bak = cp(fname, bakname);
+			break;
+		case NO:
+			if (VAR(VBACKUP))
+				bak = rename(fname, bakname);
+			else
+				unlink(fname);	/* break link */
+			break;
+		case ABORT:
+			return ABORT;
+		}
+	} else if (VAR(VBACKUP))
+		bak = rename(fname, bakname);
+
+	rc = bwritefile(fname);
+	if (rc)
+		clrpaw();
+	else {
+		if (errno == EACCES)
+			error("File is read only.");
+		else
+			error("Unable to write file.");
+		if (bak) {
+			if (sbuf.st_nlink) {
+				cp(bakname, fname);
+				unlink(bakname);
+			} else
+				rename(bakname, fname);
+		}
+	}
+
+	return rc;
+}

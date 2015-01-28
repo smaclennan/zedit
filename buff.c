@@ -31,8 +31,9 @@
 #include "buff.h"
 
 #ifdef ZEDIT
-#include "z.h" /* SAM fixme config.h */
-#undef bcremrk /* SAM */
+#include "z.h"
+#else
+static inline void vsetmod(bool flag) {}
 #endif
 
 #if ZLIB
@@ -110,14 +111,9 @@ void bfini(void)
 {
 	Curbuff = NULL;
 
-	while (Bufflist) {
-		if (Bufflist->fname)
-			free(Bufflist->fname);
-		if (Bufflist->bname)
-			delbname(Bufflist->bname);
+	while (Bufflist)
 		/* bdelbuff will update Bufflist */
 		bdelbuff(Bufflist);
-	}
 
 	while (Mrklist)
 		unmark(Mrklist);
@@ -220,7 +216,6 @@ struct buff *_bcreate(void)
 			return NULL;
 		}
 		buf->pnt_page = fpage;
-		buf->bmode = bsetmode();
 		buf->child = EOF;
 		++NumBuffs;
 	}
@@ -352,6 +347,11 @@ bool bdelbuff(struct buff *tbuff)
 	uncomment(tbuff);
 	undo_clear(tbuff);
 #endif
+
+	if (tbuff->fname)
+		free(tbuff->fname);
+	if (tbuff->bname)
+		free(tbuff->bname);
 
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);
@@ -1229,12 +1229,4 @@ static void freepage(struct buff *tbuff, struct page *page)
 /* ems.c needs to know the page structure */
 #include "win32/ems.c"
 #endif
-#endif
-
-#ifndef ZEDIT
-bool delbname(char *bname) { return true; }
-
-void vsetmod(bool flag) {}
-
-int bsetmode(void) { return 0; }
 #endif

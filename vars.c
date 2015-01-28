@@ -173,12 +173,6 @@ static void setavar(const char *vin, bool display)
 	Arg = 0;
 }
 
-int bsetmode(void)
-{
-		return (VAR(VNORMAL) ? NORMAL : TXTMODE) |
-			(VAR(VEXACT) ? EXACT     : 0);
-}
-
 /* Set Tabsize variable. Tabs must be >= 2 and <= 8. */
 int Tabsize = 8;
 

@@ -558,7 +558,6 @@ void Zstats(void)
 	_putpaw(PawStr);
 }
 
-#undef bcremrk
 struct mark *zcreatemrk(void)
 {
 	struct mark *mrk = bcremrk();
@@ -566,5 +565,3 @@ struct mark *zcreatemrk(void)
 		longjmp(zenv, -1);	/* ABORT */
 	return mrk;
 }
-#define bcremrk bogus
-

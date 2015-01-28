@@ -144,9 +144,7 @@ void makecur(struct page *);
 void makeoffset(int);
 
 int bgetstats(char *str, int len);
-int bsetmode(void);
 
-bool delbname(char *);
 void vsetmod(bool);
 
 #define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)

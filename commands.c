@@ -414,6 +414,7 @@ void Zexit(void)
 	bdelbuff(Paw);
 	display_fini(); /* must be before bfini! */
 	bfini();
+	cfini();
 	cleanup_bookmarks();
 
 	exit(0);

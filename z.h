@@ -217,7 +217,4 @@ void tbell_dbg(char *func, int line);
 #define tbell() tbell_dbg(__FILE__, __LINE__)
 #endif
 
-/* Use zcreatemrk */
-#define bcremrk bogus
-
 #endif /* _Z_H_ */

@@ -263,11 +263,6 @@ struct buff *cmakebuff(const char *bname, char *fname)
 	bswitchto(bptr);
 	if (fname)
 		bptr->fname = strdup(fname);
-	/* add the buffer to the head of the list */
-	if (Bufflist)
-		Bufflist->prev = bptr;
-	bptr->next = Bufflist;
-	Bufflist = bptr;
 
 	return bptr;
 }

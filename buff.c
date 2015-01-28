@@ -208,8 +208,8 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 	return copied;
 }
 
-/* Create a buffer.   Returns a pointer to the buffer descriptor. */
-struct buff *bcreate(void)
+/* Create a buffer but don't add it to the buffer list. You probably don't want this. */
+struct buff *_bcreate(void)
 {
 	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));
 	if (buf) {
@@ -225,6 +225,20 @@ struct buff *bcreate(void)
 		++NumBuffs;
 	}
 
+	return buf;
+}
+
+/* Create a buffer. Returns a pointer to the buffer descriptor. */
+struct buff *bcreate(void)
+{
+	struct buff *buf = _bcreate();
+	if (buf) {
+		/* add the buffer to the head of the list */
+		if (Bufflist)
+			Bufflist->prev = buf;
+		buf->next = Bufflist;
+		Bufflist = buf;
+	}
 	return buf;
 }
 

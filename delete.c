@@ -24,7 +24,7 @@ static struct buff *Killbuff;
 
 void delinit(void)
 {
-	Killbuff = bcreate();
+	Killbuff = _bcreate();
 }
 
 void delfini(void)

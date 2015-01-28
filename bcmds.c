@@ -75,46 +75,15 @@ void Znext_buffer(void)
 		tbell();
 }
 
-void Zdelete_buffer(void)
+static void delbuff(struct buff *buff)
 {
-	struct buff *tbuff;
-	char bname[BUFNAMMAX + 1];
-
-	if (Argp) {
-		strcpy(bname, Lbufname);
-		do
-			if (getarg("Buffer: ", bname, BUFNAMMAX))
-				return;
-		while ((tbuff = cfindbuff(bname)) == NULL);
-		bswitchto(tbuff);
-	}
-	if (Curbuff->bmodf)
-		switch (ask("save Changes? ")) {
-		case ABORT:
-			return;
-		case YES:
-			Zsave_file();
-		}
-	delbuff(Curbuff);
-}
-
-
-void delbuff(struct buff *buff)
-{
-	char bname[BUFNAMMAX + 1];
 	int wascur;
 	struct wdo *wdo;
 
 	wascur = buff == Curbuff;
-	strcpy(bname, buff->bname);	/* save it for delbname */
-	if (strcmp(Lbufname, bname) == 0)
+	if (strcmp(Lbufname, buff->bname) == 0)
 		*Lbufname = '\0';
-	if (buff->fname) {
-		free(buff->fname);
-		buff->fname = NULL;
-	}
-	if (bdelbuff(buff)) {
-		delbname(bname);
+	if (cdelbuff(buff)) {
 		if (wascur && *Lbufname) {
 			struct buff *tbuff = cfindbuff(Lbufname);
 			if (tbuff)
@@ -136,6 +105,29 @@ void delbuff(struct buff *buff)
 				wdo->modeflags = INVALID;
 			}
 	}
+}
+
+void Zdelete_buffer(void)
+{
+	struct buff *tbuff;
+	char bname[BUFNAMMAX + 1];
+
+	if (Argp) {
+		strcpy(bname, Lbufname);
+		do
+			if (getarg("Buffer: ", bname, BUFNAMMAX))
+				return;
+		while ((tbuff = cfindbuff(bname)) == NULL);
+		bswitchto(tbuff);
+	}
+	if (Curbuff->bmodf)
+		switch (ask("save Changes? ")) {
+		case ABORT:
+			return;
+		case YES:
+			Zsave_file();
+		}
+	delbuff(Curbuff);
 }
 
 #define WASTED		(BUFNAMMAX + 14)
@@ -208,7 +200,8 @@ static char *addbname(const char *bname)
 	return Bnames[i];
 }
 
-bool delbname(char *bname)
+/* Only fixes up the array - no frees */
+static bool delbname(char *bname)
 {
 	int i;
 
@@ -218,15 +211,10 @@ bool delbname(char *bname)
 		return false;
 
 	--Numbuffs;
-	free(Bnames[i]);
 	Bnames[i] = NULL;
 
-	if (Numbuffs == 0) {
-		maxbuffs = 0;
-		free(Bnames);
-	} else
-		for (; i < Numbuffs; ++i)
-			Bnames[i] = Bnames[i + 1];
+	for (; i < Numbuffs; ++i)
+		Bnames[i] = Bnames[i + 1];
 
 	return true;
 }
@@ -266,6 +254,14 @@ struct buff *cmakebuff(const char *bname, char *fname)
 	return bptr;
 }
 
+bool cdelbuff(struct buff *bptr)
+{
+	if (bptr->bname)
+		delbname(bptr->bname);
+
+	return bdelbuff(bptr);
+}
+
 /* Locate a given buffer */
 struct buff *cfindbuff(const char *bname)
 {
@@ -275,4 +271,9 @@ struct buff *cfindbuff(const char *bname)
 		if (strncasecmp(tbuff->bname, bname, BUFNAMMAX) == 0)
 			return tbuff;
 	return NULL;
+}
+
+void cfini(void)
+{
+	free(Bnames);
 }

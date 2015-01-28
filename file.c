@@ -89,8 +89,7 @@ static bool readone(char *bname, char *path)
 #endif
 			strcpy(Lbufname, was->bname);
 		} else { /* error */
-			delbname(Curbuff->bname);
-			bdelbuff(Curbuff);
+			cdelbuff(Curbuff);
 			bswitchto(was);
 		}
 		return true;

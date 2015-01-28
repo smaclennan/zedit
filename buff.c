@@ -105,14 +105,9 @@ void bfini(void)
 	bdelbuff(Killbuff);
 	bdelbuff(Paw);
 
-	while (Bufflist) {
-		if (Bufflist->fname)
-			free(Bufflist->fname);
-		if (Bufflist->bname)
-			delbname(Bufflist->bname);
+	while (Bufflist)
 		/* bdelbuff will update Bufflist */
 		bdelbuff(Bufflist);
-	}
 
 	/* Do not unmark the Scrnmarks */
 	while (Mrklist && Mrklist != mhead)
@@ -348,6 +343,11 @@ bool bdelbuff(struct buff *tbuff)
 
 	uncomment(tbuff);
 	undo_clear(tbuff);
+
+	if (tbuff->fname)
+		free(tbuff->fname);
+	if (tbuff->bname)
+		free(tbuff->bname);
 
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);

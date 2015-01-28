@@ -411,6 +411,7 @@ void Zexit(void)
 	/* For valgrind */
 	wfini();
 	bfini();
+	cfini();
 	cleanup_bookmarks();
 
 	exit(0);

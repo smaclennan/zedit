@@ -217,8 +217,8 @@ int main(int argc, char **argv)
 	binit();
 
 	/* create the needed buffers */
-	Killbuff = bcreate();
-	Paw = bcreate();
+	Killbuff = _bcreate();
+	Paw = _bcreate();
 	if (!cmakebuff(MAINBUFF, NULL)) {
 		puts("Not enough memory.");
 		exit(1);

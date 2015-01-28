@@ -158,6 +158,7 @@ int ask2(const char *, bool);
 void binit(void);
 void bfini(void);
 int bcopyrgn(struct mark *, struct buff*);
+struct buff *_bcreate(void);
 struct buff *bcreate(void);
 struct mark *bcremrk(void);
 bool bcrsearch(Byte);

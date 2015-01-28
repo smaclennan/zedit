@@ -145,7 +145,8 @@ void makeoffset(int);
 
 int bgetstats(char *str, int len);
 
-void vsetmod(bool);
+bool bm_search(const char *str, bool sensitive);
+bool bm_rsearch(const char *str, bool sensitive);
 
 #define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)
 /* This does not need to be a macro... just makes it easier to see */

@@ -72,7 +72,6 @@ extern jmp_buf zenv;
 #define SGLOBAL		3			/* global search */
 #define AGAIN		-1			/* go again */
 #define AGAIN_WRAP	128			/* wrap and go again */
-#define NUMASCII	256			/* number of ascii chars */
 #define ESIZE		256			/* reg exp buffer size */
 
 /*

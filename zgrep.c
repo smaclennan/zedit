@@ -32,7 +32,7 @@ static void grep_one(char *fname, Byte *ebuf,
 	bswitchto(inbuff);
 	bempty();
 
-	if (breadfile(fname))
+	if (zreadfile(fname))
 		return;
 
 	while (step(ebuf)) {

@@ -86,7 +86,7 @@ static struct buff *read_tagfile(void)
 	if (!buff)
 		return NULL;
 
-	if (breadfile(Tagfile))
+	if (zreadfile(Tagfile))
 		return NULL;
 
 	return buff;

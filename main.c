@@ -11,7 +11,14 @@
 
 int main(int argc, char *argv[])
 {
+	struct buff *buff;
+
 	binit();
+	buff = bcreate();
+	bswitchto(buff);
+	binstr("Hello world");
+	bdelbuff(buff);
+	bfini();
 	return 0;
 }
 

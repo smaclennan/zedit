@@ -32,6 +32,8 @@
 
 #define Byte unsigned char
 
+#define READ_MODE	(O_RDONLY | O_BINARY)
+#define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
 
 /* THE BUFFER STRUCTURES */
 
@@ -107,7 +109,7 @@ void bmove1(void);
 void boffset(unsigned long off);
 
 void binit(void);
-void bfini(struct mark *mhead);
+void bfini(void);
 int bcopyrgn(struct mark *, struct buff*);
 struct buff *bcreate(void);
 struct mark *bcremrk(void);

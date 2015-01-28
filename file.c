@@ -21,6 +21,124 @@
 
 static char Fname[PATHMAX + 1];
 
+static bool cp(char *from, char *to)
+{
+	FILE *in, *out;
+	char buf[1024];
+	int rc = true;
+	size_t n;
+
+	in = fopen(from, "r");
+	out = fopen(to, "w");
+	if (!in || !out) {
+		if (!in)
+			fclose(in);
+		return false;
+	}
+	while ((n = fread(buf, 1, 1024, in)) > 0)
+		if (fwrite(buf, 1, n, out) != n) {
+			rc = false;
+			break;
+		}
+	fclose(in);
+	fclose(out);
+	return rc;
+}
+
+static char *make_bakname(char *bakname, char *fname)
+{
+	strcpy(bakname, fname);
+	strcat(bakname, "~");
+	return bakname;
+}
+
+bool zwritefile(char *fname)
+{
+	char bakname[PATHMAX + 1];
+	struct stat sbuf;
+	int nlink = 1, rc;
+	bool bak = false;
+
+	/* If the file existed, check to see if it has been modified. */
+	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
+		if (sbuf.st_mtime > Curbuff->mtime) {
+			sprintf(PawStr,
+					"WARNING: %s has been modified. Overwrite? ",
+					lastpart(fname));
+			if (ask(PawStr) != YES)
+				return ABORT;
+		}
+		nlink = sbuf.st_nlink;
+	}
+
+	/* check for links and handle backup file */
+	make_bakname(bakname, fname);
+	if (nlink > 1) {
+		sprintf(PawStr, "WARNING: %s is linked. Preserve? ",
+			lastpart(fname));
+		switch (ask(PawStr)) {
+		case YES:
+			if (VAR(VBACKUP))
+				bak = cp(fname, bakname);
+			break;
+		case NO:
+			if (VAR(VBACKUP))
+				bak = rename(fname, bakname);
+			else
+				unlink(fname);	/* break link */
+			break;
+		case ABORT:
+			return ABORT;
+		}
+	} else if (VAR(VBACKUP))
+		bak = rename(fname, bakname);
+
+	rc = bwritefile(fname);
+	if (rc)
+		clrpaw();
+	else {
+		if (errno == EACCES)
+			error("File is read only.");
+		else
+			error("Unable to write file.");
+		if (bak) {
+			if (sbuf.st_nlink) {
+				cp(bakname, fname);
+				unlink(bakname);
+			} else
+				rename(bakname, fname);
+		}
+	}
+
+	return rc;
+}
+
+/*
+Load the file 'fname' into the current buffer.
+Returns  0  successfully opened file
+	 1  no such file
+	-1  on error
+*/
+int zreadfile(char *fname)
+{
+	int rc = breadfile(fname);
+
+	if (rc > 0) {
+		if (rc == ENOENT)
+			return 1;
+		error("%s: %s", fname, strerror(errno));
+		return -1;
+	}
+
+	if (rc == -1) {
+		error("gzdopen %s", fname);
+		return -1;
+	}
+
+	clrpaw();
+	return 0;
+}
+
 static int get_findfile(const char *prompt)
 {
 	struct stat sbuf;
@@ -61,7 +179,7 @@ void Zrevert_file(void)
 	undo_clear(Curbuff);
 
 	offset = blocation();
-	breadfile(Curbuff->fname);
+	zreadfile(Curbuff->fname);
 	boffset(offset);
 	uncomment(Curbuff);
 }
@@ -79,7 +197,7 @@ static bool readone(char *bname, char *path)
 
 	if (cmakebuff(bname, path)) {
 		putpaw("Reading %s", lastpart(path));
-		int rc = breadfile(path);
+		int rc = zreadfile(path);
 		if (rc >= 0) {
 			toggle_mode(0);
 			if (rc > 0)
@@ -241,7 +359,7 @@ void Zread_file(void)
 		bswitchto(tbuff);
 		Curbuff->bmode = save->bmode;
 		putpaw("Reading %s", lastpart(Fname));
-		rc = breadfile(Fname);
+		rc = zreadfile(Fname);
 		if (rc == 0) {
 			btoend();
 			tmark = zcreatemrk();

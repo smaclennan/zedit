@@ -58,9 +58,6 @@ extern jmp_buf zenv;
 
 #define INVALID		-1
 
-#define READ_MODE	(O_RDONLY | O_BINARY)
-#define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
-
 #define ZCFILE		".config.z"
 
 /* the first three must follow:  (define + 1) % 4 = 0 */

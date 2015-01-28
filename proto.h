@@ -162,6 +162,7 @@ struct buff *cmakebuff(const char *, char *);
 int compile(Byte*, Byte*, Byte*);
 void cswitchto(struct buff *);
 void display_init(void);
+void display_fini(void);
 bool tdelay(int ms);
 int delayprompt(const char *);
 void delinit(void);
@@ -237,6 +238,7 @@ int set_bookmark(char *bookname);
 void cleanup_bookmarks(void);
 const char *special_label(int key);
 struct mark *zcreatemrk(void);
+int zreadfile(char *fname);
 bool zwritefile(char *fname);
 
 #if GPM_MOUSE

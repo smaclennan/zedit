@@ -106,7 +106,7 @@ void binit(void)
 #endif
 }
 
-void bfini(struct mark *mhead)
+void bfini(void)
 {
 	Curbuff = NULL;
 
@@ -119,8 +119,7 @@ void bfini(struct mark *mhead)
 		bdelbuff(Bufflist);
 	}
 
-	/* Do not unmark the Scrnmarks */
-	while (Mrklist && Mrklist != mhead)
+	while (Mrklist)
 		unmark(Mrklist);
 
 	if (freemark)
@@ -208,7 +207,6 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 
 	return copied;
 }
-
 
 /* Create a buffer.   Returns a pointer to the buffer descriptor. */
 struct buff *bcreate(void)
@@ -730,11 +728,11 @@ static void crfixup(void)
 }
 
 /*
-Load the file 'fname' into the current buffer.
-Returns  0  successfully opened file
-	 1  no such file
-	-1  on error
-*/
+ * Load the file 'fname' into the current buffer.
+ * Returns  0  successfully opened file
+ * > 0 (errno) on error
+ * -1 on gzdopen error
+ */
 int breadfile(char *fname)
 {
 	char buf[PSIZE];
@@ -742,12 +740,8 @@ int breadfile(char *fname)
 	int fd, len;
 
 	fd = open(fname, O_RDONLY | O_BINARY);
-	if (fd < 0) {
-		if (errno == ENOENT)
-			return 1;
-		error("%s: %s", fname, strerror(errno));
-		return -1;
-	}
+	if (fd < 0)
+		return errno;
 
 	if (fstat(fd, &sbuf) == 0)
 		Curbuff->mtime = sbuf.st_mtime;
@@ -760,7 +754,6 @@ int breadfile(char *fname)
 	gzFile gz = gzdopen(fd, "rb");
 	if (!gz) {
 		close(fd);
-		error("gzdopen %s", fname);
 		return -1;
 	}
 
@@ -776,9 +769,8 @@ int breadfile(char *fname)
 		if (Curplen) {
 			if (!newpage(Curbuff, Curpage, NULL)) {
 				bempty();
-				error("Out of page memory!");
 				bclose(fd);
-				return -ENOMEM;
+				return ENOMEM;
 			}
 #ifndef ONE_PAGE
 			makecur(Curpage->nextp);
@@ -799,7 +791,6 @@ int breadfile(char *fname)
 		crfixup();
 
 	Curbuff->bmodf = false;
-	clrpaw();
 
 	return 0;
 }
@@ -930,8 +921,6 @@ bool bwritefile(char *fname)
 			Curbuff->mtime = sbuf.st_mtime;
 		else
 			Curbuff->mtime = -1;
-		/* If we saved the file... it isn't read-only */
-		Curbuff->bmode &= ~VIEW;
 		Curbuff->bmodf = false;
 	}
 

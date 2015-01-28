@@ -308,7 +308,7 @@ static void cmdtobuff(const char *bname, const char *cmd)
 		putpaw("Please wait...");
 		rc = system(cmd);
 		close(fd);
-		breadfile("__zsh__.out");
+		zreadfile("__zsh__.out");
 
 		if (rc == 0) {
 			btostart();

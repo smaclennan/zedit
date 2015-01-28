@@ -412,7 +412,8 @@ void Zexit(void)
 	wfini();
 	delfini();
 	bdelbuff(Paw);
-	bfini(&Scrnmarks[ROWMAX - 1]);
+	display_fini(); /* must be before bfini! */
+	bfini();
 	cleanup_bookmarks();
 
 	exit(0);

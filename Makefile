@@ -59,7 +59,7 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 
 #################
 
-all:	fcheck $(ZEXE) win32/dosbind.c
+all:	fcheck $(ZEXE) win32/dosbind.c main
 
 $(ZEXE): $O
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
@@ -72,6 +72,10 @@ win32/dosbind.c: bind.c
 fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 	$(QUIET_LINK)$(CC) -o $@ fcheck.c
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
+
+# This is just to check that no zedit dependencies crept into buff.c
+main: main.c buff.c bmsearch.c
+	$(QUIET_LINK)$(CC) -o $@ $+
 
 # Make all c files depend on all .h files
 *.o: $(HFILES)

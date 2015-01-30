@@ -644,6 +644,15 @@ void bmove1(void)
 	}
 }
 
+/* Fairly special routine. Pushes the char one past the end of the
+ * buffer. */
+void bshove(void)
+{
+	btoend();
+	++Curcptr;
+	++Curchar;
+}
+
 /* Put the mark where the point is. */
 void bmrktopnt(struct mark *tmark)
 {

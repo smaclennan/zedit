@@ -85,6 +85,7 @@ int batoi(void);
 
 bool bmove(int);
 void bmove1(void);
+void bshove(void);
 void boffset(unsigned long off);
 
 void binit(struct mark *preallocated);

@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
 	struct buff *buff;
 
-	binit();
+	binit(NULL);
 	buff = bcreate();
 	bswitchto(buff);
 	binstr("Hello world");

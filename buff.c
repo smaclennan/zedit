@@ -59,8 +59,10 @@ int Curchar;			/* current offset in Cpstart */
 int Curplen;			/* current page length */
 struct buff *Bufflist;		/* the buffer list */
 struct buff *Curbuff;		/* the current buffer */
-struct mark *Mrklist;		/* the marks list tail */
 struct page *Curpage;		/* the current page */
+
+static struct mark *Mrklist;	/* the marks list tail */
+static struct mark *mhead;
 
 int raw_mode;
 
@@ -100,11 +102,15 @@ static struct page *newpage(struct buff *tbuff,
 static void freepage(struct buff *tbuff, struct page *page);
 static bool pagesplit(void);
 
-void binit(void)
+/* You can pre-allocate some marks. Zedit uses this for the screen marks. */
+void binit(struct mark *preallocated)
 {
 #ifdef DOS_EMS
 	ems_init();
 #endif
+
+	Mrklist = preallocated;
+	mhead = preallocated;
 }
 
 void bfini(void)
@@ -114,6 +120,13 @@ void bfini(void)
 	while (Bufflist)
 		/* bdelbuff will update Bufflist */
 		bdelbuff(Bufflist);
+
+	if (mhead) {
+		if (mhead->next)
+			mhead->next->prev = NULL;
+		else
+			Mrklist = NULL;
+	}
 
 	while (Mrklist)
 		unmark(Mrklist);
@@ -1070,14 +1083,6 @@ void set_umark(struct mark *tmark)
 void clear_umark(void)
 {
 	if (Curbuff->umark) {
-#if SHOW_REGION
-		int i;
-		for (i = 0; i < ROWMAX; ++i)
-			Scrnmarks[i].modf = true;
-		Tlrow = -1;
-#elif defined(ZEDIT)
-		vsetmrk(Curbuff->umark);
-#endif
 		if (freeumark)
 			unmark(Curbuff->umark);
 		else

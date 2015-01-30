@@ -71,7 +71,6 @@ extern Byte *Curcptr;
 extern int Curchar, Curplen;
 extern struct buff *Curbuff;
 extern struct page *Curpage;
-extern struct mark *Mrklist;
 
 #define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
 
@@ -88,7 +87,7 @@ bool bmove(int);
 void bmove1(void);
 void boffset(unsigned long off);
 
-void binit(void);
+void binit(struct mark *preallocated);
 void bfini(void);
 int bcopyrgn(struct mark *, struct buff*);
 struct buff *_bcreate(void);
@@ -127,10 +126,6 @@ int bgetstats(char *str, int len);
 
 bool bm_search(const char *str, bool sensitive);
 bool bm_rsearch(const char *str, bool sensitive);
-
-#define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)
-/* This does not need to be a macro... just makes it easier to see */
-#define CLEAR_UMARK clear_umark()
 
 #ifndef O_BINARY
 #define O_BINARY 0

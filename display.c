@@ -49,17 +49,7 @@ void display_init(void)
 	Scrnmarks[ROWMAX - 1].next = NULL;
 
 	/* init the Mrklist */
-	Mrklist = &Scrnmarks[ROWMAX - 1];
-}
-
-void display_fini(void)
-{
-	/* Remove the scrnmarks from the Mrklist */
-	struct mark *lastmrk = &Scrnmarks[ROWMAX - 1];
-	if (lastmrk->next)
-		lastmrk->next->prev = NULL;
-	else
-		Mrklist = NULL;
+	binit(&Scrnmarks[ROWMAX - 1]);
 }
 
 /* True if user mark moved */

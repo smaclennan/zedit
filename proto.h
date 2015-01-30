@@ -164,7 +164,6 @@ void cfini(void);
 int compile(Byte*, Byte*, Byte*);
 void cswitchto(struct buff *);
 void display_init(void);
-void display_fini(void);
 bool tdelay(int ms);
 int delayprompt(const char *);
 void delinit(void);

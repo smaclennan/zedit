@@ -123,6 +123,8 @@ void makecur(struct page *);
 void makeoffset(int);
 
 int bgetstats(char *str, int len);
+void tobegline(void);
+void toendline(void);
 
 bool bm_search(const char *str, bool sensitive);
 bool bm_rsearch(const char *str, bool sensitive);

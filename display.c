@@ -458,9 +458,7 @@ static void subset(int from, int to, bool flag)
 		if (--btmark >= &Scrnmarks[from])
 			btmark->modf = true;
 		if (flag)
-			while (btmark > &Scrnmarks[from] &&
-			       btmark->mpage == Curpage &&
-			       btmark->moffset == Curchar)
+			while (btmark > &Scrnmarks[from] && bisatmrk(btmark))
 				(--btmark)->modf = true;
 	}
 }

@@ -224,8 +224,6 @@ void t_goto(int, int);
 void tindent(int);
 void tinit(void);
 bool tkbrdy(void);
-void tobegline(void);
-void toendline(void);
 void toggle_mode(int);
 void tprntchar(Byte);
 void tprntstr(const char *);

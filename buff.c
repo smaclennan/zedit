@@ -531,7 +531,6 @@ bool bisbeforemrk(struct mark *tmark)
 	return tp != NULL;
 }
 
-
 /* Returns the length of the buffer. */
 unsigned long blength(struct buff *tbuff)
 {
@@ -1101,6 +1100,20 @@ int bgetstats(char *str, int len)
 	return snprintf(str, len,
 					"Buffers: %d  Pages: %d  Marks: %d",
 					NumBuffs, NumPages, NumMarks);
+}
+
+void tobegline(void)
+{
+	if (Curchar > 0 && *(Curcptr - 1) == '\n')
+		return;
+	if (bcrsearch('\n'))
+		bmove1();
+}
+
+void toendline(void)
+{
+	if (bcsearch('\n'))
+		bmove(-1);
 }
 
 /* Low level memory page routines */

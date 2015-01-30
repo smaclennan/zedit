@@ -645,20 +645,6 @@ void Zswap_chars(void)
 	binsert(tmp);
 }
 
-void tobegline(void)
-{
-	if (Curchar > 0 && *(Curcptr - 1) == NL)
-		return;
-	if (bcrsearch(NL))
-		bmove1();
-}
-
-void toendline(void)
-{
-	if (bcsearch(NL))
-		bmove(-1);
-}
-
 void Zcount(void)
 {
 	bool word, swapped = false;

@@ -278,8 +278,8 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			Tlrow = trow;
 			if (Pcol < Colmax) {
 				if (bisend()) {
-					makecur(Curbuff->lastp);
-					makeoffset(Curplen + 1);
+					++Curchar;
+					++Curcptr;
 				} else if (ISNL(Buff()))
 					bmove1();
 			}

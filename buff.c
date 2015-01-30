@@ -56,7 +56,7 @@ static bool Curmodf;		/* page modified?? */
 static Byte *Cpstart;		/* pim data start */
 Byte *Curcptr;			/* current character */
 int Curchar;			/* current offset in Cpstart */
-int Curplen;			/* current page length */
+static int Curplen;			/* current page length */
 struct buff *Bufflist;		/* the buffer list */
 struct buff *Curbuff;		/* the current buffer */
 struct page *Curpage;		/* the current page */
@@ -1016,6 +1016,11 @@ void makecur(struct page *page)
 	Cpstart = page->pdata;
 	Curmodf = false;
 	Curplen = Curpage->plen;
+}
+
+bool bisend(void)
+{
+	return (Curpage == Curbuff->lastp) && (Curchar >= Curplen);
 }
 
 /* Peek the previous byte */

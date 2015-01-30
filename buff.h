@@ -68,7 +68,7 @@ struct buff {
 };
 
 extern Byte *Curcptr;
-extern int Curchar, Curplen;
+extern int Curchar;
 extern struct buff *Curbuff;
 extern struct page *Curpage;
 
@@ -76,10 +76,10 @@ extern struct page *Curpage;
 
 #define Buff()		(*Curcptr)
 #define bisstart()	((Curpage == Curbuff->firstp) && (Curchar == 0))
-#define bisend()	((Curpage == Curbuff->lastp) && (Curchar >= Curplen))
 #define bisatmrk(m)	((Curpage == (m)->mpage) && (Curchar == (m)->moffset))
 #define mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)
 
+bool bisend(void);
 Byte bpeek(void);
 int batoi(void);
 

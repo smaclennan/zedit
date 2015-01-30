@@ -121,6 +121,23 @@ struct cnames {
 };
 #define CNAMESIZE sizeof(struct cnames)
 
+struct wdo {
+	struct buff *wbuff;		/* buffer window looks on */
+	struct mark *wpnt;		/* saved Point */
+	struct mark *wmrk;		/* saved Mark */
+	struct mark *wstart;		/* screen start */
+	int umark_set;
+	int first, last;		/* screen line boundries */
+	int modecol;			/* column for modeflags */
+	int modeflags;			/* flags for modeflags */
+	struct wdo *next;
+};
+
+#define foreachwdo(wdo) for (wdo = Whead; wdo; wdo = wdo->next)
+#define wheight() (Curwdo->last - Curwdo->first)
+
+extern struct wdo *Curwdo, *Whead;
+
 extern char *Home;
 extern bool Argp;
 extern int Arg;				/* must be signed */

@@ -72,27 +72,11 @@ struct buff {
 	struct buff *prev, *next;	/* list of buffers */
 };
 
-struct wdo {
-	struct buff *wbuff;		/* buffer window looks on */
-	struct mark *wpnt;		/* saved Point */
-	struct mark *wmrk;		/* saved Mark */
-	struct mark *wstart;		/* screen start */
-	int umark_set;
-	int first, last;		/* screen line boundries */
-	int modecol;			/* column for modeflags */
-	int modeflags;			/* flags for modeflags */
-	struct wdo *next;
-};
-
-#define foreachwdo(wdo) for (wdo = Whead; wdo; wdo = wdo->next)
-#define wheight() (Curwdo->last - Curwdo->first)
-
 extern Byte *Curcptr;
 extern int Curchar, Curplen;
 extern struct buff *Curbuff;
 extern struct page *Curpage;
 extern struct mark *Mrklist;
-extern struct wdo *Curwdo, *Whead;
 
 #define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
 

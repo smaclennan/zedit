@@ -216,7 +216,9 @@ struct buff *_bcreate(void)
 			return NULL;
 		}
 		buf->pnt_page = fpage;
+#ifdef ZEDIT
 		buf->child = EOF;
+#endif
 		++NumBuffs;
 	}
 

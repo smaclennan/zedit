@@ -181,7 +181,6 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		/* and fill it in */
 		memmove(Curcptr, spnt, dstlen);
 		Curplen += dstlen;
-		tbuff->blen += dstlen;
 		copied += dstlen;
 		for (btmrk = Mrklist; btmrk; btmrk = btmrk->prev)
 			if (btmrk->mpage == Curpage &&
@@ -392,7 +391,6 @@ void bdelete(int quantity)
 #endif
 
 		Curplen -= quan;
-		Curbuff->blen -= quan;
 
 		memmove(Curcptr, Curcptr + quan, Curplen - Curchar);
 		if (Curpage == Curbuff->lastp)
@@ -464,7 +462,6 @@ void binsert(Byte byte)
 	*Curcptr++ = byte;
 	++Curplen;
 	++Curchar;
-	++Curbuff->blen;
 	Curbuff->bmodf = true;
 	Curmodf = true;
 
@@ -669,7 +666,6 @@ void bempty(void)
 			btmark->modf = true;
 		}
 	Curplen = Curchar = 0;		/* reset to start of page */
-	Curbuff->blen = 0;
 	Curcptr = Cpstart;
 	Curmodf = true;
 
@@ -797,7 +793,6 @@ int breadfile(char *fname)
 		Curcptr += len;
 		Curchar += len;
 		Curplen += len;
-		Curbuff->blen += len;
 	}
 	(void)bclose(fd);
 

@@ -47,11 +47,6 @@ struct mark {
 	struct mark *prev, *next;	/* list of marks */
 };
 
-struct comment {
-	struct mark *start, *end;
-	struct comment *next;
-};
-
 struct buff {
 	bool bmodf;			/* buffer modified? */
 	struct page *firstp, *lastp;	/* describe the pages */
@@ -65,7 +60,7 @@ struct buff {
 #ifdef ZEDIT
 	pid_t child;			/* PID of shell or EOF */
 	int in_pipe;			/* the pipe */
-	struct comment *chead, *ctail;	/* list of comments in file */
+	void *chead, *ctail;	/* list of comments in file */
 	Byte comchar;			/* single char comment character */
 	void *undo_tail;
 #endif

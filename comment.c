@@ -21,6 +21,11 @@
 
 static bool Comstate;
 
+struct comment {
+	struct mark *start, *end;
+	struct comment *next;
+};
+
 /* Mark a new comment from start to Point. */
 static void newcomment(struct mark *start)
 {
@@ -36,7 +41,7 @@ static void newcomment(struct mark *start)
 	if (!Curbuff->chead)
 		Curbuff->chead = com;
 	else
-		Curbuff->ctail->next = com;
+		((struct comment *)Curbuff->ctail)->next = com;
 	Curbuff->ctail = com;
 }
 
@@ -160,7 +165,7 @@ void uncomment(struct buff *buff)
 	if (buff)
 		while (buff->chead) {
 			struct comment *com = buff->chead;
-			buff->chead = buff->chead->next;
+			buff->chead = com->next;
 			unmark(com->start);
 			unmark(com->end);
 			free(com);

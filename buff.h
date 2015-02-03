@@ -112,7 +112,6 @@ unsigned long bline(void);
 void bmrktopnt(struct mark *);
 void bpnttomrk(struct mark *);
 int breadfile(char *);
-bool bstrsearch(const char *, bool);
 void bswappnt(struct mark *);
 void bswitchto(struct buff *);
 void btoend(void);

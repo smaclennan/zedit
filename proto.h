@@ -157,6 +157,7 @@ int ask(const char *);
 int ask2(const char *, bool);
 int bgetcol(bool, int);
 int bmakecol(int, bool);
+bool bstrsearch(const char *, bool);
 struct buff *cfindbuff(const char *);
 struct buff *cmakebuff(const char *, char *);
 bool cdelbuff(struct buff *buff);

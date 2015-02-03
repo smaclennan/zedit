@@ -92,5 +92,5 @@ install: all
 
 clean:
 	rm -f *.o gpm/*.o zversion.h ze fcheck main core* TAGS valgrind.out
-	rm -f makedosbind win32/makedosbind
+	rm -f makedosbind win32/makedosbind regtest
 	@$(MAKE) -C docs clean

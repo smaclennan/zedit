@@ -763,7 +763,7 @@ static void crfixup(void)
  * > 0 (errno) on error
  * -1 on gzdopen error
  */
-int breadfile(char *fname)
+int breadfile(const char *fname)
 {
 	char buf[PSIZE];
 	struct stat sbuf;

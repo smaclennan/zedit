@@ -113,7 +113,7 @@ unsigned long blocation(void);
 unsigned long bline(void);
 void bmrktopnt(struct mark *);
 void bpnttomrk(struct mark *);
-int breadfile(char *);
+int breadfile(const char *);
 void bswappnt(struct mark *);
 void bswitchto(struct buff *);
 void btoend(void);

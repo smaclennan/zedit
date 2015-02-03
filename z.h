@@ -234,20 +234,6 @@ void tbell_dbg(char *func, int line);
 #endif
 
 #define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)
-static inline void zclear_umark(void)
-{
-	if (Curbuff->umark) {
-#if SHOW_REGION
-		int i;
-		for (i = 0; i < ROWMAX; ++i)
-			Scrnmarks[i].modf = true;
-		Tlrow = -1;
-#else
-		vsetmrk(Curbuff->umark);
-#endif
-		clear_umark();
-	}
-}
 #define CLEAR_UMARK zclear_umark()
 
 #endif /* _Z_H_ */

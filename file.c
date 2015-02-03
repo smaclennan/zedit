@@ -190,6 +190,7 @@ void Zrevert_file(void)
  */
 static bool readone(char *bname, char *path)
 {
+	int rc;
 	struct buff *was = Curbuff;
 
 	if (cfindbuff(bname))
@@ -197,7 +198,7 @@ static bool readone(char *bname, char *path)
 
 	if (cmakebuff(bname, path)) {
 		putpaw("Reading %s", lastpart(path));
-		int rc = zreadfile(path);
+		rc = zreadfile(path);
 		if (rc >= 0) {
 			toggle_mode(0);
 			if (rc > 0)

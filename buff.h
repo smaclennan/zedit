@@ -20,7 +20,9 @@
 #ifndef _buff_h
 #define _buff_h
 
+#ifndef DOS
 #include <stdbool.h>
+#endif
 
 #if defined(WIN32) || defined(DOS)
 #include "zwin32.h"
@@ -137,6 +139,9 @@ const char *regerr(int);
 
 #ifndef O_BINARY
 #define O_BINARY 0
+#endif
+#ifndef NULL
+#define NULL ((void *)0)
 #endif
 
 #endif

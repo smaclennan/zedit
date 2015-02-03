@@ -61,6 +61,21 @@ static bool umarkmoved(struct mark *tmark)
 		 tmark->mbuff != Curbuff->umark->mbuff);
 }
 
+void zclear_umark(void)
+{
+	if (Curbuff->umark) {
+#if SHOW_REGION
+		int i;
+		for (i = 0; i < ROWMAX; ++i)
+			Scrnmarks[i].modf = true;
+		Tlrow = -1;
+#else
+		vsetmrk(Curbuff->umark);
+#endif
+		clear_umark();
+	}
+}
+
 /* True if buffer at user mark */
 static bool bisatumark(void)
 {

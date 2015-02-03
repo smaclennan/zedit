@@ -53,7 +53,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;ZEDIT</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -88,6 +88,7 @@
   <ItemGroup>
     <ClCompile Include="..\bcmds.c" />
     <ClCompile Include="..\bind.c" />
+    <ClCompile Include="..\bmsearch.c" />
     <ClCompile Include="..\buff.c" />
     <ClCompile Include="..\calc.c" />
     <ClCompile Include="..\cnames.c" />

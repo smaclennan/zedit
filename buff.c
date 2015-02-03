@@ -20,14 +20,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef DOS
-#include <stdbool.h>
-#include <strings.h>
-#endif
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/stat.h>
+
 #include "buff.h"
 
 #ifdef ZEDIT

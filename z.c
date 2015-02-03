@@ -226,7 +226,6 @@ int main(int argc, char **argv)
 	tinit();
 	fd_init();
 
-	REstart	= zcreatemrk();
 	Sstart	= zcreatemrk();
 	Psstart	= zcreatemrk();
 	Send	= zcreatemrk();

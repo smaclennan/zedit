@@ -32,7 +32,7 @@ static void getrnge(Byte *);
 #define UNGETC(c)	(--sp)
 #define ISNL(c)			((c) == '\n')
 
-struct mark *REstart;		/* assigned in Setup */
+struct mark *REstart;
 static struct mark braslist[NBRA];
 static struct mark braelist[NBRA];
 static int ebra, nbra;
@@ -263,6 +263,10 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 	int lc;
 	int i, cflg;
 
+	if (!REstart)
+		if (!(REstart = bcremrk()))
+			return 52;
+
 	lastep = NULL;
 	c = GETC();
 #ifdef ALLOW_NL
@@ -470,6 +474,7 @@ const char *regerr(int errnum)
 		/*49*/	"[] imbalance.",
 		/*50*/	"Regular expression overflow.",
 		/*51*/	"\"digit\" out of range.",
+		/*52*/  "Out of memory.",
 	};
 
 	return errs[errnum - 40];

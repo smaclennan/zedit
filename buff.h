@@ -132,6 +132,7 @@ bool bm_search(const char *str, bool sensitive);
 bool bm_rsearch(const char *str, bool sensitive);
 
 /* reg.c */
+extern struct mark *REstart;
 int compile(Byte*, Byte*, Byte*);
 bool step(Byte *);
 const char *regerr(int);

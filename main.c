@@ -23,12 +23,17 @@ int main(int argc, char *argv[])
 	btostart();
 	if (bm_search("hello", true))
 		puts("Ummm.. shouldn't have found it");
+
+	Byte ep[512];
+	if (compile((Byte *)"el.", ep, &ep[512]))
+		puts("Failed to compile regexp");
+	else {
+		btostart();
+		step(ep);
+	}
+
 	bdelbuff(buff);
 	bfini();
 
-	Byte ep[512];
-	compile((Byte *)"el.l", ep, &ep[512]);
-	btostart();
-	step(ep);
 	return 0;
 }

@@ -162,7 +162,7 @@ extern bool Sendp;
 extern char Lbufname[];
 extern struct buff *Bufflist, *Paw;
 extern struct buff *Buff_save;
-extern struct mark *Sstart, *Psstart, *Send, *REstart;
+extern struct mark *Sstart, *Psstart, *Send;
 extern struct mark Scrnmarks[];
 extern bool Initializing;
 extern bool Insearch;

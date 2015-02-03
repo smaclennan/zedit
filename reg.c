@@ -1,4 +1,4 @@
-#include "z.h"
+#include "buff.h"
 
 /* Regular expression compile and match routines.
  * See regexp(5) and ed(1).
@@ -30,6 +30,7 @@ static void getrnge(Byte *);
 #define GETC()		(*sp++)
 #define PEEKC()		(*sp)
 #define UNGETC(c)	(--sp)
+#define ISNL(c)			((c) == '\n')
 
 struct mark *REstart;		/* assigned in Setup */
 static struct mark braslist[NBRA];
@@ -54,8 +55,8 @@ bool step(Byte *ep)
 	if (circf)
 		/* if not at the start of the current line - go to the
 		 * next line */
-		if (bpeek() != NL)
-			bcsearch(NL);	/* goto next line */
+		if (bpeek() != '\n')
+			bcsearch('\n');	/* goto next line */
 
 	/* regular algorithm */
 	while (!bisend()) {
@@ -63,7 +64,7 @@ bool step(Byte *ep)
 		if (advance(ep))
 			return true;
 		if (circf)
-			bcsearch(NL);	/* goto next line */
+			bcsearch('\n');	/* goto next line */
 		else {
 			bpnttomrk(REstart);
 			bmove1();
@@ -454,7 +455,7 @@ defchar:
 	}
 }
 
-void regerr(int errnum)
+const char *regerr(int errnum)
 {
 	static const char * const errs[] = {
 		/*40*/	"Illegal or missing delimiter.",
@@ -471,5 +472,5 @@ void regerr(int errnum)
 		/*51*/	"\"digit\" out of range.",
 	};
 
-	error(errs[errnum - 40]);
+	return errs[errnum - 40];
 }

@@ -62,7 +62,7 @@ static void grepit(char *input, char *files)
 
 	int rc = compile((Byte *)input, ebuf, &ebuf[ESIZE]);
 	if (rc) {
-		regerr(rc);
+		error(regerr(rc));
 		return;
 	}
 

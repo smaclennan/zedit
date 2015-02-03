@@ -74,7 +74,7 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
 # This is just to check that no zedit dependencies crept into buff.c
-main: main.c buff.c bmsearch.c
+main: main.c buff.c bmsearch.c reg.c
 	$(QUIET_LINK)$(CC) -o $@ $+
 
 # Make all c files depend on all .h files

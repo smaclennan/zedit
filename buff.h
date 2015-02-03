@@ -127,8 +127,14 @@ int bgetstats(char *str, int len);
 void tobegline(void);
 void toendline(void);
 
+/* bmsearch.c */
 bool bm_search(const char *str, bool sensitive);
 bool bm_rsearch(const char *str, bool sensitive);
+
+/* reg.c */
+int compile(Byte*, Byte*, Byte*);
+bool step(Byte *);
+const char *regerr(int);
 
 #ifndef O_BINARY
 #define O_BINARY 0

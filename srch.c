@@ -236,7 +236,7 @@ static void doreplace(int type)
 	if (type == REGEXP)
 		rc = compile((Byte *)olds, ebuf, &ebuf[ESIZE]);
 	if (rc)
-		regerr(rc);
+		error(regerr(rc));
 	else if (Argp) {
 		for (tbuff = Bufflist; tbuff && !exit; tbuff = tbuff->next) {
 			cswitchto(tbuff);
@@ -448,7 +448,7 @@ static bool dosearch(void)
 		Byte ebuf[ESIZE];
 		rc = compile((Byte *)olds, ebuf, &ebuf[ESIZE]);
 		if (rc)
-			regerr(rc);
+			error(regerr(rc));
 		else
 			while (Arg-- > 0)
 				if (step(ebuf)) {

@@ -246,7 +246,7 @@ int main(int argc, char *argv[])
 
 	int rc = compile((Byte *)argv[1], ebuf, &ebuf[ESIZE]);
 	if (rc) {
-		regerr(rc);
+		error(regerr(rc));
 		exit(1);
 	}
 

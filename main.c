@@ -25,11 +25,10 @@ int main(int argc, char *argv[])
 		puts("Ummm.. shouldn't have found it");
 	bdelbuff(buff);
 	bfini();
+
+	Byte ep[512];
+	compile((Byte *)"el.l", ep, &ep[512]);
+	btostart();
+	step(ep);
 	return 0;
 }
-
-/*
- * Local Variables:
- * compile-command: "gcc -O3 -Wall main.c buff.c bmsearch.c -o main"
- * End:
- */

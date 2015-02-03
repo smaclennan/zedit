@@ -372,7 +372,7 @@ void Zother_previous_page(void)
  * If buffer is in a current window, switchto that window, else put the buffer
  * in the current or other window.
  */
-void bgoto(struct buff *buff)
+void wgoto(struct buff *buff)
 {
 	struct wdo *wdo = findwdo(buff);
 

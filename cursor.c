@@ -282,7 +282,7 @@ void Znext_bookmark(void)
 
 	if (Bookmrks[Bookmark]->mbuff != Curbuff) {
 		strcpy(Lbufname, Curbuff->bname);
-		bgoto(Bookmrks[Bookmark]->mbuff);
+		wgoto(Bookmrks[Bookmark]->mbuff);
 	}
 	bpnttomrk(Bookmrks[Bookmark]);
 	Curwdo->modeflags = INVALID;

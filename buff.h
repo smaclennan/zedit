@@ -100,7 +100,6 @@ bool bdelbuff(struct buff *);
 void bdelete(int);
 void bdeltomrk(struct mark *);
 void bempty(void);
-void bgoto(struct buff *);
 void bgoto_char(long offset);
 void binsert(Byte);
 void bconvert(int (*to)(int));

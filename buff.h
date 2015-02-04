@@ -105,7 +105,8 @@ void bdelete(int);
 void bdeltomrk(struct mark *);
 void bempty(void);
 void bgoto_char(long offset);
-void binsert(Byte);
+bool binsert(Byte);
+bool bappend(Byte *, int);
 void bconvert(int (*to)(int));
 void binstr(const char *);
 bool bisaftermrk(struct mark *);
@@ -145,5 +146,8 @@ const char *regerr(int);
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
+
+#define MIN(a, b)	(a < b ? a : b)
+#define MAX(a, b)	(a > b ? a : b)
 
 #endif

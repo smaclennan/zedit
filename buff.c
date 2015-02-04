@@ -465,12 +465,12 @@ void bdeltomrk(struct mark *tmark)
 
 
 /* Insert a character in the current buffer. */
-void binsert(Byte byte)
+bool binsert(Byte byte)
 {
 	struct mark *btmark;
 
 	if (Curplen == Curpage->psize && !pagesplit())
-		return;
+		return false;
 	memmove(Curcptr + 1, Curcptr, Curplen - Curchar);
 	*Curcptr++ = byte;
 	++Curplen;
@@ -486,6 +486,41 @@ void binsert(Byte byte)
 		if (btmark->mpage == Curpage && btmark->moffset >= Curchar)
 			++(btmark->moffset);
 	vsetmod(false);
+	return true;
+}
+
+bool bappend(Byte *data, int size)
+{
+	btoend();
+
+	/* Fill the current page */
+	int n, left = PSIZE - Curplen;
+	if (left > 0) {
+		n = MIN(left, size);
+		memcpy(Curcptr, data, n);
+		Curplen += n;
+		size -= n;
+		data += n;
+		Curmodf = true;
+	}
+
+	/* Put the rest in new pages */
+	while (size > 0) {
+		struct page *npage = newpage(Curbuff, Curpage, NULL);
+		if (!npage)
+			return false;
+		makecur(npage);
+
+		n = MIN(PSIZE, size);
+		memcpy(Cpstart, data, n);
+		Curplen = n;
+		size -= n;
+		data += n;
+		Curmodf = true;
+	}
+
+	btoend();
+	return true;
 }
 
 void bconvert(int (*to)(int c))

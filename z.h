@@ -169,9 +169,6 @@ extern int NexterrorCalled;
 
 extern void (*Nextpart)(void);
 
-#define MIN(a, b)	(a < b ? a : b)
-#define MAX(a, b)	(a > b ? a : b)
-
 #define clrpaw()	_putpaw("")
 
 /* The memory usage for screen stuff is approx:  (ROWMAX + 1) x 25 + COLMAX */

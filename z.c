@@ -213,7 +213,8 @@ int main(int argc, char **argv)
 	if (textMode)
 		VAR(VNORMAL) = 0;
 
-	display_init(); /* calls binit */
+	binit();
+	display_init();
 
 	/* create the needed buffers */
 	delinit();

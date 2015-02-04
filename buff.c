@@ -100,14 +100,11 @@ static void freepage(struct buff *tbuff, struct page *page);
 static bool pagesplit(void);
 
 /* You can pre-allocate some marks. Zedit uses this for the screen marks. */
-void binit(struct mark *preallocated)
+void binit(void)
 {
 #ifdef DOS_EMS
 	ems_init();
 #endif
-
-	Mrklist = preallocated;
-	mhead = preallocated;
 }
 
 void bfini(void)
@@ -134,6 +131,12 @@ void bfini(void)
 #ifdef DOS_EMS
 	ems_free();
 #endif
+}
+
+void minit(struct mark *preallocated)
+{
+	Mrklist = preallocated;
+	mhead = preallocated;
 }
 
 /* Copy from Point to tmark to tbuff. Returns number of bytes

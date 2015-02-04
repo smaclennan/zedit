@@ -49,7 +49,7 @@ void display_init(void)
 	Scrnmarks[ROWMAX - 1].next = NULL;
 
 	/* init the Mrklist */
-	binit(&Scrnmarks[ROWMAX - 1]);
+	minit(&Scrnmarks[ROWMAX - 1]);
 }
 
 /* True if user mark moved */

@@ -87,7 +87,6 @@ void hang_up(int signal)
 			unvoke(tbuff);
 	}
 	checkpipes(0);
-	tfini();
 	exit(1);
 }
 
@@ -103,6 +102,20 @@ static void initline(void)
 		tprntchar(' ');
 	tstyle(T_NORMAL);
 	t_goto(0, 0);
+	tflush();
+}
+
+static void tfini(void)
+{
+#ifdef __unix__
+	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
+#endif
+
+	set_mouse(false);
+
+	clrpaw();
+	t_goto(Rowmax - 1, 0);
+	tstyle(T_NORMAL);
 	tflush();
 }
 
@@ -155,20 +168,7 @@ void tinit(void)
 	tsetcursor(false);
 
 	initline();		/* Curwdo not defined yet */
-}
-
-void tfini(void)
-{
-#ifdef __unix__
-	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
-#endif
-
-	set_mouse(false);
-
-	clrpaw();
-	t_goto(Rowmax - 1, 0);
-	tstyle(T_NORMAL);
-	tflush();
+	atexit(tfini);
 }
 
 void setmark(bool prntchar)

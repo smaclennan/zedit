@@ -406,16 +406,6 @@ void Zexit(void)
 			unvoke(tbuff);
 	checkpipes(0);		/* make sure waited for ALL children */
 
-	tfini();
-
-	/* For valgrind */
-	wfini();
-	delfini();
-	bdelbuff(Paw);
-	bfini();
-	cfini();
-	cleanup_bookmarks();
-
 	exit(0);
 }
 

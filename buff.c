@@ -99,15 +99,7 @@ static struct page *newpage(struct buff *tbuff,
 static void freepage(struct buff *tbuff, struct page *page);
 static bool pagesplit(void);
 
-/* You can pre-allocate some marks. Zedit uses this for the screen marks. */
-void binit(void)
-{
-#ifdef DOS_EMS
-	ems_init();
-#endif
-}
-
-void bfini(void)
+static void bfini(void)
 {
 	Curbuff = NULL;
 
@@ -131,6 +123,14 @@ void bfini(void)
 #ifdef DOS_EMS
 	ems_free();
 #endif
+}
+
+void binit(void)
+{
+#ifdef DOS_EMS
+	ems_init();
+#endif
+	atexit(bfini);
 }
 
 void minit(struct mark *preallocated)

@@ -382,20 +382,21 @@ void wgoto(struct buff *buff)
 		cswitchto(buff);
 }
 
-void winit(void)
-{
-	/* Create first window over entire screen. */
-	Whead = wcreate(0, Rowmax - 2);
-	wswitchto(Whead);
-}
-
-void wfini(void)
+static void wfini(void)
 {
 	while (Whead) {
 		struct wdo *next = Whead->next;
 		wfree(Whead);
 		Whead = next;
 	}
+}
+
+void winit(void)
+{
+	/* Create first window over entire screen. */
+	Whead = wcreate(0, Rowmax - 2);
+	wswitchto(Whead);
+	atexit(wfini);
 }
 
 struct wdo *wfind(int row)

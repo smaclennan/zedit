@@ -231,8 +231,19 @@ static char *Bookname[BOOKMARKS];		/* stack of book names */
 static int  Bookmark = -1;			/* current book mark */
 static int  Lastbook = -1;			/* last bookmark */
 
+static void cleanup_bookmarks(void)
+{
+	int i;
+
+	for (i = 0; i < BOOKMARKS; ++i)
+		if (Bookname[i])
+			free(Bookname[i]);
+}
+
 int set_bookmark(char *bookname)
 {
+	if (Bookmark == -1)
+		atexit(cleanup_bookmarks);
 	Bookmark = (Bookmark + 1) % BOOKMARKS;
 	if (Bookname[Bookmark])
 		free(Bookname[Bookmark]);
@@ -289,15 +300,6 @@ void Znext_bookmark(void)
 	putpaw("Book Mark %d", Bookmark + 1);
 	if (--Bookmark < 0)
 		Bookmark = Lastbook;
-}
-
-void cleanup_bookmarks(void)
-{
-	int i;
-
-	for (i = 0; i < BOOKMARKS; ++i)
-		if (Bookname[i])
-			free(Bookname[i]);
 }
 
 void Zredisplay(void)

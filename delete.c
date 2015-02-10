@@ -22,14 +22,17 @@
 
 static struct buff *Killbuff;
 
+static void delfini(void)
+{
+	bdelbuff(Killbuff);
+	bdelbuff(Paw);
+}
+
 void delinit(void)
 {
 	Killbuff = _bcreate();
-}
-
-void delfini(void)
-{
-	bdelbuff(Killbuff);
+	Paw = _bcreate();
+	atexit(delfini);
 }
 
 static void copytomrk(struct mark *tmark)

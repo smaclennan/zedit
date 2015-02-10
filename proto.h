@@ -161,13 +161,11 @@ bool bstrsearch(const char *, bool);
 struct buff *cfindbuff(const char *);
 struct buff *cmakebuff(const char *, char *);
 bool cdelbuff(struct buff *buff);
-void cfini(void);
 void cswitchto(struct buff *);
 void display_init(void);
 bool tdelay(int ms);
 int delayprompt(const char *);
 void delinit(void);
-void delfini(void);
 bool delcmd(void);
 int do_chdir(struct buff *buff);
 void execute(void);
@@ -214,7 +212,6 @@ void tbell(void);
 void tcleol(void);
 void tclrwind(void);
 void termsize(void);
-void tfini(void);
 void tforce(void);
 void tsetcursor(bool hide);
 int tgetcmd(void);
@@ -231,7 +228,6 @@ int chwidth(Byte, int, bool);
 void hang_up(int);
 void dump_doc(const char *doc);
 int set_bookmark(char *bookname);
-void cleanup_bookmarks(void);
 const char *special_label(int key);
 void vsetmod(bool);
 struct mark *zcreatemrk(void);
@@ -248,7 +244,6 @@ void set_umark(struct mark *tmark); /* tmark == NULL means set to point */
 void clear_umark(void);
 
 void winit(void);
-void wfini(void);
 
 void checkpipes(int type);
 void siginit(void);

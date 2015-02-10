@@ -99,8 +99,5 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	bdelbuff(buff);
-	bfini();
-
 	return 0;
 }

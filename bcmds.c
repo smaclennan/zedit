@@ -172,6 +172,11 @@ void Zunmodify(void)
 	Curbuff->bmodf = Argp;
 }
 
+static void cfini(void)
+{
+	free(Bnames);
+}
+
 /* Add the new bname to the Bname array.
  * If we hit maxbuffs, try to enlarge the Bnames array.
  * Note that the compare MUST be insensitive for the getplete!
@@ -186,6 +191,9 @@ static char *addbname(const char *bname)
 					      (maxbuffs + 10) * sizeof(char *));
 		if (!ptr)
 			return NULL;
+
+		if (Bnames == NULL)
+			atexit(cfini);
 
 		Bnames = ptr;
 		maxbuffs += 10;
@@ -275,9 +283,4 @@ struct buff *cfindbuff(const char *bname)
 		if (strncasecmp(tbuff->bname, bname, BUFNAMMAX) == 0)
 			return tbuff;
 	return NULL;
-}
-
-void cfini(void)
-{
-	free(Bnames);
 }

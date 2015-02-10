@@ -38,9 +38,7 @@ int main(int argc, char *argv[])
 	struct buff *buff;
 	int total, offset;
 
-	binit();
 	buff = bcreate();
-	bswitchto(buff);
 
 	srand(time(NULL));
 

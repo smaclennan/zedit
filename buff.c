@@ -58,6 +58,8 @@ struct buff *Bufflist;		/* the buffer list */
 struct buff *Curbuff;		/* the current buffer */
 struct page *Curpage;		/* the current page */
 
+static int binitialized;
+
 static struct mark *Mrklist;	/* the marks list tail */
 static struct mark *mhead;
 
@@ -125,12 +127,15 @@ static void bfini(void)
 #endif
 }
 
-void binit(void)
+static void binit(void)
 {
+	if (!binitialized) {
 #ifdef DOS_EMS
-	ems_init();
+		ems_init();
 #endif
-	atexit(bfini);
+		atexit(bfini);
+		binitialized = 1;
+	}
 }
 
 void minit(struct mark *preallocated)
@@ -221,8 +226,10 @@ struct buff *_bcreate(void)
 {
 	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));
 	if (buf) {
-		struct page *fpage = newpage(buf, NULL, NULL);
-		if (!fpage) {
+		struct page *fpage;
+
+		binit();
+		if (!(fpage = newpage(buf, NULL, NULL))) {
 			/* bad news, de-allocate */
 			free(buf);
 			return NULL;
@@ -247,6 +254,9 @@ struct buff *bcreate(void)
 			Bufflist->prev = buf;
 		buf->next = Bufflist;
 		Bufflist = buf;
+
+		if (Curbuff == NULL)
+			bswitchto(buf);
 	}
 	return buf;
 }

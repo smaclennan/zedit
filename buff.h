@@ -90,7 +90,6 @@ void bmove1(void);
 void bshove(void);
 void boffset(unsigned long off);
 
-void binit(void);
 /* optional - zedit uses it to preallocate screen marks */
 void minit(struct mark *preallocated);
 int bcopyrgn(struct mark *, struct buff*);

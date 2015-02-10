@@ -523,6 +523,69 @@ bool bappend(Byte *data, int size)
 	return true;
 }
 
+/* Simple version to start.
+ * Can use size / PSIZE + 1 + 1 pages.
+ */
+int bindata(Byte *data, int size)
+{
+#ifdef ONE_PAGE
+	/* No optimization for now */
+	int i;
+	for (i = 0; i < size; ++i)
+		if (!binsert(data[i]))
+			break;
+	return i;
+#else
+	struct page *npage;
+	int copied = 0;
+
+	int n = Curplen - Curchar;
+	if (n > 0) {
+		struct mark *btmark;
+
+		/* Make a new page and move the end of this page to the new page */
+		if (!(npage = newpage(Curbuff, Curpage, Curpage->nextp)))
+			return 0;
+		memcpy(npage->pdata, Curcptr, n);
+		npage->plen = n;
+
+		/* Fix marks that are now in new page */
+		for (btmark = Mrklist; btmark; btmark = btmark->prev)
+			if (btmark->mpage == Curpage && btmark->moffset >= Curchar) {
+				btmark->mpage = npage;
+				btmark->moffset -= n;
+			}
+
+		/* Copy as much as possible to the end of this page */
+		n = MIN(n, size);
+		memcpy(Curcptr, data, n);
+		data += n;
+		size -= n;
+		copied += n;
+		makeoffset(Curchar + n);
+		Curplen = Curchar;
+	}
+
+	while (size > 0) {
+		if (!(npage = newpage(Curbuff, Curpage, Curpage->nextp)))
+			break;
+
+		n = MIN(PSIZE, size);
+		memcpy(npage->pdata, data, n);
+		data += n;
+		size -= n;
+		copied += n;
+
+		makecur(npage);
+		makeoffset(n);
+
+		Curplen = n;
+	}
+
+	return copied;
+#endif
+}
+
 void bconvert(int (*to)(int c))
 {
 	*Curcptr = to(*Curcptr);

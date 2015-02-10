@@ -9,7 +9,7 @@
 
 #include "buff.h"
 
-void readone(int fd)
+int readone(int fd)
 {
 	char buffer[4096];
 	int n, max;
@@ -29,11 +29,14 @@ void readone(int fd)
 		bappend(buffer, n);
 		boffset(random() % total);
 	} while (n > 0);
+
+	return total;
 }
 
 int main(int argc, char *argv[])
 {
 	struct buff *buff;
+	int total, offset;
 
 	binit();
 	buff = bcreate();
@@ -42,21 +45,41 @@ int main(int argc, char *argv[])
 	srand(time(NULL));
 
 	if (argc == 1)
-		readone(0); /* stdin */
+		total = readone(0); /* stdin */
 	else {
 		int fd = open(argv[1], O_RDONLY);
 		if (fd < 0) {
 			perror(argv[1]);
 			exit(1);
 		}
-		readone(fd);
+		total = readone(fd);
 		close(fd);
 	}
 
+	if (total < 2) {
+		puts("File too small");
+		exit(1);
+	}
+
+#if 1
+	offset = random() % total;
+#else
+	offset = 2283;
+#endif
+
+	char data[2048];
+	memset(data, '.', sizeof(data));
+	boffset(offset);
+	int n = bindata(data, sizeof(data));
+	if (n != sizeof(data))
+		puts("PROBLEMS");
+
+#if 0
 	if (!bwritefile("/tmp/main.test")) {
 		printf("Unable to write file\n");
 		exit(1);
 	}
+#endif
 
 #if 0
 	binstr("Hello world");

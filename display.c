@@ -59,52 +59,49 @@ void display_init(void)
 /* True if user mark moved */
 static bool umarkmoved(struct mark *tmark)
 {
-	return	Curbuff->umark &&
-		(tmark->moffset != Curbuff->umark->moffset ||
-		 tmark->mpage != Curbuff->umark->mpage ||
-		 tmark->mbuff != Curbuff->umark->mbuff);
+	return	UMARK_SET && !mrkatmrk(tmark, UMARK);
 }
 
 void set_umark(struct mark *tmark)
 {
-	if (Curbuff->umark == NULL) {
+	if (!UMARK_SET) {
 		if (freeumark) {
-			Curbuff->umark = freeumark;
+			UMARK = freeumark;
 			freeumark = NULL;
-		} else if (!(Curbuff->umark = bcremrk()))
+		} else if (!(UMARK = bcremrk()))
 			return;
 	}
 
 	if (tmark)
-		mrktomrk(Curbuff->umark, tmark);
+		mrktomrk(UMARK, tmark);
 	else
-		bmrktopnt(Curbuff->umark);
+		bmrktopnt(UMARK);
 }
 
 void clear_umark(void)
 {
-	if (Curbuff->umark) {
+	if (UMARK_SET) {
 #if SHOW_REGION
 		int i;
 		for (i = 0; i < ROWMAX; ++i)
 			Scrnmodf[i] = true;
 		Tlrow = -1;
 #else
-		vsetmrk(Curbuff->umark);
+		vsetmrk(UMARK);
 #endif
 
 		if (freeumark)
-			unmark(Curbuff->umark);
+			unmark(UMARK);
 		else
-			freeumark = Curbuff->umark;
-		Curbuff->umark = NULL;
+			freeumark = UMARK;
+		UMARK = NULL;
 	}
 }
 
 /* True if buffer at user mark */
 static bool bisatumark(void)
 {
-	return  Curbuff->umark && bisatmrk(Curbuff->umark);
+	return  UMARK_SET && bisatmrk(UMARK);
 }
 
 /* Mark screen invalid */
@@ -149,8 +146,8 @@ void zrefresh(void)
 	if (umarkmoved(was)) {
 		/* the user mark has moved! */
 		vsetmrk(was);
-		vsetmrk(Curbuff->umark);
-		mrktomrk(was, Curbuff->umark);
+		vsetmrk(UMARK);
+		mrktomrk(was, UMARK);
 	}
 
 	if (bisbeforemrk(Sstart) || (Sendp && !bisbeforemrk(Send)) ||
@@ -238,16 +235,16 @@ static void extendedlinemarker(void)
 	tstyle(T_NORMAL);
 }
 
-static bool in_region(struct mark *umark, struct mark *pmark)
+static bool in_region(struct mark *pmark)
 {
 #if SHOW_REGION
-	if (!umark || !pmark)
+	if (!UMARK_SET || !pmark)
 		return false;
 
-	if (bisaftermrk(umark) && bisbeforemrk(pmark))
+	if (bisaftermrk(UMARK) && bisbeforemrk(pmark))
 		return true;
 
-	if (bisaftermrk(pmark) && bisbeforemrk(umark))
+	if (bisaftermrk(pmark) && bisbeforemrk(UMARK))
 		return true;
 #endif
 
@@ -255,7 +252,7 @@ static bool in_region(struct mark *umark, struct mark *pmark)
 }
 
 #if SHOW_REGION
-#define REGION_ON Curbuff->umark
+#define REGION_ON UMARK_SET
 #else
 #define REGION_ON false
 #endif
@@ -274,7 +271,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 	if (VAR(VCOMMENTS))
 		resetcomments();
 
-	if (Curbuff->umark)
+	if (UMARK_SET)
 		tsetcursor(true); /* For DOS */
 
 	for (trow = from; trow < to; ++trow) {
@@ -286,7 +283,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			tsetpoint(trow, col);
 			while (!bisend() && !ISNL(Buff()) &&
 				   (col = buff_col()) < Colmax) {
-				if (in_region(Curbuff->umark, pmark)) {
+				if (in_region(pmark)) {
 					tstyle(T_REGION);
 					tprntchar(Buff());
 					tstyle(T_NORMAL);
@@ -342,7 +339,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 
 	tstyle(T_NORMAL);
 
-	if (Curbuff->umark)
+	if (UMARK_SET)
 		tsetcursor(false); /* For DOS */
 
 	return pntrow;
@@ -514,16 +511,18 @@ void vsetmod(bool flag)
 
 void vsetmrk(struct mark *mrk)
 {
-	int row;
+	if (mrk) {
+		int row;
 
-	Tlrow = -1; /* Needed if mark and point on same row */
+		Tlrow = -1; /* Needed if mark and point on same row */
 
-	for (row = 0; row < Rowmax - 1; ++row)
-		if (mrkaftermrk(&Scrnmarks[row], mrk)) {
-			if (row > 0)
-				Scrnmodf[row - 1] = true;
-			return;
-		}
+		for (row = 0; row < Rowmax - 1; ++row)
+			if (mrkaftermrk(&Scrnmarks[row], mrk)) {
+				if (row > 0)
+					Scrnmodf[row - 1] = true;
+				return;
+			}
+	}
 }
 
 void invalidate_scrnmarks(unsigned from, unsigned to)
@@ -545,8 +544,8 @@ static void pawdisplay(struct mark *pmark, struct mark *was)
 pawshift:
 	btostart(); bmove(Pshift);
 	for (i = 0, Pcol = Pawcol;
-	     Pcol < Colmax - 2 && !bisend();
-	     bmove1(), ++i) {
+		 Pcol < Colmax - 2 && !bisend();
+		 bmove1(), ++i) {
 		if (bisatmrk(pmark))
 			bcol = Pcol;
 		if (mrkmoved && (bisatumark() || bisatmrk(was))) {
@@ -596,8 +595,8 @@ pawshift:
 	if (bcol)
 		Pcol = bcol;
 	bpnttomrk(pmark);
-	if (Curbuff->umark)
-		mrktomrk(was, Curbuff->umark);
+	if (UMARK_SET)
+		mrktomrk(was, UMARK);
 
 	/*
 	 * If we display the cursor on the mark, they both disappear.

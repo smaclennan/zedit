@@ -233,7 +233,9 @@ void tbell_dbg(char *func, int line);
 #define tbell() tbell_dbg(__FILE__, __LINE__)
 #endif
 
-#define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)
+#define UMARK_SET (Curbuff->umark)
+#define NEED_UMARK do if (!UMARK_SET) { tbell(); return; } while (0)
+#define UMARK (Curbuff->umark) /* Must guarantee umark set! */
 #define CLEAR_UMARK clear_umark()
 
 #endif /* _Z_H_ */

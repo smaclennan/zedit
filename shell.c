@@ -437,14 +437,14 @@ void Znext_error(void)
 		bcsearch(NL);
 	line = parse(fname);
 	if (line) {
-		vsetmrk(Curbuff->umark);
-		bmrktopnt(Curbuff->umark);
+		vsetmrk(UMARK);
+		bmrktopnt(UMARK);
 		tobegline();
-		bswappnt(Curbuff->umark);
-		vsetmrk(Curbuff->umark);
+		bswappnt(UMARK);
+		vsetmrk(UMARK);
 		wdo = findwdo(mbuff);
 		if (wdo)
-			mrktomrk(wdo->wstart, Curbuff->umark);
+			mrktomrk(wdo->wstart, UMARK);
 		pathfixup(path, fname);
 		findfile(path);
 		Argp = true;

@@ -36,8 +36,8 @@ static struct wdo *wcreate(int first, int last)
 		wdo->modeflags	= INVALID;
 		wdo->first	= first;
 		wdo->last	= last;
-		if (Curbuff->umark) {
-			mrktomrk(wdo->wmrk, Curbuff->umark);
+		if (UMARK_SET) {
+			mrktomrk(wdo->wmrk, UMARK);
 			wdo->umark_set = 1;
 		}
 	}
@@ -121,8 +121,8 @@ void wswitchto(struct wdo *wdo)
 	if (wdo != Curwdo) {
 		if (Curwdo) {
 			bmrktopnt(Curwdo->wpnt);
-			if (Curbuff->umark) {
-				mrktomrk(Curwdo->wmrk, Curbuff->umark);
+			if (UMARK_SET) {
+				mrktomrk(Curwdo->wmrk, UMARK);
 				Curwdo->umark_set = 1;
 			} else
 				Curwdo->umark_set = 0;
@@ -148,8 +148,8 @@ void cswitchto(struct buff *buff)
 	if (Curwdo->wbuff != Curbuff) {
 		Curwdo->wbuff = Curbuff;
 		bmrktopnt(Curwdo->wpnt);
-		if (Curbuff->umark) {
-			mrktomrk(Curwdo->wmrk, Curbuff->umark);
+		if (UMARK_SET) {
+			mrktomrk(Curwdo->wmrk, UMARK);
 			Curwdo->umark_set = 1;
 		} else
 			Curwdo->umark_set = 0;

@@ -96,8 +96,8 @@ static void delbuff(struct buff *buff)
 			if (wdo->wbuff == buff) {
 				wdo->wbuff = Curbuff;
 				bmrktopnt(wdo->wpnt);
-				if (Curbuff->umark) {
-					mrktomrk(wdo->wmrk, Curbuff->umark);
+				if (UMARK_SET) {
+					mrktomrk(wdo->wmrk, UMARK);
 					wdo->umark_set = 1;
 				} else
 					wdo->umark_set = 0;
@@ -277,6 +277,8 @@ bool cdelbuff(struct buff *bptr)
 
 	uncomment(bptr);
 	undo_clear(bptr);
+
+	CLEAR_UMARK;
 
 	return bdelbuff(bptr);
 }

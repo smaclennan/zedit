@@ -368,7 +368,6 @@ bool bdelbuff(struct buff *tbuff)
 
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);
-	unmark(tbuff->umark);	/* free the user mark */
 	if (tbuff == Bufflist)	/* unlink from the list */
 		Bufflist = tbuff->next;
 	if (tbuff->prev)

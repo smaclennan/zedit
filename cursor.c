@@ -174,7 +174,7 @@ void Zswap_mark(void)
 	Arg = 0;
 	NEED_UMARK;
 
-	mrktomrk(&tmark, Curbuff->umark);
+	mrktomrk(&tmark, UMARK);
 	Zset_mark();
 	bpnttomrk(&tmark);
 }

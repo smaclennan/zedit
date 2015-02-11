@@ -324,7 +324,7 @@ void Zwrite_file(void)
 				NEED_UMARK;
 				putpaw("Writing %s", path);
 				bswitchto(save);
-				bcopyrgn(Curbuff->umark, tbuff);
+				bcopyrgn(UMARK, tbuff);
 				bswitchto(tbuff);
 				Curbuff->bmode = save->bmode;
 				zwritefile(path);

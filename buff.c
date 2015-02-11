@@ -369,13 +369,14 @@ bool bdelbuff(struct buff *tbuff)
 	}
 
 	uncomment(tbuff);
-	undo_clear(tbuff);
 #endif
 
 	if (tbuff->fname)
 		free(tbuff->fname);
 	if (tbuff->bname)
 		free(tbuff->bname);
+	if (tbuff->app)
+		free(tbuff->app);
 
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);
@@ -386,6 +387,7 @@ bool bdelbuff(struct buff *tbuff)
 		tbuff->prev->next = tbuff->next;
 	if (tbuff->next)
 		tbuff->next->prev = tbuff->prev;
+
 	free((char *)tbuff);	/* free the buffer proper */
 
 	--NumBuffs;

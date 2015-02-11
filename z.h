@@ -129,6 +129,11 @@ struct wdo {
 	struct wdo *next;
 };
 
+struct zapp {
+	void *undo_tail;
+};
+#define zapp(b) ((struct zapp *)((b)->app))
+
 #define foreachwdo(wdo) for (wdo = Whead; wdo; wdo = wdo->next)
 #define wheight() (Curwdo->last - Curwdo->first)
 

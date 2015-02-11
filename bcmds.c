@@ -233,14 +233,15 @@ struct buff *cmakebuff(const char *bname, char *fname)
 {
 	struct buff *bptr, *save = Curbuff;
 
-	bptr = cfindbuff(bname);
-	if (bptr) {
+	if ((bptr = cfindbuff(bname))) {
 		bswitchto(bptr);
 		return bptr;
 	}
 
-	bptr = bcreate();
-	if (!bptr) {
+	if ((bptr = bcreate()))
+		bptr->app = calloc(1, sizeof(struct zapp));
+	if (!bptr || !bptr->app) {
+		if (bptr) free(bptr);
 		error("Unable to create buffer");
 		return NULL;
 	}
@@ -270,6 +271,8 @@ bool cdelbuff(struct buff *bptr)
 {
 	if (bptr->bname)
 		delbname(bptr->bname);
+
+	undo_clear(bptr);
 
 	return bdelbuff(bptr);
 }

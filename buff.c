@@ -31,6 +31,8 @@
 #include "z.h"
 #else
 static inline void vsetmod(bool flag) {}
+static inline void undo_add(int size) {}
+static inline void undo_clear(struct buff *buff) {}
 #endif
 
 #if ZLIB
@@ -359,9 +361,6 @@ bool bdelbuff(struct buff *tbuff)
 			return false;
 	}
 
-#ifdef ZEDIT
-#endif
-
 	if (tbuff->fname)
 		free(tbuff->fname);
 	if (tbuff->bname)
@@ -481,9 +480,7 @@ bool binsert(Byte byte)
 	Curbuff->bmodf = true;
 	Curmodf = true;
 
-#ifdef ZEDIT
 	undo_add(1);
-#endif
 
 	for (btmark = Mrklist; btmark; btmark = btmark->prev)
 		if (btmark->mpage == Curpage && btmark->moffset >= Curchar)
@@ -791,9 +788,7 @@ void bempty(void)
 	Curcptr = Cpstart;
 	Curmodf = true;
 
-#ifdef ZEDIT
 	undo_clear(Curbuff);
-#endif
 }
 
 /* Swap the point and the mark. */

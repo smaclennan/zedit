@@ -29,8 +29,8 @@ struct comment {
 /* Mark a new comment from start to Point. */
 static void newcomment(struct mark *start)
 {
-	struct comment *com;
-	com = (struct comment *)calloc(sizeof(struct comment), 1);
+	struct zapp *app = Curbuff->app;
+	struct comment *com = (struct comment *)calloc(sizeof(struct comment), 1);
 	if (!com)
 		return;
 	com->start = zcreatemrk();
@@ -38,11 +38,11 @@ static void newcomment(struct mark *start)
 
 	mrktomrk(com->start, start);
 
-	if (!Curbuff->chead)
-		Curbuff->chead = com;
+	if (!app->chead)
+		app->chead = com;
 	else
-		((struct comment *)Curbuff->ctail)->next = com;
-	Curbuff->ctail = com;
+		((struct comment *)app->ctail)->next = com;
+	app->ctail = com;
 }
 
 /* Scan an entire buffer for comments. */
@@ -50,7 +50,10 @@ static void scanbuffer(struct buff *buff)
 {
 	struct mark tmark, start;
 	int i;
-	Byte comchar = zapp(Curbuff) ? zapp(Curbuff)->comchar : 0;
+	Byte comchar;
+
+	if (!Curbuff->app) return;
+	comchar = zapp(Curbuff)->comchar;
 
 	uncomment(buff);
 
@@ -105,7 +108,8 @@ static struct comment *start;
 /* Called from innerdsp before display loop */
 void resetcomments(void)
 {
-	start = Curbuff->chead;
+	if (!Curbuff->app) return;
+	start = zapp(Curbuff)->chead;
 
 	switch (Lfunc) {
 	/* Was the last command a delete of any type? */
@@ -145,7 +149,7 @@ void cprntchar(Byte ch)
 			if (wdo->wbuff != Curbuff)
 				scanbuffer(wdo->wbuff);
 		bswitchto(was);
-		start = Curbuff->chead;
+		start = zapp(Curbuff) ? zapp(Curbuff)->chead : NULL;
 	}
 
 	for (; start; start = start->next)
@@ -163,10 +167,10 @@ void cprntchar(Byte ch)
 /* Remove all comments from buffer and mark unscanned */
 void uncomment(struct buff *buff)
 {
-	if (buff)
-		while (buff->chead) {
-			struct comment *com = buff->chead;
-			buff->chead = com->next;
+	if (buff && buff->app)
+		while (zapp(buff)->chead) {
+			struct comment *com = zapp(buff)->chead;
+			zapp(buff)->chead = com->next;
 			unmark(com->start);
 			unmark(com->end);
 			free(com);

@@ -130,6 +130,7 @@ struct wdo {
 };
 
 struct zapp {
+	void *chead, *ctail;	/* list of comments in file */
 	Byte comchar;			/* single char comment character */
 	void *undo_tail;
 };

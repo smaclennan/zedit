@@ -93,7 +93,6 @@ static void dotty(void)
 #define PIPEFD 2
 
 static struct pollfd fds[MAX_FDS];
-static struct buff *pipebuff;
 
 static void fd_init(void)
 {
@@ -110,11 +109,10 @@ static void fd_init(void)
 #endif
 }
 
-bool fd_add(int fd, struct buff *buff)
+bool fd_add(int fd)
 {
 	if (fds[PIPEFD].fd == -1) {
 		fds[PIPEFD].fd = fd;
-		pipebuff = buff;
 		return true;
 	}
 	return false;
@@ -124,7 +122,6 @@ void fd_remove(int fd)
 {
 	if (fds[PIPEFD].fd == fd) {
 		fds[PIPEFD].fd = -1;
-		pipebuff = NULL;
 	}
 }
 #else
@@ -157,8 +154,8 @@ void execute(void)
 		if (fds[1].revents)
 			handle_gpm_mouse();
 #endif
-		if (fds[PIPEFD].revents && pipebuff)
-			readapipe(pipebuff);
+		if (fds[PIPEFD].revents)
+			readapipe();
 	}
 #else
 	dotty();

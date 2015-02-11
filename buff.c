@@ -235,9 +235,6 @@ struct buff *_bcreate(void)
 			return NULL;
 		}
 		buf->pnt_page = fpage;
-#ifdef ZEDIT
-		buf->child = EOF;
-#endif
 		++NumBuffs;
 	}
 
@@ -363,12 +360,6 @@ bool bdelbuff(struct buff *tbuff)
 	}
 
 #ifdef ZEDIT
-	while (tbuff->child != EOF) {
-		unvoke(tbuff);
-		checkpipes(1);
-	}
-
-	uncomment(tbuff);
 #endif
 
 	if (tbuff->fname)

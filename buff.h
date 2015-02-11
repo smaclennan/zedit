@@ -60,10 +60,6 @@ struct buff {
 	char *fname;			/* file name associated with buffer */
 	time_t mtime;			/* file time at read */
 	void *app;				/* app specific data */
-#ifdef ZEDIT
-	pid_t child;			/* PID of shell or EOF */
-	int in_pipe;			/* the pipe */
-#endif
 	struct buff *prev, *next;	/* list of buffers */
 };
 

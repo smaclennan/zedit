@@ -401,9 +401,7 @@ void Zexit(void)
 	if (modf && ask("Modified buffers. quit anyway? ") != YES)
 		return;
 
-	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-		if (tbuff->child != EOF)
-			unvoke(tbuff);
+	unvoke(NULL);
 	checkpipes(0);		/* make sure waited for ALL children */
 
 	exit(0);

@@ -272,6 +272,10 @@ bool cdelbuff(struct buff *bptr)
 	if (bptr->bname)
 		delbname(bptr->bname);
 
+	if (unvoke(bptr))
+		checkpipes(1);
+
+	uncomment(bptr);
 	undo_clear(bptr);
 
 	return bdelbuff(bptr);

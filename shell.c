@@ -53,7 +53,10 @@ static void message(struct buff *buff, const char *str)
 #include <signal.h>
 #include <sys/wait.h>
 
-static int Waiting;
+/* We only allow one pipe command */
+static struct buff *pipebuff;
+static pid_t child = EOF;	/* PID of shell or EOF */
+static int in_pipe = -1;	/* the pipe */
 
 /* Come here when a child dies or exits.
  *
@@ -63,7 +66,6 @@ static int Waiting;
  */
 static void sigchild(int signo)
 {
-	++Waiting;
 }
 
 void siginit(void)
@@ -75,18 +77,19 @@ void siginit(void)
 }
 
 /* pipe has something for us */
-int readapipe(struct buff *tbuff)
+int readapipe(void)
 {
 	char buff[BUFSIZ], *ptr;
 	int cnt, i;
 
-	cnt = i = read(tbuff->in_pipe, ptr = buff, BUFSIZ);
+	if (in_pipe == -1) return 0;
+	cnt = i = read(in_pipe, ptr = buff, BUFSIZ);
 	if (i > 0) {
 		/* Yup! Read somethin' */
 		struct mark tmark;
 		struct buff *save = Curbuff;
 
-		bswitchto(tbuff);
+		bswitchto(pipebuff);
 		bmrktopnt(&tmark);
 		btoend();
 		while (i-- > 0)
@@ -121,29 +124,28 @@ static void exit_status(struct buff *tbuff, int status)
 /* Wait for dead children and cleanup. Type == 0 on exit. */
 void checkpipes(int type)
 {
-	struct buff *tbuff;
 	int pid = 0, status;
 
-	while ((pid = waitpid((pid_t)-1, &status, WNOHANG)) > 0) {
-		--Waiting;		/* one less to wait for */
-		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-			if (tbuff->child == pid) {
-				/*
-				 * make sure pipe empty (except on exit)
-				 *	- since child is dead, read
-				 *	will not block if nothing to
-				 *	read
-				 */
-				if (type) {
-					while (readapipe(tbuff) > 0) ;
-					exit_status(tbuff, status);
-				}
-				fd_remove(tbuff->in_pipe);
-				(void)close(tbuff->in_pipe);
-				tbuff->in_pipe = EOF;
-				tbuff->child = EOF;
-				break;
+	if (child == EOF) return;
+
+	if ((pid = waitpid((pid_t)-1, &status, WNOHANG)) > 0) {
+		if (pid == child) {
+			/*
+			 * make sure pipe empty (except on exit)
+			 *	- since child is dead, read
+			 *	will not block if nothing to
+			 *	read
+			 */
+			if (type) {
+				while (readapipe() > 0) ;
+				exit_status(pipebuff, status);
 			}
+			fd_remove(in_pipe);
+			(void)close(in_pipe);
+			in_pipe = EOF;
+			child = EOF;
+			pipebuff = NULL;
+		}
 	}
 
 #ifdef SYSV4
@@ -183,7 +185,7 @@ static bool dopipe(struct buff *tbuff, const char *icmd)
 	char cmd[STRMAX + 1], *p, *argv[11];
 	int from[2], arg;
 
-	if (tbuff->child != EOF) {
+	if (child != EOF) {
 		error("%s in use....", tbuff->bname);
 		return false;
 	}
@@ -193,8 +195,8 @@ static bool dopipe(struct buff *tbuff, const char *icmd)
 		;
 
 	if (pipe(from) == 0) {
-		tbuff->child = fork();
-		if (tbuff->child == 0) {
+		pid_t pid = fork();
+		if (pid == 0) {
 			/* child */
 			(void)close(from[0]);
 			dup2(from[1], 1);
@@ -204,10 +206,12 @@ static bool dopipe(struct buff *tbuff, const char *icmd)
 		}
 
 		(void)close(from[1]);		/* close fail or not */
-		if (tbuff->child != EOF) {
+		if (pid != EOF) {
 			/* SUCCESS! */
-			tbuff->in_pipe = from[0];
-			fd_add(tbuff->in_pipe, tbuff);
+			pipebuff = tbuff;
+			in_pipe = from[0];
+			child = pid;
+			fd_add(in_pipe);
 			return true;
 		} else {
 			/* fork failed - clean up */
@@ -220,10 +224,13 @@ static bool dopipe(struct buff *tbuff, const char *icmd)
 }
 
 /* Try to kill a child process */
-void unvoke(struct buff *child)
+bool unvoke(struct buff *buff)
 {
-	if (child && child->child != EOF)
-		kill(child->child, SIGKILL);
+	if (!pipebuff || (buff && buff != pipebuff))
+		return false;
+
+	kill(child, SIGKILL);
+	return true;
 }
 
 static void cmdtobuff(const char *bname, const char *cmd)
@@ -242,15 +249,12 @@ static void cmdtobuff(const char *bname, const char *cmd)
 
 void Zkill(void)
 {
-	struct buff *buff = cfindbuff(SHELLBUFF);
-	if (buff)
-		unvoke(buff);
-	else
+	if (!unvoke(NULL))
 		tbell();
 }
 #else
 void Zkill(void) { tbell(); }
-void unvoke(struct buff *child) { ((void)child); }
+bool unvoke(struct buff *child) { ((void)child); return false; }
 void checkpipes(int type) { ((void)type); }
 
 #if DOPOPEN

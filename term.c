@@ -83,9 +83,8 @@ void hang_up(int signal)
 			bswitchto(tbuff);
 			bwritefile(Curbuff->fname);
 		}
-		if (tbuff->child != EOF)
-			unvoke(tbuff);
 	}
+	unvoke(NULL);
 	checkpipes(0);
 	exit(1);
 }

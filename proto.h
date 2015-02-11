@@ -169,8 +169,8 @@ void delinit(void);
 bool delcmd(void);
 int do_chdir(struct buff *buff);
 void execute(void);
-int readapipe(struct buff *tbuff);
-bool fd_add(int fd, struct buff *buff);
+int readapipe(void);
+bool fd_add(int fd);
 void fd_remove(int fd);
 bool filesave(void);
 bool findfile(char *);
@@ -247,7 +247,7 @@ void winit(void);
 
 void checkpipes(int type);
 void siginit(void);
-void unvoke(struct buff *);
+bool unvoke(struct buff *);
 
 void Dbg(const char *fmt, ...);
 const char *func2name(Byte func);

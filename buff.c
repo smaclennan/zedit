@@ -51,6 +51,9 @@ static inline void undo_clear(struct buff *buff) {}
 #define CRLF				0x0010
 #endif
 
+/* If set, this function will be called on bdelbuff */
+void (*app_cleanup)(struct buff *buff);
+
 static bool Curmodf;		/* page modified?? */
 static Byte *Cpstart;		/* pim data start */
 Byte *Curcptr;			/* current character */
@@ -363,8 +366,8 @@ bool bdelbuff(struct buff *tbuff)
 		free(tbuff->fname);
 	if (tbuff->bname)
 		free(tbuff->bname);
-	if (tbuff->app)
-		free(tbuff->app);
+	if (tbuff->app && app_cleanup)
+		app_cleanup(tbuff);
 
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);

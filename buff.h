@@ -61,6 +61,9 @@ struct buff {
 	struct buff *prev, *next;	/* list of buffers */
 };
 
+/* If set, this function will be called on bdelbuff */
+extern void (*app_cleanup)(struct buff *buff);
+
 extern Byte *Curcptr;
 extern int Curchar;
 extern struct buff *Curbuff;

@@ -228,6 +228,16 @@ static bool delbname(char *bname)
 	return true;
 }
 
+/* Only called if bptr->app is valid */
+static void zapp_cleanup(struct buff *bptr)
+{
+	uncomment(bptr);
+	undo_clear(bptr);
+	free(bptr->app);
+	bptr->app = NULL; /* paranoia */
+}
+
+
 /* Create a buffer. */
 struct buff *cmakebuff(const char *bname, char *fname)
 {
@@ -264,6 +274,8 @@ struct buff *cmakebuff(const char *bname, char *fname)
 	if (fname)
 		bptr->fname = strdup(fname);
 
+	app_cleanup = zapp_cleanup;
+
 	return bptr;
 }
 
@@ -274,9 +286,6 @@ bool cdelbuff(struct buff *bptr)
 
 	if (unvoke(bptr))
 		checkpipes(1);
-
-	uncomment(bptr);
-	undo_clear(bptr);
 
 	CLEAR_UMARK;
 

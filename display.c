@@ -33,6 +33,7 @@ int Tlrow;			/* Last row displayed */
 static int NESTED;		/* zrefresh can go recursive... */
 static Byte tline[COLMAX + 1];
 static struct mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
+static bool Scrnmodf[ROWMAX + 1];
 
 static void (*printchar)(Byte ichar) = tprntchar;
 
@@ -67,7 +68,7 @@ void zclear_umark(void)
 #if SHOW_REGION
 		int i;
 		for (i = 0; i < ROWMAX; ++i)
-			Scrnmarks[i].modf = true;
+			Scrnmodf[i] = true;
 		Tlrow = -1;
 #else
 		vsetmrk(Curbuff->umark);
@@ -93,7 +94,7 @@ void redisplay(void)
 
 	tclrwind();
 	for (i = 0; i < Rowmax - 2; ++i)
-		Scrnmarks[i].modf = true;
+		Scrnmodf[i] = true;
 	Tlrow = -1;
 
 	/* This is needed to set Comstate to false */
@@ -253,8 +254,8 @@ static int innerdsp(int from, int to, struct mark *pmark)
 		tsetcursor(true); /* For DOS */
 
 	for (trow = from; trow < to; ++trow) {
-		if (Scrnmarks[trow].modf || !bisatmrk(&Scrnmarks[trow]) || REGION_ON) {
-			Scrnmarks[trow].modf = false;
+		if (Scrnmodf[trow] || !bisatmrk(&Scrnmarks[trow]) || REGION_ON) {
+			Scrnmodf[trow] = false;
 			bmrktopnt(&Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
 			col = 0;
@@ -461,7 +462,7 @@ static void subset(int from, int to, bool flag)
 			;
 		if (row > from) {
 			while (Scrnmarks[--row].mbuff != Curbuff) ;
-			Scrnmarks[row].modf = true;
+			Scrnmodf[row] = true;
 		}
 	} else {
 		btmark = &Scrnmarks[row];
@@ -470,10 +471,10 @@ static void subset(int from, int to, bool flag)
 			++row;
 		}
 		if (--row >= from)
-			Scrnmarks[row].modf = true;
+			Scrnmodf[row] = true;
 		if (flag)
 			while (row > from && bisatmrk(&Scrnmarks[row]))
-				Scrnmarks[--row].modf = true;
+				Scrnmodf[--row] = true;
 	}
 }
 
@@ -496,7 +497,7 @@ void vsetmrk(struct mark *mrk)
 	for (row = 0; row < Rowmax - 1; ++row)
 		if (mrkaftermrk(&Scrnmarks[row], mrk)) {
 			if (row > 0)
-				Scrnmarks[row - 1].modf = true;
+				Scrnmodf[row - 1] = true;
 			return;
 		}
 }
@@ -506,7 +507,7 @@ void invalidate_scrnmarks(unsigned from, unsigned to)
 	int i;
 
 	for (i = from; i < to; ++i)
-		Scrnmarks[i].modf = true;
+		Scrnmodf[i] = true;
 }
 
 #define SHIFT	(Colmax / 4 + 1)

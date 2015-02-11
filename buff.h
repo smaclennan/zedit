@@ -42,10 +42,9 @@
 struct page;
 
 struct mark {
-	struct page *mpage;		/* page in the buffer */
-	struct buff *mbuff;		/* buffer the mark is in */
-	int moffset;			/* offset in the page */
-	bool modf;			/* screen mark modified flags */
+	struct buff *mbuff;			/* buffer the mark is in */
+	struct page *mpage;			/* page in the buffer */
+	int moffset;				/* offset in the page */
 	struct mark *prev, *next;	/* list of marks */
 };
 

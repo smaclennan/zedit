@@ -446,34 +446,34 @@ static char *setmodes(struct buff *buff)
 /* Set one windows modified flags. */
 static void subset(int from, int to, bool flag)
 {
-	struct mark *btmark, *ltmark;
+	struct mark *btmark;
+	int row;
 
 	if (Scrnmarks[from].mbuff != Curbuff)
 		return;
-	for (btmark = &Scrnmarks[from], ltmark = &Scrnmarks[to];
-		 btmark <= ltmark && btmark->mpage != Curpage;
-		 ++btmark)
-		;
-	if (btmark > ltmark) {
-		for (btmark = &Scrnmarks[from];
-		     btmark <= ltmark &&
-			     (btmark->mbuff != Curbuff || bisaftermrk(btmark));
-		     ++btmark)
+
+	for (row = from; row <= to && Scrnmarks[row].mpage != Curpage; ++row) ;
+
+	if (row > to) {
+		for (row = from, btmark = &Scrnmarks[from];
+			 row <= to && (btmark->mbuff != Curbuff || bisaftermrk(btmark));
+			 ++btmark, ++row)
 			;
-		if (btmark > &Scrnmarks[from]) {
-			while ((--btmark)->mbuff != Curbuff)
-				;
-			btmark->modf = true;
+		if (row > from) {
+			while (Scrnmarks[--row].mbuff != Curbuff) ;
+			Scrnmarks[row].modf = true;
 		}
 	} else {
-		while (btmark->mpage == Curpage && btmark->moffset <= Curchar &&
-			   btmark <= ltmark)
+		btmark = &Scrnmarks[row];
+		while (btmark->mpage == Curpage && btmark->moffset <= Curchar && row <= from) {
 			++btmark;
-		if (--btmark >= &Scrnmarks[from])
-			btmark->modf = true;
+			++row;
+		}
+		if (--row >= from)
+			Scrnmarks[row].modf = true;
 		if (flag)
-			while (btmark > &Scrnmarks[from] && bisatmrk(btmark))
-				(--btmark)->modf = true;
+			while (row > from && bisatmrk(&Scrnmarks[row]))
+				Scrnmarks[--row].modf = true;
 	}
 }
 

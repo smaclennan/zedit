@@ -35,6 +35,9 @@ static Byte tline[COLMAX + 1];
 static struct mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
 static bool Scrnmodf[ROWMAX + 1];
 
+/* Keeping just one mark around is a HUGE win for a trivial amount of code. */
+static struct mark *freeumark;
+
 static void (*printchar)(Byte ichar) = tprntchar;
 
 void display_init(void)
@@ -62,7 +65,23 @@ static bool umarkmoved(struct mark *tmark)
 		 tmark->mbuff != Curbuff->umark->mbuff);
 }
 
-void zclear_umark(void)
+void set_umark(struct mark *tmark)
+{
+	if (Curbuff->umark == NULL) {
+		if (freeumark) {
+			Curbuff->umark = freeumark;
+			freeumark = NULL;
+		} else if (!(Curbuff->umark = bcremrk()))
+			return;
+	}
+
+	if (tmark)
+		mrktomrk(Curbuff->umark, tmark);
+	else
+		bmrktopnt(Curbuff->umark);
+}
+
+void clear_umark(void)
 {
 	if (Curbuff->umark) {
 #if SHOW_REGION
@@ -73,7 +92,12 @@ void zclear_umark(void)
 #else
 		vsetmrk(Curbuff->umark);
 #endif
-		clear_umark();
+
+		if (freeumark)
+			unmark(Curbuff->umark);
+		else
+			freeumark = Curbuff->umark;
+		Curbuff->umark = NULL;
 	}
 }
 

@@ -262,7 +262,6 @@ void wsize(void);
 bool wuseother(const char *);
 struct wdo *wfind(int row);
 void wgoto(struct buff *);
-void zclear_umark(void);
 
 void set_mouse(bool enable);
 void mouse_scroll(int row, bool down);

@@ -132,7 +132,8 @@ struct wdo {
 struct zapp {
 	void *chead, *ctail;	/* list of comments in file */
 	Byte comchar;			/* single char comment character */
-	void *undo_tail;
+	void *undo_tail;        /* list of undos */
+	struct mark *umark;     /* user mark */
 };
 #define zapp(b) ((struct zapp *)((b)->app))
 
@@ -233,6 +234,6 @@ void tbell_dbg(char *func, int line);
 #endif
 
 #define NEED_UMARK do if (Curbuff->umark == NULL) { tbell(); return; } while (0)
-#define CLEAR_UMARK zclear_umark()
+#define CLEAR_UMARK clear_umark()
 
 #endif /* _Z_H_ */

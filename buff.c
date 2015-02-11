@@ -69,8 +69,6 @@ int raw_mode;
 
 /* Keeping just one mark around is a HUGE win for a trivial amount of code. */
 static struct mark *freemark;
-/* Same for user mark */
-static struct mark *freeumark;
 
 /* stats only */
 static int NumBuffs;
@@ -1171,33 +1169,6 @@ void bgoto_char(long offset)
 
 	makecur(tpage);
 	makeoffset(offset);
-}
-
-void set_umark(struct mark *tmark)
-{
-	if (Curbuff->umark == NULL) {
-		if (freeumark) {
-			Curbuff->umark = freeumark;
-			freeumark = NULL;
-		} else if (!(Curbuff->umark = bcremrk()))
-			return;
-	}
-
-	if (tmark)
-		mrktomrk(Curbuff->umark, tmark);
-	else
-		bmrktopnt(Curbuff->umark);
-}
-
-void clear_umark(void)
-{
-	if (Curbuff->umark) {
-		if (freeumark)
-			unmark(Curbuff->umark);
-		else
-			freeumark = Curbuff->umark;
-		Curbuff->umark = NULL;
-	}
 }
 
 int bgetstats(char *str, int len)

@@ -224,6 +224,7 @@ void tprntchar(Byte);
 void tprntstr(const char *);
 void tstyle(int);
 void vsetmrk(struct mark *);
+void invalidate_scrnmarks(unsigned from, unsigned to);
 int chwidth(Byte, int, bool);
 void hang_up(int);
 void dump_doc(const char *doc);

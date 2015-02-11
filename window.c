@@ -60,12 +60,9 @@ static void wfree(struct wdo *wdo)
  */
 static void winvalidate(struct wdo *wdo)
 {
-	int i;
-
 	if (wdo->first > 0)
-		Scrnmarks[wdo->first - 1].modf = true;
-	for (i = wdo->first; i <= wdo->last; ++i)
-		Scrnmarks[i].modf = true;
+		invalidate_scrnmarks(wdo->first - 1, wdo->first);
+	invalidate_scrnmarks(wdo->first, wdo->last + 1);
 	wdo->modeflags = INVALID;
 }
 
@@ -300,7 +297,6 @@ void Zsplit_window(void)
 void Zone_window(void)
 {
 	struct wdo *wdo;
-	int i;
 
 	while (Whead) {
 		wdo = Whead;
@@ -315,8 +311,7 @@ void Zone_window(void)
 	Curwdo->next = NULL;
 	Whead = Curwdo;
 
-	for (i = 0; i < Curwdo->last; ++i)
-		Scrnmarks[i].modf = true;
+	invalidate_scrnmarks(0, Curwdo->last);
 
 	tclrwind();
 }

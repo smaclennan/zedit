@@ -28,11 +28,11 @@ static void pawdisplay(struct mark *, struct mark *);
 struct mark *Sstart, *Psstart;	/* Screen start and 'prestart' */
 struct mark *Send;		/* Screen end */
 bool Sendp;			/* Screen end set */
-struct mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
 int Tlrow;			/* Last row displayed */
 
 static int NESTED;		/* zrefresh can go recursive... */
 static Byte tline[COLMAX + 1];
+static struct mark Scrnmarks[ROWMAX + 1];	/* Screen marks - one per line */
 
 static void (*printchar)(Byte ichar) = tprntchar;
 
@@ -499,6 +499,14 @@ void vsetmrk(struct mark *mrk)
 				Scrnmarks[row - 1].modf = true;
 			return;
 		}
+}
+
+void invalidate_scrnmarks(unsigned from, unsigned to)
+{
+	int i;
+
+	for (i = from; i < to; ++i)
+		Scrnmarks[i].modf = true;
 }
 
 #define SHIFT	(Colmax / 4 + 1)

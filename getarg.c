@@ -129,15 +129,15 @@ static void pclear(void)
 	for (i = 0; i < Rowmax - 2; ++i) {
 		tsetpoint(i, 0);
 		tcleol();
-		Scrnmarks[i].modf = true;
 	}
+	invalidate_scrnmarks(0, Rowmax - 2);
 	p_row = p_col = 0;
 }
 
 static void pout(char *str)
 {
 	tsetpoint(p_row, p_col * PCOLSIZE);
-	Scrnmarks[p_row].modf = true;
+	invalidate_scrnmarks(p_row, p_row + 1);
 	if (p_row < Rowmax - 2) {
 		tprntstr(str);
 		tcleol();

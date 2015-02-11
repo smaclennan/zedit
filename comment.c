@@ -49,16 +49,13 @@ static void newcomment(struct mark *start)
 static void scanbuffer(struct buff *buff)
 {
 	struct mark tmark, start;
-	int i;
 	Byte comchar;
 
 	if (!Curbuff->app) return;
 	comchar = zapp(Curbuff)->comchar;
 
 	uncomment(buff);
-
-	for (i = 0; i < Rowmax - 2; ++i)
-		Scrnmarks[i].modf = true;
+	invalidate_scrnmarks(0, Rowmax - 2);
 
 	bswitchto(buff);
 	bmrktopnt(&tmark);

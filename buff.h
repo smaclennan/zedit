@@ -53,7 +53,6 @@ struct buff {
 	struct page *firstp, *lastp;	/* describe the pages */
 	struct page *pnt_page;		/* the position of the point */
 	unsigned pnt_offset;
-	struct mark *umark;		/* position of mark in this buffer */
 	unsigned bmode;			/* buffer mode */
 	char *bname;			/* buffer name */
 	char *fname;			/* file name associated with buffer */

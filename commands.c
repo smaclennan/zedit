@@ -748,13 +748,15 @@ void toggle_mode(int mode)
 			mode = NORMAL;
 	}
 
-	if (mode == SHMODE) {
-		if (ext && strcmp(ext, ".el") == 0)
-			Curbuff->comchar = ';';
-		else
-			Curbuff->comchar = '#';
-	} else
-		Curbuff->comchar = 0;
+	if (Curbuff->app) {
+		if (mode == SHMODE) {
+			if (ext && strcmp(ext, ".el") == 0)
+				zapp(Curbuff)->comchar = ';';
+			else
+				zapp(Curbuff)->comchar = '#';
+		} else
+			zapp(Curbuff)->comchar = 0;
+	}
 
 	Curbuff->bmode = (Curbuff->bmode & ~MAJORMODE) | mode;
 }

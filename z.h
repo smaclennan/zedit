@@ -130,6 +130,7 @@ struct wdo {
 };
 
 struct zapp {
+	Byte comchar;			/* single char comment character */
 	void *undo_tail;
 };
 #define zapp(b) ((struct zapp *)((b)->app))

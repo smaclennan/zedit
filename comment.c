@@ -50,6 +50,7 @@ static void scanbuffer(struct buff *buff)
 {
 	struct mark tmark, start;
 	int i;
+	Byte comchar = zapp(Curbuff) ? zapp(Curbuff)->comchar : 0;
 
 	uncomment(buff);
 
@@ -60,8 +61,8 @@ static void scanbuffer(struct buff *buff)
 	bmrktopnt(&tmark);
 
 	btostart();
-	if (Curbuff->comchar) {
-		while (bcsearch(Curbuff->comchar) && !bisend()) {
+	if (comchar) {
+		while (bcsearch(comchar) && !bisend()) {
 			if (bmove(-2) == 0) { /* skip to char *before* # */
 				/* # is first character in buffer */
 			} else if (isspace(*Curcptr))

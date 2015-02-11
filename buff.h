@@ -64,7 +64,6 @@ struct buff {
 	pid_t child;			/* PID of shell or EOF */
 	int in_pipe;			/* the pipe */
 	void *chead, *ctail;	/* list of comments in file */
-	Byte comchar;			/* single char comment character */
 #endif
 	struct buff *prev, *next;	/* list of buffers */
 };

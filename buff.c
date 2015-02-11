@@ -782,13 +782,13 @@ void bempty(void)
 		if (btmark->mpage && btmark->mbuff == Curbuff) {
 			btmark->mpage = Curpage;
 			btmark->moffset = 0;
-			btmark->modf = true;
 		}
 	Curplen = Curchar = 0;		/* reset to start of page */
 	Curcptr = Cpstart;
 	Curmodf = true;
 
 	undo_clear(Curbuff);
+	vsetmod(true);
 }
 
 /* Swap the point and the mark. */

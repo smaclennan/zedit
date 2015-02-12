@@ -114,7 +114,7 @@ struct buff *_bcreate(void)
 			return NULL;
 		}
 		buf->firstp = fpage;
-		buf->pnt_page = fpage;
+		buf->curpage = fpage;
 		++NumBuffs;
 	}
 
@@ -531,11 +531,12 @@ void bswitchto(struct buff *buf)
 {
 	if (buf && buf != Curbuff) {
 		if (Curbuff) {
-			Curbuff->pnt_page   = Curpage;
-			Curbuff->pnt_offset = Curchar;
+			Curbuff->curpage   = Curpage;
+			Curbuff->curchar = Curchar;
+			Curbuff->curcptr = Curcptr;
 		}
-		makecur(buf->pnt_page);
-		makeoffset(buf->pnt_offset);
+		makecur(buf->curpage);
+		makeoffset(buf->curchar);
 		Curbuff = buf;
 	}
 }

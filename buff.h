@@ -44,8 +44,9 @@ struct page;
 struct buff {
 	bool bmodf;			/* buffer modified? */
 	struct page *firstp;	/* the pages */
-	struct page *pnt_page;	/* the position of the point */
-	unsigned pnt_offset;
+	struct page *curpage;	/* the position of the point */
+	unsigned curchar;
+	Byte *curcptr;
 	unsigned bmode;			/* buffer mode */
 	char *bname;			/* buffer name */
 	char *fname;			/* file name associated with buffer */

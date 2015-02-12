@@ -1221,8 +1221,9 @@ static struct page *pagesplit(struct page *curpage)
 {
 	struct page *newp = newpage(curpage);
 	if (newp) {
+		if (!Curmodf) Dbg("Curmodf not set!\n"); // SAM DBG
 #ifdef DOS_EMS
-		ems_pagesplit(newp, Curmodf);
+		ems_pagesplit(newp);
 #else
 		memmove(newp->pdata, curpage->pdata + HALFP, HALFP);
 #endif

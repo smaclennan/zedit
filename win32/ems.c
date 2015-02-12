@@ -235,7 +235,7 @@ void ems_makecur(struct page *page, bool curmodf)
 	page->pdata = emmpage + (page->emmoff << PSHIFT);
 }
 
-void ems_pagesplit(struct page *newp, bool curmodf)
+void ems_pagesplit(struct page *newp)
 {
 	if (newp->emmpage == pim) {
 		/* both pages in same emm page */
@@ -247,7 +247,7 @@ void ems_pagesplit(struct page *newp, bool curmodf)
 		struct page *cur = Curpage;
 
 		memcpy(jump, Curpage->pdata + HALFP, HALFP);
-		ems_makecur(newp, curmodf);
+		ems_makecur(newp, true);
 		memcpy(newp->pdata, jump, HALFP);
 		ems_makecur(cur, true);
 	}

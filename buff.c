@@ -60,7 +60,6 @@ bool Curmodf;		/* page modified?? */
 static Byte *Cpstart;		/* pim data start */
 Byte *Curcptr;			/* current character */
 int Curchar;			/* current offset in Cpstart */
-int Curplen;			/* current page length */
 struct buff *Bufflist;		/* the buffer list */
 struct buff *Curbuff;		/* the current buffer */
 struct page *Curpage;		/* the current page */
@@ -181,11 +180,11 @@ bool binsert(Byte byte)
 {
 	struct mark *btmark;
 
-	if (Curplen == Curpage->psize && !bpagesplit())
+	if (Curpage->plen == Curpage->psize && !bpagesplit())
 		return false;
-	memmove(Curcptr + 1, Curcptr, Curplen - Curchar);
+	memmove(Curcptr + 1, Curcptr, Curpage->plen - Curchar);
 	*Curcptr++ = byte;
-	++Curplen;
+	++Curpage->plen;
 	++Curchar;
 	Curbuff->bmodf = true;
 	Curmodf = true;
@@ -207,11 +206,11 @@ bool bappend(Byte *data, int size)
 	btoend();
 
 	/* Fill the current page */
-	int n, left = PSIZE - Curplen;
+	int n, left = PSIZE - Curpage->plen;
 	if (left > 0) {
 		n = MIN(left, size);
 		memcpy(Curcptr, data, n);
-		Curplen += n;
+		Curpage->plen += n;
 		size -= n;
 		data += n;
 		Curmodf = true;
@@ -226,7 +225,7 @@ bool bappend(Byte *data, int size)
 
 		n = MIN(PSIZE, size);
 		memcpy(Cpstart, data, n);
-		Curplen = n;
+		Curpage->plen = n;
 		size -= n;
 		data += n;
 		Curmodf = true;
@@ -244,7 +243,7 @@ int bindata(Byte *data, int size)
 	struct page *npage;
 	int copied = 0;
 
-	int n = Curplen - Curchar;
+	int n = Curpage->plen - Curchar;
 	if (n > 0) {
 		struct mark *btmark;
 
@@ -270,7 +269,7 @@ int bindata(Byte *data, int size)
 		size -= n;
 		copied += n;
 		makeoffset(Curchar + n);
-		Curplen = Curchar;
+		Curpage->plen = Curchar;
 	}
 
 	while (size > 0) {
@@ -286,7 +285,7 @@ int bindata(Byte *data, int size)
 		makecur(npage);
 		makeoffset(n);
 
-		Curplen = n;
+		Curpage->plen = n;
 	}
 
 	return copied;
@@ -301,8 +300,8 @@ void bdelete(int quantity)
 
 	while (quantity) {
 		/* Delete as many characters as possible from this page */
-		if (Curchar + quantity > Curplen)
-			quan = Curplen - Curchar;
+		if (Curchar + quantity > Curpage->plen)
+			quan = Curpage->plen - Curchar;
 		else
 			quan = quantity;
 		if (quan < 0)
@@ -312,16 +311,16 @@ void bdelete(int quantity)
 		undo_del(quan);
 #endif
 
-		Curplen -= quan;
+		Curpage->plen -= quan;
 
-		memmove(Curcptr, Curcptr + quan, Curplen - Curchar);
+		memmove(Curcptr, Curcptr + quan, Curpage->plen - Curchar);
 		if (lastp(Curpage))
 			quantity = 0;
 		else
 			quantity -= quan;
 		Curbuff->bmodf = true;
 		Curmodf = true;
-		if (Curplen == 0 && (Curpage->nextp || Curpage->prevp)) {
+		if (Curpage->plen == 0 && (Curpage->nextp || Curpage->prevp)) {
 			/* We deleted entire page. */
 			tpage = Curpage->nextp;
 			noffset = 0;
@@ -340,7 +339,7 @@ void bdelete(int quantity)
 		} else {
 			tpage = Curpage;
 			noffset = Curchar;
-			if ((noffset >= Curplen) && Curpage->nextp) {
+			if ((noffset >= Curpage->plen) && Curpage->nextp) {
 				tpage = Curpage->nextp;
 				noffset = 0;
 			}
@@ -370,7 +369,7 @@ bool bcrsearch(Byte what)
 				return false;
 			else {
 				makecur(Curpage->prevp);
-				makeoffset(Curplen - 1);
+				makeoffset(Curpage->plen - 1);
 			}
 		else
 			makeoffset(Curchar - 1);
@@ -386,9 +385,9 @@ bool bcsearch(Byte what)
 	if (bisend())
 		return false;
 
-	while ((n = (Byte *)memchr(Curcptr, what, Curplen - Curchar)) == NULL)
+	while ((n = (Byte *)memchr(Curcptr, what, Curpage->plen - Curchar)) == NULL)
 		if (lastp(Curpage)) {
-			makeoffset(Curplen);
+			makeoffset(Curpage->plen);
 			return false;
 		} else {
 			makecur(Curpage->nextp);
@@ -458,7 +457,7 @@ bool bmove(int dist)
 {
 	while (dist) {
 		dist += Curchar;
-		if (dist >= 0 && dist < Curplen) {
+		if (dist >= 0 && dist < Curpage->plen) {
 			/* within current page makeoffset dist */
 			Curchar = dist;
 			Curcptr = Cpstart + dist;
@@ -471,15 +470,15 @@ bool bmove(int dist)
 				return false;
 			}
 			makecur(Curpage->prevp);
-			Curchar = Curplen; /* makeoffset Curplen */
-			Curcptr = Cpstart + Curplen;
+			Curchar = Curpage->plen; /* makeoffset curplen */
+			Curcptr = Cpstart + Curpage->plen;
 		} else {	/* goto next page */
 			if (lastp(Curpage)) {
 				/* past end of buffer */
-				makeoffset(Curplen);
+				makeoffset(Curpage->plen);
 				return false;
 			}
-			dist -= Curplen; /* must use this Curplen */
+			dist -= Curpage->plen; /* must use this curplen */
 			makecur(Curpage->nextp);
 			Curchar = 0; /* makeoffset 0 */
 			Curcptr = Cpstart;
@@ -490,7 +489,7 @@ bool bmove(int dist)
 
 void bmove1(void)
 {
-	if (++Curchar < Curplen)
+	if (++Curchar < Curpage->plen)
 		/* within current page */
 		++Curcptr;
 	else if (Curpage->nextp) {
@@ -500,8 +499,8 @@ void bmove1(void)
 		Curcptr = Cpstart;
 	} else {
 		/* At EOB */
-		Curchar = Curplen;
-		Curcptr = Cpstart + Curplen;
+		Curchar = Curpage->plen;
+		Curcptr = Cpstart + Curpage->plen;
 	}
 }
 
@@ -519,7 +518,7 @@ void bempty(void)
 			btmark->moffset = 0;
 		}
 #endif
-	Curplen = Curchar = 0;		/* reset to start of page */
+	Curpage->plen = Curchar = 0;		/* reset to start of page */
 	Curcptr = Cpstart;
 	Curmodf = true;
 
@@ -551,7 +550,7 @@ void btoend(void)
 		for (lastp = Curpage->nextp; lastp->nextp; lastp = lastp->nextp) ;
 		makecur(lastp);
 	}
-	makeoffset(Curplen);
+	makeoffset(Curpage->plen);
 }
 
 
@@ -564,7 +563,7 @@ void btostart(void)
 
 static void crfixup(void)
 {
-	char *p = (char *)memchr(Cpstart + 1, '\n', Curplen - 1);
+	char *p = (char *)memchr(Cpstart + 1, '\n', Curpage->plen - 1);
 	if (!p)
 		return;
 
@@ -624,7 +623,7 @@ int breadfile(const char *fname)
 
 	while ((len = bread(fd, buf, PSIZE)) > 0) {
 		Curmodf = true;
-		if (Curplen) {
+		if (Curpage->plen) {
 			if (!newpage(Curpage)) {
 				bempty();
 				bclose(fd);
@@ -636,13 +635,13 @@ int breadfile(const char *fname)
 		memcpy(Curcptr, buf, len);
 		Curcptr += len;
 		Curchar += len;
-		Curplen += len;
+		Curpage->plen += len;
 	}
 	(void)bclose(fd);
 
 	btostart();
 
-	if (Curplen && !(Curbuff->bmode & COMPRESSED))
+	if (Curpage->plen && !(Curbuff->bmode & COMPRESSED))
 		crfixup();
 
 	Curbuff->bmodf = false;
@@ -662,7 +661,6 @@ static bool bwritegzip(int fd)
 		return false;
 	}
 
-	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int n = gzwrite(gz, tpage->pdata, tpage->plen);
@@ -681,7 +679,6 @@ static bool bwritefd(int fd)
 	struct page *tpage;
 	int n, status = true;
 
-	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			makecur(tpage); /* DOS_EMS requires */
@@ -702,7 +699,6 @@ static bool bwritedos(int fd)
 	int i, n, status = true;
 	Byte buf[PSIZE * 2], *p;
 
-	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int len = tpage->plen;
@@ -794,8 +790,6 @@ void makecur(struct page *page)
 {
 	if (Curpage == page)
 		return;
-	if (Curpage)
-		Curpage->plen = Curplen;
 
 #ifdef DOS_EMS
 	ems_makecur(page, Curmodf);
@@ -804,12 +798,11 @@ void makecur(struct page *page)
 	Curpage = page;
 	Cpstart = page->pdata;
 	Curmodf = false;
-	Curplen = Curpage->plen;
 }
 
 bool bisend(void)
 {
-	return lastp(Curpage) && (Curchar >= Curplen);
+	return lastp(Curpage) && (Curchar >= Curpage->plen);
 }
 
 /* Peek the previous byte */
@@ -847,7 +840,6 @@ void bgoto_char(long offset)
 	struct page *tpage;
 
 	/* find the correct page */
-	Curpage->plen = Curplen;
 	for (tpage = Curbuff->firstp; tpage->nextp; tpage = tpage->nextp)
 		if (tpage->plen >= offset)
 			break;

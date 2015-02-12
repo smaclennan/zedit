@@ -224,7 +224,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		if (Curpage == tmark->mpage)
 			srclen = tmark->moffset - Curchar;
 		else
-			srclen = Curplen - Curchar;
+			srclen = Curpage->plen - Curchar;
 		Curmodf = true;
 #ifdef DOS_EMS
 		memcpy(spnt, Curcptr, srclen);
@@ -233,10 +233,10 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 #endif
 
 		bswitchto(tbuff);
-		dstlen = PSIZE - Curplen;
+		dstlen = PSIZE - Curpage->plen;
 		if (dstlen == 0) {
 			if (bpagesplit())
-				dstlen = PSIZE - Curplen;
+				dstlen = PSIZE - Curpage->plen;
 			else {
 				bswitchto(sbuff);
 				break;
@@ -245,10 +245,10 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		if (srclen < dstlen)
 			dstlen = srclen;
 		/* Make a gap */
-		memmove(Curcptr + dstlen, Curcptr, Curplen - Curchar);
+		memmove(Curcptr + dstlen, Curcptr, Curpage->plen - Curchar);
 		/* and fill it in */
 		memmove(Curcptr, spnt, dstlen);
-		Curplen += dstlen;
+		Curpage->plen += dstlen;
 		copied += dstlen;
 		for (btmrk = Mrklist; btmrk; btmrk = btmrk->prev)
 			if (btmrk->mpage == Curpage &&
@@ -280,7 +280,7 @@ void bdeltomrk(struct mark *tmark)
 		if (Curpage == tmark->mpage)
 			bdelete(tmark->moffset - Curchar);
 		else
-			bdelete(Curplen - Curchar);
+			bdelete(Curpage->plen - Curchar);
 }
 
 /* Return the current line of the point. */

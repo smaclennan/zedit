@@ -62,7 +62,6 @@ extern Byte *Curcptr;
 extern int Curchar;
 extern struct buff *Curbuff;
 extern struct page *Curpage;
-extern int Curplen;
 extern bool Curmodf;
 
 extern int NumBuffs, NumPages;

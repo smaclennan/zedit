@@ -496,7 +496,7 @@ static void subset(int from, int to, bool flag)
 		}
 	} else {
 		btmark = &Scrnmarks[row];
-		while (btmark->mpage == Curpage && btmark->moffset <= Curchar && row <= from) {
+		while (btmark->mpage == Curpage && btmark->moffset <= Curchar && row <= to) {
 			++btmark;
 			++row;
 		}

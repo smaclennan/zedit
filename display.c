@@ -52,7 +52,7 @@ void display_init(void)
 	}
 	Scrnmarks[ROWMAX - 1].next = NULL;
 
-	/* init the Mrklist */
+	/* init the mark list */
 	minit(&Scrnmarks[ROWMAX - 1]);
 }
 
@@ -249,6 +249,15 @@ static bool in_region(struct mark *pmark)
 #endif
 
 	return false;
+}
+
+/* Fairly special routine. Pushes the char one past the end of the
+ * buffer. */
+static void bshove(void)
+{
+	btoend();
+	++Curcptr;
+	++Curchar;
 }
 
 #if SHOW_REGION

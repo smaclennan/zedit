@@ -20,7 +20,7 @@ CC = cc
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
 D = -O2
-CFLAGS += -DZEDIT
+CFLAGS += -DZEDIT -DHAVE_MARKS
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
 
 MAKEFLAGS += --no-print-directory
@@ -36,7 +36,7 @@ ETAGS=`which etags || echo true`
 CFILES = bcmds.c bind.c buff.c calc.c cnames.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
-	reg.c shell.c spell.c srch.c tags.c term.c \
+	reg.c shell.c spell.c srch.c tags.c term.c mark.c \
 	undo.c vars.c window.c varray.c z.c zgrep.c bmsearch.c \
 	gpm/liblow.c
 
@@ -70,12 +70,16 @@ win32/dosbind.c: bind.c
 	@./makedosbind
 
 fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
-	$(QUIET_LINK)$(CC) -o $@ fcheck.c
+	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
 # This is just to check that no zedit dependencies crept into buff.c
-main: main.c buff.c bmsearch.c reg.c
+main: main.c buff.c bmsearch.c
 	$(QUIET_LINK)$(CC) -g -o $@ $+
+
+# This is just to check that no zedit dependencies crept into buff.c
+mmain: main.c buff.c bmsearch.c reg.c mark.c
+	$(QUIET_LINK)$(CC) -DHAVE_MARKS -g -o $@ $+
 
 # Make all c files depend on all .h files
 *.o: $(HFILES)

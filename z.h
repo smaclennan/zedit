@@ -44,6 +44,7 @@
 extern jmp_buf zenv;
 
 #include "buff.h"
+#include "mark.h"
 #include "vars.h"
 #include "funcs.h"
 #include "proto.h"

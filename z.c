@@ -541,7 +541,8 @@ void Zversion(void)
 
 void Zstats(void)
 {
-	int n = bgetstats(PawStr, Colmax);
+	int n = snprintf(PawStr, Colmax, "Buffers: %u  Pages: %u  Marks: %u",
+					 NumBuffs, NumPages, NumMarks);
 #ifdef DOS_EMS
 	n += snprintf(PawStr + n, Colmax - n, "  EMS: %d", ems_pages);
 #endif

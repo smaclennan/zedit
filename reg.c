@@ -1,4 +1,7 @@
+#ifdef HAVE_MARKS
+
 #include "buff.h"
+#include "mark.h"
 
 /* Regular expression compile and match routines.
  * See regexp(5) and ed(1).
@@ -479,3 +482,5 @@ const char *regerr(int errnum)
 
 	return errs[errnum - 40];
 }
+
+#endif /* HAVE_MARKS */

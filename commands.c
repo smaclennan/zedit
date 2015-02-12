@@ -34,6 +34,12 @@ static bool Findstart(void)
 	return !bisend();
 }
 
+static void bconvert(int (*to)(int c))
+{
+	*Curcptr = to(*Curcptr);
+	Curbuff->bmodf = Curmodf = true;
+}
+
 void Zcapitalize_word(void)
 {
 	if (Findstart()) {

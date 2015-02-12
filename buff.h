@@ -41,13 +41,6 @@
 
 struct page;
 
-struct mark {
-	struct buff *mbuff;			/* buffer the mark is in */
-	struct page *mpage;			/* page in the buffer */
-	int moffset;				/* offset in the page */
-	struct mark *prev, *next;	/* list of marks */
-};
-
 struct buff {
 	bool bmodf;			/* buffer modified? */
 	struct page *firstp;	/* the pages */
@@ -68,13 +61,13 @@ extern Byte *Curcptr;
 extern int Curchar;
 extern struct buff *Curbuff;
 extern struct page *Curpage;
+extern int Curplen;
+extern bool Curmodf;
 
-#define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
+extern int NumBuffs, NumPages;
 
 #define Buff()		(*Curcptr)
 #define bisstart()	((Curpage == Curbuff->firstp) && (Curchar == 0))
-#define bisatmrk(m)	((Curpage == (m)->mpage) && (Curchar == (m)->moffset))
-#define mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)
 
 bool bisend(void);
 Byte bpeek(void);
@@ -82,56 +75,35 @@ int batoi(void);
 
 bool bmove(int);
 void bmove1(void);
-void bshove(void);
 void boffset(unsigned long off);
 
-/* optional - zedit uses it to preallocate screen marks */
-void minit(struct mark *preallocated);
-int bcopyrgn(struct mark *, struct buff*);
 struct buff *_bcreate(void);
 struct buff *bcreate(void);
-struct mark *bcremrk(void);
 bool bcrsearch(Byte);
 bool bcsearch(Byte);
 bool bdelbuff(struct buff *);
 void bdelete(int);
-void bdeltomrk(struct mark *);
 void bempty(void);
 void bgoto_char(long offset);
 bool binsert(Byte);
 bool bappend(Byte *, int);
-void bconvert(int (*to)(int));
 void binstr(const char *);
-bool bisaftermrk(struct mark *);
-bool bisbeforemrk(struct mark *);
 unsigned long blength(struct buff *);
 unsigned long blocation(void);
-unsigned long bline(void);
-void bmrktopnt(struct mark *);
-void bpnttomrk(struct mark *);
 int breadfile(const char *);
-void bswappnt(struct mark *);
 void bswitchto(struct buff *);
 void btoend(void);
 void btostart(void);
 bool bwritefile(char *);
-void unmark(struct mark *);
 void makecur(struct page *);
 void makeoffset(int);
 
-int bgetstats(char *str, int len);
 void tobegline(void);
 void toendline(void);
 
 /* bmsearch.c */
 bool bm_search(const char *str, bool sensitive);
 bool bm_rsearch(const char *str, bool sensitive);
-
-/* reg.c */
-extern struct mark *REstart;
-int compile(Byte*, Byte*, Byte*);
-bool step(Byte *);
-const char *regerr(int);
 
 #ifndef O_BINARY
 #define O_BINARY 0

@@ -171,24 +171,26 @@ bool bdelbuff(struct buff *tbuff)
 }
 
 /* Insert a character in the current buffer. */
-bool binsert(Byte byte)
+bool _binsert(struct buff *buff, Byte byte)
 {
-	struct mark *btmark;
+	struct page *curpage = buff->curpage;
 
-	if (Curpage->plen == Curpage->psize && !bpagesplit())
+	if (curpage->plen == curpage->psize && !bpagesplit(buff))
 		return false;
-	memmove(Curcptr + 1, Curcptr, Curpage->plen - Curchar);
-	*Curcptr++ = byte;
-	++Curpage->plen;
-	++Curchar;
-	Curbuff->bmodf = true;
+	memmove(buff->curcptr + 1, buff->curcptr, curpage->plen - buff->curchar);
+	*buff->curcptr++ = byte;
+	buff->curchar++;
+	curpage->plen++;
+	buff->bmodf = true;
 	Curmodf = true;
 
 	undo_add(1);
 
 #ifdef HAVE_MARKS
-	foreach_pagemark(btmark, Curpage)
-		if (btmark->moffset >= Curchar)
+	struct mark *btmark;
+
+	foreach_pagemark(btmark, curpage)
+		if (btmark->moffset >= buff->curchar)
 			++(btmark->moffset);
 #endif
 
@@ -392,13 +394,6 @@ bool bcsearch(Byte what)
 	makeoffset(n - Cpstart);
 	bmove1();
 	return true;
-}
-
-/* Insert a string into the current buffer. */
-void binstr(const char *str)
-{
-	while (*str)
-		binsert(*str++);
 }
 
 /* Returns the length of the buffer. */
@@ -918,25 +913,26 @@ static void freepage(struct page **firstp, struct page *page)
 #endif
 
 /* Split a full page. */
-bool bpagesplit(void)
+bool bpagesplit(struct buff *buff)
 {
-	struct mark *btmark;
-	struct page *newp = pagesplit(Curpage);
+	struct page *newp = pagesplit(buff->curpage);
 	if (!newp)
 		return false;
 
-	Curmodf = true;
 #if HAVE_MARKS
-	foreach_pagemark(btmark, Curpage)
+	struct mark *btmark;
+
+	foreach_pagemark(btmark, buff->curpage)
 		if (btmark->moffset >= HALFP) {
 			btmark->mpage = newp;
 			btmark->moffset -= HALFP;
 		}
 #endif
-	if (Curchar >= HALFP) {
+	if (buff->curchar >= HALFP) {
 		/* new page has Point in it */
 		makecur(newp);
-		makeoffset(Curchar - HALFP);
+		makeoffset(buff->curchar - HALFP);
 	}
+	Curmodf = true;
 	return true;
 }

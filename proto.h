@@ -156,6 +156,7 @@ Z(pnewline);
 int ask(const char *);
 int ask2(const char *, bool);
 int bgetcol(bool, int);
+void binstr(const char *);
 int bmakecol(int, bool);
 bool bstrsearch(const char *, bool);
 struct buff *cfindbuff(const char *);

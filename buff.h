@@ -70,25 +70,23 @@ extern int NumBuffs, NumPages;
 #define Buff()		(*Curcptr)
 #define bisstart()	((Curpage == Curbuff->firstp) && (Curchar == 0))
 
-bool bisend(void);
-Byte bpeek(void);
-int batoi(void);
-
-bool bmove(int);
-void bmove1(void);
-void boffset(unsigned long off);
-
 struct buff *_bcreate(void);
 struct buff *bcreate(void);
+bool bdelbuff(struct buff *);
+
+#ifdef THREAD_SAFE
+#define binsert _binsert
+#else
+#define binsert(c) _binsert(Curbuff, (c))
+#endif
+bool _binsert(struct buff *, Byte);
+
 bool bcrsearch(Byte);
 bool bcsearch(Byte);
-bool bdelbuff(struct buff *);
 void bdelete(int);
 void bempty(void);
 void bgoto_char(long offset);
-bool binsert(Byte);
 bool bappend(Byte *, int);
-void binstr(const char *);
 unsigned long blength(struct buff *);
 unsigned long blocation(void);
 int breadfile(const char *);
@@ -101,6 +99,15 @@ void makeoffset(int);
 
 void tobegline(void);
 void toendline(void);
+
+bool bisend(void);
+Byte bpeek(void);
+int batoi(void);
+
+bool bmove(int);
+void bmove1(void);
+void boffset(unsigned long off);
+
 
 /* bmsearch.c */
 bool bm_search(const char *str, bool sensitive);

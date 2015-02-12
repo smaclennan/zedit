@@ -57,12 +57,10 @@ static inline void undo_clear(struct buff *buff) {}
 void (*app_cleanup)(struct buff *buff);
 
 bool Curmodf;		/* page modified?? */
-static Byte *Cpstart;		/* pim data start */
-Byte *Curcptr;			/* current character */
-int Curchar;			/* current offset in Cpstart */
 struct buff *Bufflist;		/* the buffer list */
 struct buff *Curbuff;		/* the current buffer */
-struct page *Curpage;		/* the current page */
+
+#define Cpstart (Curbuff->curpage->pdata)
 
 int raw_mode;
 
@@ -130,9 +128,6 @@ struct buff *bcreate(void)
 			Bufflist->prev = buf;
 		buf->next = Bufflist;
 		Bufflist = buf;
-
-		if (Curbuff == NULL)
-			bswitchto(buf);
 	}
 	return buf;
 }
@@ -529,14 +524,9 @@ void bempty(void)
 void bswitchto(struct buff *buf)
 {
 	if (buf && buf != Curbuff) {
-		if (Curbuff) {
-			Curbuff->curpage   = Curpage;
-			Curbuff->curchar = Curchar;
-			Curbuff->curcptr = Curcptr;
-		}
+		Curbuff = buf;
 		makecur(buf->curpage);
 		makeoffset(buf->curchar);
-		Curbuff = buf;
 	}
 }
 
@@ -778,26 +768,23 @@ bool bwritefile(char *fname)
 	return status;
 }
 
+/* Make page current*/
+void makecur(struct page *page)
+{
+	if (Curpage != page) {
+#ifdef DOS_EMS
+		ems_makecur(page, Curmodf);
+#endif
+		Curpage = page;
+		Curmodf = false;
+	}
+}
+
 /* Make the point be dist chars into the page. */
 void makeoffset(int dist)
 {
 	Curchar = dist;
 	Curcptr = Cpstart + dist;
-}
-
-/* Make page current*/
-void makecur(struct page *page)
-{
-	if (Curpage == page)
-		return;
-
-#ifdef DOS_EMS
-	ems_makecur(page, Curmodf);
-#endif
-
-	Curpage = page;
-	Cpstart = page->pdata;
-	Curmodf = false;
 }
 
 bool bisend(void)

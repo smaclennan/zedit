@@ -50,8 +50,8 @@ struct mark {
 
 struct buff {
 	bool bmodf;			/* buffer modified? */
-	struct page *firstp, *lastp;	/* describe the pages */
-	struct page *pnt_page;		/* the position of the point */
+	struct page *firstp;	/* the pages */
+	struct page *pnt_page;	/* the position of the point */
 	unsigned pnt_offset;
 	unsigned bmode;			/* buffer mode */
 	char *bname;			/* buffer name */

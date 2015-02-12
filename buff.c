@@ -89,20 +89,19 @@ struct page {
 	Byte *pdata;			/* the page data */
 	Byte emmpage;			/* 16k page */
 	Byte emmoff;			/* offset in page */
-#elif defined(ONE_PAGE)
-	Byte *pdata;			/* the page data */
 #else
 	Byte pdata[PSIZE];		/* the page data */
 #endif
 	int psize;			/* allocated page size */
 	int plen;			/* current length of the page */
-	struct page *nextp, *prevp;	/* list of pages in buffer */
+	struct page *nextp, *prevp;	/* list of pages */
 };
 
-static struct page *newpage(struct buff *tbuff,
-			    struct page *ppage, struct page *npage);
-static void freepage(struct buff *tbuff, struct page *page);
-static bool pagesplit(void);
+#define lastp(pg) ((pg)->nextp == NULL)
+
+static struct page *newpage(struct page *curpage);
+static void freepage(struct page **firstp, struct page *page);
+static bool bpagesplit(void);
 
 static void bfini(void)
 {
@@ -188,7 +187,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		bswitchto(tbuff);
 		dstlen = PSIZE - Curplen;
 		if (dstlen == 0) {
-			if (pagesplit())
+			if (bpagesplit())
 				dstlen = PSIZE - Curplen;
 			else {
 				bswitchto(sbuff);
@@ -232,11 +231,12 @@ struct buff *_bcreate(void)
 		struct page *fpage;
 
 		binit();
-		if (!(fpage = newpage(buf, NULL, NULL))) {
+		if (!(fpage = newpage(NULL))) {
 			/* bad news, de-allocate */
 			free(buf);
 			return NULL;
 		}
+		buf->firstp = fpage;
 		buf->pnt_page = fpage;
 		++NumBuffs;
 	}
@@ -334,7 +334,7 @@ bool bcsearch(Byte what)
 		return false;
 
 	while ((n = (Byte *)memchr(Curcptr, what, Curplen - Curchar)) == NULL)
-		if (Curpage == Curbuff->lastp) {
+		if (lastp(Curpage)) {
 			makeoffset(Curplen);
 			return false;
 		} else {
@@ -370,7 +370,7 @@ bool bdelbuff(struct buff *tbuff)
 		app_cleanup(tbuff);
 
 	while (tbuff->firstp)	/* delete the pages */
-		freepage(tbuff, tbuff->firstp);
+		freepage(&tbuff->firstp, tbuff->firstp);
 	if (tbuff == Bufflist)	/* unlink from the list */
 		Bufflist = tbuff->next;
 	if (tbuff->prev)
@@ -408,7 +408,7 @@ void bdelete(int quantity)
 		Curplen -= quan;
 
 		memmove(Curcptr, Curcptr + quan, Curplen - Curchar);
-		if (Curpage == Curbuff->lastp)
+		if (lastp(Curpage))
 			quantity = 0;
 		else
 			quantity -= quan;
@@ -427,7 +427,7 @@ void bdelete(int quantity)
 					tmark->mpage = tpage;
 					tmark->moffset = noffset;
 				}
-			freepage(Curbuff, Curpage);
+			freepage(&Curbuff->firstp, Curpage);
 			Curpage = NULL;
 		} else {
 			tpage = Curpage;
@@ -465,13 +465,12 @@ void bdeltomrk(struct mark *tmark)
 			bdelete(Curplen - Curchar);
 }
 
-
 /* Insert a character in the current buffer. */
 bool binsert(Byte byte)
 {
 	struct mark *btmark;
 
-	if (Curplen == Curpage->psize && !pagesplit())
+	if (Curplen == Curpage->psize && !bpagesplit())
 		return false;
 	memmove(Curcptr + 1, Curcptr, Curplen - Curchar);
 	*Curcptr++ = byte;
@@ -506,7 +505,7 @@ bool bappend(Byte *data, int size)
 
 	/* Put the rest in new pages */
 	while (size > 0) {
-		struct page *npage = newpage(Curbuff, Curpage, NULL);
+		struct page *npage = newpage(Curpage);
 		if (!npage)
 			return false;
 		makecur(npage);
@@ -528,14 +527,6 @@ bool bappend(Byte *data, int size)
  */
 int bindata(Byte *data, int size)
 {
-#ifdef ONE_PAGE
-	/* No optimization for now */
-	int i;
-	for (i = 0; i < size; ++i)
-		if (!binsert(data[i]))
-			break;
-	return i;
-#else
 	struct page *npage;
 	int copied = 0;
 
@@ -544,7 +535,7 @@ int bindata(Byte *data, int size)
 		struct mark *btmark;
 
 		/* Make a new page and move the end of this page to the new page */
-		if (!(npage = newpage(Curbuff, Curpage, Curpage->nextp)))
+		if (!(npage = newpage(Curpage)))
 			return 0;
 		memcpy(npage->pdata, Curcptr, n);
 		npage->plen = n;
@@ -567,7 +558,7 @@ int bindata(Byte *data, int size)
 	}
 
 	while (size > 0) {
-		if (!(npage = newpage(Curbuff, Curpage, Curpage->nextp)))
+		if (!(npage = newpage(Curpage)))
 			break;
 
 		n = MIN(PSIZE, size);
@@ -583,7 +574,6 @@ int bindata(Byte *data, int size)
 	}
 
 	return copied;
-#endif
 }
 
 void bconvert(int (*to)(int c))
@@ -711,7 +701,7 @@ bool bmove(int dist)
 			Curchar = Curplen; /* makeoffset Curplen */
 			Curcptr = Cpstart + Curplen;
 		} else {	/* goto next page */
-			if (Curpage == Curbuff->lastp) {
+			if (lastp(Curpage)) {
 				/* past end of buffer */
 				makeoffset(Curplen);
 				return false;
@@ -777,7 +767,7 @@ void bempty(void)
 
 	makecur(Curbuff->firstp);
 	while (Curpage->nextp)
-		freepage(Curbuff, Curpage->nextp);
+		freepage(&Curbuff->firstp, Curpage->nextp);
 	for (btmark = Mrklist; btmark; btmark = btmark->prev)
 		if (btmark->mpage && btmark->mbuff == Curbuff) {
 			btmark->mpage = Curpage;
@@ -821,7 +811,12 @@ void bswitchto(struct buff *buf)
 /* Set the point to the end of the buffer */
 void btoend(void)
 {
-	makecur(Curbuff->lastp);
+	if (Curpage->nextp) {
+		struct page *lastp;
+
+		for (lastp = Curpage->nextp; lastp->nextp; lastp = lastp->nextp) ;
+		makecur(lastp);
+	}
 	makeoffset(Curplen);
 }
 
@@ -896,15 +891,13 @@ int breadfile(const char *fname)
 	while ((len = bread(fd, buf, PSIZE)) > 0) {
 		Curmodf = true;
 		if (Curplen) {
-			if (!newpage(Curbuff, Curpage, NULL)) {
+			if (!newpage(Curpage)) {
 				bempty();
 				bclose(fd);
 				return ENOMEM;
 			}
-#ifndef ONE_PAGE
 			makecur(Curpage->nextp);
 			makeoffset(0);
-#endif
 		}
 		memcpy(Curcptr, buf, len);
 		Curcptr += len;
@@ -1124,7 +1117,7 @@ void makecur(struct page *page)
 
 bool bisend(void)
 {
-	return (Curpage == Curbuff->lastp) && (Curchar >= Curplen);
+	return lastp(Curpage) && (Curchar >= Curplen);
 }
 
 /* Peek the previous byte */
@@ -1196,61 +1189,10 @@ void toendline(void)
 
 /* Low level memory page routines */
 
-#ifdef ONE_PAGE
-/* Create a new memory page or resize old page. */
-static struct page *newpage(struct buff *tbuff,
-			    struct page *ppage, struct page *npage)
-{
-	if (ppage)
-		/* For breadfile: we just want a bigger page */
-		return pagesplit() ? Curpage : NULL;
-
-	/* Brand new page. */
-	struct page *page = (struct page *)calloc(1, sizeof(struct page));
-	if (!page)
-		return NULL;
-	page->pdata = malloc(PSIZE);
-	if (!page->pdata) {
-		free(page);
-		return NULL;
-	}
-	tbuff->firstp = tbuff->lastp = page;
-	page->psize = PSIZE;
-
-	++NumPages;
-
-	return page;
-}
-
-/* Make a full page larger. */
-static bool pagesplit(void)
-{
-	Byte *newp = realloc(Curpage->pdata, Curpage->psize + PSIZE);
-	if (!newp)
-		return false;
-	Curpage->pdata = newp;
-	Curpage->psize += PSIZE;
-	Cpstart = newp;
-	Curcptr = newp + Curchar;
-	++NumPages;
-	return true;
-}
-
-/* Free a memory page */
-static void freepage(struct buff *tbuff, struct page *page)
-{
-	NumPages -= page->psize / PSIZE;
-	free(page->pdata);
-	free(page);
-	tbuff->firstp = tbuff->lastp = NULL;
-	--NumPages;
-}
-#else
 #define HALFP		(PSIZE / 2)	/* half the page size */
 
-/* Create a new memory page and link into chain */
-static struct page *newpage(struct buff *tbuff,
-			    struct page *ppage, struct page *npage)
+/* Create a new memory page and link into chain after curpage */
+static struct page *newpage(struct page *curpage)
 {
 	struct page *page = (struct page *)calloc(1, sizeof(struct page));
 	if (!page)
@@ -1264,33 +1206,64 @@ static struct page *newpage(struct buff *tbuff,
 	}
 #endif
 
-	page->nextp = npage;
-	page->prevp = ppage;
-	npage ? (npage->prevp = page) : (tbuff->lastp = page);
-	ppage ? (ppage->nextp = page) : (tbuff->firstp = page);
-	++NumPages;
+	if (curpage) {
+		page->prevp = curpage;
+		page->nextp = curpage->nextp;
+		curpage->nextp = page;
+	}
 
+	++NumPages;
 	return page;
 }
 
-/* Split the current (full) page. */
-static bool pagesplit(void)
+/* Split a full page. */
+static struct page *pagesplit(struct page *curpage)
 {
-	struct page *newp;
-	struct mark *btmark;
+	struct page *newp = newpage(curpage);
+	if (newp) {
+#ifdef DOS_EMS
+		ems_pagesplit(newp, Curmodf);
+#else
+		memmove(newp->pdata, curpage->pdata + HALFP, HALFP);
+#endif
+		curpage->plen = HALFP;
+		newp->plen = HALFP;
+	}
 
-	newp = newpage(Curbuff, Curpage, Curpage->nextp);
-	if (newp == NULL)
-		return false;
+	return newp;
+}
+
+/* Free a memory page */
+static void freepage(struct page **firstp, struct page *page)
+{
+#ifdef DOS_EMS
+	ems_freepage(page);
+#endif
+
+	if (page->nextp)
+		page->nextp->prevp = page->prevp;
+	if (page->prevp)
+		page->prevp->nextp = page->nextp;
+	else if (firstp)
+		*firstp = page->nextp;
+	free((char *)page);
+	--NumPages;
+}
 
 #ifdef DOS_EMS
-	ems_pagesplit(newp, Curmodf);
-#else
-	memmove(newp->pdata, Cpstart + HALFP, HALFP);
+/* ems.c needs to know the page structure */
+#include "win32/ems.c"
 #endif
+
+/* Split a full page. */
+static bool bpagesplit(void)
+{
+	struct mark *btmark;
+	struct page *newp = pagesplit(Curpage);
+	if (!newp)
+		return false;
+
 	Curmodf = true;
-	Curplen = HALFP;
-	newp->plen = HALFP;
 	for (btmark = Mrklist; btmark; btmark = btmark->prev)
 		if (btmark->mpage == Curpage && btmark->moffset >= HALFP) {
 			btmark->mpage = newp;
@@ -1303,28 +1276,3 @@ static bool pagesplit(void)
 	}
 	return true;
 }
-
-/* Free a memory page */
-static void freepage(struct buff *tbuff, struct page *page)
-{
-#ifdef DOS_EMS
-	ems_freepage(page);
-#endif
-
-	if (page->nextp)
-		page->nextp->prevp = page->prevp;
-	else
-		tbuff->lastp = page->prevp;
-	if (page->prevp)
-		page->prevp->nextp = page->nextp;
-	else
-		tbuff->firstp = page->nextp;
-	free((char *)page);
-	--NumPages;
-}
-
-#ifdef DOS_EMS
-/* ems.c needs to know the page structure */
-#include "win32/ems.c"
-#endif
-#endif

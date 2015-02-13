@@ -432,31 +432,32 @@ void boffset(unsigned long off)
  *
  * Since bmove(1) is used the most, a special call has been made.
  */
-bool bmove(int dist)
+bool _bmove(struct buff *buff, int dist)
 {
 	while (dist) {
-		dist += Curchar;
-		if (dist >= 0 && dist < Curpage->plen) {
+		struct page *curpage = buff->curpage;
+
+		dist += buff->curchar;
+		if (dist >= 0 && dist < curpage->plen) {
 			/* within current page makeoffset dist */
-			Curchar = dist;
-			Curcptr = Cpstart + dist;
+			makeoffset(buff, dist);
 			return true;
 		}
 		if (dist < 0) { /* goto previous page */
-			if (Curpage == Curbuff->firstp) {
+			if (curpage == buff->firstp) {
 				/* past start of buffer */
-				makeoffset(Curbuff, 0);
+				makeoffset(buff, 0);
 				return false;
 			}
-			makecur(Curbuff, Curpage->prevp, Curpage->plen);
+			makecur(buff, curpage->prevp, curpage->plen);
 		} else {	/* goto next page */
-			if (lastp(Curpage)) {
+			if (lastp(curpage)) {
 				/* past end of buffer */
-				makeoffset(Curbuff, Curpage->plen);
+				makeoffset(buff, curpage->plen);
 				return false;
 			}
-			dist -= Curpage->plen; /* must use this curplen */
-			makecur(Curbuff, Curpage->nextp, 0);
+			dist -= curpage->plen; /* must use this curplen */
+			makecur(buff, curpage->nextp, 0);
 		}
 	}
 	return true;

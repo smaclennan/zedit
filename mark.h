@@ -57,9 +57,8 @@ void bdeltomrk(struct mark *);
 unsigned long bline(void);
 
 /* reg.c - requires marks */
-extern struct mark *REstart;
 int compile(Byte*, Byte*, Byte*);
-bool step(Byte *);
+bool step(Byte *, struct mark *REstart);
 const char *regerr(int);
 
 #define foreach_pagemark(mark, page) \

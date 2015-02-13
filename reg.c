@@ -35,7 +35,6 @@ static void getrnge(Byte *);
 #define UNGETC(c)	(--sp)
 #define ISNL(c)			((c) == '\n')
 
-struct mark *REstart;
 static struct mark braslist[NBRA];
 static struct mark braelist[NBRA];
 static int ebra, nbra;
@@ -52,8 +51,12 @@ static Byte bittab[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
  * The point is left at the end of the matched string or the buffer end and
  * REstart points to the start of the match.
  */
-bool step(Byte *ep)
+bool step(Byte *ep, struct mark *REstart)
 {
+	struct mark tmark;
+
+	if (REstart == NULL) REstart = &tmark;
+
 	/* ^ must match from start */
 	if (circf)
 		/* if not at the start of the current line - go to the
@@ -265,10 +268,6 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 	int neg;
 	int lc;
 	int i, cflg;
-
-	if (!REstart)
-		if (!(REstart = bcremrk()))
-			return 52;
 
 	lastep = NULL;
 	c = GETC();

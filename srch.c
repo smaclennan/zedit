@@ -282,10 +282,10 @@ static void promptreplace(int type)
 	doreplace(type);
 }
 
-static bool next_replace(Byte *ebuf, int type)
+static bool next_replace(Byte *ebuf, struct mark *REstart, int type)
 {
 	if (type == REGEXP)
-		return step(ebuf);
+		return step(ebuf, REstart);
 
 	if (bstrsearch(olds, FORWARD)) {
 		bmove(-(int)strlen(olds));
@@ -301,10 +301,14 @@ static bool replaceone(int type, bool *query, bool *exit, Byte *ebuf,
 	char tchar = ',', *ptr;
 	int dist, changeprev = 0;
 	struct mark *prevmatch;
+	struct mark *REstart = NULL;
+
+	if (type == REGEXP)
+		REstart = zcreatemrk();
 
 	prevmatch = zcreatemrk();
 	putpaw("Searching...");
-	while (!*exit && next_replace(ebuf, type)) {
+	while (!*exit && next_replace(ebuf, REstart, type)) {
 		found = true;
 		if (*query) {
 replace:
@@ -347,8 +351,8 @@ input:
 
 			case 'S': /* skip file */
 			case 's':
-				unmark(prevmatch);
-				return false;
+				*exit = true;
+				continue;
 
 			case 'q': /* abort */
 			case 'Q':
@@ -416,6 +420,7 @@ input:
 			*exit = true;
 	}
 	unmark(prevmatch);
+	unmark(REstart);
 	return found;
 }
 
@@ -451,7 +456,7 @@ static bool dosearch(void)
 			error(regerr(rc));
 		else
 			while (Arg-- > 0)
-				if (step(ebuf)) {
+				if (step(ebuf, NULL)) {
 					bmrktopnt(&fmark);
 					++fcnt;
 				} else

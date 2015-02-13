@@ -72,7 +72,7 @@ static void sigwinch(int sig)
 #endif
 
 /* Come here on SIGHUP or SIGTERM */
-void hang_up(int signal)
+void hang_up(int signo)
 {
 	struct buff *tbuff;
 	((void)signal);
@@ -86,6 +86,7 @@ void hang_up(int signal)
 	}
 	unvoke(NULL);
 	checkpipes(0);
+	printf("\r\nThey hung up! (%d)\r\n", signo);
 	exit(1);
 }
 

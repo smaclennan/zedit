@@ -65,30 +65,42 @@ extern bool Curmodf;
 #define Curchar (Curbuff->curchar)
 #define Curcptr (Curbuff->curcptr)
 
+/* This is used a lot */
+#define curplen(b) ((b)->curpage->plen)
+
 extern int NumBuffs, NumPages;
 
 #define Buff()		(*Curcptr)
-#define bisstart()	((Curpage == Curbuff->firstp) && (Curchar == 0))
 
-struct buff *_bcreate(void);
-struct buff *bcreate(void);
-bool bdelbuff(struct buff *);
-
-#ifdef THREAD_SAFE
-#define binsert _binsert
-#define bdelete _bdelete
-#define bmove _bmove
-#else
+/* Backwards compatibility functions */
 #define binsert(c) _binsert(Curbuff, (c))
 #define bdelete(n) _bdelete(Curbuff, (n))
 #define bmove(n) _bmove(Curbuff, (n))
-#endif
+#define bmove1(n) _bmove1(Curbuff)
+#define bisstart() _bisstart(Curbuff)
+#define bisend() _bisend(Curbuff)
+#define btostart() _btostart(Curbuff)
+#define btoend() _btoend(Curbuff)
+#define bcsearch(c) _bcsearch(Curbuff, (c))
+#define bcrsearch(c) _bcrsearch(Curbuff, (c))
+
+struct buff *_bcreate(void);
+void _bdelbuff(struct buff *);
 bool _binsert(struct buff *, Byte);
 void _bdelete(struct buff *, int);
 bool _bmove(struct buff *, int);
+void _bmove1(struct buff *);
+bool _bisstart(struct buff *);
+bool _bisend(struct buff *);
+void _btostart(struct buff *);
+void _btoend(struct buff *);
+bool _bcsearch(struct buff *, Byte);
+bool _bcrsearch(struct buff *, Byte);
 
-bool bcsearch(Byte);
-bool bcrsearch(Byte);
+#ifndef HAVE_THREADS
+struct buff *bcreate(void);
+bool bdelbuff(struct buff *);
+#endif
 void bempty(void);
 void bgoto_char(long offset);
 bool bappend(Byte *, int);
@@ -96,23 +108,15 @@ unsigned long blength(struct buff *);
 unsigned long blocation(void);
 int breadfile(const char *);
 void bswitchto(struct buff *);
-void btoend(void);
-void btostart(void);
 bool bwritefile(char *);
 
 void tobegline(void);
 void toendline(void);
 
-bool bisend(void);
 Byte bpeek(void);
 int batoi(void);
 
-void bmove1(void);
 void boffset(unsigned long off);
-
-/* These should be called from buffer/mark code only */
-void makecur(struct buff *buff, struct page *, int);
-#define makeoffset(buff, dist) makecur((buff), (buff)->curpage, (dist))
 
 /* bmsearch.c */
 bool bm_search(const char *str, bool sensitive);
@@ -127,5 +131,9 @@ bool bm_rsearch(const char *str, bool sensitive);
 
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
+
+/* These should be called from buffer/mark code only */
+void makecur(struct buff *buff, struct page *, int);
+#define makeoffset(buff, dist) makecur((buff), (buff)->curpage, (dist))
 
 #endif

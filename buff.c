@@ -57,8 +57,9 @@ static inline void undo_clear(struct buff *buff) {}
 void (*app_cleanup)(struct buff *buff);
 
 bool Curmodf;		/* page modified?? */
-struct buff *Bufflist;		/* the buffer list */
 struct buff *Curbuff;		/* the current buffer */
+
+struct buff *Bufflist;		/* the buffer list */
 
 #define Cpstart (Curbuff->curpage->pdata)
 
@@ -71,6 +72,48 @@ int NumPages;
 static struct page *newpage(struct page *curpage);
 static void freepage(struct page **firstp, struct page *page);
 
+/* Create a buffer but don't add it to the buffer list. */
+struct buff *_bcreate(void)
+{
+	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));
+	if (buf) {
+		struct page *fpage;
+
+		if (!(fpage = newpage(NULL))) {
+			/* bad news, de-allocate */
+			free(buf);
+			return NULL;
+		}
+		buf->firstp = fpage;
+		buf->curpage = fpage;
+		makecur(buf, fpage, 0);
+		++NumBuffs;
+	}
+
+	return buf;
+}
+
+void _bdelbuff(struct buff *tbuff)
+{
+	if (!tbuff)
+		return;
+
+	if (tbuff->fname)
+		free(tbuff->fname);
+	if (tbuff->bname)
+		free(tbuff->bname);
+	if (tbuff->app && app_cleanup)
+		app_cleanup(tbuff);
+
+	while (tbuff->firstp)	/* delete the pages */
+		freepage(&tbuff->firstp, tbuff->firstp);
+
+	free((char *)tbuff);	/* free the buffer proper */
+
+	--NumBuffs;
+}
+
+#ifndef HAVE_THREADS
 static void bfini(void)
 {
 	Curbuff = NULL;
@@ -97,38 +140,21 @@ static void binit(void)
 	}
 }
 
-/* Create a buffer but don't add it to the buffer list. You probably don't want this. */
-struct buff *_bcreate(void)
-{
-	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));
-	if (buf) {
-		struct page *fpage;
-
-		binit();
-		if (!(fpage = newpage(NULL))) {
-			/* bad news, de-allocate */
-			free(buf);
-			return NULL;
-		}
-		buf->firstp = fpage;
-		buf->curpage = fpage;
-		++NumBuffs;
-	}
-
-	return buf;
-}
-
 /* Create a buffer. Returns a pointer to the buffer descriptor. */
 struct buff *bcreate(void)
 {
-	struct buff *buf = _bcreate();
-	if (buf) {
+	struct buff *buf;
+
+	binit();
+
+	if ((buf = _bcreate())) {
 		/* add the buffer to the head of the list */
 		if (Bufflist)
 			Bufflist->prev = buf;
 		buf->next = Bufflist;
 		Bufflist = buf;
 	}
+
 	return buf;
 }
 
@@ -147,40 +173,28 @@ bool bdelbuff(struct buff *tbuff)
 			return false;
 	}
 
-	if (tbuff->fname)
-		free(tbuff->fname);
-	if (tbuff->bname)
-		free(tbuff->bname);
-	if (tbuff->app && app_cleanup)
-		app_cleanup(tbuff);
-
-	while (tbuff->firstp)	/* delete the pages */
-		freepage(&tbuff->firstp, tbuff->firstp);
-	if (tbuff == Bufflist)	/* unlink from the list */
+	if (tbuff == Bufflist)
 		Bufflist = tbuff->next;
 	if (tbuff->prev)
 		tbuff->prev->next = tbuff->next;
 	if (tbuff->next)
 		tbuff->next->prev = tbuff->prev;
 
-	free((char *)tbuff);	/* free the buffer proper */
-
-	--NumBuffs;
+	_bdelbuff(tbuff);
 
 	return true;
 }
+#endif
 
 /* Insert a character in the current buffer. */
 bool _binsert(struct buff *buff, Byte byte)
 {
-	struct page *curpage = buff->curpage;
-
-	if (curpage->plen == curpage->psize && !bpagesplit(buff))
+	if (curplen(buff) == PSIZE && !bpagesplit(buff))
 		return false;
-	memmove(buff->curcptr + 1, buff->curcptr, curpage->plen - buff->curchar);
+	memmove(buff->curcptr + 1, buff->curcptr, curplen(buff) - buff->curchar);
 	*buff->curcptr++ = byte;
 	buff->curchar++;
-	curpage->plen++;
+	curplen(buff)++;
 	buff->bmodf = true;
 	Curmodf = true;
 
@@ -189,7 +203,7 @@ bool _binsert(struct buff *buff, Byte byte)
 #ifdef HAVE_MARKS
 	struct mark *btmark;
 
-	foreach_pagemark(btmark, curpage)
+	foreach_pagemark(btmark, buff->curpage)
 		if (btmark->moffset >= buff->curchar)
 			++(btmark->moffset);
 #endif
@@ -297,7 +311,7 @@ void _bdelete(struct buff *buff, int quantity)
 
 	while (quantity) {
 		/* Delete as many characters as possible from this page */
-		quan = MIN(curpage->plen - buff->curchar, quantity);
+		quan = MIN(curplen(buff) - buff->curchar, quantity);
 		if (quan < 0)
 			quan = 0; /* May need to switch pages */
 
@@ -305,16 +319,16 @@ void _bdelete(struct buff *buff, int quantity)
 		undo_del(quan);
 #endif
 
-		curpage->plen -= quan;
+		curplen(buff) -= quan;
 
-		memmove(buff->curcptr, buff->curcptr + quan, curpage->plen - buff->curchar);
+		memmove(buff->curcptr, buff->curcptr + quan, curplen(buff) - buff->curchar);
 		if (lastp(curpage))
 			quantity = 0;
 		else
 			quantity -= quan;
 		buff->bmodf = true;
 		Curmodf = true;
-		if (curpage->plen == 0 && (curpage->nextp || curpage->prevp)) {
+		if (curplen(buff) == 0 && (curpage->nextp || curpage->prevp)) {
 			/* We deleted entire page. */
 			tpage = curpage->nextp;
 			noffset = 0;
@@ -332,7 +346,7 @@ void _bdelete(struct buff *buff, int quantity)
 		} else {
 			tpage = curpage;
 			noffset = buff->curchar;
-			if ((noffset >= curpage->plen) && curpage->nextp) {
+			if ((noffset >= curplen(buff)) && curpage->nextp) {
 				tpage = curpage->nextp;
 				noffset = 0;
 			}
@@ -353,40 +367,39 @@ void _bdelete(struct buff *buff, int quantity)
 	vsetmod(true);
 }
 
-bool bcrsearch(Byte what)
+bool _bcrsearch(struct buff *buff, Byte what)
 {
 	while (1) {
-		if (Curchar <= 0)
-			if (Curpage == Curbuff->firstp)
+		if (buff->curchar <= 0) {
+			if (buff->curpage == buff->firstp)
 				return false;
-			else {
-				makecur(Curbuff, Curpage->prevp, Curpage->plen - 1);
-			}
-		else {
-			--Curchar;
-			--Curcptr;
+			else
+				makecur(buff, buff->curpage->prevp, buff->curpage->plen - 1);
+		} else {
+			--buff->curchar;
+			--buff->curcptr;
 		}
-		if (*Curcptr == what)
+		if (*buff->curcptr == what)
 			return true;
 	}
 }
 
-bool bcsearch(Byte what)
+bool _bcsearch(struct buff *buff, Byte what)
 {
 	Byte *n;
 
-	if (bisend())
+	if (_bisend(buff))
 		return false;
 
-	while ((n = (Byte *)memchr(Curcptr, what, Curpage->plen - Curchar)) == NULL)
-		if (lastp(Curpage)) {
-			makeoffset(Curbuff, Curpage->plen);
+	while ((n = (Byte *)memchr(buff->curcptr, what, buff->curpage->plen - buff->curchar)) == NULL)
+		if (lastp(buff->curpage)) {
+			makeoffset(buff, buff->curpage->plen);
 			return false;
 		} else
-			makecur(Curbuff, Curpage->nextp, 0);
+			makecur(buff, buff->curpage->nextp, 0);
 
-	makeoffset(Curbuff, n - Cpstart);
-	bmove1();
+	makeoffset(buff, n - buff->curpage->pdata);
+	_bmove1(buff);
 	return true;
 }
 
@@ -438,7 +451,7 @@ bool _bmove(struct buff *buff, int dist)
 		struct page *curpage = buff->curpage;
 
 		dist += buff->curchar;
-		if (dist >= 0 && dist < curpage->plen) {
+		if (dist >= 0 && dist < curplen(buff)) {
 			/* within current page makeoffset dist */
 			makeoffset(buff, dist);
 			return true;
@@ -449,33 +462,31 @@ bool _bmove(struct buff *buff, int dist)
 				makeoffset(buff, 0);
 				return false;
 			}
-			makecur(buff, curpage->prevp, curpage->plen);
+			makecur(buff, curpage->prevp, curplen(buff));
 		} else {	/* goto next page */
 			if (lastp(curpage)) {
 				/* past end of buffer */
-				makeoffset(buff, curpage->plen);
+				makeoffset(buff, curplen(buff));
 				return false;
 			}
-			dist -= curpage->plen; /* must use this curplen */
+			dist -= curplen(buff); /* must use this curplen */
 			makecur(buff, curpage->nextp, 0);
 		}
 	}
 	return true;
 }
 
-void bmove1(void)
+void _bmove1(struct buff *buff)
 {
-	if (++Curchar < Curpage->plen)
+	if (++buff->curchar < buff->curpage->plen)
 		/* within current page */
-		++Curcptr;
-	else if (Curpage->nextp) {
+		++buff->curcptr;
+	else if (buff->curpage->nextp)
 		/* goto start of next page */
-		makecur(Curbuff, Curpage->nextp, 0);
-	} else {
-		/* At EOB */
-		Curchar = Curpage->plen;
-		Curcptr = Cpstart + Curpage->plen;
-	}
+		makecur(buff, buff->curpage->nextp, 0);
+	else
+		/* Already at EOB */
+		--buff->curchar;
 }
 
 void bempty(void)
@@ -509,23 +520,22 @@ void bswitchto(struct buff *buf)
 }
 
 
-/* Set the point to the end of the buffer */
-void btoend(void)
+/* Set the point to the start of the buffer. */
+void _btostart(struct buff *buff)
 {
-	if (Curpage->nextp) {
-		struct page *lastp;
-
-		for (lastp = Curpage->nextp; lastp->nextp; lastp = lastp->nextp) ;
-		makecur(Curbuff, lastp, lastp->plen);
-	} else
-		makecur(Curbuff, Curpage, Curpage->plen);
+	makecur(buff, buff->firstp, 0);
 }
 
-
-/* Set the point to the start of the buffer. */
-void btostart(void)
+/* Set the point to the end of the buffer */
+void _btoend(struct buff *buff)
 {
-	makecur(Curbuff, Curbuff->firstp, 0);
+	struct page *lastp = buff->curpage->nextp;
+	if (lastp) {
+		while (lastp->nextp)
+			lastp = lastp->nextp;
+		makecur(buff, lastp, lastp->plen);
+	} else
+		makeoffset(buff, buff->curpage->plen);
 }
 
 static void crfixup(void)
@@ -639,6 +649,7 @@ static bool bwritegzip(int fd)
 }
 #endif
 
+#if HAVE_MARKS
 static bool bwritefd(int fd)
 {
 	struct mark smark;
@@ -745,6 +756,7 @@ bool bwritefile(char *fname)
 
 	return status;
 }
+#endif
 
 /* Make page current at dist */
 void makecur(struct buff *buff, struct page *page, int dist)
@@ -761,9 +773,14 @@ void makecur(struct buff *buff, struct page *page, int dist)
 	buff->curcptr = page->pdata + dist;
 }
 
-bool bisend(void)
+bool _bisstart(struct buff *buff)
 {
-	return lastp(Curpage) && (Curchar >= Curpage->plen);
+	return (buff->curpage == buff->firstp) && (buff->curchar == 0);
+}
+
+bool _bisend(struct buff *buff)
+{
+	return lastp(buff->curpage) && (buff->curchar >= curplen(buff));
 }
 
 /* Peek the previous byte */
@@ -833,7 +850,6 @@ static struct page *newpage(struct page *curpage)
 	if (!page)
 		return NULL;
 
-	page->psize = PSIZE;
 #ifdef DOS_EMS
 	if (!ems_newpage(page)) {
 		free(page);
@@ -908,7 +924,7 @@ bool bpagesplit(struct buff *buff)
 #endif
 	if (buff->curchar >= HALFP)
 		/* new page has Point in it */
-		makecur(Curbuff, newp, buff->curchar - HALFP);
+		makecur(buff, newp, buff->curchar - HALFP);
 	Curmodf = true;
 	return true;
 }

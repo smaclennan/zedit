@@ -35,7 +35,6 @@ struct page {
 #else
 	Byte pdata[PSIZE];		/* the page data */
 #endif
-	int psize;			/* allocated page size */
 	int plen;			/* current length of the page */
 	struct page *nextp, *prevp;	/* list of pages */
 };

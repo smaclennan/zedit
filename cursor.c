@@ -313,12 +313,12 @@ void Zredisplay(void)
 		uncomment(buff);
 }
 
-static void scroll(bool (*search)(Byte what))
+static void scroll(bool (*search)(struct buff *buff, Byte what))
 {
 	struct mark *pmark = zcreatemrk();
 
 	bpnttomrk(Sstart);
-	while (Arg-- > 0 && search(NL))
+	while (Arg-- > 0 && search(Curbuff, NL))
 		;
 	tobegline();
 	bmrktopnt(Sstart);
@@ -336,10 +336,10 @@ static void scroll(bool (*search)(Byte what))
 
 void Zscroll_up(void)
 {
-	scroll(bcrsearch);
+	scroll(_bcrsearch);
 }
 
 void Zscroll_down(void)
 {
-	scroll(bcsearch);
+	scroll(_bcsearch);
 }

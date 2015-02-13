@@ -49,8 +49,6 @@ struct buff *Bufflist;		/* the buffer list */
 int NumBuffs;
 int NumPages;
 
-static void freepage(struct page **firstp, struct page *page);
-
 /* Create a buffer but don't add it to the buffer list. */
 struct buff *_bcreate(void)
 {
@@ -92,79 +90,6 @@ void _bdelbuff(struct buff *tbuff)
 	--NumBuffs;
 }
 
-#ifndef HAVE_THREADS
-static void bfini(void)
-{
-	Curbuff = NULL;
-
-	while (Bufflist)
-		/* bdelbuff will update Bufflist */
-		bdelbuff(Bufflist);
-
-#ifdef DOS_EMS
-	ems_free();
-#endif
-}
-
-static void binit(void)
-{
-	static int binitialized = 0;
-
-	if (!binitialized) {
-#ifdef DOS_EMS
-		ems_init();
-#endif
-		atexit(bfini);
-		binitialized = 1;
-	}
-}
-
-/* Create a buffer. Returns a pointer to the buffer descriptor. */
-struct buff *bcreate(void)
-{
-	struct buff *buf;
-
-	binit();
-
-	if ((buf = _bcreate())) {
-		/* add the buffer to the head of the list */
-		if (Bufflist)
-			Bufflist->prev = buf;
-		buf->next = Bufflist;
-		Bufflist = buf;
-	}
-
-	return buf;
-}
-
-/* Delete the buffer and its pages. */
-bool bdelbuff(struct buff *tbuff)
-{
-	if (!tbuff)
-		return true;
-
-	if (tbuff == Curbuff) { /* switch to a safe buffer */
-		if (tbuff->next)
-			bswitchto(tbuff->next);
-		else if (tbuff->prev)
-			bswitchto(tbuff->prev);
-		else
-			return false;
-	}
-
-	if (tbuff == Bufflist)
-		Bufflist = tbuff->next;
-	if (tbuff->prev)
-		tbuff->prev->next = tbuff->next;
-	if (tbuff->next)
-		tbuff->next->prev = tbuff->prev;
-
-	_bdelbuff(tbuff);
-
-	return true;
-}
-#endif
-
 /* Insert a character in the current buffer. */
 bool _binsert(struct buff *buff, Byte byte)
 {
@@ -189,6 +114,185 @@ bool _binsert(struct buff *buff, Byte byte)
 
 	vsetmod(false);
 	return true;
+}
+
+/* Delete quantity characters. */
+void _bdelete(struct buff *buff, int quantity)
+{
+	int quan, noffset;
+	struct page *tpage, *curpage = buff->curpage;
+	struct mark *tmark;
+
+	while (quantity) {
+		/* Delete as many characters as possible from this page */
+		quan = MIN(curplen(buff) - buff->curchar, quantity);
+		if (quan < 0)
+			quan = 0; /* May need to switch pages */
+
+#if UNDO
+		undo_del(quan);
+#endif
+
+		curplen(buff) -= quan;
+
+		memmove(buff->curcptr, buff->curcptr + quan, curplen(buff) - buff->curchar);
+		if (lastp(curpage))
+			quantity = 0;
+		else
+			quantity -= quan;
+		buff->bmodf = true;
+		Curmodf = true;
+		if (curplen(buff) == 0 && (curpage->nextp || curpage->prevp)) {
+			/* We deleted entire page. */
+			tpage = curpage->nextp;
+			noffset = 0;
+			if (tpage == NULL) {
+				tpage = curpage->prevp;
+				noffset = tpage->plen;
+			}
+#ifdef HAVE_MARKS
+			foreach_pagemark(tmark, curpage) {
+				tmark->mpage = tpage;
+				tmark->moffset = noffset;
+			}
+#endif
+			freepage(&buff->firstp, curpage);
+		} else {
+			tpage = curpage;
+			noffset = buff->curchar;
+			if ((noffset >= curplen(buff)) && curpage->nextp) {
+				tpage = curpage->nextp;
+				noffset = 0;
+			}
+#ifdef HAVE_MARKS
+			foreach_pagemark(tmark, curpage)
+				if (tmark->moffset >= buff->curchar) {
+					if (tmark->moffset >= buff->curchar + quan)
+						tmark->moffset -= quan;
+					else {
+						tmark->mpage = tpage;
+						tmark->moffset = noffset;
+					}
+				}
+#endif
+		}
+		makecur(buff, tpage, noffset);
+	}
+	vsetmod(true);
+}
+
+/* Move the point relative to its current position.
+ *
+ * This routine is the most time-consuming routine in the editor.
+ * Because of this, it is highly optimized. makeoffset() calls have
+ * been inlined here.
+ *
+ * Since bmove(1) is used the most, a special call has been made.
+ */
+bool _bmove(struct buff *buff, int dist)
+{
+	while (dist) {
+		struct page *curpage = buff->curpage;
+
+		dist += buff->curchar;
+		if (dist >= 0 && dist < curplen(buff)) {
+			/* within current page makeoffset dist */
+			makeoffset(buff, dist);
+			return true;
+		}
+		if (dist < 0) { /* goto previous page */
+			if (curpage == buff->firstp) {
+				/* past start of buffer */
+				makeoffset(buff, 0);
+				return false;
+			}
+			makecur(buff, curpage->prevp, curplen(buff));
+		} else {	/* goto next page */
+			if (lastp(curpage)) {
+				/* past end of buffer */
+				makeoffset(buff, curplen(buff));
+				return false;
+			}
+			dist -= curplen(buff); /* must use this curplen */
+			makecur(buff, curpage->nextp, 0);
+		}
+	}
+	return true;
+}
+
+void _bmove1(struct buff *buff)
+{
+	if (++buff->curchar < buff->curpage->plen)
+		/* within current page */
+		++buff->curcptr;
+	else if (buff->curpage->nextp)
+		/* goto start of next page */
+		makecur(buff, buff->curpage->nextp, 0);
+	else
+		/* Already at EOB */
+		--buff->curchar;
+}
+
+bool _bisstart(struct buff *buff)
+{
+	return (buff->curpage == buff->firstp) && (buff->curchar == 0);
+}
+
+bool _bisend(struct buff *buff)
+{
+	return lastp(buff->curpage) && (buff->curchar >= curplen(buff));
+}
+
+void _btostart(struct buff *buff)
+{
+	makecur(buff, buff->firstp, 0);
+}
+
+void _btoend(struct buff *buff)
+{
+	struct page *lastp = buff->curpage->nextp;
+	if (lastp) {
+		while (lastp->nextp)
+			lastp = lastp->nextp;
+		makecur(buff, lastp, lastp->plen);
+	} else
+		makeoffset(buff, buff->curpage->plen);
+}
+
+bool _bcsearch(struct buff *buff, Byte what)
+{
+	Byte *n;
+
+	if (_bisend(buff))
+		return false;
+
+	while ((n = (Byte *)memchr(buff->curcptr, what, buff->curpage->plen - buff->curchar)) == NULL)
+		if (lastp(buff->curpage)) {
+			makeoffset(buff, buff->curpage->plen);
+			return false;
+		} else
+			makecur(buff, buff->curpage->nextp, 0);
+
+	makeoffset(buff, n - buff->curpage->pdata);
+	_bmove1(buff);
+	return true;
+}
+
+bool _bcrsearch(struct buff *buff, Byte what)
+{
+	while (1) {
+		if (buff->curchar <= 0) {
+			if (buff->curpage == buff->firstp)
+				return false;
+			else
+				makecur(buff, buff->curpage->prevp, buff->curpage->plen - 1);
+		} else {
+			--buff->curchar;
+			--buff->curcptr;
+		}
+		if (*buff->curcptr == what)
+			return true;
+	}
 }
 
 bool bappend(Byte *data, int size)
@@ -281,107 +385,6 @@ int bindata(Byte *data, int size)
 	return copied;
 }
 
-/* Delete quantity characters. */
-void _bdelete(struct buff *buff, int quantity)
-{
-	int quan, noffset;
-	struct page *tpage, *curpage = buff->curpage;
-	struct mark *tmark;
-
-	while (quantity) {
-		/* Delete as many characters as possible from this page */
-		quan = MIN(curplen(buff) - buff->curchar, quantity);
-		if (quan < 0)
-			quan = 0; /* May need to switch pages */
-
-#if UNDO
-		undo_del(quan);
-#endif
-
-		curplen(buff) -= quan;
-
-		memmove(buff->curcptr, buff->curcptr + quan, curplen(buff) - buff->curchar);
-		if (lastp(curpage))
-			quantity = 0;
-		else
-			quantity -= quan;
-		buff->bmodf = true;
-		Curmodf = true;
-		if (curplen(buff) == 0 && (curpage->nextp || curpage->prevp)) {
-			/* We deleted entire page. */
-			tpage = curpage->nextp;
-			noffset = 0;
-			if (tpage == NULL) {
-				tpage = curpage->prevp;
-				noffset = tpage->plen;
-			}
-#ifdef HAVE_MARKS
-			foreach_pagemark(tmark, curpage) {
-				tmark->mpage = tpage;
-				tmark->moffset = noffset;
-			}
-#endif
-			freepage(&buff->firstp, curpage);
-		} else {
-			tpage = curpage;
-			noffset = buff->curchar;
-			if ((noffset >= curplen(buff)) && curpage->nextp) {
-				tpage = curpage->nextp;
-				noffset = 0;
-			}
-#ifdef HAVE_MARKS
-			foreach_pagemark(tmark, curpage)
-				if (tmark->moffset >= buff->curchar) {
-					if (tmark->moffset >= buff->curchar + quan)
-						tmark->moffset -= quan;
-					else {
-						tmark->mpage = tpage;
-						tmark->moffset = noffset;
-					}
-				}
-#endif
-		}
-		makecur(buff, tpage, noffset);
-	}
-	vsetmod(true);
-}
-
-bool _bcrsearch(struct buff *buff, Byte what)
-{
-	while (1) {
-		if (buff->curchar <= 0) {
-			if (buff->curpage == buff->firstp)
-				return false;
-			else
-				makecur(buff, buff->curpage->prevp, buff->curpage->plen - 1);
-		} else {
-			--buff->curchar;
-			--buff->curcptr;
-		}
-		if (*buff->curcptr == what)
-			return true;
-	}
-}
-
-bool _bcsearch(struct buff *buff, Byte what)
-{
-	Byte *n;
-
-	if (_bisend(buff))
-		return false;
-
-	while ((n = (Byte *)memchr(buff->curcptr, what, buff->curpage->plen - buff->curchar)) == NULL)
-		if (lastp(buff->curpage)) {
-			makeoffset(buff, buff->curpage->plen);
-			return false;
-		} else
-			makecur(buff, buff->curpage->nextp, 0);
-
-	makeoffset(buff, n - buff->curpage->pdata);
-	_bmove1(buff);
-	return true;
-}
-
 /* Returns the length of the buffer. */
 unsigned long blength(struct buff *tbuff)
 {
@@ -416,58 +419,6 @@ void boffset(unsigned long off)
 	bmove(off);
 }
 
-/* Move the point relative to its current position.
- *
- * This routine is the most time-consuming routine in the editor.
- * Because of this, it is highly optimized. makeoffset() calls have
- * been inlined here.
- *
- * Since bmove(1) is used the most, a special call has been made.
- */
-bool _bmove(struct buff *buff, int dist)
-{
-	while (dist) {
-		struct page *curpage = buff->curpage;
-
-		dist += buff->curchar;
-		if (dist >= 0 && dist < curplen(buff)) {
-			/* within current page makeoffset dist */
-			makeoffset(buff, dist);
-			return true;
-		}
-		if (dist < 0) { /* goto previous page */
-			if (curpage == buff->firstp) {
-				/* past start of buffer */
-				makeoffset(buff, 0);
-				return false;
-			}
-			makecur(buff, curpage->prevp, curplen(buff));
-		} else {	/* goto next page */
-			if (lastp(curpage)) {
-				/* past end of buffer */
-				makeoffset(buff, curplen(buff));
-				return false;
-			}
-			dist -= curplen(buff); /* must use this curplen */
-			makecur(buff, curpage->nextp, 0);
-		}
-	}
-	return true;
-}
-
-void _bmove1(struct buff *buff)
-{
-	if (++buff->curchar < buff->curpage->plen)
-		/* within current page */
-		++buff->curcptr;
-	else if (buff->curpage->nextp)
-		/* goto start of next page */
-		makecur(buff, buff->curpage->nextp, 0);
-	else
-		/* Already at EOB */
-		--buff->curchar;
-}
-
 void bempty(void)
 {
 	struct mark *btmark;
@@ -498,34 +449,6 @@ void bswitchto(struct buff *buf)
 	}
 }
 
-
-/* Set the point to the start of the buffer. */
-void _btostart(struct buff *buff)
-{
-	makecur(buff, buff->firstp, 0);
-}
-
-/* Set the point to the end of the buffer */
-void _btoend(struct buff *buff)
-{
-	struct page *lastp = buff->curpage->nextp;
-	if (lastp) {
-		while (lastp->nextp)
-			lastp = lastp->nextp;
-		makecur(buff, lastp, lastp->plen);
-	} else
-		makeoffset(buff, buff->curpage->plen);
-}
-
-bool _bisstart(struct buff *buff)
-{
-	return (buff->curpage == buff->firstp) && (buff->curchar == 0);
-}
-
-bool _bisend(struct buff *buff)
-{
-	return lastp(buff->curpage) && (buff->curchar >= curplen(buff));
-}
 
 /* Peek the previous byte */
 Byte bpeek(void)
@@ -584,6 +507,79 @@ void toendline(void)
 	if (bcsearch('\n'))
 		bmove(-1);
 }
+
+#ifndef HAVE_THREADS
+static void bfini(void)
+{
+	Curbuff = NULL;
+
+	while (Bufflist)
+		/* bdelbuff will update Bufflist */
+		bdelbuff(Bufflist);
+
+#ifdef DOS_EMS
+	ems_free();
+#endif
+}
+
+static void binit(void)
+{
+	static int binitialized = 0;
+
+	if (!binitialized) {
+#ifdef DOS_EMS
+		ems_init();
+#endif
+		atexit(bfini);
+		binitialized = 1;
+	}
+}
+
+/* Create a buffer. Returns a pointer to the buffer descriptor. */
+struct buff *bcreate(void)
+{
+	struct buff *buf;
+
+	binit();
+
+	if ((buf = _bcreate())) {
+		/* add the buffer to the head of the list */
+		if (Bufflist)
+			Bufflist->prev = buf;
+		buf->next = Bufflist;
+		Bufflist = buf;
+	}
+
+	return buf;
+}
+
+/* Delete the buffer and its pages. */
+bool bdelbuff(struct buff *tbuff)
+{
+	if (!tbuff)
+		return true;
+
+	if (tbuff == Curbuff) { /* switch to a safe buffer */
+		if (tbuff->next)
+			bswitchto(tbuff->next);
+		else if (tbuff->prev)
+			bswitchto(tbuff->prev);
+		else
+			return false;
+	}
+
+	if (tbuff == Bufflist)
+		Bufflist = tbuff->next;
+	if (tbuff->prev)
+		tbuff->prev->next = tbuff->next;
+	if (tbuff->next)
+		tbuff->next->prev = tbuff->prev;
+
+	_bdelbuff(tbuff);
+
+	return true;
+}
+#endif
 
 /* Low level memory page routines */
 
@@ -644,7 +640,7 @@ static struct page *pagesplit(struct page *curpage)
 }
 
 /* Free a memory page */
-static void freepage(struct page **firstp, struct page *page)
+void freepage(struct page **firstp, struct page *page)
 {
 #ifdef DOS_EMS
 	ems_freepage(page);

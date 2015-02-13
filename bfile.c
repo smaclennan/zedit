@@ -13,9 +13,8 @@
 #ifdef ZEDIT
 #include "z.h"
 #else
-static inline void vsetmod(bool flag) {}
-static inline void undo_add(int size) {}
-static inline void undo_clear(struct buff *buff) {}
+#define COMPRESSED			0x0008
+#define CRLF				0x0010
 #endif
 
 #if ZLIB
@@ -27,11 +26,6 @@ static inline void undo_clear(struct buff *buff) {}
 #else
 #define bread(a, b, c) read(a, b, c)
 #define bclose(a) close(a)
-#endif
-
-#ifndef CRLF
-#define COMPRESSED			0x0008
-#define CRLF				0x0010
 #endif
 
 int raw_mode;

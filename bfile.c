@@ -28,6 +28,12 @@
 #define bclose(a) close(a)
 #endif
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+#define READ_MODE	(O_RDONLY | O_BINARY)
+#define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
+
 int raw_mode;
 
 static void crfixup(void)

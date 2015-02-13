@@ -34,9 +34,6 @@
 
 #define Byte unsigned char
 
-#define READ_MODE	(O_RDONLY | O_BINARY)
-#define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
-
 /* THE BUFFER STRUCTURES */
 
 struct page;
@@ -55,35 +52,11 @@ struct buff {
 	struct buff *prev, *next;	/* list of buffers */
 };
 
-/* If set, this function will be called on bdelbuff */
-extern void (*app_cleanup)(struct buff *buff);
-
-extern struct buff *Curbuff;
-extern bool Curmodf;
-
-#define Curpage (Curbuff->curpage)
-#define Curchar (Curbuff->curchar)
-#define Curcptr (Curbuff->curcptr)
-#define Cpstart (Curbuff->curpage->pdata)
-
 /* This is used a lot */
 #define curplen(b) ((b)->curpage->plen)
 
-extern int NumBuffs, NumPages;
-
-#define Buff()		(*Curcptr)
-
-/* Backwards compatibility functions */
-#define binsert(c) _binsert(Curbuff, (c))
-#define bdelete(n) _bdelete(Curbuff, (n))
-#define bmove(n) _bmove(Curbuff, (n))
-#define bmove1(n) _bmove1(Curbuff)
-#define bisstart() _bisstart(Curbuff)
-#define bisend() _bisend(Curbuff)
-#define btostart() _btostart(Curbuff)
-#define btoend() _btoend(Curbuff)
-#define bcsearch(c) _bcsearch(Curbuff, (c))
-#define bcrsearch(c) _bcrsearch(Curbuff, (c))
+/* If set, this function will be called on _bdelbuff */
+extern void (*app_cleanup)(struct buff *buff);
 
 struct buff *_bcreate(void);
 void _bdelbuff(struct buff *);
@@ -95,27 +68,50 @@ bool _bisstart(struct buff *);
 bool _bisend(struct buff *);
 void _btostart(struct buff *);
 void _btoend(struct buff *);
+void _tobegline(struct buff *);
+void _toendline(struct buff *);
+unsigned long _blength(struct buff *);
+unsigned long _blocation(struct buff *);
 bool _bcsearch(struct buff *, Byte);
 bool _bcrsearch(struct buff *, Byte);
+void _bempty(struct buff *buff);
+Byte _bpeek(struct buff *buff);
+void _bgoto_char(struct buff *buff, unsigned long offset);
+bool _bappend(struct buff *buff, Byte *, int);
+int _bindata(struct buff *buff, Byte *, int);
+
 
 #ifndef HAVE_THREADS
+
+extern struct buff *Curbuff;
+#define Curpage (Curbuff->curpage)
+#define Curchar (Curbuff->curchar)
+#define Curcptr (Curbuff->curcptr)
+#define Cpstart (Curbuff->curpage->pdata)
+
+#define Buff()		(*Curcptr)
+
+#define binsert(c) _binsert(Curbuff, (c))
+#define bdelete(n) _bdelete(Curbuff, (n))
+#define bmove(n) _bmove(Curbuff, (n))
+#define bmove1(n) _bmove1(Curbuff)
+#define bisstart() _bisstart(Curbuff)
+#define bisend() _bisend(Curbuff)
+#define btostart() _btostart(Curbuff)
+#define btoend() _btoend(Curbuff)
+#define tobegline() _tobegline(Curbuff)
+#define toendline() _toendline(Curbuff)
+#define blength _blength
+#define blocation _blocation
+#define bcsearch(c) _bcsearch(Curbuff, (c))
+#define bcrsearch(c) _bcrsearch(Curbuff, (c))
+#define bempty() _bempty(Curbuff)
+#define bappend(d, n) _bappend(Curbuff, (d), (n))
+#define bindata(d, n) _bindata(Curbuff, (d), (n))
+
 struct buff *bcreate(void);
 bool bdelbuff(struct buff *);
-#endif
-void bempty(void);
-void bgoto_char(long offset);
-bool bappend(Byte *, int);
-unsigned long blength(struct buff *);
-unsigned long blocation(void);
 void bswitchto(struct buff *);
-
-void tobegline(void);
-void toendline(void);
-
-Byte bpeek(void);
-int batoi(void);
-
-void boffset(unsigned long off);
 
 /* bfile.c */
 int breadfile(const char *);
@@ -124,16 +120,17 @@ bool bwritefile(char *);
 /* bmsearch.c */
 bool bm_search(const char *str, bool sensitive);
 bool bm_rsearch(const char *str, bool sensitive);
-
-#ifndef O_BINARY
-#define O_BINARY 0
 #endif
+
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
 
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
+
+extern bool Curmodf;
+extern int NumBuffs, NumPages;
 
 /* These should be called from buffer/mark code only */
 void makecur(struct buff *buff, struct page *, int);

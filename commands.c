@@ -191,7 +191,7 @@ void Zc_insert(void)
 		break;
 
 	case '/':
-		if (bpeek() == '*')
+		if (_bpeek(Curbuff) == '*')
 			uncomment(Curbuff);
 		break;
 	}
@@ -372,11 +372,11 @@ void Zprevious_paragraph(void)
 
 void Zposition(void)
 {
-	unsigned long mark, point = blocation();
+	unsigned long mark, point = blocation(Curbuff);
 
 	if (UMARK_SET) {
 		bswappnt(UMARK);
-		mark = blocation();
+		mark = blocation(Curbuff);
 		bswappnt(UMARK);
 		putpaw("Line: %u  Column: %u  Point: %lu  Mark: %lu  Length: %lu",
 			   bline(), bgetcol(false, 0) + 1, point, mark, blength(Curbuff));

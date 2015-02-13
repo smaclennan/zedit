@@ -73,7 +73,7 @@ void Zdelete_to_eol(void)
 	if (!bisend() && Buff() == NL)
 		bdelete(1);
 	else {
-		bool atstart = bpeek() == NL;
+		bool atstart = _bpeek(Curbuff) == NL;
 		struct mark *tmark = zcreatemrk();
 		toendline();
 		if (atstart)

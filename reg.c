@@ -58,7 +58,7 @@ bool step(Byte *ep)
 	if (circf)
 		/* if not at the start of the current line - go to the
 		 * next line */
-		if (bpeek() != '\n')
+		if (_bpeek(Curbuff) != '\n')
 			bcsearch('\n');	/* goto next line */
 
 	/* regular algorithm */

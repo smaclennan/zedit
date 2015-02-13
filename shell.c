@@ -20,6 +20,18 @@
 #include "z.h"
 
 
+/* Convert the next portion of buffer to integer. Skip leading ws. */
+int batoi(void)
+{
+	int num;
+
+	while (Buff() == ' ' || Buff() == '\t')
+		bmove1();
+	for (num = 0; isdigit(Buff()); bmove1())
+		num = num * 10 + Buff() - '0';
+	return num;
+}
+
 int do_chdir(struct buff *buff)
 {
 	if (buff->fname) {

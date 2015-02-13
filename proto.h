@@ -233,6 +233,9 @@ struct mark *zcreatemrk(void);
 int zreadfile(char *fname);
 bool zwritefile(char *fname);
 
+int batoi(void);
+void boffset(unsigned long off);
+
 #if GPM_MOUSE
 void handle_gpm_mouse(void);
 void handle_mouse_cursor(void);

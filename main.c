@@ -27,7 +27,7 @@ int readone(int fd)
 			return;
 		}
 		bappend(buffer, n);
-		boffset(random() % total);
+		_bgoto_char(Curbuff, random() % total);
 	} while (n > 0);
 
 	return total;
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
 	char data[2048];
 	memset(data, '.', sizeof(data));
-	boffset(offset);
+	_bgoto_char(Curbuff, offset);
 	int n = bindata(data, sizeof(data));
 	if (n != sizeof(data))
 		puts("PROBLEMS");

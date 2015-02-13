@@ -37,17 +37,17 @@ static inline void undo_add(int size) {}
 static inline void undo_clear(struct buff *buff) {}
 #endif
 
-/* If set, this function will be called on bdelbuff */
+/* If set, this function will be called on _bdelbuff */
 void (*app_cleanup)(struct buff *buff);
 
 bool Curmodf;		/* page modified?? */
-struct buff *Curbuff;		/* the current buffer */
-
-struct buff *Bufflist;		/* the buffer list */
-
-/* stats only */
 int NumBuffs;
 int NumPages;
+
+#ifndef HAVE_THREADS
+struct buff *Curbuff;		/* the current buffer */
+struct buff *Bufflist;		/* the buffer list */
+#endif
 
 /* Create a buffer but don't add it to the buffer list. */
 struct buff *_bcreate(void)
@@ -259,6 +259,44 @@ void _btoend(struct buff *buff)
 		makeoffset(buff, buff->curpage->plen);
 }
 
+void _tobegline(struct buff *buff)
+{
+	if (buff->curchar > 0 && *(buff->curcptr - 1) == '\n')
+		return;
+	if (_bcrsearch(buff, '\n'))
+		_bmove1(buff);
+}
+
+void _toendline(struct buff *buff)
+{
+	if (_bcsearch(buff, '\n'))
+		_bmove(buff, -1);
+}
+
+/* Returns the length of the buffer. */
+unsigned long _blength(struct buff *tbuff)
+{
+	struct page *tpage;
+	unsigned long len = 0;
+
+	for (tpage = tbuff->firstp; tpage; tpage = tpage->nextp)
+		len += tpage->plen;
+
+	return len;
+}
+
+/* Return the current position of the point. */
+unsigned long _blocation(struct buff *buff)
+{
+	struct page *tpage;
+	unsigned long len = 0;
+
+	for (tpage = buff->firstp; tpage != buff->curpage; tpage = tpage->nextp)
+		len += tpage->plen;
+
+	return len + buff->curchar;
+}
+
 bool _bcsearch(struct buff *buff, Byte what)
 {
 	Byte *n;
@@ -295,16 +333,70 @@ bool _bcrsearch(struct buff *buff, Byte what)
 	}
 }
 
-bool bappend(Byte *data, int size)
+void _bempty(struct buff *buff)
 {
-	btoend();
+	makecur(buff, buff->firstp, 0);
+	curplen(buff) = 0;
+	Curmodf = true;
+	while (buff->curpage->nextp)
+		freepage(&buff->firstp, buff->curpage->nextp);
+
+#ifdef HAVE_MARKS
+	struct mark *btmark;
+
+	for (btmark = Mrklist; btmark; btmark = btmark->prev)
+		if (btmark->mpage && btmark->mbuff == buff) {
+			btmark->mpage = buff->firstp;
+			btmark->moffset = 0;
+		}
+#endif
+
+	undo_clear(buff);
+	vsetmod(true);
+}
+
+/* Peek the previous byte */
+Byte _bpeek(struct buff *buff)
+{
+	if (buff->curchar > 0)
+		return *(buff->curcptr - 1);
+	else if (_bisstart(buff))
+		/* Pretend we are at the start of a line.
+		 * Needed for delete-to-eol and step in reg.c. */
+		return '\n';
+	else {
+		Byte ch;
+		_bmove(buff, -1);
+		ch = *buff->curcptr;
+		_bmove1(buff);
+		return ch;
+	}
+}
+
+void _bgoto_char(struct buff *buff, unsigned long offset)
+{
+	struct page *tpage;
+
+	/* find the correct page */
+	for (tpage = buff->firstp; tpage->nextp; tpage = tpage->nextp)
+		if (tpage->plen >= offset)
+			break;
+		else
+			offset -= tpage->plen;
+
+	makecur(buff, tpage, offset);
+}
+
+bool _bappend(struct buff *buff, Byte *data, int size)
+{
+	_btoend(buff);
 
 	/* Fill the current page */
-	int n, left = PSIZE - Curpage->plen;
+	int n, left = PSIZE - curplen(buff);
 	if (left > 0) {
 		n = MIN(left, size);
-		memcpy(Curcptr, data, n);
-		Curpage->plen += n;
+		memcpy(buff->curcptr, data, n);
+		curplen(buff) += n;
 		size -= n;
 		data += n;
 		Curmodf = true;
@@ -312,45 +404,45 @@ bool bappend(Byte *data, int size)
 
 	/* Put the rest in new pages */
 	while (size > 0) {
-		struct page *npage = newpage(Curpage);
+		struct page *npage = newpage(buff->curpage);
 		if (!npage)
 			return false;
-		makecur(Curbuff, npage, 0);
+		makecur(buff, npage, 0);
 
 		n = MIN(PSIZE, size);
-		memcpy(Cpstart, data, n);
-		Curpage->plen = n;
+		memcpy(buff->curcptr, data, n);
+		curplen(buff) = n;
 		size -= n;
 		data += n;
 		Curmodf = true;
 	}
 
-	btoend();
+	_btoend(buff);
 	return true;
 }
 
 /* Simple version to start.
  * Can use size / PSIZE + 1 + 1 pages.
  */
-int bindata(Byte *data, int size)
+int _bindata(struct buff *buff, Byte *data, int size)
 {
 	struct page *npage;
 	int copied = 0;
 
-	int n = Curpage->plen - Curchar;
+	int n = curplen(buff) - buff->curchar;
 	if (n > 0) {
 		struct mark *btmark;
 
 		/* Make a new page and move the end of this page to the new page */
-		if (!(npage = newpage(Curpage)))
+		if (!(npage = newpage(buff->curpage)))
 			return 0;
-		memcpy(npage->pdata, Curcptr, n);
+		memcpy(npage->pdata, buff->curcptr, n);
 		npage->plen = n;
 
 #ifdef HAVE_MARKS
 		/* Fix marks that are now in new page */
-		foreach_pagemark(btmark, Curpage)
-			if (btmark->moffset >= Curchar) {
+		foreach_pagemark(btmark, buff->curpage)
+			if (btmark->moffset >= buff->curchar) {
 				btmark->mpage = npage;
 				btmark->moffset -= n;
 			}
@@ -358,17 +450,17 @@ int bindata(Byte *data, int size)
 
 		/* Copy as much as possible to the end of this page */
 		n = MIN(n, size);
-		memcpy(Curcptr, data, n);
+		memcpy(buff->curcptr, data, n);
 		data += n;
 		size -= n;
 		copied += n;
-		Curcptr += n;
-		Curchar += n;
-		Curpage->plen = Curchar;
+		buff->curcptr += n;
+		buff->curchar += n;
+		curplen(buff) = buff->curchar;
 	}
 
 	while (size > 0) {
-		if (!(npage = newpage(Curpage)))
+		if (!(npage = newpage(buff->curpage)))
 			break;
 
 		n = MIN(PSIZE, size);
@@ -377,135 +469,12 @@ int bindata(Byte *data, int size)
 		size -= n;
 		copied += n;
 
-		makecur(Curbuff, npage, n);
+		makecur(buff, npage, n);
 
-		Curpage->plen = n;
+		curplen(buff) = n;
 	}
 
 	return copied;
-}
-
-/* Returns the length of the buffer. */
-unsigned long blength(struct buff *tbuff)
-{
-	struct page *tpage;
-	unsigned long len = 0;
-
-	for (tpage = tbuff->firstp; tpage; tpage = tpage->nextp)
-		len += tpage->plen;
-
-	return len;
-}
-
-/* Return the current position of the point. */
-unsigned long blocation(void)
-{
-	struct page *tpage;
-	unsigned long len = 0;
-
-	for (tpage = Curbuff->firstp; tpage != Curpage; tpage = tpage->nextp)
-		len += tpage->plen;
-
-	return len + Curchar;
-}
-
-#define MAXMOVE		(0x7fff - 1024)
-
-void boffset(unsigned long off)
-{	/* This works even if int is 16 bits */
-	btostart();
-	for (; off > MAXMOVE; off -= MAXMOVE)
-		bmove(MAXMOVE);
-	bmove(off);
-}
-
-void bempty(void)
-{
-	struct mark *btmark;
-
-	makecur(Curbuff, Curbuff->firstp, 0);
-	while (Curpage->nextp)
-		freepage(&Curbuff->firstp, Curpage->nextp);
-#ifdef HAVE_MARKS
-	for (btmark = Mrklist; btmark; btmark = btmark->prev)
-		if (btmark->mpage && btmark->mbuff == Curbuff) {
-			btmark->mpage = Curpage;
-			btmark->moffset = 0;
-		}
-#endif
-	Curpage->plen = Curchar = 0;		/* reset to start of page */
-	Curcptr = Cpstart;
-	Curmodf = true;
-
-	undo_clear(Curbuff);
-	vsetmod(true);
-}
-
-void bswitchto(struct buff *buf)
-{
-	if (buf && buf != Curbuff) {
-		Curbuff = buf;
-		makecur(Curbuff, buf->curpage, buf->curchar);
-	}
-}
-
-
-/* Peek the previous byte */
-Byte bpeek(void)
-{
-	if (Curchar > 0)
-		return *(Curcptr - 1);
-	else if (bisstart())
-		/* Pretend we are at the start of a line.
-		 * Needed for delete-to-eol and step in reg.c. */
-		return '\n';
-	else {
-		Byte ch;
-		bmove(-1);
-		ch = Buff();
-		bmove1();
-		return ch;
-	}
-}
-
-/* Convert the next portion of buffer to integer. Skip leading ws. */
-int batoi(void)
-{
-	int num;
-
-	while (Buff() == ' ' || Buff() == '\t')
-		bmove1();
-	for (num = 0; isdigit(Buff()); bmove1())
-		num = num * 10 + Buff() - '0';
-	return num;
-}
-
-void bgoto_char(long offset)
-{
-	struct page *tpage;
-
-	/* find the correct page */
-	for (tpage = Curbuff->firstp; tpage->nextp; tpage = tpage->nextp)
-		if (tpage->plen >= offset)
-			break;
-		else
-			offset -= tpage->plen;
-
-	makecur(Curbuff, tpage, offset);
-}
-
-void tobegline(void)
-{
-	if (Curchar > 0 && *(Curcptr - 1) == '\n')
-		return;
-	if (bcrsearch('\n'))
-		bmove1();
-}
-
-void toendline(void)
-{
-	if (bcsearch('\n'))
-		bmove(-1);
 }
 
 #ifndef HAVE_THREADS
@@ -578,6 +547,14 @@ bool bdelbuff(struct buff *tbuff)
 	_bdelbuff(tbuff);
 
 	return true;
+}
+
+void bswitchto(struct buff *buf)
+{
+	if (buf && buf != Curbuff) {
+		Curbuff = buf;
+		makecur(Curbuff, buf->curpage, buf->curchar);
+	}
 }
 #endif
 

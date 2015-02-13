@@ -80,6 +80,10 @@ void _bgoto_char(struct buff *buff, unsigned long offset);
 bool _bappend(struct buff *buff, Byte *, int);
 int _bindata(struct buff *buff, Byte *, int);
 
+/* bmsearch.c */
+bool _bm_search(struct buff *buff, const char *str, bool sensitive);
+bool _bm_rsearch(struct buff *buff, const char *str, bool sensitive);
+
 #ifndef HAVE_THREADS
 extern struct buff *Curbuff;
 #define Curpage (Curbuff->curpage)
@@ -114,10 +118,6 @@ void bswitchto(struct buff *);
 /* bfile.c */
 int breadfile(const char *);
 bool bwritefile(char *);
-
-/* bmsearch.c */
-bool bm_search(const char *str, bool sensitive);
-bool bm_rsearch(const char *str, bool sensitive);
 #endif
 
 #ifndef NULL

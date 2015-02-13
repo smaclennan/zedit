@@ -476,9 +476,9 @@ static bool dosearch(void)
 bool bstrsearch(const char *str, bool forward)
 {
 	if (forward)
-		return bm_search(str, Curbuff->bmode & EXACT);
+		return _bm_search(Curbuff, str, Curbuff->bmode & EXACT);
 	else
-		return bm_rsearch(str, Curbuff->bmode & EXACT);
+		return _bm_rsearch(Curbuff, str, Curbuff->bmode & EXACT);
 }
 
 char *nocase(const char *prompt)

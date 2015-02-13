@@ -7,12 +7,14 @@
 
 #define NUMASCII	256			/* number of ascii chars */
 
+#define buff() (*buff->curcptr)
+
 /* This is an implementation of the Boyer-Moore Search.
  * It uses the delta1 only with the fast/slow loops.
  * It searches for the string 'str' starting at the current buffer location.
  * The search will be case insensitive if the buffers current mode is so set.
  */
-bool bm_search(const char *str, bool sensitive)
+bool _bm_search(struct buff *buff, const char *str, bool sensitive)
 {
 	int delta[NUMASCII], len, i, shift;
 
@@ -37,31 +39,31 @@ bool bm_search(const char *str, bool sensitive)
 		}
 
 	/* search forward*/
-	while (!bisend()) {
+	while (!_bisend(buff)) {
 		/* fast loop - delta will be 0 if matched */
-		while (!bisend() && delta[Buff()])
-			bmove(delta[Buff()]);
+		while (!_bisend(buff) && delta[buff()])
+			_bmove(buff, delta[buff()]);
 		/* slow loop */
 		for (i = len;
-			 (char)Buff() == str[i] ||
-				 (!sensitive && tolower(Buff()) == tolower(str[i]));
-			 bmove(-1), --i)
+			 (char)buff() == str[i] ||
+				 (!sensitive && tolower(buff()) == tolower(str[i]));
+			 _bmove(buff, -1), --i)
 			if (i == 0) {
-				bmove(len + 1);
+				_bmove(buff, len + 1);
 				return true;
 			}
 		/* compute shift. shift must be forward! */
-		if (i + delta[Buff()] > len)
-			shift = delta[Buff()];
+		if (i + delta[buff()] > len)
+			shift = delta[buff()];
 		else
 			shift = len - i + 1;
-		bmove(shift);
+		_bmove(buff, shift);
 	}
 
 	return false;
 }
 
-bool bm_rsearch(const char *str, bool sensitive)
+bool _bm_rsearch(struct buff *buff, const char *str, bool sensitive)
 {
 	int delta[NUMASCII], len, i;
 
@@ -83,26 +85,26 @@ bool bm_rsearch(const char *str, bool sensitive)
 		}
 
 	/* reverse search */
-	bmove(-len);
-	while (!bisstart()) {
+	_bmove(buff, -len);
+	while (!_bisstart(buff)) {
 		/* fast loop - delta will be 0 if matched */
-		while (delta[Buff()] && !bisstart())
-			bmove(delta[Buff()]);
+		while (delta[buff()] && !_bisstart(buff))
+			_bmove(buff, delta[buff()]);
 		/* slow loop */
 		for (i = 0;
 			 i <= len &&
-				 ((char)Buff() == str[i] ||
+				 ((char)buff() == str[i] ||
 				  (!sensitive &&
-				   tolower(Buff()) == tolower(str[i])));
-			 ++i, bmove1())
+				   tolower(buff()) == tolower(str[i])));
+			 ++i, _bmove1(buff))
 			;
 		if (i > len) {
 			/* we matched! */
-			bmove(-len - 1);
+			_bmove(buff, -len - 1);
 			return true;
 		}
 		/* compute shift. shift must be backward! */
-		bmove(delta[Buff()] + i < 0 ? delta[Buff()] : -i - 1);
+		_bmove(buff, delta[buff()] + i < 0 ? delta[buff()] : -i - 1);
 	}
 
 	return false;

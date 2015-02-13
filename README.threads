@@ -34,6 +34,5 @@ So the following calls are thread safe:
  * _bappend
  * _bindata
 
-I plan on adding the bmsearch functions next then tackle the mark
-code.
-
+ * _bm_search
+ * _bm_rsearch

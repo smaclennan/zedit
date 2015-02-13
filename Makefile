@@ -81,7 +81,7 @@ main: main.c buff.c bmsearch.c
 mmain: main.c buff.c bmsearch.c reg.c mark.c
 	$(QUIET_LINK)$(CC) -DHAVE_MARKS -g -o $@ $+
 
-tsmain: tsmain.c buff.c
+tsmain: tsmain.c buff.c bmsearch.c
 	$(QUIET_LINK)$(CC) -DHAVE_THREADS -g -o $@ $+
 
 # Make all c files depend on all .h files

@@ -35,7 +35,7 @@ Byte Keys[] = {
 	ZEND_OF_LINE,		/* C-E */
 	ZNEXT_CHAR,		/* C-F */
 	ZABORT,			/* C-G */
-	ZHELP,			/* C-H */
+	ZDELETE_PREVIOUS_CHAR,			/* C-H */
 	ZTAB,			/* C-I */
 	ZC_INDENT,		/* C-J */
 	ZDELETE_TO_EOL,		/* C-K */

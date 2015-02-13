@@ -51,11 +51,6 @@ void bmrktopnt(struct mark *);
 void bpnttomrk(struct mark *);
 void bswappnt(struct mark *);
 
-int bcopyrgn(struct mark *, struct buff*);
-void bdeltomrk(struct mark *);
-
-unsigned long bline(void);
-
 /* reg.c - requires marks */
 int compile(Byte*, Byte*, Byte*);
 bool step(Byte *, struct mark *REstart);

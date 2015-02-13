@@ -19,6 +19,8 @@
 
 #include "z.h"
 
+#include "page.h" /* for bcopyrgn */
+
 
 static struct buff *Killbuff;
 
@@ -45,6 +47,95 @@ static void copytomrk(struct mark *tmark)
 		bempty();
 	bswitchto(save);
 	bcopyrgn(tmark, Killbuff);
+}
+
+/* Copy from Point to tmark to tbuff. Returns number of bytes
+ * copied. Caller must handle undo. */
+int bcopyrgn(struct mark *tmark, struct buff *tbuff)
+{
+	struct buff *sbuff;
+	struct mark *ltmrk, *btmrk;
+	bool flip;
+	int  srclen, dstlen;
+#ifdef DOS_EMS
+	Byte spnt[PSIZE];
+#else
+	Byte *spnt;
+#endif
+	int copied = 0;
+
+	if (tbuff == Curbuff)
+		return 0;
+
+	flip = bisaftermrk(tmark);
+	if (flip)
+		bswappnt(tmark);
+
+	if (!(ltmrk = bcremrk()))
+		return 0;
+
+	sbuff = Curbuff;
+	while (bisbeforemrk(tmark)) {
+		if (Curpage == tmark->mpage)
+			srclen = tmark->moffset - Curchar;
+		else
+			srclen = Curpage->plen - Curchar;
+		Curmodf = true;
+#ifdef DOS_EMS
+		memcpy(spnt, Curcptr, srclen);
+#else
+		spnt = Curcptr;
+#endif
+
+		bswitchto(tbuff);
+		dstlen = PSIZE - Curpage->plen;
+		if (dstlen == 0) {
+			if (bpagesplit(Curbuff))
+				dstlen = PSIZE - Curpage->plen;
+			else {
+				bswitchto(sbuff);
+				break;
+			}
+		}
+		if (srclen < dstlen)
+			dstlen = srclen;
+		/* Make a gap */
+		memmove(Curcptr + dstlen, Curcptr, Curpage->plen - Curchar);
+		/* and fill it in */
+		memmove(Curcptr, spnt, dstlen);
+		Curpage->plen += dstlen;
+		copied += dstlen;
+		for (btmrk = Mrklist; btmrk; btmrk = btmrk->prev)
+			if (btmrk->mpage == Curpage &&
+				btmrk->moffset > Curchar)
+					btmrk->moffset += dstlen;
+		makeoffset(Curbuff, Curchar + dstlen);
+		vsetmod(false);
+		Curmodf = true;
+		Curbuff->bmodf = true;
+		bswitchto(sbuff);
+		bmove(dstlen);
+	}
+
+	bpnttomrk(ltmrk);
+	unmark(ltmrk);
+
+	if (flip)
+		bswappnt(tmark);
+
+	return copied;
+}
+
+/* Delete from the point to the Mark. */
+void bdeltomrk(struct mark *tmark)
+{
+	if (bisaftermrk(tmark))
+		bswappnt(tmark);
+	while (bisbeforemrk(tmark))
+		if (Curpage == tmark->mpage)
+			bdelete(tmark->moffset - Curchar);
+		else
+			bdelete(Curpage->plen - Curchar);
 }
 
 void killtomrk(struct mark *tmark)

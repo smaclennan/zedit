@@ -370,6 +370,20 @@ void Zprevious_paragraph(void)
 
 /* MISC COMMANDS */
 
+/* Return the current line of the point. */
+unsigned long bline(void)
+{
+	struct mark tmark;
+	unsigned long line = 1;
+
+	bmrktopnt(&tmark);
+	btostart();
+	while (bcsearch('\n') && !bisaftermrk(&tmark))
+		++line;
+	bpnttomrk(&tmark);
+	return line;
+}
+
 void Zposition(void)
 {
 	unsigned long mark, point = blocation(Curbuff);

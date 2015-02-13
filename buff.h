@@ -94,8 +94,6 @@ void bswitchto(struct buff *);
 void btoend(void);
 void btostart(void);
 bool bwritefile(char *);
-void makecur(struct page *);
-void makeoffset(int);
 
 void tobegline(void);
 void toendline(void);
@@ -108,6 +106,9 @@ bool bmove(int);
 void bmove1(void);
 void boffset(unsigned long off);
 
+/* These should be called from buffer/mark code only */
+void makecur(struct buff *buff, struct page *, int);
+#define makeoffset(buff, dist) makecur((buff), (buff)->curpage, (dist))
 
 /* bmsearch.c */
 bool bm_search(const char *str, bool sensitive);

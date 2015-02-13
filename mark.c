@@ -161,8 +161,7 @@ void bpnttomrk(struct mark *tmark)
 	if (tmark->mpage) {
 		if (tmark->mbuff != Curbuff)
 			bswitchto(tmark->mbuff);
-		makecur(tmark->mpage);
-		makeoffset(tmark->moffset);
+		makecur(Curbuff, tmark->mpage, tmark->moffset);
 	}
 }
 
@@ -254,7 +253,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 			if (btmrk->mpage == Curpage &&
 				btmrk->moffset > Curchar)
 					btmrk->moffset += dstlen;
-		makeoffset(Curchar + dstlen);
+		makeoffset(Curbuff, Curchar + dstlen);
 		vsetmod(false);
 		Curmodf = true;
 		Curbuff->bmodf = true;

@@ -218,7 +218,7 @@ bool bappend(Byte *data, int size)
 		struct page *npage = newpage(Curpage);
 		if (!npage)
 			return false;
-		makecur(npage);
+		makecur(Curbuff, npage, 0);
 
 		n = MIN(PSIZE, size);
 		memcpy(Cpstart, data, n);
@@ -265,7 +265,8 @@ int bindata(Byte *data, int size)
 		data += n;
 		size -= n;
 		copied += n;
-		makeoffset(Curchar + n);
+		Curcptr += n;
+		Curchar += n;
 		Curpage->plen = Curchar;
 	}
 
@@ -279,8 +280,7 @@ int bindata(Byte *data, int size)
 		size -= n;
 		copied += n;
 
-		makecur(npage);
-		makeoffset(n);
+		makecur(Curbuff, npage, n);
 
 		Curpage->plen = n;
 	}
@@ -352,8 +352,7 @@ void bdelete(int quantity)
 				}
 #endif
 		}
-		makecur(tpage);
-		makeoffset(noffset);
+		makecur(Curbuff, tpage, noffset);
 	}
 	vsetmod(true);
 }
@@ -365,11 +364,12 @@ bool bcrsearch(Byte what)
 			if (Curpage == Curbuff->firstp)
 				return false;
 			else {
-				makecur(Curpage->prevp);
-				makeoffset(Curpage->plen - 1);
+				makecur(Curbuff, Curpage->prevp, Curpage->plen - 1);
 			}
-		else
-			makeoffset(Curchar - 1);
+		else {
+			--Curchar;
+			--Curcptr;
+		}
 		if (*Curcptr == what)
 			return true;
 	}
@@ -384,14 +384,12 @@ bool bcsearch(Byte what)
 
 	while ((n = (Byte *)memchr(Curcptr, what, Curpage->plen - Curchar)) == NULL)
 		if (lastp(Curpage)) {
-			makeoffset(Curpage->plen);
+			makeoffset(Curbuff, Curpage->plen);
 			return false;
-		} else {
-			makecur(Curpage->nextp);
-			makeoffset(0);
-		}
+		} else
+			makecur(Curbuff, Curpage->nextp, 0);
 
-	makeoffset(n - Cpstart);
+	makeoffset(Curbuff, n - Cpstart);
 	bmove1();
 	return true;
 }
@@ -399,14 +397,11 @@ bool bcsearch(Byte what)
 /* Returns the length of the buffer. */
 unsigned long blength(struct buff *tbuff)
 {
-	struct page *tpage, *spage = Curpage;
+	struct page *tpage;
 	unsigned long len = 0;
 
-	for (tpage = tbuff->firstp; tpage; tpage = tpage->nextp) {
-		makecur(tpage);
+	for (tpage = tbuff->firstp; tpage; tpage = tpage->nextp)
 		len += tpage->plen;
-	}
-	makecur(spage);
 
 	return len;
 }
@@ -414,14 +409,12 @@ unsigned long blength(struct buff *tbuff)
 /* Return the current position of the point. */
 unsigned long blocation(void)
 {
-	struct page *tpage, *spage = Curpage;
+	struct page *tpage;
 	unsigned long len = 0;
 
-	for (tpage = Curbuff->firstp; tpage != spage; tpage = tpage->nextp) {
-		makecur(tpage);
+	for (tpage = Curbuff->firstp; tpage != Curpage; tpage = tpage->nextp)
 		len += tpage->plen;
-	}
-	makecur(spage);
+
 	return len + Curchar;
 }
 
@@ -456,22 +449,18 @@ bool bmove(int dist)
 		if (dist < 0) { /* goto previous page */
 			if (Curpage == Curbuff->firstp) {
 				/* past start of buffer */
-				makeoffset(0);
+				makeoffset(Curbuff, 0);
 				return false;
 			}
-			makecur(Curpage->prevp);
-			Curchar = Curpage->plen; /* makeoffset curplen */
-			Curcptr = Cpstart + Curpage->plen;
+			makecur(Curbuff, Curpage->prevp, Curpage->plen);
 		} else {	/* goto next page */
 			if (lastp(Curpage)) {
 				/* past end of buffer */
-				makeoffset(Curpage->plen);
+				makeoffset(Curbuff, Curpage->plen);
 				return false;
 			}
 			dist -= Curpage->plen; /* must use this curplen */
-			makecur(Curpage->nextp);
-			Curchar = 0; /* makeoffset 0 */
-			Curcptr = Cpstart;
+			makecur(Curbuff, Curpage->nextp, 0);
 		}
 	}
 	return true;
@@ -484,9 +473,7 @@ void bmove1(void)
 		++Curcptr;
 	else if (Curpage->nextp) {
 		/* goto start of next page */
-		makecur(Curpage->nextp);
-		Curchar = 0;
-		Curcptr = Cpstart;
+		makecur(Curbuff, Curpage->nextp, 0);
 	} else {
 		/* At EOB */
 		Curchar = Curpage->plen;
@@ -498,7 +485,7 @@ void bempty(void)
 {
 	struct mark *btmark;
 
-	makecur(Curbuff->firstp);
+	makecur(Curbuff, Curbuff->firstp, 0);
 	while (Curpage->nextp)
 		freepage(&Curbuff->firstp, Curpage->nextp);
 #ifdef HAVE_MARKS
@@ -520,8 +507,7 @@ void bswitchto(struct buff *buf)
 {
 	if (buf && buf != Curbuff) {
 		Curbuff = buf;
-		makecur(buf->curpage);
-		makeoffset(buf->curchar);
+		makecur(Curbuff, buf->curpage, buf->curchar);
 	}
 }
 
@@ -533,17 +519,16 @@ void btoend(void)
 		struct page *lastp;
 
 		for (lastp = Curpage->nextp; lastp->nextp; lastp = lastp->nextp) ;
-		makecur(lastp);
-	}
-	makeoffset(Curpage->plen);
+		makecur(Curbuff, lastp, lastp->plen);
+	} else
+		makecur(Curbuff, Curpage, Curpage->plen);
 }
 
 
 /* Set the point to the start of the buffer. */
 void btostart(void)
 {
-	makecur(Curbuff->firstp);
-	makeoffset(0);
+	makecur(Curbuff, Curbuff->firstp, 0);
 }
 
 static void crfixup(void)
@@ -614,8 +599,7 @@ int breadfile(const char *fname)
 				bclose(fd);
 				return ENOMEM;
 			}
-			makecur(Curpage->nextp);
-			makeoffset(0);
+			makecur(Curbuff, Curpage->nextp, 0);
 		}
 		memcpy(Curcptr, buf, len);
 		Curcptr += len;
@@ -660,34 +644,36 @@ static bool bwritegzip(int fd)
 
 static bool bwritefd(int fd)
 {
-	struct page *cur = Curpage;
+	struct mark smark;
 	struct page *tpage;
 	int n, status = true;
 
+	bmrktopnt(&smark);
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
-			makecur(tpage); /* DOS_EMS requires */
+			makecur(Curbuff, tpage, 0); /* DOS_EMS requires */
 			n = write(fd, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
 		}
 
 	close(fd);
 
-	makecur(cur);
+	bpnttomrk(&smark);
 	return status;
 }
 
 static bool bwritedos(int fd)
 {
-	struct page *cur = Curpage;
+	struct mark smark;
 	struct page *tpage;
 	int i, n, status = true;
 	Byte buf[PSIZE * 2], *p;
 
+	bmrktopnt(&smark);
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int len = tpage->plen;
-			makecur(tpage); /* DOS_EMS requires */
+			makecur(Curbuff, tpage, 0); /* DOS_EMS requires */
 			p = buf;
 			for (i = 0; i < tpage->plen; ++i) {
 				if (tpage->pdata[i] == '\n') {
@@ -703,7 +689,7 @@ static bool bwritedos(int fd)
 
 	close(fd);
 
-	makecur(cur);
+	bpnttomrk(&smark);
 	return status;
 }
 
@@ -763,23 +749,19 @@ bool bwritefile(char *fname)
 	return status;
 }
 
-/* Make page current*/
-void makecur(struct page *page)
+/* Make page current at dist */
+void makecur(struct buff *buff, struct page *page, int dist)
 {
-	if (Curpage != page) {
+	if (buff->curpage != page) {
 #ifdef DOS_EMS
 		ems_makecur(page, Curmodf);
 #endif
-		Curpage = page;
 		Curmodf = false;
+		buff->curpage = page;
 	}
-}
 
-/* Make the point be dist chars into the page. */
-void makeoffset(int dist)
-{
-	Curchar = dist;
-	Curcptr = Cpstart + dist;
+	buff->curchar = dist;
+	buff->curcptr = page->pdata + dist;
 }
 
 bool bisend(void)
@@ -828,8 +810,7 @@ void bgoto_char(long offset)
 		else
 			offset -= tpage->plen;
 
-	makecur(tpage);
-	makeoffset(offset);
+	makecur(Curbuff, tpage, offset);
 }
 
 void tobegline(void)
@@ -928,11 +909,9 @@ bool bpagesplit(struct buff *buff)
 			btmark->moffset -= HALFP;
 		}
 #endif
-	if (buff->curchar >= HALFP) {
+	if (buff->curchar >= HALFP)
 		/* new page has Point in it */
-		makecur(newp);
-		makeoffset(buff->curchar - HALFP);
-	}
+		makecur(Curbuff, newp, buff->curchar - HALFP);
 	Curmodf = true;
 	return true;
 }

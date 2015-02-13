@@ -76,14 +76,16 @@ bool bdelbuff(struct buff *);
 
 #ifdef THREAD_SAFE
 #define binsert _binsert
+#define bdelete _bdelete
 #else
 #define binsert(c) _binsert(Curbuff, (c))
+#define bdelete(n) _bdelete(Curbuff, (n))
 #endif
 bool _binsert(struct buff *, Byte);
+void _bdelete(struct buff *, int);
 
 bool bcrsearch(Byte);
 bool bcsearch(Byte);
-void bdelete(int);
 void bempty(void);
 void bgoto_char(long offset);
 bool bappend(Byte *, int);

@@ -289,18 +289,15 @@ int bindata(Byte *data, int size)
 }
 
 /* Delete quantity characters. */
-void bdelete(int quantity)
+void _bdelete(struct buff *buff, int quantity)
 {
 	int quan, noffset;
-	struct page *tpage;
+	struct page *tpage, *curpage = buff->curpage;
 	struct mark *tmark;
 
 	while (quantity) {
 		/* Delete as many characters as possible from this page */
-		if (Curchar + quantity > Curpage->plen)
-			quan = Curpage->plen - Curchar;
-		else
-			quan = quantity;
+		quan = MIN(curpage->plen - buff->curchar, quantity);
 		if (quan < 0)
 			quan = 0; /* May need to switch pages */
 
@@ -308,42 +305,41 @@ void bdelete(int quantity)
 		undo_del(quan);
 #endif
 
-		Curpage->plen -= quan;
+		curpage->plen -= quan;
 
-		memmove(Curcptr, Curcptr + quan, Curpage->plen - Curchar);
-		if (lastp(Curpage))
+		memmove(buff->curcptr, buff->curcptr + quan, curpage->plen - buff->curchar);
+		if (lastp(curpage))
 			quantity = 0;
 		else
 			quantity -= quan;
-		Curbuff->bmodf = true;
+		buff->bmodf = true;
 		Curmodf = true;
-		if (Curpage->plen == 0 && (Curpage->nextp || Curpage->prevp)) {
+		if (curpage->plen == 0 && (curpage->nextp || curpage->prevp)) {
 			/* We deleted entire page. */
-			tpage = Curpage->nextp;
+			tpage = curpage->nextp;
 			noffset = 0;
 			if (tpage == NULL) {
-				tpage = Curpage->prevp;
+				tpage = curpage->prevp;
 				noffset = tpage->plen;
 			}
 #ifdef HAVE_MARKS
-			foreach_pagemark(tmark, Curpage) {
+			foreach_pagemark(tmark, curpage) {
 				tmark->mpage = tpage;
 				tmark->moffset = noffset;
 			}
 #endif
-			freepage(&Curbuff->firstp, Curpage);
-			Curpage = NULL;
+			freepage(&buff->firstp, curpage);
 		} else {
-			tpage = Curpage;
-			noffset = Curchar;
-			if ((noffset >= Curpage->plen) && Curpage->nextp) {
-				tpage = Curpage->nextp;
+			tpage = curpage;
+			noffset = buff->curchar;
+			if ((noffset >= curpage->plen) && curpage->nextp) {
+				tpage = curpage->nextp;
 				noffset = 0;
 			}
 #ifdef HAVE_MARKS
-			foreach_pagemark(tmark, Curpage)
-				if (tmark->moffset >= Curchar) {
-					if (tmark->moffset >= Curchar + quan)
+			foreach_pagemark(tmark, curpage)
+				if (tmark->moffset >= buff->curchar) {
+					if (tmark->moffset >= buff->curchar + quan)
 						tmark->moffset -= quan;
 					else {
 						tmark->mpage = tpage;
@@ -352,7 +348,7 @@ void bdelete(int quantity)
 				}
 #endif
 		}
-		makecur(Curbuff, tpage, noffset);
+		makecur(buff, tpage, noffset);
 	}
 	vsetmod(true);
 }

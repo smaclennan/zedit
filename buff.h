@@ -64,6 +64,7 @@ extern bool Curmodf;
 #define Curpage (Curbuff->curpage)
 #define Curchar (Curbuff->curchar)
 #define Curcptr (Curbuff->curcptr)
+#define Cpstart (Curbuff->curpage->pdata)
 
 /* This is used a lot */
 #define curplen(b) ((b)->curpage->plen)
@@ -106,9 +107,7 @@ void bgoto_char(long offset);
 bool bappend(Byte *, int);
 unsigned long blength(struct buff *);
 unsigned long blocation(void);
-int breadfile(const char *);
 void bswitchto(struct buff *);
-bool bwritefile(char *);
 
 void tobegline(void);
 void toendline(void);
@@ -117,6 +116,10 @@ Byte bpeek(void);
 int batoi(void);
 
 void boffset(unsigned long off);
+
+/* bfile.c */
+int breadfile(const char *);
+bool bwritefile(char *);
 
 /* bmsearch.c */
 bool bm_search(const char *str, bool sensitive);

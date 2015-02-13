@@ -33,7 +33,7 @@ LIBS += -ldl
 
 ETAGS=`which etags || echo true`
 
-CFILES = bcmds.c bind.c buff.c calc.c cnames.c \
+CFILES = bcmds.c bind.c buff.c bfile.c calc.c cnames.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	reg.c shell.c spell.c srch.c tags.c term.c mark.c \

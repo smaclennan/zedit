@@ -41,6 +41,7 @@ struct page {
 
 #define lastp(pg) ((pg)->nextp == NULL)
 
+struct page *newpage(struct page *curpage);
 bool bpagesplit(struct buff *buff);
 
 #endif

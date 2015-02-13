@@ -1,0 +1,39 @@
+The core buffer routines in buff.c are now partially thread safe. If
+you only access the buffer in one thread at a time, then they are
+safe. However buffers cannot be shared between threads without some
+form of external locking.
+
+What you do lose from buff.c is the buffer list and memory cleanup at
+exit. I don't think the buffer list has much meaning in a
+threaded environment.
+
+You also currently lose marks. We will need to lock the
+Mrklist. Currently there are no locks in any of the buffer code.
+
+So the following calls are thread safe:
+
+ * _bcreate
+ * _bdelbuff
+ * _binsert
+ * _bdelete
+ * _bmove
+ * _bmove1
+ * _bisstart
+ * _bisend
+ * _btostart
+ * _btoend
+ * _tobegline
+ * _toendline
+ * _blength
+ * _blocation
+ * _bcsearch
+ * _bcrsearch
+ * _bempty
+ * _bpeek
+ * _bgoto_char
+ * _bappend
+ * _bindata
+
+I plan on adding the bmsearch functions next then tackle the mark
+code.
+

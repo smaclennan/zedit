@@ -80,9 +80,7 @@ void _bgoto_char(struct buff *buff, unsigned long offset);
 bool _bappend(struct buff *buff, Byte *, int);
 int _bindata(struct buff *buff, Byte *, int);
 
-
 #ifndef HAVE_THREADS
-
 extern struct buff *Curbuff;
 #define Curpage (Curbuff->curpage)
 #define Curchar (Curbuff->curchar)

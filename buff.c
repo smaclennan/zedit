@@ -230,7 +230,7 @@ void _bmove1(struct buff *buff)
 		makecur(buff, buff->curpage->nextp, 0);
 	else
 		/* Already at EOB */
-		--buff->curchar;
+		makeoffset(buff, curplen(buff));
 }
 
 bool _bisstart(struct buff *buff)

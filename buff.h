@@ -45,7 +45,7 @@ struct buff {
 	struct page *curpage;		/* the position of the point */
 	unsigned curchar;
 	Byte *curcptr;
-#ifdef HAVE_MARKS
+#if defined(HAVE_MARKS) && !defined(HAVE_GLOBAL_MARKS)
 	struct mark *marks;			/* buffer marks */
 #endif
 #ifdef HAVE_FILES

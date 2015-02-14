@@ -68,21 +68,21 @@ int compile(Byte*, Byte*, Byte*);
 bool step(struct buff *, Byte *, struct mark *REstart);
 const char *regerr(int);
 
+#ifdef HAVE_GLOBAL_MARKS
+#define foreach_pagemark(buff, mark, page)				   \
+	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
+		if ((mark)->mpage == (page))
+
+#define foreach_buffmark(buff, mark)				   \
+	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
+		if ((mark)->mbuff == (buff))
+#else
 #define foreach_pagemark(buff, mark, page)						 \
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	 \
 		if ((mark)->mpage == (page))
 
 #define foreach_buffmark(buff, mark)							\
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)
-
-#ifdef HAVE_GLOBAL_MARKS
-#define foreach_globalpagemark(mark, page) \
-	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
-		if ((mark)->mpage == (page))
-
-#define foreach_globalbuffmark(buff, mark)				   \
-	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
-		if ((mark)->mbuff == (buff))
 #endif
 
 #endif /* _mark_h */

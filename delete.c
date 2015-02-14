@@ -108,9 +108,6 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		foreach_pagemark(Curbuff, btmrk, Curpage)
 			if (btmrk->moffset > Curchar)
 					btmrk->moffset += dstlen;
-		foreach_globalpagemark(btmrk, Curpage)
-			if (btmrk->moffset > Curchar)
-					btmrk->moffset += dstlen;
 		makeoffset(Curbuff, Curchar + dstlen);
 		vsetmod(false);
 		Curmodf = true;

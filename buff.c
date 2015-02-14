@@ -87,7 +87,7 @@ void _bdelbuff(struct buff *tbuff)
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(&tbuff->firstp, tbuff->firstp);
 
-#ifdef HAVE_MARKS
+#if defined(HAVE_MARKS) && !defined(HAVE_GLOBAL_MARKS)
 	while (tbuff->marks) /* delete the marks */
 		unmark(tbuff->marks);
 #endif
@@ -117,11 +117,6 @@ bool _binsert(struct buff *buff, Byte byte)
 	foreach_pagemark(buff, btmark, buff->curpage)
 		if (btmark->moffset >= buff->curchar)
 			++(btmark->moffset);
-#ifdef HAVE_GLOBAL_MARKS
-	foreach_globalpagemark(btmark, buff->curpage)
-		if (btmark->moffset >= buff->curchar)
-			++(btmark->moffset);
-#endif
 #endif
 
 	vsetmod(false);
@@ -167,12 +162,6 @@ void _bdelete(struct buff *buff, int quantity)
 				tmark->mpage = tpage;
 				tmark->moffset = noffset;
 			}
-#ifdef HAVE_GLOBAL_MARKS
-			foreach_globalpagemark(tmark, curpage) {
-				tmark->mpage = tpage;
-				tmark->moffset = noffset;
-			}
-#endif
 #endif
 			freepage(&buff->firstp, curpage);
 		} else {
@@ -192,17 +181,6 @@ void _bdelete(struct buff *buff, int quantity)
 						tmark->moffset = noffset;
 					}
 				}
-#ifdef HAVE_GLOBAL_MARKS
-			foreach_globalpagemark(tmark, curpage)
-				if (tmark->moffset >= buff->curchar) {
-					if (tmark->moffset >= buff->curchar + quan)
-						tmark->moffset -= quan;
-					else {
-						tmark->mpage = tpage;
-						tmark->moffset = noffset;
-					}
-				}
-#endif
 #endif
 		}
 		makecur(buff, tpage, noffset);
@@ -378,13 +356,6 @@ void _bempty(struct buff *buff)
 			btmark->mpage = buff->firstp;
 			btmark->moffset = 0;
 		}
-#ifdef HAVE_GLOBAL_MARKS
-	foreach_globalbuffmark(buff, btmark)
-		if (btmark->mpage) {
-			btmark->mpage = buff->firstp;
-			btmark->moffset = 0;
-		}
-#endif
 #endif
 
 	undo_clear(buff);
@@ -482,13 +453,6 @@ int _bindata(struct buff *buff, Byte *data, int size)
 				btmark->mpage = npage;
 				btmark->moffset -= n;
 			}
-#ifdef HAVE_GLOBAL_MARKS
-		foreach_globalpagemark(btmark, buff->curpage)
-			if (btmark->moffset >= buff->curchar) {
-				btmark->mpage = npage;
-				btmark->moffset -= n;
-			}
-#endif
 #endif
 
 		/* Copy as much as possible to the end of this page */
@@ -696,13 +660,6 @@ bool bpagesplit(struct buff *buff)
 			btmark->mpage = newp;
 			btmark->moffset -= HALFP;
 		}
-#ifdef HAVE_GLOBAL_MARKS
-	foreach_globalpagemark(btmark, buff->curpage)
-		if (btmark->moffset >= HALFP) {
-			btmark->mpage = newp;
-			btmark->moffset -= HALFP;
-		}
-#endif
 #endif
 
 	if (buff->curchar >= HALFP)

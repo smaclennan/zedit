@@ -222,11 +222,6 @@ int main(int argc, char **argv)
 	tinit();
 	fd_init();
 
-	Sstart	= zcreatemrk();
-	Psstart	= zcreatemrk();
-	Send	= zcreatemrk();
-	Sendp	= false;
-
 	for (; optind < argc; ++optind, ++files)
 		if (pathfixup(path, argv[optind]) == 0)
 			if (findfile(path) && !tbuff)

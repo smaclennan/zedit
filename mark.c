@@ -12,6 +12,7 @@
 
 #ifdef HAVE_GLOBAL_MARKS
 struct mark *Marklist;	/* the marks list tail */
+static struct mark *mhead;
 #endif
 
 int NumMarks;
@@ -22,14 +23,28 @@ static struct mark *freemark;
 
 static void mfini(void)
 {
+#ifdef HAVE_GLOBAL_MARKS
+	if (mhead) {
+		if (mhead->next)
+			mhead->next->prev = NULL;
+		else
+			Marklist = NULL;
+	}
+
+	while (Marklist)
+		unmark(Marklist);
+#endif
+
 	if (freemark)
-		free(freemark);
+		free(freemark); /* don't unmark */
+
 }
 
 void minit(struct mark *preallocated)
 {
 #ifdef HAVE_GLOBAL_MARKS
 	Marklist = preallocated;
+	mhead = preallocated;
 #endif
 	atexit(mfini);
 }
@@ -59,7 +74,7 @@ struct mark *_bcremrk(struct buff *buff)
 		_bmrktopnt(buff, mrk);
 		mrk->prev = *head; /* add to end of list */
 		mrk->next = NULL;
-		if (*head) *head = mrk;
+		if (*head) (*head)->next = mrk;
 		*head = mrk;
 		++NumMarks;
 	}

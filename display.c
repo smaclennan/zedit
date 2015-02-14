@@ -364,9 +364,9 @@ static int innerdsp(int from, int to, struct mark *pmark)
 void reframe(void)
 {
 	int cnt;
-	struct mark *pmark;
+	struct mark pmark;
 
-	pmark = zcreatemrk();
+	bmrktopnt(&pmark);
 	for (cnt = prefline(); cnt > 0 && bcrsearch(NL); --cnt)
 			cnt -= bgetcol(true, 0) / Colmax;
 	if (cnt < 0)
@@ -377,8 +377,7 @@ void reframe(void)
 	bmove(-1);
 	bmrktopnt(Psstart);
 	Sendp = false;
-	bpnttomrk(pmark);
-	unmark(pmark);
+	bpnttomrk(&pmark);
 }
 
 /* Redraw the modeline except for flags. */

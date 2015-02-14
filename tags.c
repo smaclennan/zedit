@@ -112,7 +112,7 @@ static bool find_tag(char *word)
 
 	bswitchto(buff);
 	btostart();
-	if (!step(ebuf, NULL))
+	if (!step(Curbuff, ebuf, NULL))
 		goto failed;
 
 	offset = batoi();

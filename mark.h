@@ -65,7 +65,7 @@ bool mrkbeforemrk(struct mark *, struct mark *);
 
 /* reg.c - requires marks */
 int compile(Byte*, Byte*, Byte*);
-bool step(Byte *, struct mark *REstart);
+bool step(struct buff *, Byte *, struct mark *REstart);
 const char *regerr(int);
 
 #define foreach_pagemark(buff, mark, page)						 \

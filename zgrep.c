@@ -35,7 +35,7 @@ static void grep_one(char *fname, Byte *ebuf,
 	if (zreadfile(fname))
 		return;
 
-	while (step(ebuf, NULL)) {
+	while (step(Curbuff, ebuf, NULL)) {
 		struct mark *start;
 		unsigned long line = bline();
 

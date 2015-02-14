@@ -285,7 +285,7 @@ static void promptreplace(int type)
 static bool next_replace(Byte *ebuf, struct mark *REstart, int type)
 {
 	if (type == REGEXP)
-		return step(ebuf, REstart);
+		return step(Curbuff, ebuf, REstart);
 
 	if (bstrsearch(olds, FORWARD)) {
 		bmove(-(int)strlen(olds));
@@ -456,7 +456,7 @@ static bool dosearch(void)
 			error(regerr(rc));
 		else
 			while (Arg-- > 0)
-				if (step(ebuf, NULL)) {
+				if (step(Curbuff, ebuf, NULL)) {
 					bmrktopnt(&fmark);
 					++fcnt;
 				} else

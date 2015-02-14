@@ -19,6 +19,22 @@
 
 #include "z.h"
 
+/* This is cleared indirectly in Zgrep/cmdtobuff via set_shell_mark()
+ * and set in Znexterror.  If clear, the make buffer is scrolled
+ * up. Once a next error is called, the buffer is kept at the error
+ * line.
+ */
+static int NexterrorCalled;
+static struct mark *shell_mark;
+
+void set_shell_mark(void)
+{
+	NexterrorCalled = 0;
+	if (!shell_mark)
+		shell_mark = zcreatemrk();
+	else
+		bmrktopnt(shell_mark);
+}
 
 /* Convert the next portion of buffer to integer. Skip leading ws. */
 int batoi(void)
@@ -76,9 +92,7 @@ static int in_pipe = -1;	/* the pipe */
  *		signals to sigchild. We wait until the checkpipes routine. If we
  *		do it here, the system seems to send us infinite SIGCLDs.
  */
-static void sigchild(int signo)
-{
-}
+static void sigchild(int signo) {}
 
 void siginit(void)
 {
@@ -192,7 +206,7 @@ static char *wordit(char **str)
 /* Invoke 'cmd' on a pipe.
  * Returns true if the invocation succeeded.
 */
-static bool dopipe(struct buff *tbuff, const char *icmd)
+static bool _cmdtobuff(struct buff *tbuff, const char *icmd)
 {
 	char cmd[STRMAX + 1], *p, *argv[11];
 	int from[2], arg;
@@ -245,20 +259,6 @@ bool unvoke(struct buff *buff)
 	return true;
 }
 
-static void cmdtobuff(const char *bname, const char *cmd)
-{
-	struct wdo *save = Curwdo;
-
-	if (wuseother(bname)) {
-		set_umark(NULL);
-		do_chdir(Curbuff);
-		if (dopipe(Curbuff, cmd))
-			message(Curbuff, cmd);
-
-		wswitchto(save);
-	}
-}
-
 void Zkill(void)
 {
 	if (!unvoke(NULL))
@@ -270,11 +270,10 @@ bool unvoke(struct buff *child) { ((void)child); return false; }
 void checkpipes(int type) { ((void)type); }
 
 #if DOPOPEN
-static void cmdtobuff(const char *bname, const char *cmdin)
+static void _cmdtobuff(struct buff *buff, const char *cmdin)
 {
 	FILE *pfp;
 	int rc;
-	struct wdo *save = Curwdo;
 	char cmd[PATHMAX], line[STRMAX];
 	snprintf(cmd, sizeof(cmd), "%s 2>&1", cmdin);
 
@@ -284,15 +283,10 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 		return;
 	}
 
-	do_chdir(Curbuff);
-	if (wuseother(bname)) {
-		set_umark(NULL);
-		message(Curbuff, cmdin);
-		putpaw("Please wait...");
-		while (fgets(line, sizeof(line), pfp)) {
-			binstr(line);
-			zrefresh();
-		}
+	putpaw("Please wait...");
+	while (fgets(line, sizeof(line), pfp)) {
+		binstr(line);
+		zrefresh();
 	}
 
 	rc = pclose(pfp) >> 8;
@@ -301,13 +295,11 @@ static void cmdtobuff(const char *bname, const char *cmdin)
 		putpaw("Done.");
 	} else
 		putpaw("Returned %d", rc);
-	wswitchto(save);
 }
-#else
-static void cmdtobuff(const char *bname, const char *cmd)
+#elif defined(DOS)
+static void _cmdtobuff(struct buff *buff, const char *cmd)
 {
 	int fd, rc;
-	struct wdo *save = Curwdo;
 
 	fd = open("__zsh__.out", O_WRONLY|O_CREAT|O_TRUNC, 0666);
 	if (fd < 0) {
@@ -317,29 +309,39 @@ static void cmdtobuff(const char *bname, const char *cmd)
 	dup2(fd, 1);
 	dup2(1, 2);
 
-	do_chdir(Curbuff);
-	if (wuseother(bname)) {
-		set_umark(NULL);
-		message(Curbuff, cmd);
-		putpaw("Please wait...");
-		rc = system(cmd);
-		close(fd);
-		zreadfile("__zsh__.out");
+	putpaw("Please wait...");
+	rc = system(cmd);
+	close(fd);
+	zreadfile("__zsh__.out");
 
-		if (rc == 0) {
-			btostart();
-			putpaw("Done.");
-		} else
-			putpaw("Returned %d", rc);
+	if (rc == 0) {
+		btostart();
+		putpaw("Done.");
 	} else
-		close(fd);
+		putpaw("Returned %d", rc);
 	unlink("__zsh__.out");
-
-	wswitchto(save);
 }
+#else
+#error Define DOPOPEN or DOPIPES
 #endif /* DOPOPEN */
 
 #endif /* DOPIPES */
+
+static void cmdtobuff(const char *bname, const char *cmd)
+{
+	struct wdo *save = Curwdo;
+
+	if (wuseother(bname)) {
+		set_shell_mark();
+
+		do_chdir(Curbuff);
+		message(Curbuff, cmd);
+
+		_cmdtobuff(Curbuff, cmd);
+
+		wswitchto(save);
+	}
+}
 
 void Zmake(void)
 {
@@ -372,12 +374,6 @@ void Zcmd_to_buffer(void)
 		cmdtobuff(SHELLBUFF, cmd);
 }
 
-
-/* This is cleared in Zgrep/Zmake and set in Znexterror.
- * If clear, the make buffer is scrolled up. Once a next error is
- * called, the buffer is kept at the error line.
- */
-int NexterrorCalled;
 
 /* Find the next error in the shell buffer.
  * Ignores lines that start with a white space.
@@ -441,7 +437,6 @@ void Znext_error(void)
 	}
 	save = Curbuff;
 	bswitchto(mbuff);
-	NEED_UMARK;
 	if (!NexterrorCalled) {
 		NexterrorCalled = 1;
 		btostart();
@@ -449,14 +444,14 @@ void Znext_error(void)
 		bcsearch(NL);
 	line = parse(fname);
 	if (line) {
-		vsetmrk(UMARK);
-		bmrktopnt(UMARK);
+		vsetmrk(shell_mark);
+		bmrktopnt(shell_mark);
 		tobegline();
-		bswappnt(UMARK);
-		vsetmrk(UMARK);
+		bswappnt(shell_mark);
+		vsetmrk(shell_mark);
 		wdo = findwdo(mbuff);
 		if (wdo)
-			mrktomrk(wdo->wstart, UMARK);
+			mrktomrk(wdo->wstart, shell_mark);
 		pathfixup(path, fname);
 		findfile(path);
 		Argp = true;
@@ -465,7 +460,8 @@ void Znext_error(void)
 		tobegline();
 	} else {
 		btoend();
-		CLEAR_UMARK;
+		unmark(shell_mark);
+		shell_mark = NULL;
 		bswitchto(save);
 		putpaw("No more errors");
 	}

@@ -232,6 +232,7 @@ void vsetmod(bool);
 struct mark *zcreatemrk(void);
 int zreadfile(char *fname);
 bool zwritefile(char *fname);
+void set_shell_mark(void);
 
 int batoi(void);
 void boffset(unsigned long off);

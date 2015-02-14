@@ -121,8 +121,7 @@ void Zgrep(void)
 	}
 
 	if (wuseother(SHELLBUFF)) {
-		set_umark(NULL);
-		NexterrorCalled = 0;
+		set_shell_mark();
 		grepit(input, files);
 		wswitchto(save);
 	}

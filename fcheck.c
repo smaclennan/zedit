@@ -67,7 +67,7 @@ void hang_up(int sig) { ((void)sig); }
 
 void Dbg(const char *fmt, ...) { ((void)fmt); }
 
-void mouse_scroll(int row, bool down) {}
+void mouse_scroll(int row, bool down) { ((void)row); ((void)down); }
 void mouse_point(int row, int col, bool set_mark) {}
 
 #if ZLIB || SPELL || defined(GPM_HACK)
@@ -93,24 +93,26 @@ static int noinclude(int argc, char *argv[], const char *inc)
 
 static int compare(char *new, char *old)
 {
-	FILE *old_fp = fopen(old, "r");
+	int rc = 0;
+	FILE *old_fp, *new_fp;
+	char new_line[128], old_line[128];
+
+	old_fp = fopen(old, "r");
 	if (!old_fp) {
 		if (errno != ENOENT)
 			perror(old);
 		return 1;
 	}
-	FILE *new_fp = fopen(new, "r");
+	new_fp = fopen(new, "r");
 	if (!new_fp) {
 		fclose(old_fp);
 		perror(new);
 		return 1;
 	}
 
-	int rc = 0;
-	char new_line[128], old_line[128];
 	while (fgets(new_line, sizeof(new_line), new_fp))
 		if (!fgets(old_line, sizeof(old_line), old_fp) ||
-		    strcmp(new_line, old_line)) {
+			strcmp(new_line, old_line)) {
 			rc = 1;
 			break;
 		}
@@ -124,11 +126,12 @@ static int compare(char *new, char *old)
 static int build_zversion_h(void)
 {
 	int mods = 0;
+	FILE *fp;
 	char version[42];
+
 	strcpy(version, "N/A");
 
-	FILE *fp = fopen(GITFILE, "r");
-	if (fp) {
+	if ((fp = fopen(GITFILE, "r"))) {
 		if (fgets(version, sizeof(version), fp))
 			strtok(version, "\r\n");
 		fclose(fp);

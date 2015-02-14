@@ -32,7 +32,6 @@
 #include <stdbool.h>
 #endif
 #include <string.h>
-#include <strings.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -44,6 +43,7 @@
 #include "zwin32.h"
 #else
 #include <unistd.h>
+#include <strings.h>
 #endif
 #ifndef WIN32
 #include <dirent.h>

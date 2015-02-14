@@ -39,16 +39,21 @@
 struct page;
 
 struct buff {
-	bool bmodf;			/* buffer modified? */
-	struct page *firstp;	/* the pages */
-	struct page *curpage;	/* the position of the point */
+	char *bname;				/* buffer name */
+	bool bmodf;					/* buffer modified? */
+	struct page *firstp;		/* the pages */
+	struct page *curpage;		/* the position of the point */
 	unsigned curchar;
 	Byte *curcptr;
-	unsigned bmode;			/* buffer mode */
-	char *bname;			/* buffer name */
-	char *fname;			/* file name associated with buffer */
-	time_t mtime;			/* file time at read */
-	void *app;				/* app specific data */
+#ifdef HAVE_MARKS
+	struct mark *marks;			/* buffer marks */
+#endif
+#ifdef HAVE_FILES
+	char *fname;				/* file name associated with buffer */
+	unsigned bmode;				/* buffer mode */
+	time_t mtime;				/* file time at read */
+#endif
+	void *app;					/* app specific data */
 	struct buff *prev, *next;	/* list of buffers */
 };
 

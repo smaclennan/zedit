@@ -28,7 +28,7 @@ struct mark {
 	struct mark *prev, *next;	/* list of marks */
 };
 
-extern struct mark *Mrklist;
+extern struct mark *Marklist;
 extern int NumMarks; /* stats */
 
 #define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
@@ -57,8 +57,19 @@ bool step(Byte *, struct mark *REstart);
 const char *regerr(int);
 
 #define foreach_pagemark(mark, page) \
-	for ((mark) = Mrklist; (mark); (mark) = (mark)->prev) \
+	for ((mark) = Curbuff->marks; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mpage == (page))
+
+#define foreach_globalpagemark(mark, page) \
+	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
+		if ((mark)->mpage == (page))
+
+#define foreach_buffmark(mark, buff) \
+	for ((mark) = Curbuff->marks; (mark); (mark) = (mark)->prev)
+
+#define foreach_globalbuffmark(mark, buff)				   \
+	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
+		if ((mark)->mbuff == (buff))
 
 #endif /* _mark_h */
 #endif /* HAVE_MARKS */

@@ -105,9 +105,11 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		memmove(Curcptr, spnt, dstlen);
 		Curpage->plen += dstlen;
 		copied += dstlen;
-		for (btmrk = Mrklist; btmrk; btmrk = btmrk->prev)
-			if (btmrk->mpage == Curpage &&
-				btmrk->moffset > Curchar)
+		foreach_pagemark(btmrk, Curpage)
+			if (btmrk->moffset > Curchar)
+					btmrk->moffset += dstlen;
+		foreach_globalpagemark(btmrk, Curpage)
+			if (btmrk->moffset > Curchar)
 					btmrk->moffset += dstlen;
 		makeoffset(Curbuff, Curchar + dstlen);
 		vsetmod(false);

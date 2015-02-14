@@ -16,8 +16,7 @@
 static inline void vsetmod(bool flag) {}
 #endif
 
-struct mark *Mrklist;	/* the marks list tail */
-static struct mark *mhead;
+struct mark *Marklist;	/* the marks list tail */
 int NumMarks;
 
 /* Keeping just one mark around is a HUGE win for a trivial amount of code. */
@@ -25,25 +24,13 @@ static struct mark *freemark;
 
 static void mfini(void)
 {
-	if (mhead) {
-		if (mhead->next)
-			mhead->next->prev = NULL;
-		else
-			Mrklist = NULL;
-	}
-
-	while (Mrklist)
-		unmark(Mrklist);
-
 	if (freemark)
 		free(freemark);
 }
 
 void minit(struct mark *preallocated)
 {
-	Mrklist = preallocated;
-	mhead = preallocated;
-
+	Marklist = preallocated;
 	atexit(mfini);
 }
 
@@ -64,27 +51,25 @@ struct mark *bcremrk(void)
 	}
 
 	bmrktopnt(mrk);
-	mrk->prev = Mrklist;		/* add to end of list */
+	mrk->prev = Curbuff->marks;		/* add to end of list */
 	mrk->next = NULL;
-	if (Mrklist)
-		Mrklist->next = mrk;
-	Mrklist = mrk;
+	if (Curbuff->marks)
+		Curbuff->marks->next = mrk;
+	Curbuff->marks = mrk;
 	++NumMarks;
 	return mrk;
 }
 
-/* Free up the given mark and remove it from the list.
- * Cannot free a scrnmark!
- */
+/* Free up the given mark and remove it from the list. */
 void unmark(struct mark *mptr)
 {
 	if (mptr) {
+		if (mptr == mptr->mbuff->marks)
+			mptr->mbuff->marks = mptr->prev;
 		if (mptr->prev)
 			mptr->prev->next = mptr->next;
 		if (mptr->next)
 			mptr->next->prev = mptr->prev;
-		if (mptr == Mrklist)
-			Mrklist = mptr->prev;
 
 		if (!freemark)
 			freemark = mptr;

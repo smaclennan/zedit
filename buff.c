@@ -213,7 +213,7 @@ bool _bmove(struct buff *buff, int dist)
 				makeoffset(buff, 0);
 				return false;
 			}
-			makecur(buff, curpage->prevp, curplen(buff));
+			makecur(buff, curpage->prevp, curpage->prevp->plen);
 		} else {	/* goto next page */
 			if (lastp(curpage)) {
 				/* past end of buffer */
@@ -330,7 +330,7 @@ bool _bcrsearch(struct buff *buff, Byte what)
 			if (buff->curpage == buff->firstp)
 				return false;
 			else
-				makecur(buff, buff->curpage->prevp, buff->curpage->plen - 1);
+				makecur(buff, buff->curpage->prevp, buff->curpage->prevp->plen - 1);
 		} else {
 			--buff->curchar;
 			--buff->curcptr;

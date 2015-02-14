@@ -53,7 +53,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;ZEDIT</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;ZEDIT;ZEDIT;HAVE_MARKS;HAVE_GLOBAL_MARKS;HAVE_FILES</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -75,7 +75,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;ZEDIT;HAVE_MARKS;HAVE_GLOBAL_MARKS;HAVE_FILES</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\bcmds.c" />
+    <ClCompile Include="..\bfile.c" />
     <ClCompile Include="..\bind.c" />
     <ClCompile Include="..\bmsearch.c" />
     <ClCompile Include="..\buff.c" />
@@ -102,6 +103,7 @@
     <ClCompile Include="..\getarg.c" />
     <ClCompile Include="..\getfname.c" />
     <ClCompile Include="..\help.c" />
+    <ClCompile Include="..\mark.c" />
     <ClCompile Include="..\reg.c" />
     <ClCompile Include="..\shell.c" />
     <ClCompile Include="..\spell.c" />

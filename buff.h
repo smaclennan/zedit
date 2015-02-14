@@ -99,7 +99,7 @@ extern struct buff *Curbuff;
 #define binsert(c) _binsert(Curbuff, (c))
 #define bdelete(n) _bdelete(Curbuff, (n))
 #define bmove(n) _bmove(Curbuff, (n))
-#define bmove1(n) _bmove1(Curbuff)
+#define bmove1() _bmove1(Curbuff)
 #define bisstart() _bisstart(Curbuff)
 #define bisend() _bisend(Curbuff)
 #define btostart() _btostart(Curbuff)

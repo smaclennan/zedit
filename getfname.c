@@ -27,7 +27,7 @@ struct llist {
 
 static struct llist *Flist;
 static bool Didmatch;
-#if defined(WIN32) || defined(DOS)
+#if defined(WIN32)
 #define OBJEXT ".obj"
 #else
 #define OBJEXT ".o"
@@ -72,19 +72,8 @@ int getfname(const char *prompt, char *path)
 static bool isext(char *fname, const char *ext)
 {
 	char *ptr;
-#ifdef DOS
-	return fname && (ptr = strrchr(fname, '.')) != NULL &&
-		stricmp(ptr, ext) == 0;
-#else
 	return fname && (ptr = strrchr(fname, '.')) && strcmp(ptr, ext) == 0;
-#endif
 }
-
-#if defined(DOS)
-#define fnamelower strlwr
-#else
-#define fnamelower(f) f
-#endif
 
 static struct llist *fill_list(const char *dir)
 {
@@ -103,7 +92,7 @@ static struct llist *fill_list(const char *dir)
 
 	while ((dirp = readdir(dp)) != NULL)
 		if (!isext(dirp->d_name, OBJEXT))
-			add(&Flist, fnamelower(dirp->d_name));
+			add(&Flist, dirp->d_name);
 
 	closedir(dp);
 
@@ -287,7 +276,7 @@ void Zfname(void)
 	}
 }
 
-#if !defined(WIN32) && !defined(DOS)
+#if !defined(WIN32)
 #include <pwd.h>
 
 /* Must always end in /. Must always return something sane. */

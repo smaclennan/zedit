@@ -24,10 +24,7 @@
 #include "funcs.c"
 #include "cnames.c"
 #include "bind.c"
-#ifdef DOS
-#define install_ints()
-#include "doskbd.c"
-#elif defined(WIN32)
+#ifdef WIN32
 #define zrefresh()
 HANDLE hstdin;
 int Colmax, Rowmax;
@@ -46,9 +43,6 @@ static struct utsname utsname;
 #elif defined WIN32
 #define OS win32
 #define GITFILE "../.git/refs/heads/master"
-#elif defined DOS
-#define OS dos
-#define GITFILE "git~00.___/refs/heads/master"
 #else
 #error Unknown OS
 #endif
@@ -250,14 +244,6 @@ int main(int argc, char *argv[])
 			err = 1;
 		}
 	}
-
-#ifdef DOS
-	if ((sizeof(alts) / sizeof(int)) != 0x86 - 0x10 + 1) {
-		printf("Problems with alts 0x%x\n",
-			sizeof(alts) / sizeof(int));
-		err = 1;
-	}
-#endif
 
 	/* check sizes of various stuff */
 	if (NUMFUNCS >= 256) {

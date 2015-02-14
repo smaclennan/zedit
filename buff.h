@@ -20,11 +20,9 @@
 #ifndef _buff_h
 #define _buff_h
 
-#ifndef DOS
 #include <stdbool.h>
-#endif
 
-#if defined(WIN32) || defined(DOS)
+#if defined(WIN32)
 #include "zwin32.h"
 #else
 #include <unistd.h>

@@ -1,8 +1,6 @@
 #ifndef __ZWIN32_H__
 #define __ZWIN32_H__
 
-#ifdef WIN32
-
 #include <Windows.h>
 #include <io.h>
 #include <direct.h>
@@ -44,39 +42,6 @@ typedef struct DIR {
 DIR *opendir(const char *dirname);
 struct dirent *readdir(DIR *dir);
 void closedir(DIR *dir);
-
-#endif /* WIN32 */
-
-#ifdef DOS
-#include <time.h>
-
-#define inline
-#define _inline
-
-typedef int bool;
-#define true  1
-#define false 0
-
-#define vsnprintf(a, b, c, d) vsprintf(a, c, d)
-#define strcasecmp stricmp
-#define strncasecmp strnicmp
-
-#define usleep(us) delay((us) / 1000)
-
-#ifdef DOS_EMS
-extern int ems_pages;
-
-void ems_init(void);
-void ems_free(void);
-bool ems_newpage(struct page *page);
-void ems_freepage(struct page *page);
-void ems_makecur(struct page *page, bool curmodf);
-void ems_pagesplit(struct page *newp, bool curmodf);
-#endif /* DOS_EMS */
-
-#endif /* DOS */
-
-/* COMMON */
 
 extern int optind;
 extern char *optarg;

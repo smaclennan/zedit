@@ -22,19 +22,12 @@
 
 /* Generally, the bigger the page size the faster the editor however
  * the more wasted memory. A page size of 1k seems to be a very good trade off.
- * NOTE: DOS *requires* 1k pages for DOS_EMS.
  */
 #define PSIZE		1024		/* size of page */
 #define HALFP		(PSIZE / 2)	/* half the page size */
 
 struct page {
-#ifdef DOS_EMS
-	Byte *pdata;			/* the page data */
-	Byte emmpage;			/* 16k page */
-	Byte emmoff;			/* offset in page */
-#else
 	Byte pdata[PSIZE];		/* the page data */
-#endif
 	int plen;			/* current length of the page */
 	struct page *nextp, *prevp;	/* list of pages */
 };

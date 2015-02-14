@@ -492,10 +492,6 @@ static void bfini(void)
 	while (Bufflist)
 		/* bdelbuff will update Bufflist */
 		bdelbuff(Bufflist);
-
-#ifdef DOS_EMS
-	ems_free();
-#endif
 }
 
 static void binit(void)
@@ -503,9 +499,6 @@ static void binit(void)
 	static int binitialized = 0;
 
 	if (!binitialized) {
-#ifdef DOS_EMS
-		ems_init();
-#endif
 		atexit(bfini);
 		binitialized = 1;
 	}
@@ -571,9 +564,6 @@ void bswitchto(struct buff *buf)
 void makecur(struct buff *buff, struct page *page, int dist)
 {
 	if (buff->curpage != page) {
-#ifdef DOS_EMS
-		ems_makecur(page, Curmodf);
-#endif
 		Curmodf = false;
 		buff->curpage = page;
 	}
@@ -588,13 +578,6 @@ struct page *newpage(struct page *curpage)
 	struct page *page = (struct page *)calloc(1, sizeof(struct page));
 	if (!page)
 		return NULL;
-
-#ifdef DOS_EMS
-	if (!ems_newpage(page)) {
-		free(page);
-		return NULL;
-	}
-#endif
 
 	if (curpage) {
 		page->prevp = curpage;
@@ -611,11 +594,7 @@ static struct page *pagesplit(struct page *curpage)
 {
 	struct page *newp = newpage(curpage);
 	if (newp) {
-#ifdef DOS_EMS
-		ems_pagesplit(newp);
-#else
 		memmove(newp->pdata, curpage->pdata + HALFP, HALFP);
-#endif
 		curpage->plen = HALFP;
 		newp->plen = HALFP;
 	}
@@ -626,10 +605,6 @@ static struct page *pagesplit(struct page *curpage)
 /* Free a memory page */
 void freepage(struct page **firstp, struct page *page)
 {
-#ifdef DOS_EMS
-	ems_freepage(page);
-#endif
-
 	if (page->nextp)
 		page->nextp->prevp = page->prevp;
 	if (page->prevp)
@@ -639,11 +614,6 @@ void freepage(struct page **firstp, struct page *page)
 	free((char *)page);
 	--NumPages;
 }
-
-#ifdef DOS_EMS
-/* ems.c needs to know the page structure */
-#include "win32/ems.c"
-#endif
 
 /* Split a full page. */
 bool bpagesplit(struct buff *buff)

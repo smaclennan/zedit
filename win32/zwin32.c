@@ -95,8 +95,6 @@ char *zgetcwd(char *dir, int len)
 	return dir;
 }
 
-#ifdef WIN32
-
 char *gethomedir(void)
 {
 	static char home[PATHMAX];
@@ -148,37 +146,3 @@ void closedir(DIR *dir)
 	FindClose(dir->handle);
 	free(dir);
 }
-
-#endif
-
-#ifdef DOS
-#include <stdarg.h>
-
-int snprintf(char *str, int size, const char *fmt, ...)
-{
-	int n;
-	va_list ap;
-	((void)size);
-
-	va_start(ap, fmt);
-	n = vsprintf(str, fmt, ap);
-	va_end(ap);
-
-	return n;
-}
-
-char *gethomedir(void)
-{
-	char *home = getenv("HOME");
-	if (home == NULL) home = "C:/";
-	psepfixup(home);
-	return home;
-}
-
-static void interrupt far criterr(void) {}
-
-void install_ints(void)
-{
-	_dos_setvect(0x24, criterr);
-}
-#endif

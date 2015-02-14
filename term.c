@@ -40,8 +40,6 @@ HANDLE hstdin, hstdout;	/* Console in and out handles */
 #define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
 #define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
 #define ATTR_REGION	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
-#elif defined(DOS)
-#include <conio.h>
 #else
 #error No term driver
 #endif
@@ -137,8 +135,6 @@ void tinit(void)
 
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
-#elif defined(DOS)
-	install_ints();
 #endif
 
 	set_mouse(true);
@@ -194,9 +190,6 @@ static void tsize(int *rows, int *cols)
 			*rows = info.dwSize.Y;
 		}
 	}
-#elif defined(DOS)
-	*rows = 25;
-	*cols = 80;
 #else
 	char buf[12];
 	int n, w;
@@ -348,8 +341,6 @@ void tforce(void)
 		where.X = Pcol;
 		where.Y = Prow;
 		SetConsoleCursorPosition(hstdout, where);
-#elif defined(DOS)
-		gotoxy(Pcol + 1, Prow + 1);
 #else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
 #endif
@@ -375,9 +366,6 @@ void tcleol(void)
 			where.X = Clrcol[Prow] - 1;
 		FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, 1,
 					   where, &written);
-#elif defined(DOS)
-		tforce();
-		clreol();
 #else
 		tforce();
 		fputs("\033[K", stdout);
@@ -396,9 +384,6 @@ void tclrwind(void)
 				   where, &written);
 	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
 				   where, &written);
-#elif defined(DOS)
-	tstyle(T_NORMAL);
-	clrscr();
 #else
 	fputs("\033[2J", stdout);
 #endif
@@ -439,34 +424,6 @@ void tstyle(int style)
 		SetConsoleTextAttribute(hstdout, ATTR_REGION);
 		break;
 	}
-#elif defined(DOS)
-	if (cur_style == T_BOLD)
-		normvideo();
-
-	switch (style) {
-	case T_NORMAL:
-		textcolor(WHITE);
-		textbackground(BLACK);
-		break;
-	case T_STANDOUT: /* modeline */
-		textcolor(BLACK);
-		textbackground(ring_bell ? RED : WHITE);
-		break;
-	case T_REVERSE:
-		textcolor(BLACK);
-		textbackground(WHITE);
-		break;
-	case T_BOLD:
-		highvideo();
-		break;
-	case T_COMMENT:
-		textcolor(RED);
-		break;
-	case T_REGION:
-		textcolor(WHITE);
-		textbackground(BLUE);
-		break;
-	}
 #else
 	switch (style) {
 	case T_NORMAL:
@@ -490,14 +447,7 @@ void tstyle(int style)
 
 void tsetcursor(bool hide)
 {
-#ifdef DOS
-	if (hide)
-		_setcursortype(_NOCURSOR);
-	else if (Curbuff->bmode & OVERWRITE)
-		_setcursortype(_NORMALCURSOR);
-	else
-		_setcursortype(_SOLIDCURSOR);
-#elif defined(WIN32)
+#ifdef WIN32
 	CONSOLE_CURSOR_INFO cursorinfo;
 
 	if (Curbuff->bmode & OVERWRITE)

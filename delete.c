@@ -57,11 +57,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 	struct mark *ltmrk, *btmrk;
 	bool flip;
 	int  srclen, dstlen;
-#ifdef DOS_EMS
-	Byte spnt[PSIZE];
-#else
 	Byte *spnt;
-#endif
 	int copied = 0;
 
 	if (tbuff == Curbuff)
@@ -81,11 +77,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		else
 			srclen = Curpage->plen - Curchar;
 		Curmodf = true;
-#ifdef DOS_EMS
-		memcpy(spnt, Curcptr, srclen);
-#else
 		spnt = Curcptr;
-#endif
 
 		bswitchto(tbuff);
 		dstlen = PSIZE - Curpage->plen;

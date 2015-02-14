@@ -538,9 +538,6 @@ void Zstats(void)
 {
 	int n = snprintf(PawStr, Colmax, "Buffers: %u  Pages: %u  Marks: %u",
 					 NumBuffs, NumPages, NumMarks);
-#ifdef DOS_EMS
-	n += snprintf(PawStr + n, Colmax - n, "  EMS: %d", ems_pages);
-#endif
 #if UNDO
 	n += snprintf(PawStr + n, Colmax - n, "  Undos: %lu%c",
 			  (undo_total + 521) / 1024, undo_total ? 'K' : ' ');

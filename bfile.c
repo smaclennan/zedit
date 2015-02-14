@@ -156,7 +156,7 @@ static bool bwritefd(int fd)
 	bmrktopnt(&smark);
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
-			makecur(Curbuff, tpage, 0); /* DOS_EMS requires */
+			makecur(Curbuff, tpage, 0);
 			n = write(fd, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
 		}
@@ -178,7 +178,7 @@ static bool bwritedos(int fd)
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int len = tpage->plen;
-			makecur(Curbuff, tpage, 0); /* DOS_EMS requires */
+			makecur(Curbuff, tpage, 0);
 			p = buf;
 			for (i = 0; i < tpage->plen; ++i) {
 				if (tpage->pdata[i] == '\n') {

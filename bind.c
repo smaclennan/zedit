@@ -23,7 +23,7 @@
 Byte Lfunc;
 Byte CRdefault = ZNEWLINE;
 
-#if defined(DOS) || defined(__cplusplus)
+#ifdef __cplusplus
 #include "win32/dosbind.c"
 #else
 Byte Keys[] = {

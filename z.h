@@ -51,7 +51,7 @@ extern jmp_buf zenv;
 #include "keys.h"
 
 #define ZSTR	"Zedit"
-#define VERSION	"6"
+#define VERSION	"6.1"
 
 #define INVALID		-1
 
@@ -112,9 +112,6 @@ struct cnames {
 	Byte fnum;
 	Byte flags;
 	const char *doc;
-#ifdef DOS
-	Byte pad[2];
-#endif
 };
 #define CNAMESIZE sizeof(struct cnames)
 
@@ -178,13 +175,8 @@ extern void (*Nextpart)(void);
 #define clrpaw()	_putpaw("")
 
 /* The memory usage for screen stuff is approx:  (ROWMAX + 1) x 25 + COLMAX */
-#ifdef DOS
-#define ROWMAX				25
-#define COLMAX				80
-#else
 #define	ROWMAX				110
 #define	COLMAX				256
-#endif
 
 #define PREFLINE			10
 
@@ -205,10 +197,6 @@ char *zgetcwd(char *cwd, int len);
 #ifdef WIN32
 char *gethomedir(void);
 void tputchar(Byte c);
-#define tflush()
-#elif defined(DOS)
-char *gethomedir(void);
-#define tputchar(c)		putch(c)
 #define tflush()
 #else
 #define gethomedir()		getenv("HOME")

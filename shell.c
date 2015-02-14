@@ -269,7 +269,6 @@ void Zkill(void) { tbell(); }
 bool unvoke(struct buff *child) { ((void)child); return false; }
 void checkpipes(int type) { ((void)type); }
 
-#if DOPOPEN
 static void _cmdtobuff(struct buff *buff, const char *cmdin)
 {
 	FILE *pfp;
@@ -296,35 +295,6 @@ static void _cmdtobuff(struct buff *buff, const char *cmdin)
 	} else
 		putpaw("Returned %d", rc);
 }
-#elif defined(DOS)
-static void _cmdtobuff(struct buff *buff, const char *cmd)
-{
-	int fd, rc;
-
-	fd = open("__zsh__.out", O_WRONLY|O_CREAT|O_TRUNC, 0666);
-	if (fd < 0) {
-		perror("open");
-		return;
-	}
-	dup2(fd, 1);
-	dup2(1, 2);
-
-	putpaw("Please wait...");
-	rc = system(cmd);
-	close(fd);
-	zreadfile("__zsh__.out");
-
-	if (rc == 0) {
-		btostart();
-		putpaw("Done.");
-	} else
-		putpaw("Returned %d", rc);
-	unlink("__zsh__.out");
-}
-#else
-#error Define DOPOPEN or DOPIPES
-#endif /* DOPOPEN */
-
 #endif /* DOPIPES */
 
 static void cmdtobuff(const char *bname, const char *cmd)

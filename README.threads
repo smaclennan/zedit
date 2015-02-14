@@ -7,10 +7,7 @@ What you do lose from buff.c is the buffer list and memory cleanup at
 exit. I don't think the buffer list has much meaning in a
 threaded environment.
 
-You also currently lose marks. We will need to lock the
-Mrklist. Currently there are no locks in any of the buffer code.
-
-So the following calls are thread safe:
+The following calls are thread safe:
 
  * _bcreate
  * _bdelbuff
@@ -36,3 +33,18 @@ So the following calls are thread safe:
 
  * _bm_search
  * _bm_rsearch
+
+If marks enabled:
+
+ * _bcremrk
+ * unmark
+ * _bisatmrk
+ * _bisaftermrk
+ * _bisbeforemrk
+ * _bmrktopnt
+ * _bpnttomrk
+ * _bswappnt
+ * mrktomrk
+ * mrkaftermrk
+ * mrkatmrk
+ * mrkbeforemrk

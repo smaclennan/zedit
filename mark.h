@@ -28,48 +28,62 @@ struct mark {
 	struct mark *prev, *next;	/* list of marks */
 };
 
+#ifdef HAVE_GLOBAL_MARKS
 extern struct mark *Marklist;
+
+void minit(struct mark *preallocated);
+#endif
+
 extern int NumMarks; /* stats */
 
-#define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
-
+#ifndef HAVE_THREADS
 #define bisatmrk(m)	((Curpage == (m)->mpage) && (Curchar == (m)->moffset))
-#define mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)
 
-/* optional - zedit uses it to preallocate screen marks */
-void minit(struct mark *preallocated);
-struct mark *bcremrk(void);
+#define bisaftermrk(m) _bisaftermrk(Curbuff, (m))
+#define bisbeforemrk(m) _bisbeforemrk(Curbuff, (m))
+
+#define bmrktopnt(m) _bmrktopnt(Curbuff, (m))
+#define bpnttomrk(m) _bpnttomrk(Curbuff, (m))
+#define bswappnt(m) _bswappnt(Curbuff, (m))
+#endif
+
+struct mark *_bcremrk(struct buff *);
 void unmark(struct mark *);
 
-bool bisaftermrk(struct mark *);
-bool bisbeforemrk(struct mark *);
+#define _bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))
+bool _bisaftermrk(struct buff *, struct mark *);
+bool _bisbeforemrk(struct buff *, struct mark *);
+void _bmrktopnt(struct buff *, struct mark *);
+bool _bpnttomrk(struct buff *, struct mark *);
+void _bswappnt(struct buff *, struct mark *);
+
+#define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
+#define mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)
 bool mrkaftermrk(struct mark *, struct mark *);
 bool mrkatmrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
-
-void bmrktopnt(struct mark *);
-void bpnttomrk(struct mark *);
-void bswappnt(struct mark *);
 
 /* reg.c - requires marks */
 int compile(Byte*, Byte*, Byte*);
 bool step(Byte *, struct mark *REstart);
 const char *regerr(int);
 
-#define foreach_pagemark(mark, page) \
-	for ((mark) = Curbuff->marks; (mark); (mark) = (mark)->prev) \
+#define foreach_pagemark(buff, mark, page)						 \
+	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	 \
 		if ((mark)->mpage == (page))
 
+#define foreach_buffmark(buff, mark)							\
+	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)
+
+#ifdef HAVE_GLOBAL_MARKS
 #define foreach_globalpagemark(mark, page) \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mpage == (page))
 
-#define foreach_buffmark(mark, buff) \
-	for ((mark) = Curbuff->marks; (mark); (mark) = (mark)->prev)
-
-#define foreach_globalbuffmark(mark, buff)				   \
+#define foreach_globalbuffmark(buff, mark)				   \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mbuff == (buff))
+#endif
 
 #endif /* _mark_h */
 #endif /* HAVE_MARKS */

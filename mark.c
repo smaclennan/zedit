@@ -10,15 +10,13 @@
 #include "mark.h"
 #include "page.h"
 
-#ifdef ZEDIT
-#include "z.h"
-#else
-static inline void vsetmod(bool flag) {}
+#ifdef HAVE_GLOBAL_MARKS
+struct mark *Marklist;	/* the marks list tail */
 #endif
 
-struct mark *Marklist;	/* the marks list tail */
 int NumMarks;
 
+#ifndef HAVE_THREADS
 /* Keeping just one mark around is a HUGE win for a trivial amount of code. */
 static struct mark *freemark;
 
@@ -30,33 +28,36 @@ static void mfini(void)
 
 void minit(struct mark *preallocated)
 {
+#ifdef HAVE_GLOBAL_MARKS
 	Marklist = preallocated;
+#endif
 	atexit(mfini);
 }
+#endif /* !HAVE_THREADS */
 
-/* Create a mark at the current point and add it to the list.
- * If we are unable to alloc, longjmp.
- */
-struct mark *bcremrk(void)
+/* Create a mark at the current point and add it to the list. */
+struct mark *_bcremrk(struct buff *buff)
 {
 	struct mark *mrk;
 
+#ifdef HAVE_THREADS
+	mrk = (struct mark *)calloc(1, sizeof(struct mark));
+#else
 	if (freemark) {
 		mrk = freemark;
 		freemark = NULL;
-	} else {
+	} else
 		mrk = (struct mark *)calloc(1, sizeof(struct mark));
-		if (!mrk)
-			return NULL;
+#endif
+	if (mrk) {
+		_bmrktopnt(buff, mrk);
+		mrk->prev = buff->marks; /* add to end of list */
+		mrk->next = NULL;
+		if (buff->marks)
+			buff->marks->next = mrk;
+		buff->marks = mrk;
+		++NumMarks;
 	}
-
-	bmrktopnt(mrk);
-	mrk->prev = Curbuff->marks;		/* add to end of list */
-	mrk->next = NULL;
-	if (Curbuff->marks)
-		Curbuff->marks->next = mrk;
-	Curbuff->marks = mrk;
-	++NumMarks;
 	return mrk;
 }
 
@@ -71,40 +72,96 @@ void unmark(struct mark *mptr)
 		if (mptr->next)
 			mptr->next->prev = mptr->prev;
 
+#ifndef HAVE_THREADS
 		if (!freemark)
 			freemark = mptr;
 		else
+#endif
 			free((char *)mptr);
 		--NumMarks;
 	}
 }
 
 /* Returns true if point is after the mark. */
-bool bisaftermrk(struct mark *tmark)
+bool _bisaftermrk(struct buff *buff, struct mark *tmark)
 {
 	struct page *tp;
 
-	if (!tmark->mpage || tmark->mbuff != Curbuff)
+	if (!tmark->mpage || tmark->mbuff != buff)
 		return false;
-	if (tmark->mpage == Curpage)
-		return Curchar > tmark->moffset;
-	for (tp = Curpage->prevp; tp && tp != tmark->mpage; tp = tp->prevp)
+	if (tmark->mpage == buff->curpage)
+		return buff->curchar > tmark->moffset;
+	for (tp = buff->curpage->prevp; tp && tp != tmark->mpage; tp = tp->prevp)
 		;
 	return tp != NULL;
 }
 
 /* True if the point precedes the mark. */
-bool bisbeforemrk(struct mark *tmark)
+bool _bisbeforemrk(struct buff *buff, struct mark *tmark)
 {
 	struct page *tp;
 
-	if (!tmark->mpage || tmark->mbuff != Curbuff)
+	if (!tmark->mpage || tmark->mbuff != buff)
 		return false;
-	if (tmark->mpage == Curpage)
-		return Curchar < tmark->moffset;
-	for (tp = Curpage->nextp; tp && tp != tmark->mpage; tp = tp->nextp)
+	if (tmark->mpage == buff->curpage)
+		return buff->curchar < tmark->moffset;
+	for (tp = buff->curpage->nextp; tp && tp != tmark->mpage; tp = tp->nextp)
 		;
 	return tp != NULL;
+}
+
+/* Put the mark where the point is. */
+void _bmrktopnt(struct buff *buff, struct mark *tmark)
+{
+	tmark->mbuff   = buff;
+	tmark->mpage   = buff->curpage;
+	tmark->moffset = buff->curchar;
+}
+
+/* Put the current buffer point at the mark */
+bool _bpnttomrk(struct buff *buff, struct mark *tmark)
+{
+#if HAVE_THREADS
+	if (tmark->mbuff != buff)
+		return false;
+	if (tmark->mpage)
+		makecur(buff, tmark->mpage, tmark->moffset);
+#else
+	if (tmark->mpage) {
+		if (tmark->mbuff != buff)
+			bswitchto(tmark->mbuff);
+		makecur(buff, tmark->mpage, tmark->moffset);
+	}
+#endif
+	return true;
+}
+
+/* Swap the point and the mark. */
+void _bswappnt(struct buff *buff, struct mark *tmark)
+{
+	struct mark tmp;
+
+	tmp.mbuff	= buff; /* Point not moved out of its buffer */
+	tmp.mpage	= tmark->mpage;
+	tmp.moffset	= tmark->moffset;
+	_bmrktopnt(buff, tmark);
+	_bpnttomrk(buff, &tmp);
+}
+
+/* True if mark1 precedes mark2 */
+bool mrkbeforemrk(struct mark *mark1, struct mark *mark2)
+{
+	struct page *tpage;
+
+	if (!mark1->mpage || !mark2->mpage || mark1->mbuff != mark2->mbuff)
+		return false;        /* Marks not in same buffer */
+	if (mark1->mpage == mark2->mpage)
+		return mark1->moffset < mark2->moffset;
+	for (tpage = mark1->mpage->nextp;
+		 tpage && tpage != mark2->mpage;
+		 tpage = tpage->nextp)
+		;
+	return tpage != NULL;
 }
 
 /* True if mark1 follows mark2 */
@@ -132,50 +189,5 @@ bool mrkatmrk(struct mark *mark1, struct mark *mark2)
 		mark1->moffset == mark2->moffset;
 }
 
-/* Put the mark where the point is. */
-void bmrktopnt(struct mark *tmark)
-{
-	tmark->mbuff   = Curbuff;
-	tmark->mpage   = Curpage;
-	tmark->moffset = Curchar;
-}
-
-/* Put the current buffer point at the mark */
-void bpnttomrk(struct mark *tmark)
-{
-	if (tmark->mpage) {
-		if (tmark->mbuff != Curbuff)
-			bswitchto(tmark->mbuff);
-		makecur(Curbuff, tmark->mpage, tmark->moffset);
-	}
-}
-
-/* Swap the point and the mark. */
-void bswappnt(struct mark *tmark)
-{
-	struct mark tmp;
-
-	tmp.mbuff	= Curbuff; /* Point not moved out of its buffer */
-	tmp.mpage	= tmark->mpage;
-	tmp.moffset	= tmark->moffset;
-	bmrktopnt(tmark);
-	bpnttomrk(&tmp);
-}
-
-/* True if mark1 precedes mark2 */
-bool mrkbeforemrk(struct mark *mark1, struct mark *mark2)
-{
-	struct page *tpage;
-
-	if (!mark1->mpage || !mark2->mpage || mark1->mbuff != mark2->mbuff)
-		return false;        /* Marks not in same buffer */
-	if (mark1->mpage == mark2->mpage)
-		return mark1->moffset < mark2->moffset;
-	for (tpage = mark1->mpage->nextp;
-		 tpage && tpage != mark2->mpage;
-		 tpage = tpage->nextp)
-		;
-	return tpage != NULL;
-}
 
 #endif /* HAVE_MARKS */

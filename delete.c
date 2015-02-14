@@ -71,7 +71,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 	if (flip)
 		bswappnt(tmark);
 
-	if (!(ltmrk = bcremrk()))
+	if (!(ltmrk = _bcremrk(Curbuff)))
 		return 0;
 
 	sbuff = Curbuff;
@@ -105,7 +105,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		memmove(Curcptr, spnt, dstlen);
 		Curpage->plen += dstlen;
 		copied += dstlen;
-		foreach_pagemark(btmrk, Curpage)
+		foreach_pagemark(Curbuff, btmrk, Curpage)
 			if (btmrk->moffset > Curchar)
 					btmrk->moffset += dstlen;
 		foreach_globalpagemark(btmrk, Curpage)

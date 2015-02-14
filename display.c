@@ -74,7 +74,7 @@ void set_umark(struct mark *tmark)
 		if (freeumark) {
 			UMARK = freeumark;
 			freeumark = NULL;
-		} else if (!(UMARK = bcremrk()))
+		} else if (!(UMARK = _bcremrk(Curbuff)))
 			return;
 	}
 

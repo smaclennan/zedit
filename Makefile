@@ -20,7 +20,7 @@ CC = cc
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
 D = -O2
-CFLAGS += -DZEDIT -DHAVE_MARKS -DHAVE_FILES
+CFLAGS += -DZEDIT -DHAVE_MARKS -DHAVE_GLOBAL_MARKS -DHAVE_FILES
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
 
 MAKEFLAGS += --no-print-directory
@@ -81,8 +81,8 @@ main: main.c buff.c bmsearch.c
 mmain: main.c buff.c bmsearch.c reg.c mark.c
 	$(QUIET_LINK)$(CC) -DHAVE_MARKS -g -o $@ $+
 
-tsmain: tsmain.c buff.c bmsearch.c
-	$(QUIET_LINK)$(CC) -DHAVE_THREADS -g -o $@ $+
+tsmain: tsmain.c buff.c mark.c bmsearch.c
+	$(QUIET_LINK)$(CC) -DHAVE_THREADS -DHAVE_MARKS -g -o $@ $+
 
 # Make all c files depend on all .h files
 *.o: $(HFILES)
@@ -98,6 +98,7 @@ install: all
 	install -s ze $(DESTDIR)/bin/z
 
 clean:
-	rm -f *.o gpm/*.o zversion.h ze fcheck main core* TAGS valgrind.out
+	rm -f *.o gpm/*.o zversion.h ze fcheck core* TAGS valgrind.out
 	rm -f makedosbind win32/makedosbind regtest
+	@rm -f main mmain tsmain
 	@$(MAKE) -C docs clean

@@ -550,7 +550,7 @@ void Zstats(void)
 
 struct mark *zcreatemrk(void)
 {
-	struct mark *mrk = bcremrk();
+	struct mark *mrk = _bcremrk(Curbuff);
 	if (!mrk)
 		longjmp(zenv, -1);	/* ABORT */
 	return mrk;

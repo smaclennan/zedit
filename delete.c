@@ -76,7 +76,6 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 			srclen = tmark->moffset - Curchar;
 		else
 			srclen = Curpage->plen - Curchar;
-		Curmodf = true;
 		spnt = Curcptr;
 
 		bswitchto(tbuff);
@@ -102,7 +101,6 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 					btmrk->moffset += dstlen;
 		makeoffset(Curbuff, Curchar + dstlen);
 		vsetmod(false);
-		Curmodf = true;
 		Curbuff->bmodf = true;
 		bswitchto(sbuff);
 		bmove(dstlen);

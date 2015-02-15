@@ -135,7 +135,6 @@ bool bwritefile(char *);
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
 
-extern bool Curmodf;
 extern int NumBuffs, NumPages;
 
 /* These should be called from buffer/mark code only */

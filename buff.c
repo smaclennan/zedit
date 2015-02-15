@@ -40,7 +40,6 @@ static inline void undo_clear(struct buff *buff) {}
 /* If set, this function will be called on _bdelbuff */
 void (*app_cleanup)(struct buff *buff);
 
-bool Curmodf;		/* page modified?? */
 int NumBuffs;
 int NumPages;
 
@@ -106,7 +105,6 @@ bool _binsert(struct buff *buff, Byte byte)
 	buff->curchar++;
 	curplen(buff)++;
 	buff->bmodf = true;
-	Curmodf = true;
 
 	undo_add(1);
 
@@ -147,7 +145,6 @@ void _bdelete(struct buff *buff, int quantity)
 		else
 			quantity -= quan;
 		buff->bmodf = true;
-		Curmodf = true;
 		if (curplen(buff) == 0 && (curpage->nextp || curpage->prevp)) {
 			/* We deleted entire page. */
 			tpage = curpage->nextp;
@@ -343,7 +340,6 @@ void _bempty(struct buff *buff)
 {
 	makecur(buff, buff->firstp, 0);
 	curplen(buff) = 0;
-	Curmodf = true;
 	while (buff->curpage->nextp)
 		freepage(&buff->firstp, buff->curpage->nextp);
 
@@ -405,7 +401,6 @@ bool _bappend(struct buff *buff, Byte *data, int size)
 		curplen(buff) += n;
 		size -= n;
 		data += n;
-		Curmodf = true;
 	}
 
 	/* Put the rest in new pages */
@@ -420,7 +415,6 @@ bool _bappend(struct buff *buff, Byte *data, int size)
 		curplen(buff) = n;
 		size -= n;
 		data += n;
-		Curmodf = true;
 	}
 
 	_btoend(buff);
@@ -610,11 +604,7 @@ void bswitchto(struct buff *buf)
 /* Make page current at dist */
 void makecur(struct buff *buff, struct page *page, int dist)
 {
-	if (buff->curpage != page) {
-		Curmodf = false;
-		buff->curpage = page;
-	}
-
+	buff->curpage = page;
 	buff->curchar = dist;
 	buff->curcptr = page->pdata + dist;
 }
@@ -686,6 +676,5 @@ bool bpagesplit(struct buff *buff)
 	if (buff->curchar >= HALFP)
 		/* new page has Point in it */
 		makecur(buff, newp, buff->curchar - HALFP);
-	Curmodf = true;
 	return true;
 }

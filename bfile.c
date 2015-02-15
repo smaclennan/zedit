@@ -21,11 +21,11 @@
 #undef Byte
 #include <zlib.h>
 
-#define bread(a, b, c) gzread(gz, b, c)
-#define bclose(a) gzclose(gz)
+#define fileread(a, b, c) gzread(gz, b, c)
+#define fileclose(a) gzclose(gz)
 #else
-#define bread(a, b, c) read(a, b, c)
-#define bclose(a) close(a)
+#define fileread(a, b, c) read(a, b, c)
+#define fileclose(a) close(a)
 #endif
 
 #ifndef O_BINARY
@@ -96,12 +96,11 @@ int breadfile(const char *fname)
 		Curbuff->bmode |= COMPRESSED;
 #endif
 
-	while ((len = bread(fd, buf, PSIZE)) > 0) {
-		Curmodf = true;
+	while ((len = fileread(fd, buf, PSIZE)) > 0) {
 		if (Curpage->plen) {
 			if (!newpage(Curpage)) {
 				bempty();
-				bclose(fd);
+				fileclose(fd);
 				return ENOMEM;
 			}
 			makecur(Curbuff, Curpage->nextp, 0);
@@ -111,7 +110,7 @@ int breadfile(const char *fname)
 		Curchar += len;
 		Curpage->plen += len;
 	}
-	(void)bclose(fd);
+	fileclose(fd);
 
 	btostart();
 

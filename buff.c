@@ -437,25 +437,12 @@ int _bindata(struct buff *buff, Byte *data, int size)
 
 	int n = curplen(buff) - buff->curchar;
 	if (n > 0) {
-		struct mark *btmark;
-
-		/* Make a new page and move the end of this page to the new page */
-		if (!(npage = newpage(buff->curpage)))
-			return 0;
-		memcpy(npage->pdata, buff->curcptr, n);
-		npage->plen = n;
-
-#ifdef HAVE_MARKS
-		/* Fix marks that are now in new page */
-		foreach_pagemark(buff, btmark, buff->curpage)
-			if (btmark->moffset >= buff->curchar) {
-				btmark->mpage = npage;
-				btmark->moffset -= n;
-			}
-#endif
+		if (buff->curchar != curplen(buff))
+			if (!pagesplit(buff, buff->curpage, buff->curchar))
+				return 0;
 
 		/* Copy as much as possible to the end of this page */
-		n = MIN(n, size);
+		n = MIN(PSIZE - buff->curchar, size);
 		memcpy(buff->curcptr, data, n);
 		data += n;
 		size -= n;

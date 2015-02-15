@@ -36,6 +36,8 @@ struct page {
 
 struct page *newpage(struct page *curpage);
 void freepage(struct page **firstp, struct page *page);
+struct page *pagesplit(struct buff *buff, struct page *curpage, int dist);
+
 bool bpagesplit(struct buff *buff);
 
 #endif

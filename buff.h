@@ -79,7 +79,7 @@ bool _bcsearch(struct buff *, Byte);
 bool _bcrsearch(struct buff *, Byte);
 void _bempty(struct buff *buff);
 Byte _bpeek(struct buff *buff);
-void _bgoto_char(struct buff *buff, unsigned long offset);
+void _boffset(struct buff *buff, unsigned long offset);
 bool _bappend(struct buff *buff, Byte *, int);
 int _bindata(struct buff *buff, Byte *, int);
 
@@ -111,6 +111,7 @@ extern struct buff *Curbuff;
 #define bcsearch(c) _bcsearch(Curbuff, (c))
 #define bcrsearch(c) _bcrsearch(Curbuff, (c))
 #define bempty() _bempty(Curbuff)
+#define boffset(n) _boffset(Curbuff, n)
 #define bappend(d, n) _bappend(Curbuff, (d), (n))
 #define bindata(d, n) _bindata(Curbuff, (d), (n))
 

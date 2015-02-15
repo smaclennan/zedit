@@ -380,7 +380,7 @@ Byte _bpeek(struct buff *buff)
 	}
 }
 
-void _bgoto_char(struct buff *buff, unsigned long offset)
+void _boffset(struct buff *buff, unsigned long offset)
 {
 	struct page *tpage;
 
@@ -589,15 +589,29 @@ struct page *newpage(struct page *curpage)
 	return page;
 }
 
-/* Split a full page. */
-static struct page *pagesplit(struct page *curpage)
+/* Split a full page. Leaves dist in curpage. */
+struct page *pagesplit(struct buff *buff, struct page *curpage, int dist)
 {
 	struct page *newp = newpage(curpage);
-	if (newp) {
-		memmove(newp->pdata, curpage->pdata + HALFP, HALFP);
-		curpage->plen = HALFP;
-		newp->plen = HALFP;
-	}
+	if (!newp)
+		return NULL;
+
+	if (dist <= 0 || dist >= PSIZE) dist = HALFP;
+	int newsize = curpage->plen - dist;
+
+	memmove(newp->pdata, curpage->pdata + dist, newsize);
+	curpage->plen = dist;
+	newp->plen = newsize;
+
+#if HAVE_MARKS
+	struct mark *btmark;
+
+	foreach_pagemark(buff, btmark, curpage)
+		if (btmark->moffset >= dist) {
+			btmark->mpage = newp;
+			btmark->moffset -= dist;
+		}
+#endif
 
 	return newp;
 }
@@ -618,19 +632,9 @@ void freepage(struct page **firstp, struct page *page)
 /* Split a full page. */
 bool bpagesplit(struct buff *buff)
 {
-	struct page *newp = pagesplit(buff->curpage);
+	struct page *newp = pagesplit(buff, buff->curpage, HALFP);
 	if (!newp)
 		return false;
-
-#if HAVE_MARKS
-	struct mark *btmark;
-
-	foreach_pagemark(buff, btmark, buff->curpage)
-		if (btmark->moffset >= HALFP) {
-			btmark->mpage = newp;
-			btmark->moffset -= HALFP;
-		}
-#endif
 
 	if (buff->curchar >= HALFP)
 		/* new page has Point in it */

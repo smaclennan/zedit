@@ -8,29 +8,59 @@
 #include <errno.h>
 
 #include "buff.h"
+#include "mark.h"
+#include "page.h" /* shouldn't be included... */
 
-int readone(int fd)
+
+/* A little over 1k */
+const char *str1k =
+"Here is what Jeff Foxworthy has to say about Canadians, during "
+"a recent appearance at Caesars in Windsor : "
+"If someone in a Home Depot store "
+"Offers you assistance and they don't work there, "
+"You may live in Canada. "
+"If you've worn shorts and a parka at the same time, "
+"You may live in Canada. "
+"If you've had a lengthy telephone conversation "
+"With someone who dialed a wrong number, "
+"You may live in Canada. "
+"If 'Vacation' means going anywhere "
+"South of Detroit for the weekend, "
+"You may live in Canada. "
+"If you measure distance in hours, "
+"You may live in Canada. "
+"If you know several people "
+"Who have hit a deer more than once, "
+"You may live in Canada. "
+"If you have switched from 'heat' to 'A/C' "
+"In the same day and back again, "
+"You may live in Canada. "
+"If you can drive 90 km/hr through 2 feet of snow "
+"During a raging blizzard without flinching, "
+"You may live in Canada. "
+"If you install security lights on your house and garage, "
+"But leave both unlocked, "
+"You may live in Canada. "
+"If you carry jumper cables in your car "
+"And your wife knows how to use them, "
+"You may live in Canada.";
+
+void dump_mark(struct mark *mrk)
 {
-	char buffer[4096];
-	int n, max;
-	unsigned offset, total = 0;
+	printf("b:%p p:%p o:%d\n", mrk->mbuff, mrk->mpage, mrk->moffset);
+}
 
-	do {
-		max = random() & 0xfff;
-		if (max == 0) max = 1;
-		n = read(fd, buffer, max);
-		total += n;
-		offset = random() % total;
-		printf("Read %4d max %4d offset %u/%u\n", n, max, offset, total);
-		if (max < 0) {
-			perror("read");
-			return;
-		}
-		bappend(buffer, n);
-		_bgoto_char(Curbuff, random() % total);
-	} while (n > 0);
+void dump_str_at_mark(const char *label, struct mark *mrk)
+{
+	int i;
 
-	return total;
+	printf("%s [%p:%u]: ", label, mrk->mpage, mrk->moffset);
+
+	bswappnt(mrk);
+	for (i = 0; i < 16; ++i)
+		putchar(*(mrk->mbuff->curcptr + i)); /* cheating since we are in page */
+	putchar('\n');
+	bswappnt(mrk);
 }
 
 int main(int argc, char *argv[])
@@ -39,63 +69,39 @@ int main(int argc, char *argv[])
 	int total, offset;
 
 	buff = bcreate();
+	bswitchto(buff);
 
 	srand(time(NULL));
 
-	if (argc == 1)
-		total = readone(0); /* stdin */
-	else {
-		int fd = open(argv[1], O_RDONLY);
-		if (fd < 0) {
-			perror(argv[1]);
-			exit(1);
-		}
-		total = readone(fd);
-		close(fd);
-	}
-
-	if (total < 2) {
-		puts("File too small");
+	/* testing pagesplit */
+	bappend((Byte *)str1k, 800); /* over half page */
+	btostart();
+	if (!_bm_search(buff, "wrong number", true)) {
+		puts("search1 failed");
 		exit(1);
 	}
+	bmove(-12);
+	struct mark *mark1 = _bcremrk(buff);
 
-#if 1
-	offset = random() % total;
-#else
-	offset = 2283;
-#endif
+	if (!_bm_search(buff, "2 feet of snow", true)) {
+		puts("search2 failed");
+		exit(1);
+	}
+	bmove(-14);
+	struct mark *mark2 = _bcremrk(buff);
 
-	char data[2048];
-	memset(data, '.', sizeof(data));
-	_bgoto_char(Curbuff, offset);
-	int n = bindata(data, sizeof(data));
-	if (n != sizeof(data))
+	if (mark1->moffset >= HALFP || mark2->moffset <= HALFP) {
 		puts("PROBLEMS");
-
-#if 0
-	if (!bwritefile("/tmp/main.test")) {
-		printf("Unable to write file\n");
 		exit(1);
 	}
-#endif
 
-#if 0
-	binstr("Hello world");
-	btostart();
-	if (bm_search("hello", false))
-		puts("found it!");
-	btostart();
-	if (bm_search("hello", true))
-		puts("Ummm.. shouldn't have found it");
+	dump_str_at_mark("1", mark1);
+	dump_str_at_mark("2", mark2);
 
-	Byte ep[512];
-	if (compile((Byte *)"el.", ep, &ep[512]))
-		puts("Failed to compile regexp");
-	else {
-		btostart();
-		step(ep);
-	}
-#endif
+	pagesplit(buff, buff->curpage, 600);
+
+	dump_str_at_mark("1", mark1);
+	dump_str_at_mark("2", mark2);
 
 	return 0;
 }

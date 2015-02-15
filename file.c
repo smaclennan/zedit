@@ -163,16 +163,6 @@ void Zfind_file(void)
 			uncomment(NULL);
 }
 
-#define MAXMOVE		(0x7fff - 1024)
-
-void boffset(unsigned long off)
-{	/* This works even if int is 16 bits */
-	btostart();
-	for (; off > MAXMOVE; off -= MAXMOVE)
-		bmove(MAXMOVE);
-	bmove(off);
-}
-
 void Zrevert_file(void)
 {
 	unsigned long offset;

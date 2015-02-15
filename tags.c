@@ -133,7 +133,7 @@ static bool find_tag(char *word)
 	set_bookmark(word);
 
 	if (findfile(path)) {
-		_bgoto_char(Curbuff, offset);
+		_boffset(Curbuff, offset);
 		redisplay();
 		return true;
 	}

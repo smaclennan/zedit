@@ -472,17 +472,6 @@ int _bindata(struct buff *buff, Byte *data, int size)
 
 #define BREAD_THRESHOLD (PSIZE / 4)
 
-static void bread_update(struct buff *buff, int *ret, int *size, int n)
-{
-	if (n > 0) {
-		buff->curchar += n;
-		buff->curcptr += n;
-		curplen(buff) += n;
-		*ret += n;
-		*size -= n;
-	}
-}
-
 /* Simple version. Can do multiple reads! */
 int _bread(struct buff *buff, int fd, int size)
 {

@@ -82,6 +82,8 @@ Byte _bpeek(struct buff *buff);
 void _boffset(struct buff *buff, unsigned long offset);
 bool _bappend(struct buff *buff, Byte *, int);
 int _bindata(struct buff *buff, Byte *, int);
+int _bread(struct buff *buff, int fd, int size);
+int _bwrite(struct buff *buff, int fd, int size);
 
 /* bmsearch.c */
 bool _bm_search(struct buff *buff, const char *str, bool sensitive);
@@ -114,6 +116,8 @@ extern struct buff *Curbuff;
 #define boffset(n) _boffset(Curbuff, n)
 #define bappend(d, n) _bappend(Curbuff, (d), (n))
 #define bindata(d, n) _bindata(Curbuff, (d), (n))
+#define bread(fd, n) _bread(Curbuff, (fd), (n))
+#define bwrite(fd, n) _bwrite(Curbuff, (fd), (n))
 
 struct buff *bcreate(void);
 bool bdelbuff(struct buff *);

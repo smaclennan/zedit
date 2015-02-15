@@ -45,11 +45,6 @@ const char *str1k =
 "And your wife knows how to use them, "
 "You may live in Canada.";
 
-void dump_mark(struct mark *mrk)
-{
-	printf("b:%p p:%p o:%d\n", mrk->mbuff, mrk->mpage, mrk->moffset);
-}
-
 void dump_str_at_mark(const char *label, struct mark *mrk)
 {
 	int i;
@@ -63,6 +58,47 @@ void dump_str_at_mark(const char *label, struct mark *mrk)
 	bswappnt(mrk);
 }
 
+int test_readwrite(char *in, char *out)
+{
+	int n, count, fd = open(in, O_RDONLY);
+	if (fd < 0) {
+		perror(in);
+		exit(1);
+	}
+
+	do
+		count = random() % 4096;
+	while ((n = bread(fd, count)) > 0);
+
+	close(fd);
+
+	if (n < 0) {
+		printf("Reads failed\n");
+		exit(1);
+	}
+
+	btostart();
+
+	fd = open(out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd < 0) {
+		perror(out);
+		exit(1);
+	}
+
+	do
+		count = random() % 4096;
+	while ((n = bwrite(fd, count)) > 0);
+
+	close(fd);
+
+	if (n < 0) {
+		printf("Writes failed\n");
+		exit(1);
+	}
+
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	struct buff *buff;
@@ -72,6 +108,9 @@ int main(int argc, char *argv[])
 	bswitchto(buff);
 
 	srand(time(NULL));
+
+	if (argc > 2)
+		return test_readwrite(argv[1], argv[2]);
 
 	/* testing pagesplit */
 	bappend((Byte *)str1k, 800); /* over half page */

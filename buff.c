@@ -62,7 +62,6 @@ struct buff *_bcreate(void)
 			return NULL;
 		}
 		buf->firstp = fpage;
-		buf->curpage = fpage;
 		makecur(buf, fpage, 0);
 		++NumBuffs;
 	}
@@ -482,6 +481,78 @@ int _bindata(struct buff *buff, Byte *data, int size)
 	}
 
 	return copied;
+}
+
+#define BREAD_THRESHOLD (PSIZE / 4)
+
+static void bread_update(struct buff *buff, int *ret, int *size, int n)
+{
+	if (n > 0) {
+		buff->curchar += n;
+		buff->curcptr += n;
+		curplen(buff) += n;
+		*ret += n;
+		*size -= n;
+	}
+}
+
+/* Simple version. Can do multiple reads! */
+int _bread(struct buff *buff, int fd, int size)
+{
+	int n, ret = 0, left = PSIZE - curplen(buff);
+
+	/* try to fill current page */
+	if (left >= size || left > BREAD_THRESHOLD) {
+		if (buff->curchar != curplen(buff)) {
+			/* Move data after point into new page */
+			if (!pagesplit(buff, buff->curpage, buff->curchar))
+				return -ENOMEM;
+			left = PSIZE - buff->curchar;
+		}
+		n = read(fd, buff->curcptr, MIN(size, left));
+		if (n <= 0)
+			return n;
+		buff->curchar += n;
+		buff->curcptr += n;
+		curplen(buff) += n;
+		ret += n;
+		size -= n;
+	}
+
+	/* now use full pages */
+	while (size > 0) {
+		struct page *npage = newpage(buff->curpage);
+		if (!npage)
+			return ret > 0 ? ret : -ENOMEM;
+		n = read(fd, npage->pdata, MIN(size, PSIZE));
+		if (n > 0) {
+			makecur(buff, npage, n);
+			curplen(buff) = n;
+		} else {
+			freepage(&buff->firstp, npage);
+			return ret > 0 ? ret : n;
+		}
+	}
+
+	return ret;
+}
+
+/* Writes are easy! Leaves the point at the end of the write. */
+int _bwrite(struct buff *buff, int fd, int size)
+{
+	int n = 0, ret = 0;
+
+	while (size > 0) {
+		int have = curplen(buff) - buff->curchar;
+		n = write(fd, buff->curcptr, MIN(size, have));
+		if (n <= 0)
+			break;
+		ret += n;
+		size -= n;
+		bmove(n);
+	}
+
+	return ret > 0 ? ret : n;
 }
 
 #ifndef HAVE_THREADS

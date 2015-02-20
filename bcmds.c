@@ -302,10 +302,3 @@ struct buff *cfindbuff(const char *bname)
 			return tbuff;
 	return NULL;
 }
-
-/* Insert a string into the current buffer. */
-void binstr(const char *str)
-{
-	while (*str)
-		binsert(*str++);
-}

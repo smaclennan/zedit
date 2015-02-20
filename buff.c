@@ -425,8 +425,6 @@ bool _bappend(struct buff *buff, Byte *data, int size)
 	return true;
 }
 
-#define BTHRESHOLD (PSIZE / 4)
-
 /* Simple version to start.
  * Can use size / PSIZE + 1 + 1 pages.
  */
@@ -439,13 +437,15 @@ int _bindata(struct buff *buff, Byte *data, int size)
 	if (n >= size) {
 		/* fits in this page */
 		n = curplen(buff) - buff->curchar;
-		memmove(buff->curcptr + size, buff->curcptr, n);
+		if (n)
+			memmove(buff->curcptr + size, buff->curcptr, n);
 		memcpy(buff->curcptr, data, size);
 #ifdef HAVE_MARKS
 		struct mark *m;
-		foreach_pagemark(buff, m, buff->curpage)
-			if (m->moffset >= buff->curchar)
-				m->moffset += size;
+		if (n)
+			foreach_pagemark(buff, m, buff->curpage)
+				if (m->moffset >= buff->curchar)
+					m->moffset += size;
 #endif
 		buff->curcptr += size;
 		buff->curchar += size;

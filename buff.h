@@ -119,6 +119,8 @@ extern struct buff *Curbuff;
 #define bread(fd, n) _bread(Curbuff, (fd), (n))
 #define bwrite(fd, n) _bwrite(Curbuff, (fd), (n))
 
+#define binstr(s) _bindata(Curbuff, (Byte *)(s), strlen(s));
+
 struct buff *bcreate(void);
 bool bdelbuff(struct buff *);
 void bswitchto(struct buff *);

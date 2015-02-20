@@ -24,9 +24,12 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/uio.h>
 
 #include "buff.h"
+#ifdef HAVE_MARKS
 #include "mark.h"
+#endif
 #include "page.h"
 
 #ifdef ZEDIT
@@ -125,7 +128,6 @@ void _bdelete(struct buff *buff, int quantity)
 {
 	int quan, noffset;
 	struct page *tpage, *curpage = buff->curpage;
-	struct mark *tmark;
 
 	while (quantity) {
 		/* Delete as many characters as possible from this page */
@@ -154,6 +156,7 @@ void _bdelete(struct buff *buff, int quantity)
 				noffset = tpage->plen;
 			}
 #ifdef HAVE_MARKS
+			struct mark *tmark;
 			foreach_pagemark(buff, tmark, curpage) {
 				tmark->mpage = tpage;
 				tmark->moffset = noffset;
@@ -168,6 +171,7 @@ void _bdelete(struct buff *buff, int quantity)
 				noffset = 0;
 			}
 #ifdef HAVE_MARKS
+			struct mark *tmark;
 			foreach_pagemark(buff, tmark, curpage)
 				if (tmark->moffset >= buff->curchar) {
 					if (tmark->moffset >= buff->curchar + quan)
@@ -510,19 +514,52 @@ int _bread(struct buff *buff, int fd, int size)
 /* Writes are easy! Leaves the point at the end of the write. */
 int _bwrite(struct buff *buff, int fd, int size)
 {
+#if 1
 	int n = 0, ret = 0;
 
 	while (size > 0) {
 		int have = curplen(buff) - buff->curchar;
-		n = write(fd, buff->curcptr, MIN(size, have));
+		do
+			n = write(fd, buff->curcptr, MIN(size, have));
+		while (n < 0 && errno == EINTR);
 		if (n <= 0)
 			break;
 		ret += n;
 		size -= n;
-		bmove(n);
+		_bmove(buff, n);
 	}
 
 	return ret > 0 ? ret : n;
+#else
+#define MAX_IOVS 16
+	struct iovec iovs[MAX_IOVS];
+	struct page *pg;
+	int i, n;
+
+	int have = curplen(buff) - buff->curchar;
+	iovs[0].iov_base = buff->curcptr;
+	iovs[0].iov_len = MIN(have, size);
+	size -= iovs[0].iov_len;
+	total += iovs[0].iov_len;
+
+	for (pg = buff->curpage->nextp, i = 1;
+		 i < MAX_IOVS && size > 0 && pg;
+		 ++i, pg = pg->nextp) {
+		iovs[i].iov_base = pg->pdata;
+		iovs[i].iov_len = MIN(pg->plen, size);
+		size -= iovs[i].iov_len;
+		total += iovs[i].iov_len;
+	}
+
+	do
+		n = writev(fd, iovs, i);
+	while (n < 0 && errno == EINTR);
+
+	if (n > 0)
+		_bmove(buff, n);
+
+	return n;
+#endif
 }
 
 #ifndef HAVE_THREADS
@@ -629,13 +666,13 @@ struct page *newpage(struct page *curpage)
 /* Split a full page. Leaves dist in curpage. */
 struct page *pagesplit(struct buff *buff, struct page *curpage, int dist)
 {
+	if (dist < 0 || dist > PSIZE) return NULL;
+
 	struct page *newp = newpage(curpage);
 	if (!newp)
 		return NULL;
 
-	if (dist <= 0 || dist >= PSIZE) dist = HALFP;
 	int newsize = curpage->plen - dist;
-
 	memmove(newp->pdata, curpage->pdata + dist, newsize);
 	curpage->plen = dist;
 	newp->plen = newsize;

@@ -425,19 +425,50 @@ bool _bappend(struct buff *buff, Byte *data, int size)
 	return true;
 }
 
+#define BTHRESHOLD (PSIZE / 4)
+
 /* Simple version to start.
  * Can use size / PSIZE + 1 + 1 pages.
  */
 int _bindata(struct buff *buff, Byte *data, int size)
 {
 	struct page *npage;
-	int copied = 0;
+	int n, copied = 0;
 
-	int n = curplen(buff) - buff->curchar;
-	if (n > 0) {
-		if (buff->curchar != curplen(buff))
-			if (!pagesplit(buff, buff->curpage, buff->curchar))
-				return 0;
+	n = PSIZE - curplen(buff);
+	if (n >= size) {
+		/* fits in this page */
+		n = curplen(buff) - buff->curchar;
+		memmove(buff->curcptr + size, buff->curcptr, n);
+		memcpy(buff->curcptr, data, size);
+#ifdef HAVE_MARKS
+		struct mark *m;
+		foreach_pagemark(buff, m, buff->curpage)
+			if (m->moffset >= buff->curchar)
+				m->moffset += size;
+#endif
+		buff->curcptr += size;
+		buff->curchar += size;
+		curplen(buff) += size;
+		return size;
+	}
+
+	/* If we can just append to the end of the page... do it.
+	 * We already know from the previous block that size > n.
+	 */
+	if (n > 0 && buff->curchar == curplen(buff)) {
+		memcpy(buff->curcptr, data, n);
+		data += n;
+		size -= n;
+		copied += n;
+		buff->curcptr += n;
+		buff->curchar += n;
+		curplen(buff) += n;
+		if (size == 0)
+			return copied;
+	} else {
+		if (!pagesplit(buff, buff->curpage, buff->curchar))
+			return copied;
 
 		/* Copy as much as possible to the end of this page */
 		n = MIN(PSIZE - buff->curchar, size);
@@ -461,7 +492,6 @@ int _bindata(struct buff *buff, Byte *data, int size)
 		copied += n;
 
 		makecur(buff, npage, n);
-
 		curplen(buff) = n;
 	}
 

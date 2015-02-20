@@ -30,7 +30,11 @@
 
 #include <time.h>
 
+#ifdef ZEDIT
 #define Byte unsigned char
+#else
+#define Byte char
+#endif
 
 /* THE BUFFER STRUCTURES */
 
@@ -80,7 +84,7 @@ bool _bcrsearch(struct buff *, Byte);
 void _bempty(struct buff *buff);
 Byte _bpeek(struct buff *buff);
 void _boffset(struct buff *buff, unsigned long offset);
-bool _bappend(struct buff *buff, Byte *, int);
+int _bappend(struct buff *buff, Byte *, int);
 int _bindata(struct buff *buff, Byte *, int);
 int _bread(struct buff *buff, int fd, int size);
 int _bwrite(struct buff *buff, int fd, int size);

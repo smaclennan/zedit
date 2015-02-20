@@ -393,36 +393,47 @@ void _boffset(struct buff *buff, unsigned long offset)
 	makecur(buff, tpage, offset);
 }
 
-bool _bappend(struct buff *buff, Byte *data, int size)
+/* You must guarantee we are at the end of the page */
+static int bappendpage(struct buff *buff, Byte *data, int size)
 {
-	_btoend(buff);
+	int appended = 0;
 
 	/* Fill the current page */
 	int n, left = PSIZE - curplen(buff);
 	if (left > 0) {
 		n = MIN(left, size);
 		memcpy(buff->curcptr, data, n);
+		buff->curcptr += n;
+		buff->curchar += n;
 		curplen(buff) += n;
 		size -= n;
 		data += n;
+		appended += n;
 	}
 
 	/* Put the rest in new pages */
 	while (size > 0) {
 		struct page *npage = newpage(buff->curpage);
 		if (!npage)
-			return false;
+			return appended;
 		makecur(buff, npage, 0);
 
 		n = MIN(PSIZE, size);
 		memcpy(buff->curcptr, data, n);
 		curplen(buff) = n;
+		makeoffset(buff, n);
 		size -= n;
 		data += n;
+		appended += n;
 	}
 
+	return appended;
+}
+
+int _bappend(struct buff *buff, Byte *data, int size)
+{
 	_btoend(buff);
-	return true;
+	return bappendpage(buff, data, size);
 }
 
 /* Simple version to start.
@@ -433,19 +444,21 @@ int _bindata(struct buff *buff, Byte *data, int size)
 	struct page *npage;
 	int n, copied = 0;
 
+	/* If we can append... use append */
+	if (buff->curchar == curplen(buff))
+		return bappendpage(buff, data, size);
+
 	n = PSIZE - curplen(buff);
 	if (n >= size) {
 		/* fits in this page */
 		n = curplen(buff) - buff->curchar;
-		if (n)
-			memmove(buff->curcptr + size, buff->curcptr, n);
+		memmove(buff->curcptr + size, buff->curcptr, n);
 		memcpy(buff->curcptr, data, size);
 #ifdef HAVE_MARKS
 		struct mark *m;
-		if (n)
-			foreach_pagemark(buff, m, buff->curpage)
-				if (m->moffset >= buff->curchar)
-					m->moffset += size;
+		foreach_pagemark(buff, m, buff->curpage)
+			if (m->moffset >= buff->curchar)
+				m->moffset += size;
 #endif
 		buff->curcptr += size;
 		buff->curchar += size;
@@ -453,20 +466,8 @@ int _bindata(struct buff *buff, Byte *data, int size)
 		return size;
 	}
 
-	/* If we can just append to the end of the page... do it.
-	 * We already know from the previous block that size > n.
-	 */
-	if (n > 0 && buff->curchar == curplen(buff)) {
-		memcpy(buff->curcptr, data, n);
-		data += n;
-		size -= n;
-		copied += n;
-		buff->curcptr += n;
-		buff->curchar += n;
-		curplen(buff) += n;
-		if (size == 0)
-			return copied;
-	} else {
+	n = curplen(buff) - buff->curchar;
+	if (n > 0) {
 		if (!pagesplit(buff, buff->curpage, buff->curchar))
 			return copied;
 

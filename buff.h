@@ -36,6 +36,8 @@
 #define Byte char
 #endif
 
+#define MAX_IOVS 16
+
 /* THE BUFFER STRUCTURES */
 
 struct page;

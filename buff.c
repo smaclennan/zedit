@@ -33,11 +33,9 @@
 #include "page.h"
 
 #ifdef ZEDIT
-#include "z.h"
+void vsetmod(bool flag);
 #else
 static inline void vsetmod(bool flag) {}
-static inline void undo_add(int size) {}
-static inline void undo_clear(struct buff *buff) {}
 #endif
 
 /* If set, this function will be called on _bdelbuff */
@@ -109,7 +107,9 @@ bool _binsert(struct buff *buff, Byte byte)
 	curplen(buff)++;
 	buff->bmodf = true;
 
+#if UNDO
 	undo_add(1);
+#endif
 
 #ifdef HAVE_MARKS
 	struct mark *btmark;
@@ -357,7 +357,9 @@ void _bempty(struct buff *buff)
 		}
 #endif
 
+#if UNDO
 	undo_clear(buff);
+#endif
 	vsetmod(true);
 }
 
@@ -545,24 +547,6 @@ int _bread(struct buff *buff, int fd, int size)
 /* Writes are easy! Leaves the point at the end of the write. */
 int _bwrite(struct buff *buff, int fd, int size)
 {
-#if 1
-	int n = 0, ret = 0;
-
-	while (size > 0) {
-		int have = curplen(buff) - buff->curchar;
-		do
-			n = write(fd, buff->curcptr, MIN(size, have));
-		while (n < 0 && errno == EINTR);
-		if (n <= 0)
-			break;
-		ret += n;
-		size -= n;
-		_bmove(buff, n);
-	}
-
-	return ret > 0 ? ret : n;
-#else
-#define MAX_IOVS 16
 	struct iovec iovs[MAX_IOVS];
 	struct page *pg;
 	int i, n;
@@ -571,7 +555,6 @@ int _bwrite(struct buff *buff, int fd, int size)
 	iovs[0].iov_base = buff->curcptr;
 	iovs[0].iov_len = MIN(have, size);
 	size -= iovs[0].iov_len;
-	total += iovs[0].iov_len;
 
 	for (pg = buff->curpage->nextp, i = 1;
 		 i < MAX_IOVS && size > 0 && pg;
@@ -579,7 +562,6 @@ int _bwrite(struct buff *buff, int fd, int size)
 		iovs[i].iov_base = pg->pdata;
 		iovs[i].iov_len = MIN(pg->plen, size);
 		size -= iovs[i].iov_len;
-		total += iovs[i].iov_len;
 	}
 
 	do
@@ -590,7 +572,6 @@ int _bwrite(struct buff *buff, int fd, int size)
 		_bmove(buff, n);
 
 	return n;
-#endif
 }
 
 #ifndef HAVE_THREADS

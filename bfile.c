@@ -8,7 +8,6 @@
 
 #include "buff.h"
 #include "mark.h"
-#include "page.h"
 
 #ifdef ZEDIT
 #include "z.h"

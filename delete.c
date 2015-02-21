@@ -19,8 +19,6 @@
 
 #include "z.h"
 
-#include "page.h" /* for bcopyrgn */
-
 
 static struct buff *Killbuff;
 

@@ -30,7 +30,6 @@
 #ifdef HAVE_MARKS
 #include "mark.h"
 #endif
-#include "page.h"
 
 #ifdef ZEDIT
 void vsetmod(bool flag);

@@ -8,7 +8,6 @@
 
 #include "buff.h"
 #include "mark.h"
-#include "page.h"
 
 #ifdef HAVE_GLOBAL_MARKS
 struct mark *Marklist;	/* the marks list tail */

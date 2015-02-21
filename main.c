@@ -9,7 +9,6 @@
 
 #include "buff.h"
 #include "mark.h"
-#include "page.h" /* shouldn't be included... */
 
 
 /* A little over 1k */

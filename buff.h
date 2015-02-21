@@ -149,4 +149,26 @@ extern int NumBuffs, NumPages;
 void makecur(struct buff *buff, struct page *, int);
 #define makeoffset(buff, dist) makecur((buff), (buff)->curpage, (dist))
 
+/* Page struct and functions. */
+
+/* Generally, the bigger the page size the faster the editor however
+ * the more wasted memory. A page size of 1k seems to be a very good trade off.
+ */
+#define PSIZE		1024		/* size of page */
+#define HALFP		(PSIZE / 2)	/* half the page size */
+
+struct page {
+	Byte pdata[PSIZE];		/* the page data */
+	int plen;			/* current length of the page */
+	struct page *nextp, *prevp;	/* list of pages */
+};
+
+#define lastp(pg) ((pg)->nextp == NULL)
+
+struct page *newpage(struct page *curpage);
+void freepage(struct page **firstp, struct page *page);
+struct page *pagesplit(struct buff *buff, struct page *curpage, int dist);
+
+bool bpagesplit(struct buff *buff);
+
 #endif

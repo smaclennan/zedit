@@ -147,6 +147,12 @@ struct zapp {
 #define prevbuff(b) (zapp(b)->prev)
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = zapp(b)->next)
 
+#define Curpage (Curbuff->curpage)
+#define Curchar (Curbuff->curchar)
+#define Curcptr (Curbuff->curcptr)
+
+#define Buff()		(*Curcptr)
+
 extern char *Home;
 extern bool Argp;
 extern int Arg;				/* must be signed */

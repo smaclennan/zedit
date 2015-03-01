@@ -29,7 +29,7 @@ int raw_mode;
 
 static void crfixup(void)
 {
-	char *p = (char *)memchr(Cpstart + 1, '\n', Curpage->plen - 1);
+	char *p = (char *)memchr(Curpage->pdata + 1, '\n', Curpage->plen - 1);
 	if (!p)
 		return;
 

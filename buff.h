@@ -92,12 +92,6 @@ bool _bm_rsearch(struct buff *buff, const char *str, bool sensitive);
 
 #ifndef HAVE_THREADS
 extern struct buff *Curbuff;
-#define Curpage (Curbuff->curpage)
-#define Curchar (Curbuff->curchar)
-#define Curcptr (Curbuff->curcptr)
-#define Cpstart (Curbuff->curpage->pdata)
-
-#define Buff()		(*Curcptr)
 
 #define binsert(c) _binsert(Curbuff, (c))
 #define bdelete(n) _bdelete(Curbuff, (n))
@@ -123,10 +117,6 @@ extern struct buff *Curbuff;
 #define binstr(s) _bindata(Curbuff, (Byte *)(s), strlen(s));
 
 void bswitchto(struct buff *);
-
-/* bfile.c */
-int breadfile(const char *);
-bool bwritefile(char *);
 #endif
 
 #ifndef NULL

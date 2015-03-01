@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 	struct buff *buff;
 	int total, offset;
 
-	buff = bcreate();
+	buff = _bcreate();
 	bswitchto(buff);
 
 	srand(time(NULL));

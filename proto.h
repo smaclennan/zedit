@@ -156,6 +156,8 @@ Z(pnewline);
 int ask(const char *);
 int ask2(const char *, bool);
 int bgetcol(bool, int);
+int breadfile(const char *);
+bool bwritefile(char *);
 int bmakecol(int, bool);
 bool bstrsearch(const char *, bool);
 struct buff *cfindbuff(const char *);

@@ -37,7 +37,7 @@ void minit(struct mark *preallocated);
 extern int NumMarks; /* stats */
 
 #ifndef HAVE_THREADS
-#define bisatmrk(m)	((Curpage == (m)->mpage) && (Curchar == (m)->moffset))
+#define bisatmrk(m)	((Curbuff->curpage == (m)->mpage) && (Curchar == (m)->moffset))
 
 #define bisaftermrk(m) _bisaftermrk(Curbuff, (m))
 #define bisbeforemrk(m) _bisbeforemrk(Curbuff, (m))

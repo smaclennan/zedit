@@ -16,13 +16,9 @@ static struct mark *mhead;
 
 int NumMarks;
 
-#ifndef HAVE_THREADS
-/* Keeping just one mark around is a HUGE win for a trivial amount of code. */
-static struct mark *freemark;
-
+#ifdef HAVE_GLOBAL_MARKS
 static void mfini(void)
 {
-#ifdef HAVE_GLOBAL_MARKS
 	if (mhead) {
 		if (mhead->next)
 			mhead->next->prev = NULL;
@@ -32,37 +28,22 @@ static void mfini(void)
 
 	while (Marklist)
 		unmark(Marklist);
-#endif
-
-	if (freemark)
-		free(freemark); /* don't unmark */
-
 }
+#endif
 
 void minit(struct mark *preallocated)
 {
 #ifdef HAVE_GLOBAL_MARKS
 	Marklist = preallocated;
 	mhead = preallocated;
-#endif
 	atexit(mfini);
+#endif
 }
-#endif /* !HAVE_THREADS */
 
 /* Create a mark at the current point and add it to the list. */
 struct mark *bcremrk(struct buff *buff)
 {
-	struct mark *mrk;
-
-#ifdef HAVE_THREADS
-	mrk = (struct mark *)calloc(1, sizeof(struct mark));
-#else
-	if (freemark) {
-		mrk = freemark;
-		freemark = NULL;
-	} else
-		mrk = (struct mark *)calloc(1, sizeof(struct mark));
-#endif
+	struct mark *mrk = (struct mark *)calloc(1, sizeof(struct mark));
 	if (mrk) {
 #ifdef HAVE_GLOBAL_MARKS
 		struct mark **head = &Marklist;
@@ -96,12 +77,7 @@ void unmark(struct mark *mptr)
 		if (mptr->next)
 			mptr->next->prev = mptr->prev;
 
-#ifndef HAVE_THREADS
-		if (!freemark)
-			freemark = mptr;
-		else
-#endif
-			free((char *)mptr);
+		free((char *)mptr);
 		--NumMarks;
 	}
 }
@@ -205,6 +181,5 @@ bool mrkatmrk(struct mark *mark1, struct mark *mark2)
 		mark1->mpage == mark2->mpage &&
 		mark1->moffset == mark2->moffset;
 }
-
 
 #endif /* HAVE_MARKS */

@@ -72,9 +72,6 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 main: main.c buff.c bmsearch.c reg.c mark.c
 	$(QUIET_LINK)$(CC) -DHAVE_MARKS -g -o $@ $+
 
-tsmain: tsmain.c buff.c mark.c bmsearch.c reg.c
-	$(QUIET_LINK)$(CC) -DHAVE_THREADS -DHAVE_MARKS -g -o $@ $+
-
 # Make all c files depend on all .h files
 *.o: $(HFILES)
 

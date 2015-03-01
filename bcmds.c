@@ -26,6 +26,7 @@ static int Numbnames;			/* number of buffers */
 static int Maxbnames;			/* max buffers Bnames can hold */
 
 struct buff *Bufflist;		/* the buffer list */
+struct buff *Curbuff;		/* the current buffer */
 
 static void switchto_part(void)
 {

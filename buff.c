@@ -40,10 +40,6 @@ void (*app_cleanup)(struct buff *buff);
 int NumBuffs;
 int NumPages;
 
-#ifndef HAVE_THREADS
-struct buff *Curbuff;		/* the current buffer */
-#endif
-
 /* Create a buffer but don't add it to the buffer list. */
 struct buff *bcreate(void)
 {

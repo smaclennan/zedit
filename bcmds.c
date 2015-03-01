@@ -227,18 +227,6 @@ static bool delbname(char *bname)
 	return true;
 }
 
-static void zapp_cleanup(struct buff *bptr)
-{
-	if (bptr->app) {
-		if (zapp(bptr)->fname)
-			free(zapp(bptr)->fname);
-		uncomment(bptr);
-		undo_clear(bptr);
-		free(bptr->app);
-		bptr->app = NULL; /* paranoia */
-	}
-}
-
 static void bfini(void)
 {
 	Curbuff = NULL;
@@ -253,9 +241,7 @@ static void binit(void)
 	static int binitialized = 0;
 
 	if (!binitialized) {
-		app_cleanup = zapp_cleanup;
 		bsetmod = vsetmod_callback;
-
 		atexit(bfini);
 		binitialized = 1;
 	}
@@ -342,6 +328,12 @@ bool cdelbuff(struct buff *tbuff)
 		nextbuff(prevbuff(tbuff)) = nextbuff(tbuff);
 	if (nextbuff(tbuff))
 		prevbuff(nextbuff(tbuff)) = prevbuff(tbuff);
+
+	if (zapp(tbuff)->fname)
+		free(zapp(tbuff)->fname);
+	uncomment(tbuff);
+	undo_clear(tbuff);
+	free(tbuff->app);
 
 	bdelbuff(tbuff);
 

@@ -55,9 +55,6 @@ struct buff {
 /* This is used a lot */
 #define curplen(b) ((b)->curpage->plen)
 
-/* If set, this function will be called on _bdelbuff */
-extern void (*app_cleanup)(struct buff *buff);
-
 extern void (*bsetmod)(struct buff *buff);
 
 struct buff *bcreate(void);

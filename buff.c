@@ -34,9 +34,6 @@
 static void dummy_bsetmod(struct buff *buff) {}
 void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
 
-/* If set, this function will be called on bdelbuff */
-void (*app_cleanup)(struct buff *buff);
-
 int NumBuffs;
 int NumPages;
 
@@ -64,9 +61,6 @@ void bdelbuff(struct buff *tbuff)
 {
 	if (!tbuff)
 		return;
-
-	if (app_cleanup)
-		app_cleanup(tbuff);
 
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);

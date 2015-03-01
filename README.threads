@@ -4,53 +4,15 @@ safe. However buffers cannot be shared between threads without some
 form of external locking.
 
 What you do lose from buff.c is the buffer list and memory cleanup at
-exit. I don't think the buffer list has much meaning in a
-threaded environment.
+exit. I don't think the buffer list has much meaning in a threaded
+environment.
 
-The following calls are thread safe:
+All the functions in the following files are thread safe:
 
- * _bcreate
- * _bdelbuff
- * _binsert
- * _bdelete
- * _bmove
- * _bmove1
- * _bisstart
- * _bisend
- * _btostart
- * _btoend
- * _tobegline
- * _toendline
- * _blength
- * _blocation
- * _bcsearch
- * _bcrsearch
- * _bempty
- * _bpeek
- * _bgoto_char
- * _bappend
- * _bindata
- * _bread
- * _bwrite
+ * buff.c
+ * bm_search.c
+ * mark.c (1)
+ * reg.c (2)
 
- * _bm_search
- * _bm_rsearch
-
-If marks enabled:
-
- * _bcremrk
- * unmark
- * _bisatmrk
- * _bisaftermrk
- * _bisbeforemrk
- * _bmrktopnt
- * _bpnttomrk
- * _bswappnt
- * mrktomrk
- * mrkaftermrk
- * mrkatmrk
- * mrkbeforemrk
-
- * compile
- * step
- * regerr
+(1) You can't enable GLOBAL_MARKS
+(2) Requires marks

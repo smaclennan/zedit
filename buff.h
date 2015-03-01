@@ -99,6 +99,7 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive);
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
 
+/* These are for stats only and are not thread safe */
 extern int NumBuffs, NumPages;
 
 /* These should be called from buffer/mark code only */

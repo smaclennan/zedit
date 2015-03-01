@@ -41,7 +41,6 @@
 /* THE BUFFER STRUCTURES */
 
 struct buff {
-	char *bname;				/* buffer name */
 	bool bmodf;					/* buffer modified? */
 	struct page *firstp;		/* the pages */
 	struct page *curpage;		/* the position of the point */

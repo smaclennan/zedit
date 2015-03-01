@@ -126,8 +126,7 @@ bool bpnttomrk(struct buff *buff, struct mark *tmark)
 #ifdef HAVE_GLOBAL_MARKS
 		/* For Zedit debugging... */
 		extern void Dbg(const char *fmt, ...);
-		Dbg("bmrktopnt: mismatch mark %s and buff %s\n",
-			tmark->mbuff->bname, buff->bname);
+		Dbg("bmrktopnt: mismatch mark %p and buff %p\n", tmark->mbuff, buff);
 #endif
 		return false;
 	}

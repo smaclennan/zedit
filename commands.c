@@ -446,7 +446,7 @@ bool promptsave(struct buff *tbuff, bool must)
 
 	if (tbuff->bmodf) {
 		if (!must && !save_all) {
-			sprintf(str, "save buffer %s? ", tbuff->bname);
+			sprintf(str, "save buffer %s? ", zapp(tbuff)->bname);
 			ok = ask2(str, true);
 			if (ok == BANG)
 				save_all = 1;

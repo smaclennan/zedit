@@ -292,7 +292,7 @@ void Znext_bookmark(void)
 	}
 
 	if (Bookmrks[Bookmark]->mbuff != Curbuff) {
-		strcpy(Lbufname, Curbuff->bname);
+		strcpy(Lbufname, zapp(Curbuff)->bname);
 		wgoto(Bookmrks[Bookmark]->mbuff);
 	}
 	bpnttomrk(Curbuff, Bookmrks[Bookmark]);

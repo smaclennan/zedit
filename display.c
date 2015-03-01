@@ -389,7 +389,7 @@ static void modeline(struct wdo *wdo)
 	tsetpoint(wdo->last, 0);
 	tstyle(T_STANDOUT);
 	sprintf(str, "%s %s  (%s)  %s: ", ZSTR, VERSION,
-		setmodes(wdo->wbuff), wdo->wbuff->bname);
+			setmodes(wdo->wbuff), zapp(wdo->wbuff)->bname);
 	tprntstr(str);
 	if (zapp(wdo->wbuff)->fname) {
 		len = strlen(str) + 3;

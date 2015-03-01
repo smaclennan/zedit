@@ -272,7 +272,7 @@ bool wuseother(const char *bname)
 	struct buff *buff;
 
 	for (wdo = Whead, last = NULL; wdo; last = wdo, wdo = wdo->next)
-		if (strcmp(wdo->wbuff->bname, bname) == 0)
+		if (strcmp(zapp(wdo->wbuff)->bname, bname) == 0)
 			break;
 	if (wdo)
 		wswitchto(wdo);

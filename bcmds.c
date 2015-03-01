@@ -41,13 +41,13 @@ static void switchto_part(void)
 		tbuff = nextbuff(tbuff);
 	else
 		tbuff = Bufflist;
-	makepaw(tbuff->bname, true);
+	makepaw(zapp(tbuff)->bname, true);
 }
 
 void Zswitch_to_buffer(void)
 {
 	int rc;
-	char *was = Curbuff->bname;
+	char *was = zapp(Curbuff)->bname;
 
 	Arg = 0;
 	Nextpart = switchto_part;
@@ -69,7 +69,7 @@ void Znext_buffer(void)
 		for (next = nextbuff(Curbuff); nextbuff(next); next = nextbuff(next))
 			;
 	if (next) {
-		strcpy(Lbufname, Curbuff->bname);
+		strcpy(Lbufname, zapp(Curbuff)->bname);
 		uncomment(Curbuff);
 		cswitchto(next);
 		reframe();
@@ -83,7 +83,7 @@ static void delbuff(struct buff *buff)
 	struct wdo *wdo;
 
 	wascur = buff == Curbuff;
-	if (strcmp(Lbufname, buff->bname) == 0)
+	if (strcmp(Lbufname, zapp(buff)->bname) == 0)
 		*Lbufname = '\0';
 	if (cdelbuff(buff)) {
 		if (wascur && *Lbufname) {
@@ -137,7 +137,7 @@ void Zdelete_buffer(void)
 
 static void lstbuff(struct buff *tbuff)
 {
-	sprintf(PawStr, "%-*s %c%c %8lu %s\n", BUFNAMMAX, tbuff->bname,
+	sprintf(PawStr, "%-*s %c%c %8lu %s\n", BUFNAMMAX, zapp(tbuff)->bname,
 			(tbuff->bmode & SYSBUFF) ? 'S' : ' ',
 			tbuff->bmodf ? '*' : ' ',
 			blength(tbuff),
@@ -281,8 +281,8 @@ struct buff *cmakebuff(const char *bname, char *fname)
 		return NULL;
 	}
 
-	bptr->bname = addbname(bname);
-	if (!bptr->bname) {
+	zapp(bptr)->bname = addbname(bname);
+	if (!zapp(bptr)->bname) {
 		error("Out of buffers");
 		bdelbuff(bptr);
 		return NULL;
@@ -317,9 +317,9 @@ bool cdelbuff(struct buff *tbuff)
 	if (!tbuff)
 		return false;
 
-	if (tbuff->bname) {
-		delbname(tbuff->bname);
-		tbuff->bname = NULL;
+	if (zapp(tbuff)->bname) {
+		delbname(zapp(tbuff)->bname);
+		zapp(tbuff)->bname = NULL;
 	}
 
 	if (unvoke(tbuff))
@@ -354,7 +354,7 @@ struct buff *cfindbuff(const char *bname)
 	struct buff *tbuff;
 
 	foreachbuff(tbuff)
-		if (strncasecmp(tbuff->bname, bname, BUFNAMMAX) == 0)
+		if (strncasecmp(zapp(tbuff)->bname, bname, BUFNAMMAX) == 0)
 			return tbuff;
 	return NULL;
 }

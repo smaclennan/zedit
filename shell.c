@@ -212,7 +212,7 @@ static bool _cmdtobuff(struct buff *tbuff, const char *icmd)
 	int from[2], arg;
 
 	if (child != EOF) {
-		error("%s in use....", tbuff->bname);
+		error("%s in use....", zapp(tbuff)->bname);
 		return false;
 	}
 

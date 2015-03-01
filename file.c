@@ -207,7 +207,7 @@ static bool readone(char *bname, char *path)
 			else if (access(path, R_OK | W_OK) == EOF)
 				Curbuff->bmode |= VIEW;
 #endif
-			strcpy(Lbufname, was->bname);
+			strcpy(Lbufname, zapp(was)->bname);
 		} else { /* error */
 			cdelbuff(Curbuff);
 			bswitchto(was);
@@ -226,7 +226,7 @@ bool findfile(char *path)
 	int rc = true;
 
 	Arg = 0;
-	was = Curbuff->bname;
+	was = zapp(Curbuff)->bname;
 
 	/* limit name to BUFNAMMAX */
 	strncpy(tbname, lastpart(path), BUFNAMMAX);

@@ -122,8 +122,15 @@ void bmrktopnt(struct buff *buff, struct mark *tmark)
 bool bpnttomrk(struct buff *buff, struct mark *tmark)
 {
 	/* SAM WARNING: Zedit used to do bswitchto if tmark->mbuff != buff */
-	if (tmark->mbuff != buff)
+	if (tmark->mbuff != buff) {
+#ifdef HAVE_GLOBAL_MARKS
+		/* For Zedit debugging... */
+		extern void Dbg(const char *fmt, ...);
+		Dbg("bmrktopnt: mismatch mark %s and buff %s\n",
+			tmark->mbuff->bname, buff->bname);
+#endif
 		return false;
+	}
 	if (tmark->mpage)
 		makecur(buff, tmark->mpage, tmark->moffset);
 	return true;

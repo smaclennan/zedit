@@ -42,7 +42,6 @@ int NumPages;
 
 #ifndef HAVE_THREADS
 struct buff *Curbuff;		/* the current buffer */
-struct buff *Bufflist;		/* the buffer list */
 #endif
 
 /* Create a buffer but don't add it to the buffer list. */
@@ -567,70 +566,6 @@ int _bwrite(struct buff *buff, int fd, int size)
 }
 
 #ifndef HAVE_THREADS
-static void bfini(void)
-{
-	Curbuff = NULL;
-
-	while (Bufflist)
-		/* bdelbuff will update Bufflist */
-		bdelbuff(Bufflist);
-}
-
-static void binit(void)
-{
-	static int binitialized = 0;
-
-	if (!binitialized) {
-		atexit(bfini);
-		binitialized = 1;
-	}
-}
-
-/* Create a buffer. Returns a pointer to the buffer descriptor. */
-struct buff *bcreate(void)
-{
-	struct buff *buf;
-
-	binit();
-
-	if ((buf = _bcreate())) {
-		/* add the buffer to the head of the list */
-		if (Bufflist)
-			Bufflist->prev = buf;
-		buf->next = Bufflist;
-		Bufflist = buf;
-	}
-
-	return buf;
-}
-
-/* Delete the buffer and its pages. */
-bool bdelbuff(struct buff *tbuff)
-{
-	if (!tbuff)
-		return true;
-
-	if (tbuff == Curbuff) { /* switch to a safe buffer */
-		if (tbuff->next)
-			bswitchto(tbuff->next);
-		else if (tbuff->prev)
-			bswitchto(tbuff->prev);
-		else
-			return false;
-	}
-
-	if (tbuff == Bufflist)
-		Bufflist = tbuff->next;
-	if (tbuff->prev)
-		tbuff->prev->next = tbuff->next;
-	if (tbuff->next)
-		tbuff->next->prev = tbuff->prev;
-
-	_bdelbuff(tbuff);
-
-	return true;
-}
-
 void bswitchto(struct buff *buf)
 {
 	if (buf && buf != Curbuff) {

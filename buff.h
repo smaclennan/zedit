@@ -123,8 +123,6 @@ extern struct buff *Curbuff;
 
 #define binstr(s) _bindata(Curbuff, (Byte *)(s), strlen(s));
 
-struct buff *bcreate(void);
-bool bdelbuff(struct buff *);
 void bswitchto(struct buff *);
 
 /* bfile.c */

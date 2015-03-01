@@ -60,8 +60,6 @@ void display_init(void)
 
 	/* init the mark list */
 	minit(Send);
-
-	bsetmod = vsetmod_callback;
 }
 
 /* True if user mark moved */

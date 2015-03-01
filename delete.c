@@ -24,8 +24,8 @@ static struct buff *Killbuff;
 
 static void delfini(void)
 {
-	bdelbuff(Killbuff);
-	bdelbuff(Paw);
+	_bdelbuff(Killbuff);
+	_bdelbuff(Paw);
 }
 
 void delinit(void)

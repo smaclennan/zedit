@@ -25,6 +25,7 @@ static char **Bnames;			/* array of ptrs to buffer names */
 static int Numbuffs;			/* number of buffers */
 static int maxbuffs;			/* max buffers Bnames can hold */
 
+struct buff *Bufflist;		/* the buffer list */
 
 static void switchto_part(void)
 {
@@ -240,58 +241,103 @@ static void zapp_cleanup(struct buff *bptr)
 	}
 }
 
-/* Create a buffer. */
+static void bfini(void)
+{
+	Curbuff = NULL;
+
+	while (Bufflist)
+		/* bdelbuff will update Bufflist */
+		cdelbuff(Bufflist);
+}
+
+static void binit(void)
+{
+	static int binitialized = 0;
+
+	if (!binitialized) {
+		app_cleanup = zapp_cleanup;
+		bsetmod = vsetmod_callback;
+
+		atexit(bfini);
+		binitialized = 1;
+	}
+}
+
+/* Create a buffer and add to Bufflist. */
 struct buff *cmakebuff(const char *bname, char *fname)
 {
-	struct buff *bptr, *save = Curbuff;
+	struct buff *bptr;
 
 	if ((bptr = cfindbuff(bname))) {
 		bswitchto(bptr);
 		return bptr;
 	}
 
-	if ((bptr = bcreate()))
-		bptr->app = calloc(1, sizeof(struct zapp));
-	if (!bptr || !bptr->app) {
-		if (bptr) free(bptr);
+	binit();
+
+	if (!(bptr = _bcreate()) ||
+		!(bptr->app = calloc(1, sizeof(struct zapp))) ||
+		(fname && !(zapp(bptr)->fname = strdup(fname)))) {
+		_bdelbuff(bptr);
 		error("Unable to create buffer");
 		return NULL;
 	}
 
-	bptr->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
-		(VAR(VEXACT) ? EXACT : 0);
-
 	bptr->bname = addbname(bname);
 	if (!bptr->bname) {
 		error("Out of buffers");
-		bdelbuff(bptr);
-		bswitchto(save);
+		_bdelbuff(bptr);
 		return NULL;
 	}
+
+	/* add the buffer to the head of the list */
+	if (Bufflist)
+		Bufflist->prev = bptr;
+	bptr->next = Bufflist;
+	Bufflist = bptr;
+
+	bptr->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
+		(VAR(VEXACT) ? EXACT : 0);
 
 	if (*bname == '*')
 		bptr->bmode |= SYSBUFF;
 
 	bswitchto(bptr);
-	if (fname)
-		zapp(bptr)->fname = strdup(fname);
-
-	app_cleanup = zapp_cleanup;
-
 	return bptr;
 }
 
-bool cdelbuff(struct buff *bptr)
+bool cdelbuff(struct buff *tbuff)
 {
-	if (bptr->bname)
-		delbname(bptr->bname);
+	if (!tbuff)
+		return false;
 
-	if (unvoke(bptr))
+	if (tbuff->bname)
+		delbname(tbuff->bname);
+
+	if (unvoke(tbuff))
 		checkpipes(1);
 
 	CLEAR_UMARK;
 
-	return bdelbuff(bptr);
+	if (tbuff == Curbuff) { /* switch to a safe buffer */
+		if (tbuff->next)
+			bswitchto(tbuff->next);
+		else if (tbuff->prev)
+			bswitchto(tbuff->prev);
+		else
+			return false;
+	}
+
+	if (tbuff == Bufflist)
+		Bufflist = tbuff->next;
+	if (tbuff->prev)
+		tbuff->prev->next = tbuff->next;
+	if (tbuff->next)
+		tbuff->next->prev = tbuff->prev;
+
+	_bdelbuff(tbuff);
+
+	return true;
 }
 
 /* Locate a given buffer */

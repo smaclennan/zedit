@@ -319,8 +319,7 @@ void Zwrite_file(void)
 		if (Argp) {
 			struct buff *tbuff, *save = Curbuff;
 
-			tbuff = bcreate();
-			if (tbuff) {
+			if ((tbuff = _bcreate())) {
 				NEED_UMARK;
 				putpaw("Writing %s", path);
 				bswitchto(save);
@@ -329,7 +328,7 @@ void Zwrite_file(void)
 				Curbuff->bmode = save->bmode;
 				zwritefile(path);
 				bswitchto(save);
-				bdelbuff(tbuff);
+				_bdelbuff(tbuff);
 				clrpaw();
 				CLEAR_UMARK;
 			}
@@ -354,8 +353,7 @@ void Zread_file(void)
 		return;
 
 	save = Curbuff;
-	tbuff = bcreate();
-	if (tbuff) {
+	if ((tbuff = _bcreate())) {
 		bswitchto(tbuff);
 		Curbuff->bmode = save->bmode;
 		putpaw("Reading %s", lastpart(Fname));
@@ -368,7 +366,7 @@ void Zread_file(void)
 			unmark(tmark);
 		}
 		bswitchto(save);
-		bdelbuff(tbuff);
+		_bdelbuff(tbuff);
 	}
 
 	if (rc > 0)

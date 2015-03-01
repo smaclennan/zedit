@@ -119,7 +119,7 @@ void Zhelp_function(void)
 		if (buff == NULL)
 			return;
 		cswitchto(buff);
-		bempty(Curbuff);
+		bempty(Bbuff);
 	} else
 		wuseother(HELPBUFF);
 
@@ -138,7 +138,7 @@ void Zhelp_function(void)
 	dump_doc(Cnames[rc].doc);
 	dump_bindings(Cnames[rc].fnum);
 
-	btostart(Curbuff);
+	btostart(Bbuff);
 	Curbuff->bmodf = false;
 }
 
@@ -167,7 +167,7 @@ void Zhelp_variable(void)
 
 	dump_doc(Vars[rc].doc);
 
-	btostart(Curbuff);
+	btostart(Bbuff);
 	Curbuff->bmodf = false;
 }
 
@@ -200,7 +200,7 @@ void Zhelp_apropos(void)
 	if (match == 0)
 		putpaw("No matches.");
 	else {
-		btostart(Curbuff);
+		btostart(Bbuff);
 		Curbuff->bmodf = false;
 	}
 }

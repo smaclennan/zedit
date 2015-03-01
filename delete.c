@@ -40,9 +40,9 @@ static void copytomrk(struct mark *tmark)
 	struct buff *save = Curbuff;
 	bswitchto(Killbuff);
 	if (delcmd())
-		btoend(Curbuff);
+		btoend(Bbuff);
 	else
-		bempty(Curbuff);
+		bempty(Bbuff);
 	bswitchto(save);
 	bcopyrgn(tmark, Killbuff);
 }
@@ -148,14 +148,14 @@ void Zdelete_previous_char(void)
 
 void Zdelete_to_eol(void)
 {
-	if (!bisend(Curbuff) && Buff() == NL)
+	if (!bisend(Bbuff) && Buff() == NL)
 		bdelete(Bbuff, 1);
 	else {
-		bool atstart = bpeek(Curbuff) == NL;
+		bool atstart = bpeek(Bbuff) == NL;
 		struct mark *tmark = zcreatemrk();
-		toendline(Curbuff);
+		toendline(Bbuff);
 		if (atstart)
-			bmove1(Curbuff); /* delete the NL */
+			bmove1(Bbuff); /* delete the NL */
 		killtomrk(tmark);
 		unmark(tmark);
 	}
@@ -165,7 +165,7 @@ void Zdelete_line(void)
 {
 	struct mark *tmark;
 
-	tobegline(Curbuff);
+	tobegline(Bbuff);
 	tmark = zcreatemrk();
 	bcsearch(Bbuff, NL);
 	killtomrk(tmark);
@@ -193,7 +193,7 @@ void Zyank(void)
 	struct mark *tmark, save;	/* save must NOT be a pointer */
 
 	if (InPaw && First) {
-		bempty(Curbuff);
+		bempty(Bbuff);
 		First = false;
 	}
 
@@ -205,9 +205,9 @@ void Zyank(void)
 	set_umark(NULL);
 #endif
 	bswitchto(Killbuff);
-	btoend(Curbuff);
+	btoend(Bbuff);
 	tmark = zcreatemrk();
-	btostart(Curbuff);
+	btostart(Bbuff);
 #if UNDO
 	undo_add(bcopyrgn(tmark, tbuff));
 #else
@@ -273,10 +273,10 @@ void Zdelete_blanks(void)
 
 	pmark = zcreatemrk();
 	if (bcrsearch(Bbuff, NL)) {
-		bmove1(Curbuff);
+		bmove1(Bbuff);
 		tmark = zcreatemrk();
 		movepast(bisspace, BACKWARD);
-		if (!bisstart(Curbuff))
+		if (!bisstart(Bbuff))
 			bcsearch(Bbuff, NL);
 		if (bisbeforemrk(Bbuff, tmark))
 			bdeltomrk(tmark);
@@ -286,7 +286,7 @@ void Zdelete_blanks(void)
 		tmark = zcreatemrk();
 		movepast(bisspace, FORWARD);
 		if (bcrsearch(Bbuff, NL))
-			bmove1(Curbuff);
+			bmove1(Bbuff);
 		if (bisaftermrk(Bbuff, tmark))
 			bdeltomrk(tmark);
 		unmark(tmark);
@@ -297,7 +297,7 @@ void Zdelete_blanks(void)
 
 void Zjoin(void)
 {
-	toendline(Curbuff);
+	toendline(Bbuff);
 	bdelete(Bbuff, 1);
 	Ztrim_white_space();
 	binsert(Bbuff, ' ');
@@ -307,6 +307,6 @@ void Zempty_buffer(void)
 {
 	if (ask("Empty buffer? ") != YES)
 		return;
-	bempty(Curbuff);
+	bempty(Bbuff);
 	Curbuff->bmodf = true;
 }

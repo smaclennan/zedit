@@ -47,7 +47,7 @@ static void crfixup(void)
 			bdelete(Bbuff, 1);
 		}
 
-	btostart(Curbuff);
+	btostart(Bbuff);
 }
 
 /*
@@ -71,7 +71,7 @@ int breadfile(const char *fname)
 	else
 		zapp(Curbuff)->mtime = -1;
 
-	bempty(Curbuff);
+	bempty(Bbuff);
 
 #if ZLIB
 	gzFile gz = gzdopen(fd, "rb");
@@ -90,7 +90,7 @@ int breadfile(const char *fname)
 	while ((len = fileread(fd, buf, PSIZE)) > 0) {
 		if (Curpage->plen) {
 			if (!newpage(Curpage)) {
-				bempty(Curbuff);
+				bempty(Bbuff);
 				fileclose(fd);
 				return ENOMEM;
 			}
@@ -103,7 +103,7 @@ int breadfile(const char *fname)
 	}
 	fileclose(fd);
 
-	btostart(Curbuff);
+	btostart(Bbuff);
 
 	if (Curpage->plen && !(zapp(Curbuff)->bmode & COMPRESSED))
 		crfixup();

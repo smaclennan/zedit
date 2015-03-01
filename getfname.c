@@ -104,7 +104,7 @@ static struct llist *getfill(char *dir, char **fname, int *len, bool *update)
 	char txt[PATHMAX + 1];
 
 	if (First) {
-		bempty(Curbuff);
+		bempty(Bbuff);
 		First = false;
 	}
 	getbtxt(txt, PATHMAX);
@@ -196,12 +196,12 @@ void Zfname(void)
 	int did_something = 0;
 
 	if (Cmd == '/') {
-		if (bpeek(Curbuff) == '/')
-			bempty(Curbuff);
+		if (bpeek(Bbuff) == '/')
+			bempty(Bbuff);
 		pinsert();
 		return;
 	} else if (Cmd == '~') {
-		bempty(Curbuff);
+		bempty(Bbuff);
 		pinsert();
 		return;
 	}
@@ -225,7 +225,7 @@ void Zfname(void)
 		}
 	if (match) {
 		if (n > len) {
-			btoend(Curbuff);
+			btoend(Bbuff);
 			while (len < n && blength(Curbuff) < Pawlen) {
 				binsert(Bbuff, match[len++]);
 				++did_something;

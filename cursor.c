@@ -22,13 +22,13 @@
 void Zbeginning_of_line(void)
 {
 	bmove(Bbuff, -1);
-	tobegline(Curbuff);
+	tobegline(Bbuff);
 }
 
 void Zend_of_line(void)
 {
-	bmove1(Curbuff);
-	toendline(Curbuff);
+	bmove1(Bbuff);
+	toendline(Bbuff);
 }
 
 /* Support routine to calc column to force to for line up and down */
@@ -88,10 +88,10 @@ int bgetcol(bool flag, int col)
 
 	bmrktopnt(Bbuff, &pmark);
 	if (bcrsearch(Bbuff, '\n'))
-		bmove1(Curbuff);
-	while (!bisatmrk(Bbuff, &pmark) && !bisend(Curbuff)) {
+		bmove1(Bbuff);
+	while (!bisatmrk(Bbuff, &pmark) && !bisend(Bbuff)) {
 		col += chwidth(*Curcptr, col, flag);
-		bmove1(Curbuff);
+		bmove1(Bbuff);
 	}
 	return col;
 }
@@ -104,10 +104,10 @@ int bmakecol(int col, bool must)
 	int tcol = 0;
 
 	if (bcrsearch(Bbuff, '\n'))
-		bmove1(Curbuff);
-	while (tcol < col && *Curcptr != '\n' && !bisend(Curbuff)) {
+		bmove1(Bbuff);
+	while (tcol < col && *Curcptr != '\n' && !bisend(Bbuff)) {
 		tcol += chwidth(*Curcptr, tcol, !must);
-		bmove1(Curbuff);
+		bmove1(Bbuff);
 	}
 	if (must && tcol < col) {
 		int wid = chwidth('\t', tcol, true);
@@ -137,7 +137,7 @@ void Znext_page(void)
 	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(Bbuff, NL); --i) {
 		bmove(Bbuff, -1);
 		i -= bgetcol(true, 0) / Colmax;
-		bmove1(Curbuff);
+		bmove1(Bbuff);
 	}
 	bmakecol(col, false);
 	reframe();
@@ -159,12 +159,12 @@ void Znext_word(void)
 
 void Zbeginning_of_buffer(void)
 {
-	btostart(Curbuff);
+	btostart(Bbuff);
 }
 
 void Zend_of_buffer(void)
 {
-	btoend(Curbuff);
+	btoend(Bbuff);
 }
 
 void Zswap_mark(void)
@@ -212,7 +212,7 @@ void Zgoto_line(void)
 			return;
 	}
 
-	btostart(Curbuff);
+	btostart(Bbuff);
 	while (--line > 0)
 		bcsearch(Bbuff, NL);
 }
@@ -320,14 +320,14 @@ static void scroll(bool (*search)(struct buff *buff, Byte what))
 	bpnttomrk(Bbuff, Sstart);
 	while (Arg-- > 0 && search(Bbuff, NL))
 		;
-	tobegline(Curbuff);
+	tobegline(Bbuff);
 	bmrktopnt(Bbuff, Sstart);
 	bmove(Bbuff, -1);
 	bmrktopnt(Bbuff, Psstart);
 	Sendp = false;
 
 	if (mrkaftermrk(Sstart, pmark))
-		bmove1(Curbuff);
+		bmove1(Bbuff);
 	else
 		bpnttomrk(Bbuff, pmark);
 

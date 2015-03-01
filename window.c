@@ -285,7 +285,7 @@ bool wuseother(const char *bname)
 	if (buff == NULL)
 		return false;
 	cswitchto(buff);
-	bempty(Curbuff);
+	bempty(Bbuff);
 	return true;
 }
 

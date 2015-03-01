@@ -30,7 +30,7 @@ static void grep_one(char *fname, Byte *ebuf,
 		     struct buff *inbuff, struct buff *outbuff)
 {
 	bswitchto(inbuff);
-	bempty(Curbuff);
+	bempty(Bbuff);
 
 	if (zreadfile(fname))
 		return;
@@ -44,10 +44,10 @@ static void grep_one(char *fname, Byte *ebuf,
 		binstr(Bbuff, PawStr);
 		bswitchto(inbuff);
 
-		tobegline(Curbuff);
+		tobegline(Bbuff);
 		start = zcreatemrk();
-		toendline(Curbuff);
-		bmove1(Curbuff); /* grab NL */
+		toendline(Bbuff);
+		bmove1(Bbuff); /* grab NL */
 		bcopyrgn(start, outbuff);
 		unmark(start);
 	}

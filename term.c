@@ -509,14 +509,14 @@ void mouse_point(int row, int col, bool set_mark)
 			bcrsearch(Bbuff, '\n');
 			--Prow;
 		}
-		tobegline(Curbuff);
+		tobegline(Bbuff);
 	}
 
 	/* Move the point to col */
 	atcol = 0;
-	while (col > 0 && !bisend(Curbuff) && *Curcptr != '\n') {
+	while (col > 0 && !bisend(Bbuff) && *Curcptr != '\n') {
 		int n = chwidth(*Curcptr, atcol, false);
-		bmove1(Curbuff);
+		bmove1(Bbuff);
 		col -= n;
 		atcol += n;
 	}

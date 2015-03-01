@@ -111,7 +111,7 @@ static bool find_tag(char *word)
 	}
 
 	bswitchto(buff);
-	btostart(Curbuff);
+	btostart(Bbuff);
 	if (!step(Bbuff, ebuf, NULL))
 		goto failed;
 

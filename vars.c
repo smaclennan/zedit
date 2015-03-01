@@ -202,7 +202,7 @@ void Zshow_config(void)
 	if (!tbuff)
 		return;
 
-	bempty(Curbuff);
+	bempty(Bbuff);
 	for (i = 0; i < NUMVARS; ++i) {
 		if (Vars[i].vtype == V_STRING) {
 			if (VARSTR(i))
@@ -223,6 +223,6 @@ void Zshow_config(void)
 	}
 
 	tbuff->bmodf = false;
-	btostart(Curbuff);
+	btostart(Bbuff);
 	cswitchto(tbuff);
 }

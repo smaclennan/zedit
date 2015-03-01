@@ -76,7 +76,7 @@ again:
 					if (strstr(promptstr, "Wrap") == NULL)
 						strcat(promptstr, " (Wrapped)");
 					count = 0;
-					btostart(Curbuff);
+					btostart(Bbuff);
 					goto again;
 				} else {
 					bpnttomrk(Bbuff, &tmark);
@@ -150,7 +150,7 @@ void Zglobal_search(void)
 	if (getarg(nocase("Global Search: "), olds, STRMAX))
 		return;
 	cswitchto(Bufflist);
-	btostart(Curbuff);
+	btostart(Bbuff);
 	searchdir[0] = FORWARD;
 	searchdir[1] = SGLOBAL;
 	Zagain();
@@ -166,7 +166,7 @@ void Zglobal_re_search(void)
 	if (getarg(nocase("Global RE Search: "), olds, STRMAX))
 		return;
 	cswitchto(Bufflist);
-	btostart(Curbuff);
+	btostart(Bbuff);
 	searchdir[0] = REGEXP;
 	searchdir[1] = SGLOBAL;
 	Zagain();
@@ -181,7 +181,7 @@ void Zagain(void)
 			Curbuff = nextbuff(Curbuff);
 			if (Curbuff) {
 				cswitchto(Curbuff);
-				btostart(Curbuff);
+				btostart(Bbuff);
 				Arg = 1;
 			} else {
 				bpnttomrk(Bbuff, Gmark);
@@ -195,7 +195,7 @@ void Zagain(void)
 	} else {
 		if (searchdir[0] & AGAIN_WRAP) {
 			searchdir[0] &= ~AGAIN_WRAP;
-			btostart(Curbuff);
+			btostart(Bbuff);
 			putpaw("Wrapped....");
 			dosearch();
 		} else if (promptsearch("Search: ", AGAIN) == 0)
@@ -244,7 +244,7 @@ static void doreplace(int type)
 			else {
 				cswitchto(tbuff);
 				bmrktopnt(Bbuff, &tmark);
-				btostart(Curbuff);
+				btostart(Bbuff);
 				while (replaceone(type, &query, &exit, ebuf, crgone) &&
 					   !exit)
 					;
@@ -370,7 +370,7 @@ input:
 					bmrktopnt(Bbuff, prevmatch);
 					changeprev = 0;
 					/* skip and continue */
-					bmove1(Curbuff);
+					bmove1(Bbuff);
 				}
 				continue;
 			}
@@ -417,7 +417,7 @@ input:
 		}
 		/* special case for "^" && "$" search strings */
 		if (type == REGEXP && (ISNL(Buff()) || circf) && !crgone)
-			bmove1(Curbuff);
+			bmove1(Bbuff);
 		if (*query)
 			putpaw("Searching...");
 		else if (tkbrdy())

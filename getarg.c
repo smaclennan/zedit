@@ -61,15 +61,15 @@ bool _getarg(const char *prompt, char *arg, int max, bool tostart)
 	Pawlen = max;
 	makepaw(arg, false);
 	if (tostart) {
-		btostart(Curbuff);
+		btostart(Bbuff);
 		First = true;
 	}
 	while (InPaw == true)
 		execute();
 	if (InPaw != ABORT) {
 		/* get the argument */
-		btostart(Curbuff);
-		for (ptr = arg; !bisend(Curbuff) && Buff() != '\0'; bmove1(Curbuff))
+		btostart(Bbuff);
+		for (ptr = arg; !bisend(Bbuff) && Buff() != '\0'; bmove1(Bbuff))
 			*ptr++ = Buff();
 		*ptr = '\0';
 		rc = ptr == arg;	/* set to 1 if string empty */
@@ -204,7 +204,7 @@ void pinsert(void)
 	}
 
 	if (First) {
-		bempty(Curbuff);
+		bempty(Bbuff);
 		First = false;
 		Tlrow = -1;
 	}
@@ -214,7 +214,7 @@ void pinsert(void)
 		Zinsert();
 
 		bmrktopnt(Bbuff, &tmark);
-		btoend(Curbuff);
+		btoend(Bbuff);
 		if (bgetcol(false, 0) > Pawlen) {
 			/* Insert in middle pushed text past end */
 			bmove(Bbuff, -width);

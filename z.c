@@ -406,14 +406,14 @@ int getbword(char word[], int max, int (*valid)())
 	int i;
 	struct mark tmark;
 
-	bmrktopnt(&tmark);
+	bmrktopnt(Curbuff, &tmark);
 	if (!bistoken())
 		moveto(bistoken, BACKWARD);
 	movepast(bistoken, BACKWARD);
 	for (i = 0; !bisend(Curbuff) && valid() && i < max; ++i, bmove1(Curbuff))
 		word[i] = Buff();
 	word[i] = '\0';
-	bpnttomrk(&tmark);
+	bpnttomrk(Curbuff, &tmark);
 	return i;
 }
 
@@ -422,12 +422,12 @@ bool looking_at(const char *match)
 {
 	struct mark tmark;
 
-	bmrktopnt(&tmark);
+	bmrktopnt(Curbuff, &tmark);
 	while (*match && *Curcptr == *match) {
 		bmove1(Curbuff);
 		++match;
 	}
-	bpnttomrk(&tmark);
+	bpnttomrk(Curbuff, &tmark);
 	return *match == '\0';
 }
 
@@ -440,11 +440,11 @@ char *getbtxt(char txt[], int max)
 	int i;
 	struct mark tmark;
 
-	bmrktopnt(&tmark);
+	bmrktopnt(Curbuff, &tmark);
 	for (btostart(Curbuff), i = 0; !bisend(Curbuff) && i < max; bmove1(Curbuff), ++i)
 		txt[i] = Buff();
 	txt[i] = '\0';
-	bpnttomrk(&tmark);
+	bpnttomrk(Curbuff, &tmark);
 	return txt;
 }
 
@@ -547,7 +547,7 @@ void Zstats(void)
 
 struct mark *zcreatemrk(void)
 {
-	struct mark *mrk = _bcremrk(Curbuff);
+	struct mark *mrk = bcremrk(Curbuff);
 	if (!mrk)
 		longjmp(zenv, -1);	/* ABORT */
 	return mrk;

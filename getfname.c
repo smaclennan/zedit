@@ -196,7 +196,7 @@ void Zfname(void)
 	int did_something = 0;
 
 	if (Cmd == '/') {
-		if (_bpeek(Curbuff) == '/')
+		if (bpeek(Curbuff) == '/')
 			bempty(Curbuff);
 		pinsert();
 		return;

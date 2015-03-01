@@ -120,7 +120,7 @@ void wswitchto(struct wdo *wdo)
 {
 	if (wdo != Curwdo) {
 		if (Curwdo) {
-			bmrktopnt(Curwdo->wpnt);
+			bmrktopnt(Curbuff, Curwdo->wpnt);
 			if (UMARK_SET) {
 				mrktomrk(Curwdo->wmrk, UMARK);
 				Curwdo->umark_set = 1;
@@ -132,7 +132,7 @@ void wswitchto(struct wdo *wdo)
 		}
 		Curwdo = wdo;
 		bswitchto(wdo->wbuff);
-		bpnttomrk(wdo->wpnt);
+		bpnttomrk(Curbuff, wdo->wpnt);
 		if (Curwdo->umark_set)
 			set_umark(wdo->wmrk);
 		mrktomrk(Sstart, wdo->wstart);
@@ -147,7 +147,7 @@ void cswitchto(struct buff *buff)
 	bswitchto(buff);
 	if (Curwdo->wbuff != Curbuff) {
 		Curwdo->wbuff = Curbuff;
-		bmrktopnt(Curwdo->wpnt);
+		bmrktopnt(Curbuff, Curwdo->wpnt);
 		if (UMARK_SET) {
 			mrktomrk(Curwdo->wmrk, UMARK);
 			Curwdo->umark_set = 1;

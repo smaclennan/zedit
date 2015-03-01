@@ -34,7 +34,7 @@
 static void dummy_bsetmod(struct buff *buff) {}
 void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
 
-/* If set, this function will be called on _bdelbuff */
+/* If set, this function will be called on bdelbuff */
 void (*app_cleanup)(struct buff *buff);
 
 int NumBuffs;
@@ -45,7 +45,7 @@ struct buff *Curbuff;		/* the current buffer */
 #endif
 
 /* Create a buffer but don't add it to the buffer list. */
-struct buff *_bcreate(void)
+struct buff *bcreate(void)
 {
 	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));
 	if (buf) {
@@ -64,7 +64,7 @@ struct buff *_bcreate(void)
 	return buf;
 }
 
-void _bdelbuff(struct buff *tbuff)
+void bdelbuff(struct buff *tbuff)
 {
 	if (!tbuff)
 		return;
@@ -89,7 +89,7 @@ void _bdelbuff(struct buff *tbuff)
 }
 
 /* Insert a character in the current buffer. */
-bool _binsert(struct buff *buff, Byte byte)
+bool binsert(struct buff *buff, Byte byte)
 {
 	if (curplen(buff) == PSIZE && !pagesplit(buff, HALFP))
 		return false;
@@ -116,7 +116,7 @@ bool _binsert(struct buff *buff, Byte byte)
 }
 
 /* Delete quantity characters. */
-void _bdelete(struct buff *buff, int quantity)
+void bdelete(struct buff *buff, int quantity)
 {
 	int quan, noffset;
 	struct page *tpage, *curpage = buff->curpage;
@@ -188,7 +188,7 @@ void _bdelete(struct buff *buff, int quantity)
  *
  * Since bmove(1) is used the most, a special call has been made.
  */
-bool _bmove(struct buff *buff, int dist)
+bool bmove(struct buff *buff, int dist)
 {
 	while (dist) {
 		struct page *curpage = buff->curpage;
@@ -219,7 +219,7 @@ bool _bmove(struct buff *buff, int dist)
 	return true;
 }
 
-void _bmove1(struct buff *buff)
+void bmove1(struct buff *buff)
 {
 	if (++buff->curchar < buff->curpage->plen)
 		/* within current page */
@@ -232,22 +232,22 @@ void _bmove1(struct buff *buff)
 		makeoffset(buff, curplen(buff));
 }
 
-bool _bisstart(struct buff *buff)
+bool bisstart(struct buff *buff)
 {
 	return (buff->curpage == buff->firstp) && (buff->curchar == 0);
 }
 
-bool _bisend(struct buff *buff)
+bool bisend(struct buff *buff)
 {
 	return lastp(buff->curpage) && (buff->curchar >= curplen(buff));
 }
 
-void _btostart(struct buff *buff)
+void btostart(struct buff *buff)
 {
 	makecur(buff, buff->firstp, 0);
 }
 
-void _btoend(struct buff *buff)
+void btoend(struct buff *buff)
 {
 	struct page *lastp = buff->curpage->nextp;
 	if (lastp) {
@@ -258,22 +258,22 @@ void _btoend(struct buff *buff)
 		makeoffset(buff, buff->curpage->plen);
 }
 
-void _tobegline(struct buff *buff)
+void tobegline(struct buff *buff)
 {
 	if (buff->curchar > 0 && *(buff->curcptr - 1) == '\n')
 		return;
-	if (_bcrsearch(buff, '\n'))
-		_bmove1(buff);
+	if (bcrsearch(buff, '\n'))
+		bmove1(buff);
 }
 
-void _toendline(struct buff *buff)
+void toendline(struct buff *buff)
 {
-	if (_bcsearch(buff, '\n'))
-		_bmove(buff, -1);
+	if (bcsearch(buff, '\n'))
+		bmove(buff, -1);
 }
 
 /* Returns the length of the buffer. */
-unsigned long _blength(struct buff *tbuff)
+unsigned long blength(struct buff *tbuff)
 {
 	struct page *tpage;
 	unsigned long len = 0;
@@ -285,7 +285,7 @@ unsigned long _blength(struct buff *tbuff)
 }
 
 /* Return the current position of the point. */
-unsigned long _blocation(struct buff *buff)
+unsigned long blocation(struct buff *buff)
 {
 	struct page *tpage;
 	unsigned long len = 0;
@@ -296,11 +296,11 @@ unsigned long _blocation(struct buff *buff)
 	return len + buff->curchar;
 }
 
-bool _bcsearch(struct buff *buff, Byte what)
+bool bcsearch(struct buff *buff, Byte what)
 {
 	Byte *n;
 
-	if (_bisend(buff))
+	if (bisend(buff))
 		return false;
 
 	while ((n = (Byte *)memchr(buff->curcptr, what, buff->curpage->plen - buff->curchar)) == NULL)
@@ -311,11 +311,11 @@ bool _bcsearch(struct buff *buff, Byte what)
 			makecur(buff, buff->curpage->nextp, 0);
 
 	makeoffset(buff, n - buff->curpage->pdata);
-	_bmove1(buff);
+	bmove1(buff);
 	return true;
 }
 
-bool _bcrsearch(struct buff *buff, Byte what)
+bool bcrsearch(struct buff *buff, Byte what)
 {
 	while (1) {
 		if (buff->curchar <= 0) {
@@ -332,7 +332,7 @@ bool _bcrsearch(struct buff *buff, Byte what)
 	}
 }
 
-void _bempty(struct buff *buff)
+void bempty(struct buff *buff)
 {
 	makecur(buff, buff->firstp, 0);
 	curplen(buff) = 0;
@@ -356,24 +356,24 @@ void _bempty(struct buff *buff)
 }
 
 /* Peek the previous byte */
-Byte _bpeek(struct buff *buff)
+Byte bpeek(struct buff *buff)
 {
 	if (buff->curchar > 0)
 		return *(buff->curcptr - 1);
-	else if (_bisstart(buff))
+	else if (bisstart(buff))
 		/* Pretend we are at the start of a line.
 		 * Needed for delete-to-eol and step in reg.c. */
 		return '\n';
 	else {
 		Byte ch;
-		_bmove(buff, -1);
+		bmove(buff, -1);
 		ch = *buff->curcptr;
-		_bmove1(buff);
+		bmove1(buff);
 		return ch;
 	}
 }
 
-void _boffset(struct buff *buff, unsigned long offset)
+void boffset(struct buff *buff, unsigned long offset)
 {
 	struct page *tpage;
 
@@ -424,16 +424,16 @@ static int bappendpage(struct buff *buff, Byte *data, int size)
 	return appended;
 }
 
-int _bappend(struct buff *buff, Byte *data, int size)
+int bappend(struct buff *buff, Byte *data, int size)
 {
-	_btoend(buff);
+	btoend(buff);
 	return bappendpage(buff, data, size);
 }
 
 /* Simple version to start.
  * Can use size / PSIZE + 1 + 1 pages.
  */
-int _bindata(struct buff *buff, Byte *data, int size)
+int bindata(struct buff *buff, Byte *data, int size)
 {
 	struct page *npage;
 	int n, copied = 0;
@@ -496,7 +496,7 @@ int _bindata(struct buff *buff, Byte *data, int size)
 #define BREAD_THRESHOLD (PSIZE / 4)
 
 /* Simple version. Can do multiple reads! */
-int _bread(struct buff *buff, int fd, int size)
+int bread(struct buff *buff, int fd, int size)
 {
 	int n, ret = 0, left = PSIZE - curplen(buff);
 
@@ -537,7 +537,7 @@ int _bread(struct buff *buff, int fd, int size)
 }
 
 /* Writes are easy! Leaves the point at the end of the write. */
-int _bwrite(struct buff *buff, int fd, int size)
+int bwrite(struct buff *buff, int fd, int size)
 {
 	struct iovec iovs[MAX_IOVS];
 	struct page *pg;
@@ -561,7 +561,7 @@ int _bwrite(struct buff *buff, int fd, int size)
 	while (n < 0 && errno == EINTR);
 
 	if (n > 0)
-		_bmove(buff, n);
+		bmove(buff, n);
 
 	return n;
 }

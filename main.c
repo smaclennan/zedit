@@ -44,20 +44,20 @@ const char *str1k =
 "And your wife knows how to use them, "
 "You may live in Canada.";
 
-void dump_str_at_mark(const char *label, struct mark *mrk)
+void dump_str_at_mark(struct buff *buff, const char *label, struct mark *mrk)
 {
 	int i;
 
 	printf("%s [%p:%u]: ", label, mrk->mpage, mrk->moffset);
 
-	bswappnt(mrk);
+	bswappnt(buff, mrk);
 	for (i = 0; i < 16; ++i)
 		putchar(*(mrk->mbuff->curcptr + i)); /* cheating since we are in page */
 	putchar('\n');
-	bswappnt(mrk);
+	bswappnt(buff, mrk);
 }
 
-int test_readwrite(char *in, char *out)
+int test_readwrite(struct buff *buff, char *in, char *out)
 {
 	int n, count, fd = open(in, O_RDONLY);
 	if (fd < 0) {
@@ -67,7 +67,7 @@ int test_readwrite(char *in, char *out)
 
 	do
 		count = random() % 4096;
-	while ((n = bread(fd, count)) > 0);
+	while ((n = bread(buff, fd, count)) > 0);
 
 	close(fd);
 
@@ -76,7 +76,7 @@ int test_readwrite(char *in, char *out)
 		exit(1);
 	}
 
-	btostart();
+	btostart(buff);
 
 	fd = open(out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0) {
@@ -86,7 +86,7 @@ int test_readwrite(char *in, char *out)
 
 	do
 		count = random() % 4096;
-	while ((n = bwrite(fd, count)) > 0);
+	while ((n = bwrite(buff, fd, count)) > 0);
 
 	close(fd);
 
@@ -103,43 +103,42 @@ int main(int argc, char *argv[])
 	struct buff *buff;
 	int total, offset;
 
-	buff = _bcreate();
-	bswitchto(buff);
+	buff = bcreate();
 
 	srand(time(NULL));
 
 	if (argc > 2)
-		return test_readwrite(argv[1], argv[2]);
+		return test_readwrite(buff, argv[1], argv[2]);
 
 	/* testing pagesplit */
-	bappend((Byte *)str1k, 800); /* over half page */
-	btostart();
-	if (!_bm_search(buff, "wrong number", true)) {
+	bappend(buff, (Byte *)str1k, 800); /* over half page */
+	btostart(buff);
+	if (!bm_search(buff, "wrong number", true)) {
 		puts("search1 failed");
 		exit(1);
 	}
-	bmove(Curbuff, -12);
-	struct mark *mark1 = _bcremrk(buff);
+	bmove(buff, -12);
+	struct mark *mark1 = bcremrk(buff);
 
-	if (!_bm_search(buff, "2 feet of snow", true)) {
+	if (!bm_search(buff, "2 feet of snow", true)) {
 		puts("search2 failed");
 		exit(1);
 	}
-	bmove(Curbuff, -14);
-	struct mark *mark2 = _bcremrk(buff);
+	bmove(buff, -14);
+	struct mark *mark2 = bcremrk(buff);
 
 	if (mark1->moffset >= HALFP || mark2->moffset <= HALFP) {
 		puts("PROBLEMS");
 		exit(1);
 	}
 
-	dump_str_at_mark("1", mark1);
-	dump_str_at_mark("2", mark2);
+	dump_str_at_mark(buff, "1", mark1);
+	dump_str_at_mark(buff, "2", mark2);
 
 	pagesplit(buff, 600);
 
-	dump_str_at_mark("1", mark1);
-	dump_str_at_mark("2", mark2);
+	dump_str_at_mark(buff, "1", mark1);
+	dump_str_at_mark(buff, "2", mark2);
 
 	return 0;
 }

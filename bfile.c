@@ -143,7 +143,7 @@ static bool bwritefd(int fd)
 	struct page *tpage;
 	int n, status = true;
 
-	bmrktopnt(&smark);
+	bmrktopnt(Curbuff, &smark);
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			makecur(Curbuff, tpage, 0);
@@ -153,7 +153,7 @@ static bool bwritefd(int fd)
 
 	close(fd);
 
-	bpnttomrk(&smark);
+	bpnttomrk(Curbuff, &smark);
 	return status;
 }
 
@@ -164,7 +164,7 @@ static bool bwritedos(int fd)
 	int i, n, status = true;
 	Byte buf[PSIZE * 2], *p;
 
-	bmrktopnt(&smark);
+	bmrktopnt(Curbuff, &smark);
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int len = tpage->plen;
@@ -184,7 +184,7 @@ static bool bwritedos(int fd)
 
 	close(fd);
 
-	bpnttomrk(&smark);
+	bpnttomrk(Curbuff, &smark);
 	return status;
 }
 

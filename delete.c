@@ -24,14 +24,14 @@ static struct buff *Killbuff;
 
 static void delfini(void)
 {
-	_bdelbuff(Killbuff);
-	_bdelbuff(Paw);
+	bdelbuff(Killbuff);
+	bdelbuff(Paw);
 }
 
 void delinit(void)
 {
-	Killbuff = _bcreate();
-	Paw = _bcreate();
+	Killbuff = bcreate();
+	Paw = bcreate();
 	atexit(delfini);
 }
 
@@ -61,15 +61,15 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 	if (tbuff == Curbuff)
 		return 0;
 
-	flip = bisaftermrk(tmark);
+	flip = bisaftermrk(Curbuff, tmark);
 	if (flip)
-		bswappnt(tmark);
+		bswappnt(Curbuff, tmark);
 
-	if (!(ltmrk = _bcremrk(Curbuff)))
+	if (!(ltmrk = bcremrk(Curbuff)))
 		return 0;
 
 	sbuff = Curbuff;
-	while (bisbeforemrk(tmark)) {
+	while (bisbeforemrk(Curbuff, tmark)) {
 		if (Curpage == tmark->mpage)
 			srclen = tmark->moffset - Curchar;
 		else
@@ -104,11 +104,11 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		bmove(Curbuff, dstlen);
 	}
 
-	bpnttomrk(ltmrk);
+	bpnttomrk(Curbuff, ltmrk);
 	unmark(ltmrk);
 
 	if (flip)
-		bswappnt(tmark);
+		bswappnt(Curbuff, tmark);
 
 	return copied;
 }
@@ -116,9 +116,9 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 /* Delete from the point to the Mark. */
 void bdeltomrk(struct mark *tmark)
 {
-	if (bisaftermrk(tmark))
-		bswappnt(tmark);
-	while (bisbeforemrk(tmark))
+	if (bisaftermrk(Curbuff, tmark))
+		bswappnt(Curbuff, tmark);
+	while (bisbeforemrk(Curbuff, tmark))
 		if (Curpage == tmark->mpage)
 			bdelete(Curbuff, tmark->moffset - Curchar);
 		else
@@ -151,7 +151,7 @@ void Zdelete_to_eol(void)
 	if (!bisend(Curbuff) && Buff() == NL)
 		bdelete(Curbuff, 1);
 	else {
-		bool atstart = _bpeek(Curbuff) == NL;
+		bool atstart = bpeek(Curbuff) == NL;
 		struct mark *tmark = zcreatemrk();
 		toendline(Curbuff);
 		if (atstart)
@@ -215,7 +215,7 @@ void Zyank(void)
 #endif
 	unmark(tmark);
 	bswitchto(tbuff);
-	if (bisaftermrk(&save))
+	if (bisaftermrk(Curbuff, &save))
 		reframe();
 }
 
@@ -260,7 +260,7 @@ void Zcopy_word(void)
 		start = zcreatemrk();
 		movepast(bistoken, FORWARD); /* move Point to end of word */
 		copytomrk(start); /* copy to Kill buffer */
-		bpnttomrk(tmark); /* move Point back */
+		bpnttomrk(Curbuff, tmark); /* move Point back */
 		unmark(tmark);
 		unmark(start);
 	}
@@ -278,7 +278,7 @@ void Zdelete_blanks(void)
 		movepast(bisspace, BACKWARD);
 		if (!bisstart(Curbuff))
 			bcsearch(Curbuff, NL);
-		if (bisbeforemrk(tmark))
+		if (bisbeforemrk(Curbuff, tmark))
 			bdeltomrk(tmark);
 		unmark(tmark);
 	}
@@ -287,11 +287,11 @@ void Zdelete_blanks(void)
 		movepast(bisspace, FORWARD);
 		if (bcrsearch(Curbuff, NL))
 			bmove1(Curbuff);
-		if (bisaftermrk(tmark))
+		if (bisaftermrk(Curbuff, tmark))
 			bdeltomrk(tmark);
 		unmark(tmark);
 	}
-	bpnttomrk(pmark);
+	bpnttomrk(Curbuff, pmark);
 	unmark(pmark);
 }
 

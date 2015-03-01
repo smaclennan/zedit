@@ -58,7 +58,7 @@ static void scanbuffer(struct buff *buff)
 	invalidate_scrnmarks(0, Rowmax - 2);
 
 	bswitchto(buff);
-	bmrktopnt(&tmark);
+	bmrktopnt(Curbuff, &tmark);
 
 	btostart(Curbuff);
 	if (comchar) {
@@ -73,7 +73,7 @@ static void scanbuffer(struct buff *buff)
 			}
 
 			/* mark to end of line as comment */
-			bmrktopnt(&start);
+			bmrktopnt(Curbuff, &start);
 			bcsearch(Curbuff, '\n');
 			bmove(Curbuff, -1);
 			newcomment(&start);
@@ -83,19 +83,19 @@ static void scanbuffer(struct buff *buff)
 		while (bcsearch(Curbuff, '/') && !bisend(Curbuff)) {
 			if (Buff() == '*') {
 				bmove(Curbuff, -1);
-				bmrktopnt(&start);
+				bmrktopnt(Curbuff, &start);
 				if (bstrsearch("*/", FORWARD))
 					newcomment(&start);
 			} else if (Buff() == '/') {
 				bmove(Curbuff, -1);
-				bmrktopnt(&start);
+				bmrktopnt(Curbuff, &start);
 				toendline(Curbuff);
 				newcomment(&start);
 			}
 		}
 	}
 
-	bpnttomrk(&tmark);
+	bpnttomrk(Curbuff, &tmark);
 	Comstate = true;
 }
 
@@ -150,9 +150,9 @@ void cprntchar(Byte ch)
 	}
 
 	for (; start; start = start->next)
-		if (bisbeforemrk(start->start))
+		if (bisbeforemrk(Curbuff, start->start))
 			break;
-		else if (bisbeforemrk(start->end) || bisatmrk(start->end)) {
+		else if (bisbeforemrk(Curbuff, start->end) || bisatmrk(Curbuff, start->end)) {
 			style = T_COMMENT;
 			break;
 		}

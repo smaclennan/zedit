@@ -213,14 +213,14 @@ void pinsert(void)
 	if (bgetcol(false, 0) + width <= Pawlen) {
 		Zinsert();
 
-		bmrktopnt(&tmark);
+		bmrktopnt(Curbuff, &tmark);
 		btoend(Curbuff);
 		if (bgetcol(false, 0) > Pawlen) {
 			/* Insert in middle pushed text past end */
 			bmove(Curbuff, -width);
 			bdelete(Curbuff, width);
 		}
-		bpnttomrk(&tmark);
+		bpnttomrk(Curbuff, &tmark);
 	} else
 		tbell();
 }

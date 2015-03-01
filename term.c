@@ -523,7 +523,7 @@ void mouse_point(int row, int col, bool set_mark)
 
 	if (set_mark) {
 		Zset_mark(); /* mark to point */
-		bpnttomrk(tmark); /* reset mark */
+		bpnttomrk(Curbuff, tmark); /* reset mark */
 	}
 
 	unmark(tmark);

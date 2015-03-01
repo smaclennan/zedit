@@ -33,7 +33,7 @@ void set_shell_mark(void)
 	if (!shell_mark)
 		shell_mark = zcreatemrk();
 	else
-		bmrktopnt(shell_mark);
+		bmrktopnt(Curbuff, shell_mark);
 }
 
 /* Convert the next portion of buffer to integer. Skip leading ws. */
@@ -116,11 +116,11 @@ int readapipe(void)
 		struct buff *save = Curbuff;
 
 		bswitchto(pipebuff);
-		bmrktopnt(&tmark);
+		bmrktopnt(Curbuff, &tmark);
 		btoend(Curbuff);
 		while (i-- > 0)
 			binsert(Curbuff, *ptr++);
-		bpnttomrk(&tmark);
+		bpnttomrk(Curbuff, &tmark);
 		bswitchto(save);
 	} else
 		/* pipe died */
@@ -415,9 +415,9 @@ void Znext_error(void)
 	line = parse(fname);
 	if (line) {
 		vsetmrk(shell_mark);
-		bmrktopnt(shell_mark);
+		bmrktopnt(Curbuff, shell_mark);
 		tobegline(Curbuff);
-		bswappnt(shell_mark);
+		bswappnt(Curbuff, shell_mark);
 		vsetmrk(shell_mark);
 		wdo = findwdo(mbuff);
 		if (wdo)

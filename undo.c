@@ -209,7 +209,7 @@ void Zundo(void)
 			struct mark *tmark = zcreatemrk();
 			for (i = 0; i < undo->size; ++i)
 				binsert(Curbuff, undo->data[i]);
-			bpnttomrk(tmark);
+			bpnttomrk(Curbuff, tmark);
 			unmark(tmark);
 			free_undo(&app->undo_tail);
 			undo = (struct undo *)app->undo_tail;

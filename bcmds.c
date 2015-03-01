@@ -96,13 +96,13 @@ static void delbuff(struct buff *buff)
 		foreachwdo(wdo)
 			if (wdo->wbuff == buff) {
 				wdo->wbuff = Curbuff;
-				bmrktopnt(wdo->wpnt);
+				bmrktopnt(Curbuff, wdo->wpnt);
 				if (UMARK_SET) {
 					mrktomrk(wdo->wmrk, UMARK);
 					wdo->umark_set = 1;
 				} else
 					wdo->umark_set = 0;
-				bmrktopnt(wdo->wstart);
+				bmrktopnt(Curbuff, wdo->wstart);
 				wdo->modeflags = INVALID;
 			}
 	} else
@@ -272,10 +272,10 @@ struct buff *cmakebuff(const char *bname, char *fname)
 
 	binit();
 
-	if (!(bptr = _bcreate()) ||
+	if (!(bptr = bcreate()) ||
 		!(bptr->app = calloc(1, sizeof(struct zapp))) ||
 		(fname && !(zapp(bptr)->fname = strdup(fname)))) {
-		_bdelbuff(bptr);
+		bdelbuff(bptr);
 		error("Unable to create buffer");
 		return NULL;
 	}
@@ -283,7 +283,7 @@ struct buff *cmakebuff(const char *bname, char *fname)
 	bptr->bname = addbname(bname);
 	if (!bptr->bname) {
 		error("Out of buffers");
-		_bdelbuff(bptr);
+		bdelbuff(bptr);
 		return NULL;
 	}
 
@@ -342,7 +342,7 @@ bool cdelbuff(struct buff *tbuff)
 	if (nextbuff(tbuff))
 		prevbuff(nextbuff(tbuff)) = prevbuff(tbuff);
 
-	_bdelbuff(tbuff);
+	bdelbuff(tbuff);
 
 	return true;
 }

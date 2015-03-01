@@ -72,7 +72,7 @@ static void grepit(char *input, char *files)
 		return;
 	}
 
-	if (!(inbuff = _bcreate())) {
+	if (!(inbuff = bcreate())) {
 		error("Unable to create tmp file buffer.");
 		goto cleanup;
 	}
@@ -85,7 +85,7 @@ cleanup:
 	closedir(dir);
 	bswitchto(outbuff);
 	if (inbuff)
-		_bdelbuff(inbuff);
+		bdelbuff(inbuff);
 }
 
 void Zgrep(void)

@@ -74,14 +74,14 @@ void set_umark(struct mark *tmark)
 		if (freeumark) {
 			UMARK = freeumark;
 			freeumark = NULL;
-		} else if (!(UMARK = _bcremrk(Curbuff)))
+		} else if (!(UMARK = bcremrk(Curbuff)))
 			return;
 	}
 
 	if (tmark)
 		mrktomrk(UMARK, tmark);
 	else
-		bmrktopnt(UMARK);
+		bmrktopnt(Curbuff, UMARK);
 }
 
 void clear_umark(void)
@@ -107,7 +107,7 @@ void clear_umark(void)
 /* True if buffer at user mark */
 static bool bisatumark(void)
 {
-	return  UMARK_SET && bisatmrk(UMARK);
+	return  UMARK_SET && bisatmrk(Curbuff, UMARK);
 }
 
 /* Mark screen invalid */
@@ -156,20 +156,20 @@ void zrefresh(void)
 		mrktomrk(was, UMARK);
 	}
 
-	if (bisbeforemrk(Sstart) || (Sendp && !bisbeforemrk(Send)) ||
+	if (bisbeforemrk(Curbuff, Sstart) || (Sendp && !bisbeforemrk(Curbuff, Send)) ||
 	   Sstart->mbuff != Curbuff)
 		/* The cursor has moved before/after the screen marks */
 		reframe();
-	bpnttomrk(Sstart);
-	if (bisatmrk(Psstart) && !bisstart(Curbuff)) {
+	bpnttomrk(Curbuff, Sstart);
+	if (bisatmrk(Curbuff, Psstart) && !bisstart(Curbuff)) {
 		/* Deleted first char in window that is not at buffer start */
-		bpnttomrk(pmark);
+		bpnttomrk(Curbuff, pmark);
 		reframe();
-		bpnttomrk(Sstart);
+		bpnttomrk(Curbuff, Sstart);
 	}
 	pntrow = innerdsp(Curwdo->first, Curwdo->last, pmark);
-	if (bisbeforemrk(pmark) && !tkbrdy()) {
-		bpnttomrk(pmark);
+	if (bisbeforemrk(Curbuff, pmark) && !tkbrdy()) {
+		bpnttomrk(Curbuff, pmark);
 		unmark(pmark);
 		reframe();
 		zrefresh();
@@ -185,10 +185,10 @@ void zrefresh(void)
 			bswitchto(wdo->wbuff);
 			settabsize(Curbuff->bmode);
 			point = zcreatemrk();
-			bpnttomrk(wdo->wstart);
+			bpnttomrk(Curbuff, wdo->wstart);
 			innerdsp(wdo->first, wdo->last, NULL);
 			modeflags(wdo);
-			bpnttomrk(point);
+			bpnttomrk(Curbuff, point);
 			unmark(point);
 			bswitchto(Curwdo->wbuff);
 		}
@@ -196,8 +196,8 @@ void zrefresh(void)
 
 	/* position the cursor */
 	col = 0;
-	bpnttomrk(&Scrnmarks[pntrow]);
-	while (bisbeforemrk(pmark)) {
+	bpnttomrk(Curbuff, &Scrnmarks[pntrow]);
+	while (bisbeforemrk(Curbuff, pmark)) {
 		col += chwidth(Buff(), col, false);
 		bmove1(Curbuff);
 	}
@@ -247,10 +247,10 @@ static bool in_region(struct mark *pmark)
 	if (!UMARK_SET || !pmark)
 		return false;
 
-	if (bisaftermrk(UMARK) && bisbeforemrk(pmark))
+	if (bisaftermrk(Curbuff, UMARK) && bisbeforemrk(Curbuff, pmark))
 		return true;
 
-	if (bisaftermrk(pmark) && bisbeforemrk(UMARK))
+	if (bisaftermrk(Curbuff, pmark) && bisbeforemrk(Curbuff, UMARK))
 		return true;
 #endif
 
@@ -290,9 +290,9 @@ static int innerdsp(int from, int to, struct mark *pmark)
 		tsetcursor(true);
 
 	for (trow = from; trow < to; ++trow) {
-		if (Scrnmodf[trow] || !bisatmrk(&Scrnmarks[trow]) || REGION_ON) {
+		if (Scrnmodf[trow] || !bisatmrk(Curbuff, &Scrnmarks[trow]) || REGION_ON) {
 			Scrnmodf[trow] = false;
-			bmrktopnt(&Scrnmarks[trow]); /* Do this before tkbrdy */
+			bmrktopnt(Curbuff, &Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
 			col = 0;
 			tsetpoint(trow, col);
@@ -335,15 +335,15 @@ static int innerdsp(int from, int to, struct mark *pmark)
 					bmove1(Curbuff);
 			}
 		} else
-			bpnttomrk(&Scrnmarks[trow + 1]);
-		if (pmark && bisaftermrk(pmark) && needpnt) {
+			bpnttomrk(Curbuff, &Scrnmarks[trow + 1]);
+		if (pmark && bisaftermrk(Curbuff, pmark) && needpnt) {
 			pntrow = trow;
 			needpnt = false;
 		}
 	}
-	bmrktopnt(&Scrnmarks[trow]);
+	bmrktopnt(Curbuff, &Scrnmarks[trow]);
 	if (pmark) {
-		bmrktopnt(Send);
+		bmrktopnt(Curbuff, Send);
 		Sendp = true;
 		if (needpnt) {
 			/* the user has typed past the end of the screen */
@@ -366,18 +366,18 @@ void reframe(void)
 	int cnt;
 	struct mark pmark;
 
-	bmrktopnt(&pmark);
+	bmrktopnt(Curbuff, &pmark);
 	for (cnt = prefline(); cnt > 0 && bcrsearch(Curbuff, NL); --cnt)
 			cnt -= bgetcol(true, 0) / Colmax;
 	if (cnt < 0)
 		bmakecol((-cnt) * Colmax, false);
 	else
 		tobegline(Curbuff);
-	bmrktopnt(Sstart);
+	bmrktopnt(Curbuff, Sstart);
 	bmove(Curbuff, -1);
-	bmrktopnt(Psstart);
+	bmrktopnt(Curbuff, Psstart);
 	Sendp = false;
-	bpnttomrk(&pmark);
+	bpnttomrk(Curbuff, &pmark);
 }
 
 /* Redraw the modeline except for flags. */
@@ -492,7 +492,7 @@ static void subset(int from, int to)
 
 	if (row > to) {
 		for (row = from, btmark = &Scrnmarks[from];
-			 row <= to && (btmark->mbuff != Curbuff || bisaftermrk(btmark));
+			 row <= to && (btmark->mbuff != Curbuff || bisaftermrk(Curbuff, btmark));
 			 ++btmark, ++row)
 			;
 		if (row > from) {
@@ -507,7 +507,7 @@ static void subset(int from, int to)
 		}
 		if (--row >= from)
 			Scrnmodf[row] = true;
-		while (row > from && bisatmrk(&Scrnmarks[row])) {
+		while (row > from && bisatmrk(Curbuff, &Scrnmarks[row])) {
 			Scrnmodf[--row] = true;
 		}
 	}
@@ -560,9 +560,9 @@ pawshift:
 	for (i = 0, Pcol = Pawcol;
 		 Pcol < Colmax - 2 && !bisend(Curbuff);
 		 bmove1(Curbuff), ++i) {
-		if (bisatmrk(pmark))
+		if (bisatmrk(Curbuff, pmark))
 			bcol = Pcol;
-		if (mrkmoved && (bisatumark() || bisatmrk(was))) {
+		if (mrkmoved && (bisatumark() || bisatmrk(Curbuff, was))) {
 			if (bisatumark())
 				tstyle(T_REVERSE);
 			tprntchar(Buff());
@@ -582,7 +582,7 @@ pawshift:
 		if (bisatumark()) {
 			setmark(false);
 			--Pcol;		/* space always 1 character! */
-		} else if (bisatmrk(pmark))
+		} else if (bisatmrk(Curbuff, pmark))
 			bcol = Pcol;
 	}
 
@@ -608,7 +608,7 @@ pawshift:
 
 	if (bcol)
 		Pcol = bcol;
-	bpnttomrk(pmark);
+	bpnttomrk(Curbuff, pmark);
 	if (UMARK_SET)
 		mrktomrk(was, UMARK);
 

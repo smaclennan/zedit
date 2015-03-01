@@ -50,7 +50,7 @@ void minit(struct mark *preallocated)
 #endif /* !HAVE_THREADS */
 
 /* Create a mark at the current point and add it to the list. */
-struct mark *_bcremrk(struct buff *buff)
+struct mark *bcremrk(struct buff *buff)
 {
 	struct mark *mrk;
 
@@ -70,7 +70,7 @@ struct mark *_bcremrk(struct buff *buff)
 		struct mark **head = &buff->marks;
 #endif
 
-		_bmrktopnt(buff, mrk);
+		bmrktopnt(buff, mrk);
 		mrk->prev = *head; /* add to end of list */
 		mrk->next = NULL;
 		if (*head) (*head)->next = mrk;
@@ -107,7 +107,7 @@ void unmark(struct mark *mptr)
 }
 
 /* Returns true if point is after the mark. */
-bool _bisaftermrk(struct buff *buff, struct mark *tmark)
+bool bisaftermrk(struct buff *buff, struct mark *tmark)
 {
 	struct page *tp;
 
@@ -121,7 +121,7 @@ bool _bisaftermrk(struct buff *buff, struct mark *tmark)
 }
 
 /* True if the point precedes the mark. */
-bool _bisbeforemrk(struct buff *buff, struct mark *tmark)
+bool bisbeforemrk(struct buff *buff, struct mark *tmark)
 {
 	struct page *tp;
 
@@ -135,7 +135,7 @@ bool _bisbeforemrk(struct buff *buff, struct mark *tmark)
 }
 
 /* Put the mark where the point is. */
-void _bmrktopnt(struct buff *buff, struct mark *tmark)
+void bmrktopnt(struct buff *buff, struct mark *tmark)
 {
 	tmark->mbuff   = buff;
 	tmark->mpage   = buff->curpage;
@@ -143,7 +143,7 @@ void _bmrktopnt(struct buff *buff, struct mark *tmark)
 }
 
 /* Put the current buffer point at the mark */
-bool _bpnttomrk(struct buff *buff, struct mark *tmark)
+bool bpnttomrk(struct buff *buff, struct mark *tmark)
 {
 	/* SAM WARNING: Zedit used to do bswitchto if tmark->mbuff != buff */
 	if (tmark->mbuff != buff)
@@ -154,15 +154,15 @@ bool _bpnttomrk(struct buff *buff, struct mark *tmark)
 }
 
 /* Swap the point and the mark. */
-void _bswappnt(struct buff *buff, struct mark *tmark)
+void bswappnt(struct buff *buff, struct mark *tmark)
 {
 	struct mark tmp;
 
 	tmp.mbuff	= buff; /* Point not moved out of its buffer */
 	tmp.mpage	= tmark->mpage;
 	tmp.moffset	= tmark->moffset;
-	_bmrktopnt(buff, tmark);
-	_bpnttomrk(buff, &tmp);
+	bmrktopnt(buff, tmark);
+	bpnttomrk(buff, &tmp);
 }
 
 /* True if mark1 precedes mark2 */

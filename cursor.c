@@ -86,10 +86,10 @@ int bgetcol(bool flag, int col)
 {
 	struct mark pmark;
 
-	bmrktopnt(&pmark);
+	bmrktopnt(Curbuff, &pmark);
 	if (bcrsearch(Curbuff, '\n'))
 		bmove1(Curbuff);
-	while (!bisatmrk(&pmark) && !bisend(Curbuff)) {
+	while (!bisatmrk(Curbuff, &pmark) && !bisend(Curbuff)) {
 		col += chwidth(*Curcptr, col, flag);
 		bmove1(Curbuff);
 	}
@@ -122,7 +122,7 @@ void Zprevious_page(void)
 {
 	int i, col = forcecol();
 
-	bpnttomrk(Sstart);
+	bpnttomrk(Curbuff, Sstart);
 	for (i = wheight() - prefline() - 2; i > 0 && bcrsearch(Curbuff, NL); --i)
 		i -= bgetcol(true, 0) / Colmax;
 	bmakecol(col, false);
@@ -133,7 +133,7 @@ void Znext_page(void)
 {
 	int i, col = forcecol();
 
-	bpnttomrk(Sstart);
+	bpnttomrk(Curbuff, Sstart);
 	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(Curbuff, NL); --i) {
 		bmove(Curbuff, -1);
 		i -= bgetcol(true, 0) / Colmax;
@@ -176,7 +176,7 @@ void Zswap_mark(void)
 
 	mrktomrk(&tmark, UMARK);
 	Zset_mark();
-	bpnttomrk(&tmark);
+	bpnttomrk(Curbuff, &tmark);
 }
 
 void Zopen_line(void)
@@ -254,7 +254,7 @@ int set_bookmark(char *bookname)
 		Lastbook = Bookmark;
 		Bookmrks[Bookmark] = zcreatemrk();
 	} else
-		bmrktopnt(Bookmrks[Bookmark]);
+		bmrktopnt(Curbuff, Bookmrks[Bookmark]);
 	return Bookmark;
 }
 
@@ -295,7 +295,7 @@ void Znext_bookmark(void)
 		strcpy(Lbufname, Curbuff->bname);
 		wgoto(Bookmrks[Bookmark]->mbuff);
 	}
-	bpnttomrk(Bookmrks[Bookmark]);
+	bpnttomrk(Curbuff, Bookmrks[Bookmark]);
 	Curwdo->modeflags = INVALID;
 	putpaw("Book Mark %d", Bookmark + 1);
 	if (--Bookmark < 0)
@@ -317,29 +317,29 @@ static void scroll(bool (*search)(struct buff *buff, Byte what))
 {
 	struct mark *pmark = zcreatemrk();
 
-	bpnttomrk(Sstart);
+	bpnttomrk(Curbuff, Sstart);
 	while (Arg-- > 0 && search(Curbuff, NL))
 		;
 	tobegline(Curbuff);
-	bmrktopnt(Sstart);
+	bmrktopnt(Curbuff, Sstart);
 	bmove(Curbuff, -1);
-	bmrktopnt(Psstart);
+	bmrktopnt(Curbuff, Psstart);
 	Sendp = false;
 
 	if (mrkaftermrk(Sstart, pmark))
 		bmove1(Curbuff);
 	else
-		bpnttomrk(pmark);
+		bpnttomrk(Curbuff, pmark);
 
 	unmark(pmark);
 }
 
 void Zscroll_up(void)
 {
-	scroll(_bcrsearch);
+	scroll(bcrsearch);
 }
 
 void Zscroll_down(void)
 {
-	scroll(_bcsearch);
+	scroll(bcsearch);
 }

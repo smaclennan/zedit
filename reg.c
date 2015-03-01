@@ -62,19 +62,19 @@ bool step(struct buff *buff, Byte *ep, struct mark *REstart)
 	if (circf)
 		/* if not at the start of the current line - go to the
 		 * next line */
-		if (_bpeek(buff) != '\n')
-			_bcsearch(buff, '\n');	/* goto next line */
+		if (bpeek(buff) != '\n')
+			bcsearch(buff, '\n');	/* goto next line */
 
 	/* regular algorithm */
-	while (!_bisend(buff)) {
-		_bmrktopnt(buff, REstart);
+	while (!bisend(buff)) {
+		bmrktopnt(buff, REstart);
 		if (advance(buff, ep))
 			return true;
 		if (circf)
-			_bcsearch(buff, '\n');	/* goto next line */
+			bcsearch(buff, '\n');	/* goto next line */
 		else {
-			_bpnttomrk(buff, REstart);
-			_bmove1(buff);
+			bpnttomrk(buff, REstart);
+			bmove1(buff);
 		}
 	}
 	return false;
@@ -86,7 +86,7 @@ static bool advance(struct buff *buff, Byte *ep)
 	int c, ct;
 	struct mark *bbeg, curlp, tmark;
 
-	while (!_bisend(buff)) {
+	while (!bisend(buff)) {
 		switch (*ep++) {
 		case CCHR:
 			if (*ep++ == buff())
@@ -114,11 +114,11 @@ static bool advance(struct buff *buff, Byte *ep)
 			return false;
 
 		case CBRA:
-			_bmrktopnt(buff, &braslist[*ep++]);
+			bmrktopnt(buff, &braslist[*ep++]);
 			continue;
 
 		case CKET:
-			_bmrktopnt(buff, &braelist[*ep++]);
+			bmrktopnt(buff, &braelist[*ep++]);
 			continue;
 
 		case CCHR | RNGE:
@@ -127,11 +127,11 @@ static bool advance(struct buff *buff, Byte *ep)
 			while (low--) {
 				if (buff() != c)
 					return false;
-				_bmove1(buff);
+				bmove1(buff);
 			}
-			_bmrktopnt(buff, &curlp);
+			bmrktopnt(buff, &curlp);
 			while (size-- && buff() == c)
-				_bmove1(buff);
+				bmove1(buff);
 			ep += 2;
 			goto star;
 
@@ -141,12 +141,12 @@ static bool advance(struct buff *buff, Byte *ep)
 				if (ISNL(buff()))
 					return false;
 				else
-					_bmove1(buff);
-			_bmrktopnt(buff, &curlp);
+					bmove1(buff);
+			bmrktopnt(buff, &curlp);
 			while (size-- && !ISNL(buff()))
-				_bmove1(buff);
+				bmove1(buff);
 			if (size < 0 || ISNL(buff()))
-				_bmove1(buff);
+				bmove1(buff);
 			ep += 2;
 			goto star;
 
@@ -154,19 +154,19 @@ static bool advance(struct buff *buff, Byte *ep)
 			getrnge(ep + 16);
 			while (low--) {
 				c = buff() & 0177;
-				_bmove1(buff);
+				bmove1(buff);
 				if (!ISTHERE(c))
 					return false;
 			}
-			_bmrktopnt(buff, &curlp);
+			bmrktopnt(buff, &curlp);
 			while (size--) {
 				c = buff() & 0177;
-				_bmove1(buff);
+				bmove1(buff);
 				if (!ISTHERE(c))
 					break;
 			}
 			if (size < 0)
-				_bmove1(buff);
+				bmove1(buff);
 			ep += 18;		/* 16 + 2 */
 			goto star;
 
@@ -180,47 +180,47 @@ static bool advance(struct buff *buff, Byte *ep)
 		case CBACK | STAR:
 			bbeg = &braslist[*ep];
 			ct = &braelist[*ep++] - bbeg;
-			_bmrktopnt(buff, &curlp);
+			bmrktopnt(buff, &curlp);
 			while (ecmp(buff, bbeg, ct))
 				;
-			while (_bisaftermrk(buff, &curlp) || _bisatmrk(buff, &curlp)) {
+			while (bisaftermrk(buff, &curlp) || bisatmrk(buff, &curlp)) {
 				if (advance(buff, ep))
 					return true;
-				_bmove(buff, -ct);
+				bmove(buff, -ct);
 			}
 			return false;
 
 		case CDOT | STAR:
-			_bmrktopnt(buff, &curlp); /* save the current position */
-			_toendline(buff);
+			bmrktopnt(buff, &curlp); /* save the current position */
+			toendline(buff);
 			goto star;
 
 		case CCHR | STAR:
-			_bmrktopnt(buff, &curlp); /* save the current position */
+			bmrktopnt(buff, &curlp); /* save the current position */
 			while (buff() == *ep)  /* skip over matches */
-				_bmove1(buff);
+				bmove1(buff);
 			ep++;                       /* go on */
 			goto star;
 
 		case CCL | STAR:
-			_bmrktopnt(buff, &curlp);
-			while (!_bisend(buff) && ISTHERE(((Byte)buff())))
-				_bmove1(buff);
+			bmrktopnt(buff, &curlp);
+			while (!bisend(buff) && ISTHERE(((Byte)buff())))
+				bmove1(buff);
 			ep += 16;
 
 star:
 			do {
-				_bmrktopnt(buff, &tmark);
+				bmrktopnt(buff, &tmark);
 				if (advance(buff, ep)) /* try to match */
 					return true;
-				_bpnttomrk(buff, &tmark);
-				if (!_bmove(buff, -1)) /* go back and try again */
+				bpnttomrk(buff, &tmark);
+				if (!bmove(buff, -1)) /* go back and try again */
 					break;
-			} while (!_bisbeforemrk(buff, &curlp)); /* till back to start */
-			_bpnttomrk(buff, &curlp); /* Don't slip backwards */
+			} while (!bisbeforemrk(buff, &curlp)); /* till back to start */
+			bpnttomrk(buff, &curlp); /* Don't slip backwards */
 			return false;
 		}
-		_bmove1(buff);
+		bmove1(buff);
 	}
 	return *ep == CCEOF;
 }
@@ -241,14 +241,14 @@ static bool ecmp(struct buff *buff, struct mark *start, int cnt)
 {
 	Byte c;
 
-	while (cnt-- > 0 && !_bisend(buff)) {
-		_bswappnt(buff, start);
+	while (cnt-- > 0 && !bisend(buff)) {
+		bswappnt(buff, start);
 		c = buff();
-		_bmove1(buff);
-		_bswappnt(buff, start);
+		bmove1(buff);
+		bswappnt(buff, start);
 		if (buff() != c)
 			return false;
-		_bmove1(buff);
+		bmove1(buff);
 	}
 	return true;
 }

@@ -36,26 +36,15 @@ void minit(struct mark *preallocated);
 
 extern int NumMarks; /* stats */
 
-#ifndef HAVE_THREADS
-#define bisatmrk(m)	((Curbuff->curpage == (m)->mpage) && (Curchar == (m)->moffset))
-
-#define bisaftermrk(m) _bisaftermrk(Curbuff, (m))
-#define bisbeforemrk(m) _bisbeforemrk(Curbuff, (m))
-
-#define bmrktopnt(m) _bmrktopnt(Curbuff, (m))
-#define bpnttomrk(m) _bpnttomrk(Curbuff, (m))
-#define bswappnt(m) _bswappnt(Curbuff, (m))
-#endif
-
-struct mark *_bcremrk(struct buff *);
+struct mark *bcremrk(struct buff *);
 void unmark(struct mark *);
 
-#define _bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))
-bool _bisaftermrk(struct buff *, struct mark *);
-bool _bisbeforemrk(struct buff *, struct mark *);
-void _bmrktopnt(struct buff *, struct mark *);
-bool _bpnttomrk(struct buff *, struct mark *);
-void _bswappnt(struct buff *, struct mark *);
+#define bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))
+bool bisaftermrk(struct buff *, struct mark *);
+bool bisbeforemrk(struct buff *, struct mark *);
+void bmrktopnt(struct buff *, struct mark *);
+bool bpnttomrk(struct buff *, struct mark *);
+void bswappnt(struct buff *, struct mark *);
 
 #define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
 #define mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)

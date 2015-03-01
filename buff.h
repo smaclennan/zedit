@@ -62,54 +62,35 @@ extern void (*app_cleanup)(struct buff *buff);
 
 extern void (*bsetmod)(struct buff *buff);
 
-struct buff *_bcreate(void);
-void _bdelbuff(struct buff *);
-bool _binsert(struct buff *, Byte);
-void _bdelete(struct buff *, int);
-bool _bmove(struct buff *, int);
-void _bmove1(struct buff *);
-bool _bisstart(struct buff *);
-bool _bisend(struct buff *);
-void _btostart(struct buff *);
-void _btoend(struct buff *);
-void _tobegline(struct buff *);
-void _toendline(struct buff *);
-unsigned long _blength(struct buff *);
-unsigned long _blocation(struct buff *);
-bool _bcsearch(struct buff *, Byte);
-bool _bcrsearch(struct buff *, Byte);
-void _bempty(struct buff *buff);
-Byte _bpeek(struct buff *buff);
-void _boffset(struct buff *buff, unsigned long offset);
-int _bappend(struct buff *buff, Byte *, int);
-int _bindata(struct buff *buff, Byte *, int);
-int _bread(struct buff *buff, int fd, int size);
-int _bwrite(struct buff *buff, int fd, int size);
+struct buff *bcreate(void);
+void bdelbuff(struct buff *);
+bool binsert(struct buff *, Byte);
+void bdelete(struct buff *, int);
+bool bmove(struct buff *, int);
+void bmove1(struct buff *);
+bool bisstart(struct buff *);
+bool bisend(struct buff *);
+void btostart(struct buff *);
+void btoend(struct buff *);
+void tobegline(struct buff *);
+void toendline(struct buff *);
+unsigned long blength(struct buff *);
+unsigned long blocation(struct buff *);
+bool bcsearch(struct buff *, Byte);
+bool bcrsearch(struct buff *, Byte);
+void bempty(struct buff *buff);
+Byte bpeek(struct buff *buff);
+void boffset(struct buff *buff, unsigned long offset);
+int bappend(struct buff *buff, Byte *, int);
+int bindata(struct buff *buff, Byte *, int);
+int bread(struct buff *buff, int fd, int size);
+int bwrite(struct buff *buff, int fd, int size);
 
 /* bmsearch.c */
-bool _bm_search(struct buff *buff, const char *str, bool sensitive);
-bool _bm_rsearch(struct buff *buff, const char *str, bool sensitive);
+bool bm_search(struct buff *buff, const char *str, bool sensitive);
+bool bm_rsearch(struct buff *buff, const char *str, bool sensitive);
 
-#ifndef HAVE_THREADS
-#define binsert _binsert
-#define bdelete _bdelete
-#define bmove _bmove
-#define bmove1 _bmove1
-#define bisstart _bisstart
-#define bisend _bisend
-#define btostart _btostart
-#define btoend _btoend
-#define tobegline _tobegline
-#define toendline _toendline
-#define blength _blength
-#define blocation _blocation
-#define bcsearch _bcsearch
-#define bcrsearch _bcrsearch
-#define bempty _bempty
-#define boffset _boffset
-
-#define binstr(b, s) _bindata((b), (Byte *)(s), strlen(s));
-#endif
+#define binstr(b, s) bindata((b), (Byte *)(s), strlen(s));
 
 #ifndef NULL
 #define NULL ((void *)0)

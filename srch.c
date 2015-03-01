@@ -43,7 +43,7 @@ static void doincsrch(const char *prompt, bool forward)
 	int cmd, i = 0, count = 0;
 	struct mark marks[STRMAX];
 
-	bmrktopnt(&marks[0]); /* make sure this is set */
+	bmrktopnt(Curbuff, &marks[0]); /* make sure this is set */
 	memset(str, '\0', sizeof(str));
 	strcpy(promptstr, nocase(prompt));
 	while (go) {
@@ -66,10 +66,10 @@ static void doincsrch(const char *prompt, bool forward)
 					continue;
 				strcpy(str, olds);
 				for (i = 0; i < n; ++i)
-					bmrktopnt(&marks[i]);
+					bmrktopnt(Curbuff, &marks[i]);
 			}
 
-			bmrktopnt(&tmark); /* save in case search fails */
+			bmrktopnt(Curbuff, &tmark); /* save in case search fails */
 again:
 			if (!bstrsearch(str, forward)) {
 				if (++count == 2) {
@@ -79,7 +79,7 @@ again:
 					btostart(Curbuff);
 					goto again;
 				} else {
-					bpnttomrk(&tmark);
+					bpnttomrk(Curbuff, &tmark);
 					tbell();
 				}
 			}
@@ -89,11 +89,11 @@ again:
 
 		if (isprint(cmd)) {
 			if (i < STRMAX) {
-				bmrktopnt(&marks[i]);
+				bmrktopnt(Curbuff, &marks[i]);
 				str[i++] = cmd;
 				bmove(Curbuff, -i);
 				if (!bstrsearch(str, forward)) {
-					bpnttomrk(&marks[--i]);
+					bpnttomrk(Curbuff, &marks[--i]);
 					str[i] = '\0';
 					tbell();
 				}
@@ -101,7 +101,7 @@ again:
 				tbell();
 		} else if (Keys[cmd] == ZDELETE_PREVIOUS_CHAR) {
 			if (i > 0) {
-				bpnttomrk(&marks[--i]);
+				bpnttomrk(Curbuff, &marks[--i]);
 				str[i] = '\0';
 			} else
 				tbell();
@@ -114,7 +114,7 @@ again:
 	}
 	clrpaw();
 	if (Keys[cmd] == ZABORT)
-		bpnttomrk(&marks[0]);
+		bpnttomrk(Curbuff, &marks[0]);
 	else
 		strcpy(olds, str);
 	searchdir[0] = forward;
@@ -184,7 +184,7 @@ void Zagain(void)
 				btostart(Curbuff);
 				Arg = 1;
 			} else {
-				bpnttomrk(Gmark);
+				bpnttomrk(Curbuff, Gmark);
 				unmark(Gmark);
 				Gmark = NULL;
 				Curwdo->modeflags = INVALID;
@@ -243,12 +243,12 @@ static void doreplace(int type)
 				break;
 			else {
 				cswitchto(tbuff);
-				bmrktopnt(&tmark);
+				bmrktopnt(Curbuff, &tmark);
 				btostart(Curbuff);
 				while (replaceone(type, &query, &exit, ebuf, crgone) &&
 					   !exit)
 					;
-				bpnttomrk(&tmark);
+				bpnttomrk(Curbuff, &tmark);
 			}
 		}
 		clrpaw();
@@ -258,7 +258,7 @@ static void doreplace(int type)
 	else
 		clrpaw();
 
-	bpnttomrk(pmark);
+	bpnttomrk(Curbuff, pmark);
 	unmark(pmark);
 }
 
@@ -340,11 +340,11 @@ input:
 				if (type == REGEXP)
 					tbell();
 				else {
-					bpnttomrk(prevmatch);
+					bpnttomrk(Curbuff, prevmatch);
 					if (changeprev) {
 						bdelete(Curbuff, strlen(news));
 						binstr(Curbuff, olds);
-						bpnttomrk(prevmatch);
+						bpnttomrk(Curbuff, prevmatch);
 					}
 				}
 				goto replace;
@@ -367,7 +367,7 @@ input:
 				if (Keys[(int)tchar] == ZABORT)
 					*exit = true;
 				else {
-					bmrktopnt(prevmatch);
+					bmrktopnt(Curbuff, prevmatch);
 					changeprev = 0;
 					/* skip and continue */
 					bmove1(Curbuff);
@@ -375,7 +375,7 @@ input:
 				continue;
 			}
 		}
-		bmrktopnt(prevmatch);
+		bmrktopnt(Curbuff, prevmatch);
 		changeprev = 1;
 
 		/* change it! */
@@ -402,7 +402,7 @@ input:
 				/* change it back */
 				if (type == REGEXP) {
 					for (dist = 0;
-						 !bisatmrk(REstart);
+						 !bisatmrk(Curbuff, REstart);
 						 ++dist, bmove(Curbuff, -1))
 						;
 					bdelete(Curbuff, dist);
@@ -446,7 +446,7 @@ static bool dosearch(void)
 	int fcnt = 0, rc;
 	struct mark save, fmark;
 
-	bmrktopnt(&save);
+	bmrktopnt(Curbuff, &save);
 #if 0
 	/* This causes problems with RE search. You can't match the first line.
 	 * Why is it needed?
@@ -461,21 +461,21 @@ static bool dosearch(void)
 		else
 			while (Arg-- > 0)
 				if (step(Curbuff, ebuf, NULL)) {
-					bmrktopnt(&fmark);
+					bmrktopnt(Curbuff, &fmark);
 					++fcnt;
 				} else
 					break;
 	} else
 		while (Arg-- > 0)
 			if (bstrsearch(olds, searchdir[0])) {
-				bmrktopnt(&fmark);
+				bmrktopnt(Curbuff, &fmark);
 				++fcnt;
 			} else
 				break;
 	if (fcnt)
-		bpnttomrk(&fmark);
+		bpnttomrk(Curbuff, &fmark);
 	else {
-		bpnttomrk(&save);
+		bpnttomrk(Curbuff, &save);
 		putpaw("Not Found");
 	}
 	Arg = 0;
@@ -485,9 +485,9 @@ static bool dosearch(void)
 bool bstrsearch(const char *str, bool forward)
 {
 	if (forward)
-		return _bm_search(Curbuff, str, Curbuff->bmode & EXACT);
+		return bm_search(Curbuff, str, Curbuff->bmode & EXACT);
 	else
-		return _bm_rsearch(Curbuff, str, Curbuff->bmode & EXACT);
+		return bm_rsearch(Curbuff, str, Curbuff->bmode & EXACT);
 }
 
 char *nocase(const char *prompt)

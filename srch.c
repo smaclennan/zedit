@@ -178,7 +178,7 @@ void Zagain(void)
 		if (!Gmark)
 			Gmark = zcreatemrk(); /* set here in case exit/reload */
 		while (!promptsearch("", AGAIN)) {
-			Curbuff = Curbuff->next;
+			Curbuff = nextbuff(Curbuff);
 			if (Curbuff) {
 				cswitchto(Curbuff);
 				btostart();
@@ -238,14 +238,18 @@ static void doreplace(int type)
 	if (rc)
 		error(regerr(rc));
 	else if (Argp) {
-		for (tbuff = Bufflist; tbuff && !exit; tbuff = tbuff->next) {
-			cswitchto(tbuff);
-			bmrktopnt(&tmark);
-			btostart();
-			while (replaceone(type, &query, &exit, ebuf, crgone) &&
-				   !exit)
-				;
-			bpnttomrk(&tmark);
+		foreachbuff(tbuff) {
+			if(exit)
+				break;
+			else {
+				cswitchto(tbuff);
+				bmrktopnt(&tmark);
+				btostart();
+				while (replaceone(type, &query, &exit, ebuf, crgone) &&
+					   !exit)
+					;
+				bpnttomrk(&tmark);
+			}
 		}
 		clrpaw();
 		cswitchto(pmark->mbuff);

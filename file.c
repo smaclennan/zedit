@@ -235,7 +235,7 @@ bool findfile(char *path)
 	/* If is this file already in a buffer - use it.
 	 * At startup, we are done.
 	 */
-	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+	foreachbuff(tbuff)
 		if (zapp(tbuff)->fname && strcmp(path, zapp(tbuff)->fname) == 0) {
 			bswitchto(tbuff);
 			if (Initializing)
@@ -276,7 +276,7 @@ void Zsave_all_files(void)
 	if (Argp) {
 		struct buff *tbuff;
 
-		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+		foreachbuff(tbuff)
 			if (!(tbuff->bmode & SYSBUFF) && zapp(tbuff)->fname)
 				tbuff->bmodf = true;
 	}

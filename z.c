@@ -231,7 +231,7 @@ int main(int argc, char **argv)
 		bswitchto(tbuff);
 
 		strcpy(Lbufname,
-			   Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
+			   prevbuff(Curbuff) ? prevbuff(Curbuff)->bname : MAINBUFF);
 	}
 
 	winit();

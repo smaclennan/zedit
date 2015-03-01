@@ -309,7 +309,7 @@ void Zredisplay(void)
 	wsize();
 	redisplay();
 
-	for (buff = Bufflist; buff; buff = buff->next)
+	foreachbuff(buff)
 		uncomment(buff);
 }
 

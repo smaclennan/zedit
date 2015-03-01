@@ -415,7 +415,7 @@ void Zexit(void)
 	if (!saveall(Argp))
 		return;
 
-	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+	foreachbuff(tbuff)
 		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF))
 			modf = true;
 	if (modf && ask("Modified buffers. quit anyway? ") != YES)
@@ -474,7 +474,7 @@ bool saveall(bool must)
 	struct buff *tbuff, *bsave;
 
 	bsave = Curbuff;
-	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+	foreachbuff(tbuff)
 		if (!(tbuff->bmode & SYSBUFF) && !promptsave(tbuff, must)) {
 			Curwdo->modeflags = INVALID;
 			return false;

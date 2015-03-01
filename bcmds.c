@@ -22,8 +22,8 @@
 char Lbufname[BUFNAMMAX + 1];
 
 static char **Bnames;			/* array of ptrs to buffer names */
-static int Numbuffs;			/* number of buffers */
-static int maxbuffs;			/* max buffers Bnames can hold */
+static int Numbnames;			/* number of buffers */
+static int Maxbnames;			/* max buffers Bnames can hold */
 
 struct buff *Bufflist;		/* the buffer list */
 
@@ -36,8 +36,8 @@ static void switchto_part(void)
 	tbuff = cfindbuff(word);
 	if (!tbuff)
 		tbuff = Curbuff;
-	if (tbuff->next)
-		tbuff = tbuff->next;
+	if (nextbuff(tbuff))
+		tbuff = nextbuff(tbuff);
 	else
 		tbuff = Bufflist;
 	makepaw(tbuff->bname, true);
@@ -50,7 +50,7 @@ void Zswitch_to_buffer(void)
 
 	Arg = 0;
 	Nextpart = switchto_part;
-	rc = getplete("Buffer: ", Lbufname, Bnames, sizeof(char *), Numbuffs);
+	rc = getplete("Buffer: ", Lbufname, Bnames, sizeof(char *), Numbnames);
 	Nextpart = NULL;
 	if (rc == -1)
 		return;
@@ -61,11 +61,11 @@ void Zswitch_to_buffer(void)
 
 void Znext_buffer(void)
 {
-	struct buff *next = Curbuff->prev;
+	struct buff *next = prevbuff(Curbuff);
 
 
-	if (!next && Curbuff->next)
-		for (next = Curbuff->next; next->next; next = next->next)
+	if (!next && nextbuff(Curbuff))
+		for (next = nextbuff(Curbuff); nextbuff(next); next = nextbuff(next))
 			;
 	if (next) {
 		strcpy(Lbufname, Curbuff->bname);
@@ -151,7 +151,7 @@ void Zlist_buffers(void)
 	int i;
 
 	if (wuseother(LISTBUFF)) {
-		for (i = 0; i < Numbuffs; ++i) {
+		for (i = 0; i < Numbnames; ++i) {
 			struct buff *tbuff = cfindbuff(Bnames[i]);
 			if (tbuff)
 				lstbuff(tbuff);
@@ -173,58 +173,56 @@ void Zunmodify(void)
 	Curbuff->bmodf = Argp;
 }
 
-static void cfini(void)
-{
-	free(Bnames);
-}
-
 /* Add the new bname to the Bname array.
- * If we hit maxbuffs, try to enlarge the Bnames array.
+ * If we hit Maxbnames, try to enlarge the Bnames array.
  * Note that the compare MUST be insensitive for the getplete!
  */
 static char *addbname(const char *bname)
 {
 	int i;
 
-	if (Numbuffs == maxbuffs) {
+	if (Numbnames == Maxbnames) {
 		/* increase Bnames array */
 		char **ptr = (char **)realloc(Bnames,
-					      (maxbuffs + 10) * sizeof(char *));
+						  (Maxbnames + 10) * sizeof(char *));
 		if (!ptr)
 			return NULL;
 
-		if (Bnames == NULL)
-			atexit(cfini);
-
 		Bnames = ptr;
-		maxbuffs += 10;
+		Maxbnames += 10;
 	}
 
-	for (i = Numbuffs; i > 0 && strcasecmp(bname, Bnames[i - 1]) < 0; --i)
+	for (i = Numbnames; i > 0 && strcasecmp(bname, Bnames[i - 1]) < 0; --i)
 		Bnames[i] = Bnames[i - 1];
-	Bnames[i] = strdup(bname);
-	if (strlen(Bnames[i]) > BUFNAMMAX)
-		Bnames[i][BUFNAMMAX] = '\0';
-	++Numbuffs;
+	if ((Bnames[i] = strdup(bname))) {
+		if (strlen(Bnames[i]) > BUFNAMMAX)
+			Bnames[i][BUFNAMMAX] = '\0';
+		++Numbnames;
+	}
 
 	return Bnames[i];
 }
 
-/* Only fixes up the array - no frees */
 static bool delbname(char *bname)
 {
 	int i;
 
-	for (i = 0; i < Numbuffs && strcmp(bname, Bnames[i]); ++i)
+	for (i = 0; i < Numbnames && strcmp(bname, Bnames[i]); ++i)
 		;
-	if (i == Numbuffs)
+	if (i == Numbnames)
 		return false;
 
-	--Numbuffs;
+	--Numbnames;
+	free(bname);
 	Bnames[i] = NULL;
 
-	for (; i < Numbuffs; ++i)
-		Bnames[i] = Bnames[i + 1];
+	if (Numbnames == 0) {
+		free(Bnames);
+		Bnames = NULL;
+		Maxbnames = 0;
+	} else
+		for (; i < Numbnames; ++i)
+			Bnames[i] = Bnames[i + 1];
 
 	return true;
 }
@@ -292,8 +290,8 @@ struct buff *cmakebuff(const char *bname, char *fname)
 
 	/* add the buffer to the head of the list */
 	if (Bufflist)
-		Bufflist->prev = bptr;
-	bptr->next = Bufflist;
+		prevbuff(Bufflist) = bptr;
+	nextbuff(bptr) = Bufflist;
 	Bufflist = bptr;
 
 	bptr->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
@@ -311,29 +309,31 @@ bool cdelbuff(struct buff *tbuff)
 	if (!tbuff)
 		return false;
 
-	if (tbuff->bname)
+	if (tbuff->bname) {
 		delbname(tbuff->bname);
+		tbuff->bname = NULL;
+	}
 
 	if (unvoke(tbuff))
 		checkpipes(1);
 
-	CLEAR_UMARK;
-
 	if (tbuff == Curbuff) { /* switch to a safe buffer */
-		if (tbuff->next)
-			bswitchto(tbuff->next);
-		else if (tbuff->prev)
-			bswitchto(tbuff->prev);
+		CLEAR_UMARK;
+
+		if (nextbuff(tbuff))
+			bswitchto(nextbuff(tbuff));
+		else if (prevbuff(tbuff))
+			bswitchto(prevbuff(tbuff));
 		else
 			return false;
 	}
 
 	if (tbuff == Bufflist)
-		Bufflist = tbuff->next;
-	if (tbuff->prev)
-		tbuff->prev->next = tbuff->next;
-	if (tbuff->next)
-		tbuff->next->prev = tbuff->prev;
+		Bufflist = nextbuff(tbuff);
+	if (prevbuff(tbuff))
+		nextbuff(prevbuff(tbuff)) = nextbuff(tbuff);
+	if (nextbuff(tbuff))
+		prevbuff(nextbuff(tbuff)) = prevbuff(tbuff);
 
 	_bdelbuff(tbuff);
 
@@ -345,7 +345,7 @@ struct buff *cfindbuff(const char *bname)
 {
 	struct buff *tbuff;
 
-	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
+	foreachbuff(tbuff)
 		if (strncasecmp(tbuff->bname, bname, BUFNAMMAX) == 0)
 			return tbuff;
 	return NULL;

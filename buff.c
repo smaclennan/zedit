@@ -69,10 +69,11 @@ void _bdelbuff(struct buff *tbuff)
 	if (!tbuff)
 		return;
 
-	if (tbuff->bname)
-		free(tbuff->bname);
 	if (app_cleanup)
 		app_cleanup(tbuff);
+
+	if (tbuff->bname)
+		free(tbuff->bname);
 
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);

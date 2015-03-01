@@ -127,6 +127,11 @@ struct wdo {
 	struct wdo *next;
 };
 
+#define foreachwdo(wdo) for (wdo = Whead; wdo; wdo = wdo->next)
+#define wheight() (Curwdo->last - Curwdo->first)
+
+extern struct wdo *Curwdo, *Whead;
+
 struct zapp {
 	char *fname;            /* file associated with buffer */
 	time_t mtime;           /* file modified time */
@@ -137,10 +142,9 @@ struct zapp {
 };
 #define zapp(b) ((struct zapp *)((b)->app))
 
-#define foreachwdo(wdo) for (wdo = Whead; wdo; wdo = wdo->next)
-#define wheight() (Curwdo->last - Curwdo->first)
-
-extern struct wdo *Curwdo, *Whead;
+#define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)
+#define nextbuff(b) ((b)->next)
+#define prevbuff(b) ((b)->prev)
 
 extern char *Home;
 extern bool Argp;

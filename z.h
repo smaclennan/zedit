@@ -132,6 +132,7 @@ struct wdo {
 
 extern struct wdo *Curwdo, *Whead;
 extern struct buff *Curbuff;
+extern struct buff *Bbuff;
 
 struct zapp {
 	char *bname;            /* buffer name */

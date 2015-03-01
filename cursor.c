@@ -21,7 +21,7 @@
 
 void Zbeginning_of_line(void)
 {
-	bmove(Curbuff, -1);
+	bmove(Bbuff, -1);
 	tobegline(Curbuff);
 }
 
@@ -57,7 +57,7 @@ void Zprevious_line(void)
 {
 	int col = forcecol();
 	while (Arg-- > 0)
-		bcrsearch(Curbuff, NL);
+		bcrsearch(Bbuff, NL);
 	bmakecol(col, false);
 }
 
@@ -65,19 +65,19 @@ void Znext_line(void)
 {
 	int col = forcecol();
 	while (Arg-- > 0)
-		bcsearch(Curbuff, NL);
+		bcsearch(Bbuff, NL);
 	bmakecol(col, false);
 }
 
 void Zprevious_char(void)
 {
-	bmove(Curbuff, -Arg);
+	bmove(Bbuff, -Arg);
 	Arg = 0;
 }
 
 void Znext_char(void)
 {
-	bmove(Curbuff, Arg);
+	bmove(Bbuff, Arg);
 	Arg = 0;
 }
 
@@ -86,10 +86,10 @@ int bgetcol(bool flag, int col)
 {
 	struct mark pmark;
 
-	bmrktopnt(Curbuff, &pmark);
-	if (bcrsearch(Curbuff, '\n'))
+	bmrktopnt(Bbuff, &pmark);
+	if (bcrsearch(Bbuff, '\n'))
 		bmove1(Curbuff);
-	while (!bisatmrk(Curbuff, &pmark) && !bisend(Curbuff)) {
+	while (!bisatmrk(Bbuff, &pmark) && !bisend(Curbuff)) {
 		col += chwidth(*Curcptr, col, flag);
 		bmove1(Curbuff);
 	}
@@ -103,7 +103,7 @@ int bmakecol(int col, bool must)
 {
 	int tcol = 0;
 
-	if (bcrsearch(Curbuff, '\n'))
+	if (bcrsearch(Bbuff, '\n'))
 		bmove1(Curbuff);
 	while (tcol < col && *Curcptr != '\n' && !bisend(Curbuff)) {
 		tcol += chwidth(*Curcptr, tcol, !must);
@@ -122,8 +122,8 @@ void Zprevious_page(void)
 {
 	int i, col = forcecol();
 
-	bpnttomrk(Curbuff, Sstart);
-	for (i = wheight() - prefline() - 2; i > 0 && bcrsearch(Curbuff, NL); --i)
+	bpnttomrk(Bbuff, Sstart);
+	for (i = wheight() - prefline() - 2; i > 0 && bcrsearch(Bbuff, NL); --i)
 		i -= bgetcol(true, 0) / Colmax;
 	bmakecol(col, false);
 	reframe();
@@ -133,9 +133,9 @@ void Znext_page(void)
 {
 	int i, col = forcecol();
 
-	bpnttomrk(Curbuff, Sstart);
-	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(Curbuff, NL); --i) {
-		bmove(Curbuff, -1);
+	bpnttomrk(Bbuff, Sstart);
+	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(Bbuff, NL); --i) {
+		bmove(Bbuff, -1);
 		i -= bgetcol(true, 0) / Colmax;
 		bmove1(Curbuff);
 	}
@@ -176,13 +176,13 @@ void Zswap_mark(void)
 
 	mrktomrk(&tmark, UMARK);
 	Zset_mark();
-	bpnttomrk(Curbuff, &tmark);
+	bpnttomrk(Bbuff, &tmark);
 }
 
 void Zopen_line(void)
 {
-	binsert(Curbuff, NL);
-	bmove(Curbuff, -1);
+	binsert(Bbuff, NL);
+	bmove(Bbuff, -1);
 }
 
 static long getnum(const char *prompt)
@@ -214,7 +214,7 @@ void Zgoto_line(void)
 
 	btostart(Curbuff);
 	while (--line > 0)
-		bcsearch(Curbuff, NL);
+		bcsearch(Bbuff, NL);
 }
 
 void Zout_to(void)
@@ -254,7 +254,7 @@ int set_bookmark(char *bookname)
 		Lastbook = Bookmark;
 		Bookmrks[Bookmark] = zcreatemrk();
 	} else
-		bmrktopnt(Curbuff, Bookmrks[Bookmark]);
+		bmrktopnt(Bbuff, Bookmrks[Bookmark]);
 	return Bookmark;
 }
 
@@ -295,7 +295,7 @@ void Znext_bookmark(void)
 		strcpy(Lbufname, zapp(Curbuff)->bname);
 		wgoto(Bookmrks[Bookmark]->mbuff);
 	}
-	bpnttomrk(Curbuff, Bookmrks[Bookmark]);
+	bpnttomrk(Bbuff, Bookmrks[Bookmark]);
 	Curwdo->modeflags = INVALID;
 	putpaw("Book Mark %d", Bookmark + 1);
 	if (--Bookmark < 0)
@@ -317,19 +317,19 @@ static void scroll(bool (*search)(struct buff *buff, Byte what))
 {
 	struct mark *pmark = zcreatemrk();
 
-	bpnttomrk(Curbuff, Sstart);
-	while (Arg-- > 0 && search(Curbuff, NL))
+	bpnttomrk(Bbuff, Sstart);
+	while (Arg-- > 0 && search(Bbuff, NL))
 		;
 	tobegline(Curbuff);
-	bmrktopnt(Curbuff, Sstart);
-	bmove(Curbuff, -1);
-	bmrktopnt(Curbuff, Psstart);
+	bmrktopnt(Bbuff, Sstart);
+	bmove(Bbuff, -1);
+	bmrktopnt(Bbuff, Psstart);
 	Sendp = false;
 
 	if (mrkaftermrk(Sstart, pmark))
 		bmove1(Curbuff);
 	else
-		bpnttomrk(Curbuff, pmark);
+		bpnttomrk(Bbuff, pmark);
 
 	unmark(pmark);
 }

@@ -180,7 +180,7 @@ void Zrevert_file(void)
 
 	offset = blocation(Curbuff);
 	zreadfile(zapp(Curbuff)->fname);
-	boffset(Curbuff, offset);
+	boffset(Bbuff, offset);
 	uncomment(Curbuff);
 }
 

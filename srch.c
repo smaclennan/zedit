@@ -43,7 +43,7 @@ static void doincsrch(const char *prompt, bool forward)
 	int cmd, i = 0, count = 0;
 	struct mark marks[STRMAX];
 
-	bmrktopnt(Curbuff, &marks[0]); /* make sure this is set */
+	bmrktopnt(Bbuff, &marks[0]); /* make sure this is set */
 	memset(str, '\0', sizeof(str));
 	strcpy(promptstr, nocase(prompt));
 	while (go) {
@@ -66,10 +66,10 @@ static void doincsrch(const char *prompt, bool forward)
 					continue;
 				strcpy(str, olds);
 				for (i = 0; i < n; ++i)
-					bmrktopnt(Curbuff, &marks[i]);
+					bmrktopnt(Bbuff, &marks[i]);
 			}
 
-			bmrktopnt(Curbuff, &tmark); /* save in case search fails */
+			bmrktopnt(Bbuff, &tmark); /* save in case search fails */
 again:
 			if (!bstrsearch(str, forward)) {
 				if (++count == 2) {
@@ -79,7 +79,7 @@ again:
 					btostart(Curbuff);
 					goto again;
 				} else {
-					bpnttomrk(Curbuff, &tmark);
+					bpnttomrk(Bbuff, &tmark);
 					tbell();
 				}
 			}
@@ -89,11 +89,11 @@ again:
 
 		if (isprint(cmd)) {
 			if (i < STRMAX) {
-				bmrktopnt(Curbuff, &marks[i]);
+				bmrktopnt(Bbuff, &marks[i]);
 				str[i++] = cmd;
-				bmove(Curbuff, -i);
+				bmove(Bbuff, -i);
 				if (!bstrsearch(str, forward)) {
-					bpnttomrk(Curbuff, &marks[--i]);
+					bpnttomrk(Bbuff, &marks[--i]);
 					str[i] = '\0';
 					tbell();
 				}
@@ -101,7 +101,7 @@ again:
 				tbell();
 		} else if (Keys[cmd] == ZDELETE_PREVIOUS_CHAR) {
 			if (i > 0) {
-				bpnttomrk(Curbuff, &marks[--i]);
+				bpnttomrk(Bbuff, &marks[--i]);
 				str[i] = '\0';
 			} else
 				tbell();
@@ -114,7 +114,7 @@ again:
 	}
 	clrpaw();
 	if (Keys[cmd] == ZABORT)
-		bpnttomrk(Curbuff, &marks[0]);
+		bpnttomrk(Bbuff, &marks[0]);
 	else
 		strcpy(olds, str);
 	searchdir[0] = forward;
@@ -184,7 +184,7 @@ void Zagain(void)
 				btostart(Curbuff);
 				Arg = 1;
 			} else {
-				bpnttomrk(Curbuff, Gmark);
+				bpnttomrk(Bbuff, Gmark);
 				unmark(Gmark);
 				Gmark = NULL;
 				Curwdo->modeflags = INVALID;
@@ -243,12 +243,12 @@ static void doreplace(int type)
 				break;
 			else {
 				cswitchto(tbuff);
-				bmrktopnt(Curbuff, &tmark);
+				bmrktopnt(Bbuff, &tmark);
 				btostart(Curbuff);
 				while (replaceone(type, &query, &exit, ebuf, crgone) &&
 					   !exit)
 					;
-				bpnttomrk(Curbuff, &tmark);
+				bpnttomrk(Bbuff, &tmark);
 			}
 		}
 		clrpaw();
@@ -258,7 +258,7 @@ static void doreplace(int type)
 	else
 		clrpaw();
 
-	bpnttomrk(Curbuff, pmark);
+	bpnttomrk(Bbuff, pmark);
 	unmark(pmark);
 }
 
@@ -289,10 +289,10 @@ static void promptreplace(int type)
 static bool next_replace(Byte *ebuf, struct mark *REstart, int type)
 {
 	if (type == REGEXP)
-		return step(Curbuff, ebuf, REstart);
+		return step(Bbuff, ebuf, REstart);
 
 	if (bstrsearch(olds, FORWARD)) {
-		bmove(Curbuff, -(int)strlen(olds));
+		bmove(Bbuff, -(int)strlen(olds));
 		return true;
 	}
 
@@ -340,11 +340,11 @@ input:
 				if (type == REGEXP)
 					tbell();
 				else {
-					bpnttomrk(Curbuff, prevmatch);
+					bpnttomrk(Bbuff, prevmatch);
 					if (changeprev) {
-						bdelete(Curbuff, strlen(news));
-						binstr(Curbuff, olds);
-						bpnttomrk(Curbuff, prevmatch);
+						bdelete(Bbuff, strlen(news));
+						binstr(Bbuff, olds);
+						bpnttomrk(Bbuff, prevmatch);
 					}
 				}
 				goto replace;
@@ -367,7 +367,7 @@ input:
 				if (Keys[(int)tchar] == ZABORT)
 					*exit = true;
 				else {
-					bmrktopnt(Curbuff, prevmatch);
+					bmrktopnt(Bbuff, prevmatch);
 					changeprev = 0;
 					/* skip and continue */
 					bmove1(Curbuff);
@@ -375,7 +375,7 @@ input:
 				continue;
 			}
 		}
-		bmrktopnt(Curbuff, prevmatch);
+		bmrktopnt(Bbuff, prevmatch);
 		changeprev = 1;
 
 		/* change it! */
@@ -386,15 +386,15 @@ input:
 			for (ptr = news; *ptr; ++ptr)
 				switch (*ptr) {
 				case '\\':
-					binsert(Curbuff, *(++ptr) ? *ptr : '\\'); break;
+					binsert(Bbuff, *(++ptr) ? *ptr : '\\'); break;
 				case '&':
 					Zyank(); break;
 				default:
-					binsert(Curbuff, *ptr);
+					binsert(Bbuff, *ptr);
 				}
 		} else {
-			bdelete(Curbuff, strlen(olds));
-			binstr(Curbuff, news);
+			bdelete(Bbuff, strlen(olds));
+			binstr(Bbuff, news);
 		}
 		if (*query && tchar == ',') {
 			zrefresh();
@@ -402,16 +402,16 @@ input:
 				/* change it back */
 				if (type == REGEXP) {
 					for (dist = 0;
-						 !bisatmrk(Curbuff, REstart);
-						 ++dist, bmove(Curbuff, -1))
+						 !bisatmrk(Bbuff, REstart);
+						 ++dist, bmove(Bbuff, -1))
 						;
-					bdelete(Curbuff, dist);
+					bdelete(Bbuff, dist);
 					Zyank();
 				} else {
 					int len = strlen(news);
-					bmove(Curbuff, -len);
-					bdelete(Curbuff, len);
-					binstr(Curbuff, olds);
+					bmove(Bbuff, -len);
+					bdelete(Bbuff, len);
+					binstr(Bbuff, olds);
 				}
 			}
 		}
@@ -446,12 +446,12 @@ static bool dosearch(void)
 	int fcnt = 0, rc;
 	struct mark save, fmark;
 
-	bmrktopnt(Curbuff, &save);
+	bmrktopnt(Bbuff, &save);
 #if 0
 	/* This causes problems with RE search. You can't match the first line.
 	 * Why is it needed?
 	 */
-	bmove(Curbuff, searchdir[0] == BACKWARD ? -1 : 1);
+	bmove(Bbuff, searchdir[0] == BACKWARD ? -1 : 1);
 #endif
 	if (searchdir[0] == REGEXP) {
 		Byte ebuf[ESIZE];
@@ -460,22 +460,22 @@ static bool dosearch(void)
 			error(regerr(rc));
 		else
 			while (Arg-- > 0)
-				if (step(Curbuff, ebuf, NULL)) {
-					bmrktopnt(Curbuff, &fmark);
+				if (step(Bbuff, ebuf, NULL)) {
+					bmrktopnt(Bbuff, &fmark);
 					++fcnt;
 				} else
 					break;
 	} else
 		while (Arg-- > 0)
 			if (bstrsearch(olds, searchdir[0])) {
-				bmrktopnt(Curbuff, &fmark);
+				bmrktopnt(Bbuff, &fmark);
 				++fcnt;
 			} else
 				break;
 	if (fcnt)
-		bpnttomrk(Curbuff, &fmark);
+		bpnttomrk(Bbuff, &fmark);
 	else {
-		bpnttomrk(Curbuff, &save);
+		bpnttomrk(Bbuff, &save);
 		putpaw("Not Found");
 	}
 	Arg = 0;
@@ -485,9 +485,9 @@ static bool dosearch(void)
 bool bstrsearch(const char *str, bool forward)
 {
 	if (forward)
-		return bm_search(Curbuff, str, zapp(Curbuff)->bmode & EXACT);
+		return bm_search(Bbuff, str, zapp(Curbuff)->bmode & EXACT);
 	else
-		return bm_rsearch(Curbuff, str, zapp(Curbuff)->bmode & EXACT);
+		return bm_rsearch(Bbuff, str, zapp(Curbuff)->bmode & EXACT);
 }
 
 char *nocase(const char *prompt)

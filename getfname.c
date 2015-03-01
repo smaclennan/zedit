@@ -227,14 +227,14 @@ void Zfname(void)
 		if (n > len) {
 			btoend(Curbuff);
 			while (len < n && blength(Curbuff) < Pawlen) {
-				binsert(Curbuff, match[len++]);
+				binsert(Bbuff, match[len++]);
 				++did_something;
 			}
 			if (len < n)
 				tbell();
 		}
 		if (f == 0 && isdir(getbtxt(txt, PATHMAX)) && blength(Curbuff) < Pawlen)
-			binsert(Curbuff, '/');
+			binsert(Bbuff, '/');
 	} else if (!update)
 		tbell();
 

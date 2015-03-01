@@ -41,10 +41,10 @@ static void crfixup(void)
 
 	zapp(Curbuff)->bmode |= CRLF;
 
-	while (bcsearch(Curbuff, '\r'))
+	while (bcsearch(Bbuff, '\r'))
 		if (*Curcptr == '\n') {
-			bmove(Curbuff, -1);
-			bdelete(Curbuff, 1);
+			bmove(Bbuff, -1);
+			bdelete(Bbuff, 1);
 		}
 
 	btostart(Curbuff);
@@ -94,7 +94,7 @@ int breadfile(const char *fname)
 				fileclose(fd);
 				return ENOMEM;
 			}
-			makecur(Curbuff, Curpage->nextp, 0);
+			makecur(Bbuff, Curpage->nextp, 0);
 		}
 		memcpy(Curcptr, buf, len);
 		Curcptr += len;
@@ -143,17 +143,17 @@ static bool bwritefd(int fd)
 	struct page *tpage;
 	int n, status = true;
 
-	bmrktopnt(Curbuff, &smark);
+	bmrktopnt(Bbuff, &smark);
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
-			makecur(Curbuff, tpage, 0);
+			makecur(Bbuff, tpage, 0);
 			n = write(fd, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
 		}
 
 	close(fd);
 
-	bpnttomrk(Curbuff, &smark);
+	bpnttomrk(Bbuff, &smark);
 	return status;
 }
 
@@ -164,11 +164,11 @@ static bool bwritedos(int fd)
 	int i, n, status = true;
 	Byte buf[PSIZE * 2], *p;
 
-	bmrktopnt(Curbuff, &smark);
+	bmrktopnt(Bbuff, &smark);
 	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int len = tpage->plen;
-			makecur(Curbuff, tpage, 0);
+			makecur(Bbuff, tpage, 0);
 			p = buf;
 			for (i = 0; i < tpage->plen; ++i) {
 				if (tpage->pdata[i] == '\n') {
@@ -184,7 +184,7 @@ static bool bwritedos(int fd)
 
 	close(fd);
 
-	bpnttomrk(Curbuff, &smark);
+	bpnttomrk(Bbuff, &smark);
 	return status;
 }
 

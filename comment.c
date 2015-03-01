@@ -58,44 +58,44 @@ static void scanbuffer(struct buff *buff)
 	invalidate_scrnmarks(0, Rowmax - 2);
 
 	bswitchto(buff);
-	bmrktopnt(Curbuff, &tmark);
+	bmrktopnt(Bbuff, &tmark);
 
 	btostart(Curbuff);
 	if (comchar) {
-		while (bcsearch(Curbuff, comchar) && !bisend(Curbuff)) {
-			if (bmove(Curbuff, -2) == 0) { /* skip to char *before* # */
+		while (bcsearch(Bbuff, comchar) && !bisend(Curbuff)) {
+			if (bmove(Bbuff, -2) == 0) { /* skip to char *before* # */
 				/* # is first character in buffer */
 			} else if (isspace(*Curcptr))
 				bmove1(Curbuff);
 			else {
-				bmove(Curbuff, 2);
+				bmove(Bbuff, 2);
 				continue;
 			}
 
 			/* mark to end of line as comment */
-			bmrktopnt(Curbuff, &start);
-			bcsearch(Curbuff, '\n');
-			bmove(Curbuff, -1);
+			bmrktopnt(Bbuff, &start);
+			bcsearch(Bbuff, '\n');
+			bmove(Bbuff, -1);
 			newcomment(&start);
 		}
 	} else {
 		/* Look for both C and C++ comments. */
-		while (bcsearch(Curbuff, '/') && !bisend(Curbuff)) {
+		while (bcsearch(Bbuff, '/') && !bisend(Curbuff)) {
 			if (Buff() == '*') {
-				bmove(Curbuff, -1);
-				bmrktopnt(Curbuff, &start);
+				bmove(Bbuff, -1);
+				bmrktopnt(Bbuff, &start);
 				if (bstrsearch("*/", FORWARD))
 					newcomment(&start);
 			} else if (Buff() == '/') {
-				bmove(Curbuff, -1);
-				bmrktopnt(Curbuff, &start);
+				bmove(Bbuff, -1);
+				bmrktopnt(Bbuff, &start);
 				toendline(Curbuff);
 				newcomment(&start);
 			}
 		}
 	}
 
-	bpnttomrk(Curbuff, &tmark);
+	bpnttomrk(Bbuff, &tmark);
 	Comstate = true;
 }
 
@@ -150,9 +150,9 @@ void cprntchar(Byte ch)
 	}
 
 	for (; start; start = start->next)
-		if (bisbeforemrk(Curbuff, start->start))
+		if (bisbeforemrk(Bbuff, start->start))
 			break;
-		else if (bisbeforemrk(Curbuff, start->end) || bisatmrk(Curbuff, start->end)) {
+		else if (bisbeforemrk(Bbuff, start->end) || bisatmrk(Curbuff, start->end)) {
 			style = T_COMMENT;
 			break;
 		}

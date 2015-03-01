@@ -35,13 +35,13 @@ static void grep_one(char *fname, Byte *ebuf,
 	if (zreadfile(fname))
 		return;
 
-	while (step(Curbuff, ebuf, NULL)) {
+	while (step(Bbuff, ebuf, NULL)) {
 		struct mark *start;
 		unsigned long line = bline();
 
 		bswitchto(outbuff);
 		snprintf(PawStr, STRMAX, "%s:%ld: ", fname, line);
-		binstr(Curbuff, PawStr);
+		binstr(Bbuff, PawStr);
 		bswitchto(inbuff);
 
 		tobegline(Curbuff);

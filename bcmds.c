@@ -27,6 +27,7 @@ static int Maxbnames;			/* max buffers Bnames can hold */
 
 struct buff *Bufflist;		/* the buffer list */
 struct buff *Curbuff;		/* the current buffer */
+struct buff *Bbuff;         /* the current low-level buffer */
 
 static void switchto_part(void)
 {
@@ -97,13 +98,13 @@ static void delbuff(struct buff *buff)
 		foreachwdo(wdo)
 			if (wdo->wbuff == buff) {
 				wdo->wbuff = Curbuff;
-				bmrktopnt(Curbuff, wdo->wpnt);
+				bmrktopnt(Bbuff, wdo->wpnt);
 				if (UMARK_SET) {
 					mrktomrk(wdo->wmrk, UMARK);
 					wdo->umark_set = 1;
 				} else
 					wdo->umark_set = 0;
-				bmrktopnt(Curbuff, wdo->wstart);
+				bmrktopnt(Bbuff, wdo->wstart);
 				wdo->modeflags = INVALID;
 			}
 	} else
@@ -142,7 +143,7 @@ static void lstbuff(struct buff *tbuff)
 			tbuff->bmodf ? '*' : ' ',
 			blength(tbuff),
 			zapp(tbuff)->fname ? limit(zapp(tbuff)->fname, WASTED) : UNTITLED);
-	binstr(Curbuff, PawStr);
+	binstr(Bbuff, PawStr);
 }
 
 void Zlist_buffers(void)
@@ -158,7 +159,7 @@ void Zlist_buffers(void)
 			else {
 				sprintf(PawStr, "%-*s Problem\n",
 					BUFNAMMAX, Bnames[i]);
-				binstr(Curbuff, PawStr);
+				binstr(Bbuff, PawStr);
 			}
 		}
 		Curbuff->bmodf = false;
@@ -294,7 +295,8 @@ void bswitchto(struct buff *buf)
 {
 	if (buf && buf != Curbuff) {
 		Curbuff = buf;
-		makecur(Curbuff, buf->curpage, buf->curchar);
+		Bbuff = buf;
+		makecur(Bbuff, buf->curpage, buf->curchar);
 	}
 }
 

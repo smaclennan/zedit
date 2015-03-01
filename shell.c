@@ -33,7 +33,7 @@ void set_shell_mark(void)
 	if (!shell_mark)
 		shell_mark = zcreatemrk();
 	else
-		bmrktopnt(Curbuff, shell_mark);
+		bmrktopnt(Bbuff, shell_mark);
 }
 
 /* Convert the next portion of buffer to integer. Skip leading ws. */
@@ -116,11 +116,11 @@ int readapipe(void)
 		struct buff *save = Curbuff;
 
 		bswitchto(pipebuff);
-		bmrktopnt(Curbuff, &tmark);
+		bmrktopnt(Bbuff, &tmark);
 		btoend(Curbuff);
 		while (i-- > 0)
-			binsert(Curbuff, *ptr++);
-		bpnttomrk(Curbuff, &tmark);
+			binsert(Bbuff, *ptr++);
+		bpnttomrk(Bbuff, &tmark);
 		bswitchto(save);
 	} else
 		/* pipe died */
@@ -305,9 +305,9 @@ static void cmdtobuff(const char *bname, const char *cmd)
 		set_shell_mark();
 
 		do_chdir(Curbuff);
-		message(Curbuff, cmd);
+		message(Bbuff, cmd);
 
-		_cmdtobuff(Curbuff, cmd);
+		_cmdtobuff(Bbuff, cmd);
 
 		wswitchto(save);
 	}
@@ -387,7 +387,7 @@ static int parse(char *fname)
 		}
 
 		/* skip to next line */
-		bcsearch(Curbuff, NL);
+		bcsearch(Bbuff, NL);
 	}
 	return 0;
 }
@@ -411,13 +411,13 @@ void Znext_error(void)
 		NexterrorCalled = 1;
 		btostart(Curbuff);
 	} else
-		bcsearch(Curbuff, NL);
+		bcsearch(Bbuff, NL);
 	line = parse(fname);
 	if (line) {
 		vsetmrk(shell_mark);
-		bmrktopnt(Curbuff, shell_mark);
+		bmrktopnt(Bbuff, shell_mark);
 		tobegline(Curbuff);
-		bswappnt(Curbuff, shell_mark);
+		bswappnt(Bbuff, shell_mark);
 		vsetmrk(shell_mark);
 		wdo = findwdo(mbuff);
 		if (wdo)

@@ -53,36 +53,36 @@ static void dump_bindings(int fnum)
 	int k, found = 0;
 	char buff[BUFSIZ];
 
-	binstr(Curbuff, "\nBinding(s): ");
+	binstr(Bbuff, "\nBinding(s): ");
 
 	for (k = 0; k < NUMKEYS; ++k)
 		if (Keys[k] == fnum) {
 			if (found) {
-				binsert(Curbuff, ',');
+				binsert(Bbuff, ',');
 				Cmd = ' ';
 				Zfill_check();
 			} else
 				found = true;
-			binstr(Curbuff, dispkey(k, buff));
+			binstr(Bbuff, dispkey(k, buff));
 		}
 
 	if (!found)
-		binstr(Curbuff, "Unbound");
+		binstr(Bbuff, "Unbound");
 }
 
 void dump_doc(const char *doc)
 {
 	if (doc) {
-		binstr(Curbuff, "\n\n");
+		binstr(Bbuff, "\n\n");
 
 		for (; *doc; ++doc)
 			if (*doc == ' ') {
 				Cmd = *doc;
 				Zfill_check();
 			} else
-				binsert(Curbuff, *doc);
+				binsert(Bbuff, *doc);
 	}
-	binsert(Curbuff, '\n');
+	binsert(Bbuff, '\n');
 }
 
 void Zhelp(void)
@@ -123,16 +123,16 @@ void Zhelp_function(void)
 	} else
 		wuseother(HELPBUFF);
 
-	binstr(Curbuff, Cnames[rc].name);
+	binstr(Bbuff, Cnames[rc].name);
 
 	pawok = Cmds[Cnames[rc].fnum][1] != Znotimpl;
 	if (pawok || Cnames[rc].flags) {
-		binstr(Curbuff, " (");
+		binstr(Bbuff, " (");
 		if (Cnames[rc].flags)
-			binsert(Curbuff, Cnames[rc].flags);
+			binsert(Bbuff, Cnames[rc].flags);
 		if (pawok)
-			binsert(Curbuff, 'P');
-		binsert(Curbuff, ')');
+			binsert(Bbuff, 'P');
+		binsert(Bbuff, ')');
 	}
 
 	dump_doc(Cnames[rc].doc);
@@ -151,18 +151,18 @@ void Zhelp_variable(void)
 
 	wuseother(HELPBUFF);
 
-	binstr(Curbuff, Vars[rc].vname);
-	binstr(Curbuff, ": ");
+	binstr(Bbuff, Vars[rc].vname);
+	binstr(Bbuff, ": ");
 	switch (Vars[rc].vtype) {
 	case V_STRING:
-		binstr(Curbuff, VARSTR(rc) ? VARSTR(rc) : "NONE");
+		binstr(Bbuff, VARSTR(rc) ? VARSTR(rc) : "NONE");
 		break;
 	case V_FLAG:
-		binstr(Curbuff, VAR(rc) ? "On" : "Off");
+		binstr(Bbuff, VAR(rc) ? "On" : "Off");
 		break;
 	case V_DECIMAL:
 		sprintf(PawStr, "%d", VAR(rc));
-		binstr(Curbuff, PawStr);
+		binstr(Bbuff, PawStr);
 	}
 
 	dump_doc(Vars[rc].doc);
@@ -186,15 +186,15 @@ void Zhelp_apropos(void)
 				wuseother(HELPBUFF);
 			n += sprintf(line + n, "%-24s", Cnames[i].name);
 			if (++j == 3) {
-				binstr(Curbuff, line);
-				binsert(Curbuff, '\n');
+				binstr(Bbuff, line);
+				binsert(Bbuff, '\n');
 				j = n = 0;
 			}
 		}
 
 	if (j) {
-		binstr(Curbuff, line);
-		binsert(Curbuff, '\n');
+		binstr(Bbuff, line);
+		binsert(Bbuff, '\n');
 	}
 
 	if (match == 0)

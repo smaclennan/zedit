@@ -406,14 +406,14 @@ int getbword(char word[], int max, int (*valid)())
 	int i;
 	struct mark tmark;
 
-	bmrktopnt(Curbuff, &tmark);
+	bmrktopnt(Bbuff, &tmark);
 	if (!bistoken())
 		moveto(bistoken, BACKWARD);
 	movepast(bistoken, BACKWARD);
 	for (i = 0; !bisend(Curbuff) && valid() && i < max; ++i, bmove1(Curbuff))
 		word[i] = Buff();
 	word[i] = '\0';
-	bpnttomrk(Curbuff, &tmark);
+	bpnttomrk(Bbuff, &tmark);
 	return i;
 }
 
@@ -422,12 +422,12 @@ bool looking_at(const char *match)
 {
 	struct mark tmark;
 
-	bmrktopnt(Curbuff, &tmark);
+	bmrktopnt(Bbuff, &tmark);
 	while (*match && *Curcptr == *match) {
 		bmove1(Curbuff);
 		++match;
 	}
-	bpnttomrk(Curbuff, &tmark);
+	bpnttomrk(Bbuff, &tmark);
 	return *match == '\0';
 }
 
@@ -440,11 +440,11 @@ char *getbtxt(char txt[], int max)
 	int i;
 	struct mark tmark;
 
-	bmrktopnt(Curbuff, &tmark);
+	bmrktopnt(Bbuff, &tmark);
 	for (btostart(Curbuff), i = 0; !bisend(Curbuff) && i < max; bmove1(Curbuff), ++i)
 		txt[i] = Buff();
 	txt[i] = '\0';
-	bpnttomrk(Curbuff, &tmark);
+	bpnttomrk(Bbuff, &tmark);
 	return txt;
 }
 
@@ -452,9 +452,9 @@ char *getbtxt(char txt[], int max)
 void movepast(int (*pred)(), bool forward)
 {
 	if (!forward)
-		bmove(Curbuff, -1);
+		bmove(Bbuff, -1);
 	while (!(forward ? bisend(Curbuff) : bisstart(Curbuff)) && (*pred)())
-		bmove(Curbuff, forward ? 1 : -1);
+		bmove(Bbuff, forward ? 1 : -1);
 	if (!forward && !(*pred)())
 		bmove1(Curbuff);
 }
@@ -463,9 +463,9 @@ void movepast(int (*pred)(), bool forward)
 void moveto(int (*pred)(), bool forward)
 {
 	if (!forward)
-		bmove(Curbuff, -1);
+		bmove(Bbuff, -1);
 	while (!(forward ? bisend(Curbuff) : bisstart(Curbuff)) && !(*pred)())
-		bmove(Curbuff, forward ? 1 : -1);
+		bmove(Bbuff, forward ? 1 : -1);
 	if (!forward && !bisstart(Curbuff))
 		bmove1(Curbuff);
 }
@@ -475,9 +475,9 @@ void tindent(int arg)
 {
 	if (VAR(VSPACETAB) == 0)
 		for (; arg >= Tabsize; arg -= Tabsize)
-			binsert(Curbuff, '\t');
+			binsert(Bbuff, '\t');
 	while (arg-- > 0)
-		binsert(Curbuff, ' ');
+		binsert(Bbuff, ' ');
 }
 
 int bisspace(void)

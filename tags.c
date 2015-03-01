@@ -112,14 +112,14 @@ static bool find_tag(char *word)
 
 	bswitchto(buff);
 	btostart(Curbuff);
-	if (!step(Curbuff, ebuf, NULL))
+	if (!step(Bbuff, ebuf, NULL))
 		goto failed;
 
 	offset = batoi();
 
-	if (!bcrsearch(Curbuff, 014)) /* C-L */
+	if (!bcrsearch(Bbuff, 014)) /* C-L */
 		goto failed;
-	bmove(Curbuff, 2);
+	bmove(Bbuff, 2);
 
 	strcpy(path, Tagfile);
 	p = strrchr(path, '/');
@@ -133,7 +133,7 @@ static bool find_tag(char *word)
 	set_bookmark(word);
 
 	if (findfile(path)) {
-		boffset(Curbuff, offset);
+		boffset(Bbuff, offset);
 		redisplay();
 		return true;
 	}

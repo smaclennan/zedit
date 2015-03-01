@@ -83,7 +83,7 @@ void _bdelbuff(struct buff *tbuff)
 		app_cleanup(tbuff);
 
 	while (tbuff->firstp)	/* delete the pages */
-		freepage(&tbuff->firstp, tbuff->firstp);
+		freepage(tbuff, tbuff->firstp);
 
 #if defined(HAVE_MARKS) && !defined(HAVE_GLOBAL_MARKS)
 	while (tbuff->marks) /* delete the marks */
@@ -98,7 +98,7 @@ void _bdelbuff(struct buff *tbuff)
 /* Insert a character in the current buffer. */
 bool _binsert(struct buff *buff, Byte byte)
 {
-	if (curplen(buff) == PSIZE && !bpagesplit(buff))
+	if (curplen(buff) == PSIZE && !pagesplit(buff, HALFP))
 		return false;
 	memmove(buff->curcptr + 1, buff->curcptr, curplen(buff) - buff->curchar);
 	*buff->curcptr++ = byte;
@@ -161,7 +161,7 @@ void _bdelete(struct buff *buff, int quantity)
 				tmark->moffset = noffset;
 			}
 #endif
-			freepage(&buff->firstp, curpage);
+			freepage(buff, curpage);
 		} else {
 			tpage = curpage;
 			noffset = buff->curchar;
@@ -344,7 +344,7 @@ void _bempty(struct buff *buff)
 	makecur(buff, buff->firstp, 0);
 	curplen(buff) = 0;
 	while (buff->curpage->nextp)
-		freepage(&buff->firstp, buff->curpage->nextp);
+		freepage(buff, buff->curpage->nextp);
 
 #ifdef HAVE_MARKS
 	struct mark *btmark;
@@ -469,7 +469,7 @@ int _bindata(struct buff *buff, Byte *data, int size)
 
 	n = curplen(buff) - buff->curchar;
 	if (n > 0) {
-		if (!pagesplit(buff, buff->curpage, buff->curchar))
+		if (!pagesplit(buff, buff->curchar))
 			return copied;
 
 		/* Copy as much as possible to the end of this page */
@@ -511,7 +511,7 @@ int _bread(struct buff *buff, int fd, int size)
 	if (left >= size || left > BREAD_THRESHOLD) {
 		if (buff->curchar != curplen(buff)) {
 			/* Move data after point into new page */
-			if (!pagesplit(buff, buff->curpage, buff->curchar))
+			if (!pagesplit(buff, buff->curchar))
 				return -ENOMEM;
 			left = PSIZE - buff->curchar;
 		}
@@ -535,7 +535,7 @@ int _bread(struct buff *buff, int fd, int size)
 			makecur(buff, npage, n);
 			curplen(buff) = n;
 		} else {
-			freepage(&buff->firstp, npage);
+			freepage(buff, npage);
 			return ret > 0 ? ret : n;
 		}
 	}
@@ -676,11 +676,12 @@ struct page *newpage(struct page *curpage)
 	return page;
 }
 
-/* Split a full page. Leaves dist in curpage. */
-struct page *pagesplit(struct buff *buff, struct page *curpage, int dist)
+/* Split the current full page. Leaves dist in curpage. */
+struct page *pagesplit(struct buff *buff, int dist)
 {
 	if (dist < 0 || dist > PSIZE) return NULL;
 
+	struct page *curpage = buff->curpage;
 	struct page *newp = newpage(curpage);
 	if (!newp)
 		return NULL;
@@ -700,31 +701,23 @@ struct page *pagesplit(struct buff *buff, struct page *curpage, int dist)
 		}
 #endif
 
+	if (buff->curchar >= dist)
+		/* new page has Point in it */
+		makecur(buff, newp, buff->curchar - dist);
+
 	return newp;
 }
 
 /* Free a memory page */
-void freepage(struct page **firstp, struct page *page)
+void freepage(struct buff *buff, struct page *page)
 {
 	if (page->nextp)
 		page->nextp->prevp = page->prevp;
 	if (page->prevp)
 		page->prevp->nextp = page->nextp;
-	else if (firstp)
-		*firstp = page->nextp;
-	free((char *)page);
+	else
+		buff->firstp = page->nextp;
+
+	free(page);
 	--NumPages;
-}
-
-/* Split a full page. */
-bool bpagesplit(struct buff *buff)
-{
-	struct page *newp = pagesplit(buff, buff->curpage, HALFP);
-	if (!newp)
-		return false;
-
-	if (buff->curchar >= HALFP)
-		/* new page has Point in it */
-		makecur(buff, newp, buff->curchar - HALFP);
-	return true;
 }

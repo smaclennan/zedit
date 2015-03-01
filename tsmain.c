@@ -36,7 +36,7 @@ static int readone(struct buff *buff, int fd)
 		printf("Read %4d max %4d offset %u/%u\n", n, max, offset, total);
 		if (max < 0) {
 			perror("read");
-			return;
+			return 0;
 		}
 		do_append(buff, buffer, n);
 		_btostart(buff);

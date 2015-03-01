@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
 	dump_str_at_mark("1", mark1);
 	dump_str_at_mark("2", mark2);
 
-	pagesplit(buff, buff->curpage, 600);
+	pagesplit(buff, 600);
 
 	dump_str_at_mark("1", mark1);
 	dump_str_at_mark("2", mark2);

@@ -79,7 +79,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 		bswitchto(tbuff);
 		dstlen = PSIZE - Curpage->plen;
 		if (dstlen == 0) {
-			if (bpagesplit(Curbuff))
+			if (pagesplit(Curbuff, HALFP))
 				dstlen = PSIZE - Curpage->plen;
 			else {
 				bswitchto(sbuff);

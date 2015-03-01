@@ -166,9 +166,7 @@ struct page {
 #define lastp(pg) ((pg)->nextp == NULL)
 
 struct page *newpage(struct page *curpage);
-void freepage(struct page **firstp, struct page *page);
-struct page *pagesplit(struct buff *buff, struct page *curpage, int dist);
-
-bool bpagesplit(struct buff *buff);
+void freepage(struct buff *buff, struct page *page);
+struct page *pagesplit(struct buff *buff, int dist);
 
 #endif

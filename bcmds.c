@@ -136,10 +136,10 @@ void Zdelete_buffer(void)
 static void lstbuff(struct buff *tbuff)
 {
 	sprintf(PawStr, "%-*s %c%c %8lu %s ", BUFNAMMAX, tbuff->bname,
-		(tbuff->bmode & SYSBUFF) ? 'S' : ' ',
-		tbuff->bmodf ? '*' : ' ',
-		blength(tbuff),
-		tbuff->fname ? limit(tbuff->fname, WASTED) : UNTITLED);
+			(tbuff->bmode & SYSBUFF) ? 'S' : ' ',
+			tbuff->bmodf ? '*' : ' ',
+			blength(tbuff),
+			zapp(tbuff)->fname ? limit(zapp(tbuff)->fname, WASTED) : UNTITLED);
 	binstr(PawStr);
 	binsert('\n');
 }
@@ -231,13 +231,14 @@ static bool delbname(char *bname)
 static void zapp_cleanup(struct buff *bptr)
 {
 	if (bptr->app) {
+		if (zapp(bptr)->fname)
+			free(zapp(bptr)->fname);
 		uncomment(bptr);
 		undo_clear(bptr);
 		free(bptr->app);
 		bptr->app = NULL; /* paranoia */
 	}
 }
-
 
 /* Create a buffer. */
 struct buff *cmakebuff(const char *bname, char *fname)
@@ -273,7 +274,7 @@ struct buff *cmakebuff(const char *bname, char *fname)
 
 	bswitchto(bptr);
 	if (fname)
-		bptr->fname = strdup(fname);
+		zapp(bptr)->fname = strdup(fname);
 
 	app_cleanup = zapp_cleanup;
 

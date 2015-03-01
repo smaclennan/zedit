@@ -50,10 +50,10 @@ int batoi(void)
 
 int do_chdir(struct buff *buff)
 {
-	if (buff->fname) {
+	if (zapp(buff)->fname) {
 		char dir[PATHMAX + 1], *p;
 
-		strcpy(dir, buff->fname);
+		strcpy(dir, zapp(buff)->fname);
 		p = strrchr(dir, '/');
 		if (p) {
 			*p = '\0';
@@ -68,9 +68,9 @@ static void message(struct buff *buff, const char *str)
 {
 	struct wdo *wdo;
 
-	if (buff->fname)
-		free(buff->fname);
-	buff->fname = strdup(str);
+	if (zapp(buff)->fname)
+		free(zapp(buff)->fname);
+	zapp(buff)->fname = strdup(str);
 	foreachwdo(wdo)
 		if (wdo->wbuff == buff)
 			wdo->modeflags = INVALID;

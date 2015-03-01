@@ -40,8 +40,6 @@
 
 /* THE BUFFER STRUCTURES */
 
-struct page;
-
 struct buff {
 	char *bname;				/* buffer name */
 	bool bmodf;					/* buffer modified? */
@@ -52,11 +50,7 @@ struct buff {
 #if defined(HAVE_MARKS) && !defined(HAVE_GLOBAL_MARKS)
 	struct mark *marks;			/* buffer marks */
 #endif
-#ifdef HAVE_FILES
-	char *fname;				/* file name associated with buffer */
-	unsigned bmode;				/* buffer mode */
-	time_t mtime;				/* file time at read */
-#endif
+	unsigned bmode;				/* buffer mode - unused in core */
 	void *app;					/* app specific data */
 	struct buff *prev, *next;	/* list of buffers */
 };

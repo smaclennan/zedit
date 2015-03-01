@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 
 	reframe();
 
-	if (!Curbuff->mtime && Curbuff->fname)
+	if (!zapp(Curbuff)->mtime && zapp(Curbuff)->fname)
 		putpaw("New File");
 
 	if (line) {

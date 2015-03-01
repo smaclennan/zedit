@@ -75,9 +75,9 @@ int breadfile(const char *fname)
 		return errno;
 
 	if (fstat(fd, &sbuf) == 0)
-		Curbuff->mtime = sbuf.st_mtime;
+		zapp(Curbuff)->mtime = sbuf.st_mtime;
 	else
-		Curbuff->mtime = -1;
+		zapp(Curbuff)->mtime = -1;
 
 	bempty();
 
@@ -211,8 +211,8 @@ bool bwritefile(char *fname)
 		return true;
 
 	/* If the file existed, check to see if it has been modified. */
-	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
-		if (sbuf.st_mtime > Curbuff->mtime) {
+	if (zapp(Curbuff)->mtime && stat(fname, &sbuf) == 0) {
+		if (sbuf.st_mtime > zapp(Curbuff)->mtime) {
 			/* file has been modified */
 		}
 		mode  = sbuf.st_mode;
@@ -243,9 +243,9 @@ bool bwritefile(char *fname)
 	/* cleanup */
 	if (status) {
 		if (stat(fname, &sbuf) == 0)
-			Curbuff->mtime = sbuf.st_mtime;
+			zapp(Curbuff)->mtime = sbuf.st_mtime;
 		else
-			Curbuff->mtime = -1;
+			zapp(Curbuff)->mtime = -1;
 		Curbuff->bmodf = false;
 	}
 

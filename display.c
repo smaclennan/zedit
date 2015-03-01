@@ -393,9 +393,9 @@ static void modeline(struct wdo *wdo)
 	sprintf(str, "%s %s  (%s)  %s: ", ZSTR, VERSION,
 		setmodes(wdo->wbuff), wdo->wbuff->bname);
 	tprntstr(str);
-	if (wdo->wbuff->fname) {
+	if (zapp(wdo->wbuff)->fname) {
 		len = strlen(str) + 3;
-		tprntstr(limit(wdo->wbuff->fname, len));
+		tprntstr(limit(zapp(wdo->wbuff)->fname, len));
 	}
 	wdo->modecol = Pcol;
 

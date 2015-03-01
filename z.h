@@ -128,6 +128,8 @@ struct wdo {
 };
 
 struct zapp {
+	char *fname;            /* file associated with buffer */
+	time_t mtime;           /* file modified time */
 	void *chead, *ctail;	/* list of comments in file */
 	Byte comchar;			/* single char comment character */
 	void *undo_tail;        /* list of undos */

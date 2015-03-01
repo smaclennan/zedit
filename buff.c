@@ -70,10 +70,6 @@ void _bdelbuff(struct buff *tbuff)
 	if (!tbuff)
 		return;
 
-#ifdef HAVE_FILES
-	if (tbuff->fname)
-		free(tbuff->fname);
-#endif
 	if (tbuff->bname)
 		free(tbuff->bname);
 	if (app_cleanup)

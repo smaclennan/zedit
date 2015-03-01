@@ -30,6 +30,8 @@ The following calls are thread safe:
  * _bgoto_char
  * _bappend
  * _bindata
+ * _bread
+ * _bwrite
 
  * _bm_search
  * _bm_rsearch

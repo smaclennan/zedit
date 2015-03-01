@@ -77,9 +77,9 @@ void hang_up(int signo)
 
 	InPaw = true;	/* Kludge to turn off error */
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next) {
-		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF) && Curbuff->fname) {
+		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF) && zapp(Curbuff)->fname) {
 			bswitchto(tbuff);
-			bwritefile(Curbuff->fname);
+			bwritefile(zapp(Curbuff)->fname);
 		}
 	}
 	unvoke(NULL);

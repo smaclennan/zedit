@@ -60,8 +60,8 @@ bool zwritefile(char *fname)
 	bool bak = false;
 
 	/* If the file existed, check to see if it has been modified. */
-	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
-		if (sbuf.st_mtime > Curbuff->mtime) {
+	if (zapp(Curbuff)->mtime && stat(fname, &sbuf) == 0) {
+		if (sbuf.st_mtime > zapp(Curbuff)->mtime) {
 			sprintf(PawStr,
 					"WARNING: %s has been modified. Overwrite? ",
 					lastpart(fname));
@@ -167,7 +167,7 @@ void Zrevert_file(void)
 {
 	unsigned long offset;
 
-	if (!Curbuff->fname) {
+	if (!zapp(Curbuff)->fname) {
 		tbell();
 		return;
 	}
@@ -179,7 +179,7 @@ void Zrevert_file(void)
 	undo_clear(Curbuff);
 
 	offset = blocation(Curbuff);
-	zreadfile(Curbuff->fname);
+	zreadfile(zapp(Curbuff)->fname);
 	boffset(offset);
 	uncomment(Curbuff);
 }
@@ -236,7 +236,7 @@ bool findfile(char *path)
 	 * At startup, we are done.
 	 */
 	for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-		if (tbuff->fname && strcmp(path, tbuff->fname) == 0) {
+		if (zapp(tbuff)->fname && strcmp(path, zapp(tbuff)->fname) == 0) {
 			bswitchto(tbuff);
 			if (Initializing)
 				return true;
@@ -277,7 +277,7 @@ void Zsave_all_files(void)
 		struct buff *tbuff;
 
 		for (tbuff = Bufflist; tbuff; tbuff = tbuff->next)
-			if (!(tbuff->bmode & SYSBUFF) && tbuff->fname)
+			if (!(tbuff->bmode & SYSBUFF) && zapp(tbuff)->fname)
 				tbuff->bmodf = true;
 	}
 	saveall(true);
@@ -296,16 +296,16 @@ bool filesave(void)
 	char path[PATHMAX + 1];
 
 	Arg = 0;
-	if (Curbuff->fname == NULL) {
+	if (zapp(Curbuff)->fname == NULL) {
 		*path = '\0';
 		if (getfname("File Name: ", path) == 0)
-			Curbuff->fname = strdup(path);
+			zapp(Curbuff)->fname = strdup(path);
 		else
 			return false;
 		Curwdo->modeflags = INVALID;
 	}
-	putpaw("Writing %s", lastpart(Curbuff->fname));
-	return zwritefile(Curbuff->fname);
+	putpaw("Writing %s", lastpart(zapp(Curbuff)->fname));
+	return zwritefile(zapp(Curbuff)->fname);
 }
 
 void Zwrite_file(void)
@@ -334,10 +334,10 @@ void Zwrite_file(void)
 				CLEAR_UMARK;
 			}
 		} else {
-			if (Curbuff->fname)
-				free(Curbuff->fname);
-			Curbuff->fname = strdup(path);
-			Curbuff->mtime = 0;	/* this is no longer valid */
+			if (zapp(Curbuff)->fname)
+				free(zapp(Curbuff)->fname);
+			zapp(Curbuff)->fname = strdup(path);
+			zapp(Curbuff)->mtime = 0;	/* this is no longer valid */
 			Zsave_file();
 			Curwdo->modeflags = INVALID;
 		}

@@ -67,6 +67,8 @@ struct buff {
 /* If set, this function will be called on _bdelbuff */
 extern void (*app_cleanup)(struct buff *buff);
 
+extern void (*bsetmod)(struct buff *buff);
+
 struct buff *_bcreate(void);
 void _bdelbuff(struct buff *);
 bool _binsert(struct buff *, Byte);

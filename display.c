@@ -60,6 +60,8 @@ void display_init(void)
 
 	/* init the mark list */
 	minit(Send);
+
+	bsetmod = vsetmod_callback;
 }
 
 /* True if user mark moved */
@@ -480,7 +482,7 @@ static char *setmodes(struct buff *buff)
 }
 
 /* Set one windows modified flags. */
-static void subset(int from, int to, bool flag)
+static void subset(int from, int to)
 {
 	struct mark *btmark;
 	int row;
@@ -507,20 +509,20 @@ static void subset(int from, int to, bool flag)
 		}
 		if (--row >= from)
 			Scrnmodf[row] = true;
-		if (flag)
-			while (row > from && bisatmrk(&Scrnmarks[row]))
-				Scrnmodf[--row] = true;
+		while (row > from && bisatmrk(&Scrnmarks[row])) {
+			Scrnmodf[--row] = true;
+		}
 	}
 }
 
-/* Insert the correct modified flags. */
-void vsetmod(bool flag)
+/* Insert the correct modified flags. Ignores buff. */
+void vsetmod_callback(struct buff *buff)
 {
 	struct wdo *wdo;
 
 	foreachwdo(wdo)
 		if (wdo->wbuff == Curbuff)
-			subset(wdo->first, wdo->last, flag);
+			subset(wdo->first, wdo->last);
 }
 
 void vsetmrk(struct mark *mrk)

@@ -98,7 +98,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 			if (btmrk->moffset > Curchar)
 					btmrk->moffset += dstlen;
 		makeoffset(Curbuff, Curchar + dstlen);
-		vsetmod(false);
+		vsetmod();
 		Curbuff->bmodf = true;
 		bswitchto(sbuff);
 		bmove(dstlen);

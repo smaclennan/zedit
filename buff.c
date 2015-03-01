@@ -31,11 +31,8 @@
 #include "mark.h"
 #endif
 
-#ifdef ZEDIT
-void vsetmod(bool flag);
-#else
-static inline void vsetmod(bool flag) {}
-#endif
+static void dummy_bsetmod(struct buff *buff) {}
+void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
 
 /* If set, this function will be called on _bdelbuff */
 void (*app_cleanup)(struct buff *buff);
@@ -79,7 +76,7 @@ void _bdelbuff(struct buff *tbuff)
 #endif
 	if (tbuff->bname)
 		free(tbuff->bname);
-	if (tbuff->app && app_cleanup)
+	if (app_cleanup)
 		app_cleanup(tbuff);
 
 	while (tbuff->firstp)	/* delete the pages */
@@ -118,7 +115,7 @@ bool _binsert(struct buff *buff, Byte byte)
 			++(btmark->moffset);
 #endif
 
-	vsetmod(false);
+	bsetmod(false);
 	return true;
 }
 
@@ -184,7 +181,7 @@ void _bdelete(struct buff *buff, int quantity)
 		}
 		makecur(buff, tpage, noffset);
 	}
-	vsetmod(true);
+	bsetmod(buff);
 }
 
 /* Move the point relative to its current position.
@@ -359,7 +356,7 @@ void _bempty(struct buff *buff)
 #if UNDO
 	undo_clear(buff);
 #endif
-	vsetmod(true);
+	bsetmod(buff);
 }
 
 /* Peek the previous byte */

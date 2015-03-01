@@ -228,13 +228,14 @@ static bool delbname(char *bname)
 	return true;
 }
 
-/* Only called if bptr->app is valid */
 static void zapp_cleanup(struct buff *bptr)
 {
-	uncomment(bptr);
-	undo_clear(bptr);
-	free(bptr->app);
-	bptr->app = NULL; /* paranoia */
+	if (bptr->app) {
+		uncomment(bptr);
+		undo_clear(bptr);
+		free(bptr->app);
+		bptr->app = NULL; /* paranoia */
+	}
 }
 
 

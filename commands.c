@@ -46,7 +46,7 @@ void Zcapitalize_word(void)
 		bconvert(toupper);
 		for (bmove1(); !bisend() && bistoken(); bmove1())
 			bconvert(tolower);
-		vsetmod(false);
+		vsetmod();
 	}
 }
 
@@ -56,7 +56,7 @@ void Zlowercase_word(void)
 	if (Findstart()) {
 		for (; !bisend() && bistoken(); bmove1())
 			bconvert(tolower);
-		vsetmod(false);
+		vsetmod();
 	}
 }
 
@@ -65,7 +65,7 @@ void Zuppercase_word(void)
 	if (Findstart()) {
 		for (; !bisend() && bistoken(); bmove1())
 			bconvert(toupper);
-		vsetmod(false);
+		vsetmod();
 	}
 }
 

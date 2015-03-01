@@ -227,13 +227,15 @@ void hang_up(int);
 void dump_doc(const char *doc);
 int set_bookmark(char *bookname);
 const char *special_label(int key);
-void vsetmod(bool);
 struct mark *zcreatemrk(void);
 int zreadfile(char *fname);
 bool zwritefile(char *fname);
 void set_shell_mark(void);
 
 int batoi(void);
+
+void vsetmod_callback(struct buff *buff);
+#define vsetmod() vsetmod_callback(NULL);
 
 #if GPM_MOUSE
 void handle_gpm_mouse(void);

@@ -410,7 +410,7 @@ int getbword(char word[], int max, int (*valid)())
 	if (!bistoken())
 		moveto(bistoken, BACKWARD);
 	movepast(bistoken, BACKWARD);
-	for (i = 0; !bisend() && valid() && i < max; ++i, bmove1())
+	for (i = 0; !bisend(Curbuff) && valid() && i < max; ++i, bmove1(Curbuff))
 		word[i] = Buff();
 	word[i] = '\0';
 	bpnttomrk(&tmark);
@@ -424,7 +424,7 @@ bool looking_at(const char *match)
 
 	bmrktopnt(&tmark);
 	while (*match && *Curcptr == *match) {
-		bmove1();
+		bmove1(Curbuff);
 		++match;
 	}
 	bpnttomrk(&tmark);
@@ -441,7 +441,7 @@ char *getbtxt(char txt[], int max)
 	struct mark tmark;
 
 	bmrktopnt(&tmark);
-	for (btostart(), i = 0; !bisend() && i < max; bmove1(), ++i)
+	for (btostart(Curbuff), i = 0; !bisend(Curbuff) && i < max; bmove1(Curbuff), ++i)
 		txt[i] = Buff();
 	txt[i] = '\0';
 	bpnttomrk(&tmark);
@@ -453,10 +453,10 @@ void movepast(int (*pred)(), bool forward)
 {
 	if (!forward)
 		bmove(-1);
-	while (!(forward ? bisend() : bisstart()) && (*pred)())
+	while (!(forward ? bisend(Curbuff) : bisstart(Curbuff)) && (*pred)())
 		bmove(forward ? 1 : -1);
 	if (!forward && !(*pred)())
-		bmove1();
+		bmove1(Curbuff);
 }
 
 /* Go forward or back to a thingy */
@@ -464,10 +464,10 @@ void moveto(int (*pred)(), bool forward)
 {
 	if (!forward)
 		bmove(-1);
-	while (!(forward ? bisend() : bisstart()) && !(*pred)())
+	while (!(forward ? bisend(Curbuff) : bisstart(Curbuff)) && !(*pred)())
 		bmove(forward ? 1 : -1);
-	if (!forward && !bisstart())
-		bmove1();
+	if (!forward && !bisstart(Curbuff))
+		bmove1(Curbuff);
 }
 
 /* Put in the right number of tabs and spaces */

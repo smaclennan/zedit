@@ -96,11 +96,11 @@ extern struct buff *Curbuff;
 #define binsert(c) _binsert(Curbuff, (c))
 #define bdelete(n) _bdelete(Curbuff, (n))
 #define bmove(n) _bmove(Curbuff, (n))
-#define bmove1() _bmove1(Curbuff)
-#define bisstart() _bisstart(Curbuff)
-#define bisend() _bisend(Curbuff)
-#define btostart() _btostart(Curbuff)
-#define btoend() _btoend(Curbuff)
+#define bmove1 _bmove1
+#define bisstart _bisstart
+#define bisend _bisend
+#define btostart _btostart
+#define btoend _btoend
 #define tobegline _tobegline
 #define toendline _toendline
 #define blength _blength
@@ -110,7 +110,7 @@ extern struct buff *Curbuff;
 #define bempty _bempty
 #define boffset _boffset
 
-#define binstr(s) _bindata(Curbuff, (Byte *)(s), strlen(s));
+#define binstr(b, s) _bindata((b), (Byte *)(s), strlen(s));
 
 void bswitchto(struct buff *);
 #endif

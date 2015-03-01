@@ -359,9 +359,9 @@ void Zread_file(void)
 		putpaw("Reading %s", lastpart(Fname));
 		rc = zreadfile(Fname);
 		if (rc == 0) {
-			btoend();
+			btoend(Curbuff);
 			tmark = zcreatemrk();
-			btostart();
+			btostart(Curbuff);
 			bcopyrgn(tmark, save);
 			unmark(tmark);
 		}

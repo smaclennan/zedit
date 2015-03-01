@@ -27,11 +27,11 @@ bool Argp;
 /* Find the start of a word. */
 static bool Findstart(void)
 {
-	while (!bisstart() && bistoken())
+	while (!bisstart(Curbuff) && bistoken())
 		bmove(-1);
-	while (!bisend() && !isalpha(*Curcptr))
-		bmove1();
-	return !bisend();
+	while (!bisend(Curbuff) && !isalpha(*Curcptr))
+		bmove1(Curbuff);
+	return !bisend(Curbuff);
 }
 
 static void bconvert(int (*to)(int c))
@@ -44,7 +44,7 @@ void Zcapitalize_word(void)
 {
 	if (Findstart()) {
 		bconvert(toupper);
-		for (bmove1(); !bisend() && bistoken(); bmove1())
+		for (bmove1(Curbuff); !bisend(Curbuff) && bistoken(); bmove1(Curbuff))
 			bconvert(tolower);
 		vsetmod();
 	}
@@ -54,7 +54,7 @@ void Zcapitalize_word(void)
 void Zlowercase_word(void)
 {
 	if (Findstart()) {
-		for (; !bisend() && bistoken(); bmove1())
+		for (; !bisend(Curbuff) && bistoken(); bmove1(Curbuff))
 			bconvert(tolower);
 		vsetmod();
 	}
@@ -63,7 +63,7 @@ void Zlowercase_word(void)
 void Zuppercase_word(void)
 {
 	if (Findstart()) {
-		for (; !bisend() && bistoken(); bmove1())
+		for (; !bisend(Curbuff) && bistoken(); bmove1(Curbuff))
 			bconvert(toupper);
 		vsetmod();
 	}
@@ -90,7 +90,7 @@ void Zswap_words(void)
 	struct mark *tmark, *tmp;
 
 	moveto(bistoken, FORWARD);
-	if (bisend())
+	if (bisend(Curbuff))
 		return;
 	tmark = zcreatemrk();
 	movepast(bistoken, FORWARD);
@@ -134,7 +134,7 @@ void Zc_insert(void)
 		Arg = 0;
 		tmark = zcreatemrk();
 		bmrktopnt(tmark);	/* save current position */
-		for (cnt = 0, bmove(-1); !bisstart(); bmove(-1))
+		for (cnt = 0, bmove(-1); !bisstart(Curbuff); bmove(-1))
 			if (*Curcptr == '{') {
 				if (cnt)
 					--cnt;
@@ -165,10 +165,10 @@ void Zc_insert(void)
 
 		do
 			bmove(-1);
-		while (!bisstart() && biswhite());
+		while (!bisstart(Curbuff) && biswhite());
 
-		if (ISNL(*Curcptr) && !bisstart()) {
-			bmove1();		/* skip NL */
+		if (ISNL(*Curcptr) && !bisstart(Curbuff)) {
+			bmove1(Curbuff);		/* skip NL */
 			bdeltomrk(tmark);
 		} else
 			bpnttomrk(tmark);
@@ -214,7 +214,7 @@ void Zc_indent(void)
 			if (*Curcptr == '#')
 				bmove(-1);
 			tobegline(Curbuff);
-		} while (*Curcptr == '#' && !bisstart());
+		} while (*Curcptr == '#' && !bisstart(Curbuff));
 		movepast(biswhite, FORWARD);
 		if (looking_at("if") || looking_at("while")) {
 			width += Tabsize;
@@ -222,7 +222,7 @@ void Zc_indent(void)
 		}
 		if (bisaftermrk(&tmark))
 			bpnttomrk(&tmark);
-		for (width += bgetcol(true, 0); bisbeforemrk(&tmark); bmove1())
+		for (width += bgetcol(true, 0); bisbeforemrk(&tmark); bmove1(Curbuff))
 			if (*Curcptr == '{') {
 				if (did_indent == 0 || sawstart > 0)
 					width += Tabsize;
@@ -268,14 +268,14 @@ void Zfill_check(void)
 
 void Ztrim_white_space(void)
 {
-	while (!bisend() && biswhite())
+	while (!bisend(Curbuff) && biswhite())
 		bdelete(1);
-	while (!bisstart()) {
+	while (!bisstart(Curbuff)) {
 		bmove(-1);
 		if (biswhite())
 			bdelete(1);
 		else {
-			bmove1();
+			bmove1(Curbuff);
 			break;
 		}
 	}
@@ -321,10 +321,10 @@ void Zfill_paragraph(void)
 
 		unmark(tmp);
 		movepast(bisspace, FORWARD); /* setup for next iteration */
-	} while (Argp && !bisend() && !tkbrdy());
+	} while (Argp && !bisend(Curbuff) && !tkbrdy());
 
 	clrpaw();
-	if (Argp && !bisend()) {
+	if (Argp && !bisend(Curbuff)) {
 		putpaw("Aborted");
 		tgetcmd();
 	}
@@ -349,9 +349,9 @@ void Znext_paragraph(void)
 	/* Only go back if between paras */
 	if (bisspace())
 		movepast(bisspace, BACKWARD);
-	while (!bisend() && !ispara(pc, *Curcptr)) {
+	while (!bisend(Curbuff) && !ispara(pc, *Curcptr)) {
 		pc = *Curcptr;
-		bmove1();
+		bmove1(Curbuff);
 	}
 	movepast(bisspace, FORWARD);
 }
@@ -361,7 +361,7 @@ void Zprevious_paragraph(void)
 	char pc = '\0';
 
 	movepast(bisspace, BACKWARD);
-	while (!bisstart() && !ispara(*Curcptr, pc)) {
+	while (!bisstart(Curbuff) && !ispara(*Curcptr, pc)) {
 		pc = *Curcptr;
 		bmove(-1);
 	}
@@ -377,7 +377,7 @@ unsigned long bline(void)
 	unsigned long line = 1;
 
 	bmrktopnt(&tmark);
-	btostart();
+	btostart(Curbuff);
 	while (bcsearch(Curbuff, '\n') && !bisaftermrk(&tmark))
 		++line;
 	bpnttomrk(&tmark);
@@ -509,7 +509,7 @@ static void mshow(unsigned ch)
 			--cnt;
 		else if (*Curcptr == ch)
 			++cnt;
-	} while (cnt && !bisstart());
+	} while (cnt && !bisstart(Curbuff));
 	if (cnt)
 		tbell();
 	else { /* show the match! */
@@ -522,7 +522,7 @@ static void mshow(unsigned ch)
 void Zinsert(void)
 {
 	if (Curbuff->bmode & OVERWRITE) {
-		if (!bisend() && *Curcptr != NL)
+		if (!bisend(Curbuff) && *Curcptr != NL)
 			bdelete(1);
 	}
 
@@ -643,13 +643,13 @@ void Zswap_chars(void)
 {
 	int tmp;
 
-	if (bisend() || *Curcptr == NL)
+	if (bisend(Curbuff) || *Curcptr == NL)
 		bmove(-1);
-	if (!bisstart())
+	if (!bisstart(Curbuff))
 		bmove(-1);
 	tmp = *Curcptr;
 	bdelete(1);
-	bmove1();
+	bmove1(Curbuff);
 	binsert(tmp);
 }
 
@@ -668,12 +668,12 @@ void Zcount(void)
 		tmark = zcreatemrk();
 	} else {
 		tmark = zcreatemrk();
-		btostart();
+		btostart(Curbuff);
 	}
 	l = w = c = 0;
 	putpaw("Counting...");
 	word = false;
-	for (; Argp ? bisbeforemrk(UMARK) : !bisend(); bmove1(), ++c) {
+	for (; Argp ? bisbeforemrk(UMARK) : !bisend(Curbuff); bmove1(Curbuff), ++c) {
 		if (ISNL(*Curcptr))
 			++l;
 		if (!bistoken())
@@ -783,7 +783,7 @@ void Zmark_paragraph(void)
 {
 	NEED_UMARK;
 
-	bmove1();	/* make sure we are not at the start of a paragraph */
+	bmove1(Curbuff);	/* make sure we are not at the start of a paragraph */
 	Zprevious_paragraph();
 	bmrktopnt(UMARK);
 	while (Arg-- > 0)
@@ -809,7 +809,7 @@ static void setregion(int (*convert)(int))
 		bswappnt(UMARK);
 	bmrktopnt(&tmark);
 
-	for (; bisbeforemrk(UMARK); bmove1())
+	for (; bisbeforemrk(UMARK); bmove1(Curbuff))
 		*Curcptr = (*convert)(*Curcptr);
 
 	if (swapped)

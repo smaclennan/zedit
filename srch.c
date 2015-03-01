@@ -76,7 +76,7 @@ again:
 					if (strstr(promptstr, "Wrap") == NULL)
 						strcat(promptstr, " (Wrapped)");
 					count = 0;
-					btostart();
+					btostart(Curbuff);
 					goto again;
 				} else {
 					bpnttomrk(&tmark);
@@ -150,7 +150,7 @@ void Zglobal_search(void)
 	if (getarg(nocase("Global Search: "), olds, STRMAX))
 		return;
 	cswitchto(Bufflist);
-	btostart();
+	btostart(Curbuff);
 	searchdir[0] = FORWARD;
 	searchdir[1] = SGLOBAL;
 	Zagain();
@@ -166,7 +166,7 @@ void Zglobal_re_search(void)
 	if (getarg(nocase("Global RE Search: "), olds, STRMAX))
 		return;
 	cswitchto(Bufflist);
-	btostart();
+	btostart(Curbuff);
 	searchdir[0] = REGEXP;
 	searchdir[1] = SGLOBAL;
 	Zagain();
@@ -181,7 +181,7 @@ void Zagain(void)
 			Curbuff = nextbuff(Curbuff);
 			if (Curbuff) {
 				cswitchto(Curbuff);
-				btostart();
+				btostart(Curbuff);
 				Arg = 1;
 			} else {
 				bpnttomrk(Gmark);
@@ -195,7 +195,7 @@ void Zagain(void)
 	} else {
 		if (searchdir[0] & AGAIN_WRAP) {
 			searchdir[0] &= ~AGAIN_WRAP;
-			btostart();
+			btostart(Curbuff);
 			putpaw("Wrapped....");
 			dosearch();
 		} else if (promptsearch("Search: ", AGAIN) == 0)
@@ -244,7 +244,7 @@ static void doreplace(int type)
 			else {
 				cswitchto(tbuff);
 				bmrktopnt(&tmark);
-				btostart();
+				btostart(Curbuff);
 				while (replaceone(type, &query, &exit, ebuf, crgone) &&
 					   !exit)
 					;
@@ -343,7 +343,7 @@ input:
 					bpnttomrk(prevmatch);
 					if (changeprev) {
 						bdelete(strlen(news));
-						binstr(olds);
+						binstr(Curbuff, olds);
 						bpnttomrk(prevmatch);
 					}
 				}
@@ -370,7 +370,7 @@ input:
 					bmrktopnt(prevmatch);
 					changeprev = 0;
 					/* skip and continue */
-					bmove1();
+					bmove1(Curbuff);
 				}
 				continue;
 			}
@@ -394,7 +394,7 @@ input:
 				}
 		} else {
 			bdelete(strlen(olds));
-			binstr(news);
+			binstr(Curbuff, news);
 		}
 		if (*query && tchar == ',') {
 			zrefresh();
@@ -402,8 +402,8 @@ input:
 				/* change it back */
 				if (type == REGEXP) {
 					for (dist = 0;
-					     !bisatmrk(REstart);
-					     ++dist, bmove(-1))
+						 !bisatmrk(REstart);
+						 ++dist, bmove(-1))
 						;
 					bdelete(dist);
 					Zyank();
@@ -411,13 +411,13 @@ input:
 					int len = strlen(news);
 					bmove(-len);
 					bdelete(len);
-					binstr(olds);
+					binstr(Curbuff, olds);
 				}
 			}
 		}
 		/* special case for "^" && "$" search strings */
 		if (type == REGEXP && (ISNL(Buff()) || circf) && !crgone)
-			bmove1();
+			bmove1(Curbuff);
 		if (*query)
 			putpaw("Searching...");
 		else if (tkbrdy())

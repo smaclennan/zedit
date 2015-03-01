@@ -42,8 +42,8 @@ int batoi(void)
 	int num;
 
 	while (Buff() == ' ' || Buff() == '\t')
-		bmove1();
-	for (num = 0; isdigit(Buff()); bmove1())
+		bmove1(Curbuff);
+	for (num = 0; isdigit(Buff()); bmove1(Curbuff))
 		num = num * 10 + Buff() - '0';
 	return num;
 }
@@ -117,7 +117,7 @@ int readapipe(void)
 
 		bswitchto(pipebuff);
 		bmrktopnt(&tmark);
-		btoend();
+		btoend(Curbuff);
 		while (i-- > 0)
 			binsert(*ptr++);
 		bpnttomrk(&tmark);
@@ -144,7 +144,7 @@ static void exit_status(struct buff *tbuff, int status)
 		}
 	}
 	if (status)
-	    tbell();
+		tbell();
 }
 
 /* Wait for dead children and cleanup. Type == 0 on exit. */
@@ -354,18 +354,18 @@ static int parse(char *fname)
 	int line;
 	char *p;
 
-	while (!bisend()) {
+	while (!bisend(Curbuff)) {
 		/* try to get the fname */
-		for (p = fname; !isspace(Buff()) && Buff() != ':'; bmove1())
+		for (p = fname; !isspace(Buff()) && Buff() != ':'; bmove1(Curbuff))
 			*p++ = Buff();
 		*p = '\0';
 
 #ifdef __TURBOC__
 		/* Error|Warning <fname> <line>: <msg> */
 		if (strcmp(fname, "Error") == 0 || strcmp(fname, "Warning") == 0) {
-			bmove1();
+			bmove1(Curbuff);
 
-			for (p = fname; !isspace(Buff()); bmove1())
+			for (p = fname; !isspace(Buff()); bmove1(Curbuff))
 				*p++ = Buff();
 			*p = '\0';
 
@@ -378,7 +378,7 @@ static int parse(char *fname)
 
 		/* try to get the line */
 		if (Buff() == ':') {
-			bmove1();
+			bmove1(Curbuff);
 
 			/* look for line number */
 			line = batoi();
@@ -409,7 +409,7 @@ void Znext_error(void)
 	bswitchto(mbuff);
 	if (!NexterrorCalled) {
 		NexterrorCalled = 1;
-		btostart();
+		btostart(Curbuff);
 	} else
 		bcsearch(Curbuff, NL);
 	line = parse(fname);
@@ -429,7 +429,7 @@ void Znext_error(void)
 		Zgoto_line();
 		tobegline(Curbuff);
 	} else {
-		btoend();
+		btoend(Curbuff);
 		unmark(shell_mark);
 		shell_mark = NULL;
 		bswitchto(save);

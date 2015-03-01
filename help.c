@@ -53,7 +53,7 @@ static void dump_bindings(int fnum)
 	int k, found = 0;
 	char buff[BUFSIZ];
 
-	binstr("\nBinding(s): ");
+	binstr(Curbuff, "\nBinding(s): ");
 
 	for (k = 0; k < NUMKEYS; ++k)
 		if (Keys[k] == fnum) {
@@ -63,17 +63,17 @@ static void dump_bindings(int fnum)
 				Zfill_check();
 			} else
 				found = true;
-			binstr(dispkey(k, buff));
+			binstr(Curbuff, dispkey(k, buff));
 		}
 
 	if (!found)
-		binstr("Unbound");
+		binstr(Curbuff, "Unbound");
 }
 
 void dump_doc(const char *doc)
 {
 	if (doc) {
-		binstr("\n\n");
+		binstr(Curbuff, "\n\n");
 
 		for (; *doc; ++doc)
 			if (*doc == ' ') {
@@ -123,11 +123,11 @@ void Zhelp_function(void)
 	} else
 		wuseother(HELPBUFF);
 
-	binstr(Cnames[rc].name);
+	binstr(Curbuff, Cnames[rc].name);
 
 	pawok = Cmds[Cnames[rc].fnum][1] != Znotimpl;
 	if (pawok || Cnames[rc].flags) {
-		binstr(" (");
+		binstr(Curbuff, " (");
 		if (Cnames[rc].flags)
 			binsert(Cnames[rc].flags);
 		if (pawok)
@@ -138,7 +138,7 @@ void Zhelp_function(void)
 	dump_doc(Cnames[rc].doc);
 	dump_bindings(Cnames[rc].fnum);
 
-	btostart();
+	btostart(Curbuff);
 	Curbuff->bmodf = false;
 }
 
@@ -151,23 +151,23 @@ void Zhelp_variable(void)
 
 	wuseother(HELPBUFF);
 
-	binstr(Vars[rc].vname);
-	binstr(": ");
+	binstr(Curbuff, Vars[rc].vname);
+	binstr(Curbuff, ": ");
 	switch (Vars[rc].vtype) {
 	case V_STRING:
-		binstr(VARSTR(rc) ? VARSTR(rc) : "NONE");
+		binstr(Curbuff, VARSTR(rc) ? VARSTR(rc) : "NONE");
 		break;
 	case V_FLAG:
-		binstr(VAR(rc) ? "On" : "Off");
+		binstr(Curbuff, VAR(rc) ? "On" : "Off");
 		break;
 	case V_DECIMAL:
 		sprintf(PawStr, "%d", VAR(rc));
-		binstr(PawStr);
+		binstr(Curbuff, PawStr);
 	}
 
 	dump_doc(Vars[rc].doc);
 
-	btostart();
+	btostart(Curbuff);
 	Curbuff->bmodf = false;
 }
 
@@ -186,21 +186,21 @@ void Zhelp_apropos(void)
 				wuseother(HELPBUFF);
 			n += sprintf(line + n, "%-24s", Cnames[i].name);
 			if (++j == 3) {
-				binstr(line);
+				binstr(Curbuff, line);
 				binsert('\n');
 				j = n = 0;
 			}
 		}
 
 	if (j) {
-		binstr(line);
+		binstr(Curbuff, line);
 		binsert('\n');
 	}
 
 	if (match == 0)
 		putpaw("No matches.");
 	else {
-		btostart();
+		btostart(Curbuff);
 		Curbuff->bmodf = false;
 	}
 }

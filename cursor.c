@@ -27,7 +27,7 @@ void Zbeginning_of_line(void)
 
 void Zend_of_line(void)
 {
-	bmove1();
+	bmove1(Curbuff);
 	toendline(Curbuff);
 }
 
@@ -88,10 +88,10 @@ int bgetcol(bool flag, int col)
 
 	bmrktopnt(&pmark);
 	if (bcrsearch(Curbuff, '\n'))
-		bmove1();
-	while (!bisatmrk(&pmark) && !bisend()) {
+		bmove1(Curbuff);
+	while (!bisatmrk(&pmark) && !bisend(Curbuff)) {
 		col += chwidth(*Curcptr, col, flag);
-		bmove1();
+		bmove1(Curbuff);
 	}
 	return col;
 }
@@ -104,10 +104,10 @@ int bmakecol(int col, bool must)
 	int tcol = 0;
 
 	if (bcrsearch(Curbuff, '\n'))
-		bmove1();
-	while (tcol < col && *Curcptr != '\n' && !bisend()) {
+		bmove1(Curbuff);
+	while (tcol < col && *Curcptr != '\n' && !bisend(Curbuff)) {
 		tcol += chwidth(*Curcptr, tcol, !must);
-		bmove1();
+		bmove1(Curbuff);
 	}
 	if (must && tcol < col) {
 		int wid = chwidth('\t', tcol, true);
@@ -137,7 +137,7 @@ void Znext_page(void)
 	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(Curbuff, NL); --i) {
 		bmove(-1);
 		i -= bgetcol(true, 0) / Colmax;
-		bmove1();
+		bmove1(Curbuff);
 	}
 	bmakecol(col, false);
 	reframe();
@@ -159,12 +159,12 @@ void Znext_word(void)
 
 void Zbeginning_of_buffer(void)
 {
-	btostart();
+	btostart(Curbuff);
 }
 
 void Zend_of_buffer(void)
 {
-	btoend();
+	btoend(Curbuff);
 }
 
 void Zswap_mark(void)
@@ -212,7 +212,7 @@ void Zgoto_line(void)
 			return;
 	}
 
-	btostart();
+	btostart(Curbuff);
 	while (--line > 0)
 		bcsearch(Curbuff, NL);
 }
@@ -327,7 +327,7 @@ static void scroll(bool (*search)(struct buff *buff, Byte what))
 	Sendp = false;
 
 	if (mrkaftermrk(Sstart, pmark))
-		bmove1();
+		bmove1(Curbuff);
 	else
 		bpnttomrk(pmark);
 

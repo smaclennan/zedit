@@ -40,7 +40,7 @@ static void copytomrk(struct mark *tmark)
 	struct buff *save = Curbuff;
 	bswitchto(Killbuff);
 	if (delcmd())
-		btoend();
+		btoend(Curbuff);
 	else
 		bempty(Curbuff);
 	bswitchto(save);
@@ -148,14 +148,14 @@ void Zdelete_previous_char(void)
 
 void Zdelete_to_eol(void)
 {
-	if (!bisend() && Buff() == NL)
+	if (!bisend(Curbuff) && Buff() == NL)
 		bdelete(1);
 	else {
 		bool atstart = _bpeek(Curbuff) == NL;
 		struct mark *tmark = zcreatemrk();
 		toendline(Curbuff);
 		if (atstart)
-			bmove1(); /* delete the NL */
+			bmove1(Curbuff); /* delete the NL */
 		killtomrk(tmark);
 		unmark(tmark);
 	}
@@ -205,9 +205,9 @@ void Zyank(void)
 	set_umark(NULL);
 #endif
 	bswitchto(Killbuff);
-	btoend();
+	btoend(Curbuff);
 	tmark = zcreatemrk();
-	btostart();
+	btostart(Curbuff);
 #if UNDO
 	undo_add(bcopyrgn(tmark, tbuff));
 #else
@@ -273,10 +273,10 @@ void Zdelete_blanks(void)
 
 	pmark = zcreatemrk();
 	if (bcrsearch(Curbuff, NL)) {
-		bmove1();
+		bmove1(Curbuff);
 		tmark = zcreatemrk();
 		movepast(bisspace, BACKWARD);
-		if (!bisstart())
+		if (!bisstart(Curbuff))
 			bcsearch(Curbuff, NL);
 		if (bisbeforemrk(tmark))
 			bdeltomrk(tmark);
@@ -286,7 +286,7 @@ void Zdelete_blanks(void)
 		tmark = zcreatemrk();
 		movepast(bisspace, FORWARD);
 		if (bcrsearch(Curbuff, NL))
-			bmove1();
+			bmove1(Curbuff);
 		if (bisaftermrk(tmark))
 			bdeltomrk(tmark);
 		unmark(tmark);

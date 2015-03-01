@@ -47,7 +47,7 @@ static void crfixup(void)
 			bdelete(1);
 		}
 
-	btostart();
+	btostart(Curbuff);
 }
 
 /*
@@ -103,7 +103,7 @@ int breadfile(const char *fname)
 	}
 	fileclose(fd);
 
-	btostart();
+	btostart(Curbuff);
 
 	if (Curpage->plen && !(Curbuff->bmode & COMPRESSED))
 		crfixup();

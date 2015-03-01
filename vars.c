@@ -219,10 +219,10 @@ void Zshow_config(void)
 				 Vars[i].vname,
 				 VAR(i) ? "true" : "false");
 
-		binstr(line);
+		binstr(Curbuff, line);
 	}
 
 	tbuff->bmodf = false;
-	btostart();
+	btostart(Curbuff);
 	cswitchto(tbuff);
 }

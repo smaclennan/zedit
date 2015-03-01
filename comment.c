@@ -60,13 +60,13 @@ static void scanbuffer(struct buff *buff)
 	bswitchto(buff);
 	bmrktopnt(&tmark);
 
-	btostart();
+	btostart(Curbuff);
 	if (comchar) {
-		while (bcsearch(Curbuff, comchar) && !bisend()) {
+		while (bcsearch(Curbuff, comchar) && !bisend(Curbuff)) {
 			if (bmove(-2) == 0) { /* skip to char *before* # */
 				/* # is first character in buffer */
 			} else if (isspace(*Curcptr))
-				bmove1();
+				bmove1(Curbuff);
 			else {
 				bmove(2);
 				continue;
@@ -80,7 +80,7 @@ static void scanbuffer(struct buff *buff)
 		}
 	} else {
 		/* Look for both C and C++ comments. */
-		while (bcsearch(Curbuff, '/') && !bisend()) {
+		while (bcsearch(Curbuff, '/') && !bisend(Curbuff)) {
 			if (Buff() == '*') {
 				bmove(-1);
 				bmrktopnt(&start);

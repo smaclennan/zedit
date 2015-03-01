@@ -161,7 +161,7 @@ void zrefresh(void)
 		/* The cursor has moved before/after the screen marks */
 		reframe();
 	bpnttomrk(Sstart);
-	if (bisatmrk(Psstart) && !bisstart()) {
+	if (bisatmrk(Psstart) && !bisstart(Curbuff)) {
 		/* Deleted first char in window that is not at buffer start */
 		bpnttomrk(pmark);
 		reframe();
@@ -199,7 +199,7 @@ void zrefresh(void)
 	bpnttomrk(&Scrnmarks[pntrow]);
 	while (bisbeforemrk(pmark)) {
 		col += chwidth(Buff(), col, false);
-		bmove1();
+		bmove1(Curbuff);
 	}
 	t_goto(pntrow, col);
 	unmark(pmark);
@@ -212,7 +212,7 @@ void zrefresh(void)
 	 */
 	if (bisatumark()) {
 		tstyle(T_NORMAL);
-		tprntchar((bisend() || ISNL(Buff())) ? ' ' : Buff());
+		tprntchar((bisend(Curbuff) || ISNL(Buff())) ? ' ' : Buff());
 		t_goto(pntrow, col);
 		was->moffset = -1; /* Invalidate it */
 	}
@@ -261,7 +261,7 @@ static bool in_region(struct mark *pmark)
  * buffer. */
 static void bshove(void)
 {
-	btoend();
+	btoend(Curbuff);
 	++Curcptr;
 	++Curchar;
 }
@@ -296,7 +296,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			lptr = tline;
 			col = 0;
 			tsetpoint(trow, col);
-			while (!bisend() && !ISNL(Buff()) &&
+			while (!bisend(Curbuff) && !ISNL(Buff()) &&
 				   (col = buff_col()) < Colmax) {
 				if (in_region(pmark)) {
 					tstyle(T_REGION);
@@ -318,21 +318,21 @@ static int innerdsp(int from, int to, struct mark *pmark)
 						Tlrow = -1;
 				}
 				*lptr++ = Buff();
-				bmove1();
+				bmove1(Curbuff);
 			}
 			tcleol();
 			if (bisatumark() &&
-				(ISNL(Buff()) || bisstart() || bisend()))
+				(ISNL(Buff()) || bisstart(Curbuff) || bisend(Curbuff)))
 				setmark(false);
 			if (col >= Colmax)
 				extendedlinemarker();
 			memset(lptr, '\376', Colmax - (lptr - tline));
 			Tlrow = trow;
 			if (Pcol < Colmax) {
-				if (bisend())
+				if (bisend(Curbuff))
 					bshove();
 				else if (ISNL(Buff()))
-					bmove1();
+					bmove1(Curbuff);
 			}
 		} else
 			bpnttomrk(&Scrnmarks[trow + 1]);
@@ -556,10 +556,10 @@ static void pawdisplay(struct mark *pmark, struct mark *was)
 
 	Prow = Rowmax - 1;
 pawshift:
-	btostart(); bmove(Pshift);
+	btostart(Curbuff); bmove(Pshift);
 	for (i = 0, Pcol = Pawcol;
-		 Pcol < Colmax - 2 && !bisend();
-		 bmove1(), ++i) {
+		 Pcol < Colmax - 2 && !bisend(Curbuff);
+		 bmove1(Curbuff), ++i) {
 		if (bisatmrk(pmark))
 			bcol = Pcol;
 		if (mrkmoved && (bisatumark() || bisatmrk(was))) {
@@ -578,7 +578,7 @@ pawshift:
 	memset(&tline[i], '\376', &tline[COLMAX] - &tline[i]);
 	tcleol();
 
-	if (bisend()) {
+	if (bisend(Curbuff)) {
 		if (bisatumark()) {
 			setmark(false);
 			--Pcol;		/* space always 1 character! */
@@ -620,7 +620,7 @@ pawshift:
 	 */
 	if (bisatumark()) {
 		i = Pcol;
-		tprntchar(bisend() ? ' ' : Buff());
+		tprntchar(bisend(Curbuff) ? ' ' : Buff());
 		Pcol = i;
 		was->moffset = -1;		/* Invalidate it */
 	}
@@ -635,9 +635,9 @@ void makepaw(char *word, bool start)
 {
 	bswitchto(Paw);
 	bempty(Curbuff);
-	binstr(word);
+	binstr(Curbuff, word);
 	tcleol();
 	memset(tline, '\376', COLMAX);	/* invalidate it */
 	if (start)
-		btostart();
+		btostart(Curbuff);
 }

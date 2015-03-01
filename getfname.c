@@ -225,7 +225,7 @@ void Zfname(void)
 		}
 	if (match) {
 		if (n > len) {
-			btoend();
+			btoend(Curbuff);
 			while (len < n && blength(Curbuff) < Pawlen) {
 				binsert(match[len++]);
 				++did_something;

@@ -41,13 +41,13 @@ static void grep_one(char *fname, Byte *ebuf,
 
 		bswitchto(outbuff);
 		snprintf(PawStr, STRMAX, "%s:%ld: ", fname, line);
-		binstr(PawStr);
+		binstr(Curbuff, PawStr);
 		bswitchto(inbuff);
 
 		tobegline(Curbuff);
 		start = zcreatemrk();
 		toendline(Curbuff);
-		bmove1(); /* grab NL */
+		bmove1(Curbuff); /* grab NL */
 		bcopyrgn(start, outbuff);
 		unmark(start);
 	}

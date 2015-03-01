@@ -58,7 +58,7 @@ static void dump_bindings(int fnum)
 	for (k = 0; k < NUMKEYS; ++k)
 		if (Keys[k] == fnum) {
 			if (found) {
-				binsert(',');
+				binsert(Curbuff, ',');
 				Cmd = ' ';
 				Zfill_check();
 			} else
@@ -80,9 +80,9 @@ void dump_doc(const char *doc)
 				Cmd = *doc;
 				Zfill_check();
 			} else
-				binsert(*doc);
+				binsert(Curbuff, *doc);
 	}
-	binsert('\n');
+	binsert(Curbuff, '\n');
 }
 
 void Zhelp(void)
@@ -129,10 +129,10 @@ void Zhelp_function(void)
 	if (pawok || Cnames[rc].flags) {
 		binstr(Curbuff, " (");
 		if (Cnames[rc].flags)
-			binsert(Cnames[rc].flags);
+			binsert(Curbuff, Cnames[rc].flags);
 		if (pawok)
-			binsert('P');
-		binsert(')');
+			binsert(Curbuff, 'P');
+		binsert(Curbuff, ')');
 	}
 
 	dump_doc(Cnames[rc].doc);
@@ -187,14 +187,14 @@ void Zhelp_apropos(void)
 			n += sprintf(line + n, "%-24s", Cnames[i].name);
 			if (++j == 3) {
 				binstr(Curbuff, line);
-				binsert('\n');
+				binsert(Curbuff, '\n');
 				j = n = 0;
 			}
 		}
 
 	if (j) {
 		binstr(Curbuff, line);
-		binsert('\n');
+		binsert(Curbuff, '\n');
 	}
 
 	if (match == 0)

@@ -200,15 +200,15 @@ void Zundo(void)
 	boffset(Curbuff, undo->offset);
 
 	if (is_insert(undo)) {
-		bmove(-undo->size);
-		bdelete(undo->size);
+		bmove(Curbuff, -undo->size);
+		bdelete(Curbuff, undo->size);
 		free_undo(&app->undo_tail);
 	} else {
 		unsigned long offset = undo->offset;
 		do {
 			struct mark *tmark = zcreatemrk();
 			for (i = 0; i < undo->size; ++i)
-				binsert(undo->data[i]);
+				binsert(Curbuff, undo->data[i]);
 			bpnttomrk(tmark);
 			unmark(tmark);
 			free_undo(&app->undo_tail);

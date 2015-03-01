@@ -452,9 +452,9 @@ char *getbtxt(char txt[], int max)
 void movepast(int (*pred)(), bool forward)
 {
 	if (!forward)
-		bmove(-1);
+		bmove(Curbuff, -1);
 	while (!(forward ? bisend(Curbuff) : bisstart(Curbuff)) && (*pred)())
-		bmove(forward ? 1 : -1);
+		bmove(Curbuff, forward ? 1 : -1);
 	if (!forward && !(*pred)())
 		bmove1(Curbuff);
 }
@@ -463,9 +463,9 @@ void movepast(int (*pred)(), bool forward)
 void moveto(int (*pred)(), bool forward)
 {
 	if (!forward)
-		bmove(-1);
+		bmove(Curbuff, -1);
 	while (!(forward ? bisend(Curbuff) : bisstart(Curbuff)) && !(*pred)())
-		bmove(forward ? 1 : -1);
+		bmove(Curbuff, forward ? 1 : -1);
 	if (!forward && !bisstart(Curbuff))
 		bmove1(Curbuff);
 }
@@ -475,9 +475,9 @@ void tindent(int arg)
 {
 	if (VAR(VSPACETAB) == 0)
 		for (; arg >= Tabsize; arg -= Tabsize)
-			binsert('\t');
+			binsert(Curbuff, '\t');
 	while (arg-- > 0)
-		binsert(' ');
+		binsert(Curbuff, ' ');
 }
 
 int bisspace(void)

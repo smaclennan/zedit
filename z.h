@@ -131,6 +131,7 @@ struct wdo {
 #define wheight() (Curwdo->last - Curwdo->first)
 
 extern struct wdo *Curwdo, *Whead;
+extern struct buff *Curbuff;
 
 struct zapp {
 	char *fname;            /* file associated with buffer */

@@ -374,7 +374,7 @@ void reframe(void)
 	else
 		tobegline(Curbuff);
 	bmrktopnt(Sstart);
-	bmove(-1);
+	bmove(Curbuff, -1);
 	bmrktopnt(Psstart);
 	Sendp = false;
 	bpnttomrk(&pmark);
@@ -556,7 +556,7 @@ static void pawdisplay(struct mark *pmark, struct mark *was)
 
 	Prow = Rowmax - 1;
 pawshift:
-	btostart(Curbuff); bmove(Pshift);
+	btostart(Curbuff); bmove(Curbuff, Pshift);
 	for (i = 0, Pcol = Pawcol;
 		 Pcol < Colmax - 2 && !bisend(Curbuff);
 		 bmove1(Curbuff), ++i) {

@@ -217,8 +217,8 @@ void pinsert(void)
 		btoend(Curbuff);
 		if (bgetcol(false, 0) > Pawlen) {
 			/* Insert in middle pushed text past end */
-			bmove(-width);
-			bdelete(width);
+			bmove(Curbuff, -width);
+			bdelete(Curbuff, width);
 		}
 		bpnttomrk(&tmark);
 	} else

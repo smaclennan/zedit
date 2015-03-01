@@ -119,7 +119,7 @@ int readapipe(void)
 		bmrktopnt(&tmark);
 		btoend(Curbuff);
 		while (i-- > 0)
-			binsert(*ptr++);
+			binsert(Curbuff, *ptr++);
 		bpnttomrk(&tmark);
 		bswitchto(save);
 	} else

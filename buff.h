@@ -91,11 +91,9 @@ bool _bm_search(struct buff *buff, const char *str, bool sensitive);
 bool _bm_rsearch(struct buff *buff, const char *str, bool sensitive);
 
 #ifndef HAVE_THREADS
-extern struct buff *Curbuff;
-
-#define binsert(c) _binsert(Curbuff, (c))
-#define bdelete(n) _bdelete(Curbuff, (n))
-#define bmove(n) _bmove(Curbuff, (n))
+#define binsert _binsert
+#define bdelete _bdelete
+#define bmove _bmove
 #define bmove1 _bmove1
 #define bisstart _bisstart
 #define bisend _bisend

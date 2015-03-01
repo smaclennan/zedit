@@ -119,7 +119,7 @@ static bool find_tag(char *word)
 
 	if (!bcrsearch(Curbuff, 014)) /* C-L */
 		goto failed;
-	bmove(2);
+	bmove(Curbuff, 2);
 
 	strcpy(path, Tagfile);
 	p = strrchr(path, '/');

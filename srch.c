@@ -91,7 +91,7 @@ again:
 			if (i < STRMAX) {
 				bmrktopnt(&marks[i]);
 				str[i++] = cmd;
-				bmove(-i);
+				bmove(Curbuff, -i);
 				if (!bstrsearch(str, forward)) {
 					bpnttomrk(&marks[--i]);
 					str[i] = '\0';
@@ -292,7 +292,7 @@ static bool next_replace(Byte *ebuf, struct mark *REstart, int type)
 		return step(Curbuff, ebuf, REstart);
 
 	if (bstrsearch(olds, FORWARD)) {
-		bmove(-(int)strlen(olds));
+		bmove(Curbuff, -(int)strlen(olds));
 		return true;
 	}
 
@@ -342,7 +342,7 @@ input:
 				else {
 					bpnttomrk(prevmatch);
 					if (changeprev) {
-						bdelete(strlen(news));
+						bdelete(Curbuff, strlen(news));
 						binstr(Curbuff, olds);
 						bpnttomrk(prevmatch);
 					}
@@ -386,14 +386,14 @@ input:
 			for (ptr = news; *ptr; ++ptr)
 				switch (*ptr) {
 				case '\\':
-					binsert(*(++ptr) ? *ptr : '\\'); break;
+					binsert(Curbuff, *(++ptr) ? *ptr : '\\'); break;
 				case '&':
 					Zyank(); break;
 				default:
-					binsert(*ptr);
+					binsert(Curbuff, *ptr);
 				}
 		} else {
-			bdelete(strlen(olds));
+			bdelete(Curbuff, strlen(olds));
 			binstr(Curbuff, news);
 		}
 		if (*query && tchar == ',') {
@@ -403,14 +403,14 @@ input:
 				if (type == REGEXP) {
 					for (dist = 0;
 						 !bisatmrk(REstart);
-						 ++dist, bmove(-1))
+						 ++dist, bmove(Curbuff, -1))
 						;
-					bdelete(dist);
+					bdelete(Curbuff, dist);
 					Zyank();
 				} else {
 					int len = strlen(news);
-					bmove(-len);
-					bdelete(len);
+					bmove(Curbuff, -len);
+					bdelete(Curbuff, len);
 					binstr(Curbuff, olds);
 				}
 			}
@@ -451,7 +451,7 @@ static bool dosearch(void)
 	/* This causes problems with RE search. You can't match the first line.
 	 * Why is it needed?
 	 */
-	bmove(searchdir[0] == BACKWARD ? -1 : 1);
+	bmove(Curbuff, searchdir[0] == BACKWARD ? -1 : 1);
 #endif
 	if (searchdir[0] == REGEXP) {
 		Byte ebuf[ESIZE];

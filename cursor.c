@@ -21,7 +21,7 @@
 
 void Zbeginning_of_line(void)
 {
-	bmove(-1);
+	bmove(Curbuff, -1);
 	tobegline(Curbuff);
 }
 
@@ -71,13 +71,13 @@ void Znext_line(void)
 
 void Zprevious_char(void)
 {
-	bmove(-Arg);
+	bmove(Curbuff, -Arg);
 	Arg = 0;
 }
 
 void Znext_char(void)
 {
-	bmove(Arg);
+	bmove(Curbuff, Arg);
 	Arg = 0;
 }
 
@@ -135,7 +135,7 @@ void Znext_page(void)
 
 	bpnttomrk(Sstart);
 	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(Curbuff, NL); --i) {
-		bmove(-1);
+		bmove(Curbuff, -1);
 		i -= bgetcol(true, 0) / Colmax;
 		bmove1(Curbuff);
 	}
@@ -181,8 +181,8 @@ void Zswap_mark(void)
 
 void Zopen_line(void)
 {
-	binsert(NL);
-	bmove(-1);
+	binsert(Curbuff, NL);
+	bmove(Curbuff, -1);
 }
 
 static long getnum(const char *prompt)
@@ -322,7 +322,7 @@ static void scroll(bool (*search)(struct buff *buff, Byte what))
 		;
 	tobegline(Curbuff);
 	bmrktopnt(Sstart);
-	bmove(-1);
+	bmove(Curbuff, -1);
 	bmrktopnt(Psstart);
 	Sendp = false;
 

@@ -43,8 +43,8 @@ static void crfixup(void)
 
 	while (bcsearch(Curbuff, '\r'))
 		if (*Curcptr == '\n') {
-			bmove(-1);
-			bdelete(1);
+			bmove(Curbuff, -1);
+			bdelete(Curbuff, 1);
 		}
 
 	btostart(Curbuff);

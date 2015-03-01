@@ -17,7 +17,7 @@ static void do_append(struct buff *buff, char *buffer, int n)
 	int i;
 
 	for (i = 0; i < n; ++i, ++buffer)
-		_binsert(buff, *buffer);
+		_binsert(Curbuff, buff, *buffer);
 #endif
 }
 
@@ -40,7 +40,7 @@ static int readone(struct buff *buff, int fd)
 		}
 		do_append(buff, buffer, n);
 		_btostart(buff);
-		_bmove(buff, random() % total);
+		_bmove(Curbuff, buff, random() % total);
 	} while (n > 0);
 
 	return total;

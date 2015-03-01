@@ -42,7 +42,7 @@ static void copytomrk(struct mark *tmark)
 	if (delcmd())
 		btoend();
 	else
-		bempty();
+		bempty(Curbuff);
 	bswitchto(save);
 	bcopyrgn(tmark, Killbuff);
 }
@@ -153,7 +153,7 @@ void Zdelete_to_eol(void)
 	else {
 		bool atstart = _bpeek(Curbuff) == NL;
 		struct mark *tmark = zcreatemrk();
-		toendline();
+		toendline(Curbuff);
 		if (atstart)
 			bmove1(); /* delete the NL */
 		killtomrk(tmark);
@@ -165,9 +165,9 @@ void Zdelete_line(void)
 {
 	struct mark *tmark;
 
-	tobegline();
+	tobegline(Curbuff);
 	tmark = zcreatemrk();
-	bcsearch(NL);
+	bcsearch(Curbuff, NL);
 	killtomrk(tmark);
 	unmark(tmark);
 }
@@ -193,7 +193,7 @@ void Zyank(void)
 	struct mark *tmark, save;	/* save must NOT be a pointer */
 
 	if (InPaw && First) {
-		bempty();
+		bempty(Curbuff);
 		First = false;
 	}
 
@@ -272,20 +272,20 @@ void Zdelete_blanks(void)
 	struct mark *tmark, *pmark;
 
 	pmark = zcreatemrk();
-	if (bcrsearch(NL)) {
+	if (bcrsearch(Curbuff, NL)) {
 		bmove1();
 		tmark = zcreatemrk();
 		movepast(bisspace, BACKWARD);
 		if (!bisstart())
-			bcsearch(NL);
+			bcsearch(Curbuff, NL);
 		if (bisbeforemrk(tmark))
 			bdeltomrk(tmark);
 		unmark(tmark);
 	}
-	if (bcsearch(NL)) {
+	if (bcsearch(Curbuff, NL)) {
 		tmark = zcreatemrk();
 		movepast(bisspace, FORWARD);
-		if (bcrsearch(NL))
+		if (bcrsearch(Curbuff, NL))
 			bmove1();
 		if (bisaftermrk(tmark))
 			bdeltomrk(tmark);
@@ -297,7 +297,7 @@ void Zdelete_blanks(void)
 
 void Zjoin(void)
 {
-	toendline();
+	toendline(Curbuff);
 	bdelete(1);
 	Ztrim_white_space();
 	binsert(' ');
@@ -307,6 +307,6 @@ void Zempty_buffer(void)
 {
 	if (ask("Empty buffer? ") != YES)
 		return;
-	bempty();
+	bempty(Curbuff);
 	Curbuff->bmodf = true;
 }

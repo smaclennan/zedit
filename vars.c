@@ -202,7 +202,7 @@ void Zshow_config(void)
 	if (!tbuff)
 		return;
 
-	bempty();
+	bempty(Curbuff);
 	for (i = 0; i < NUMVARS; ++i) {
 		if (Vars[i].vtype == V_STRING) {
 			if (VARSTR(i))

@@ -101,18 +101,14 @@ extern struct buff *Curbuff;
 #define bisend() _bisend(Curbuff)
 #define btostart() _btostart(Curbuff)
 #define btoend() _btoend(Curbuff)
-#define tobegline() _tobegline(Curbuff)
-#define toendline() _toendline(Curbuff)
+#define tobegline _tobegline
+#define toendline _toendline
 #define blength _blength
 #define blocation _blocation
-#define bcsearch(c) _bcsearch(Curbuff, (c))
-#define bcrsearch(c) _bcrsearch(Curbuff, (c))
-#define bempty() _bempty(Curbuff)
-#define boffset(n) _boffset(Curbuff, n)
-#define bappend(d, n) _bappend(Curbuff, (d), (n))
-#define bindata(d, n) _bindata(Curbuff, (d), (n))
-#define bread(fd, n) _bread(Curbuff, (fd), (n))
-#define bwrite(fd, n) _bwrite(Curbuff, (fd), (n))
+#define bcsearch _bcsearch
+#define bcrsearch _bcrsearch
+#define bempty _bempty
+#define boffset _boffset
 
 #define binstr(s) _bindata(Curbuff, (Byte *)(s), strlen(s));
 

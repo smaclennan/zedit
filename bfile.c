@@ -41,7 +41,7 @@ static void crfixup(void)
 
 	Curbuff->bmode |= CRLF;
 
-	while (bcsearch('\r'))
+	while (bcsearch(Curbuff, '\r'))
 		if (*Curcptr == '\n') {
 			bmove(-1);
 			bdelete(1);
@@ -71,7 +71,7 @@ int breadfile(const char *fname)
 	else
 		zapp(Curbuff)->mtime = -1;
 
-	bempty();
+	bempty(Curbuff);
 
 #if ZLIB
 	gzFile gz = gzdopen(fd, "rb");
@@ -90,7 +90,7 @@ int breadfile(const char *fname)
 	while ((len = fileread(fd, buf, PSIZE)) > 0) {
 		if (Curpage->plen) {
 			if (!newpage(Curpage)) {
-				bempty();
+				bempty(Curbuff);
 				fileclose(fd);
 				return ENOMEM;
 			}

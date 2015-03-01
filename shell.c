@@ -387,7 +387,7 @@ static int parse(char *fname)
 		}
 
 		/* skip to next line */
-		bcsearch(NL);
+		bcsearch(Curbuff, NL);
 	}
 	return 0;
 }
@@ -411,12 +411,12 @@ void Znext_error(void)
 		NexterrorCalled = 1;
 		btostart();
 	} else
-		bcsearch(NL);
+		bcsearch(Curbuff, NL);
 	line = parse(fname);
 	if (line) {
 		vsetmrk(shell_mark);
 		bmrktopnt(shell_mark);
-		tobegline();
+		tobegline(Curbuff);
 		bswappnt(shell_mark);
 		vsetmrk(shell_mark);
 		wdo = findwdo(mbuff);
@@ -427,7 +427,7 @@ void Znext_error(void)
 		Argp = true;
 		Arg = line;
 		Zgoto_line();
-		tobegline();
+		tobegline(Curbuff);
 	} else {
 		btoend();
 		unmark(shell_mark);

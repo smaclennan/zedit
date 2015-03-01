@@ -119,7 +119,7 @@ void Zhelp_function(void)
 		if (buff == NULL)
 			return;
 		cswitchto(buff);
-		bempty();
+		bempty(Curbuff);
 	} else
 		wuseother(HELPBUFF);
 

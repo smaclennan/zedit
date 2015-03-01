@@ -204,7 +204,7 @@ void pinsert(void)
 	}
 
 	if (First) {
-		bempty();
+		bempty(Curbuff);
 		First = false;
 		Tlrow = -1;
 	}

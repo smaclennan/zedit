@@ -501,15 +501,15 @@ void mouse_point(int row, int col, bool set_mark)
 	/* Move the point to row */
 	if (row > Prow)
 		while (Prow < row) {
-			bcsearch('\n');
+			bcsearch(Curbuff, '\n');
 			++Prow;
 		}
 	else if (row <= Prow) {
 		while (Prow > row) {
-			bcrsearch('\n');
+			bcrsearch(Curbuff, '\n');
 			--Prow;
 		}
-		tobegline();
+		tobegline(Curbuff);
 	}
 
 	/* Move the point to col */

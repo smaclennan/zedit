@@ -367,12 +367,12 @@ void reframe(void)
 	struct mark pmark;
 
 	bmrktopnt(&pmark);
-	for (cnt = prefline(); cnt > 0 && bcrsearch(NL); --cnt)
+	for (cnt = prefline(); cnt > 0 && bcrsearch(Curbuff, NL); --cnt)
 			cnt -= bgetcol(true, 0) / Colmax;
 	if (cnt < 0)
 		bmakecol((-cnt) * Colmax, false);
 	else
-		tobegline();
+		tobegline(Curbuff);
 	bmrktopnt(Sstart);
 	bmove(-1);
 	bmrktopnt(Psstart);
@@ -634,7 +634,7 @@ pawshift:
 void makepaw(char *word, bool start)
 {
 	bswitchto(Paw);
-	bempty();
+	bempty(Curbuff);
 	binstr(word);
 	tcleol();
 	memset(tline, '\376', COLMAX);	/* invalidate it */

@@ -197,7 +197,7 @@ void Zundo(void)
 
 	undo = (struct undo *)app->undo_tail;
 	InUndo = true;
-	boffset(undo->offset);
+	boffset(Curbuff, undo->offset);
 
 	if (is_insert(undo)) {
 		bmove(-undo->size);

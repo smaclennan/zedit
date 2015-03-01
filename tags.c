@@ -117,7 +117,7 @@ static bool find_tag(char *word)
 
 	offset = batoi();
 
-	if (!bcrsearch(014)) /* C-L */
+	if (!bcrsearch(Curbuff, 014)) /* C-L */
 		goto failed;
 	bmove(2);
 

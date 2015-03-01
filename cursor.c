@@ -22,13 +22,13 @@
 void Zbeginning_of_line(void)
 {
 	bmove(-1);
-	tobegline();
+	tobegline(Curbuff);
 }
 
 void Zend_of_line(void)
 {
 	bmove1();
-	toendline();
+	toendline(Curbuff);
 }
 
 /* Support routine to calc column to force to for line up and down */
@@ -57,7 +57,7 @@ void Zprevious_line(void)
 {
 	int col = forcecol();
 	while (Arg-- > 0)
-		bcrsearch(NL);
+		bcrsearch(Curbuff, NL);
 	bmakecol(col, false);
 }
 
@@ -65,7 +65,7 @@ void Znext_line(void)
 {
 	int col = forcecol();
 	while (Arg-- > 0)
-		bcsearch(NL);
+		bcsearch(Curbuff, NL);
 	bmakecol(col, false);
 }
 
@@ -87,7 +87,7 @@ int bgetcol(bool flag, int col)
 	struct mark pmark;
 
 	bmrktopnt(&pmark);
-	if (bcrsearch('\n'))
+	if (bcrsearch(Curbuff, '\n'))
 		bmove1();
 	while (!bisatmrk(&pmark) && !bisend()) {
 		col += chwidth(*Curcptr, col, flag);
@@ -103,7 +103,7 @@ int bmakecol(int col, bool must)
 {
 	int tcol = 0;
 
-	if (bcrsearch('\n'))
+	if (bcrsearch(Curbuff, '\n'))
 		bmove1();
 	while (tcol < col && *Curcptr != '\n' && !bisend()) {
 		tcol += chwidth(*Curcptr, tcol, !must);
@@ -123,7 +123,7 @@ void Zprevious_page(void)
 	int i, col = forcecol();
 
 	bpnttomrk(Sstart);
-	for (i = wheight() - prefline() - 2; i > 0 && bcrsearch(NL); --i)
+	for (i = wheight() - prefline() - 2; i > 0 && bcrsearch(Curbuff, NL); --i)
 		i -= bgetcol(true, 0) / Colmax;
 	bmakecol(col, false);
 	reframe();
@@ -134,7 +134,7 @@ void Znext_page(void)
 	int i, col = forcecol();
 
 	bpnttomrk(Sstart);
-	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(NL); --i) {
+	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(Curbuff, NL); --i) {
 		bmove(-1);
 		i -= bgetcol(true, 0) / Colmax;
 		bmove1();
@@ -214,7 +214,7 @@ void Zgoto_line(void)
 
 	btostart();
 	while (--line > 0)
-		bcsearch(NL);
+		bcsearch(Curbuff, NL);
 }
 
 void Zout_to(void)
@@ -320,7 +320,7 @@ static void scroll(bool (*search)(struct buff *buff, Byte what))
 	bpnttomrk(Sstart);
 	while (Arg-- > 0 && search(Curbuff, NL))
 		;
-	tobegline();
+	tobegline(Curbuff);
 	bmrktopnt(Sstart);
 	bmove(-1);
 	bmrktopnt(Psstart);

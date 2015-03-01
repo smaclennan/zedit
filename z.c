@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 {
 	char path[PATHMAX + 1];
 	int arg, files = 0, textMode = 0, exitflag = 0, line = 0;
-	struct buff *tbuff = NULL;
+	struct zbuff *tbuff = NULL;
 
 	/* A longjmp is called if zcreatemrk runs out of memory */
 	if (setjmp(zenv) != 0) {
@@ -228,7 +228,7 @@ int main(int argc, char **argv)
 				tbuff = Curbuff;
 
 	if (tbuff) {
-		bswitchto(tbuff);
+		zswitchto(tbuff);
 
 		strcpy(Lbufname,
 			   prevbuff(Curbuff) ? zapp(prevbuff(Curbuff))->bname : MAINBUFF);
@@ -547,7 +547,7 @@ void Zstats(void)
 
 struct mark *zcreatemrk(void)
 {
-	struct mark *mrk = bcremrk(Curbuff);
+	struct mark *mrk = bcremrk(Bbuff);
 	if (!mrk)
 		longjmp(zenv, -1);	/* ABORT */
 	return mrk;

@@ -37,14 +37,14 @@ static bool Findstart(void)
 static void bconvert(int (*to)(int c))
 {
 	*Curcptr = to(*Curcptr);
-	Curbuff->bmodf = true;
+	Bbuff->bmodf = true;
 }
 
 void Zcapitalize_word(void)
 {
 	if (Findstart()) {
 		bconvert(toupper);
-		for (bmove1(Bbuff); !bisend(Bbuff) && bistoken(); bmove1(Curbuff))
+		for (bmove1(Bbuff); !bisend(Bbuff) && bistoken(); bmove1(Bbuff))
 			bconvert(tolower);
 		vsetmod();
 	}
@@ -386,17 +386,17 @@ unsigned long bline(void)
 
 void Zposition(void)
 {
-	unsigned long mark, point = blocation(Curbuff);
+	unsigned long mark, point = blocation(Bbuff);
 
 	if (UMARK_SET) {
 		bswappnt(Bbuff, UMARK);
-		mark = blocation(Curbuff);
+		mark = blocation(Bbuff);
 		bswappnt(Bbuff, UMARK);
 		putpaw("Line: %u  Column: %u  Point: %lu  Mark: %lu  Length: %lu",
-			   bline(), bgetcol(false, 0) + 1, point, mark, blength(Curbuff));
+			   bline(), bgetcol(false, 0) + 1, point, mark, blength(Bbuff));
 	} else
 		putpaw("Line: %u  Column: %u  Point: %lu  Mark: unset  Length: %lu",
-			   bline(), bgetcol(false, 0) + 1, point, blength(Curbuff));
+			   bline(), bgetcol(false, 0) + 1, point, blength(Bbuff));
 }
 
 void Znotimpl(void) { tbell(); }
@@ -409,14 +409,14 @@ void Zset_mark(void)
 
 void Zexit(void)
 {
-	struct buff *tbuff;
+	struct zbuff *tbuff;
 	bool modf = false;
 
 	if (!saveall(Argp))
 		return;
 
 	foreachbuff(tbuff)
-		if (tbuff->bmodf && !(zapp(tbuff)->bmode & SYSBUFF))
+		if (tbuff->buff->bmodf && !(zapp(tbuff)->bmode & SYSBUFF))
 			modf = true;
 	if (modf && ask("Modified buffers. quit anyway? ") != YES)
 		return;
@@ -438,13 +438,13 @@ void Zsave_and_exit(void)
  * Always saves if 'must' is true or saveOnExit is set.
  * Returns false if the user ABORTS the prompt.
  */
-bool promptsave(struct buff *tbuff, bool must)
+bool promptsave(struct zbuff *tbuff, bool must)
 {
 	static int save_all;
 	char str[BUFNAMMAX + 20];
 	int ok = YES;
 
-	if (tbuff->bmodf) {
+	if (tbuff->buff->bmodf) {
 		if (!must && !save_all) {
 			sprintf(str, "save buffer %s? ", zapp(tbuff)->bname);
 			ok = ask2(str, true);
@@ -455,7 +455,7 @@ bool promptsave(struct buff *tbuff, bool must)
 		}
 
 		if (ok == YES || save_all) {
-			bswitchto(tbuff);
+			zswitchto(tbuff);
 			if (filesave() != true)
 				return false;
 		}
@@ -471,7 +471,7 @@ bool promptsave(struct buff *tbuff, bool must)
 */
 bool saveall(bool must)
 {
-	struct buff *tbuff, *bsave;
+	struct zbuff *tbuff, *bsave;
 
 	bsave = Curbuff;
 	foreachbuff(tbuff)
@@ -479,7 +479,7 @@ bool saveall(bool must)
 			Curwdo->modeflags = INVALID;
 			return false;
 		}
-	bswitchto(bsave);
+	zswitchto(bsave);
 	return true;
 }
 
@@ -766,15 +766,13 @@ void toggle_mode(int mode)
 			mode = NORMAL;
 	}
 
-	if (Curbuff->app) {
-		if (mode == SHMODE) {
-			if (ext && strcmp(ext, ".el") == 0)
-				zapp(Curbuff)->comchar = ';';
-			else
-				zapp(Curbuff)->comchar = '#';
-		} else
-			zapp(Curbuff)->comchar = 0;
-	}
+	if (mode == SHMODE) {
+		if (ext && strcmp(ext, ".el") == 0)
+			zapp(Curbuff)->comchar = ';';
+		else
+			zapp(Curbuff)->comchar = '#';
+	} else
+		zapp(Curbuff)->comchar = 0;
 
 	zapp(Curbuff)->bmode = (zapp(Curbuff)->bmode & ~MAJORMODE) | mode;
 }
@@ -816,7 +814,7 @@ static void setregion(int (*convert)(int))
 		mrktomrk(UMARK, &tmark);
 	else
 		bpnttomrk(Bbuff, &tmark);
-	Curbuff->bmodf = true;
+	Bbuff->bmodf = true;
 
 	CLEAR_UMARK;
 	redisplay();

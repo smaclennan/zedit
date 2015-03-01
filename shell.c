@@ -48,7 +48,7 @@ int batoi(void)
 	return num;
 }
 
-int do_chdir(struct buff *buff)
+int do_chdir(struct zbuff *buff)
 {
 	if (zapp(buff)->fname) {
 		char dir[PATHMAX + 1], *p;
@@ -64,7 +64,7 @@ int do_chdir(struct buff *buff)
 }
 
 /* echo 'str' to the paw and as the filename for 'buff' */
-static void message(struct buff *buff, const char *str)
+static void message(struct zbuff *buff, const char *str)
 {
 	struct wdo *wdo;
 
@@ -82,7 +82,7 @@ static void message(struct buff *buff, const char *str)
 #include <sys/wait.h>
 
 /* We only allow one pipe command */
-static struct buff *pipebuff;
+static struct zbuff *pipebuff;
 static pid_t child = EOF;	/* PID of shell or EOF */
 static int in_pipe = -1;	/* the pipe */
 
@@ -113,22 +113,22 @@ int readapipe(void)
 	if (i > 0) {
 		/* Yup! Read somethin' */
 		struct mark tmark;
-		struct buff *save = Curbuff;
+		struct zbuff *save = Curbuff;
 
-		bswitchto(pipebuff);
+		zswitchto(pipebuff);
 		bmrktopnt(Bbuff, &tmark);
 		btoend(Bbuff);
 		while (i-- > 0)
 			binsert(Bbuff, *ptr++);
 		bpnttomrk(Bbuff, &tmark);
-		bswitchto(save);
+		zswitchto(save);
 	} else
 		/* pipe died */
 		checkpipes(1);
 	return cnt;
 }
 
-static void exit_status(struct buff *tbuff, int status)
+static void exit_status(struct zbuff *tbuff, int status)
 {
 	if (status & 0xff)
 		message(tbuff, "Died.");
@@ -206,7 +206,7 @@ static char *wordit(char **str)
 /* Invoke 'cmd' on a pipe.
  * Returns true if the invocation succeeded.
 */
-static bool _cmdtobuff(struct buff *tbuff, const char *icmd)
+static bool _cmdtobuff(struct zbuff *tbuff, const char *icmd)
 {
 	char cmd[STRMAX + 1], *p, *argv[11];
 	int from[2], arg;
@@ -250,7 +250,7 @@ static bool _cmdtobuff(struct buff *tbuff, const char *icmd)
 }
 
 /* Try to kill a child process */
-bool unvoke(struct buff *buff)
+bool unvoke(struct zbuff *buff)
 {
 	if (!pipebuff || (buff && buff != pipebuff))
 		return false;
@@ -266,10 +266,10 @@ void Zkill(void)
 }
 #else
 void Zkill(void) { tbell(); }
-bool unvoke(struct buff *child) { ((void)child); return false; }
+bool unvoke(struct zbuff *child) { ((void)child); return false; }
 void checkpipes(int type) { ((void)type); }
 
-static void _cmdtobuff(struct buff *buff, const char *cmdin)
+static void _cmdtobuff(struct zbuff *buff, const char *cmdin)
 {
 	FILE *pfp;
 	int rc;
@@ -284,13 +284,13 @@ static void _cmdtobuff(struct buff *buff, const char *cmdin)
 
 	putpaw("Please wait...");
 	while (fgets(line, sizeof(line), pfp)) {
-		binstr(line);
+		binstr(buff->buff, line);
 		zrefresh();
 	}
 
 	rc = pclose(pfp) >> 8;
 	if (rc == 0) {
-		btostart();
+		btostart(buff->buff);
 		putpaw("Done.");
 	} else
 		putpaw("Returned %d", rc);
@@ -305,9 +305,9 @@ static void cmdtobuff(const char *bname, const char *cmd)
 		set_shell_mark();
 
 		do_chdir(Curbuff);
-		message(Bbuff, cmd);
+		message(Curbuff, cmd);
 
-		_cmdtobuff(Bbuff, cmd);
+		_cmdtobuff(Curbuff, cmd);
 
 		wswitchto(save);
 	}
@@ -395,7 +395,7 @@ static int parse(char *fname)
 void Znext_error(void)
 {
 	struct wdo *wdo;
-	struct buff *save, *mbuff;
+	struct zbuff *save, *mbuff;
 	char fname[STRMAX + 1];
 	char path[PATHMAX + 1];
 	int line;
@@ -406,7 +406,7 @@ void Znext_error(void)
 		return;
 	}
 	save = Curbuff;
-	bswitchto(mbuff);
+	zswitchto(mbuff);
 	if (!NexterrorCalled) {
 		NexterrorCalled = 1;
 		btostart(Bbuff);
@@ -419,7 +419,7 @@ void Znext_error(void)
 		tobegline(Bbuff);
 		bswappnt(Bbuff, shell_mark);
 		vsetmrk(shell_mark);
-		wdo = findwdo(mbuff);
+		wdo = findwdo(mbuff->buff);
 		if (wdo)
 			mrktomrk(wdo->wstart, shell_mark);
 		pathfixup(path, fname);
@@ -432,7 +432,7 @@ void Znext_error(void)
 		btoend(Bbuff);
 		unmark(shell_mark);
 		shell_mark = NULL;
-		bswitchto(save);
+		zswitchto(save);
 		putpaw("No more errors");
 	}
 	Argp = false;

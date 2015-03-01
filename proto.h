@@ -161,16 +161,17 @@ bool bwritefile(char *);
 int bmakecol(int, bool);
 bool bstrsearch(const char *, bool);
 void bswitchto(struct buff *);
-struct buff *cfindbuff(const char *);
-struct buff *cmakebuff(const char *, char *);
-bool cdelbuff(struct buff *buff);
-void cswitchto(struct buff *);
+void zswitchto(struct zbuff *);
+struct zbuff *cfindbuff(const char *);
+struct zbuff *cmakebuff(const char *, char *);
+bool cdelbuff(struct zbuff *buff);
+void cswitchto(struct zbuff *);
 void display_init(void);
 bool tdelay(int ms);
 int delayprompt(const char *);
 void delinit(void);
 bool delcmd(void);
-int do_chdir(struct buff *buff);
+int do_chdir(struct zbuff *buff);
 void execute(void);
 int readapipe(void);
 bool fd_add(int fd);
@@ -196,7 +197,7 @@ void movepast(int (*pred)(), bool forward);
 void moveto(int (*pred)(), bool forward);
 char *nocase(const char *);
 int pathfixup(char *, char *);
-bool promptsave(struct buff *tbuff, bool must);
+bool promptsave(struct zbuff *tbuff, bool must);
 int prefline(void);
 void _putpaw(const char *str);
 void putpaw(const char *fmt, ...);
@@ -253,7 +254,7 @@ void winit(void);
 
 void checkpipes(int type);
 void siginit(void);
-bool unvoke(struct buff *);
+bool unvoke(struct zbuff *);
 
 void Dbg(const char *fmt, ...);
 const char *func2name(Byte func);
@@ -278,14 +279,14 @@ unsigned long bline(void);
 
 /* COMMENTBOLD */
 void resetcomments(void);
-void uncomment(struct buff *buff);
+void uncomment(struct zbuff *buff);
 void cprntchar(Byte ch);
 
 #if UNDO
 extern unsigned long undo_total;
 void undo_add(int size);
 void undo_del(int size);
-void undo_clear(struct buff *buff);
+void undo_clear(struct zbuff *buff);
 #else
 #define undo_add(size)
 #define undo_del(size)

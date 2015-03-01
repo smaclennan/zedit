@@ -56,7 +56,7 @@ static int get_tagfile(void)
 	return getfname("Tagfile: ", Tagfile);
 }
 
-static bool tagfile_modified(struct buff *buff)
+static bool tagfile_modified(struct zbuff *buff)
 {
 	struct stat sbuf;
 
@@ -70,9 +70,9 @@ static bool tagfile_modified(struct buff *buff)
 }
 
 /* May change Curbuff */
-static struct buff *read_tagfile(void)
+static struct zbuff *read_tagfile(void)
 {
-	struct buff *buff;
+	struct zbuff *buff;
 
 	if (get_tagfile())
 		return NULL;
@@ -96,11 +96,11 @@ static bool find_tag(char *word)
 {
 	char path[PATHMAX], regstr[STRMAX], *p;
 	Byte ebuf[ESIZE];
-	struct buff *buff, *save = Curbuff;
+	struct zbuff *buff, *save = Curbuff;
 	int offset;
 
 	buff = read_tagfile();
-	bswitchto(save);
+	zswitchto(save);
 	if (!buff)
 		return false;
 
@@ -110,7 +110,7 @@ static bool find_tag(char *word)
 		return false;
 	}
 
-	bswitchto(buff);
+	zswitchto(buff);
 	btostart(Bbuff);
 	if (!step(Bbuff, ebuf, NULL))
 		goto failed;
@@ -129,7 +129,7 @@ static bool find_tag(char *word)
 		p = path + strlen(path);
 	getbword(p, sizeof(path), bistoken);
 
-	bswitchto(save);
+	zswitchto(save);
 	set_bookmark(word);
 
 	if (findfile(path)) {
@@ -140,7 +140,7 @@ static bool find_tag(char *word)
 
 failed:
 	putpaw("No match.");
-	bswitchto(save);
+	zswitchto(save);
 	return false;
 }
 

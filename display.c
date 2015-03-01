@@ -22,7 +22,7 @@
 
 static int innerdsp(int from, int to, struct mark *pmark);
 static void modeflags(struct wdo *wdo);
-static char *setmodes(struct buff *);
+static char *setmodes(struct zbuff *);
 static void pawdisplay(struct mark *, struct mark *);
 
 struct mark *Sstart, *Psstart;	/* Screen start and 'prestart' */
@@ -74,7 +74,7 @@ void set_umark(struct mark *tmark)
 		if (freeumark) {
 			UMARK = freeumark;
 			freeumark = NULL;
-		} else if (!(UMARK = bcremrk(Curbuff)))
+		} else if (!(UMARK = bcremrk(Bbuff)))
 			return;
 	}
 
@@ -156,8 +156,8 @@ void zrefresh(void)
 		mrktomrk(was, UMARK);
 	}
 
-	if (bisbeforemrk(Bbuff, Sstart) || (Sendp && !bisbeforemrk(Curbuff, Send)) ||
-	   Sstart->mbuff != Curbuff)
+	if (bisbeforemrk(Bbuff, Sstart) || (Sendp && !bisbeforemrk(Bbuff, Send)) ||
+	   Sstart->mbuff != Bbuff)
 		/* The cursor has moved before/after the screen marks */
 		reframe();
 	bpnttomrk(Bbuff, Sstart);
@@ -182,7 +182,7 @@ void zrefresh(void)
 	foreachwdo(wdo)
 		if (wdo != Curwdo) {
 			struct mark *point;
-			bswitchto(wdo->wbuff);
+			zswitchto(wdo->wbuff);
 			settabsize(zapp(Curbuff)->bmode);
 			point = zcreatemrk();
 			bpnttomrk(Bbuff, wdo->wstart);
@@ -190,7 +190,7 @@ void zrefresh(void)
 			modeflags(wdo);
 			bpnttomrk(Bbuff, point);
 			unmark(point);
-			bswitchto(Curwdo->wbuff);
+			zswitchto(Curwdo->wbuff);
 		}
 	Tabsize = tsave;
 
@@ -247,10 +247,10 @@ static bool in_region(struct mark *pmark)
 	if (!UMARK_SET || !pmark)
 		return false;
 
-	if (bisaftermrk(Bbuff, UMARK) && bisbeforemrk(Curbuff, pmark))
+	if (bisaftermrk(Bbuff, UMARK) && bisbeforemrk(Bbuff, pmark))
 		return true;
 
-	if (bisaftermrk(Bbuff, pmark) && bisbeforemrk(Curbuff, UMARK))
+	if (bisaftermrk(Bbuff, pmark) && bisbeforemrk(Bbuff, UMARK))
 		return true;
 #endif
 
@@ -417,7 +417,7 @@ static void modeflags(struct wdo *wdo)
 
 	tstyle(T_STANDOUT);
 
-	mask = delcmd() | (wdo->wbuff->bmodf ? 2 : 0);
+	mask = delcmd() | (wdo->wbuff->buff->bmodf ? 2 : 0);
 	if (!InPaw && wdo->modeflags != mask) {
 		tsetpoint(wdo->last, wdo->modecol);
 		tprntchar(mask & 2 ? '*' : ' ');
@@ -430,7 +430,7 @@ static void modeflags(struct wdo *wdo)
 }
 
 /* local routine to set PawStr to the correct mode */
-static char *setmodes(struct buff *buff)
+static char *setmodes(struct zbuff *buff)
 {
 	if (!InPaw)	/* we should never be in the Paw but .... */
 		Curcmds = 0;
@@ -485,18 +485,18 @@ static void subset(int from, int to)
 	struct mark *btmark;
 	int row;
 
-	if (Scrnmarks[from].mbuff != Curbuff)
+	if (Scrnmarks[from].mbuff != Bbuff)
 		return;
 
 	for (row = from; row <= to && Scrnmarks[row].mpage != Curpage; ++row) ;
 
 	if (row > to) {
 		for (row = from, btmark = &Scrnmarks[from];
-			 row <= to && (btmark->mbuff != Curbuff || bisaftermrk(Bbuff, btmark));
+			 row <= to && (btmark->mbuff != Bbuff || bisaftermrk(Bbuff, btmark));
 			 ++btmark, ++row)
 			;
 		if (row > from) {
-			while (Scrnmarks[--row].mbuff != Curbuff) ;
+			while (Scrnmarks[--row].mbuff != Bbuff) ;
 			Scrnmodf[row] = true;
 		}
 	} else {

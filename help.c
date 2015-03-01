@@ -115,7 +115,7 @@ void Zhelp_function(void)
 		return;
 
 	if (Argp) {
-		struct buff *buff = cmakebuff(HELPBUFF, NULL);
+		struct zbuff *buff = cmakebuff(HELPBUFF, NULL);
 		if (buff == NULL)
 			return;
 		cswitchto(buff);
@@ -139,7 +139,7 @@ void Zhelp_function(void)
 	dump_bindings(Cnames[rc].fnum);
 
 	btostart(Bbuff);
-	Curbuff->bmodf = false;
+	Bbuff->bmodf = false;
 }
 
 void Zhelp_variable(void)
@@ -168,7 +168,7 @@ void Zhelp_variable(void)
 	dump_doc(Vars[rc].doc);
 
 	btostart(Bbuff);
-	Curbuff->bmodf = false;
+	Bbuff->bmodf = false;
 }
 
 void Zhelp_apropos(void)
@@ -201,7 +201,7 @@ void Zhelp_apropos(void)
 		putpaw("No matches.");
 	else {
 		btostart(Bbuff);
-		Curbuff->bmodf = false;
+		Bbuff->bmodf = false;
 	}
 }
 

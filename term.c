@@ -72,13 +72,13 @@ static void sigwinch(int sig)
 /* Come here on SIGHUP or SIGTERM */
 void hang_up(int signo)
 {
-	struct buff *tbuff;
+	struct zbuff *tbuff;
 	((void)signal);
 
 	InPaw = true;	/* Kludge to turn off error */
 	foreachbuff(tbuff)
-		if (tbuff->bmodf && !(zapp(tbuff)->bmode & SYSBUFF) && zapp(Curbuff)->fname) {
-			bswitchto(tbuff);
+		if (tbuff->buff->bmodf && !(zapp(tbuff)->bmode & SYSBUFF) && zapp(Curbuff)->fname) {
+			zswitchto(tbuff);
 			bwritefile(zapp(Curbuff)->fname);
 		}
 	unvoke(NULL);

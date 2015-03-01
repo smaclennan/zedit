@@ -226,14 +226,14 @@ void Zfname(void)
 	if (match) {
 		if (n > len) {
 			btoend(Bbuff);
-			while (len < n && blength(Curbuff) < Pawlen) {
+			while (len < n && blength(Bbuff) < Pawlen) {
 				binsert(Bbuff, match[len++]);
 				++did_something;
 			}
 			if (len < n)
 				tbell();
 		}
-		if (f == 0 && isdir(getbtxt(txt, PATHMAX)) && blength(Curbuff) < Pawlen)
+		if (f == 0 && isdir(getbtxt(txt, PATHMAX)) && blength(Bbuff) < Pawlen)
 			binsert(Bbuff, '/');
 	} else if (!update)
 		tbell();

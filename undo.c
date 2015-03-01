@@ -44,7 +44,7 @@ static struct undo *new_undo(void **tail, bool insert, int size)
 		return NULL;
 
 	undo->size = size;
-	undo->offset = blocation(Curbuff);
+	undo->offset = blocation(Bbuff);
 	if (!insert) {
 		undo->data = (Byte *)malloc(size);
 		if (!undo->data) {
@@ -75,9 +75,9 @@ static void free_undo(void **tail)
 	}
 }
 
-static inline int no_undo(struct buff *buff)
+static inline int no_undo(struct zbuff *buff)
 {
-	return !buff->app || VAR(VUNDO) == 0 || InUndo || *zapp(buff)->bname == '*';
+	return VAR(VUNDO) == 0 || InUndo || *zapp(buff)->bname == '*';
 }
 
 static inline bool clump(void)
@@ -101,8 +101,7 @@ void undo_add(int size)
 	if (no_undo(Curbuff))
 		return;
 
-	struct zapp *app = Curbuff->app;
-	struct undo *undo = (struct undo *)app->undo_tail;
+	struct undo *undo = (struct undo *)Curbuff->undo_tail;
 
 	if (undo && is_insert(undo) && clump()) {
 		/* clump with last undo */
@@ -110,7 +109,7 @@ void undo_add(int size)
 		undo->offset += size;
 	} else
 		/* need a new undo */
-		undo = new_undo(&app->undo_tail, true, size);
+		undo = new_undo(&Curbuff->undo_tail, true, size);
 }
 
 static void undo_append(struct undo *undo, Byte *data)
@@ -149,8 +148,7 @@ void undo_del(int size)
 	if (no_undo(Curbuff))
 		return;
 
-	struct zapp *app = Curbuff->app;
-	struct undo *undo = (struct undo *)app->undo_tail;
+	struct undo *undo = (struct undo *)Curbuff->undo_tail;
 
 	if (size == 0) /* this can happen on page boundaries */
 		return;
@@ -169,40 +167,37 @@ void undo_del(int size)
 	}
 
 	/* need a new undo */
-	undo = new_undo(&app->undo_tail, false, size);
+	undo = new_undo(&Curbuff->undo_tail, false, size);
 	if (undo == NULL)
 		return;
 
 	memcpy(undo->data, Curcptr, size);
 }
 
-void undo_clear(struct buff *buff)
+void undo_clear(struct zbuff *buff)
 {
-	struct zapp *app = buff->app;
-	if (app)
-		while (app->undo_tail)
-			free_undo(&app->undo_tail);
+	while (buff->undo_tail)
+		free_undo(&buff->undo_tail);
 }
 
 void Zundo(void)
 {
-	struct zapp *app = Curbuff->app;
 	struct undo *undo;
 	int i;
 
-	if (!app || !app->undo_tail) {
+	if (Curbuff->undo_tail) {
 		tbell();
 		return;
 	}
 
-	undo = (struct undo *)app->undo_tail;
+	undo = (struct undo *)Curbuff->undo_tail;
 	InUndo = true;
 	boffset(Bbuff, undo->offset);
 
 	if (is_insert(undo)) {
 		bmove(Bbuff, -undo->size);
 		bdelete(Bbuff, undo->size);
-		free_undo(&app->undo_tail);
+		free_undo(&Curbuff->undo_tail);
 	} else {
 		unsigned long offset = undo->offset;
 		do {
@@ -211,16 +206,16 @@ void Zundo(void)
 				binsert(Bbuff, undo->data[i]);
 			bpnttomrk(Bbuff, tmark);
 			unmark(tmark);
-			free_undo(&app->undo_tail);
-			undo = (struct undo *)app->undo_tail;
+			free_undo(&Curbuff->undo_tail);
+			undo = (struct undo *)Curbuff->undo_tail;
 		} while (undo && !is_insert(undo) && undo->offset == offset);
 	}
 
 	InUndo = false;
 
-	if (!app->undo_tail)
+	if (!Curbuff->undo_tail)
 		/* Last undo */
-		Curbuff->bmodf = false;
+		Bbuff->bmodf = false;
 }
 #else
 void Zundo(void) { tbell(); }

@@ -110,7 +110,7 @@ struct wdo *findwdo(struct buff *buff)
 	struct wdo *wdo;
 
 	foreachwdo(wdo)
-		if (wdo->wbuff == buff)
+		if (wdo->wbuff->buff == buff)
 			return wdo;
 	return NULL;
 }
@@ -127,11 +127,11 @@ void wswitchto(struct wdo *wdo)
 			} else
 				Curwdo->umark_set = 0;
 			/* don't update wstart unless Sstart for this window */
-			if (Sstart->mbuff == Curwdo->wbuff)
+			if (Sstart->mbuff == Curwdo->wbuff->buff)
 				mrktomrk(Curwdo->wstart, Sstart);
 		}
 		Curwdo = wdo;
-		bswitchto(wdo->wbuff);
+		zswitchto(wdo->wbuff);
 		bpnttomrk(Bbuff, wdo->wpnt);
 		if (Curwdo->umark_set)
 			set_umark(wdo->wmrk);
@@ -142,9 +142,9 @@ void wswitchto(struct wdo *wdo)
 }
 
 /* Switch to a new buffer in the current window. */
-void cswitchto(struct buff *buff)
+void cswitchto(struct zbuff *buff)
 {
-	bswitchto(buff);
+	zswitchto(buff);
 	if (Curwdo->wbuff != Curbuff) {
 		Curwdo->wbuff = Curbuff;
 		bmrktopnt(Bbuff, Curwdo->wpnt);
@@ -153,12 +153,12 @@ void cswitchto(struct buff *buff)
 			Curwdo->umark_set = 1;
 		} else
 			Curwdo->umark_set = 0;
-		if (Sstart->mbuff == Curbuff)
+		if (Sstart->mbuff == Bbuff)
 			mrktomrk(Curwdo->wstart, Sstart);
 		else {
 			/* bring to start of buffer - just in case */
-			Curwdo->wstart->mbuff = Curbuff;
-			Curwdo->wstart->mpage = Curbuff->firstp;
+			Curwdo->wstart->mbuff = Bbuff;
+			Curwdo->wstart->mpage = Bbuff->firstp;
 			Curwdo->wstart->moffset = 0;
 		}
 		Curwdo->modeflags = INVALID;
@@ -269,7 +269,7 @@ void wsize(void)
 bool wuseother(const char *bname)
 {
 	struct wdo *wdo, *last;
-	struct buff *buff;
+	struct zbuff *buff;
 
 	for (wdo = Whead, last = NULL; wdo; last = wdo, wdo = wdo->next)
 		if (strcmp(zapp(wdo->wbuff)->bname, bname) == 0)
@@ -374,7 +374,7 @@ void wgoto(struct buff *buff)
 	if (wdo)
 		wswitchto(wdo);
 	else
-		cswitchto(buff);
+		cswitchto(buff->parent);
 }
 
 static void wfini(void)

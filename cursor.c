@@ -291,7 +291,7 @@ void Znext_bookmark(void)
 			return;
 	}
 
-	if (Bookmrks[Bookmark]->mbuff != Curbuff) {
+	if (Bookmrks[Bookmark]->mbuff != Bbuff) {
 		strcpy(Lbufname, zapp(Curbuff)->bname);
 		wgoto(Bookmrks[Bookmark]->mbuff);
 	}
@@ -304,7 +304,7 @@ void Znext_bookmark(void)
 
 void Zredisplay(void)
 {
-	struct buff *buff;
+	struct zbuff *buff;
 
 	wsize();
 	redisplay();

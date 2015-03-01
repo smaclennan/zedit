@@ -43,10 +43,10 @@ int main(int argc, char *argv[])
 	}
 
 	binit(NULL);
-	struct buff *buff = bcreate();
+	struct zbuff *buff = bcreate();
 	if (!buff)
 		exit(2);
-	bswitchto(buff);
+	zswitchto(buff);
 
 	int arg;
 	for (arg = 2; arg < argc; ++arg) {

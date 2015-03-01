@@ -43,6 +43,8 @@
 #include <setjmp.h>
 extern jmp_buf zenv;
 
+struct zbuff;
+
 #include "buff.h"
 #include "mark.h"
 #include "vars.h"
@@ -116,7 +118,7 @@ struct cnames {
 #define CNAMESIZE sizeof(struct cnames)
 
 struct wdo {
-	struct buff *wbuff;		/* buffer window looks on */
+	struct zbuff *wbuff;		/* buffer window looks on */
 	struct mark *wpnt;		/* saved Point */
 	struct mark *wmrk;		/* saved Mark */
 	struct mark *wstart;		/* screen start */
@@ -131,10 +133,10 @@ struct wdo {
 #define wheight() (Curwdo->last - Curwdo->first)
 
 extern struct wdo *Curwdo, *Whead;
-extern struct buff *Curbuff;
+extern struct zbuff *Curbuff;
 extern struct buff *Bbuff;
 
-struct zapp {
+struct zbuff {
 	char *bname;            /* buffer name */
 	char *fname;            /* file associated with buffer */
 	unsigned bmode;		    /* buffer mode - unused in core */
@@ -143,19 +145,19 @@ struct zapp {
 	Byte comchar;			/* single char comment character */
 	void *undo_tail;        /* list of undos */
 	struct mark *umark;     /* user mark */
-	struct buff *prev, *next;	/* list of buffers */
+	struct buff *buff;	    /* low-level buffer */
+	struct zbuff *prev, *next;	/* list of buffers */
 };
-#define zapp(b) ((struct zapp *)((b)->app))
+#define zapp(b) (b)
 
 #define nextbuff(b) (zapp(b)->next)
 #define prevbuff(b) (zapp(b)->prev)
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = zapp(b)->next)
 
-#define Curpage (Curbuff->curpage)
-#define Curchar (Curbuff->curchar)
-#define Curcptr (Curbuff->curcptr)
-
-#define Buff()		(*Curcptr)
+#define Curpage (Bbuff->curpage)
+#define Curchar (Bbuff->curchar)
+#define Curcptr (Bbuff->curcptr)
+#define Buff()  (*Curcptr)
 
 extern char *Home;
 extern bool Argp;
@@ -163,6 +165,7 @@ extern int Arg;				/* must be signed */
 extern int InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
 extern int Pawcol, Pawlen, Pshift;
+extern struct buff *Paw;
 
 extern unsigned Cmd;
 extern int Cmdpushed;
@@ -179,8 +182,8 @@ extern int raw_mode;
 
 extern bool Sendp;
 extern char Lbufname[];
-extern struct buff *Bufflist, *Paw;
-extern struct buff *Buff_save;
+extern struct zbuff *Bufflist;
+extern struct zbuff *Buff_save;
 extern struct mark *Sstart, *Psstart, *Send;
 extern bool Initializing;
 extern bool Insearch;

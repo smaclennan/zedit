@@ -172,13 +172,13 @@ void Zrevert_file(void)
 		return;
 	}
 
-	if (Curbuff->bmodf && ask("File modifed. Ok to loose changes?") != YES)
+	if (Bbuff->bmodf && ask("File modifed. Ok to loose changes?") != YES)
 		return;
 
 	/* Lose the undo history */
 	undo_clear(Curbuff);
 
-	offset = blocation(Curbuff);
+	offset = blocation(Bbuff);
 	zreadfile(zapp(Curbuff)->fname);
 	boffset(Bbuff, offset);
 	uncomment(Curbuff);
@@ -191,7 +191,7 @@ void Zrevert_file(void)
 static bool readone(char *bname, char *path)
 {
 	int rc;
-	struct buff *was = Curbuff;
+	struct zbuff *was = Curbuff;
 
 	if (cfindbuff(bname))
 		return true;
@@ -210,7 +210,7 @@ static bool readone(char *bname, char *path)
 			strcpy(Lbufname, zapp(was)->bname);
 		} else { /* error */
 			cdelbuff(Curbuff);
-			bswitchto(was);
+			zswitchto(was);
 		}
 		return true;
 	}
@@ -222,7 +222,7 @@ bool findfile(char *path)
 {
 	char tbname[BUFNAMMAX + 1];
 	char *was;
-	struct buff *tbuff;
+	struct zbuff *tbuff;
 	int rc = true;
 
 	Arg = 0;
@@ -237,7 +237,7 @@ bool findfile(char *path)
 	 */
 	foreachbuff(tbuff)
 		if (zapp(tbuff)->fname && strcmp(path, zapp(tbuff)->fname) == 0) {
-			bswitchto(tbuff);
+			zswitchto(tbuff);
 			if (Initializing)
 				return true;
 			strcpy(Lbufname, was);
@@ -274,11 +274,11 @@ bool findfile(char *path)
 void Zsave_all_files(void)
 {
 	if (Argp) {
-		struct buff *tbuff;
+		struct zbuff *tbuff;
 
 		foreachbuff(tbuff)
 			if (!(zapp(tbuff)->bmode & SYSBUFF) && zapp(tbuff)->fname)
-				tbuff->bmodf = true;
+				tbuff->buff->bmodf = true;
 	}
 	saveall(true);
 }
@@ -317,7 +317,8 @@ void Zwrite_file(void)
 	*path = '\0';
 	if (getfname(prompt, path) == 0) {
 		if (Argp) {
-			struct buff *tbuff, *save = Curbuff;
+			struct buff *tbuff, *save = Bbuff;
+			unsigned saved_bmode = Curbuff->bmode;
 
 			if ((tbuff = bcreate())) {
 				NEED_UMARK;
@@ -325,7 +326,7 @@ void Zwrite_file(void)
 				bswitchto(save);
 				bcopyrgn(UMARK, tbuff);
 				bswitchto(tbuff);
-				zapp(Curbuff)->bmode = zapp(save)->bmode;
+				Curbuff->bmode = saved_bmode;
 				zwritefile(path);
 				bswitchto(save);
 				bdelbuff(tbuff);
@@ -345,6 +346,7 @@ void Zwrite_file(void)
 
 void Zread_file(void)
 {
+#if 0
 	struct buff *tbuff, *save;
 	struct mark *tmark;
 	int rc = 1;
@@ -352,7 +354,7 @@ void Zread_file(void)
 	if (get_findfile("Read File: "))
 		return;
 
-	save = Curbuff;
+	save = Bbuff;
 	if ((tbuff = bcreate())) {
 		bswitchto(tbuff);
 		zapp(Curbuff)->bmode = zapp(save)->bmode;
@@ -365,10 +367,13 @@ void Zread_file(void)
 			bcopyrgn(tmark, save);
 			unmark(tmark);
 		}
-		bswitchto(save);
+		zswitchto(save);
 		bdelbuff(tbuff);
 	}
 
 	if (rc > 0)
 		error("Unable to read %s", Fname);
+#else
+	error("disabled");
+#endif
 }

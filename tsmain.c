@@ -9,7 +9,7 @@
 
 #include "buff.h"
 
-static void do_append(struct buff *buff, char *buffer, int n)
+static void do_append(struct zbuff *buff, char *buffer, int n)
 {
 #ifdef SAM_NOT_YET
 	bappend(buff, buffer, n);
@@ -21,7 +21,7 @@ static void do_append(struct buff *buff, char *buffer, int n)
 #endif
 }
 
-static int readone(struct buff *buff, int fd)
+static int readone(struct zbuff *buff, int fd)
 {
 	char buffer[4096];
 	int n, max;
@@ -48,7 +48,7 @@ static int readone(struct buff *buff, int fd)
 
 int main(int argc, char *argv[])
 {
-	struct buff *buff;
+	struct zbuff *buff;
 	int total, offset;
 
 	buff = bcreate();

@@ -26,10 +26,11 @@
 #define FNM_FLAGS 0
 #endif
 
+#if 0
 static void grep_one(char *fname, Byte *ebuf,
-		     struct buff *inbuff, struct buff *outbuff)
+		     struct zbuff *inbuff, struct buff *outbuff)
 {
-	bswitchto(inbuff);
+	zswitchto(inbuff);
 	bempty(Bbuff);
 
 	if (zreadfile(fname))
@@ -39,10 +40,10 @@ static void grep_one(char *fname, Byte *ebuf,
 		struct mark *start;
 		unsigned long line = bline();
 
-		bswitchto(outbuff);
+		zswitchto(outbuff);
 		snprintf(PawStr, STRMAX, "%s:%ld: ", fname, line);
 		binstr(Bbuff, PawStr);
-		bswitchto(inbuff);
+		zswitchto(inbuff);
 
 		tobegline(Bbuff);
 		start = zcreatemrk();
@@ -58,7 +59,7 @@ static void grepit(char *input, char *files)
 	Byte ebuf[ESIZE];
 	DIR *dir;
 	struct dirent *ent;
-	struct buff *inbuff, *outbuff = Curbuff;
+	struct zbuff *inbuff, *outbuff = Curbuff;
 
 	int rc = compile((Byte *)input, ebuf, &ebuf[ESIZE]);
 	if (rc) {
@@ -83,7 +84,7 @@ static void grepit(char *input, char *files)
 
 cleanup:
 	closedir(dir);
-	bswitchto(outbuff);
+	zswitchto(outbuff);
 	if (inbuff)
 		bdelbuff(inbuff);
 }
@@ -125,3 +126,9 @@ void Zgrep(void)
 		wswitchto(save);
 	}
 }
+#else
+void Zgrep(void)
+{
+	error("disabled");
+}
+#endif

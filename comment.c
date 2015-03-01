@@ -29,7 +29,6 @@ struct comment {
 /* Mark a new comment from start to Point. */
 static void newcomment(struct mark *start)
 {
-	struct zapp *app = Curbuff->app;
 	struct comment *com = (struct comment *)calloc(sizeof(struct comment), 1);
 	if (!com)
 		return;
@@ -38,26 +37,26 @@ static void newcomment(struct mark *start)
 
 	mrktomrk(com->start, start);
 
-	if (!app->chead)
-		app->chead = com;
+	if (!Curbuff->chead)
+		Curbuff->chead = com;
 	else
-		((struct comment *)app->ctail)->next = com;
-	app->ctail = com;
+		((struct comment *)Curbuff->ctail)->next = com;
+	Curbuff->ctail = com;
 }
 
 /* Scan an entire buffer for comments. */
-static void scanbuffer(struct buff *buff)
+static void scanbuffer(struct zbuff *buff)
 {
 	struct mark tmark, start;
 	Byte comchar;
 
-	if (!Curbuff->app) return;
-	comchar = zapp(Curbuff)->comchar;
+	if (!Curbuff->comchar) return;
+	comchar = Curbuff->comchar;
 
 	uncomment(buff);
 	invalidate_scrnmarks(0, Rowmax - 2);
 
-	bswitchto(buff);
+	zswitchto(buff);
 	bmrktopnt(Bbuff, &tmark);
 
 	btostart(Bbuff);
@@ -105,8 +104,7 @@ static struct comment *start;
 /* Called from innerdsp before display loop */
 void resetcomments(void)
 {
-	if (!Curbuff->app) return;
-	start = zapp(Curbuff)->chead;
+	start = Curbuff->chead;
 
 	switch (Lfunc) {
 	/* Was the last command a delete of any type? */
@@ -139,20 +137,20 @@ void cprntchar(Byte ch)
 
 	if (!Comstate) {
 		struct wdo *wdo;
-		struct buff *was = Curbuff;
+		struct zbuff *was = Curbuff;
 
 		scanbuffer(Curbuff);
 		for (wdo = Whead; wdo; wdo = wdo->next)
 			if (wdo->wbuff != Curbuff)
 				scanbuffer(wdo->wbuff);
-		bswitchto(was);
+		zswitchto(was);
 		start = zapp(Curbuff) ? zapp(Curbuff)->chead : NULL;
 	}
 
 	for (; start; start = start->next)
 		if (bisbeforemrk(Bbuff, start->start))
 			break;
-		else if (bisbeforemrk(Bbuff, start->end) || bisatmrk(Curbuff, start->end)) {
+		else if (bisbeforemrk(Bbuff, start->end) || bisatmrk(Bbuff, start->end)) {
 			style = T_COMMENT;
 			break;
 		}
@@ -162,9 +160,9 @@ void cprntchar(Byte ch)
 }
 
 /* Remove all comments from buffer and mark unscanned */
-void uncomment(struct buff *buff)
+void uncomment(struct zbuff *buff)
 {
-	if (buff && buff->app)
+	if (buff)
 		while (zapp(buff)->chead) {
 			struct comment *com = zapp(buff)->chead;
 			zapp(buff)->chead = com->next;

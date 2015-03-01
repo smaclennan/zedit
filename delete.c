@@ -37,13 +37,10 @@ void delinit(void)
 
 static void copytomrk(struct mark *tmark)
 {
-	struct buff *save = Curbuff;
-	bswitchto(Killbuff);
 	if (delcmd())
-		btoend(Bbuff);
+		btoend(Killbuff);
 	else
-		bempty(Bbuff);
-	bswitchto(save);
+		bempty(Killbuff);
 	bcopyrgn(tmark, Killbuff);
 }
 
@@ -58,17 +55,17 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 	Byte *spnt;
 	int copied = 0;
 
-	if (tbuff == Curbuff)
+	if (tbuff == Bbuff)
 		return 0;
 
 	flip = bisaftermrk(Bbuff, tmark);
 	if (flip)
 		bswappnt(Bbuff, tmark);
 
-	if (!(ltmrk = bcremrk(Curbuff)))
+	if (!(ltmrk = bcremrk(Bbuff)))
 		return 0;
 
-	sbuff = Curbuff;
+	sbuff = Bbuff;
 	while (bisbeforemrk(Bbuff, tmark)) {
 		if (Curpage == tmark->mpage)
 			srclen = tmark->moffset - Curchar;
@@ -99,7 +96,7 @@ int bcopyrgn(struct mark *tmark, struct buff *tbuff)
 					btmrk->moffset += dstlen;
 		makeoffset(Bbuff, Curchar + dstlen);
 		vsetmod();
-		Curbuff->bmodf = true;
+		Bbuff->bmodf = true;
 		bswitchto(sbuff);
 		bmove(Bbuff, dstlen);
 	}
@@ -198,7 +195,7 @@ void Zyank(void)
 	}
 
 	mrktomrk(&save, Send);
-	tbuff = Curbuff;
+	tbuff = Bbuff;
 #if !UNDO
 	/* This leaves the mark at the start of the yank and
 	 * the point at the end. */
@@ -246,7 +243,7 @@ void Zcopy_word(void)
 	struct mark *tmark, *start;
 
 	if (InPaw) {
-		bswitchto(Buff_save);
+		zswitchto(Buff_save);
 		getbword(word, STRMAX, bistoken);
 		bswitchto(Paw);
 		for (ptr = word; *ptr; ++ptr) {
@@ -308,5 +305,5 @@ void Zempty_buffer(void)
 	if (ask("Empty buffer? ") != YES)
 		return;
 	bempty(Bbuff);
-	Curbuff->bmodf = true;
+	Bbuff->bmodf = true;
 }

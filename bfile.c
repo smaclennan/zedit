@@ -108,7 +108,7 @@ int breadfile(const char *fname)
 	if (Curpage->plen && !(zapp(Curbuff)->bmode & COMPRESSED))
 		crfixup();
 
-	Curbuff->bmodf = false;
+	Bbuff->bmodf = false;
 
 	return 0;
 }
@@ -125,7 +125,7 @@ static bool bwritegzip(int fd)
 		return false;
 	}
 
-	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
+	for (tpage = Bbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int n = gzwrite(gz, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
@@ -144,7 +144,7 @@ static bool bwritefd(int fd)
 	int n, status = true;
 
 	bmrktopnt(Bbuff, &smark);
-	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
+	for (tpage = Bbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			makecur(Bbuff, tpage, 0);
 			n = write(fd, tpage->pdata, tpage->plen);
@@ -165,7 +165,7 @@ static bool bwritedos(int fd)
 	Byte buf[PSIZE * 2], *p;
 
 	bmrktopnt(Bbuff, &smark);
-	for (tpage = Curbuff->firstp; tpage && status; tpage = tpage->nextp)
+	for (tpage = Bbuff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int len = tpage->plen;
 			makecur(Bbuff, tpage, 0);
@@ -238,7 +238,7 @@ bool bwritefile(char *fname)
 			zapp(Curbuff)->mtime = sbuf.st_mtime;
 		else
 			zapp(Curbuff)->mtime = -1;
-		Curbuff->bmodf = false;
+		Bbuff->bmodf = false;
 	}
 
 	return status;

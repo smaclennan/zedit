@@ -198,7 +198,7 @@ void Zshow_config(void)
 {
 	int i;
 	char line[STRMAX * 2];
-	struct buff *tbuff = cmakebuff(CONFBUFF, NULL);
+	struct zbuff *tbuff = cmakebuff(CONFBUFF, NULL);
 	if (!tbuff)
 		return;
 
@@ -222,7 +222,7 @@ void Zshow_config(void)
 		binstr(Bbuff, line);
 	}
 
-	tbuff->bmodf = false;
+	tbuff->buff->bmodf = false;
 	btostart(Bbuff);
 	cswitchto(tbuff);
 }

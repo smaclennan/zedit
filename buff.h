@@ -46,7 +46,7 @@ struct buff {
 	unsigned curchar;
 	Byte *curcptr;
 	bool bmodf;					/* buffer modified? */
-	void *app;					/* app specific data */
+	void *parent;
 #if defined(HAVE_MARKS) && !defined(HAVE_GLOBAL_MARKS)
 	struct mark *marks;			/* buffer marks */
 #endif

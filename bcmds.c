@@ -25,14 +25,14 @@ static char **Bnames;			/* array of ptrs to buffer names */
 static int Numbnames;			/* number of buffers */
 static int Maxbnames;			/* max buffers Bnames can hold */
 
-struct buff *Bufflist;		/* the buffer list */
-struct buff *Curbuff;		/* the current buffer */
+struct zbuff *Bufflist;		/* the buffer list */
+struct zbuff *Curbuff;		/* the current buffer */
 struct buff *Bbuff;         /* the current low-level buffer */
 
 static void switchto_part(void)
 {
 	char word[STRMAX + 1];
-	struct buff *tbuff;
+	struct zbuff *tbuff;
 
 	getbtxt(word, STRMAX);
 	tbuff = cfindbuff(word);
@@ -63,7 +63,7 @@ void Zswitch_to_buffer(void)
 
 void Znext_buffer(void)
 {
-	struct buff *next = prevbuff(Curbuff);
+	struct zbuff *next = prevbuff(Curbuff);
 
 
 	if (!next && nextbuff(Curbuff))
@@ -78,7 +78,7 @@ void Znext_buffer(void)
 		tbell();
 }
 
-static void delbuff(struct buff *buff)
+static void delbuff(struct zbuff *buff)
 {
 	int wascur;
 	struct wdo *wdo;
@@ -88,9 +88,9 @@ static void delbuff(struct buff *buff)
 		*Lbufname = '\0';
 	if (cdelbuff(buff)) {
 		if (wascur && *Lbufname) {
-			struct buff *tbuff = cfindbuff(Lbufname);
+			struct zbuff *tbuff = cfindbuff(Lbufname);
 			if (tbuff)
-				bswitchto(tbuff);
+				zswitchto(tbuff);
 		}
 		cswitchto(Curbuff);
 
@@ -113,7 +113,7 @@ static void delbuff(struct buff *buff)
 
 void Zdelete_buffer(void)
 {
-	struct buff *tbuff;
+	struct zbuff *tbuff;
 	char bname[BUFNAMMAX + 1];
 
 	if (Argp) {
@@ -122,9 +122,9 @@ void Zdelete_buffer(void)
 			if (getarg("Buffer: ", bname, BUFNAMMAX))
 				return;
 		while ((tbuff = cfindbuff(bname)) == NULL);
-		bswitchto(tbuff);
+		zswitchto(tbuff);
 	}
-	if (Curbuff->bmodf)
+	if (Bbuff->bmodf)
 		switch (ask("save Changes? ")) {
 		case ABORT:
 			return;
@@ -136,12 +136,12 @@ void Zdelete_buffer(void)
 
 #define WASTED		(BUFNAMMAX + 14)
 
-static void lstbuff(struct buff *tbuff)
+static void lstbuff(struct zbuff *tbuff)
 {
 	sprintf(PawStr, "%-*s %c%c %8lu %s\n", BUFNAMMAX, zapp(tbuff)->bname,
 			(zapp(tbuff)->bmode & SYSBUFF) ? 'S' : ' ',
-			tbuff->bmodf ? '*' : ' ',
-			blength(tbuff),
+			tbuff->buff->bmodf ? '*' : ' ',
+			blength(tbuff->buff),
 			zapp(tbuff)->fname ? limit(zapp(tbuff)->fname, WASTED) : UNTITLED);
 	binstr(Bbuff, PawStr);
 }
@@ -153,7 +153,7 @@ void Zlist_buffers(void)
 
 	if (wuseother(LISTBUFF)) {
 		for (i = 0; i < Numbnames; ++i) {
-			struct buff *tbuff = cfindbuff(Bnames[i]);
+			struct zbuff *tbuff = cfindbuff(Bnames[i]);
 			if (tbuff)
 				lstbuff(tbuff);
 			else {
@@ -162,7 +162,7 @@ void Zlist_buffers(void)
 				binstr(Bbuff, PawStr);
 			}
 		}
-		Curbuff->bmodf = false;
+		Bbuff->bmodf = false;
 		wswitchto(was);
 	} else
 		tbell();
@@ -171,7 +171,7 @@ void Zlist_buffers(void)
 
 void Zunmodify(void)
 {
-	Curbuff->bmodf = Argp;
+	Bbuff->bmodf = Argp;
 }
 
 /* Add the new bname to the Bname array.
@@ -249,29 +249,26 @@ static void binit(void)
 }
 
 /* Create a buffer and add to Bufflist. */
-struct buff *cmakebuff(const char *bname, char *fname)
+struct zbuff *cmakebuff(const char *bname, char *fname)
 {
-	struct buff *bptr;
+	struct zbuff *bptr;
 
 	if ((bptr = cfindbuff(bname))) {
-		bswitchto(bptr);
+		zswitchto(bptr);
 		return bptr;
 	}
 
 	binit();
 
-	if (!(bptr = bcreate()) ||
-		!(bptr->app = calloc(1, sizeof(struct zapp))) ||
+	if (!(bptr = calloc(1, sizeof(struct zbuff))) ||
+		!(bptr->buff = bcreate()) ||
+		!(bptr->bname = addbname(bname)) ||
 		(fname && !(zapp(bptr)->fname = strdup(fname)))) {
-		bdelbuff(bptr);
+		bdelbuff(bptr->buff);
+		if (bptr->fname) free(bptr->fname);
+		if (bptr->bname) delbname(bptr->bname);
+		if (bptr) free(bptr);
 		error("Unable to create buffer");
-		return NULL;
-	}
-
-	zapp(bptr)->bname = addbname(bname);
-	if (!zapp(bptr)->bname) {
-		error("Out of buffers");
-		bdelbuff(bptr);
 		return NULL;
 	}
 
@@ -281,26 +278,38 @@ struct buff *cmakebuff(const char *bname, char *fname)
 	nextbuff(bptr) = Bufflist;
 	Bufflist = bptr;
 
+	bptr->buff->parent = bptr;
+
 	zapp(bptr)->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 		(VAR(VEXACT) ? EXACT : 0);
 
 	if (*bname == '*')
 		zapp(bptr)->bmode |= SYSBUFF;
 
-	bswitchto(bptr);
+	zswitchto(bptr);
 	return bptr;
 }
 
-void bswitchto(struct buff *buf)
+void zswitchto(struct zbuff *buf)
 {
 	if (buf && buf != Curbuff) {
 		Curbuff = buf;
-		Bbuff = buf;
+		Bbuff = buf->buff;
+		makecur(Bbuff, buf->buff->curpage, buf->buff->curchar);
+	}
+}
+
+/* WARNING: Curbuff could be set to NULL */
+void bswitchto(struct buff *buf)
+{
+	if (buf && buf != Bbuff) {
+		Curbuff = buf->parent;
+		Bbuff = buf      ;
 		makecur(Bbuff, buf->curpage, buf->curchar);
 	}
 }
 
-bool cdelbuff(struct buff *tbuff)
+bool cdelbuff(struct zbuff *tbuff)
 {
 	if (!tbuff)
 		return false;
@@ -317,9 +326,9 @@ bool cdelbuff(struct buff *tbuff)
 		CLEAR_UMARK;
 
 		if (nextbuff(tbuff))
-			bswitchto(nextbuff(tbuff));
+			zswitchto(nextbuff(tbuff));
 		else if (prevbuff(tbuff))
-			bswitchto(prevbuff(tbuff));
+			zswitchto(prevbuff(tbuff));
 		else
 			return false;
 	}
@@ -335,17 +344,17 @@ bool cdelbuff(struct buff *tbuff)
 		free(zapp(tbuff)->fname);
 	uncomment(tbuff);
 	undo_clear(tbuff);
-	free(tbuff->app);
 
-	bdelbuff(tbuff);
+	bdelbuff(tbuff->buff);
+	free(tbuff);
 
 	return true;
 }
 
 /* Locate a given buffer */
-struct buff *cfindbuff(const char *bname)
+struct zbuff *cfindbuff(const char *bname)
 {
-	struct buff *tbuff;
+	struct zbuff *tbuff;
 
 	foreachbuff(tbuff)
 		if (strncasecmp(zapp(tbuff)->bname, bname, BUFNAMMAX) == 0)

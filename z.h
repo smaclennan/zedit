@@ -165,7 +165,7 @@ extern int Arg;				/* must be signed */
 extern int InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
 extern int Pawcol, Pawlen, Pshift;
-extern struct buff *Paw;
+extern struct zbuff *Paw;
 
 extern unsigned Cmd;
 extern int Cmdpushed;

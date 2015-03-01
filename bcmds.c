@@ -262,13 +262,17 @@ struct zbuff *cmakebuff(const char *bname, char *fname)
 
 	if (!(bptr = calloc(1, sizeof(struct zbuff))) ||
 		!(bptr->buff = bcreate()) ||
-		!(bptr->bname = addbname(bname)) ||
 		(fname && !(zapp(bptr)->fname = strdup(fname)))) {
 		bdelbuff(bptr->buff);
 		if (bptr->fname) free(bptr->fname);
-		if (bptr->bname) delbname(bptr->bname);
 		if (bptr) free(bptr);
 		error("Unable to create buffer");
+		return NULL;
+	}
+
+	if (bname && !(bptr->bname = addbname(bname))) {
+		error("Out of buffer name space");
+		cdelbuff(bptr);
 		return NULL;
 	}
 
@@ -283,7 +287,7 @@ struct zbuff *cmakebuff(const char *bname, char *fname)
 	zapp(bptr)->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 		(VAR(VEXACT) ? EXACT : 0);
 
-	if (*bname == '*')
+	if (bname && *bname == '*')
 		zapp(bptr)->bmode |= SYSBUFF;
 
 	zswitchto(bptr);

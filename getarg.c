@@ -26,7 +26,7 @@
 int InPaw;
 bool First;
 int Pawcol, Pawlen, Pshift;
-struct buff *Paw;
+struct zbuff *Paw;
 struct zbuff *Buff_save;
 
 /* globals for getplete */
@@ -55,7 +55,7 @@ bool _getarg(const char *prompt, char *arg, int max, bool tostart)
 	argp_save = Argp;
 	arg_save = Arg;
 	Buff_save = Curbuff;
-// SAM	zapp(Paw)->bmode = zapp(Curbuff)->bmode;
+	zapp(Paw)->bmode = zapp(Curbuff)->bmode;
 	InPaw = true;
 	Curcmds = 1;
 	Pshift = 0;
@@ -81,7 +81,7 @@ bool _getarg(const char *prompt, char *arg, int max, bool tostart)
 	Argp = argp_save;
 	Arg = arg_save;
 	zswitchto(Buff_save);		/* go back */
-// SAM	zapp(Curbuff)->bmode = zapp(Paw)->bmode;	/* mainly for EXACT mode */
+	zapp(Curbuff)->bmode = zapp(Paw)->bmode;	/* mainly for EXACT mode */
 	t_goto(trow, tcol);
 	Curwdo->modeflags = INVALID;
 	Curcmds = 0;

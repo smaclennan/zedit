@@ -26,9 +26,9 @@
 #define FNM_FLAGS 0
 #endif
 
-#if 0
+#if 0 // SAM
 static void grep_one(char *fname, Byte *ebuf,
-		     struct zbuff *inbuff, struct buff *outbuff)
+			 struct zbuff *inbuff, struct zbuff *outbuff)
 {
 	zswitchto(inbuff);
 	bempty(Bbuff);
@@ -49,7 +49,7 @@ static void grep_one(char *fname, Byte *ebuf,
 		start = zcreatemrk();
 		toendline(Bbuff);
 		bmove1(Bbuff); /* grab NL */
-		bcopyrgn(start, outbuff);
+		bcopyrgn(start, outbuff->buff);
 		unmark(start);
 	}
 }
@@ -129,6 +129,6 @@ void Zgrep(void)
 #else
 void Zgrep(void)
 {
-	error("disabled");
+	error("disable");
 }
 #endif

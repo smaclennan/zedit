@@ -480,47 +480,49 @@ static char *setmodes(struct zbuff *buff)
 }
 
 /* Set one windows modified flags. */
-static void subset(int from, int to)
+static void subset(struct buff *buff, int from, int to)
 {
 	struct mark *btmark;
 	int row;
 
-	if (Scrnmarks[from].mbuff != Bbuff)
+	if (Scrnmarks[from].mbuff != buff)
 		return;
 
-	for (row = from; row <= to && Scrnmarks[row].mpage != Curpage; ++row) ;
+	for (row = from; row <= to && Scrnmarks[row].mpage != buff->curpage; ++row) ;
 
 	if (row > to) {
 		for (row = from, btmark = &Scrnmarks[from];
-			 row <= to && (btmark->mbuff != Bbuff || bisaftermrk(Bbuff, btmark));
+			 row <= to && (btmark->mbuff != buff || bisaftermrk(buff, btmark));
 			 ++btmark, ++row)
 			;
 		if (row > from) {
-			while (Scrnmarks[--row].mbuff != Bbuff) ;
+			while (Scrnmarks[--row].mbuff != buff) ;
 			Scrnmodf[row] = true;
 		}
 	} else {
 		btmark = &Scrnmarks[row];
-		while (btmark->mpage == Curpage && btmark->moffset <= Curchar && row <= to) {
+		while (btmark->mpage == buff->curpage && btmark->moffset <= buff->curchar && row <= to) {
 			++btmark;
 			++row;
 		}
 		if (--row >= from)
 			Scrnmodf[row] = true;
-		while (row > from && bisatmrk(Bbuff, &Scrnmarks[row])) {
+		while (row > from && bisatmrk(buff, &Scrnmarks[row])) {
 			Scrnmodf[--row] = true;
 		}
 	}
 }
 
-/* Insert the correct modified flags. Ignores buff. */
+/* Insert the correct modified flags. */
 void vsetmod_callback(struct buff *buff)
 {
 	struct wdo *wdo;
 
+	if (buff == NULL) buff = Bbuff;
+
 	foreachwdo(wdo)
 		if (wdo->wbuff == Curbuff)
-			subset(wdo->first, wdo->last);
+			subset(buff, wdo->first, wdo->last);
 }
 
 void vsetmrk(struct mark *mrk)
@@ -633,7 +635,7 @@ pawshift:
 
 void makepaw(char *word, bool start)
 {
-	bswitchto(Paw);
+	zswitchto(Paw);
 	bempty(Bbuff);
 	binstr(Bbuff, word);
 	tcleol();

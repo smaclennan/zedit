@@ -214,6 +214,14 @@ int main(int argc, char **argv)
 
 	/* create the needed buffers */
 	delinit();
+
+	/* PAW must not be on the Bufflist */
+	if (!(Paw = cmakebuff(NULL, NULL)))
+		exit(1);
+	Paw->prev = Paw->next = NULL;
+	Bufflist = NULL;
+	Curbuff = NULL;
+
 	if (!cmakebuff(MAINBUFF, NULL)) {
 		puts("Not enough memory.");
 		exit(1);

@@ -25,13 +25,11 @@ static struct buff *Killbuff;
 static void delfini(void)
 {
 	bdelbuff(Killbuff);
-	bdelbuff(Paw);
 }
 
 void delinit(void)
 {
 	Killbuff = bcreate();
-	Paw = bcreate();
 	atexit(delfini);
 }
 
@@ -46,66 +44,57 @@ static void copytomrk(struct mark *tmark)
 
 /* Copy from Point to tmark to tbuff. Returns number of bytes
  * copied. Caller must handle undo. */
-int bcopyrgn(struct mark *tmark, struct buff *tbuff)
+/* No global */
+int bcopyrgn(struct mark *tmark, struct buff *to)
 {
-	struct buff *sbuff;
 	struct mark *ltmrk, *btmrk;
 	bool flip;
 	int  srclen, dstlen;
-	Byte *spnt;
 	int copied = 0;
+	struct buff *from = tmark->mbuff;
 
-	if (tbuff == Bbuff)
-		return 0;
-
-	flip = bisaftermrk(Bbuff, tmark);
+	flip = bisaftermrk(from, tmark);
 	if (flip)
-		bswappnt(Bbuff, tmark);
+		bswappnt(from, tmark);
 
-	if (!(ltmrk = bcremrk(Bbuff)))
+	if (!(ltmrk = bcremrk(from)))
 		return 0;
 
-	sbuff = Bbuff;
-	while (bisbeforemrk(Bbuff, tmark)) {
-		if (Curpage == tmark->mpage)
-			srclen = tmark->moffset - Curchar;
+	while (bisbeforemrk(from, tmark)) {
+		if (from->curpage == tmark->mpage)
+			srclen = tmark->moffset - from->curchar;
 		else
-			srclen = Curpage->plen - Curchar;
-		spnt = Curcptr;
+			srclen = curplen(from) - from->curchar;
 
-		bswitchto(tbuff);
-		dstlen = PSIZE - Curpage->plen;
+		dstlen = PSIZE - curplen(to);
 		if (dstlen == 0) {
-			if (pagesplit(Bbuff, HALFP))
-				dstlen = PSIZE - Curpage->plen;
-			else {
-				bswitchto(sbuff);
+			if (pagesplit(to, HALFP))
+				dstlen = PSIZE - curplen(to);
+			else
 				break;
-			}
 		}
 		if (srclen < dstlen)
 			dstlen = srclen;
 		/* Make a gap */
-		memmove(Curcptr + dstlen, Curcptr, Curpage->plen - Curchar);
+		memmove(to->curcptr + dstlen, to->curcptr, curplen(to) - to->curchar);
 		/* and fill it in */
-		memmove(Curcptr, spnt, dstlen);
-		Curpage->plen += dstlen;
+		memmove(to->curcptr, from->curcptr, dstlen);
+		curplen(to) += dstlen;
 		copied += dstlen;
-		foreach_pagemark(Bbuff, btmrk, Curpage)
-			if (btmrk->moffset > Curchar)
+		foreach_pagemark(to, btmrk, to->curpage)
+			if (btmrk->moffset > to->curchar)
 					btmrk->moffset += dstlen;
-		makeoffset(Bbuff, Curchar + dstlen);
-		vsetmod();
-		Bbuff->bmodf = true;
-		bswitchto(sbuff);
-		bmove(Bbuff, dstlen);
+		makeoffset(to, to->curchar + dstlen);
+		vsetmod_callback(to);
+		to->bmodf = true;
+		bmove(from, dstlen);
 	}
 
-	bpnttomrk(Bbuff, ltmrk);
+	bpnttomrk(from, ltmrk);
 	unmark(ltmrk);
 
 	if (flip)
-		bswappnt(Bbuff, tmark);
+		bswappnt(from, tmark);
 
 	return copied;
 }
@@ -186,7 +175,6 @@ void Zcopy_region(void)
 
 void Zyank(void)
 {
-	struct buff *tbuff;
 	struct mark *tmark, save;	/* save must NOT be a pointer */
 
 	if (InPaw && First) {
@@ -195,23 +183,23 @@ void Zyank(void)
 	}
 
 	mrktomrk(&save, Send);
-	tbuff = Bbuff;
 #if !UNDO
 	/* This leaves the mark at the start of the yank and
 	 * the point at the end. */
 	set_umark(NULL);
 #endif
-	bswitchto(Killbuff);
-	btoend(Bbuff);
-	tmark = zcreatemrk();
-	btostart(Bbuff);
+	btoend(Killbuff);
+	if (!(tmark = bcremrk(Killbuff))) {
+		error("out of memory");
+		return;
+	}
+	btostart(Killbuff);
 #if UNDO
-	undo_add(bcopyrgn(tmark, tbuff));
+	undo_add(bcopyrgn(tmark, Bbuff));
 #else
-	bcopyrgn(tmark, tbuff);
+	bcopyrgn(tmark, Bbuff);
 #endif
 	unmark(tmark);
-	bswitchto(tbuff);
 	if (bisaftermrk(Bbuff, &save))
 		reframe();
 }
@@ -245,7 +233,7 @@ void Zcopy_word(void)
 	if (InPaw) {
 		zswitchto(Buff_save);
 		getbword(word, STRMAX, bistoken);
-		bswitchto(Paw);
+		zswitchto(Paw);
 		for (ptr = word; *ptr; ++ptr) {
 			Cmd = *ptr;
 			pinsert();

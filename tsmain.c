@@ -11,14 +11,7 @@
 
 static void do_append(struct zbuff *buff, char *buffer, int n)
 {
-#ifdef SAM_NOT_YET
 	bappend(buff, buffer, n);
-#else
-	int i;
-
-	for (i = 0; i < n; ++i, ++buffer)
-		binsert(buff, *buffer);
-#endif
 }
 
 static int readone(struct zbuff *buff, int fd)

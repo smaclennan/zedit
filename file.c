@@ -346,7 +346,7 @@ void Zwrite_file(void)
 
 void Zread_file(void)
 {
-#if 0
+#if 0 // SAM
 	struct buff *tbuff, *save;
 	struct mark *tmark;
 	int rc = 1;

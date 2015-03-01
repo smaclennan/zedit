@@ -30,7 +30,7 @@
 
 #include <time.h>
 
-#ifdef ZEDIT
+#ifdef UNSIGNED_BYTES
 #define Byte unsigned char
 #else
 #define Byte char

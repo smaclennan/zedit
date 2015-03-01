@@ -6,15 +6,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#include "buff.h"
-#include "mark.h"
-
-#ifdef ZEDIT
 #include "z.h"
-#else
-#define COMPRESSED			0x0008
-#define CRLF				0x0010
-#endif
 
 #if ZLIB
 #undef Byte

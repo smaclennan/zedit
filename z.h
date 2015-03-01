@@ -139,12 +139,13 @@ struct zapp {
 	Byte comchar;			/* single char comment character */
 	void *undo_tail;        /* list of undos */
 	struct mark *umark;     /* user mark */
+	struct buff *prev, *next;	/* list of buffers */
 };
 #define zapp(b) ((struct zapp *)((b)->app))
 
-#define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)
-#define nextbuff(b) ((b)->next)
-#define prevbuff(b) ((b)->prev)
+#define nextbuff(b) (zapp(b)->next)
+#define prevbuff(b) (zapp(b)->prev)
+#define foreachbuff(b) for ((b) = Bufflist; (b); (b) = zapp(b)->next)
 
 extern char *Home;
 extern bool Argp;

@@ -47,12 +47,11 @@ struct buff {
 	struct page *curpage;		/* the position of the point */
 	unsigned curchar;
 	Byte *curcptr;
+	unsigned bmode;				/* buffer mode - unused in core */
+	void *app;					/* app specific data */
 #if defined(HAVE_MARKS) && !defined(HAVE_GLOBAL_MARKS)
 	struct mark *marks;			/* buffer marks */
 #endif
-	unsigned bmode;				/* buffer mode - unused in core */
-	void *app;					/* app specific data */
-	struct buff *prev, *next;	/* list of buffers */
 };
 
 /* This is used a lot */

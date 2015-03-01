@@ -136,6 +136,7 @@ extern struct buff *Curbuff;
 struct zapp {
 	char *bname;            /* buffer name */
 	char *fname;            /* file associated with buffer */
+	unsigned bmode;		    /* buffer mode - unused in core */
 	time_t mtime;           /* file modified time */
 	void *chead, *ctail;	/* list of comments in file */
 	Byte comchar;			/* single char comment character */

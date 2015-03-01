@@ -163,7 +163,7 @@ void cswitchto(struct buff *buff)
 		}
 		Curwdo->modeflags = INVALID;
 
-		settabsize(buff->bmode);
+		settabsize(zapp(buff)->bmode);
 	}
 
 }

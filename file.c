@@ -205,7 +205,7 @@ static bool readone(char *bname, char *path)
 				putpaw("New File");
 #ifdef R_OK
 			else if (access(path, R_OK | W_OK) == EOF)
-				Curbuff->bmode |= VIEW;
+				zapp(Curbuff)->bmode |= VIEW;
 #endif
 			strcpy(Lbufname, zapp(was)->bname);
 		} else { /* error */
@@ -277,7 +277,7 @@ void Zsave_all_files(void)
 		struct buff *tbuff;
 
 		foreachbuff(tbuff)
-			if (!(tbuff->bmode & SYSBUFF) && zapp(tbuff)->fname)
+			if (!(zapp(tbuff)->bmode & SYSBUFF) && zapp(tbuff)->fname)
 				tbuff->bmodf = true;
 	}
 	saveall(true);
@@ -325,7 +325,7 @@ void Zwrite_file(void)
 				bswitchto(save);
 				bcopyrgn(UMARK, tbuff);
 				bswitchto(tbuff);
-				Curbuff->bmode = save->bmode;
+				zapp(Curbuff)->bmode = zapp(save)->bmode;
 				zwritefile(path);
 				bswitchto(save);
 				bdelbuff(tbuff);
@@ -355,7 +355,7 @@ void Zread_file(void)
 	save = Curbuff;
 	if ((tbuff = bcreate())) {
 		bswitchto(tbuff);
-		Curbuff->bmode = save->bmode;
+		zapp(Curbuff)->bmode = zapp(save)->bmode;
 		putpaw("Reading %s", lastpart(Fname));
 		rc = zreadfile(Fname);
 		if (rc == 0) {

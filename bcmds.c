@@ -138,7 +138,7 @@ void Zdelete_buffer(void)
 static void lstbuff(struct buff *tbuff)
 {
 	sprintf(PawStr, "%-*s %c%c %8lu %s\n", BUFNAMMAX, zapp(tbuff)->bname,
-			(tbuff->bmode & SYSBUFF) ? 'S' : ' ',
+			(zapp(tbuff)->bmode & SYSBUFF) ? 'S' : ' ',
 			tbuff->bmodf ? '*' : ' ',
 			blength(tbuff),
 			zapp(tbuff)->fname ? limit(zapp(tbuff)->fname, WASTED) : UNTITLED);
@@ -294,11 +294,11 @@ struct buff *cmakebuff(const char *bname, char *fname)
 	nextbuff(bptr) = Bufflist;
 	Bufflist = bptr;
 
-	bptr->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
+	zapp(bptr)->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 		(VAR(VEXACT) ? EXACT : 0);
 
 	if (*bname == '*')
-		bptr->bmode |= SYSBUFF;
+		zapp(bptr)->bmode |= SYSBUFF;
 
 	bswitchto(bptr);
 	return bptr;

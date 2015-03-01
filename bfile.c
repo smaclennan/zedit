@@ -39,7 +39,7 @@ static void crfixup(void)
 	if (raw_mode)
 		return;
 
-	Curbuff->bmode |= CRLF;
+	zapp(Curbuff)->bmode |= CRLF;
 
 	while (bcsearch(Curbuff, '\r'))
 		if (*Curcptr == '\n') {
@@ -84,7 +84,7 @@ int breadfile(const char *fname)
 	 * compressed.
 	 */
 	if (sbuf.st_size && gzdirect(gz) == 0)
-		Curbuff->bmode |= COMPRESSED;
+		zapp(Curbuff)->bmode |= COMPRESSED;
 #endif
 
 	while ((len = fileread(fd, buf, PSIZE)) > 0) {
@@ -105,7 +105,7 @@ int breadfile(const char *fname)
 
 	btostart(Curbuff);
 
-	if (Curpage->plen && !(Curbuff->bmode & COMPRESSED))
+	if (Curpage->plen && !(zapp(Curbuff)->bmode & COMPRESSED))
 		crfixup();
 
 	Curbuff->bmodf = false;
@@ -221,11 +221,11 @@ bool bwritefile(char *fname)
 	fd = open(fname, WRITE_MODE, mode);
 	if (fd != EOF) {
 #if ZLIB
-		if (Curbuff->bmode & COMPRESSED)
+		if (zapp(Curbuff)->bmode & COMPRESSED)
 			status = bwritegzip(fd);
 		else
 #endif
-			if (Curbuff->bmode & CRLF)
+			if (zapp(Curbuff)->bmode & CRLF)
 				status = bwritedos(fd);
 			else
 				status = bwritefd(fd);

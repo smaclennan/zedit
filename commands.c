@@ -204,7 +204,7 @@ void Zc_indent(void)
 	int width = 0;
 	struct mark tmark;
 
-	if ((Curbuff->bmode & OVERWRITE))
+	if ((zapp(Curbuff)->bmode & OVERWRITE))
 		bcsearch(Curbuff, NL);
 	else {
 		int sawstart = 0, did_indent = 0;
@@ -285,7 +285,7 @@ void Zfill_paragraph(void)
 {	/* Not reentrant - must iterate for arg */
 	struct mark *tmark, *tmp;
 
-	if (Curbuff->bmode & PROGMODE) {
+	if (zapp(Curbuff)->bmode & PROGMODE) {
 		putpaw("Not in program mode");
 		tbell();
 		return;
@@ -416,7 +416,7 @@ void Zexit(void)
 		return;
 
 	foreachbuff(tbuff)
-		if (tbuff->bmodf && !(tbuff->bmode & SYSBUFF))
+		if (tbuff->bmodf && !(zapp(tbuff)->bmode & SYSBUFF))
 			modf = true;
 	if (modf && ask("Modified buffers. quit anyway? ") != YES)
 		return;
@@ -429,7 +429,7 @@ void Zexit(void)
 
 void Zsave_and_exit(void)
 {
-	if ((Curbuff->bmode & SYSBUFF) == 0)
+	if ((zapp(Curbuff)->bmode & SYSBUFF) == 0)
 		Zsave_file();
 	Zexit();
 }
@@ -475,7 +475,7 @@ bool saveall(bool must)
 
 	bsave = Curbuff;
 	foreachbuff(tbuff)
-		if (!(tbuff->bmode & SYSBUFF) && !promptsave(tbuff, must)) {
+		if (!(zapp(tbuff)->bmode & SYSBUFF) && !promptsave(tbuff, must)) {
 			Curwdo->modeflags = INVALID;
 			return false;
 		}
@@ -489,7 +489,7 @@ static void mshow(unsigned ch)
 	int cnt = 0;
 	struct mark save;
 
-	if (!(Curbuff->bmode & PROGMODE) || InPaw || tkbrdy())
+	if (!(zapp(Curbuff)->bmode & PROGMODE) || InPaw || tkbrdy())
 		return;
 
 	switch (ch) {
@@ -521,7 +521,7 @@ static void mshow(unsigned ch)
 
 void Zinsert(void)
 {
-	if (Curbuff->bmode & OVERWRITE) {
+	if (zapp(Curbuff)->bmode & OVERWRITE) {
 		if (!bisend(Curbuff) && *Curcptr != NL)
 			bdelete(Curbuff, 1);
 	}
@@ -532,7 +532,7 @@ void Zinsert(void)
 
 void Znewline(void)
 {
-	if (Curbuff->bmode & OVERWRITE)
+	if (zapp(Curbuff)->bmode & OVERWRITE)
 		bcsearch(Curbuff, NL);
 	else
 		binsert(Curbuff, NL);
@@ -550,7 +550,7 @@ void Ztab(void)
 
 void Zinsert_overwrite(void)
 {
-	Curbuff->bmode ^= OVERWRITE;
+	zapp(Curbuff)->bmode ^= OVERWRITE;
 	if (!InPaw)
 		Curwdo->modeflags = INVALID;
 	Arg = 0;
@@ -559,12 +559,12 @@ void Zinsert_overwrite(void)
 
 void Ztoggle_case(void)
 {
-	Curbuff->bmode ^= EXACT;
+	zapp(Curbuff)->bmode ^= EXACT;
 	if (InPaw && Insearch) {
 		tsetpoint(Rowmax - 1, 0);
 		tprntstr(nocase(NULL));
 	} else
-		putpaw(Curbuff->bmode & EXACT ? "Exact Set" : "Exact Reset");
+		putpaw(zapp(Curbuff)->bmode & EXACT ? "Exact Set" : "Exact Reset");
 	Arg = 0;
 }
 
@@ -711,7 +711,7 @@ void Zmode(void)
 
 	/* find the current mode for default */
 	for (i = 0; i < NUMMODES - 1; ++i)
-		if (modes[i].mode & Curbuff->bmode)
+		if (modes[i].mode & zapp(Curbuff)->bmode)
 			break;
 	rc = getplete("Mode: ", modes[i].str, (char **)modes,
 			  AMODESIZE, NUMMODES);
@@ -776,7 +776,7 @@ void toggle_mode(int mode)
 			zapp(Curbuff)->comchar = 0;
 	}
 
-	Curbuff->bmode = (Curbuff->bmode & ~MAJORMODE) | mode;
+	zapp(Curbuff)->bmode = (zapp(Curbuff)->bmode & ~MAJORMODE) | mode;
 }
 
 void Zmark_paragraph(void)
@@ -796,7 +796,7 @@ static void setregion(int (*convert)(int))
 	bool swapped;
 	struct mark tmark;
 
-	if (Curbuff->bmode & PROGMODE) {
+	if (zapp(Curbuff)->bmode & PROGMODE) {
 		putpaw("Not in program mode");
 		tbell();
 		return;

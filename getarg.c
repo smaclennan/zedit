@@ -54,7 +54,7 @@ bool _getarg(const char *prompt, char *arg, int max, bool tostart)
 	argp_save = Argp;
 	arg_save = Arg;
 	Buff_save = Curbuff;
-	Paw->bmode = Curbuff->bmode;
+	zapp(Paw)->bmode = zapp(Curbuff)->bmode;
 	InPaw = true;
 	Curcmds = 1;
 	Pshift = 0;
@@ -80,7 +80,7 @@ bool _getarg(const char *prompt, char *arg, int max, bool tostart)
 	Argp = argp_save;
 	Arg = arg_save;
 	bswitchto(Buff_save);		/* go back */
-	Curbuff->bmode = Paw->bmode;	/* mainly for EXACT mode */
+	zapp(Curbuff)->bmode = zapp(Paw)->bmode;	/* mainly for EXACT mode */
 	t_goto(trow, tcol);
 	Curwdo->modeflags = INVALID;
 	Curcmds = 0;

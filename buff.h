@@ -41,12 +41,11 @@
 /* THE BUFFER STRUCTURES */
 
 struct buff {
-	bool bmodf;					/* buffer modified? */
 	struct page *firstp;		/* the pages */
 	struct page *curpage;		/* the position of the point */
 	unsigned curchar;
 	Byte *curcptr;
-	unsigned bmode;				/* buffer mode - unused in core */
+	bool bmodf;					/* buffer modified? */
 	void *app;					/* app specific data */
 #if defined(HAVE_MARKS) && !defined(HAVE_GLOBAL_MARKS)
 	struct mark *marks;			/* buffer marks */

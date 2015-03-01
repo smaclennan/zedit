@@ -147,7 +147,7 @@ static void setavar(const char *vin, bool display)
 			do_var_match(i, vin);
 			if (display) {
 				if (i == VTABS || i == VCTABS) {
-					settabsize(Curbuff->bmode);
+					settabsize(zapp(Curbuff)->bmode);
 					redisplay();
 				}
 				if (Vars[i].vtype == V_STRING) {

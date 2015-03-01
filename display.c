@@ -183,7 +183,7 @@ void zrefresh(void)
 		if (wdo != Curwdo) {
 			struct mark *point;
 			bswitchto(wdo->wbuff);
-			settabsize(Curbuff->bmode);
+			settabsize(zapp(Curbuff)->bmode);
 			point = zcreatemrk();
 			bpnttomrk(Curbuff, wdo->wstart);
 			innerdsp(wdo->first, wdo->last, NULL);
@@ -442,7 +442,7 @@ static char *setmodes(struct buff *buff)
 	printchar = tprntchar;
 
 	/* Set PawStr to majour mode and setup any special keys */
-	switch (buff->bmode & MAJORMODE) {
+	switch (zapp(buff)->bmode & MAJORMODE) {
 	case CMODE:
 		strcpy(PawStr, "C");
 		Keys[CR] = ZC_INDENT;
@@ -466,16 +466,16 @@ static char *setmodes(struct buff *buff)
 		strcpy(PawStr, "Normal");
 	}
 
-	if (buff->bmode & VIEW)
+	if (zapp(buff)->bmode & VIEW)
 		strcat(PawStr, " RO");
-	if (buff->bmode & COMPRESSED)
+	if (zapp(buff)->bmode & COMPRESSED)
 		strcat(PawStr, " Z");
-	if (buff->bmode & CRLF)
+	if (zapp(buff)->bmode & CRLF)
 		strcat(PawStr, " CR");
-	if (buff->bmode & OVERWRITE)
+	if (zapp(buff)->bmode & OVERWRITE)
 		strcat(PawStr, " OVWRT");
 
-	settabsize(buff->bmode);
+	settabsize(zapp(buff)->bmode);
 	return PawStr;
 }
 

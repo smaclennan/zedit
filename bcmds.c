@@ -303,6 +303,14 @@ struct buff *cmakebuff(const char *bname, char *fname)
 	return bptr;
 }
 
+void bswitchto(struct buff *buf)
+{
+	if (buf && buf != Curbuff) {
+		Curbuff = buf;
+		makecur(Curbuff, buf->curpage, buf->curchar);
+	}
+}
+
 bool cdelbuff(struct buff *tbuff)
 {
 	if (!tbuff)

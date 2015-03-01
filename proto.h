@@ -160,6 +160,7 @@ int breadfile(const char *);
 bool bwritefile(char *);
 int bmakecol(int, bool);
 bool bstrsearch(const char *, bool);
+void bswitchto(struct buff *);
 struct buff *cfindbuff(const char *);
 struct buff *cmakebuff(const char *, char *);
 bool cdelbuff(struct buff *buff);

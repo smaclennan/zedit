@@ -109,8 +109,6 @@ bool _bm_rsearch(struct buff *buff, const char *str, bool sensitive);
 #define boffset _boffset
 
 #define binstr(b, s) _bindata((b), (Byte *)(s), strlen(s));
-
-void bswitchto(struct buff *);
 #endif
 
 #ifndef NULL

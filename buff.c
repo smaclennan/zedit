@@ -566,16 +566,6 @@ int _bwrite(struct buff *buff, int fd, int size)
 	return n;
 }
 
-#ifndef HAVE_THREADS
-void bswitchto(struct buff *buf)
-{
-	if (buf && buf != Curbuff) {
-		Curbuff = buf;
-		makecur(Curbuff, buf->curpage, buf->curchar);
-	}
-}
-#endif
-
 /* Low level memory page routines */
 
 /* Make page current at dist */

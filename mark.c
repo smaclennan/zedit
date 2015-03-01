@@ -145,18 +145,11 @@ void _bmrktopnt(struct buff *buff, struct mark *tmark)
 /* Put the current buffer point at the mark */
 bool _bpnttomrk(struct buff *buff, struct mark *tmark)
 {
-#if HAVE_THREADS
+	/* SAM WARNING: Zedit used to do bswitchto if tmark->mbuff != buff */
 	if (tmark->mbuff != buff)
 		return false;
 	if (tmark->mpage)
 		makecur(buff, tmark->mpage, tmark->moffset);
-#else
-	if (tmark->mpage) {
-		if (tmark->mbuff != buff)
-			bswitchto(tmark->mbuff);
-		makecur(buff, tmark->mpage, tmark->moffset);
-	}
-#endif
 	return true;
 }
 

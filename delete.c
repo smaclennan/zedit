@@ -105,10 +105,10 @@ void bdeltomrk(struct mark *tmark)
 	if (bisaftermrk(Bbuff, tmark))
 		bswappnt(Bbuff, tmark);
 	while (bisbeforemrk(Bbuff, tmark))
-		if (Curpage == tmark->mpage)
-			bdelete(Bbuff, tmark->moffset - Curchar);
+		if (Bbuff->curpage == tmark->mpage)
+			bdelete(Bbuff, tmark->moffset - Bbuff->curchar);
 		else
-			bdelete(Bbuff, Curpage->plen - Curchar);
+			bdelete(Bbuff, curplen(Bbuff) - Bbuff->curchar);
 }
 
 void killtomrk(struct mark *tmark)

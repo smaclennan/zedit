@@ -262,8 +262,8 @@ static bool in_region(struct mark *pmark)
 static void bshove(void)
 {
 	btoend(Bbuff);
-	++Curcptr;
-	++Curchar;
+	++Bbuff->curcptr;
+	++Bbuff->curchar;
 }
 
 #if SHOW_REGION

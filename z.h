@@ -151,10 +151,8 @@ struct zbuff {
 
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)
 
-#define Curpage (Bbuff->curpage)
-#define Curchar (Bbuff->curchar)
 #define Curcptr (Bbuff->curcptr)
-#define Buff()  (*Curcptr)
+#define Buff()  (*Bbuff->curcptr)
 
 extern char *Home;
 extern bool Argp;

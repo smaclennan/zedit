@@ -115,7 +115,7 @@ bool zwritefile(char *fname)
 
 static void crfixup(void)
 {
-	char *p = (char *)memchr(Curpage->pdata + 1, '\n', Curpage->plen - 1);
+	char *p = (char *)memchr(Bbuff->curpage->pdata + 1, '\n', curplen(Bbuff) - 1);
 	if (!p)
 		return;
 
@@ -168,7 +168,7 @@ int zreadfile(char *fname)
 
 	if (compressed)
 		Curbuff->bmode |= COMPRESSED;
-	else if (Curpage->plen)
+	else if (curplen(Bbuff))
 		crfixup();
 
 	clrpaw();

@@ -48,10 +48,7 @@ static void newcomment(struct mark *start)
 static void scanbuffer(struct zbuff *buff)
 {
 	struct mark tmark, start;
-	Byte comchar;
-
-	if (!Curbuff->comchar) return;
-	comchar = Curbuff->comchar;
+	Byte comchar = Curbuff->comchar;
 
 	uncomment(buff);
 	invalidate_scrnmarks(0, Rowmax - 2);

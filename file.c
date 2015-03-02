@@ -113,6 +113,29 @@ bool zwritefile(char *fname)
 	return rc;
 }
 
+static void crfixup(void)
+{
+	char *p = (char *)memchr(Curpage->pdata + 1, '\n', Curpage->plen - 1);
+	if (!p)
+		return;
+
+	if (*(p - 1) != '\r')
+		return;
+
+	if (raw_mode)
+		return;
+
+	Curbuff->bmode |= CRLF;
+
+	while (bcsearch(Bbuff, '\r'))
+		if (*Curcptr == '\n') {
+			bmove(Bbuff, -1);
+			bdelete(Bbuff, 1);
+		}
+
+	btostart(Bbuff);
+}
+
 /*
 Load the file 'fname' into the current buffer.
 Returns  0  successfully opened file
@@ -121,7 +144,15 @@ Returns  0  successfully opened file
 */
 int zreadfile(char *fname)
 {
-	int rc = breadfile(fname);
+	struct stat sbuf;
+	int compressed;
+
+	if (stat(fname, &sbuf) == 0)
+		Curbuff->mtime = sbuf.st_mtime;
+	else
+		Curbuff->mtime = -1;
+
+	int rc = breadfile(Bbuff, fname, &compressed);
 
 	if (rc > 0) {
 		if (rc == ENOENT)
@@ -134,6 +165,11 @@ int zreadfile(char *fname)
 		error("gzdopen %s", fname);
 		return -1;
 	}
+
+	if (compressed)
+		Curbuff->bmode |= COMPRESSED;
+	else if (Curpage->plen)
+		crfixup();
 
 	clrpaw();
 	return 0;
@@ -346,34 +382,28 @@ void Zwrite_file(void)
 
 void Zread_file(void)
 {
-#if 0 // SAM
-	struct buff *tbuff, *save;
+	struct buff *tbuff;
 	struct mark *tmark;
 	int rc = 1;
 
 	if (get_findfile("Read File: "))
 		return;
 
-	save = Bbuff;
 	if ((tbuff = bcreate())) {
-		bswitchto(tbuff);
-		Curbuff->bmode = save->bmode;
 		putpaw("Reading %s", lastpart(Fname));
-		rc = zreadfile(Fname);
+		rc = breadfile(tbuff, Fname, NULL);
 		if (rc == 0) {
-			btoend(Bbuff);
-			tmark = zcreatemrk();
-			btostart(Bbuff);
-			bcopyrgn(tmark, save);
-			unmark(tmark);
+			btoend(tbuff);
+			if ((tmark = bcremrk(tbuff))) {
+				btostart(tbuff);
+				bcopyrgn(tmark, Bbuff);
+				unmark(tmark);
+			} else
+				error("Out of memory");
 		}
-		zswitchto(save);
 		bdelbuff(tbuff);
 	}
 
 	if (rc > 0)
 		error("Unable to read %s", Fname);
-#else
-	error("disabled");
-#endif
 }

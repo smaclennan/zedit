@@ -15,5 +15,5 @@
  * default: Output in real time but you must wait until command complete.
  */
 #if defined(__unix__)
-// SAM #define DOPIPES 1
+#define DOPIPES 1
 #endif

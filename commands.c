@@ -371,16 +371,16 @@ void Zprevious_paragraph(void)
 /* MISC COMMANDS */
 
 /* Return the current line of the point. */
-unsigned long bline(void)
+unsigned long bline(struct buff *buff)
 {
 	struct mark tmark;
 	unsigned long line = 1;
 
-	bmrktopnt(Bbuff, &tmark);
-	btostart(Bbuff);
-	while (bcsearch(Bbuff, '\n') && !bisaftermrk(Bbuff, &tmark))
+	bmrktopnt(buff, &tmark);
+	btostart(buff);
+	while (bcsearch(buff, '\n') && !bisaftermrk(buff, &tmark))
 		++line;
-	bpnttomrk(Bbuff, &tmark);
+	bpnttomrk(buff, &tmark);
 	return line;
 }
 
@@ -393,10 +393,10 @@ void Zposition(void)
 		mark = blocation(Bbuff);
 		bswappnt(Bbuff, UMARK);
 		putpaw("Line: %u  Column: %u  Point: %lu  Mark: %lu  Length: %lu",
-			   bline(), bgetcol(false, 0) + 1, point, mark, blength(Bbuff));
+			   bline(Bbuff), bgetcol(false, 0) + 1, point, mark, blength(Bbuff));
 	} else
 		putpaw("Line: %u  Column: %u  Point: %lu  Mark: unset  Length: %lu",
-			   bline(), bgetcol(false, 0) + 1, point, blength(Bbuff));
+			   bline(Bbuff), bgetcol(false, 0) + 1, point, blength(Bbuff));
 }
 
 void Znotimpl(void) { tbell(); }

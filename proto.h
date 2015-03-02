@@ -156,7 +156,7 @@ Z(pnewline);
 int ask(const char *);
 int ask2(const char *, bool);
 int bgetcol(bool, int);
-int breadfile(const char *);
+int breadfile(struct buff *buff, const char *, int *compressed);
 bool bwritefile(char *);
 int bmakecol(int, bool);
 bool bstrsearch(const char *, bool);
@@ -275,7 +275,7 @@ void mouse_point(int row, int col, bool set_mark);
 
 int bcopyrgn(struct mark *, struct buff*);
 void bdeltomrk(struct mark *);
-unsigned long bline(void);
+unsigned long bline(struct buff *buff);
 
 /* COMMENTBOLD */
 void resetcomments(void);

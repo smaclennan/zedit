@@ -27,51 +27,23 @@
 
 int raw_mode;
 
-static void crfixup(void)
-{
-	char *p = (char *)memchr(Curpage->pdata + 1, '\n', Curpage->plen - 1);
-	if (!p)
-		return;
-
-	if (*(p - 1) != '\r')
-		return;
-
-	if (raw_mode)
-		return;
-
-	Curbuff->bmode |= CRLF;
-
-	while (bcsearch(Bbuff, '\r'))
-		if (*Curcptr == '\n') {
-			bmove(Bbuff, -1);
-			bdelete(Bbuff, 1);
-		}
-
-	btostart(Bbuff);
-}
-
 /*
  * Load the file 'fname' into the current buffer.
  * Returns  0  successfully opened file
  * > 0 (errno) on error
  * -1 on gzdopen error
  */
-int breadfile(const char *fname)
+int breadfile(struct buff *buff, const char *fname, int *compressed)
 {
 	char buf[PSIZE];
-	struct stat sbuf;
 	int fd, len;
+	unsigned count = 0; /* to check for zero length files */
 
 	fd = open(fname, O_RDONLY | O_BINARY);
 	if (fd < 0)
 		return errno;
 
-	if (fstat(fd, &sbuf) == 0)
-		Curbuff->mtime = sbuf.st_mtime;
-	else
-		Curbuff->mtime = -1;
-
-	bempty(Bbuff);
+	bempty(buff);
 
 #if ZLIB
 	gzFile gz = gzdopen(fd, "rb");
@@ -80,35 +52,34 @@ int breadfile(const char *fname)
 		return -1;
 	}
 
-	/* Ubuntu 12.04 has a bug where zero length files are reported as
-	 * compressed.
-	 */
-	if (sbuf.st_size && gzdirect(gz) == 0)
-		Curbuff->bmode |= COMPRESSED;
+	if (compressed) *compressed = gzdirect(gz);
 #endif
 
 	while ((len = fileread(fd, buf, PSIZE)) > 0) {
-		if (Curpage->plen) {
-			if (!newpage(Curpage)) {
-				bempty(Bbuff);
+		if (curplen(buff)) {
+			if (!newpage(buff->curpage)) {
+				bempty(buff);
 				fileclose(fd);
 				return ENOMEM;
 			}
-			makecur(Bbuff, Curpage->nextp, 0);
+			makecur(buff, buff->curpage->nextp, 0);
 		}
-		memcpy(Curcptr, buf, len);
-		Curcptr += len;
-		Curchar += len;
-		Curpage->plen += len;
+		memcpy(buff->curcptr, buf, len);
+		buff->curcptr += len;
+		buff->curchar += len;
+		curplen(buff) += len;
+		count += len;
 	}
 	fileclose(fd);
 
-	btostart(Bbuff);
+	btostart(buff);
 
-	if (Curpage->plen && !(Curbuff->bmode & COMPRESSED))
-		crfixup();
+	/* Ubuntu 12.04 has a bug where zero length files are reported as
+	 * compressed.
+	 */
+	if (compressed && count == 0) *compressed = 0;
 
-	Bbuff->bmodf = false;
+	buff->bmodf = false;
 
 	return 0;
 }

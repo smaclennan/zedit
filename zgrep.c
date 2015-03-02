@@ -26,31 +26,24 @@
 #define FNM_FLAGS 0
 #endif
 
-#if 0 // SAM
 static void grep_one(char *fname, Byte *ebuf,
-			 struct zbuff *inbuff, struct zbuff *outbuff)
+					 struct buff *inbuff, struct buff *outbuff)
 {
-	zswitchto(inbuff);
-	bempty(Bbuff);
-
-	if (zreadfile(fname))
+	if (breadfile(inbuff, fname, NULL))
 		return;
 
-	while (step(Bbuff, ebuf, NULL)) {
-		struct mark *start;
-		unsigned long line = bline();
+	while (step(inbuff, ebuf, NULL)) {
+		struct mark start;
+		unsigned long line = bline(inbuff);
 
-		zswitchto(outbuff);
 		snprintf(PawStr, STRMAX, "%s:%ld: ", fname, line);
-		binstr(Bbuff, PawStr);
-		zswitchto(inbuff);
+		binstr(outbuff, PawStr);
 
-		tobegline(Bbuff);
-		start = zcreatemrk();
-		toendline(Bbuff);
-		bmove1(Bbuff); /* grab NL */
-		bcopyrgn(start, outbuff->buff);
-		unmark(start);
+		tobegline(inbuff);
+		bmrktopnt(inbuff, &start);
+		toendline(inbuff);
+		bmove1(inbuff); /* grab NL */
+		bcopyrgn(&start, outbuff);
 	}
 }
 
@@ -59,7 +52,7 @@ static void grepit(char *input, char *files)
 	Byte ebuf[ESIZE];
 	DIR *dir;
 	struct dirent *ent;
-	struct zbuff *inbuff, *outbuff = Curbuff;
+	struct buff *inbuff, *outbuff = Curbuff->buff;
 
 	int rc = compile((Byte *)input, ebuf, &ebuf[ESIZE]);
 	if (rc) {
@@ -84,7 +77,6 @@ static void grepit(char *input, char *files)
 
 cleanup:
 	closedir(dir);
-	zswitchto(outbuff);
 	if (inbuff)
 		bdelbuff(inbuff);
 }
@@ -126,9 +118,3 @@ void Zgrep(void)
 		wswitchto(save);
 	}
 }
-#else
-void Zgrep(void)
-{
-	error("disable");
-}
-#endif

@@ -21,14 +21,9 @@
 #define _buff_h
 
 #include <stdbool.h>
-
-#if defined(WIN32)
-#include "zwin32.h"
-#else
+#ifndef WIN32
 #include <unistd.h>
 #endif
-
-#include <time.h>
 
 #ifdef UNSIGNED_BYTES
 #define Byte unsigned char
@@ -78,14 +73,15 @@ Byte bpeek(struct buff *buff);
 void boffset(struct buff *buff, unsigned long offset);
 int bappend(struct buff *buff, Byte *, int);
 int bindata(struct buff *buff, Byte *, int);
-int bread(struct buff *buff, int fd, int size);
-int bwrite(struct buff *buff, int fd, int size);
+#define binstr(b, s) bindata((b), (Byte *)(s), strlen(s));
 
 /* bmsearch.c */
 bool bm_search(struct buff *buff, const char *str, bool sensitive);
 bool bm_rsearch(struct buff *buff, const char *str, bool sensitive);
 
-#define binstr(b, s) bindata((b), (Byte *)(s), strlen(s));
+/* socket.c */
+int bread(struct buff *buff, int fd, int size);
+int bwrite(struct buff *buff, int fd, int size);
 
 #ifndef NULL
 #define NULL ((void *)0)

@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
+#include <time.h>
 
 #include "buff.h"
 #include "mark.h"
@@ -44,7 +45,7 @@ const char *str1k =
 "And your wife knows how to use them, "
 "You may live in Canada.";
 
-void dump_str_at_mark(struct zbuff *buff, const char *label, struct mark *mrk)
+void dump_str_at_mark(struct buff *buff, const char *label, struct mark *mrk)
 {
 	int i;
 
@@ -57,7 +58,7 @@ void dump_str_at_mark(struct zbuff *buff, const char *label, struct mark *mrk)
 	bswappnt(buff, mrk);
 }
 
-int test_readwrite(struct zbuff *buff, char *in, char *out)
+int test_readwrite(struct buff *buff, char *in, char *out)
 {
 	int n, count, fd = open(in, O_RDONLY);
 	if (fd < 0) {
@@ -100,7 +101,7 @@ int test_readwrite(struct zbuff *buff, char *in, char *out)
 
 int main(int argc, char *argv[])
 {
-	struct zbuff *buff;
+	struct buff *buff;
 	int total, offset;
 
 	buff = bcreate();

@@ -36,7 +36,9 @@
 
 #include "config.h"
 
-#ifndef WIN32
+#ifdef WIN32
+#include "zwin32.h"
+#else
 #include <dirent.h>
 #endif
 

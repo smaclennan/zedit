@@ -35,9 +35,9 @@ static int get_tagfile(void)
 	if (access(Tagfile, F_OK) == 0)
 		return 0;
 
-	if (zapp(Curbuff)->fname) {
+	if (Curbuff->fname) {
 		char *p;
-		strcpy(Tagfile, zapp(Curbuff)->fname);
+		strcpy(Tagfile, Curbuff->fname);
 		p = strrchr(Tagfile, '/');
 		if (p) {
 			++p;
@@ -60,10 +60,10 @@ static bool tagfile_modified(struct zbuff *buff)
 {
 	struct stat sbuf;
 
-	if (strcmp(zapp(buff)->fname, Tagfile))
+	if (strcmp(buff->fname, Tagfile))
 		return true;
 
-	if (stat(Tagfile, &sbuf) || sbuf.st_mtime > zapp(buff)->mtime)
+	if (stat(Tagfile, &sbuf) || sbuf.st_mtime > buff->mtime)
 		return true;
 
 	return false;

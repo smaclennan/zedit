@@ -204,7 +204,7 @@ void Zc_indent(void)
 	int width = 0;
 	struct mark tmark;
 
-	if ((zapp(Curbuff)->bmode & OVERWRITE))
+	if ((Curbuff->bmode & OVERWRITE))
 		bcsearch(Bbuff, NL);
 	else {
 		int sawstart = 0, did_indent = 0;
@@ -285,7 +285,7 @@ void Zfill_paragraph(void)
 {	/* Not reentrant - must iterate for arg */
 	struct mark *tmark, *tmp;
 
-	if (zapp(Curbuff)->bmode & PROGMODE) {
+	if (Curbuff->bmode & PROGMODE) {
 		putpaw("Not in program mode");
 		tbell();
 		return;
@@ -416,7 +416,7 @@ void Zexit(void)
 		return;
 
 	foreachbuff(tbuff)
-		if (tbuff->buff->bmodf && !(zapp(tbuff)->bmode & SYSBUFF))
+		if (tbuff->buff->bmodf && !(tbuff->bmode & SYSBUFF))
 			modf = true;
 	if (modf && ask("Modified buffers. quit anyway? ") != YES)
 		return;
@@ -429,7 +429,7 @@ void Zexit(void)
 
 void Zsave_and_exit(void)
 {
-	if ((zapp(Curbuff)->bmode & SYSBUFF) == 0)
+	if ((Curbuff->bmode & SYSBUFF) == 0)
 		Zsave_file();
 	Zexit();
 }
@@ -446,7 +446,7 @@ bool promptsave(struct zbuff *tbuff, bool must)
 
 	if (tbuff->buff->bmodf) {
 		if (!must && !save_all) {
-			sprintf(str, "save buffer %s? ", zapp(tbuff)->bname);
+			sprintf(str, "save buffer %s? ", tbuff->bname);
 			ok = ask2(str, true);
 			if (ok == BANG)
 				save_all = 1;
@@ -475,7 +475,7 @@ bool saveall(bool must)
 
 	bsave = Curbuff;
 	foreachbuff(tbuff)
-		if (!(zapp(tbuff)->bmode & SYSBUFF) && !promptsave(tbuff, must)) {
+		if (!(tbuff->bmode & SYSBUFF) && !promptsave(tbuff, must)) {
 			Curwdo->modeflags = INVALID;
 			return false;
 		}
@@ -489,7 +489,7 @@ static void mshow(unsigned ch)
 	int cnt = 0;
 	struct mark save;
 
-	if (!(zapp(Curbuff)->bmode & PROGMODE) || InPaw || tkbrdy())
+	if (!(Curbuff->bmode & PROGMODE) || InPaw || tkbrdy())
 		return;
 
 	switch (ch) {
@@ -521,7 +521,7 @@ static void mshow(unsigned ch)
 
 void Zinsert(void)
 {
-	if (zapp(Curbuff)->bmode & OVERWRITE) {
+	if (Curbuff->bmode & OVERWRITE) {
 		if (!bisend(Bbuff) && *Curcptr != NL)
 			bdelete(Bbuff, 1);
 	}
@@ -532,7 +532,7 @@ void Zinsert(void)
 
 void Znewline(void)
 {
-	if (zapp(Curbuff)->bmode & OVERWRITE)
+	if (Curbuff->bmode & OVERWRITE)
 		bcsearch(Bbuff, NL);
 	else
 		binsert(Bbuff, NL);
@@ -550,7 +550,7 @@ void Ztab(void)
 
 void Zinsert_overwrite(void)
 {
-	zapp(Curbuff)->bmode ^= OVERWRITE;
+	Curbuff->bmode ^= OVERWRITE;
 	if (!InPaw)
 		Curwdo->modeflags = INVALID;
 	Arg = 0;
@@ -559,12 +559,12 @@ void Zinsert_overwrite(void)
 
 void Ztoggle_case(void)
 {
-	zapp(Curbuff)->bmode ^= EXACT;
+	Curbuff->bmode ^= EXACT;
 	if (InPaw && Insearch) {
 		tsetpoint(Rowmax - 1, 0);
 		tprntstr(nocase(NULL));
 	} else
-		putpaw(zapp(Curbuff)->bmode & EXACT ? "Exact Set" : "Exact Reset");
+		putpaw(Curbuff->bmode & EXACT ? "Exact Set" : "Exact Reset");
 	Arg = 0;
 }
 
@@ -711,7 +711,7 @@ void Zmode(void)
 
 	/* find the current mode for default */
 	for (i = 0; i < NUMMODES - 1; ++i)
-		if (modes[i].mode & zapp(Curbuff)->bmode)
+		if (modes[i].mode & Curbuff->bmode)
 			break;
 	rc = getplete("Mode: ", modes[i].str, (char **)modes,
 			  AMODESIZE, NUMMODES);
@@ -740,7 +740,7 @@ static bool matchit(char *extstr, char *str)
 void toggle_mode(int mode)
 {
 	char tmp[PATHMAX], *ext;
-	strcpy(tmp, zapp(Curbuff)->fname);
+	strcpy(tmp, Curbuff->fname);
 
 	ext = strrchr(tmp, '.');
 #if ZLIB
@@ -768,13 +768,13 @@ void toggle_mode(int mode)
 
 	if (mode == SHMODE) {
 		if (ext && strcmp(ext, ".el") == 0)
-			zapp(Curbuff)->comchar = ';';
+			Curbuff->comchar = ';';
 		else
-			zapp(Curbuff)->comchar = '#';
+			Curbuff->comchar = '#';
 	} else
-		zapp(Curbuff)->comchar = 0;
+		Curbuff->comchar = 0;
 
-	zapp(Curbuff)->bmode = (zapp(Curbuff)->bmode & ~MAJORMODE) | mode;
+	Curbuff->bmode = (Curbuff->bmode & ~MAJORMODE) | mode;
 }
 
 void Zmark_paragraph(void)
@@ -794,7 +794,7 @@ static void setregion(int (*convert)(int))
 	bool swapped;
 	struct mark tmark;
 
-	if (zapp(Curbuff)->bmode & PROGMODE) {
+	if (Curbuff->bmode & PROGMODE) {
 		putpaw("Not in program mode");
 		tbell();
 		return;

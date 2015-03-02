@@ -77,9 +77,9 @@ void hang_up(int signo)
 
 	InPaw = true;	/* Kludge to turn off error */
 	foreachbuff(tbuff)
-		if (tbuff->buff->bmodf && !(zapp(tbuff)->bmode & SYSBUFF) && zapp(Curbuff)->fname) {
+		if (tbuff->buff->bmodf && !(tbuff->bmode & SYSBUFF) && Curbuff->fname) {
 			zswitchto(tbuff);
-			bwritefile(zapp(Curbuff)->fname);
+			bwritefile(Curbuff->fname);
 		}
 	unvoke(NULL);
 	checkpipes(0);
@@ -449,7 +449,7 @@ void tsetcursor(bool hide)
 #ifdef WIN32
 	CONSOLE_CURSOR_INFO cursorinfo;
 
-	if (zapp(Curbuff)->bmode & OVERWRITE)
+	if (Curbuff->bmode & OVERWRITE)
 		cursorinfo.dwSize = 25; /* default */
 	else
 		cursorinfo.dwSize = 100; /* solid */

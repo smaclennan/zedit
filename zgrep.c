@@ -99,9 +99,9 @@ void Zgrep(void)
 	if (getarg("Regex: ", input, STRMAX))
 		return;
 
-	if (zapp(Curbuff)->bmode & CMODE)
+	if (Curbuff->bmode & CMODE)
 		strcpy(files, "*.[ch]");
-	else if (zapp(Curbuff)->bmode & SHMODE)
+	else if (Curbuff->bmode & SHMODE)
 		strcpy(files, "*.sh");
 	else
 		strcpy(files, "*");

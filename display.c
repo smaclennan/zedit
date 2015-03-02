@@ -183,7 +183,7 @@ void zrefresh(void)
 		if (wdo != Curwdo) {
 			struct mark *point;
 			zswitchto(wdo->wbuff);
-			settabsize(zapp(Curbuff)->bmode);
+			settabsize(Curbuff->bmode);
 			point = zcreatemrk();
 			bpnttomrk(Bbuff, wdo->wstart);
 			innerdsp(wdo->first, wdo->last, NULL);
@@ -389,11 +389,11 @@ static void modeline(struct wdo *wdo)
 	tsetpoint(wdo->last, 0);
 	tstyle(T_STANDOUT);
 	sprintf(str, "%s %s  (%s)  %s: ", ZSTR, VERSION,
-			setmodes(wdo->wbuff), zapp(wdo->wbuff)->bname);
+			setmodes(wdo->wbuff), wdo->wbuff->bname);
 	tprntstr(str);
-	if (zapp(wdo->wbuff)->fname) {
+	if (wdo->wbuff->fname) {
 		len = strlen(str) + 3;
-		tprntstr(limit(zapp(wdo->wbuff)->fname, len));
+		tprntstr(limit(wdo->wbuff->fname, len));
 	}
 	wdo->modecol = Pcol;
 
@@ -442,7 +442,7 @@ static char *setmodes(struct zbuff *buff)
 	printchar = tprntchar;
 
 	/* Set PawStr to majour mode and setup any special keys */
-	switch (zapp(buff)->bmode & MAJORMODE) {
+	switch (buff->bmode & MAJORMODE) {
 	case CMODE:
 		strcpy(PawStr, "C");
 		Keys[CR] = ZC_INDENT;
@@ -466,16 +466,16 @@ static char *setmodes(struct zbuff *buff)
 		strcpy(PawStr, "Normal");
 	}
 
-	if (zapp(buff)->bmode & VIEW)
+	if (buff->bmode & VIEW)
 		strcat(PawStr, " RO");
-	if (zapp(buff)->bmode & COMPRESSED)
+	if (buff->bmode & COMPRESSED)
 		strcat(PawStr, " Z");
-	if (zapp(buff)->bmode & CRLF)
+	if (buff->bmode & CRLF)
 		strcat(PawStr, " CR");
-	if (zapp(buff)->bmode & OVERWRITE)
+	if (buff->bmode & OVERWRITE)
 		strcat(PawStr, " OVWRT");
 
-	settabsize(zapp(buff)->bmode);
+	settabsize(buff->bmode);
 	return PawStr;
 }
 

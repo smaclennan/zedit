@@ -42,13 +42,13 @@ static void switchto_part(void)
 		tbuff = nextbuff(tbuff);
 	else
 		tbuff = Bufflist;
-	makepaw(zapp(tbuff)->bname, true);
+	makepaw(tbuff->bname, true);
 }
 
 void Zswitch_to_buffer(void)
 {
 	int rc;
-	char *was = zapp(Curbuff)->bname;
+	char *was = Curbuff->bname;
 
 	Arg = 0;
 	Nextpart = switchto_part;
@@ -70,7 +70,7 @@ void Znext_buffer(void)
 		for (next = nextbuff(Curbuff); nextbuff(next); next = nextbuff(next))
 			;
 	if (next) {
-		strcpy(Lbufname, zapp(Curbuff)->bname);
+		strcpy(Lbufname, Curbuff->bname);
 		uncomment(Curbuff);
 		cswitchto(next);
 		reframe();
@@ -84,7 +84,7 @@ static void delbuff(struct zbuff *buff)
 	struct wdo *wdo;
 
 	wascur = buff == Curbuff;
-	if (strcmp(Lbufname, zapp(buff)->bname) == 0)
+	if (strcmp(Lbufname, buff->bname) == 0)
 		*Lbufname = '\0';
 	if (cdelbuff(buff)) {
 		if (wascur && *Lbufname) {
@@ -138,11 +138,11 @@ void Zdelete_buffer(void)
 
 static void lstbuff(struct zbuff *tbuff)
 {
-	sprintf(PawStr, "%-*s %c%c %8lu %s\n", BUFNAMMAX, zapp(tbuff)->bname,
-			(zapp(tbuff)->bmode & SYSBUFF) ? 'S' : ' ',
+	sprintf(PawStr, "%-*s %c%c %8lu %s\n", BUFNAMMAX, tbuff->bname,
+			(tbuff->bmode & SYSBUFF) ? 'S' : ' ',
 			tbuff->buff->bmodf ? '*' : ' ',
 			blength(tbuff->buff),
-			zapp(tbuff)->fname ? limit(zapp(tbuff)->fname, WASTED) : UNTITLED);
+			tbuff->fname ? limit(tbuff->fname, WASTED) : UNTITLED);
 	binstr(Bbuff, PawStr);
 }
 
@@ -262,7 +262,7 @@ struct zbuff *cmakebuff(const char *bname, char *fname)
 
 	if (!(bptr = calloc(1, sizeof(struct zbuff))) ||
 		!(bptr->buff = bcreate()) ||
-		(fname && !(zapp(bptr)->fname = strdup(fname)))) {
+		(fname && !(bptr->fname = strdup(fname)))) {
 		bdelbuff(bptr->buff);
 		if (bptr->fname) free(bptr->fname);
 		if (bptr) free(bptr);
@@ -284,11 +284,11 @@ struct zbuff *cmakebuff(const char *bname, char *fname)
 
 	bptr->buff->parent = bptr;
 
-	zapp(bptr)->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
+	bptr->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 		(VAR(VEXACT) ? EXACT : 0);
 
 	if (bname && *bname == '*')
-		zapp(bptr)->bmode |= SYSBUFF;
+		bptr->bmode |= SYSBUFF;
 
 	zswitchto(bptr);
 	return bptr;
@@ -318,9 +318,9 @@ bool cdelbuff(struct zbuff *tbuff)
 	if (!tbuff)
 		return false;
 
-	if (zapp(tbuff)->bname) {
-		delbname(zapp(tbuff)->bname);
-		zapp(tbuff)->bname = NULL;
+	if (tbuff->bname) {
+		delbname(tbuff->bname);
+		tbuff->bname = NULL;
 	}
 
 	if (unvoke(tbuff))
@@ -344,8 +344,8 @@ bool cdelbuff(struct zbuff *tbuff)
 	if (nextbuff(tbuff))
 		prevbuff(nextbuff(tbuff)) = prevbuff(tbuff);
 
-	if (zapp(tbuff)->fname)
-		free(zapp(tbuff)->fname);
+	if (tbuff->fname)
+		free(tbuff->fname);
 	uncomment(tbuff);
 	undo_clear(tbuff);
 
@@ -361,7 +361,7 @@ struct zbuff *cfindbuff(const char *bname)
 	struct zbuff *tbuff;
 
 	foreachbuff(tbuff)
-		if (strncasecmp(zapp(tbuff)->bname, bname, BUFNAMMAX) == 0)
+		if (strncasecmp(tbuff->bname, bname, BUFNAMMAX) == 0)
 			return tbuff;
 	return NULL;
 }

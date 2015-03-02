@@ -144,7 +144,7 @@ void cprntchar(Byte ch)
 			if (wdo->wbuff != Curbuff)
 				scanbuffer(wdo->wbuff);
 		zswitchto(was);
-		start = zapp(Curbuff) ? zapp(Curbuff)->chead : NULL;
+		start = Curbuff ? Curbuff->chead : NULL;
 	}
 
 	for (; start; start = start->next)
@@ -163,9 +163,9 @@ void cprntchar(Byte ch)
 void uncomment(struct zbuff *buff)
 {
 	if (buff)
-		while (zapp(buff)->chead) {
-			struct comment *com = zapp(buff)->chead;
-			zapp(buff)->chead = com->next;
+		while (buff->chead) {
+			struct comment *com = buff->chead;
+			buff->chead = com->next;
 			unmark(com->start);
 			unmark(com->end);
 			free(com);

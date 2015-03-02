@@ -60,8 +60,8 @@ bool zwritefile(char *fname)
 	bool bak = false;
 
 	/* If the file existed, check to see if it has been modified. */
-	if (zapp(Curbuff)->mtime && stat(fname, &sbuf) == 0) {
-		if (sbuf.st_mtime > zapp(Curbuff)->mtime) {
+	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
+		if (sbuf.st_mtime > Curbuff->mtime) {
 			sprintf(PawStr,
 					"WARNING: %s has been modified. Overwrite? ",
 					lastpart(fname));
@@ -167,7 +167,7 @@ void Zrevert_file(void)
 {
 	unsigned long offset;
 
-	if (!zapp(Curbuff)->fname) {
+	if (!Curbuff->fname) {
 		tbell();
 		return;
 	}
@@ -179,7 +179,7 @@ void Zrevert_file(void)
 	undo_clear(Curbuff);
 
 	offset = blocation(Bbuff);
-	zreadfile(zapp(Curbuff)->fname);
+	zreadfile(Curbuff->fname);
 	boffset(Bbuff, offset);
 	uncomment(Curbuff);
 }
@@ -205,9 +205,9 @@ static bool readone(char *bname, char *path)
 				putpaw("New File");
 #ifdef R_OK
 			else if (access(path, R_OK | W_OK) == EOF)
-				zapp(Curbuff)->bmode |= VIEW;
+				Curbuff->bmode |= VIEW;
 #endif
-			strcpy(Lbufname, zapp(was)->bname);
+			strcpy(Lbufname, was->bname);
 		} else { /* error */
 			cdelbuff(Curbuff);
 			zswitchto(was);
@@ -226,7 +226,7 @@ bool findfile(char *path)
 	int rc = true;
 
 	Arg = 0;
-	was = zapp(Curbuff)->bname;
+	was = Curbuff->bname;
 
 	/* limit name to BUFNAMMAX */
 	strncpy(tbname, lastpart(path), BUFNAMMAX);
@@ -236,7 +236,7 @@ bool findfile(char *path)
 	 * At startup, we are done.
 	 */
 	foreachbuff(tbuff)
-		if (zapp(tbuff)->fname && strcmp(path, zapp(tbuff)->fname) == 0) {
+		if (tbuff->fname && strcmp(path, tbuff->fname) == 0) {
 			zswitchto(tbuff);
 			if (Initializing)
 				return true;
@@ -277,7 +277,7 @@ void Zsave_all_files(void)
 		struct zbuff *tbuff;
 
 		foreachbuff(tbuff)
-			if (!(zapp(tbuff)->bmode & SYSBUFF) && zapp(tbuff)->fname)
+			if (!(tbuff->bmode & SYSBUFF) && tbuff->fname)
 				tbuff->buff->bmodf = true;
 	}
 	saveall(true);
@@ -296,16 +296,16 @@ bool filesave(void)
 	char path[PATHMAX + 1];
 
 	Arg = 0;
-	if (zapp(Curbuff)->fname == NULL) {
+	if (Curbuff->fname == NULL) {
 		*path = '\0';
 		if (getfname("File Name: ", path) == 0)
-			zapp(Curbuff)->fname = strdup(path);
+			Curbuff->fname = strdup(path);
 		else
 			return false;
 		Curwdo->modeflags = INVALID;
 	}
-	putpaw("Writing %s", lastpart(zapp(Curbuff)->fname));
-	return zwritefile(zapp(Curbuff)->fname);
+	putpaw("Writing %s", lastpart(Curbuff->fname));
+	return zwritefile(Curbuff->fname);
 }
 
 void Zwrite_file(void)
@@ -334,10 +334,10 @@ void Zwrite_file(void)
 				CLEAR_UMARK;
 			}
 		} else {
-			if (zapp(Curbuff)->fname)
-				free(zapp(Curbuff)->fname);
-			zapp(Curbuff)->fname = strdup(path);
-			zapp(Curbuff)->mtime = 0;	/* this is no longer valid */
+			if (Curbuff->fname)
+				free(Curbuff->fname);
+			Curbuff->fname = strdup(path);
+			Curbuff->mtime = 0;	/* this is no longer valid */
 			Zsave_file();
 			Curwdo->modeflags = INVALID;
 		}
@@ -357,7 +357,7 @@ void Zread_file(void)
 	save = Bbuff;
 	if ((tbuff = bcreate())) {
 		bswitchto(tbuff);
-		zapp(Curbuff)->bmode = zapp(save)->bmode;
+		Curbuff->bmode = save->bmode;
 		putpaw("Reading %s", lastpart(Fname));
 		rc = zreadfile(Fname);
 		if (rc == 0) {

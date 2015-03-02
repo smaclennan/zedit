@@ -163,7 +163,7 @@ void cswitchto(struct zbuff *buff)
 		}
 		Curwdo->modeflags = INVALID;
 
-		settabsize(zapp(buff)->bmode);
+		settabsize(buff->bmode);
 	}
 
 }
@@ -272,7 +272,7 @@ bool wuseother(const char *bname)
 	struct zbuff *buff;
 
 	for (wdo = Whead, last = NULL; wdo; last = wdo, wdo = wdo->next)
-		if (strcmp(zapp(wdo->wbuff)->bname, bname) == 0)
+		if (strcmp(wdo->wbuff->bname, bname) == 0)
 			break;
 	if (wdo)
 		wswitchto(wdo);

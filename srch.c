@@ -485,9 +485,9 @@ static bool dosearch(void)
 bool bstrsearch(const char *str, bool forward)
 {
 	if (forward)
-		return bm_search(Bbuff, str, zapp(Curbuff)->bmode & EXACT);
+		return bm_search(Bbuff, str, Curbuff->bmode & EXACT);
 	else
-		return bm_rsearch(Bbuff, str, zapp(Curbuff)->bmode & EXACT);
+		return bm_rsearch(Bbuff, str, Curbuff->bmode & EXACT);
 }
 
 char *nocase(const char *prompt)
@@ -503,5 +503,5 @@ char *nocase(const char *prompt)
 			*u = toupper(*p);
 		Insearch = true;
 	}
-	return (zapp(Curbuff)->bmode & EXACT) ? is : upper;
+	return (Curbuff->bmode & EXACT) ? is : upper;
 }

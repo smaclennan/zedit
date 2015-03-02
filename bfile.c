@@ -39,7 +39,7 @@ static void crfixup(void)
 	if (raw_mode)
 		return;
 
-	zapp(Curbuff)->bmode |= CRLF;
+	Curbuff->bmode |= CRLF;
 
 	while (bcsearch(Bbuff, '\r'))
 		if (*Curcptr == '\n') {
@@ -67,9 +67,9 @@ int breadfile(const char *fname)
 		return errno;
 
 	if (fstat(fd, &sbuf) == 0)
-		zapp(Curbuff)->mtime = sbuf.st_mtime;
+		Curbuff->mtime = sbuf.st_mtime;
 	else
-		zapp(Curbuff)->mtime = -1;
+		Curbuff->mtime = -1;
 
 	bempty(Bbuff);
 
@@ -84,7 +84,7 @@ int breadfile(const char *fname)
 	 * compressed.
 	 */
 	if (sbuf.st_size && gzdirect(gz) == 0)
-		zapp(Curbuff)->bmode |= COMPRESSED;
+		Curbuff->bmode |= COMPRESSED;
 #endif
 
 	while ((len = fileread(fd, buf, PSIZE)) > 0) {
@@ -105,7 +105,7 @@ int breadfile(const char *fname)
 
 	btostart(Bbuff);
 
-	if (Curpage->plen && !(zapp(Curbuff)->bmode & COMPRESSED))
+	if (Curpage->plen && !(Curbuff->bmode & COMPRESSED))
 		crfixup();
 
 	Bbuff->bmodf = false;
@@ -203,8 +203,8 @@ bool bwritefile(char *fname)
 		return true;
 
 	/* If the file existed, check to see if it has been modified. */
-	if (zapp(Curbuff)->mtime && stat(fname, &sbuf) == 0) {
-		if (sbuf.st_mtime > zapp(Curbuff)->mtime) {
+	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
+		if (sbuf.st_mtime > Curbuff->mtime) {
 			/* file has been modified */
 		}
 		mode  = sbuf.st_mode;
@@ -221,11 +221,11 @@ bool bwritefile(char *fname)
 	fd = open(fname, WRITE_MODE, mode);
 	if (fd != EOF) {
 #if ZLIB
-		if (zapp(Curbuff)->bmode & COMPRESSED)
+		if (Curbuff->bmode & COMPRESSED)
 			status = bwritegzip(fd);
 		else
 #endif
-			if (zapp(Curbuff)->bmode & CRLF)
+			if (Curbuff->bmode & CRLF)
 				status = bwritedos(fd);
 			else
 				status = bwritefd(fd);
@@ -235,9 +235,9 @@ bool bwritefile(char *fname)
 	/* cleanup */
 	if (status) {
 		if (stat(fname, &sbuf) == 0)
-			zapp(Curbuff)->mtime = sbuf.st_mtime;
+			Curbuff->mtime = sbuf.st_mtime;
 		else
-			zapp(Curbuff)->mtime = -1;
+			Curbuff->mtime = -1;
 		Bbuff->bmodf = false;
 	}
 

@@ -148,11 +148,10 @@ struct zbuff {
 	struct buff *buff;	    /* low-level buffer */
 	struct zbuff *prev, *next;	/* list of buffers */
 };
-#define zapp(b) (b)
 
-#define nextbuff(b) (zapp(b)->next)
-#define prevbuff(b) (zapp(b)->prev)
-#define foreachbuff(b) for ((b) = Bufflist; (b); (b) = zapp(b)->next)
+#define nextbuff(b) ((b)->next)
+#define prevbuff(b) ((b)->prev)
+#define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)
 
 #define Curpage (Bbuff->curpage)
 #define Curchar (Bbuff->curchar)
@@ -240,9 +239,9 @@ void tbell_dbg(char *func, int line);
 #define tbell() tbell_dbg(__FILE__, __LINE__)
 #endif
 
-#define UMARK_SET (zapp(Curbuff) && zapp(Curbuff)->umark)
+#define UMARK_SET (Curbuff->umark)
 #define NEED_UMARK do if (!UMARK_SET) { tbell(); return; } while (0)
-#define UMARK (zapp(Curbuff)->umark) /* Must guarantee umark set! */
+#define UMARK (Curbuff->umark) /* Must guarantee umark set! */
 #define CLEAR_UMARK clear_umark()
 
 #endif /* _Z_H_ */

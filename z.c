@@ -239,14 +239,14 @@ int main(int argc, char **argv)
 		zswitchto(tbuff);
 
 		strcpy(Lbufname,
-			   prevbuff(Curbuff) ? zapp(prevbuff(Curbuff))->bname : MAINBUFF);
+			   prevbuff(Curbuff) ? prevbuff(Curbuff)->bname : MAINBUFF);
 	}
 
 	winit();
 
 	reframe();
 
-	if (!zapp(Curbuff)->mtime && zapp(Curbuff)->fname)
+	if (!Curbuff->mtime && Curbuff->fname)
 		putpaw("New File");
 
 	if (line) {

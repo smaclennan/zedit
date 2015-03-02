@@ -87,5 +87,5 @@ install: all
 
 clean:
 	rm -f *.o gpm/*.o zversion.h ze fcheck core* TAGS valgrind.out
-	@rm -f main mmain tsmain regtest
+	@rm -f main mmain tsmain
 	@$(MAKE) -C docs clean

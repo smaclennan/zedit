@@ -373,8 +373,13 @@ void wgoto(struct buff *buff)
 
 	if (wdo)
 		wswitchto(wdo);
-	else
-		cswitchto(buff->parent);
+	else {
+		struct zbuff *tbuff = cfindzbuff(buff);
+		if (tbuff)
+			cswitchto(tbuff);
+		else
+			error("Buffer not found");
+	}
 }
 
 static void wfini(void)

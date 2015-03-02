@@ -634,12 +634,10 @@ struct cnames Cnames[] = {
 	{"word-search",			ZWORD_SEARCH,		AN,
 	 C("Search for the word at the point.")
 	},
-	{"write-file",			ZWRITE_FILE,		0,
+	{"write-file",			ZWRITE_FILE,		AI,
 	 C("Prompts for a path name and writes out the current buffer to this "
 	   "file name. Supports file name completion. It changes the path "
-	   "name of the current buffer to the new path name. A Universal "
-	   "Argument causes only the Region to be written and does not "
-	   "change the name of the buffer.")
+	   "name of the current buffer to the new path name.")
 	},
 	{"yank",			ZYANK,			AN,
 	 C("Inserts the characters from the Kill Buffer before the Point. The "

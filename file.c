@@ -352,31 +352,12 @@ void Zwrite_file(void)
 	Arg = 0;
 	*path = '\0';
 	if (getfname(prompt, path) == 0) {
-		if (Argp) {
-			struct buff *tbuff, *save = Bbuff;
-			unsigned saved_bmode = Curbuff->bmode;
-
-			if ((tbuff = bcreate())) {
-				NEED_UMARK;
-				putpaw("Writing %s", path);
-				bswitchto(save);
-				bcopyrgn(UMARK, tbuff);
-				bswitchto(tbuff);
-				Curbuff->bmode = saved_bmode;
-				zwritefile(path);
-				bswitchto(save);
-				bdelbuff(tbuff);
-				clrpaw();
-				CLEAR_UMARK;
-			}
-		} else {
-			if (Curbuff->fname)
-				free(Curbuff->fname);
-			Curbuff->fname = strdup(path);
-			Curbuff->mtime = 0;	/* this is no longer valid */
-			Zsave_file();
-			Curwdo->modeflags = INVALID;
-		}
+		if (Curbuff->fname)
+			free(Curbuff->fname);
+		Curbuff->fname = strdup(path);
+		Curbuff->mtime = 0;	/* this is no longer valid */
+		Zsave_file();
+		Curwdo->modeflags = INVALID;
 	}
 }
 

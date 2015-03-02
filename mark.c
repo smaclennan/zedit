@@ -121,10 +121,9 @@ void bmrktopnt(struct buff *buff, struct mark *tmark)
 /* Put the current buffer point at the mark */
 bool bpnttomrk(struct buff *buff, struct mark *tmark)
 {
-	/* SAM WARNING: Zedit used to do bswitchto if tmark->mbuff != buff */
 	if (tmark->mbuff != buff) {
 #ifdef HAVE_GLOBAL_MARKS
-		/* For Zedit debugging... */
+		/* SAM For Zedit debugging... */
 		extern void Dbg(const char *fmt, ...);
 		Dbg("bmrktopnt: mismatch mark %p and buff %p\n", tmark->mbuff, buff);
 #endif

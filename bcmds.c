@@ -282,8 +282,6 @@ struct zbuff *cmakebuff(const char *bname, char *fname)
 	bptr->next = Bufflist;
 	Bufflist = bptr;
 
-	bptr->buff->parent = bptr;
-
 	bptr->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 		(VAR(VEXACT) ? EXACT : 0);
 
@@ -300,16 +298,6 @@ void zswitchto(struct zbuff *buf)
 		Curbuff = buf;
 		Bbuff = buf->buff;
 		makecur(Bbuff, buf->buff->curpage, buf->buff->curchar);
-	}
-}
-
-/* WARNING: Curbuff could be set to NULL */
-void bswitchto(struct buff *buf)
-{
-	if (buf && buf != Bbuff) {
-		Curbuff = buf->parent;
-		Bbuff = buf      ;
-		makecur(Bbuff, buf->curpage, buf->curchar);
 	}
 }
 
@@ -362,6 +350,16 @@ struct zbuff *cfindbuff(const char *bname)
 
 	foreachbuff(tbuff)
 		if (strncasecmp(tbuff->bname, bname, BUFNAMMAX) == 0)
+			return tbuff;
+	return NULL;
+}
+
+struct zbuff *cfindzbuff(struct buff *buff)
+{
+	struct zbuff *tbuff;
+
+	foreachbuff(tbuff)
+		if (tbuff->buff == buff)
 			return tbuff;
 	return NULL;
 }

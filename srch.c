@@ -223,7 +223,7 @@ static void doreplace(int type)
 	bool exit = false, crgone, query;
 	Byte ebuf[ESIZE];
 	struct mark *pmark, tmark;
-	struct zbuff *tbuff;
+	struct zbuff *tbuff, *save = Curbuff;
 	int rc = 0;
 
 	Arg = 0;
@@ -252,7 +252,7 @@ static void doreplace(int type)
 			}
 		}
 		clrpaw();
-		cswitchto(pmark->mbuff->parent);
+		cswitchto(save);
 	} else if (!replaceone(type, &query, &exit, ebuf, crgone) && !exit)
 		putpaw("Not Found");
 	else

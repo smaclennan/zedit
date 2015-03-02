@@ -72,7 +72,7 @@ void bdelbuff(struct buff *tbuff)
 
 #if defined(HAVE_MARKS) && !defined(HAVE_GLOBAL_MARKS)
 	while (tbuff->marks) /* delete the marks */
-		unmark(tbuff->marks);
+		bdelmark(tbuff->marks);
 #endif
 
 	free((char *)tbuff);	/* free the buffer proper */

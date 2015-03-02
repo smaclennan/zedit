@@ -215,7 +215,7 @@ int main(int argc, char **argv)
 	delinit();
 
 	/* PAW must not be on the Bufflist */
-	if (!(Paw = cmakebuff(NULL, NULL)))
+	if (!(Paw = cmakebuff("*paw*", NULL)))
 		exit(1);
 	Paw->prev = Paw->next = NULL;
 	Bufflist = NULL;

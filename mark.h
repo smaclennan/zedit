@@ -30,8 +30,6 @@ struct mark {
 
 #ifdef HAVE_GLOBAL_MARKS
 extern struct mark *Marklist;
-
-void minit(struct mark *preallocated);
 #endif
 
 extern int NumMarks; /* stats */

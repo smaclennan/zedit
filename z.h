@@ -149,8 +149,6 @@ struct zbuff {
 	struct zbuff *prev, *next;	/* list of buffers */
 };
 
-#define nextbuff(b) ((b)->next)
-#define prevbuff(b) ((b)->prev)
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)
 
 #define Curpage (Bbuff->curpage)

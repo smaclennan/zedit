@@ -178,7 +178,7 @@ void Zagain(void)
 		if (!Gmark)
 			Gmark = zcreatemrk(); /* set here in case exit/reload */
 		while (!promptsearch("", AGAIN)) {
-			Curbuff = nextbuff(Curbuff);
+			Curbuff = Curbuff->next;
 			if (Curbuff) {
 				cswitchto(Curbuff);
 				btostart(Bbuff);

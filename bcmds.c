@@ -38,8 +38,8 @@ static void switchto_part(void)
 	tbuff = cfindbuff(word);
 	if (!tbuff)
 		tbuff = Curbuff;
-	if (nextbuff(tbuff))
-		tbuff = nextbuff(tbuff);
+	if (tbuff->next)
+		tbuff = tbuff->next;
 	else
 		tbuff = Bufflist;
 	makepaw(tbuff->bname, true);
@@ -63,11 +63,11 @@ void Zswitch_to_buffer(void)
 
 void Znext_buffer(void)
 {
-	struct zbuff *next = prevbuff(Curbuff);
+	struct zbuff *next = Curbuff->prev;
 
 
-	if (!next && nextbuff(Curbuff))
-		for (next = nextbuff(Curbuff); nextbuff(next); next = nextbuff(next))
+	if (!next && Curbuff->next)
+		for (next = Curbuff->next; next->next; next = next->next)
 			;
 	if (next) {
 		strcpy(Lbufname, Curbuff->bname);
@@ -278,8 +278,8 @@ struct zbuff *cmakebuff(const char *bname, char *fname)
 
 	/* add the buffer to the head of the list */
 	if (Bufflist)
-		prevbuff(Bufflist) = bptr;
-	nextbuff(bptr) = Bufflist;
+		Bufflist->prev = bptr;
+	bptr->next = Bufflist;
 	Bufflist = bptr;
 
 	bptr->buff->parent = bptr;
@@ -329,20 +329,20 @@ bool cdelbuff(struct zbuff *tbuff)
 	if (tbuff == Curbuff) { /* switch to a safe buffer */
 		CLEAR_UMARK;
 
-		if (nextbuff(tbuff))
-			zswitchto(nextbuff(tbuff));
-		else if (prevbuff(tbuff))
-			zswitchto(prevbuff(tbuff));
+		if (tbuff->next)
+			zswitchto(tbuff->next);
+		else if (tbuff->prev)
+			zswitchto(tbuff->prev);
 		else
 			return false;
 	}
 
 	if (tbuff == Bufflist)
-		Bufflist = nextbuff(tbuff);
-	if (prevbuff(tbuff))
-		nextbuff(prevbuff(tbuff)) = nextbuff(tbuff);
-	if (nextbuff(tbuff))
-		prevbuff(nextbuff(tbuff)) = prevbuff(tbuff);
+		Bufflist = tbuff->next;
+	if (tbuff->prev)
+		tbuff->next->prev = tbuff->next;
+	if (tbuff->next)
+		tbuff->next->prev = tbuff->prev;
 
 	if (tbuff->fname)
 		free(tbuff->fname);

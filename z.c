@@ -239,7 +239,7 @@ int main(int argc, char **argv)
 		zswitchto(tbuff);
 
 		strcpy(Lbufname,
-			   prevbuff(Curbuff) ? prevbuff(Curbuff)->bname : MAINBUFF);
+			   Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
 	}
 
 	winit();

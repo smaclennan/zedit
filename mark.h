@@ -28,10 +28,6 @@ struct mark {
 	struct mark *prev, *next;	/* list of marks */
 };
 
-#ifdef HAVE_GLOBAL_MARKS
-extern struct mark *Marklist;
-#endif
-
 extern int NumMarks; /* stats */
 
 struct mark *bcremrk(struct buff *);
@@ -56,6 +52,8 @@ bool step(struct buff *, Byte *, struct mark *REstart);
 const char *regerr(int);
 
 #ifdef HAVE_GLOBAL_MARKS
+extern struct mark *Marklist;
+
 #define foreach_pagemark(buff, mark, page)				   \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mpage == (page))

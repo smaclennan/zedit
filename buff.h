@@ -21,9 +21,6 @@
 #define _buff_h
 
 #include <stdbool.h>
-#ifndef WIN32
-#include <unistd.h>
-#endif
 
 #ifdef UNSIGNED_BYTES
 #define Byte unsigned char

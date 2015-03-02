@@ -235,6 +235,7 @@ struct mark *zcreatemrk(void);
 int zreadfile(char *fname);
 bool zwritefile(char *fname);
 void set_shell_mark(void);
+void unmark(struct mark *);
 
 int batoi(void);
 
@@ -282,13 +283,13 @@ void resetcomments(void);
 void uncomment(struct zbuff *buff);
 void cprntchar(Byte ch);
 
-#if UNDO
+#ifdef UNDO
 extern unsigned long undo_total;
-void undo_add(int size);
+void undo_add(int size, bool clumped);
 void undo_del(int size);
-void undo_clear(struct zbuff *buff);
+void undo_clear(struct buff *buff);
 #else
-#define undo_add(size)
+#define undo_add(size, clumped)
 #define undo_del(size)
 #define undo_clear(buff)
 #endif

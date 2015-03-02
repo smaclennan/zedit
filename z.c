@@ -212,7 +212,6 @@ int main(int argc, char **argv)
 
 	display_init();
 
-	/* create the needed buffers */
 	delinit();
 
 	/* PAW must not be on the Bufflist */
@@ -553,10 +552,26 @@ void Zstats(void)
 	_putpaw(PawStr);
 }
 
+/* Keep around one mark */
+struct mark *freemark;
+
 struct mark *zcreatemrk(void)
 {
-	struct mark *mrk = bcremrk(Bbuff);
-	if (!mrk)
+	struct mark *mrk = freemark;
+
+	if (mrk) {
+		freemark = NULL;
+		bmrktopnt(Bbuff, mrk);
+	} else if (!(mrk = bcremrk(Bbuff)))
 		longjmp(zenv, -1);	/* ABORT */
+
 	return mrk;
+}
+
+void unmark(struct mark *mrk)
+{
+	if (freemark)
+		bdelmark(mrk);
+	else
+		freemark = mrk;
 }

@@ -212,7 +212,7 @@ void Zrevert_file(void)
 		return;
 
 	/* Lose the undo history */
-	undo_clear(Curbuff);
+	undo_clear(Curbuff->buff);
 
 	offset = blocation(Bbuff);
 	zreadfile(Curbuff->fname);

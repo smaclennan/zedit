@@ -8,7 +8,6 @@
 #define GPM_MOUSE	1	/* Requires libgpm */
 #endif
 
-#define UNDO		1	/* EXPERIMENTAL, but portable! */
 #define SHOW_REGION	1
 
 /* DOPIPES: Output in real time and you can continue editing.

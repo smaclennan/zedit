@@ -37,7 +37,7 @@ void minit(struct mark *preallocated);
 extern int NumMarks; /* stats */
 
 struct mark *bcremrk(struct buff *);
-void unmark(struct mark *);
+void bdelmark(struct mark *);
 
 #define bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))
 bool bisaftermrk(struct buff *, struct mark *);

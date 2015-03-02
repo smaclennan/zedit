@@ -30,6 +30,12 @@
 #include "mark.h"
 #endif
 
+#ifdef UNDO
+void undo_add(int size, bool clumped);
+void undo_del(int size);
+void undo_clear(struct buff *buff);
+#endif
+
 static void dummy_bsetmod(struct buff *buff) {}
 void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
 
@@ -85,8 +91,8 @@ bool binsert(struct buff *buff, Byte byte)
 	curplen(buff)++;
 	buff->bmodf = true;
 
-#if UNDO
-	undo_add(1);
+#ifdef UNDO
+	undo_add(1, false);
 #endif
 
 #ifdef HAVE_MARKS
@@ -113,7 +119,7 @@ void bdelete(struct buff *buff, int quantity)
 		if (quan < 0)
 			quan = 0; /* May need to switch pages */
 
-#if UNDO
+#ifdef UNDO
 		undo_del(quan);
 #endif
 
@@ -335,7 +341,7 @@ void bempty(struct buff *buff)
 		}
 #endif
 
-#if UNDO
+#ifdef UNDO
 	undo_clear(buff);
 #endif
 	bsetmod(buff);
@@ -389,6 +395,9 @@ static int bappendpage(struct buff *buff, Byte *data, int size)
 		size -= n;
 		data += n;
 		appended += n;
+#ifdef UNDO
+		undo_add(n, false);
+#endif
 	}
 
 	/* Put the rest in new pages */
@@ -402,6 +411,9 @@ static int bappendpage(struct buff *buff, Byte *data, int size)
 		memcpy(buff->curcptr, data, n);
 		curplen(buff) = n;
 		makeoffset(buff, n);
+#ifdef UNDO
+		undo_add(n, appended != 0);
+#endif
 		size -= n;
 		data += n;
 		appended += n;
@@ -443,6 +455,9 @@ int bindata(struct buff *buff, Byte *data, int size)
 		buff->curcptr += size;
 		buff->curchar += size;
 		curplen(buff) += size;
+#ifdef UNDO
+		undo_add(size, false);
+#endif
 		return size;
 	}
 
@@ -456,6 +471,9 @@ int bindata(struct buff *buff, Byte *data, int size)
 		memcpy(buff->curcptr, data, n);
 		data += n;
 		size -= n;
+#ifdef UNDO
+		undo_add(n, copied > 0);
+#endif
 		copied += n;
 		buff->curcptr += n;
 		buff->curchar += n;
@@ -470,6 +488,9 @@ int bindata(struct buff *buff, Byte *data, int size)
 		memcpy(npage->pdata, data, n);
 		data += n;
 		size -= n;
+#ifdef UNDO
+		undo_add(n, copied > 0);
+#endif
 		copied += n;
 
 		makecur(buff, npage, n);

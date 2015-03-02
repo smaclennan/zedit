@@ -235,6 +235,8 @@ static void bfini(void)
 	while (Bufflist)
 		/* bdelbuff will update Bufflist */
 		cdelbuff(Bufflist);
+
+	cdelbuff(Paw);
 }
 
 static void binit(void)
@@ -335,7 +337,7 @@ bool cdelbuff(struct zbuff *tbuff)
 	if (tbuff->fname)
 		free(tbuff->fname);
 	uncomment(tbuff);
-	undo_clear(tbuff);
+	undo_clear(tbuff->buff);
 
 	bdelbuff(tbuff->buff);
 	free(tbuff);

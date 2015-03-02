@@ -11,34 +11,9 @@
 
 #ifdef HAVE_GLOBAL_MARKS
 struct mark *Marklist;	/* the marks list tail */
-static struct mark *mhead;
 #endif
 
 int NumMarks;
-
-#ifdef HAVE_GLOBAL_MARKS
-static void mfini(void)
-{
-	if (mhead) {
-		if (mhead->next)
-			mhead->next->prev = NULL;
-		else
-			Marklist = NULL;
-	}
-
-	while (Marklist)
-		unmark(Marklist);
-}
-#endif
-
-void minit(struct mark *preallocated)
-{
-#ifdef HAVE_GLOBAL_MARKS
-	Marklist = preallocated;
-	mhead = preallocated;
-	atexit(mfini);
-#endif
-}
 
 /* Create a mark at the current point and add it to the list. */
 struct mark *bcremrk(struct buff *buff)
@@ -62,7 +37,7 @@ struct mark *bcremrk(struct buff *buff)
 }
 
 /* Free up the given mark and remove it from the list. */
-void unmark(struct mark *mptr)
+void bdelmark(struct mark *mptr)
 {
 	if (mptr) {
 #ifdef HAVE_GLOBAL_MARKS

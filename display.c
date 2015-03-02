@@ -35,10 +35,23 @@ static Byte tline[COLMAX + 1];
 static struct mark Scrnmarks[ROWMAX + 3];	/* Screen marks - one per line */
 static bool Scrnmodf[ROWMAX];
 
+static struct mark *mhead;
+
 /* Keeping just one mark around is a HUGE win for a trivial amount of code. */
 static struct mark *freeumark;
 
 static void (*printchar)(Byte ichar) = tprntchar;
+
+static void mfini(void)
+{
+	if (mhead->next)
+		mhead->next->prev = NULL;
+	else
+		Marklist = NULL;
+
+	while (Marklist)
+		unmark(Marklist);
+}
 
 void display_init(void)
 {
@@ -59,7 +72,9 @@ void display_init(void)
 	Sendp	= false;
 
 	/* init the mark list */
-	minit(Send);
+	Marklist = Send;
+	mhead = Send;
+	atexit(mfini);
 }
 
 /* True if user mark moved */

@@ -96,14 +96,14 @@ static inline bool clump(void)
 
 /* Exports */
 
-void undo_add(int size)
+void undo_add(int size, bool clumped)
 {
 	if (no_undo(Curbuff))
 		return;
 
 	struct undo *undo = (struct undo *)Curbuff->undo_tail;
 
-	if (undo && is_insert(undo) && clump()) {
+	if (undo && is_insert(undo) && (clumped || clump())) {
 		/* clump with last undo */
 		undo->size += size;
 		undo->offset += size;
@@ -174,10 +174,13 @@ void undo_del(int size)
 	memcpy(undo->data, Curcptr, size);
 }
 
-void undo_clear(struct zbuff *buff)
+/* Must be a struct buff since it is called from the buff.c code */
+void undo_clear(struct buff *buff)
 {
-	while (buff->undo_tail)
-		free_undo(&buff->undo_tail);
+	struct zbuff *tbuff = cfindzbuff(buff);
+	if (tbuff)
+		while (tbuff->undo_tail)
+			free_undo(&tbuff->undo_tail);
 }
 
 void Zundo(void)
@@ -185,7 +188,7 @@ void Zundo(void)
 	struct undo *undo;
 	int i;
 
-	if (Curbuff->undo_tail) {
+	if (!Curbuff->undo_tail) {
 		tbell();
 		return;
 	}

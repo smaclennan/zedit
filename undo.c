@@ -148,10 +148,10 @@ void undo_del(int size)
 	if (no_undo(Curbuff))
 		return;
 
-	struct undo *undo = (struct undo *)Curbuff->undo_tail;
-
 	if (size == 0) /* this can happen on page boundaries */
 		return;
+
+	struct undo *undo = (struct undo *)Curbuff->undo_tail;
 
 	/* We only merge simple deletes */
 	if (undo && !is_insert(undo) && size == 1) {

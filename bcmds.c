@@ -308,6 +308,10 @@ bool cdelbuff(struct zbuff *tbuff)
 	if (!tbuff)
 		return false;
 
+	/* Do this before deleting bname */
+	undo_clear(tbuff->buff);
+	uncomment(tbuff);
+
 	if (tbuff->bname) {
 		delbname(tbuff->bname);
 		tbuff->bname = NULL;
@@ -336,8 +340,6 @@ bool cdelbuff(struct zbuff *tbuff)
 
 	if (tbuff->fname)
 		free(tbuff->fname);
-	uncomment(tbuff);
-	undo_clear(tbuff->buff);
 
 	bdelbuff(tbuff->buff);
 	free(tbuff);

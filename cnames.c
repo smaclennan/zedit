@@ -89,9 +89,9 @@ struct cnames Cnames[] = {
 	   "PAW, the Copy Word command takes the word the Point was on in the "
 	   "previously active window and inserts it into the PAW.")
 	},
-	{"count",			ZCOUNT,			0,
-	 C("Count the number of lines, words, and characters in the buffer. A "
-	   "Universal Argument counts the region.")
+	{"count",			ZCOUNT,			AI,
+	 C("Count the number of lines, words, and characters in the buffer. If "
+	   "the mark is set counts only the region.")
 	},
 	{"ctrl-x",			ZCTRL_X,		0,
 	 C("Command prefix.")

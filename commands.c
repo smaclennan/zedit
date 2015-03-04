@@ -660,8 +660,7 @@ void Zcount(void)
 	struct mark *tmark;
 
 	Arg = 0;
-	if (Argp) {
-		NEED_UMARK;
+	if (UMARK_SET) {
 		swapped = bisaftermrk(Bbuff, UMARK);
 		if (swapped)
 			bswappnt(Bbuff, UMARK);
@@ -673,7 +672,7 @@ void Zcount(void)
 	l = w = c = 0;
 	putpaw("Counting...");
 	word = false;
-	for (; Argp ? bisbeforemrk(Bbuff, UMARK) : !bisend(Bbuff); bmove1(Bbuff), ++c) {
+	for (; UMARK_SET ? bisbeforemrk(Bbuff, UMARK) : !bisend(Bbuff); bmove1(Bbuff), ++c) {
 		if (ISNL(*Curcptr))
 			++l;
 		if (!bistoken())
@@ -685,7 +684,7 @@ void Zcount(void)
 	}
 	putpaw("Lines: %u   Words: %u   Characters: %u", l, w, c);
 	if (swapped)
-		mrktomrk(UMARK, tmark);
+		bswappnt(Bbuff, UMARK);
 	else
 		bpnttomrk(Bbuff, tmark);
 	unmark(tmark);

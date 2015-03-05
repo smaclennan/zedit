@@ -75,7 +75,7 @@ int bindata(struct buff *buff, Byte *, int);
 bool bm_search(struct buff *buff, const char *str, bool sensitive);
 bool bm_rsearch(struct buff *buff, const char *str, bool sensitive);
 
-/* socket.c */
+/* bsocket.c */
 int bread(struct buff *buff, int fd, int size);
 int bwrite(struct buff *buff, int fd, int size);
 

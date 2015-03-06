@@ -52,7 +52,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 		return -1;
 	}
 
-	if (compressed) *compressed = gzdirect(gz);
+	if (compressed) *compressed = gzdirect(gz) == 0;
 #endif
 
 	while ((len = fileread(fd, buf, PSIZE)) > 0) {

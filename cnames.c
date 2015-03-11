@@ -172,20 +172,6 @@ struct cnames Cnames[] = {
 	   "a new buffer is created and the file read into it. "
 	   "Supports file name completion.")
 	},
-	{"global-re-search",		ZGLOBAL_RE_SEARCH,	AN,
-	 C("This command is the same as global-search except it is used to "
-	   "search for a regular expression in all the buffers. "
-	   "See global-search for more details.")
-	},
-	{"global-search",		ZGLOBAL_SEARCH,		AN,
-	 C("This command is used to search for a string in all the buffers. "
-	   "It prompts for a search string and then starts searching at the "
-	   "start of the first buffer. If a match is found, it stops and "
-	   "leaves the point at the match. If Again is executed, it starts "
-	   "at the current Point and searches forwards through the buffers. "
-	   "At the last buffer it stops and puts the Point back where it "
-	   "started.")
-	},
 	{"goto-line",			ZGOTO_LINE,		0,
 	 C("Moves the point to the start of a given line. If there is a "
 	   "Universal Argument, uses the argument, else prompts for the line "

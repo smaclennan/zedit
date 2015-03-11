@@ -73,7 +73,6 @@ struct zbuff;
 #define FORWARD		1			/* go backwards */
 #define REGEXP		2			/* reg exp search */
 #define QUERY		3			/* query replace */
-#define SGLOBAL		3			/* global search */
 #define AGAIN		-1			/* go again */
 #define AGAIN_WRAP	128			/* wrap and go again */
 #define ESIZE		256			/* reg exp buffer size */

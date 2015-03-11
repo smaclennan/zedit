@@ -31,7 +31,6 @@ bool Insearch;	/* set by nocase, reset by getarg */
 static char olds[STRMAX + 1];	/* Search string */
 static char news[STRMAX + 1];	/* Replace string */
 static int searchdir[2];	/* Current direction for Again. */
-static struct mark *Gmark;	/* used by global search routines */
 
 #define QHELP	\
 "Options: ' ' 'y'=change; 'n'=don't; '.'=change & quit; 'u'=undo; '^G'=quit"
@@ -145,62 +144,20 @@ void Zword_search(void)
 	promptsearch(NULL, AGAIN);
 }
 
-void Zglobal_search(void)
-{
-	if (getarg(nocase("Global Search: "), olds, STRMAX))
-		return;
-	cswitchto(Bufflist);
-	btostart(Bbuff);
-	searchdir[0] = FORWARD;
-	searchdir[1] = SGLOBAL;
-	Zagain();
-}
-
 void Zre_search(void)
 {
 	promptsearch("RE Search: ", REGEXP);
 }
 
-void Zglobal_re_search(void)
-{
-	if (getarg(nocase("Global RE Search: "), olds, STRMAX))
-		return;
-	cswitchto(Bufflist);
-	btostart(Bbuff);
-	searchdir[0] = REGEXP;
-	searchdir[1] = SGLOBAL;
-	Zagain();
-}
-
 void Zagain(void)
 {
-	if (searchdir[1] == SGLOBAL) {
-		if (!Gmark)
-			Gmark = zcreatemrk(); /* set here in case exit/reload */
-		while (!promptsearch("", AGAIN)) {
-			Curbuff = Curbuff->next;
-			if (Curbuff) {
-				cswitchto(Curbuff);
-				btostart(Bbuff);
-				Arg = 1;
-			} else {
-				bpnttomrk(Bbuff, Gmark);
-				unmark(Gmark);
-				Gmark = NULL;
-				Curwdo->modeflags = INVALID;
-				searchdir[1] = 0;
-				return;
-			}
-		}
-	} else {
-		if (searchdir[0] & AGAIN_WRAP) {
-			searchdir[0] &= ~AGAIN_WRAP;
-			btostart(Bbuff);
-			putpaw("Wrapped....");
-			dosearch();
-		} else if (promptsearch("Search: ", AGAIN) == 0)
-			searchdir[0] |= AGAIN_WRAP;
-	}
+	if (searchdir[0] & AGAIN_WRAP) {
+		searchdir[0] &= ~AGAIN_WRAP;
+		btostart(Bbuff);
+		putpaw("Wrapped....");
+		dosearch();
+	} else if (promptsearch("Search: ", AGAIN) == 0)
+		searchdir[0] |= AGAIN_WRAP;
 }
 
 void Zreplace(void)

@@ -119,7 +119,7 @@ Byte Keys[] = {
 	[CX('=')] = ZPOSITION,
 
 	/* All lowercase converted to uppercase */
-	[CX('A')] = ZGLOBAL_SEARCH,
+	[CX('A')] = 0,
 	[CX('B')] = ZNEXT_BOOKMARK,
 	[CX('C')] = ZCOUNT,
 	[CX('D')] = 0,

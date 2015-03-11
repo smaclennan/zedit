@@ -1,4 +1,7 @@
 #define FCHECK
+#define HAVE_MARKS
+#define HAVE_GLOBAL_MARKS
+#define UNSIGNED_BYTES
 #include "../z.h"
 #include "../keys.h"
 

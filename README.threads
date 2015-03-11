@@ -10,11 +10,11 @@ environment.
 All the functions in the following files are thread safe:
 
  * buff.c
- * bm_search.c
+ * bmsearch.c
  * mark.c (1)
  * reg.c (2)
- * socket.c (3)
+ * bsocket.c (3)
 
 (1) You can't enable GLOBAL_MARKS
 (2) Requires marks
-(3) Note supported in win32
+(3) Not supported in win32

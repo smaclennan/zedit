@@ -778,11 +778,9 @@ void toggle_mode(int mode)
 
 void Zmark_paragraph(void)
 {
-	NEED_UMARK;
-
 	bmove1(Bbuff);	/* make sure we are not at the start of a paragraph */
 	Zprevious_paragraph();
-	bmrktopnt(Bbuff, UMARK);
+	set_umark(NULL);
 	while (Arg-- > 0)
 		Znext_paragraph();
 	Arg = 0;

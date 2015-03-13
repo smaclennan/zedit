@@ -80,6 +80,21 @@ bool step(struct buff *buff, Byte *ep, struct mark *REstart)
 	return false;
 }
 
+bool lookingat(struct buff *buff, Byte *str)
+{
+	Byte ep[ESIZE];
+	if (compile(str, ep, ep + ESIZE))
+		return false;
+
+	struct mark tmark;
+	bmrktopnt(buff, &tmark);
+	if (advance(buff, ep))
+		return true;
+
+	bpnttomrk(buff, &tmark);
+	return false;
+}
+
 /* Called by step to try to match at current position. */
 static bool advance(struct buff *buff, Byte *ep)
 {

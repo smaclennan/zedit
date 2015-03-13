@@ -47,8 +47,10 @@ bool mrkatmrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
 
 /* reg.c - requires marks */
+#define ESIZE		256			/* reg exp buffer size */
 int compile(Byte*, Byte*, Byte*);
 bool step(struct buff *, Byte *, struct mark *REstart);
+bool lookingat(struct buff *, Byte *);
 const char *regerr(int);
 
 #ifdef HAVE_GLOBAL_MARKS

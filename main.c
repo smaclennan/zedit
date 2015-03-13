@@ -141,5 +141,16 @@ int main(int argc, char *argv[])
 	dump_str_at_mark(buff, "1", mark1);
 	dump_str_at_mark(buff, "2", mark2);
 
+	btostart(buff);
+	if (lookingat(buff, "is what")) puts("la probs 1");
+	bmove(buff, 4);
+	if (lookingat(buff, "is what")) puts("la probs 2");
+	bmove1(buff);
+	if (!lookingat(buff, "is what")) puts("la probs 3");
+	btostart(buff);
+	bmove(buff, 5);
+	if (lookingat(buff, "is what nope")) puts("la probs 4");
+	if (!lookingat(buff, "is what")) puts("la probs 6");
+
 	return 0;
 }

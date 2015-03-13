@@ -75,7 +75,6 @@ struct zbuff;
 #define QUERY		3			/* query replace */
 #define AGAIN		-1			/* go again */
 #define AGAIN_WRAP	128			/* wrap and go again */
-#define ESIZE		256			/* reg exp buffer size */
 
 /*
  * BUFFER MODES

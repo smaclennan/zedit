@@ -17,9 +17,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef HAVE_MARKS
 #ifndef _mark_h
 #define _mark_h
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef HAVE_MARKS
 
 struct mark {
 	struct buff *mbuff;			/* buffer the mark is in */
@@ -72,5 +77,5 @@ extern struct mark *Marklist;
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)
 #endif
 
-#endif /* _mark_h */
 #endif /* HAVE_MARKS */
+#endif /* _mark_h */

@@ -1,6 +1,6 @@
-#ifdef HAVE_MARKS
-
 #include "buff.h"
+
+#ifdef HAVE_MARKS
 #include "mark.h"
 
 /* Regular expression compile and match routines.

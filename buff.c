@@ -544,7 +544,7 @@ struct page *pagesplit(struct buff *buff, int dist)
 	curpage->plen = dist;
 	newp->plen = newsize;
 
-#if HAVE_MARKS
+#ifdef HAVE_MARKS
 	struct mark *btmark;
 
 	foreach_pagemark(buff, btmark, curpage)

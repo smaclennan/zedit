@@ -20,6 +20,10 @@
 #ifndef _buff_h
 #define _buff_h
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdbool.h>
 
 #ifdef UNSIGNED_BYTES

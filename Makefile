@@ -19,9 +19,8 @@ CC = cc
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
 D = -O2
-CFLAGS += -DHAVE_MARKS -DHAVE_GLOBAL_MARKS -DUNSIGNED_BYTES
-CFLAGS += -DUNDO
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
+CFLAGS += -DHAVE_CONFIG_H
 
 MAKEFLAGS += --no-print-directory
 

@@ -9,6 +9,7 @@
 #endif
 
 #define SHOW_REGION	1
+#define UNDO        1
 
 /* DOPIPES: Output in real time and you can continue editing.
  * default: Output in real time but you must wait until command complete.
@@ -16,3 +17,8 @@
 #if defined(__unix__)
 #define DOPIPES 1
 #endif
+
+/* Don't touch these */
+#define HAVE_MARKS
+#define HAVE_GLOBAL_MARKS
+#define UNSIGNED_BYTES

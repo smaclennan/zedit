@@ -103,3 +103,13 @@ else
     sed 's/^CC = clang/#CC = clang/' Makefile > Makefile.tmp
 fi
 mv Makefile.tmp Makefile
+
+# Always need these
+cat >> config.h << EOF
+
+/* Don't touch these */
+#define HAVE_MARKS 1
+#define HAVE_GLOBAL_MARKS 1
+#define UNSIGNED_BYTES 1
+#define UNDO 1
+EOF

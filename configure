@@ -79,9 +79,10 @@ else
 fi
 set_one SPELL $spell
 set_one ZLIB $zlib
-set_one UNDO $undo
 set_one SHOW_REGION $show_region
 set_one GPM_MOUSE $gpm
+# Undo is special
+[ $undo -eq 1 ] && echo "#define UNDO 1" >> config.h
 
 if [ "$spell" = 1 ]; then
     sed 's/^#LIBS += -ldl/LIBS += -ldl/' Makefile > Makefile.tmp
@@ -108,8 +109,7 @@ mv Makefile.tmp Makefile
 cat >> config.h << EOF
 
 /* Don't touch these */
-#define HAVE_MARKS 1
-#define HAVE_GLOBAL_MARKS 1
-#define UNSIGNED_BYTES 1
-#define UNDO 1
+#define HAVE_MARKS
+#define HAVE_GLOBAL_MARKS
+#define UNSIGNED_BYTES
 EOF

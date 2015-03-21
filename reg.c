@@ -1,8 +1,5 @@
 #include "buff.h"
 
-#ifdef HAVE_MARKS
-#include "mark.h"
-
 /* Regular expression compile and match routines.
  * See regexp(5) and ed(1).
  * NOTES:	loc1 is now REstart
@@ -496,5 +493,3 @@ const char *regerr(int errnum)
 
 	return errs[errnum - 40];
 }
-
-#endif /* HAVE_MARKS */

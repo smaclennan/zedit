@@ -33,6 +33,8 @@
 #define Byte char
 #endif
 
+#include "mark.h"
+
 #define MAX_IOVS 16
 
 /* THE BUFFER STRUCTURES */

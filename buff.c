@@ -26,9 +26,6 @@
 #include <sys/stat.h>
 
 #include "buff.h"
-#ifdef HAVE_MARKS
-#include "mark.h"
-#endif
 
 #ifdef UNDO
 void undo_add(int size, bool clumped);
@@ -95,13 +92,11 @@ bool binsert(struct buff *buff, Byte byte)
 	undo_add(1, false);
 #endif
 
-#ifdef HAVE_MARKS
 	struct mark *btmark;
 
 	foreach_pagemark(buff, btmark, buff->curpage)
 		if (btmark->moffset >= buff->curchar)
 			++(btmark->moffset);
-#endif
 
 	bsetmod(false);
 	return true;
@@ -139,13 +134,11 @@ void bdelete(struct buff *buff, int quantity)
 				tpage = curpage->prevp;
 				noffset = tpage->plen;
 			}
-#ifdef HAVE_MARKS
 			struct mark *tmark;
 			foreach_pagemark(buff, tmark, curpage) {
 				tmark->mpage = tpage;
 				tmark->moffset = noffset;
 			}
-#endif
 			freepage(buff, curpage);
 		} else {
 			tpage = curpage;
@@ -154,7 +147,6 @@ void bdelete(struct buff *buff, int quantity)
 				tpage = curpage->nextp;
 				noffset = 0;
 			}
-#ifdef HAVE_MARKS
 			struct mark *tmark;
 			foreach_pagemark(buff, tmark, curpage)
 				if (tmark->moffset >= buff->curchar) {
@@ -165,7 +157,6 @@ void bdelete(struct buff *buff, int quantity)
 						tmark->moffset = noffset;
 					}
 				}
-#endif
 		}
 		makecur(buff, tpage, noffset);
 	}
@@ -331,7 +322,6 @@ void bempty(struct buff *buff)
 	while (buff->curpage->nextp)
 		freepage(buff, buff->curpage->nextp);
 
-#ifdef HAVE_MARKS
 	struct mark *btmark;
 
 	foreach_buffmark(buff, btmark)
@@ -339,7 +329,6 @@ void bempty(struct buff *buff)
 			btmark->mpage = buff->firstp;
 			btmark->moffset = 0;
 		}
-#endif
 
 #ifdef UNDO
 	undo_clear(buff);
@@ -446,12 +435,10 @@ int bindata(struct buff *buff, Byte *data, int size)
 		n = curplen(buff) - buff->curchar;
 		memmove(buff->curcptr + size, buff->curcptr, n);
 		memcpy(buff->curcptr, data, size);
-#ifdef HAVE_MARKS
 		struct mark *m;
 		foreach_pagemark(buff, m, buff->curpage)
 			if (m->moffset >= buff->curchar)
 				m->moffset += size;
-#endif
 		buff->curcptr += size;
 		buff->curchar += size;
 		curplen(buff) += size;
@@ -544,7 +531,6 @@ struct page *pagesplit(struct buff *buff, int dist)
 	curpage->plen = dist;
 	newp->plen = newsize;
 
-#ifdef HAVE_MARKS
 	struct mark *btmark;
 
 	foreach_pagemark(buff, btmark, curpage)
@@ -552,7 +538,6 @@ struct page *pagesplit(struct buff *buff, int dist)
 			btmark->mpage = newp;
 			btmark->moffset -= dist;
 		}
-#endif
 
 	if (buff->curchar >= dist)
 		/* new page has Point in it */

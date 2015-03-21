@@ -2,7 +2,6 @@
 #include "config.h"
 #endif
 
-#ifdef HAVE_MARKS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +10,6 @@
 #include <errno.h>
 
 #include "buff.h"
-#include "mark.h"
 
 #ifdef HAVE_GLOBAL_MARKS
 struct mark *Marklist;	/* the marks list tail */
@@ -152,5 +150,3 @@ bool mrkatmrk(struct mark *mark1, struct mark *mark2)
 		mark1->mpage == mark2->mpage &&
 		mark1->moffset == mark2->moffset;
 }
-
-#endif /* HAVE_MARKS */

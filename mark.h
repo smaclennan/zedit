@@ -20,12 +20,6 @@
 #ifndef _mark_h
 #define _mark_h
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#ifdef HAVE_MARKS
-
 struct mark {
 	struct buff *mbuff;			/* buffer the mark is in */
 	struct page *mpage;			/* page in the buffer */
@@ -86,5 +80,4 @@ extern struct mark *Marklist;
 #define foreach_buffmark(buff, mark) if (0)
 #endif
 
-#endif /* HAVE_MARKS */
 #endif /* _mark_h */

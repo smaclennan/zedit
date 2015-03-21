@@ -21,6 +21,7 @@ CC = cc
 D = -O2
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
 CFLAGS += -DHAVE_CONFIG_H
+CFLAGS += -DHAVE_MARKS -DHAVE_GLOBAL_MARKS -DUNSIGNED_BYTES
 
 MAKEFLAGS += --no-print-directory
 
@@ -70,7 +71,8 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 
 # This is just to check that no zedit dependencies crept into buff.c
 main: main.c buff.c bmsearch.c reg.c mark.c bsocket.c
-	$(QUIET_LINK)$(CC) -DHAVE_MARKS -g -o $@ $+
+	$(QUIET_LINK)$(CC) -UHAVE_GLOBAL_MARKS -DHAVE_BUFFER_MARKS -DHAVE_MARKS -g -o $@ $+
+	$(QUIET_LINK)$(CC) -UUNSIGNED_BYTES -UHAVE_GLOBAL_MARKS -DHAVE_MARKS -g -o $@ $+
 
 # Make all c files depend on all .h files
 *.o: $(HFILES)

@@ -24,17 +24,14 @@ struct mark *bcremrk(struct buff *buff)
 {
 	struct mark *mrk = (struct mark *)calloc(1, sizeof(struct mark));
 	if (mrk) {
-#ifdef HAVE_GLOBAL_MARKS
-		struct mark **head = &Marklist;
-#else
-		struct mark **head = &buff->marks;
-#endif
-
-		bmrktopnt(buff, mrk);
+#ifdef MARKS_HEAD
+		struct mark **head = &MARKS_HEAD(buff);
 		mrk->prev = *head; /* add to end of list */
 		mrk->next = NULL;
 		if (*head) (*head)->next = mrk;
 		*head = mrk;
+#endif
+		bmrktopnt(buff, mrk);
 		++NumMarks;
 	}
 	return mrk;
@@ -44,18 +41,14 @@ struct mark *bcremrk(struct buff *buff)
 void bdelmark(struct mark *mptr)
 {
 	if (mptr) {
-#ifdef HAVE_GLOBAL_MARKS
-		if (mptr == Marklist)
-			Marklist = mptr->prev;
-#else
-		if (mptr == mptr->mbuff->marks)
-			mptr->mbuff->marks = mptr->prev;
-#endif
+#ifdef MARKS_HEAD
+		if (mptr == MARKS_HEAD(mptr->mbuff))
+			MARKS_HEAD(mptr->mbuff) = mptr->prev;
 		if (mptr->prev)
 			mptr->prev->next = mptr->next;
 		if (mptr->next)
 			mptr->next->prev = mptr->prev;
-
+#endif
 		free((char *)mptr);
 		--NumMarks;
 	}

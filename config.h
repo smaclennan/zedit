@@ -17,8 +17,3 @@
 #if defined(__unix__)
 #define DOPIPES 1
 #endif
-
-/* Don't touch these */
-#define HAVE_MARKS
-#define HAVE_GLOBAL_MARKS
-#define UNSIGNED_BYTES

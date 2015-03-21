@@ -30,7 +30,9 @@ struct mark {
 	struct buff *mbuff;			/* buffer the mark is in */
 	struct page *mpage;			/* page in the buffer */
 	int moffset;				/* offset in the page */
+#if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
 	struct mark *prev, *next;	/* list of marks */
+#endif
 };
 
 extern int NumMarks; /* stats */
@@ -61,6 +63,8 @@ const char *regerr(int errnum);
 #ifdef HAVE_GLOBAL_MARKS
 extern struct mark *Marklist;
 
+#define MARKS_HEAD(buff) Marklist
+
 #define foreach_pagemark(buff, mark, page)				   \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mpage == (page))
@@ -68,13 +72,18 @@ extern struct mark *Marklist;
 #define foreach_buffmark(buff, mark)				   \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mbuff == (buff))
-#else
+#elif defined(HAVE_BUFFER_MARKS)
+#define MARKS_HEAD(buff) ((buff)->marks)
+
 #define foreach_pagemark(buff, mark, page)						 \
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	 \
 		if ((mark)->mpage == (page))
 
 #define foreach_buffmark(buff, mark)							\
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)
+#else
+#define foreach_pagemark(buff, mark, page) if (0)
+#define foreach_buffmark(buff, mark) if (0)
 #endif
 
 #endif /* HAVE_MARKS */

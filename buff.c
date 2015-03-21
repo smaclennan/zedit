@@ -70,7 +70,7 @@ void bdelbuff(struct buff *tbuff)
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);
 
-#if defined(HAVE_MARKS) && !defined(HAVE_GLOBAL_MARKS)
+#ifdef HAVE_BUFFER_MARKS
 	while (tbuff->marks) /* delete the marks */
 		bdelmark(tbuff->marks);
 #endif

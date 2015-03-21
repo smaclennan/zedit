@@ -25,6 +25,7 @@
 #endif
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifdef UNSIGNED_BYTES
 #define Byte unsigned char

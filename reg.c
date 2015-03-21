@@ -10,9 +10,9 @@
  *		locs is set externally by ed and sed - removed!
  */
 
-static bool advance(struct buff *buff, Byte *);
+static bool advance(struct buff *buff, uint8_t *ep);
 static bool ecmp(struct buff *buff, struct mark *, int);
-static void getrnge(Byte *);
+static void getrnge(uint8_t *);
 
 #define	CBRA	2
 #define	CCHR	4
@@ -52,7 +52,7 @@ static Byte bittab[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
  * The point is left at the end of the matched string or the buffer end and
  * REstart points to the start of the match.
  */
-bool step(struct buff *buff, Byte *ep, struct mark *REstart)
+bool step(struct buff *buff, uint8_t *ep, struct mark *REstart)
 {
 	struct mark tmark;
 
@@ -82,7 +82,7 @@ bool step(struct buff *buff, Byte *ep, struct mark *REstart)
 
 bool lookingat(struct buff *buff, Byte *str)
 {
-	Byte ep[ESIZE];
+	uint8_t ep[ESIZE];
 	if (compile(str, ep, ep + ESIZE))
 		return false;
 
@@ -96,7 +96,7 @@ bool lookingat(struct buff *buff, Byte *str)
 }
 
 /* Called by step to try to match at current position. */
-static bool advance(struct buff *buff, Byte *ep)
+static bool advance(struct buff *buff, uint8_t *ep)
 {
 	int c, ct;
 	struct mark *bbeg, curlp, tmark;
@@ -241,10 +241,10 @@ star:
 }
 
 /* Called by advance to match \{\} type ranges. */
-static void getrnge(Byte *str)
+static void getrnge(uint8_t *str)
 {
 	low = *str++ & 0377;
-	size = (*str == (Byte)'\377') ? 20000 : (*str & 0377) - low;
+	size = (*str == (uint8_t)'\377') ? 20000 : (*str & 0377) - low;
 }
 
 /* Compare the string at buffer mrk start to the string at the current point.
@@ -273,11 +273,11 @@ static bool ecmp(struct buff *buff, struct mark *start, int cnt)
  */
 #define EOFCH	('\0')
 
-int compile(Byte *instring, Byte *ep, Byte *endbuf)
+int compile(Byte *instring, uint8_t *ep, uint8_t *endbuf)
 {
 	Byte *sp = instring;
 	int c;
-	Byte *lastep = instring;
+	uint8_t *lastep = NULL;
 	int cclcnt;
 	char bracket[NBRA], *bracketp;
 	int closed;
@@ -285,7 +285,6 @@ int compile(Byte *instring, Byte *ep, Byte *endbuf)
 	int lc;
 	int i, cflg;
 
-	lastep = NULL;
 	c = GETC();
 #ifdef ALLOW_NL
 	if (c == EOFCH) {

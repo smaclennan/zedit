@@ -12,47 +12,58 @@
 /* These can be used with files... but where written to use with
  * sockets. */
 
-#define BREAD_THRESHOLD (PSIZE / 4)
-
-/* Simple version. Can do multiple reads! */
-int bread(struct buff *buff, int fd, int size)
+/* Simple version. Optimized for appends. */
+int bread(struct buff *buff, int fd)
 {
-	int n, ret = 0, left = PSIZE - curplen(buff);
+	int n;
+	struct page *npage;
+	struct iovec iovs[2];
+
+	if (buff->curchar != curplen(buff)) {
+		/* Move data after point into new page */
+		if (!pagesplit(buff, buff->curchar))
+			return -ENOMEM;
+	}
+
+	int left = PSIZE - curplen(buff);
 
 	/* try to fill current page */
-	if (left >= size || left > BREAD_THRESHOLD) {
-		if (buff->curchar != curplen(buff)) {
-			/* Move data after point into new page */
-			if (!pagesplit(buff, buff->curchar))
-				return -ENOMEM;
-			left = PSIZE - buff->curchar;
-		}
-		n = read(fd, buff->curcptr, MIN(size, left));
-		if (n <= 0)
-			return n;
-		buff->curchar += n;
-		buff->curcptr += n;
-		curplen(buff) += n;
-		ret += n;
-		size -= n;
+	if (left) {
+		iovs[0].iov_base = buff->curcptr;
+		iovs[0].iov_len = left;
+	} else
+		iovs[0].iov_len = 0;
+
+	/* plus a new page */
+	npage = newpage(buff->curpage);
+	if (!npage)
+		return -ENOMEM;
+
+	iovs[1].iov_base = npage->pdata;
+	iovs[1].iov_len = PSIZE;
+
+	n = readv(fd, iovs, 2);
+
+	if (n <= 0) {
+		freepage(buff, npage);
+		return n;
 	}
 
-	/* now use full pages */
-	while (size > 0) {
-		struct page *npage = newpage(buff->curpage);
-		if (!npage)
-			return ret > 0 ? ret : -ENOMEM;
-		n = read(fd, npage->pdata, MIN(size, PSIZE));
-		if (n > 0) {
-			makecur(buff, npage, n);
-			curplen(buff) = n;
-		} else {
-			freepage(buff, npage);
-			return ret > 0 ? ret : n;
-		}
+	if (left) {
+		int wrote = MIN(left, n);
+		buff->curcptr += wrote;
+		buff->curchar += wrote;
+		curplen(buff) += wrote;
+		n -= wrote;
 	}
 
-	return ret;
+	if (n > 0) {
+		makecur(buff, npage, n);
+		curplen(buff) = n;
+	} else
+		freepage(buff, npage);
+
+	return n;
 }
 
 /* Writes are easy! Leaves the point at the end of the write. */
@@ -85,3 +96,21 @@ int bwrite(struct buff *buff, int fd, int size)
 	return n;
 }
 
+bool blookingat(struct buff *buff, const Byte *str)
+{
+	int moved = 0; /* SAM worth it to add mark? */
+
+	while (*buff->curcptr == ' ' || *buff->curcptr == '\t') {
+		bmove1(buff);
+		++moved;
+	}
+	while (*str)
+		if (*buff->curcptr == *str) {
+			++str;
+			bmove1(buff);
+			++moved;
+		}
+	if (*str) bmove(buff, -moved);
+
+	return *str ? false : true;
+}

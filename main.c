@@ -66,9 +66,7 @@ int test_readwrite(struct buff *buff, char *in, char *out)
 		exit(1);
 	}
 
-	do
-		count = random() % 4096;
-	while ((n = bread(buff, fd, count)) > 0);
+	while ((n = bread(buff, fd)) > 0) ;
 
 	close(fd);
 

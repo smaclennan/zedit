@@ -8,6 +8,7 @@
 #define NUMASCII	256			/* number of ascii chars */
 
 #define buff() (*buff->curcptr)
+#define buffint() ((uint8_t)buff())
 
 /* This is an implementation of the Boyer-Moore Search.
  * It uses the delta1 only with the fast/slow loops.
@@ -31,7 +32,7 @@ bool bm_search(struct buff *buff, const char *str, bool sensitive)
 		delta[i] = len ? len : 1;
 	if (sensitive)
 		for (i = 0; i <= len;  ++i)
-			delta[(int)str[i]] = len - i;
+			delta[(uint8_t)str[i]] = len - i;
 	else
 		for (i = 0; i <= len;  ++i) {
 			delta[toupper(str[i])] = len - i;
@@ -41,11 +42,11 @@ bool bm_search(struct buff *buff, const char *str, bool sensitive)
 	/* search forward*/
 	while (!bisend(buff)) {
 		/* fast loop - delta will be 0 if matched */
-		while (!bisend(buff) && delta[buff()])
-			bmove(buff, delta[buff()]);
+		while (!bisend(buff) && delta[buffint()])
+			bmove(buff, delta[buffint()]);
 		/* slow loop */
 		for (i = len;
-			 (char)buff() == str[i] ||
+			 buff() == str[i] ||
 				 (!sensitive && tolower(buff()) == tolower(str[i]));
 			 bmove(buff, -1), --i)
 			if (i == 0) {
@@ -53,8 +54,8 @@ bool bm_search(struct buff *buff, const char *str, bool sensitive)
 				return true;
 			}
 		/* compute shift. shift must be forward! */
-		if (i + delta[buff()] > len)
-			shift = delta[buff()];
+		if (i + delta[buffint()] > len)
+			shift = delta[buffint()];
 		else
 			shift = len - i + 1;
 		bmove(buff, shift);
@@ -77,7 +78,7 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive)
 		delta[i] = len ? -len : -1;
 	if (sensitive)
 		for (i = len; i >= 0; --i)
-			delta[(int)str[i]] = -i;
+			delta[(uint8_t)str[i]] = -i;
 	else
 		for (i = len; i >= 0; --i) {
 			delta[toupper(str[i])] = -i;
@@ -88,8 +89,8 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive)
 	bmove(buff, -len);
 	while (!bisstart(buff)) {
 		/* fast loop - delta will be 0 if matched */
-		while (delta[buff()] && !bisstart(buff))
-			bmove(buff, delta[buff()]);
+		while (delta[buffint()] && !bisstart(buff))
+			bmove(buff, delta[buffint()]);
 		/* slow loop */
 		for (i = 0;
 			 i <= len &&
@@ -104,7 +105,7 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive)
 			return true;
 		}
 		/* compute shift. shift must be backward! */
-		bmove(buff, delta[buff()] + i < 0 ? delta[buff()] : -i - 1);
+		bmove(buff, delta[buffint()] + i < 0 ? delta[buffint()] : -i - 1);
 	}
 
 	return false;

@@ -151,8 +151,7 @@ void Zhelp_variable(void)
 
 	wuseother(HELPBUFF);
 
-	binstr(Bbuff, Vars[rc].vname);
-	binstr(Bbuff, ": ");
+	binstr(Bbuff, "%s: ", Vars[rc].vname);
 	switch (Vars[rc].vtype) {
 	case V_STRING:
 		binstr(Bbuff, VARSTR(rc) ? VARSTR(rc) : "NONE");
@@ -186,16 +185,13 @@ void Zhelp_apropos(void)
 				wuseother(HELPBUFF);
 			n += sprintf(line + n, "%-24s", Cnames[i].name);
 			if (++j == 3) {
-				binstr(Bbuff, line);
-				binsert(Bbuff, '\n');
+				binstr(Bbuff, "%s\n", line);
 				j = n = 0;
 			}
 		}
 
-	if (j) {
-		binstr(Bbuff, line);
-		binsert(Bbuff, '\n');
-	}
+	if (j)
+		binstr(Bbuff, "%s\n", line);
 
 	if (match == 0)
 		putpaw("No matches.");

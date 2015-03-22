@@ -36,7 +36,7 @@ static void grep_one(char *fname, Byte *ebuf,
 		struct mark start;
 		unsigned long line = bline(inbuff);
 
-		snprintf(PawStr, STRMAX, "%s:%ld: ", fname, line);
+		snprintf(PawStr, STRMAX, "%s:%lu: ", fname, line);
 		binstr(outbuff, PawStr);
 
 		tobegline(inbuff);

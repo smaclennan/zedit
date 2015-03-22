@@ -76,7 +76,9 @@ Byte bpeek(struct buff *buff);
 void boffset(struct buff *buff, unsigned long offset);
 int bappend(struct buff *buff, Byte *, int);
 int bindata(struct buff *buff, Byte *, int);
-#define binstr(b, s) bindata((b), (Byte *)(s), strlen(s));
+
+/* Supports %s only! */
+void binstr(struct buff *buff, const char *str, ...);
 
 /* reg.c */
 #define ESIZE		256			/* reg exp buffer size */

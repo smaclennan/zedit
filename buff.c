@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
 #include <fcntl.h>
@@ -100,6 +101,28 @@ bool binsert(struct buff *buff, Byte byte)
 
 	bsetmod(false);
 	return true;
+}
+
+/* Supports %s only! */
+void binstr(struct buff *buff, const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	while (*fmt) {
+		if (*fmt == '%') {
+			if (*(fmt + 1) == 's') {
+				char *s;
+				for (s = va_arg(ap, char *); *s; ++s)
+					binsert(buff, *s);
+				++fmt;
+			} else
+				binsert(buff, '%');
+		} else
+			binsert(buff, *fmt);
+		++fmt;
+	}
+	va_end(ap);
 }
 
 /* Delete quantity characters. */

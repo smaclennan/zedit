@@ -160,8 +160,7 @@ void Zhelp_variable(void)
 		binstr(Bbuff, VAR(rc) ? "On" : "Off");
 		break;
 	case V_DECIMAL:
-		sprintf(PawStr, "%d", VAR(rc));
-		binstr(Bbuff, PawStr);
+		binstr(Bbuff, "%d", VAR(rc));
 	}
 
 	dump_doc(Vars[rc].doc);

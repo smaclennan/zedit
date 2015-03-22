@@ -138,12 +138,11 @@ void Zdelete_buffer(void)
 
 static void lstbuff(struct zbuff *tbuff)
 {
-	sprintf(PawStr, "%-*s %c%c %8lu %s\n", BUFNAMMAX, tbuff->bname,
-			(tbuff->bmode & SYSBUFF) ? 'S' : ' ',
-			tbuff->buff->bmodf ? '*' : ' ',
-			blength(tbuff->buff),
-			tbuff->fname ? limit(tbuff->fname, WASTED) : UNTITLED);
-	binstr(Bbuff, PawStr);
+	binstr(Bbuff, "%-16s %s%s %8u %s\n", tbuff->bname,
+		   (tbuff->bmode & SYSBUFF) ? "S" : " ",
+		   tbuff->buff->bmodf ? "*" : " ",
+		   blength(tbuff->buff),
+		   tbuff->fname ? limit(tbuff->fname, WASTED) : UNTITLED);
 }
 
 void Zlist_buffers(void)
@@ -156,11 +155,8 @@ void Zlist_buffers(void)
 			struct zbuff *tbuff = cfindbuff(Bnames[i]);
 			if (tbuff)
 				lstbuff(tbuff);
-			else {
-				sprintf(PawStr, "%-*s Problem\n",
-					BUFNAMMAX, Bnames[i]);
-				binstr(Bbuff, PawStr);
-			}
+			else if (strcmp(Bnames[i], "*paw*"))
+				binstr(Bbuff, "%-16s Problem\n", Bnames[i]);
 		}
 		Bbuff->bmodf = false;
 		wswitchto(was);

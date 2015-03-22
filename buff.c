@@ -103,21 +103,61 @@ bool binsert(struct buff *buff, Byte byte)
 	return true;
 }
 
-/* Supports %s only! */
+static char valid_format(const char *fmt, int *saw_neg, int *len, int *n)
+{
+	*saw_neg = *len = *n = 0;
+	++fmt; ++*n; /* skip % */
+	if (*fmt == '-') {
+		*saw_neg = 1;
+		++fmt; ++*n;
+	}
+	while (isdigit(*fmt)) {
+		*len = *len * 10 + *fmt - '0';
+		++fmt; ++*n;
+	}
+	if (*fmt == 'u' || *fmt == 'd') *saw_neg = 0;
+	return *fmt;
+}
+
+static void out_str(struct buff *buff, const char *s, int saw_neg, int len)
+{
+	int slen = strlen(s);
+	if (saw_neg == 0)
+		while (slen++ < len)
+			binsert(buff, ' ');
+	while (*s)
+		binsert(buff, *s++);
+	while (slen++ < len)
+		binsert(buff, ' ');
+}
+
 void binstr(struct buff *buff, const char *fmt, ...)
 {
 	va_list ap;
+	char tmp[21];
+	int saw_neg, len, n;
 
 	va_start(ap, fmt);
 	while (*fmt) {
 		if (*fmt == '%') {
-			if (*(fmt + 1) == 's') {
-				char *s;
-				for (s = va_arg(ap, char *); *s; ++s)
-					binsert(buff, *s);
-				++fmt;
-			} else
-				binsert(buff, '%');
+			switch (valid_format(fmt, &saw_neg, &len, &n)) {
+			case 's':
+				fmt += n;
+				out_str(buff, va_arg(ap, char *), saw_neg, len);
+				break;
+			case 'd':
+				fmt += n;
+				snprintf(tmp, sizeof(tmp), "%d", va_arg(ap, int));
+				out_str(buff, tmp, saw_neg, len);
+				break;
+			case 'u':
+				fmt += n;
+				snprintf(tmp, sizeof(tmp), "%u", va_arg(ap, unsigned));
+				out_str(buff, tmp, saw_neg, len);
+				break;
+			default:
+				binsert(buff, *fmt);
+			}
 		} else
 			binsert(buff, *fmt);
 		++fmt;

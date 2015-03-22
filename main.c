@@ -150,5 +150,15 @@ int main(int argc, char *argv[])
 	if (lookingat(buff, "is what nope")) puts("la probs 4");
 	if (!lookingat(buff, "is what")) puts("la probs 6");
 
+	bempty(buff);
+	int n = 1234;
+	binstr(buff, "%-32s %8u\n", "fred", n);
+	binstr(buff, "%15s %8d\n", "fred", n);
+	binstr(buff, "%-15s %8u\n", "fredrick the first", n);
+	binstr(buff, "%-15s left\n", "fredrick the first");
+	printf("%.*s", curplen(buff), buff->curpage->pdata);
+
+	printf("%-15s %8u\n", "fred", n);
+
 	return 0;
 }

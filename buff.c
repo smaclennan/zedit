@@ -99,7 +99,7 @@ bool binsert(struct buff *buff, Byte byte)
 		if (btmark->moffset >= buff->curchar)
 			++(btmark->moffset);
 
-	bsetmod(false);
+	bsetmod(buff);
 	return true;
 }
 
@@ -131,7 +131,7 @@ void bdelete(struct buff *buff, int quantity)
 	int quan, noffset;
 	struct page *tpage, *curpage = buff->curpage;
 
-	while (quantity) {
+	while (quantity > 0) {
 		/* Delete as many characters as possible from this page */
 		quan = MIN(curplen(buff) - buff->curchar, quantity);
 		if (quan < 0)

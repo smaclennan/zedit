@@ -39,24 +39,15 @@ bool bisaftermrk(struct buff *, struct mark *);
 bool bisbeforemrk(struct buff *, struct mark *);
 void bmrktopnt(struct buff *, struct mark *);
 bool bpnttomrk(struct buff *, struct mark *);
-void bswappnt(struct buff *, struct mark *);
+bool bswappnt(struct buff *, struct mark *);
 
-#define MRKSIZE		(sizeof(struct mark) - (sizeof(struct mark *) << 1))
-#define mrktomrk(m1, m2) memcpy(m1, m2, MRKSIZE)
+void mrktomrk(struct mark *m1, struct mark *m2);
 bool mrkaftermrk(struct mark *, struct mark *);
 bool mrkatmrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
 
-/* reg.c - requires marks */
-#define ESIZE		256			/* reg exp buffer size */
-int compile(Byte *instring, uint8_t *ep, uint8_t *endbuf);
-bool step(struct buff *buff, uint8_t *ep, struct mark *REstart);
-bool lookingat(struct buff *buff, Byte *str);
-const char *regerr(int errnum);
-
 #ifdef HAVE_GLOBAL_MARKS
 extern struct mark *Marklist;
-
 #define MARKS_HEAD(buff) Marklist
 
 #define foreach_pagemark(buff, mark, page)				   \

@@ -98,16 +98,24 @@ bool bpnttomrk(struct buff *buff, struct mark *tmark)
 	return true;
 }
 
-/* Swap the point and the mark. */
-void bswappnt(struct buff *buff, struct mark *tmark)
+void mrktomrk(struct mark *m1, struct mark *m2)
 {
-	struct mark tmp;
+	m1->mbuff = m2->mbuff;
+	m1->mpage = m2->mpage;
+	m1->moffset = m2->moffset;
+}
 
-	tmp.mbuff	= buff; /* Point not moved out of its buffer */
-	tmp.mpage	= tmark->mpage;
-	tmp.moffset	= tmark->moffset;
-	bmrktopnt(buff, tmark);
-	bpnttomrk(buff, &tmp);
+/* Swap the point and the mark. */
+bool bswappnt(struct buff *buff, struct mark *tmark)
+{
+	if (tmark->mbuff != buff)
+		return false;
+
+	struct mark tmp;
+	bmrktopnt(buff, &tmp);
+	bpnttomrk(buff, tmark);
+	mrktomrk(tmark, &tmp);
+	return true;
 }
 
 /* True if mark1 precedes mark2 */

@@ -78,6 +78,13 @@ int bappend(struct buff *buff, Byte *, int);
 int bindata(struct buff *buff, Byte *, int);
 #define binstr(b, s) bindata((b), (Byte *)(s), strlen(s));
 
+/* reg.c */
+#define ESIZE		256			/* reg exp buffer size */
+int compile(Byte *instring, uint8_t *ep, uint8_t *endbuf);
+bool step(struct buff *buff, uint8_t *ep, struct mark *REstart);
+bool lookingat(struct buff *buff, Byte *str);
+const char *regerr(int error);
+
 /* bmsearch.c */
 bool bm_search(struct buff *buff, const char *str, bool sensitive);
 bool bm_rsearch(struct buff *buff, const char *str, bool sensitive);

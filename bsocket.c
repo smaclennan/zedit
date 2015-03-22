@@ -95,22 +95,3 @@ int bwrite(struct buff *buff, int fd, int size)
 
 	return n;
 }
-
-bool blookingat(struct buff *buff, const Byte *str)
-{
-	int moved = 0; /* SAM worth it to add mark? */
-
-	while (*buff->curcptr == ' ' || *buff->curcptr == '\t') {
-		bmove1(buff);
-		++moved;
-	}
-	while (*str)
-		if (*buff->curcptr == *str) {
-			++str;
-			bmove1(buff);
-			++moved;
-		}
-	if (*str) bmove(buff, -moved);
-
-	return *str ? false : true;
-}

@@ -177,8 +177,9 @@ static bool advance(struct buff *buff, uint8_t *ep)
 				if (!ISTHERE(c))
 					break;
 			}
-			if (size < 0)
-				bmove1(buff);
+			/* SAM why? goes one too far for \{m\} */
+// SAM			if (size < 0)
+// SAM				bmove1(buff);
 			ep += 18;		/* 16 + 2 */
 			goto star;
 

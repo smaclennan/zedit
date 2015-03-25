@@ -15,7 +15,7 @@
 /* Simple version. Optimized for appends. */
 int bread(struct buff *buff, int fd)
 {
-	int n;
+	int n, n_read;
 	struct page *npage;
 	struct iovec iovs[2];
 
@@ -42,7 +42,7 @@ int bread(struct buff *buff, int fd)
 	iovs[1].iov_base = npage->pdata;
 	iovs[1].iov_len = PSIZE;
 
-	n = readv(fd, iovs, 2);
+	n = n_read = readv(fd, iovs, 2);
 
 	if (n <= 0) {
 		freepage(buff, npage);
@@ -63,7 +63,7 @@ int bread(struct buff *buff, int fd)
 	} else
 		freepage(buff, npage);
 
-	return n;
+	return n_read;
 }
 
 /* Writes are easy! Leaves the point at the end of the write. */

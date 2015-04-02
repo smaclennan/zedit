@@ -580,9 +580,9 @@ struct page *newpage(struct page *curpage)
 }
 
 /* Split the current full page. Leaves dist in curpage. */
-struct page *pagesplit(struct buff *buff, int dist)
+struct page *pagesplit(struct buff *buff, unsigned dist)
 {
-	if (dist < 0 || dist > PSIZE) return NULL;
+	if (dist > PSIZE) return NULL;
 
 	struct page *curpage = buff->curpage;
 	struct page *newp = newpage(curpage);

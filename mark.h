@@ -23,7 +23,7 @@
 struct mark {
 	struct buff *mbuff;			/* buffer the mark is in */
 	struct page *mpage;			/* page in the buffer */
-	int moffset;				/* offset in the page */
+	unsigned moffset;			/* offset in the page */
 #if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
 	struct mark *prev, *next;	/* list of marks */
 #endif

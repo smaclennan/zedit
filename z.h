@@ -29,11 +29,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h> /* needed for c11 */
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <unistd.h>
 #include <time.h>
 #include <sys/stat.h>
 
@@ -42,7 +40,9 @@
 #ifdef WIN32
 #include "zwin32.h"
 #else
+#include <unistd.h>
 #include <dirent.h>
+#include <strings.h> /* needed for c11 */
 #endif
 
 #include <setjmp.h>

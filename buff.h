@@ -33,6 +33,10 @@
 #define Byte char
 #endif
 
+#ifdef WIN32
+#define snprintf _snprintf
+#endif
+
 #include "mark.h"
 
 #define MAX_IOVS 16
@@ -77,7 +81,6 @@ void boffset(struct buff *buff, unsigned long offset);
 int bappend(struct buff *buff, Byte *, int);
 int bindata(struct buff *buff, Byte *, int);
 
-/* Supports %s only! */
 void binstr(struct buff *buff, const char *str, ...);
 
 /* reg.c */
@@ -119,7 +122,7 @@ void makecur(struct buff *buff, struct page *, int);
 
 struct page {
 	Byte pdata[PSIZE];		/* the page data */
-	int plen;			/* current length of the page */
+	unsigned plen;			/* current length of the page */
 	struct page *nextp, *prevp;	/* list of pages */
 };
 
@@ -127,6 +130,6 @@ struct page {
 
 struct page *newpage(struct page *curpage);
 void freepage(struct buff *buff, struct page *page);
-struct page *pagesplit(struct buff *buff, int dist);
+struct page *pagesplit(struct buff *buff, unsigned dist);
 
 #endif

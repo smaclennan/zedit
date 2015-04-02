@@ -132,7 +132,8 @@ static bool bwritedos(int fd)
 {
 	struct mark smark;
 	struct page *tpage;
-	int i, n, status = true;
+	int n, status = true;
+	unsigned i;
 	Byte buf[PSIZE * 2], *p;
 
 	bmrktopnt(Bbuff, &smark);

@@ -558,7 +558,7 @@ void vsetmrk(struct mark *mrk)
 
 void invalidate_scrnmarks(unsigned from, unsigned to)
 {
-	int i;
+	unsigned i;
 
 	for (i = from; i < to; ++i)
 		Scrnmodf[i] = true;

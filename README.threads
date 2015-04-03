@@ -3,18 +3,36 @@ you only access the buffer in one thread at a time, then they are
 safe. However buffers cannot be shared between threads without some
 form of external locking.
 
-What you do lose from buff.c is the buffer list and memory cleanup at
-exit. I don't think the buffer list has much meaning in a threaded
-environment.
-
 All the functions in the following files are thread safe:
 
  * buff.c
  * bmsearch.c
  * mark.c (1)
- * reg.c (2)
- * bsocket.c (3)
+ * reg.c
+ * bsocket.c (2)
 
 (1) You can't enable GLOBAL_MARKS
-(2) Requires marks
-(3) Not supported in win32
+(2) Not supported in win32
+
+MARKS
+-----
+
+There are two types of marks: static and dynamic. By default, only
+static marks are supported. Static marks point at one place in a
+buffer and never move. So if you insert or delete characters, the mark
+could end up pointing at nothing.
+
+However they are still very useful. For example, you can set a mark,
+search, and then return to the mark. The regular expression code
+relies on marks.
+
+Dynamic marks are enabled with either the HAVE_GLOBAL_MARKS or
+HAVE_BUFFER_MARKS defines (don't set both).  HAVE_GLOBAL_MARKS defines
+one global list of marks. This is really for Zedit and is not thread
+safe. HAVE_BUFFER_MARKS gives you buffer local marks which have the
+same restrictions as buffers.
+
+Dynamic marks must be created with bcremrk() or they will not be on the
+proper list. The advantage of dynamic marks is that they move as
+characters are inserted or deleted. So they stay valid even as the
+text around them changes.

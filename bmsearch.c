@@ -13,7 +13,6 @@
 /* This is an implementation of the Boyer-Moore Search.
  * It uses the delta1 only with the fast/slow loops.
  * It searches for the string 'str' starting at the current buffer location.
- * The search will be case insensitive if the buffers current mode is so set.
  */
 bool bm_search(struct buff *buff, const char *str, bool sensitive)
 {

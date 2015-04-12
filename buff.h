@@ -84,11 +84,28 @@ int bindata(struct buff *buff, Byte *, int);
 void binstr(struct buff *buff, const char *str, ...);
 
 /* reg.c */
+#ifdef BUILTIN_REG
 #define ESIZE		256			/* reg exp buffer size */
-int compile(Byte *instring, uint8_t *ep, uint8_t *endbuf);
-bool step(struct buff *buff, uint8_t *ep, struct mark *REstart);
+
+typedef struct regex {
+	uint8_t ep[ESIZE];
+} regex_t;
+
+#define REG_EXTENDED	0
+#define REG_ICASE		0
+#define REG_NOSUB		0
+#define REG_NEWLINE		0
+
+int regerror(int errcode, const regex_t *preg, char *errbuf,
+				int errbuf_size);
+static inline void regfree(regex_t *re) {}
+#endif
+
+int compile(struct buff *buff, regex_t *re, const char *regex, int cflags);
+bool step(struct buff *buff, regex_t *re, struct mark *REstart);
+/* regerror */
+/* regfree */
 bool lookingat(struct buff *buff, Byte *str);
-const char *regerr(int error);
 
 /* bmsearch.c */
 bool bm_search(struct buff *buff, const char *str, bool sensitive);

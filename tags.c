@@ -95,7 +95,7 @@ static struct zbuff *read_tagfile(void)
 static bool find_tag(char *word)
 {
 	char path[PATHMAX], regstr[STRMAX], *p;
-	Byte ebuf[ESIZE];
+	regex_t re;
 	struct zbuff *buff, *save = Curbuff;
 	int offset;
 
@@ -105,14 +105,14 @@ static bool find_tag(char *word)
 		return false;
 
 	snprintf(regstr, sizeof(regstr), TAG_REGEX, word);
-	if (compile((Byte *)regstr, ebuf, &ebuf[ESIZE])) {
+	if (compile(Bbuff, &re, regstr, 0)) {
 		putpaw("regcomp failed");
 		return false;
 	}
 
 	zswitchto(buff);
 	btostart(Bbuff);
-	if (!step(Bbuff, ebuf, NULL))
+	if (!step(Bbuff, &re, NULL))
 		goto failed;
 
 	offset = batoi();
@@ -141,6 +141,7 @@ static bool find_tag(char *word)
 failed:
 	putpaw("No match.");
 	zswitchto(save);
+	regfree(&re);
 	return false;
 }
 

@@ -22,6 +22,8 @@ D = -O2
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
 CFLAGS += -DHAVE_CONFIG_H -DHAVE_GLOBAL_MARKS -DUNSIGNED_BYTES
 
+CFLAGS += -DBUILTIN_REG
+
 MAKEFLAGS += --no-print-directory
 
 # Enable and all buffers have only one contiguous page.

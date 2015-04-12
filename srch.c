@@ -23,7 +23,7 @@
 static int promptsearch(const char *prompt, int type);
 static void promptreplace(int type);
 static bool dosearch(void);
-static bool replaceone(int, bool *, bool *, Byte *, bool);
+static bool replaceone(int, bool *, bool *, regex_t *, bool);
 
 
 bool Insearch;	/* set by nocase, reset by getarg */
@@ -178,7 +178,7 @@ void Zre_replace(void)
 static void doreplace(int type)
 {
 	bool exit = false, crgone, query;
-	Byte ebuf[ESIZE];
+	regex_t re;
 	struct mark *pmark, tmark;
 	struct zbuff *tbuff, *save = Curbuff;
 	int rc = 0;
@@ -191,9 +191,11 @@ static void doreplace(int type)
 	pmark = zcreatemrk();
 
 	if (type == REGEXP)
-		rc = compile((Byte *)olds, ebuf, &ebuf[ESIZE]);
-	if (rc)
-		error(regerr(rc));
+		rc = compile(Bbuff, &re, olds, REG_EXTENDED);
+	if (rc) {
+		regerror(rc, &re, PawStr, COLMAX);
+		error("%s", PawStr);
+	}
 	else if (Argp) {
 		foreachbuff(tbuff) {
 			if(exit)
@@ -202,7 +204,7 @@ static void doreplace(int type)
 				cswitchto(tbuff);
 				bmrktopnt(Bbuff, &tmark);
 				btostart(Bbuff);
-				while (replaceone(type, &query, &exit, ebuf, crgone) &&
+				while (replaceone(type, &query, &exit, &re, crgone) &&
 					   !exit)
 					;
 				bpnttomrk(Bbuff, &tmark);
@@ -210,13 +212,15 @@ static void doreplace(int type)
 		}
 		clrpaw();
 		cswitchto(save);
-	} else if (!replaceone(type, &query, &exit, ebuf, crgone) && !exit)
+	} else if (!replaceone(type, &query, &exit, &re, crgone) && !exit)
 		putpaw("Not Found");
 	else
 		clrpaw();
 
 	bpnttomrk(Bbuff, pmark);
 	unmark(pmark);
+	if (type == REGEXP)
+		regfree(&re);
 }
 
 static void promptreplace(int type)
@@ -243,10 +247,10 @@ static void promptreplace(int type)
 	doreplace(type);
 }
 
-static bool next_replace(Byte *ebuf, struct mark *REstart, int type)
+static bool next_replace(regex_t *re, struct mark *REstart, int type)
 {
 	if (type == REGEXP)
-		return step(Bbuff, ebuf, REstart);
+		return step(Bbuff, re, REstart);
 
 	if (bstrsearch(olds, FORWARD)) {
 		bmove(Bbuff, -(int)strlen(olds));
@@ -255,8 +259,8 @@ static bool next_replace(Byte *ebuf, struct mark *REstart, int type)
 
 	return false;
 }
-static bool replaceone(int type, bool *query, bool *exit, Byte *ebuf,
-			  bool crgone)
+
+static bool replaceone(int type, bool *query, bool *exit, regex_t *re, bool crgone)
 {
 	bool found = false;
 	char tchar = ',', *ptr;
@@ -269,7 +273,7 @@ static bool replaceone(int type, bool *query, bool *exit, Byte *ebuf,
 
 	prevmatch = zcreatemrk();
 	putpaw("Searching...");
-	while (!*exit && next_replace(ebuf, REstart, type)) {
+	while (!*exit && next_replace(re, REstart, type)) {
 		found = true;
 		if (*query) {
 replace:
@@ -411,17 +415,20 @@ static bool dosearch(void)
 	bmove(Bbuff, searchdir[0] == BACKWARD ? -1 : 1);
 #endif
 	if (searchdir[0] == REGEXP) {
-		Byte ebuf[ESIZE];
-		rc = compile((Byte *)olds, ebuf, &ebuf[ESIZE]);
-		if (rc)
-			error(regerr(rc));
-		else
+		regex_t re;
+
+		if ((rc = compile(Bbuff, &re, olds, REG_EXTENDED))) {
+			regerror(rc, &re, PawStr, COLMAX);
+			error("%s", PawStr);
+		} else {
 			while (Arg-- > 0)
-				if (step(Bbuff, ebuf, NULL)) {
+				if (step(Bbuff, &re, NULL)) {
 					bmrktopnt(Bbuff, &fmark);
 					++fcnt;
 				} else
 					break;
+			regfree(&re);
+		}
 	} else
 		while (Arg-- > 0)
 			if (bstrsearch(olds, searchdir[0])) {

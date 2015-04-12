@@ -1,29 +1,23 @@
 #include "buff.h"
 
-#define BUILTIN_REG
 #ifndef BUILTIN_REG
 #include <regex.h>
 
 /* This is for zedit... do not rely on it in threaded code */
 int circf;
 
-bool step(struct buff *buff, uint8_t *ep, struct mark *REstart)
+bool step(struct buff *buff, regext_t *re, struct mark *REstart)
 {
 	return false;
 }
 
-int compile(Byte *instring, uint8_t *ep, uint8_t *endbuf)
+int compile(const regex_t *re, const char *regex, int cflags)
 {
 	circf = 0;
 	if (*instring == '^')
 		circf = 1;
 
-	return 0;
-}
-
-const char *regerr(int errnum)
-{
-	return "duh";
+	return regcomp(re, regex, cflags);
 }
 #else
 /* Regular expression compile and match routines.
@@ -75,8 +69,9 @@ static Byte bittab[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
  * The point is left at the end of the matched string or the buffer end and
  * REstart points to the start of the match.
  */
-bool step(struct buff *buff, uint8_t *ep, struct mark *REstart)
+bool step(struct buff *buff, regex_t *re, struct mark *REstart)
 {
+	uint8_t *ep = re->ep;
 	struct mark tmark;
 
 	if (REstart == NULL) REstart = &tmark;
@@ -105,16 +100,19 @@ bool step(struct buff *buff, uint8_t *ep, struct mark *REstart)
 
 bool lookingat(struct buff *buff, Byte *str)
 {
-	uint8_t ep[ESIZE];
-	if (compile(str, ep, ep + ESIZE))
+	regex_t re;
+	if (compile(buff, &re, (char *)str, 0))
 		return false;
 
 	struct mark tmark;
 	bmrktopnt(buff, &tmark);
-	if (advance(buff, ep))
+	if (advance(buff, re.ep)) {
+		regfree(&re);
 		return true;
+	}
 
 	bpnttomrk(buff, &tmark);
+	regfree(&re);
 	return false;
 }
 
@@ -297,9 +295,10 @@ static bool ecmp(struct buff *buff, struct mark *start, int cnt)
  */
 #define EOFCH	('\0')
 
-int compile(Byte *instring, uint8_t *ep, uint8_t *endbuf)
+int compile(struct buff *buff, regex_t *re, const char *regex, int cflags)
 {
-	Byte *sp = instring;
+	Byte *sp = (Byte *)regex;
+	uint8_t *ep = re->ep, *endbuf = re->ep + sizeof(re->ep);
 	int c;
 	uint8_t *lastep = NULL;
 	int cclcnt;

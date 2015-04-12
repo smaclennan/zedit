@@ -99,6 +99,8 @@ typedef struct regex {
 int regerror(int errcode, const regex_t *preg, char *errbuf,
 				int errbuf_size);
 static inline void regfree(regex_t *re) {}
+#else
+#include <regex.h>
 #endif
 
 int compile(struct buff *buff, regex_t *re, const char *regex, int cflags);

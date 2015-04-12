@@ -1,21 +1,60 @@
 #include "buff.h"
 
 #ifndef BUILTIN_REG
-#include <regex.h>
-
-/* This is for zedit... do not rely on it in threaded code */
+/* This is for Zedit... do not rely on it in threaded code */
 int circf;
 
-bool step(struct buff *buff, regext_t *re, struct mark *REstart)
+static bool advance(struct buff *buff, regex_t *re, struct mark *REstart)
 {
+	char line[4096];
+	int i;
+	regmatch_t match[1];
+
+	for (i = 0; i < sizeof(line) - 1 && *buff->curcptr != '\n'; ++i) {
+		line[i] = *buff->curcptr;
+		bmove1(buff);
+	}
+	line[i] = '\0';
+
+	if (regexec(re, line, 1, match, 0) == 0) {
+		bpnttomrk(buff, REstart);
+		bmove(buff, match[0].rm_eo);
+		return true;
+	} else
+		return false;
+}
+
+bool step(struct buff *buff, regex_t *re, struct mark *REstart)
+{
+	struct mark tmark;
+
+	if (REstart == NULL) REstart = &tmark;
+
+	/* ^ must match from start */
+	if (circf)
+		/* if not at the start of the current line - go to the
+		 * next line */
+		if (bpeek(buff) != '\n')
+			bcsearch(buff, '\n');	/* goto next line */
+
+	/* regular algorithm */
+	while (!bisend(buff)) {
+		bmrktopnt(buff, REstart);
+		if (advance(buff, re, REstart))
+			return true;
+		if (circf)
+			bcsearch(buff, '\n');	/* goto next line */
+		else {
+			bpnttomrk(buff, REstart);
+			bmove1(buff);
+		}
+	}
 	return false;
 }
 
-int compile(const regex_t *re, const char *regex, int cflags)
+int compile(struct buff *buff, regex_t *re, const char *regex, int cflags)
 {
-	circf = 0;
-	if (*instring == '^')
-		circf = 1;
+	circf = *regex == '^';
 
 	return regcomp(re, regex, cflags);
 }

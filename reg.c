@@ -1,5 +1,31 @@
 #include "buff.h"
 
+#define BUILTIN_REG
+#ifndef BUILTIN_REG
+#include <regex.h>
+
+/* This is for zedit... do not rely on it in threaded code */
+int circf;
+
+bool step(struct buff *buff, uint8_t *ep, struct mark *REstart)
+{
+	return false;
+}
+
+int compile(Byte *instring, uint8_t *ep, uint8_t *endbuf)
+{
+	circf = 0;
+	if (*instring == '^')
+		circf = 1;
+
+	return 0;
+}
+
+const char *regerr(int errnum)
+{
+	return "duh";
+}
+#else
 /* Regular expression compile and match routines.
  * See regexp(5) and ed(1).
  * NOTES:	loc1 is now REstart
@@ -494,3 +520,4 @@ const char *regerr(int errnum)
 
 	return errs[errnum - 40];
 }
+#endif

@@ -135,6 +135,7 @@ static bool find_tag(char *word)
 	if (findfile(path)) {
 		boffset(Bbuff, offset);
 		redisplay();
+		regfree(&re);
 		return true;
 	}
 

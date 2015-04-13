@@ -64,7 +64,7 @@ int do_chdir(struct zbuff *buff)
 }
 
 /* echo 'str' to the paw and as the filename for 'buff' */
-static void message(struct zbuff *buff, const char *str)
+void message(struct zbuff *buff, const char *str)
 {
 	struct wdo *wdo;
 

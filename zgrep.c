@@ -37,6 +37,7 @@ static void grep_one(char *fname, regex_t *re,
 		unsigned long line = bline(inbuff);
 
 		binstr(outbuff, "%s:%u: ", fname, line);
+		zrefresh();
 
 		tobegline(inbuff);
 		bmrktopnt(inbuff, &start);
@@ -80,6 +81,8 @@ cleanup:
 	if (inbuff)
 		bdelbuff(inbuff);
 	regfree(&re);
+
+	message(Curbuff, "Done");
 }
 
 void Zgrep(void)

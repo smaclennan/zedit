@@ -234,6 +234,7 @@ int zreadfile(char *fname);
 bool zwritefile(char *fname);
 void set_shell_mark(void);
 void unmark(struct mark *);
+void message(struct zbuff *buff, const char *str);
 
 int batoi(void);
 

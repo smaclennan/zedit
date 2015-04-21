@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <io.h>
 #include <direct.h>
+#include <stdlib.h>
 
 /* WIN32 sure likes underscores */
 #define inline __inline

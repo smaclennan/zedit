@@ -1,6 +1,6 @@
 #include "buff.h"
 
-#ifndef BUILTIN_REG
+#if !defined(BUILTIN_REG) && !defined(WIN32)
 /* This is for Zedit... do not rely on it in threaded code */
 int circf;
 
@@ -532,7 +532,7 @@ defchar:
 	}
 }
 
-const char *regerr(int errnum)
+int regerror(int errnum, const regex_t *preg, char *errbuf, int errbuf_size)
 {
 	static const char * const errs[] = {
 		/*40*/	"Illegal or missing delimiter.",
@@ -550,6 +550,9 @@ const char *regerr(int errnum)
 		/*52*/  "Out of memory.",
 	};
 
-	return errs[errnum - 40];
+	snprintf(errbuf, errbuf_size, "%s", errs[errnum - 40]);
+	return 0;
 }
+
+void regfree(regex_t *re) {}
 #endif

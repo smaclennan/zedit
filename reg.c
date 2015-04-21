@@ -42,8 +42,6 @@ bool step(struct buff *buff, regex_t *re, struct mark *REstart)
 		bmrktopnt(buff, REstart);
 		if (advance(buff, re, REstart))
 			return true;
-		bpnttomrk(buff, REstart);
-		bcsearch(buff, '\n');	/* goto next line */
 	}
 	return false;
 }

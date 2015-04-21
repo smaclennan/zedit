@@ -42,12 +42,8 @@ bool step(struct buff *buff, regex_t *re, struct mark *REstart)
 		bmrktopnt(buff, REstart);
 		if (advance(buff, re, REstart))
 			return true;
-		if (circf)
-			bcsearch(buff, '\n');	/* goto next line */
-		else {
-			bpnttomrk(buff, REstart);
-			bmove1(buff);
-		}
+		bpnttomrk(buff, REstart);
+		bcsearch(buff, '\n');	/* goto next line */
 	}
 	return false;
 }

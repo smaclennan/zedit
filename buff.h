@@ -89,24 +89,26 @@ void binstr(struct buff *buff, const char *str, ...);
 
 typedef struct regex {
 	uint8_t ep[ESIZE];
-} regex_t;
+	int circf;
+} regexp_t;
 
 #define REG_EXTENDED	0
 #define REG_ICASE		0
 #define REG_NOSUB		0
 #define REG_NEWLINE		0
-
-int regerror(int errcode, const regex_t *preg, char *errbuf,
-				int errbuf_size);
-void regfree(regex_t *re);
 #else
 #include <regex.h>
+
+typedef struct regexp {
+	regex_t *re;
+	int circf;
+} regexp_t;
 #endif
 
-int compile(struct buff *buff, regex_t *re, const char *regex, int cflags);
-bool step(struct buff *buff, regex_t *re, struct mark *REstart);
-/* regerror */
-/* regfree */
+int re_compile(struct buff *buff, regexp_t *re, const char *regex, int cflags);
+bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart);
+int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size);
+void re_free(regexp_t *re);
 bool lookingat(struct buff *buff, Byte *str);
 
 /* bmsearch.c */

@@ -1,9 +1,6 @@
 #include "buff.h"
 
 #if !defined(BUILTIN_REG) && !defined(WIN32)
-/* This is for Zedit... do not rely on it in threaded code */
-int circf;
-
 static bool advance(struct buff *buff, regex_t *re, struct mark *REstart)
 {
 	char line[4096];
@@ -24,14 +21,14 @@ static bool advance(struct buff *buff, regex_t *re, struct mark *REstart)
 		return false;
 }
 
-bool step(struct buff *buff, regex_t *re, struct mark *REstart)
+bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 {
 	struct mark tmark;
 
 	if (REstart == NULL) REstart = &tmark;
 
 	/* ^ must match from start */
-	if (circf)
+	if (re->circf)
 		/* if not at the start of the current line - go to the
 		 * next line */
 		if (bpeek(buff) != '\n')
@@ -40,17 +37,24 @@ bool step(struct buff *buff, regex_t *re, struct mark *REstart)
 	/* regular algorithm */
 	while (!bisend(buff)) {
 		bmrktopnt(buff, REstart);
-		if (advance(buff, re, REstart))
+		if (advance(buff, re->re, REstart))
 			return true;
 	}
 	return false;
 }
 
-int compile(struct buff *buff, regex_t *re, const char *regex, int cflags)
+int re_compile(struct buff *buff, regexp_t *re, const char *regex, int cflags)
 {
-	circf = *regex == '^';
+	re->circf = *regex == '^';
 
-	return regcomp(re, regex, cflags);
+	return regcomp(re->re, regex, cflags);
+}
+
+void re_free(regexp_t *re) { regfree(re->re); }
+
+int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
+{
+	return regerror(errcode, preg->re, errbuf, errbuf_size);
 }
 #else
 /* Regular expression compile and match routines.
@@ -59,6 +63,7 @@ int compile(struct buff *buff, regex_t *re, const char *regex, int cflags)
  *		loc2 was removed, buffer will be left pointing here!
  *		locs is set externally by ed and sed - removed!
  */
+#include <stdio.h>
 
 static bool advance(struct buff *buff, uint8_t *ep);
 static bool ecmp(struct buff *buff, struct mark *, int);
@@ -90,7 +95,6 @@ static struct mark braslist[NBRA];
 static struct mark braelist[NBRA];
 static int ebra, nbra;
 
-int	circf;
 static int low;
 static int size;
 
@@ -102,7 +106,7 @@ static Byte bittab[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
  * The point is left at the end of the matched string or the buffer end and
  * REstart points to the start of the match.
  */
-bool step(struct buff *buff, regex_t *re, struct mark *REstart)
+bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 {
 	uint8_t *ep = re->ep;
 	struct mark tmark;
@@ -110,7 +114,7 @@ bool step(struct buff *buff, regex_t *re, struct mark *REstart)
 	if (REstart == NULL) REstart = &tmark;
 
 	/* ^ must match from start */
-	if (circf)
+	if (re->circf)
 		/* if not at the start of the current line - go to the
 		 * next line */
 		if (bpeek(buff) != '\n')
@@ -121,7 +125,7 @@ bool step(struct buff *buff, regex_t *re, struct mark *REstart)
 		bmrktopnt(buff, REstart);
 		if (advance(buff, ep))
 			return true;
-		if (circf)
+		if (re->circf)
 			bcsearch(buff, '\n');	/* goto next line */
 		else {
 			bpnttomrk(buff, REstart);
@@ -133,19 +137,19 @@ bool step(struct buff *buff, regex_t *re, struct mark *REstart)
 
 bool lookingat(struct buff *buff, Byte *str)
 {
-	regex_t re;
-	if (compile(buff, &re, (char *)str, 0))
+	regexp_t re;
+	if (re_compile(buff, &re, (char *)str, 0))
 		return false;
 
 	struct mark tmark;
 	bmrktopnt(buff, &tmark);
 	if (advance(buff, re.ep)) {
-		regfree(&re);
+		re_free(&re);
 		return true;
 	}
 
 	bpnttomrk(buff, &tmark);
-	regfree(&re);
+	re_free(&re);
 	return false;
 }
 
@@ -328,7 +332,7 @@ static bool ecmp(struct buff *buff, struct mark *start, int cnt)
  */
 #define EOFCH	('\0')
 
-int compile(struct buff *buff, regex_t *re, const char *regex, int cflags)
+int re_compile(struct buff *buff, regexp_t *re, const char *regex, int cflags)
 {
 	Byte *sp = (Byte *)regex;
 	uint8_t *ep = re->ep, *endbuf = re->ep + sizeof(re->ep);
@@ -358,9 +362,9 @@ int compile(struct buff *buff, regex_t *re, const char *regex, int cflags)
 	}
 #endif
 	bracketp = bracket;
-	circf = closed = nbra = ebra = 0;
+	re->circf = closed = nbra = ebra = 0;
 	if (c == '^')
-		circf++;
+		re->circf = 1;
 	else
 		UNGETC(c);
 	while (1) {
@@ -532,7 +536,7 @@ defchar:
 	}
 }
 
-int regerror(int errnum, const regex_t *preg, char *errbuf, int errbuf_size)
+int re_error(int errnum, const regexp_t *preg, char *errbuf, int errbuf_size)
 {
 	static const char * const errs[] = {
 		/*40*/	"Illegal or missing delimiter.",
@@ -554,5 +558,5 @@ int regerror(int errnum, const regex_t *preg, char *errbuf, int errbuf_size)
 	return 0;
 }
 
-void regfree(regex_t *re) {}
+void re_free(regexp_t *re) {}
 #endif

@@ -26,13 +26,13 @@
 #define FNM_FLAGS 0
 #endif
 
-static void grep_one(char *fname, regex_t *re,
+static void grep_one(char *fname, regexp_t *re,
 					 struct buff *inbuff, struct buff *outbuff)
 {
 	if (breadfile(inbuff, fname, NULL))
 		return;
 
-	while (step(inbuff, re, NULL)) {
+	while (re_step(inbuff, re, NULL)) {
 		struct mark start;
 		unsigned long line = bline(inbuff);
 
@@ -49,14 +49,14 @@ static void grep_one(char *fname, regex_t *re,
 
 static void grepit(char *input, char *files)
 {
-	regex_t re;
+	regexp_t re;
 	DIR *dir;
 	struct dirent *ent;
 	struct buff *inbuff, *outbuff = Curbuff->buff;
 
-	int rc = compile(Bbuff, &re, input, REG_EXTENDED);
+	int rc = re_compile(Bbuff, &re, input, REG_EXTENDED);
 	if (rc) {
-		regerror(rc, &re, PawStr, COLMAX);
+		re_error(rc, &re, PawStr, COLMAX);
 		error("%s", PawStr);
 		return;
 	}
@@ -80,7 +80,7 @@ cleanup:
 	closedir(dir);
 	if (inbuff)
 		bdelbuff(inbuff);
-	regfree(&re);
+	re_free(&re);
 
 	message(Curbuff, "Done");
 }

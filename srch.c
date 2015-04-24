@@ -23,7 +23,7 @@
 static int promptsearch(const char *prompt, int type);
 static void promptreplace(int type);
 static bool dosearch(void);
-static bool replaceone(int, bool *, bool *, regex_t *, bool);
+static bool replaceone(int, bool *, bool *, regexp_t *, bool);
 
 
 bool Insearch;	/* set by nocase, reset by getarg */
@@ -178,7 +178,7 @@ void Zre_replace(void)
 static void doreplace(int type)
 {
 	bool exit = false, crgone, query;
-	regex_t re;
+	regexp_t re;
 	struct mark *pmark, tmark;
 	struct zbuff *tbuff, *save = Curbuff;
 	int rc = 0;
@@ -191,9 +191,9 @@ static void doreplace(int type)
 	pmark = zcreatemrk();
 
 	if (type == REGEXP)
-		rc = compile(Bbuff, &re, olds, REG_EXTENDED);
+		rc = re_compile(Bbuff, &re, olds, REG_EXTENDED);
 	if (rc) {
-		regerror(rc, &re, PawStr, COLMAX);
+		re_error(rc, &re, PawStr, COLMAX);
 		error("%s", PawStr);
 	}
 	else if (Argp) {
@@ -220,7 +220,7 @@ static void doreplace(int type)
 	bpnttomrk(Bbuff, pmark);
 	unmark(pmark);
 	if (type == REGEXP)
-		regfree(&re);
+		re_free(&re);
 }
 
 static void promptreplace(int type)
@@ -247,10 +247,10 @@ static void promptreplace(int type)
 	doreplace(type);
 }
 
-static bool next_replace(regex_t *re, struct mark *REstart, int type)
+static bool next_replace(regexp_t *re, struct mark *REstart, int type)
 {
 	if (type == REGEXP)
-		return step(Bbuff, re, REstart);
+		return re_step(Bbuff, re, REstart);
 
 	if (bstrsearch(olds, FORWARD)) {
 		bmove(Bbuff, -(int)strlen(olds));
@@ -260,7 +260,7 @@ static bool next_replace(regex_t *re, struct mark *REstart, int type)
 	return false;
 }
 
-static bool replaceone(int type, bool *query, bool *exit, regex_t *re, bool crgone)
+static bool replaceone(int type, bool *query, bool *exit, regexp_t *re, bool crgone)
 {
 	bool found = false;
 	char tchar = ',', *ptr;
@@ -377,7 +377,7 @@ input:
 			}
 		}
 		/* special case for "^" && "$" search strings */
-		if (type == REGEXP && (ISNL(Buff()) || circf) && !crgone)
+		if (type == REGEXP && (ISNL(Buff()) || re->circf) && !crgone)
 			bmove1(Bbuff);
 		if (*query)
 			putpaw("Searching...");
@@ -415,19 +415,19 @@ static bool dosearch(void)
 	bmove(Bbuff, searchdir[0] == BACKWARD ? -1 : 1);
 #endif
 	if (searchdir[0] == REGEXP) {
-		regex_t re;
+		regexp_t re;
 
-		if ((rc = compile(Bbuff, &re, olds, REG_EXTENDED))) {
-			regerror(rc, &re, PawStr, COLMAX);
+		if ((rc = re_compile(Bbuff, &re, olds, REG_EXTENDED))) {
+			re_error(rc, &re, PawStr, COLMAX);
 			error("%s", PawStr);
 		} else {
 			while (Arg-- > 0)
-				if (step(Bbuff, &re, NULL)) {
+				if (re_step(Bbuff, &re, NULL)) {
 					bmrktopnt(Bbuff, &fmark);
 					++fcnt;
 				} else
 					break;
-			regfree(&re);
+			re_free(&re);
 		}
 	} else
 		while (Arg-- > 0)

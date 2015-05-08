@@ -29,7 +29,7 @@ MAKEFLAGS += --no-print-directory
 # Enable and all buffers have only one contiguous page.
 #CFLAGS += -DONE_PAGE
 
-LIBS += -lz
+#LIBS += -lz
 LIBS += -ldl
 
 ETAGS=`which etags || echo true`

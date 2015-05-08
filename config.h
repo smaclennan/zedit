@@ -5,7 +5,7 @@
 #define SPELL		1	/* Requires libaspell */
 #endif
 #if defined(__linux__)
-#define GPM_MOUSE	1	/* Requires libgpm */
+#define GPM_MOUSE	0
 #endif
 
 #define SHOW_REGION	1

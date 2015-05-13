@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include "zversion.h"
 #include <stdarg.h>
 
 bool Initializing = true;
@@ -523,22 +522,6 @@ char *lastpart(char *fname)
 		return p + 1;
 	else
 		return fname;
-}
-
-void Zversion(void)
-{
-	/* With the Linux 3.17 kernel the longest sha1 commit needed
-	 * to be unique is 11 chars. Zedit only needs 9. So 12 chars
-	 * should be safe.
-	 */
-	char commit[13];
-
-	/* Don't use snprintf... doesn't work well with windows */
-	strncpy(commit, GIT_COMMIT, 12);
-	commit[12] = '\0';
-	putpaw("Zedit %s %s%s", VERSION, commit, GIT_MOD > 0 ? " +" : "");
-
-	Arg = 0;
 }
 
 void Zstats(void)

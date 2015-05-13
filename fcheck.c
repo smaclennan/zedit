@@ -36,13 +36,11 @@ int Colmax, Rowmax;
 
 #if defined __unix__
 #define OS unix
-#define GITFILE ".git/refs/heads/master"
 
 #include <sys/utsname.h>
 static struct utsname utsname;
 #elif defined WIN32
 #define OS win32
-#define GITFILE "../.git/refs/heads/master"
 #else
 #error Unknown OS
 #endif
@@ -87,91 +85,6 @@ static int noinclude(int argc, char *argv[], const char *inc)
 	return 1; /* not found */
 }
 #endif
-
-static int compare(char *new, char *old)
-{
-	int rc = 0;
-	FILE *old_fp, *new_fp;
-	char new_line[128], old_line[128];
-
-	old_fp = fopen(old, "r");
-	if (!old_fp) {
-		if (errno != ENOENT)
-			perror(old);
-		return 1;
-	}
-	new_fp = fopen(new, "r");
-	if (!new_fp) {
-		fclose(old_fp);
-		perror(new);
-		return 1;
-	}
-
-	while (fgets(new_line, sizeof(new_line), new_fp))
-		if (!fgets(old_line, sizeof(old_line), old_fp) ||
-		    strcmp(new_line, old_line)) {
-			rc = 1;
-			break;
-		}
-
-	fclose(new_fp);
-	fclose(old_fp);
-
-	return rc;
-}
-
-static int build_zversion_h(void)
-{
-	int mods = 0;
-	FILE *fp;
-	char version[42];
-
-	strcpy(version, "N/A");
-
-	if ((fp = fopen(GITFILE, "r"))) {
-		if (fgets(version, sizeof(version), fp))
-			strtok(version, "\r\n");
-		fclose(fp);
-
-#ifdef __unix__
-		/* Suse doesn't support -s + others */
-		fp = popen("git status --untracked-files=no", "r");
-		if (fp) {
-			char line[80];
-
-			while (fgets(line, sizeof(line), fp))
-				if (strncmp(line, "#\t", 2) == 0) {
-					mods = 1;
-					break;
-				}
-			fclose(fp);
-		} else
-			puts("Warning: git status failed.");
-#endif
-	} else if (errno == ENOENT)
-		puts("Warning: .git does not exist or is incomplete.");
-	else
-		perror(GITFILE);
-	
-	fp = fopen("zversion.new", "w");
-	if (!fp) {
-		perror("zversion.new");
-		return 1;
-	}
-
-	fprintf(fp, "#define ZEDIT_VERSION\t\"%s\"\n", VERSION);
-	fprintf(fp, "#define GIT_COMMIT\t\"%s\"\n", version);
-	fprintf(fp, "#define GIT_MOD\t\t%d\n", mods);
-	fclose(fp);
-
-	if (compare("zversion.new", "zversion.h")) {
-		puts("     UPDATE   zversion.h");
-		rename("zversion.new", "zversion.h");
-	} else
-		unlink("zversion.new");
-
-	return 0;	
-}
 
 int main(int argc, char *argv[])
 {
@@ -289,9 +202,6 @@ int main(int argc, char *argv[])
 		       (int)sizeof(struct avar), (int)sizeof(char *));
 		err = 1;
 	}
-
-	if (err == 0)
-		err = build_zversion_h();
 
 		/* Freebsd does not support sed -i */
 #if ZLIB

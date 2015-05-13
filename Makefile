@@ -78,8 +78,6 @@ main: main.c buff.c bmsearch.c reg.c mark.c bsocket.c
 # Make all c files depend on all .h files
 *.o: $(HFILES)
 
-z.o: zversion.h
-
 checkit:
 	@sparse -D__unix__ $(CFILES)
 	@sparse -D__unix__ fcheck.c
@@ -89,6 +87,6 @@ install: all
 	install -s ze $(DESTDIR)/bin/z
 
 clean:
-	rm -f *.o gpm/*.o zversion.h ze fcheck core* TAGS valgrind.out
+	rm -f *.o gpm/*.o ze fcheck core* TAGS valgrind.out
 	@rm -f main mmain tsmain
 	@$(MAKE) -C docs clean

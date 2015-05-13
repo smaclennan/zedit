@@ -536,7 +536,7 @@ void Zstats(void)
 }
 
 /* Keep around one mark */
-struct mark *freemark;
+static struct mark *freemark;
 
 struct mark *zcreatemrk(void)
 {

@@ -52,7 +52,7 @@ static char *make_bakname(char *bakname, char *fname)
 	return bakname;
 }
 
-bool zwritefile(char *fname)
+static bool zwritefile(char *fname)
 {
 	char bakname[PATHMAX + 1];
 	struct stat sbuf;
@@ -66,7 +66,7 @@ bool zwritefile(char *fname)
 					"WARNING: %s has been modified. Overwrite? ",
 					lastpart(fname));
 			if (ask(PawStr) != YES)
-				return ABORT;
+				return false;
 		}
 		nlink = sbuf.st_nlink;
 	}
@@ -88,7 +88,7 @@ bool zwritefile(char *fname)
 				unlink(fname);	/* break link */
 			break;
 		case ABORT:
-			return ABORT;
+			return false;
 		}
 	} else if (VAR(VBACKUP))
 		bak = rename(fname, bakname);

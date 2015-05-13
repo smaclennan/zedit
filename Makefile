@@ -79,7 +79,7 @@ main: main.c buff.c bmsearch.c reg.c mark.c bsocket.c
 *.o: $(HFILES)
 
 checkit:
-	@sparse -D__unix__ $(CFILES)
+	@sparse -D__unix__ $(CFLAGS) $(CFILES)
 	@sparse -D__unix__ fcheck.c
 
 install: all

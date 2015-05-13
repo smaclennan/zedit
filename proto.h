@@ -230,7 +230,6 @@ int set_bookmark(char *bookname);
 const char *special_label(int key);
 struct mark *zcreatemrk(void);
 int zreadfile(char *fname);
-bool zwritefile(char *fname);
 void set_shell_mark(void);
 void unmark(struct mark *);
 void message(struct zbuff *buff, const char *str);

@@ -15,7 +15,9 @@ static bool advance(struct buff *buff, regex_t *re, struct mark *REstart)
 
 	if (regexec(re, line, 1, match, 0) == 0) {
 		bpnttomrk(buff, REstart);
-		bmove(buff, match[0].rm_eo);
+		bmove(buff, match[0].rm_so);
+		bmrktopnt(buff, REstart);
+		bmove(buff, match[0].rm_eo - match[0].rm_so);
 		return true;
 	} else
 		return false;
@@ -37,7 +39,7 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 	/* regular algorithm */
 	while (!bisend(buff)) {
 		bmrktopnt(buff, REstart);
-		if (advance(buff, re->re, REstart))
+		if (advance(buff, &re->re, REstart))
 			return true;
 	}
 	return false;
@@ -47,15 +49,36 @@ int re_compile(struct buff *buff, regexp_t *re, const char *regex, int cflags)
 {
 	re->circf = *regex == '^';
 
-	return regcomp(re->re, regex, cflags);
+	return regcomp(&re->re, regex, cflags);
 }
 
-void re_free(regexp_t *re) { regfree(re->re); }
+void re_free(regexp_t *re) { regfree(&re->re); }
 
 int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
 {
-	return regerror(errcode, preg->re, errbuf, errbuf_size);
+	return regerror(errcode, &preg->re, errbuf, errbuf_size);
 }
+
+bool lookingat(struct buff *buff, Byte *str)
+{
+	regexp_t re;
+	if (re_compile(buff, &re, (char *)str, REG_EXTENDED))
+		return false;
+
+	struct mark start, REstart;
+	bmrktopnt(buff, &start);
+	bmrktopnt(buff, &REstart);
+	if (advance(buff, &re.re, &REstart))
+		if (mrkatmrk(&start, &REstart)) {
+			re_free(&re);
+			return true;
+		}
+
+	bpnttomrk(buff, &start);
+	re_free(&re);
+	return false;
+}
+
 #else
 /* Regular expression compile and match routines.
  * See regexp(5) and ed(1).

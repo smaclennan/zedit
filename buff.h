@@ -100,7 +100,7 @@ typedef struct regex {
 #include <regex.h>
 
 typedef struct regexp {
-	regex_t *re;
+	regex_t re;
 	int circf;
 } regexp_t;
 #endif

@@ -140,10 +140,23 @@ int main(int argc, char *argv[])
 	dump_str_at_mark(buff, "2", mark2);
 
 	btostart(buff);
+#if 1
+	/* Here is what Jeff Foxworthy has to say about Canadians, during
+	 * ^
+	 */
 	if (lookingat(buff, "is what")) puts("la probs 1");
 	bmove(buff, 4);
+	/* Here is what Jeff Foxworthy has to say about Canadians, during
+	 *     ^
+	 */
 	if (lookingat(buff, "is what")) puts("la probs 2");
 	bmove1(buff);
+#else
+	bmove(buff, 5);
+#endif
+	/* Here is what Jeff Foxworthy has to say about Canadians, during
+	 *      ^
+	 */
 	if (!lookingat(buff, "is what")) puts("la probs 3");
 	btostart(buff);
 	bmove(buff, 5);

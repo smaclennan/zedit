@@ -19,8 +19,10 @@ static bool advance(struct buff *buff, regex_t *re, struct mark *REstart)
 		bmrktopnt(buff, REstart);
 		bmove(buff, match[0].rm_eo - match[0].rm_so);
 		return true;
-	} else
+	} else {
+		if (i == 0) bmove1(buff);
 		return false;
+	}
 }
 
 bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)

@@ -23,12 +23,5 @@ Marks:
 
 Page overhead:
 
-page size (currently 1k)
-
-64bit:
-	+ 3 * 8
-32bit:
-	+ 3 * 4
-
-DOS adds 4 bytes
+page size (currently 1k) + 3 * size of pointer
 

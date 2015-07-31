@@ -211,6 +211,11 @@ extern void (*Nextpart)(void);
 
 #define tsetpoint(r, c)		(Prow = r, Pcol = c)
 
+#if TERMINFO
+void tlinit();
+void tlfini();
+#endif
+
 char *zgetcwd(char *cwd, int len);
 #ifdef WIN32
 char *gethomedir(void);

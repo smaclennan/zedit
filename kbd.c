@@ -25,7 +25,7 @@
 #endif
 
 /* Note: We can currently only have 32 specials */
-static const char * const Tkeys[] = {
+char *Tkeys[] = {
 	"\033[A",	/* up */
 	"\033[B",	/* down */
 	"\033[C",	/* right */
@@ -55,6 +55,8 @@ static const char * const Tkeys[] = {
 	"\033[8^"	/* C-end */
 };
 
+unsigned Key_mask = KEY_MASK;
+
 /* stack and vars for t[un]getkb / tkbrdy */
 #define CSTACK 16 /* must be power of 2 */
 static Byte cstack[CSTACK];
@@ -80,6 +82,7 @@ static Byte tgetkb(void)
 		}
 	}
 	Pending = false;
+	Dbg("--> %02x\n", cstack[cptr]); // SAM DBG
 	return cstack[cptr];
 }
 
@@ -210,7 +213,7 @@ void handle_mouse_cursor(void)
 
 static int check_specials(void)
 {
-	int i, j, bit, mask = KEY_MASK;
+	int i, j, bit, mask = Key_mask;
 
 	for (j = 1; mask; ++j) {
 		int cmd = tgetkb() & 0x7f;

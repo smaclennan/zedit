@@ -18,6 +18,12 @@
  */
 
 #include "z.h"
+#if TERMINFO
+#include <term.h>
+#include <curses.h>
+
+#define TPUTS(s)         tputs(s, 1, putchar)
+#endif
 #include <signal.h>
 
 #ifdef __unix__
@@ -108,6 +114,10 @@ static void tfini(void)
 	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
 #endif
 
+#if TERMINFO
+	tlfini();
+#endif
+
 	set_mouse(false);
 
 	clrpaw();
@@ -159,6 +169,10 @@ void tinit(void)
 		tfini();
 		exit(1);
 	}
+
+#if TERMINFO
+	tlinit();
+#endif
 
 	tsetcursor(false);
 
@@ -340,6 +354,8 @@ void tforce(void)
 		where.X = Pcol;
 		where.Y = Prow;
 		SetConsoleCursorPosition(hstdout, where);
+#elif TERMINFO
+		TPUTS(tparm(cursor_address, Prow, Pcol));
 #else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
 #endif
@@ -365,6 +381,9 @@ void tcleol(void)
 			where.X = Clrcol[Prow] - 1;
 		FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, 1,
 					   where, &written);
+#elif TERMINFO
+		tforce();
+		TPUTS(clr_eol);
 #else
 		tforce();
 		fputs("\033[K", stdout);
@@ -383,6 +402,8 @@ void tclrwind(void)
 				   where, &written);
 	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
 				   where, &written);
+#elif TERMINFO
+	TPUTS(clear_screen);
 #else
 	fputs("\033[2J", stdout);
 #endif
@@ -423,6 +444,25 @@ void tstyle(int style)
 		SetConsoleTextAttribute(hstdout, ATTR_REGION);
 		break;
 	}
+#elif TERMINFO
+	switch (style) {
+	case T_NORMAL:
+		TPUTS(exit_attribute_mode);
+		break;
+	case T_STANDOUT:
+		TPUTS(enter_standout_mode);
+		break;
+	case T_REVERSE:
+	case T_REGION:
+		TPUTS(enter_reverse_mode);
+		break;
+	case T_BOLD:
+		TPUTS(enter_bold_mode);
+		break;
+	case T_COMMENT:
+		TPUTS(tparm(set_a_foreground, COLOR_RED));
+		break;
+	}
 #else
 	switch (style) {
 	case T_NORMAL:
@@ -430,13 +470,12 @@ void tstyle(int style)
 	case T_STANDOUT: /* modeline */
 		fputs(ring_bell ? "\033[41m" : "\033[7m", stdout); break;
 	case T_REVERSE:
+	case T_REGION:
 		fputs("\033[7m", stdout); break;
 	case T_BOLD:
 		fputs("\033[1m", stdout); break;
 	case T_COMMENT:
 		fputs("\033[31m", stdout); break; /* red */
-	case T_REGION:
-		fputs("\033[7m", stdout); break;
 	}
 #endif
 

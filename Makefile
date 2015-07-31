@@ -31,6 +31,7 @@ MAKEFLAGS += --no-print-directory
 
 #LIBS += -lz
 LIBS += -ldl
+LIBS += -lcurses
 
 ETAGS=`which etags || echo true`
 
@@ -39,7 +40,7 @@ CFILES = bcmds.c bind.c buff.c bfile.c calc.c cnames.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	reg.c shell.c spell.c srch.c tags.c term.c mark.c \
 	undo.c vars.c window.c varray.c z.c zgrep.c bmsearch.c \
-	gpm/liblow.c
+	terminfo.c gpm/liblow.c
 
 HFILES = buff.h config.h funcs.h keys.h proto.h vars.h z.h
 

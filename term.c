@@ -18,12 +18,7 @@
  */
 
 #include "z.h"
-#if TERMINFO
-#include <term.h>
-#include <curses.h>
-
-#define TPUTS(s)         tputs(s, 1, putchar)
-#endif
+#include "zterm.h"
 #include <signal.h>
 
 #ifdef __unix__
@@ -114,9 +109,7 @@ static void tfini(void)
 	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
 #endif
 
-#if TERMINFO
 	tlfini();
-#endif
 
 	set_mouse(false);
 
@@ -170,9 +163,7 @@ void tinit(void)
 		exit(1);
 	}
 
-#if TERMINFO
 	tlinit();
-#endif
 
 	tsetcursor(false);
 
@@ -356,6 +347,8 @@ void tforce(void)
 		SetConsoleCursorPosition(hstdout, where);
 #elif TERMINFO
 		TPUTS(tparm(cursor_address, Prow, Pcol));
+#elif TERMCAP
+		TPUTS(tgoto(cm[0], Pcol, Prow));
 #else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
 #endif
@@ -381,12 +374,15 @@ void tcleol(void)
 			where.X = Clrcol[Prow] - 1;
 		FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, 1,
 					   where, &written);
-#elif TERMINFO
-		tforce();
-		TPUTS(clr_eol);
 #else
 		tforce();
+#if TERMINFO
+		TPUTS(clr_eol);
+#elif TERMCAP
+		TPUTS(cm[1]);
+#else
 		fputs("\033[K", stdout);
+#endif
 #endif
 		Clrcol[Prow] = Pcol;
 	}
@@ -404,6 +400,8 @@ void tclrwind(void)
 				   where, &written);
 #elif TERMINFO
 	TPUTS(clear_screen);
+#elif TERMCAP
+	TPUTS(cm[2]);
 #else
 	fputs("\033[2J", stdout);
 #endif
@@ -461,6 +459,20 @@ void tstyle(int style)
 		break;
 	case T_COMMENT:
 		TPUTS(tparm(set_a_foreground, COLOR_RED));
+		break;
+	}
+#elif TERMCAP
+	switch (style) {
+	case T_NORMAL:
+		TPUTS(cm[3]);
+		break;
+	case T_STANDOUT:
+	case T_REVERSE:
+	case T_REGION:
+		TPUTS(cm[4]);
+		break;
+	case T_COMMENT:
+		TPUTS(cm[6]);
 		break;
 	}
 #else

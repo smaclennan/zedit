@@ -4,24 +4,24 @@
 #if TERMINFO
 #include <term.h>
 #include <curses.h>
-#endif
-
-#if TERMCAP
+#elif TERMCAP
 #include <termcap.h>
 
 extern char *cm[];
+#else /* ANSI */
+#define tlinit()
+#define tlfini()
 #endif
 
-/* This is not used in ANSI, but should be safe to define */
+#if TERMINFO || TERMCAP
 #define TPUTS(s)         tputs(s, 1, putchar)
+
+void tlinit(void);
+void tlfini(void);
+#endif
 
 /* Defined in kbd.c */
 extern char *Tkeys[];
 extern unsigned Key_mask;
-
-#ifdef ANSI
-static inline void tlinit(void) {}
-static inline void tlfini(void) {}
-#endif
 
 #endif

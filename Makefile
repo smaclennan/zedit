@@ -40,7 +40,7 @@ CFILES = bcmds.c bind.c buff.c bfile.c calc.c cnames.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	reg.c shell.c spell.c srch.c tags.c term.c mark.c \
 	undo.c vars.c window.c varray.c z.c zgrep.c bmsearch.c \
-	terminfo.c gpm/liblow.c
+	terminfo.c termcap.c gpm/liblow.c
 
 HFILES = buff.h config.h funcs.h keys.h proto.h vars.h z.h
 

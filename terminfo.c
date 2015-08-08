@@ -20,16 +20,9 @@
 #include "z.h"
 
 #if TERMINFO
-#include <term.h>
-#include <curses.h>
-
-#define TPUTS(s)         tputs(s, 1, putchar)
+#include "zterm.h"
 
 #include "keys.h"
-
-/* Defined in kbd.c */
-extern char *Tkeys[];
-extern unsigned Key_mask;
 
 static char *Term;
 

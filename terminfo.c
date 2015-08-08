@@ -35,7 +35,7 @@ static char *Term;
 
 void tlinit()
 {
-	int rc, i;
+	int rc, i, k;
 
 	Term = getenv("TERM");
 	if (Term == NULL) {
@@ -95,24 +95,28 @@ void tlinit()
 	Tkeys[i++] = key_f10;
 	Tkeys[i++] = key_f11;
 
-	/* SAM DBG */
-	char str[100], *p;
-	int j;
-	for (i = 0; i < 22; ++i) {
-		p = Tkeys[i];
-		for (j = 0; *p; ++p, ++j)
-			sprintf(&str[j * 2], "%02x", *p);
-		str[j * 2] = '\0';
-		Dbg("%2d: %s\n", i, str);
-	}
-	/* SAM DBG */
-
 	Key_mask = 0x00c00000; /* C-Home and C-End not in terminfo */
-	for (i = 0; i < 22; ++i)
-		if (Tkeys[i] && *Tkeys[i])
-			Key_mask |= 1 << i;
+	for (k = 0; k < i; ++k)
+		if (Tkeys[k] && *Tkeys[k])
+			Key_mask |= 1 << k;
 
-	Dbg("Mask %x\n", Key_mask); // SAM DBG
+	if (verbose) {
+		char str[100], *p;
+		int j, k, n;
+		for (k = 0; k < i; ++k) {
+			p = Tkeys[k];
+			n = 0;
+			for (j = 0; *p; ++p, ++j)
+				if (*p == 033)
+					n += sprintf(str + n, "ESC");
+				else
+					n += sprintf(str + n, " %c", *p);
+			str[n] = '\0';
+			Dbg("Key %2d: %s\n", i, str);
+		}
+
+		Dbg("Key Mask %x\n", Key_mask); // SAM DBG
+	}
 }
 
 void tlfini()

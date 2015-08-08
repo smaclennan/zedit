@@ -82,7 +82,6 @@ static Byte tgetkb(void)
 		}
 	}
 	Pending = false;
-	Dbg("--> %02x\n", cstack[cptr]); // SAM DBG
 	return cstack[cptr];
 }
 

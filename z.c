@@ -23,6 +23,7 @@
 bool Initializing = true;
 char *Home;
 jmp_buf	zenv;
+int verbose;
 
 unsigned Cmd;
 int Cmdpushed = -1; /* Search pushed a key */
@@ -183,7 +184,7 @@ int main(int argc, char **argv)
 	snprintf(dbgfname, sizeof(dbgfname), "%s/z.out", Home);
 	unlink(dbgfname);
 
-	while ((arg = getopt(argc, argv, "hl:rtE")) != EOF)
+	while ((arg = getopt(argc, argv, "hl:rtvE")) != EOF)
 		switch (arg) {
 		case 'l':
 			line = atoi(optarg);
@@ -196,6 +197,9 @@ int main(int argc, char **argv)
 			break;
 		case 'E':
 			exitflag = true;
+			break;
+		case 'v':
+			++verbose;
 			break;
 		case 'h':
 		default:

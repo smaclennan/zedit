@@ -164,6 +164,7 @@ extern int InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
 extern int Pawcol, Pawlen, Pshift;
 extern struct zbuff *Paw;
+extern int verbose;
 
 extern unsigned Cmd;
 extern int Cmdpushed;

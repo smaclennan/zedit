@@ -31,7 +31,8 @@ MAKEFLAGS += --no-print-directory
 
 #LIBS += -lz
 LIBS += -ldl
-LIBS += -lcurses
+#LIBS += -lcurses
+LIBS += -ltermcap
 
 ETAGS=`which etags || echo true`
 

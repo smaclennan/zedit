@@ -27,7 +27,7 @@ static char *Term;
 #define MUST	3
 char *cm[NUMCM];
 
-static const char *key_names[] = {
+static char *key_names[] = {
 	"ku",
 	"kd",
 	"kr",

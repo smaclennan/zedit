@@ -22,8 +22,6 @@
 #if TERMINFO
 #include "zterm.h"
 
-#include "keys.h"
-
 static char *Term;
 
 void tlinit()

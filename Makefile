@@ -30,7 +30,7 @@ MAKEFLAGS += --no-print-directory
 #CFLAGS += -DONE_PAGE
 
 #LIBS += -lz
-LIBS += -ldl
+#LIBS += -ldl
 #LIBS += -lcurses
 LIBS += -ltermcap
 

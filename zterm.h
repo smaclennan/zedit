@@ -26,6 +26,6 @@ void tlfini(void);
 extern char *Tkeys[];
 extern unsigned Key_mask;
 
-void dump_key(int keyn, char *key);
+void dump_key(int keyn, char *key, const char *suffix);
 
 #endif

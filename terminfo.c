@@ -93,7 +93,7 @@ void tlinit()
 
 	if (verbose) {
 		for (k = 0; k < i; ++k)
-			dump_key(k, Tkeys[k]);
+			dump_key(k, Tkeys[k], NULL);
 
 		Dbg("Key Mask %x\n", Key_mask);
 	}

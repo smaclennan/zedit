@@ -594,7 +594,7 @@ void tbell_dbg(char *func, int line)
 	tbell();
 }
 
-void dump_key(int keyn, char *key)
+void dump_key(int keyn, char *key, const char *suffix)
 {
 	char str[100];
 	int n = 0;
@@ -607,5 +607,7 @@ void dump_key(int keyn, char *key)
 		++key;
 	}
 	str[n] = '\0';
+	if (suffix)
+		snprintf(str + n, sizeof(str) - n, "%s", suffix);
 	Dbg("Key %2d: %s\n", keyn, str);
 }

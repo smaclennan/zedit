@@ -12,8 +12,9 @@
 #define UNDO        1
 
 /* If not set defaults to ANSI */
-#define TERMINFO 0
-#define TERMCAP  0
+#define TERMINFO		0
+#define TERMCAP			0
+#define TERMCAP_KEYS	0
 
 /* DOPIPES: Output in real time and you can continue editing.
  * default: Output in real time but you must wait until command complete.

@@ -18,14 +18,8 @@
  */
 #include "z.h"
 
-#if TERMCAP
+#if TERMCAP || TERMCAP_KEYS
 #include "zterm.h"
-
-static char *Term;
-
-#define NUMCM	7
-#define MUST	3
-char *cm[NUMCM];
 
 static char *key_names[] = {
 	"ku",
@@ -55,24 +49,51 @@ static char *key_names[] = {
 };
 
 static char bp[1024];
+static char area[1024];
+
+static char *termcap_keys(void)
+{
+	int i;
+	char *key, *end = area;
+
+	char *term = getenv("TERM");
+	if (term == NULL) {
+		printf("ERROR: environment variable TERM not set.\n");
+		return NULL;
+	}
+	if (tgetent(bp, term) != 1) {
+		printf("ERROR: Unable to get termcap entry for %s.\n", term);
+		NULL;
+	}
+
+	/* get the cursor and function key defines */
+	for (i = 0; i < 22; ++i) {
+		key = end;
+		tgetstr(key_names[i], &end);
+		if (key != end) {
+			Tkeys[i] = key;
+			if (verbose)
+				dump_key(i, key);
+		}
+	}
+
+	return end;
+}
+
+#if TERMCAP
+#define NUMCM	7
+#define MUST	3
+char *cm[NUMCM];
+
 
 void tlinit()
 {
-	/* NOTE: so and se must be last */
 	static char *names[] = { "cm", "ce", "cl", "me", "so", "vb", "md" };
-	static char area[1024];
-	char *end;
-	int i, j;
+	int i;
 
-	Term = getenv("TERM");
-	if (Term == NULL) {
-		printf("ERROR: environment variable TERM not set.\n");
+	char *end = termcap_keys();
+	if (end == NULL)
 		exit(1);
-	}
-	if (tgetent(bp, Term) != 1) {
-		printf("ERROR: Unable to get termcap entry for %s.\n", Term);
-		exit(1);
-	}
 
 	/* get the initialziation string and send to stdout */
 	end = area;
@@ -94,32 +115,13 @@ void tlinit()
 				cm[i] = "";
 		}
 	}
-
-	/* get the cursor and function key defines */
-	Key_mask = 0;
-	for (i = j = 0; i < NUM_SPECIAL; ++i)
-		if (Tkeys[i])
-			Key_mask |= 1 << i;
-		else {
-			Tkeys[i] = end;
-			tgetstr(key_names[i], &end);
-			if (Tkeys[i] != end)
-				Key_mask |= 1 << i;
-		}
-
-#if 0
-	/* HACK */
-	i = TC_F10 - SPECIAL_START;
-	if ((Key_mask & (1 << i)) == 0) {
-		Tkeys[i].key = end;
-		tgetstr("k0", &end);
-		if (Tkeys[i].key != end) {
-			Key_mask |= 1 << i;
-			Tkeys[i].label = "k0";
-		}
-	}
-#endif
 }
+#else
+void tlinit()
+{
+	termcap_keys();
+}
+#endif
 
 void tlfini() {}
-#endif
+#endif /* TERMCAP || TERMCAP_KEYS */

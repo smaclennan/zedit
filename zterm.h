@@ -8,12 +8,14 @@
 #include <termcap.h>
 
 extern char *cm[];
+#elif TERMCAP_KEYS
+#include <termcap.h>
 #else /* ANSI */
 #define tlinit()
 #define tlfini()
 #endif
 
-#if TERMINFO || TERMCAP
+#if TERMINFO || TERMCAP || TERMCAP_KEYS
 #define TPUTS(s)         tputs(s, 1, putchar)
 
 void tlinit(void);
@@ -23,5 +25,7 @@ void tlfini(void);
 /* Defined in kbd.c */
 extern char *Tkeys[];
 extern unsigned Key_mask;
+
+void dump_key(int keyn, char *key);
 
 #endif

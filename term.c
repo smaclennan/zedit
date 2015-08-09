@@ -593,3 +593,19 @@ void tbell_dbg(char *func, int line)
 	Dbg("tbell %s:%d\n", func, line);
 	tbell();
 }
+
+void dump_key(int keyn, char *key)
+{
+	char str[100];
+	int n = 0;
+
+	while (*key) {
+		if (isprint(*key))
+			n += sprintf(str + n, "%c ", *key);
+		else
+			n += sprintf(str + n, "\\%03o ", *key);
+		++key;
+	}
+	str[n] = '\0';
+	Dbg("Key %2d: %s\n", keyn, str);
+}

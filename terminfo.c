@@ -92,21 +92,10 @@ void tlinit()
 			Key_mask |= 1 << k;
 
 	if (verbose) {
-		char str[100], *p;
-		int j, k, n;
-		for (k = 0; k < i; ++k) {
-			p = Tkeys[k];
-			n = 0;
-			for (j = 0; *p; ++p, ++j)
-				if (*p == 033)
-					n += sprintf(str + n, "ESC");
-				else
-					n += sprintf(str + n, " %c", *p);
-			str[n] = '\0';
-			Dbg("Key %2d: %s\n", i, str);
-		}
+		for (k = 0; k < i; ++k)
+			dump_key(k, Tkeys[k]);
 
-		Dbg("Key Mask %x\n", Key_mask); // SAM DBG
+		Dbg("Key Mask %x\n", Key_mask);
 	}
 }
 

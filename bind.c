@@ -86,7 +86,7 @@ Byte Keys[] = {
 	0,			/* C-X C-E */
 	ZFIND_FILE,		/* C-X C-F */
 	ZABORT,			/* C-X C-G */
-	ZHELP,			/* C-X C-H */
+	ZHELP_KEY,			/* C-X C-H */
 	0,			/* C-X C-I */
 	0,			/* C-X C-J */
 	ZDELETE_LINE,		/* C-X C-K */
@@ -126,7 +126,7 @@ Byte Keys[] = {
 	[CX('E')] = ZRE_REPLACE,
 	[CX('F')] = ZNEXT_PARAGRAPH,
 	[CX('G')] = 0,
-	[CX('H')] = ZHELP_FUNCTION,
+	[CX('H')] = ZHELP,
 	[CX('I')] = ZINDENT,
 	[CX('J')] = 0,
 	[CX('K')] = ZDELETE_BUFFER,

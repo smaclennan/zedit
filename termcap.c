@@ -91,7 +91,6 @@ static char *termcap_keys(void)
 #define MUST	3
 char *cm[NUMCM];
 
-
 void tlinit(void)
 {
 	static char *names[] = { "cm", "ce", "cl", "me", "so", "vb", "md" };
@@ -102,13 +101,12 @@ void tlinit(void)
 		exit(1);
 
 	/* get the initialziation string and send to stdout */
-	end = area;
+	char *was = end;
 	tgetstr("is", &end);
-	if (end != area)
-		TPUTS(area);
+	if (end != was)
+		TPUTS(was);
 
 	/* get the termcap strings needed - must be done last */
-	end = area;
 	for (i = 0; i < NUMCM; ++i) {
 		cm[i] = end;
 		tgetstr(names[i], &end);

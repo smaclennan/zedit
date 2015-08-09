@@ -4,12 +4,10 @@
 #if TERMINFO
 #include <term.h>
 #include <curses.h>
-#elif TERMCAP
+#elif TERMCAP || TERMCAP_KEYS
 #include <termcap.h>
 
 extern char *cm[];
-#elif TERMCAP_KEYS
-#include <termcap.h>
 #else /* ANSI */
 #define tlinit()
 #define tlfini()

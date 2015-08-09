@@ -24,6 +24,8 @@ static char *appanotes =
 "<p>Note: The bindings shown are the Zedit defaults and may be overridden\n"
 "by a bindings file or the bind command.\n";
 
+void Dbg(const char *fmt, ...) {} /* stub */
+
 static void header(FILE *out, char *heading)
 {
 	fputs("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n", out);

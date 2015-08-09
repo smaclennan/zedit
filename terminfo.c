@@ -24,7 +24,7 @@
 
 static char *Term;
 
-void tlinit()
+void tlinit(void)
 {
 	int rc, i, k;
 
@@ -47,7 +47,7 @@ void tlinit()
 	}
 
 	if (!exit_attribute_mode)
-		enter_reverse_mode = enter_standout_mode = enter_bold_mode = 0;
+		enter_reverse_mode = enter_standout_mode = enter_bold_mode = NULL;
 
 	/* initialize the terminal */
 	TPUTS(init_1string);
@@ -99,7 +99,7 @@ void tlinit()
 	}
 }
 
-void tlfini()
+void tlfini(void)
 {
 	TPUTS(reset_1string);
 	resetterm();

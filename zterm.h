@@ -16,7 +16,7 @@ extern char *cm[];
 #endif
 
 #if TERMINFO || TERMCAP || TERMCAP_KEYS
-#define TPUTS(s)         tputs(s, 1, putchar)
+#define TPUTS(s) tputs(s, 1, putchar)
 
 void tlinit(void);
 void tlfini(void);
@@ -25,7 +25,5 @@ void tlfini(void);
 /* Defined in kbd.c */
 extern char *Tkeys[];
 extern unsigned Key_mask;
-
-void dump_key(int keyn, char *key, const char *suffix);
 
 #endif

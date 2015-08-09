@@ -92,7 +92,7 @@ static char *termcap_keys(void)
 char *cm[NUMCM];
 
 
-void tlinit()
+void tlinit(void)
 {
 	static char *names[] = { "cm", "ce", "cl", "me", "so", "vb", "md" };
 	int i;
@@ -123,11 +123,8 @@ void tlinit()
 	}
 }
 #else
-void tlinit()
-{
-	termcap_keys();
-}
+void tlinit(void) { termcap_keys(); }
 #endif
 
-void tlfini() {}
+void tlfini(void) {}
 #endif /* TERMCAP || TERMCAP_KEYS */

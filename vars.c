@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include "keys.h"
 
 static void setavar(const char *vin, bool display);
 

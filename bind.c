@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include "keys.h"
 
 Byte Lfunc;
 Byte CRdefault = ZNEWLINE;

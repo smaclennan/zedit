@@ -67,4 +67,7 @@
 
 #define is_special(cmd) (cmd >= SPECIAL_START && cmd <= SPECIAL_END)
 
+
+void dump_key(int keyn, char *key, const char *suffix);
+
 #endif

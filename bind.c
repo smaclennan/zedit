@@ -27,38 +27,38 @@ Byte CRdefault = ZNEWLINE;
 #include "win32/dosbind.c"
 #else
 Byte Keys[] = {
-	ZSET_MARK,		/* C-@ */
-	ZBEGINNING_OF_LINE,	/* C-A */
-	ZPREVIOUS_CHAR,		/* C-B */
-	ZCOPY_WORD,		/* C-C */
-	ZDELETE_CHAR,		/* C-D */
-	ZEND_OF_LINE,		/* C-E */
-	ZNEXT_CHAR,		/* C-F */
-	ZABORT,			/* C-G */
-	ZDELETE_PREVIOUS_CHAR,			/* C-H */
-	ZTAB,			/* C-I */
-	ZC_INDENT,		/* C-J */
-	ZDELETE_TO_EOL,		/* C-K */
-	ZREDISPLAY,		/* C-L */
-	ZNEWLINE,		/* C-M */
-	ZNEXT_LINE,		/* C-N */
-	ZOPEN_LINE,		/* C-O */
-	ZPREVIOUS_LINE,		/* C-P */
-	ZQUOTE,			/* C-Q */
-	ZREVERSE_SEARCH,	/* C-R */
+	ZSET_MARK,				/* C-@ */
+	ZBEGINNING_OF_LINE,		/* C-A */
+	ZPREVIOUS_CHAR,			/* C-B */
+	ZCOPY_WORD,				/* C-C */
+	ZDELETE_CHAR,			/* C-D */
+	ZEND_OF_LINE,			/* C-E */
+	ZNEXT_CHAR,				/* C-F */
+	ZABORT,					/* C-G */
+	ZDELETE_PREVIOUS_CHAR,	/* C-H */
+	ZTAB,					/* C-I */
+	ZC_INDENT,				/* C-J */
+	ZDELETE_TO_EOL,			/* C-K */
+	ZREDISPLAY,				/* C-L */
+	ZNEWLINE,				/* C-M */
+	ZNEXT_LINE,				/* C-N */
+	ZOPEN_LINE,				/* C-O */
+	ZPREVIOUS_LINE,			/* C-P */
+	ZQUOTE,					/* C-Q */
+	ZREVERSE_SEARCH,		/* C-R */
 	ZINCREMENTAL_SEARCH,	/* C-S */
-	ZSWAP_CHARS,		/* C-T */
-	ZARG,			/* C-U */
-	ZNEXT_PAGE,		/* C-V */
-	ZDELETE_REGION,		/* C-W */
-	ZCTRL_X,		/* C-X */
-	ZYANK,			/* C-Y */
-	ZPREVIOUS_PAGE,		/* C-Z */
-	ZMETA,			/* ESC */
-	ZSET_MARK,		/* C-\ */
-	ZINSERT_OVERWRITE,	/* C-] */
-	ZDELETE_BLANKS,		/* C-^ */
-	ZUNDO,			/* C-_ */
+	ZSWAP_CHARS,			/* C-T */
+	ZARG,					/* C-U */
+	ZNEXT_PAGE,				/* C-V */
+	ZDELETE_REGION,			/* C-W */
+	ZCTRL_X,				/* C-X */
+	ZYANK,					/* C-Y */
+	ZPREVIOUS_PAGE,			/* C-Z */
+	ZMETA,					/* ESC */
+	ZSET_MARK,				/* C-\ */
+	ZINSERT_OVERWRITE,		/* C-] */
+	ZDELETE_BLANKS,			/* C-^ */
+	ZUNDO,					/* C-_ */
 
 	/* 32 - 126 are ZINSERT */
 	ZINSERT, ZINSERT, ZINSERT, ZINSERT, ZINSERT, ZINSERT, ZINSERT, ZINSERT,
@@ -78,38 +78,38 @@ Byte Keys[] = {
 
 	/* Init the CTRL-X functions */
 
-	0,			/* C-X C-@ */
-	ZSAVE_ALL_FILES,	/* C-X C-A */
-	ZSWITCH_TO_BUFFER,	/* C-X C-B */
-	ZEXIT,			/* C-X C-C */
-	ZDELETE_BUFFER,		/* C-X C-D */
-	0,			/* C-X C-E */
-	ZFIND_FILE,		/* C-X C-F */
-	ZABORT,			/* C-X C-G */
-	ZHELP_KEY,			/* C-X C-H */
-	0,			/* C-X C-I */
-	0,			/* C-X C-J */
-	ZDELETE_LINE,		/* C-X C-K */
-	ZLOWERCASE_REGION,	/* C-X C-L */
-	ZMAKE,			/* C-X C-M */
-	ZNEXT_ERROR,		/* C-X C-N */
-	ZOUT_TO,		/* C-X C-O */
-	ZMARK_PARAGRAPH,	/* C-X C-P */
-	0,			/* C-X C-Q */
-	ZREAD_FILE,		/* C-X C-R */
-	ZSAVE_FILE,		/* C-X C-S */
-	0,			/* C-X C-T */
-	ZUPPERCASE_REGION,	/* C-X C-U */
-	ZOTHER_NEXT_PAGE,	/* C-X C-V */
-	ZWRITE_FILE,		/* C-X C-W */
-	ZSWAP_MARK,		/* C-X C-X */
-	0,			/* C-X C-Y */
+	0,						/* C-X C-@ */
+	ZSAVE_ALL_FILES,		/* C-X C-A */
+	ZSWITCH_TO_BUFFER,		/* C-X C-B */
+	ZEXIT,					/* C-X C-C */
+	ZDELETE_BUFFER,			/* C-X C-D */
+	0,						/* C-X C-E */
+	ZFIND_FILE,				/* C-X C-F */
+	ZABORT,					/* C-X C-G */
+	ZHELP_KEY,				/* C-X C-H */
+	0,						/* C-X C-I */
+	0,						/* C-X C-J */
+	ZDELETE_LINE,			/* C-X C-K */
+	ZLOWERCASE_REGION,		/* C-X C-L */
+	ZMAKE,					/* C-X C-M */
+	ZNEXT_ERROR,			/* C-X C-N */
+	ZOUT_TO,				/* C-X C-O */
+	ZMARK_PARAGRAPH,		/* C-X C-P */
+	0,						/* C-X C-Q */
+	ZREAD_FILE,				/* C-X C-R */
+	ZSAVE_FILE,				/* C-X C-S */
+	0,						/* C-X C-T */
+	ZUPPERCASE_REGION,		/* C-X C-U */
+	ZOTHER_NEXT_PAGE,		/* C-X C-V */
+	ZWRITE_FILE,			/* C-X C-W */
+	ZSWAP_MARK,				/* C-X C-X */
+	0,						/* C-X C-Y */
 	ZOTHER_PREVIOUS_PAGE,	/* C-X C-Z */
-	0,			/* C-X Esc */
-	0,			/* C-X C-\ */
-	0,			/* C-X C-] */
-	ZGROW_WINDOW,		/* C-X C-^ */
-	0,			/* C-X C-_ */
+	0,						/* C-X Esc */
+	0,						/* C-X C-\ */
+	0,						/* C-X C-] */
+	ZGROW_WINDOW,			/* C-X C-^ */
+	0,						/* C-X C-_ */
 	/* makedosbind assumes this ends before C-X space */
 
 	[CX('+')] = ZSTATS,

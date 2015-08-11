@@ -447,8 +447,11 @@ void tstyle(int style)
 	case T_NORMAL:
 		TPUTS(exit_attribute_mode);
 		break;
-	case T_STANDOUT:
-		TPUTS(enter_standout_mode);
+	case T_STANDOUT: /* modeline */
+		if (ring_bell)
+			TPUTS(tparm(set_a_background, COLOR_RED));
+		else
+			TPUTS(enter_standout_mode);
 		break;
 	case T_REVERSE:
 	case T_REGION:
@@ -466,7 +469,12 @@ void tstyle(int style)
 	case T_NORMAL:
 		TPUTS(cm[3]);
 		break;
-	case T_STANDOUT:
+	case T_STANDOUT: /* modeline */
+		if (ring_bell && *cm[5])
+			TPUTS(cm[5]);
+		else
+			TPUTS(cm[4]);
+		break;
 	case T_REVERSE:
 	case T_REGION:
 		TPUTS(cm[4]);

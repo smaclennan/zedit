@@ -111,11 +111,11 @@ void tlinit(void)
 		cm[i] = end;
 		tgetstr(names[i], &end);
 		if (cm[i] == end) {
-			if (i < MUST) {
-				printf("Missing termcap entry for %s\n",
-				       names[i]);
+			if (i < MUST || verbose)
+				printf("Missing termcap entry for %s\n", names[i]);
+			if (i < MUST)
 				exit(1);
-			} else
+			else
 				cm[i] = "";
 		}
 	}

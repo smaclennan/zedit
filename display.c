@@ -469,7 +469,7 @@ static char *setmodes(struct zbuff *buff)
 		break;
 	case SHMODE:
 		strcpy(PawStr, "sh");
-		Keys[CR] = ZC_INDENT;
+		Keys[CR] = ZSH_INDENT;
 		if (VAR(VCOMMENTS))
 			printchar = cprntchar;
 		break;

@@ -20,7 +20,6 @@
 #include "z.h"
 
 Byte Lfunc;
-Byte CRdefault = ZNEWLINE;
 
 #ifdef __cplusplus
 #include "win32/dosbind.c"

@@ -186,7 +186,6 @@ extern struct zbuff *Buff_save;
 extern struct mark *Sstart, *Psstart, *Send;
 extern bool Initializing;
 extern bool Insearch;
-extern Byte CRdefault;
 extern int circf;
 
 extern void (*Nextpart)(void);

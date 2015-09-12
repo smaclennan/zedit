@@ -451,7 +451,7 @@ static char *setmodes(struct zbuff *buff)
 		Curcmds = 0;
 
 	/* set all keys back to default */
-	Keys[CR] = CRdefault;
+	Keys[CR] = ZNEWLINE;
 	Keys[' '] = Keys['}'] = Keys['#'] = Keys[':'] = Keys['/'] = ZINSERT;
 	Keys['\t'] = ZTAB;
 	printchar = tprntchar;

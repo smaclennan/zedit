@@ -250,7 +250,7 @@ static bool find_line(char *str)
 	bswappnt(Bbuff, &end);
 
 	while (bisbeforemrk(Bbuff, &end)) {
-		if (lookingat(Bbuff, (Byte *)str)) {
+		if (lookingat(Bbuff, str)) {
 			bpnttomrk(Bbuff, &save);
 			return true;
 		}
@@ -271,16 +271,16 @@ void Zsh_indent(void)
 	tmark = bcremrk(Bbuff);
 	width = bgetcol(true, 0);
 
-	if (lookingat(Bbuff, (Byte *)"\\<if\\>")) {
+	if (lookingat(Bbuff, "\\<if\\>")) {
 		if (find_line("\\<fi\\>") == 0)
 			width += Tabsize;
-	} else if (lookingat(Bbuff, (Byte *)"\\<while\\>")) {
+	} else if (lookingat(Bbuff, "\\<while\\>")) {
 		if (find_line("\\<done\\>") == 0)
 			width += Tabsize;
-	} else if (lookingat(Bbuff, (Byte *)"\\<fi\\>")) {
+	} else if (lookingat(Bbuff, "\\<fi\\>")) {
 		width -= Tabsize;
 		fixup = 1;
-	} else if (lookingat(Bbuff, (Byte *)"\\<done\\>")) {
+	} else if (lookingat(Bbuff, "\\<done\\>")) {
 		width -= Tabsize;
 		fixup = 1;
 	} else if (*Curcptr == '}') {

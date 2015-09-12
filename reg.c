@@ -61,10 +61,10 @@ int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
 	return regerror(errcode, &preg->re, errbuf, errbuf_size);
 }
 
-bool lookingat(struct buff *buff, Byte *str)
+bool lookingat(struct buff *buff, char *str)
 {
 	regexp_t re;
-	if (re_compile(&re, (char *)str, REG_EXTENDED))
+	if (re_compile(&re, str, REG_EXTENDED))
 		return false;
 
 	struct mark start, REstart;
@@ -160,10 +160,10 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 	return false;
 }
 
-bool lookingat(struct buff *buff, Byte *str)
+bool lookingat(struct buff *buff, char *str)
 {
 	regexp_t re;
-	if (re_compile(&re, (char *)str, 0))
+	if (re_compile(&re, str, 0))
 		return false;
 
 	struct mark tmark;

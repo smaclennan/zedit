@@ -57,7 +57,6 @@ extern struct mark *Marklist;
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mbuff == (buff))
 #elif defined(HAVE_BUFFER_MARKS)
-
 #define foreach_pagemark(buff, mark, page)						 \
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	 \
 		if ((mark)->mpage == (page))

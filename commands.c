@@ -286,6 +286,9 @@ void Zsh_indent(void)
 	} else if (*Curcptr == '}') {
 		width -= Tabsize;
 		fixup = 1;
+	} else if (lookingat(Bbuff, ".*\\{[ \t]*$")) {
+		/* Won't work if there is a comment */
+		width += Tabsize;
 	}
 
 	if (fixup && tmark) {

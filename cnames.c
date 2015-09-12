@@ -522,9 +522,6 @@ struct cnames Cnames[] = {
 	 C("Causes Newline characters to auto-indent to the current tab "
 	   "level. Bound to Newline in SH mode.")
 	},
-	{"sh-insert",			ZSH_INSERT,		AI,
-	 C("Currently unused.")
-	},
 	{"show-config",			ZSHOW_CONFIG,		AI,
 	 C("Show the current settings of all the Zedit variables in a "
 	   "buffer. The buffer is suitable for use as a .config.z file and "

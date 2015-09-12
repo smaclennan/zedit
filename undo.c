@@ -88,6 +88,7 @@ static inline bool clump(void)
 	case ZTAB:
 	case ZC_INSERT:
 	case ZC_INDENT:
+	case ZSH_INDENT:
 		return true;
 	default:
 		return false;

@@ -120,7 +120,6 @@ Z(Zset_bookmark);
 Z(Zsetenv);
 Z(Zset_mark);
 Z(Zsh_indent);
-Z(Zsh_insert);
 Z(Zsize_window);
 Z(Zswap_chars);
 Z(Zswap_mark);

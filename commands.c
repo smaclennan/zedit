@@ -240,11 +240,6 @@ void Zc_indent(void)
 
 /* SHELL MODE COMMANDS */
 
-void Zsh_insert(void)
-{	/* This code must handle any char so that expansion will work */
-	binsert(Bbuff, Cmd);
-}
-
 static bool find_line(char *str)
 {
 	struct mark end, save;

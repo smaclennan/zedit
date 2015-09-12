@@ -245,9 +245,62 @@ void Zsh_insert(void)
 	binsert(Bbuff, Cmd);
 }
 
+static bool find_line(char *str)
+{
+	struct mark end, save;
+
+	bmrktopnt(Bbuff, &save);
+	bmrktopnt(Bbuff, &end);
+	toendline(Bbuff);
+	bswappnt(Bbuff, &end);
+
+	while (bisbeforemrk(Bbuff, &end)) {
+		if (lookingat(Bbuff, (Byte *)str)) {
+			bpnttomrk(Bbuff, &save);
+			return true;
+		}
+		Znext_word();
+	}
+
+	bpnttomrk(Bbuff, &save);
+	return false;
+}
+
 void Zsh_indent(void)
 {
-	Zc_indent();
+	int width, fixup = 0;
+	struct mark *tmark;
+
+	tobegline(Bbuff);
+	movepast(biswhite, FORWARD);
+	tmark = bcremrk(Bbuff);
+	width = bgetcol(true, 0);
+
+	if (lookingat(Bbuff, (Byte *)"\\<if\\>")) {
+		if (find_line("\\<fi\\>") == 0)
+			width += Tabsize;
+	} else if (lookingat(Bbuff, (Byte *)"\\<while\\>")) {
+		if (find_line("\\<done\\>") == 0)
+			width += Tabsize;
+	} else if (lookingat(Bbuff, (Byte *)"\\<fi\\>")) {
+		width -= Tabsize;
+		fixup = 1;
+	} else if (lookingat(Bbuff, (Byte *)"\\<done\\>")) {
+		width -= Tabsize;
+		fixup = 1;
+	}
+
+	if (fixup && tmark) {
+		tobegline(Bbuff);
+		bdeltomrk(tmark);
+		tindent(width);
+	}
+
+	toendline(Bbuff);
+	binsert(Bbuff, NL);
+	Lfunc = ZINSERT; /* for undo */
+	tindent(width);
+	bdelmark(tmark);
 }
 
 /* FILL MODE COMMANDS */
@@ -506,6 +559,8 @@ static void mshow(unsigned ch)
 
 	switch (ch) {
 	case ')':
+		/* This is irritating in case statements */
+		if (Curbuff->bmode & SHMODE) return;
 		match = '('; break;
 	case ']':
 		match = '['; break;

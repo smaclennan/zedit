@@ -13,6 +13,9 @@
 
 #ifdef HAVE_GLOBAL_MARKS
 struct mark *Marklist;	/* the marks list tail */
+#define MARKS_HEAD(buff) Marklist
+#elif defined(HAVE_BUFFER_MARKS)
+#define MARKS_HEAD(buff) ((buff)->marks)
 #endif
 
 int NumMarks;

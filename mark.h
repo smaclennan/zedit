@@ -41,14 +41,13 @@ void bmrktopnt(struct buff *, struct mark *);
 bool bpnttomrk(struct buff *, struct mark *);
 bool bswappnt(struct buff *, struct mark *);
 
-void mrktomrk(struct mark *m1, struct mark *m2);
+void mrktomrk(struct mark *, struct mark *);
 bool mrkaftermrk(struct mark *, struct mark *);
 bool mrkatmrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
 
 #ifdef HAVE_GLOBAL_MARKS
 extern struct mark *Marklist;
-#define MARKS_HEAD(buff) Marklist
 
 #define foreach_pagemark(buff, mark, page)				   \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
@@ -58,7 +57,6 @@ extern struct mark *Marklist;
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mbuff == (buff))
 #elif defined(HAVE_BUFFER_MARKS)
-#define MARKS_HEAD(buff) ((buff)->marks)
 
 #define foreach_pagemark(buff, mark, page)						 \
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	 \

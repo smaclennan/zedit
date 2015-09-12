@@ -31,7 +31,7 @@ struct mark {
 
 extern int NumMarks; /* stats */
 
-struct mark *bcremrk(struct buff *);
+struct mark *bcremark(struct buff *);
 void bdelmark(struct mark *);
 
 #define bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))

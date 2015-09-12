@@ -57,7 +57,7 @@ int bcopyrgn(struct mark *tmark, struct buff *to)
 	if (flip)
 		bswappnt(from, tmark);
 
-	if (!(ltmrk = bcremrk(from)))
+	if (!(ltmrk = bcremark(from)))
 		return 0;
 
 	while (bisbeforemrk(from, tmark)) {
@@ -189,7 +189,7 @@ void Zyank(void)
 	set_umark(NULL);
 #endif
 	btoend(Killbuff);
-	if (!(tmark = bcremrk(Killbuff))) {
+	if (!(tmark = bcremark(Killbuff))) {
 		error("out of memory");
 		return;
 	}

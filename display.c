@@ -89,7 +89,7 @@ void set_umark(struct mark *tmark)
 		if (freeumark) {
 			UMARK = freeumark;
 			freeumark = NULL;
-		} else if (!(UMARK = bcremrk(Bbuff)))
+		} else if (!(UMARK = bcremark(Bbuff)))
 			return;
 	}
 

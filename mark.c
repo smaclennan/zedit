@@ -18,7 +18,7 @@ struct mark *Marklist;	/* the marks list tail */
 int NumMarks;
 
 /* Create a mark at the current point and add it to the list. */
-struct mark *bcremrk(struct buff *buff)
+struct mark *bcremark(struct buff *buff)
 {
 	struct mark *mrk = (struct mark *)calloc(1, sizeof(struct mark));
 	if (mrk) {

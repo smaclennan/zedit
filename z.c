@@ -549,7 +549,7 @@ struct mark *zcreatemrk(void)
 	if (mrk) {
 		freemark = NULL;
 		bmrktopnt(Bbuff, mrk);
-	} else if (!(mrk = bcremrk(Bbuff)))
+	} else if (!(mrk = bcremark(Bbuff)))
 		longjmp(zenv, -1);	/* ABORT */
 
 	return mrk;

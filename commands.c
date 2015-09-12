@@ -273,7 +273,7 @@ void Zsh_indent(void)
 
 	tobegline(Bbuff);
 	movepast(biswhite, FORWARD);
-	tmark = bcremrk(Bbuff);
+	tmark = bcremark(Bbuff);
 	width = bgetcol(true, 0);
 
 #ifndef BUILTIN_REG

@@ -375,7 +375,7 @@ void Zread_file(void)
 		rc = breadfile(tbuff, Fname, NULL);
 		if (rc == 0) {
 			btoend(tbuff);
-			if ((tmark = bcremrk(tbuff))) {
+			if ((tmark = bcremark(tbuff))) {
 				btostart(tbuff);
 				bcopyrgn(tmark, Bbuff);
 				unmark(tmark);

@@ -1,6 +1,6 @@
 #include "buff.h"
 
-#if !defined(BUILTIN_REG) && !defined(WIN32)
+#ifdef BUILTIN_REG
 static bool advance(struct buff *buff, regex_t *re, struct mark *REstart)
 {
 	char line[4096];

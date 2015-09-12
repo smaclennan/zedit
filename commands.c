@@ -243,7 +243,7 @@ void Zc_indent(void)
 /* The builtin reg cannot handle extended expressions. But if you are
  * on windows, why are you editing shell scripts?
  */
-#if !defined(BUILTIN_REG) && !defined(WIN32)
+#ifndef BUILTIN_REG
 static bool find_line(char *str)
 {
 	struct mark end, save;
@@ -276,7 +276,7 @@ void Zsh_indent(void)
 	tmark = bcremrk(Bbuff);
 	width = bgetcol(true, 0);
 
-#if !defined(BUILTIN_REG) && !defined(WIN32)
+#ifndef BUILTIN_REG
 	if (lookingat(Bbuff, "\\<if\\>")) {
 		if (find_line("\\<fi\\>") == 0)
 			width += Tabsize;

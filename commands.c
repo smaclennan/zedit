@@ -238,6 +238,18 @@ void Zc_indent(void)
 	}
 }
 
+/* SHELL MODE COMMANDS */
+
+void Zsh_insert(void)
+{	/* This code must handle any char so that expansion will work */
+	binsert(Bbuff, Cmd);
+}
+
+void Zsh_indent(void)
+{
+	Zc_indent();
+}
+
 /* FILL MODE COMMANDS */
 
 void Zfill_check(void)

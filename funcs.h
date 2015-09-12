@@ -135,7 +135,9 @@
 #define ZTAG_WORD		(ZTAG + 1)
 #define ZHELP			(ZTAG_WORD + 1)
 #define ZZAP_TO_CHAR		(ZHELP + 1)
-#define NUMFUNCS		(ZZAP_TO_CHAR + 1)
+#define ZSH_INDENT		(ZZAP_TO_CHAR + 1)
+#define ZSH_INSERT		(ZSH_INDENT + 1)
+#define NUMFUNCS		(ZSH_INSERT + 1)
 
 /* this is used by the getfname command in the PAW for command completion */
 #define ZFNAME		NUMFUNCS

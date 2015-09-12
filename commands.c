@@ -283,6 +283,9 @@ void Zsh_indent(void)
 	} else if (lookingat(Bbuff, (Byte *)"\\<done\\>")) {
 		width -= Tabsize;
 		fixup = 1;
+	} else if (*Curcptr == '}') {
+		width -= Tabsize;
+		fixup = 1;
 	}
 
 	if (fixup && tmark) {

@@ -191,7 +191,7 @@ static void doreplace(int type)
 	pmark = zcreatemrk();
 
 	if (type == REGEXP)
-		rc = re_compile(Bbuff, &re, olds, REG_EXTENDED);
+		rc = re_compile(&re, olds, REG_EXTENDED);
 	if (rc) {
 		re_error(rc, &re, PawStr, COLMAX);
 		error("%s", PawStr);
@@ -417,7 +417,7 @@ static bool dosearch(void)
 	if (searchdir[0] == REGEXP) {
 		regexp_t re;
 
-		if ((rc = re_compile(Bbuff, &re, olds, REG_EXTENDED))) {
+		if ((rc = re_compile(&re, olds, REG_EXTENDED))) {
 			re_error(rc, &re, PawStr, COLMAX);
 			error("%s", PawStr);
 		} else {

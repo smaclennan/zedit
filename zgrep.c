@@ -54,7 +54,7 @@ static void grepit(char *input, char *files)
 	struct dirent *ent;
 	struct buff *inbuff, *outbuff = Curbuff->buff;
 
-	int rc = re_compile(Bbuff, &re, input, REG_EXTENDED);
+	int rc = re_compile(&re, input, REG_EXTENDED);
 	if (rc) {
 		re_error(rc, &re, PawStr, COLMAX);
 		error("%s", PawStr);

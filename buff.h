@@ -105,7 +105,7 @@ typedef struct regexp {
 } regexp_t;
 #endif
 
-int re_compile(struct buff *buff, regexp_t *re, const char *regex, int cflags);
+int re_compile(regexp_t *re, const char *regex, int cflags);
 bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart);
 int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size);
 void re_free(regexp_t *re);

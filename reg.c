@@ -47,7 +47,7 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 	return false;
 }
 
-int re_compile(struct buff *buff, regexp_t *re, const char *regex, int cflags)
+int re_compile(regexp_t *re, const char *regex, int cflags)
 {
 	re->circf = *regex == '^';
 
@@ -64,7 +64,7 @@ int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
 bool lookingat(struct buff *buff, Byte *str)
 {
 	regexp_t re;
-	if (re_compile(buff, &re, (char *)str, REG_EXTENDED))
+	if (re_compile(&re, (char *)str, REG_EXTENDED))
 		return false;
 
 	struct mark start, REstart;
@@ -163,7 +163,7 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 bool lookingat(struct buff *buff, Byte *str)
 {
 	regexp_t re;
-	if (re_compile(buff, &re, (char *)str, 0))
+	if (re_compile(&re, (char *)str, 0))
 		return false;
 
 	struct mark tmark;
@@ -357,7 +357,7 @@ static bool ecmp(struct buff *buff, struct mark *start, int cnt)
  */
 #define EOFCH	('\0')
 
-int re_compile(struct buff *buff, regexp_t *re, const char *regex, int cflags)
+int re_compile(regexp_t *re, const char *regex, int cflags)
 {
 	Byte *sp = (Byte *)regex;
 	uint8_t *ep = re->ep, *endbuf = re->ep + sizeof(re->ep);

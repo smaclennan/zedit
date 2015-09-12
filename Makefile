@@ -16,6 +16,10 @@ CC = cc
 # Set this if aspell.h is not in /usr/include
 #ASPELLINC=-I/usr/local/include
 
+# For pcre
+#CFLAGS += -DHAVE_PCRE
+#LIBS += -lpcreposix -lpcre
+
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
 D = -O2

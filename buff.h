@@ -96,6 +96,13 @@ typedef struct regex {
 #define REG_ICASE		0
 #define REG_NOSUB		0
 #define REG_NEWLINE		0
+#elif defined(HAVE_PCRE)
+#include "pcreposix.h"
+
+typedef struct regexp {
+	regex_t re;
+	int circf;
+} regexp_t;
 #else
 #include <regex.h>
 

@@ -243,7 +243,6 @@ void Zc_indent(void)
 /* The builtin reg cannot handle extended expressions. But if you are
  * on windows, why are you editing shell scripts?
  */
-#ifndef BUILTIN_REG
 static bool find_line(char *str)
 {
 	struct mark end, save;
@@ -264,6 +263,17 @@ static bool find_line(char *str)
 	bpnttomrk(Bbuff, &save);
 	return false;
 }
+
+#ifdef HAVE_PCRE
+#define RE_IF "\\bif\\b"
+#define RE_FI "\\bfi\\b"
+#define RE_WHILE "\\bwhile\\b"
+#define RE_DONE "\\bdone\\b"
+#else
+#define RE_IF "\\<if\\>"
+#define RE_FI "\\<fi\\>"
+#define RE_WHILE "\\<while\\>"
+#define RE_DONE "\\<done\\>"
 #endif
 
 void Zsh_indent(void)
@@ -276,17 +286,16 @@ void Zsh_indent(void)
 	tmark = bcremark(Bbuff);
 	width = bgetcol(true, 0);
 
-#ifndef BUILTIN_REG
-	if (lookingat(Bbuff, "\\<if\\>")) {
-		if (find_line("\\<fi\\>") == 0)
+	if (lookingat(Bbuff, RE_IF)) {
+		if (find_line(RE_FI) == 0)
 			width += Tabsize;
-	} else if (lookingat(Bbuff, "\\<while\\>")) {
-		if (find_line("\\<done\\>") == 0)
+	} else if (lookingat(Bbuff, RE_WHILE)) {
+		if (find_line(RE_DONE) == 0)
 			width += Tabsize;
-	} else if (lookingat(Bbuff, "\\<fi\\>")) {
+	} else if (lookingat(Bbuff, RE_FI)) {
 		width -= Tabsize;
 		fixup = 1;
-	} else if (lookingat(Bbuff, "\\<done\\>")) {
+	} else if (lookingat(Bbuff, RE_DONE)) {
 		width -= Tabsize;
 		fixup = 1;
 	} else if (*Curcptr == '}') {
@@ -296,7 +305,6 @@ void Zsh_indent(void)
 		/* Won't work if there is a comment */
 		width += Tabsize;
 	}
-#endif
 
 	if (fixup && tmark) {
 		tobegline(Bbuff);

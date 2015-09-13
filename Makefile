@@ -30,9 +30,6 @@ CFLAGS += -DHAVE_CONFIG_H -DHAVE_GLOBAL_MARKS -DUNSIGNED_BYTES
 
 MAKEFLAGS += --no-print-directory
 
-# Enable and all buffers have only one contiguous page.
-#CFLAGS += -DONE_PAGE
-
 #LIBS += -lz
 #LIBS += -ldl
 #LIBS += -lcurses

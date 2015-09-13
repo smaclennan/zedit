@@ -84,7 +84,7 @@ int bindata(struct buff *buff, Byte *, int);
 void binstr(struct buff *buff, const char *str, ...);
 
 /* reg.c */
-#ifndef BUILTIN_REG
+#ifdef BUILTIN_REG
 #define ESIZE		256			/* reg exp buffer size */
 
 typedef struct regex {

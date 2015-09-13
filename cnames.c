@@ -520,7 +520,8 @@ struct cnames Cnames[] = {
 	},
 	{"sh-indent",			ZSH_INDENT,		AN,
 	 C("Causes Newline characters to auto-indent to the current tab "
-	   "level. Bound to Newline in SH mode.")
+	   "level. Also handles the 'if', 'while', 'fi', and 'done' "
+	   "keywords. Bound to Newline in SH mode.")
 	},
 	{"show-config",			ZSHOW_CONFIG,		AI,
 	 C("Show the current settings of all the Zedit variables in a "

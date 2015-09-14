@@ -47,6 +47,10 @@ bool mrkatmrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
 
 #ifdef HAVE_GLOBAL_MARKS
+# ifdef HAVE_BUFFER_MARKS
+# error You cannot define HAVE_GLOBAL_MARKS and HAVE_BUFFER_MARKS
+# endif
+
 extern struct mark *Marklist;
 
 #define foreach_pagemark(buff, mark, page)				   \

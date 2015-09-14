@@ -13,9 +13,9 @@
 
 #ifdef HAVE_GLOBAL_MARKS
 struct mark *Marklist;	/* the marks list tail */
-#define MARKS_HEAD(buff) Marklist
+#define MARKS_TAIL(buff) Marklist
 #elif defined(HAVE_BUFFER_MARKS)
-#define MARKS_HEAD(buff) ((buff)->marks)
+#define MARKS_TAIL(buff) ((buff)->marks)
 #endif
 
 int NumMarks;
@@ -25,10 +25,9 @@ struct mark *bcremark(struct buff *buff)
 {
 	struct mark *mrk = (struct mark *)calloc(1, sizeof(struct mark));
 	if (mrk) {
-#ifdef MARKS_HEAD
-		struct mark **head = &MARKS_HEAD(buff);
+#ifdef MARKS_TAIL
+		struct mark **head = &MARKS_TAIL(buff);
 		mrk->prev = *head; /* add to end of list */
-		mrk->next = NULL;
 		if (*head) (*head)->next = mrk;
 		*head = mrk;
 #endif
@@ -42,9 +41,9 @@ struct mark *bcremark(struct buff *buff)
 void bdelmark(struct mark *mptr)
 {
 	if (mptr) {
-#ifdef MARKS_HEAD
-		if (mptr == MARKS_HEAD(mptr->mbuff))
-			MARKS_HEAD(mptr->mbuff) = mptr->prev;
+#ifdef MARKS_TAIL
+		if (mptr == MARKS_TAIL(mptr->mbuff))
+			MARKS_TAIL(mptr->mbuff) = mptr->prev;
 		if (mptr->prev)
 			mptr->prev->next = mptr->next;
 		if (mptr->next)

@@ -1,6 +1,6 @@
 .PHONY: all check install clean
 
-ZEXE = ze
+ZEXE = z
 
 CC = cc
 #CC = gcc -std=c11
@@ -87,9 +87,9 @@ checkit:
 
 install: all
 	mkdir -p $(DESTDIR)/bin
-	install -s ze $(DESTDIR)/bin/z
+	install -s $(ZEXE) $(DESTDIR)/bin/z
 
 clean:
-	rm -f *.o gpm/*.o ze fcheck core* TAGS valgrind.out
+	rm -f *.o gpm/*.o $(ZEXE) fcheck core* TAGS valgrind.out
 	@rm -f main mmain tsmain
 	@$(MAKE) -C docs clean

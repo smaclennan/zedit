@@ -279,7 +279,9 @@ static bool find_line(char *str)
 void Zsh_indent(void)
 {
 	int width, fixup = 0;
-	struct mark *tmark;
+	struct mark *save, *tmark;
+
+	save = bcremark(Bbuff);
 
 	tobegline(Bbuff);
 	movepast(biswhite, FORWARD);
@@ -312,11 +314,12 @@ void Zsh_indent(void)
 		tindent(width);
 	}
 
-	toendline(Bbuff);
+	bpnttomrk(Bbuff, save);
 	binsert(Bbuff, NL);
 	Lfunc = ZINSERT; /* for undo */
 	tindent(width);
 	bdelmark(tmark);
+	bdelmark(save);
 }
 
 /* FILL MODE COMMANDS */

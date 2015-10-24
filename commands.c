@@ -281,7 +281,10 @@ void Zsh_indent(void)
 	int width, fixup = 0;
 	struct mark *save, *tmark;
 
-	save = bcremark(Bbuff);
+	if (!(save = bcremark(Bbuff))) {
+		Znewline();
+		return;
+	}
 
 	tobegline(Bbuff);
 	movepast(biswhite, FORWARD);

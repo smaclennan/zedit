@@ -40,7 +40,6 @@ void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
 int NumBuffs;
 int NumPages;
 
-/* Create a buffer but don't add it to the buffer list. */
 struct buff *bcreate(void)
 {
 	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));
@@ -78,7 +77,6 @@ void bdelbuff(struct buff *tbuff)
 	--NumBuffs;
 }
 
-/* Insert a character in the current buffer. */
 bool binsert(struct buff *buff, Byte byte)
 {
 	if (curplen(buff) == PSIZE && !pagesplit(buff, HALFP))
@@ -165,7 +163,6 @@ void binstr(struct buff *buff, const char *fmt, ...)
 	va_end(ap);
 }
 
-/* Delete quantity characters. */
 void bdelete(struct buff *buff, int quantity)
 {
 	int quan, noffset;

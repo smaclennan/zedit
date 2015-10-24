@@ -1,6 +1,6 @@
 *.o
 *.obj
-z
+ze
 config.h
 fcheck
 TAGS

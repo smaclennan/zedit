@@ -1,6 +1,6 @@
 .PHONY: all check install clean
 
-ZEXE = z
+ZEXE = ze
 
 CC = cc
 #CC = gcc -std=c11

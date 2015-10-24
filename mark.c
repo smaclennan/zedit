@@ -14,6 +14,11 @@
 #ifdef HAVE_GLOBAL_MARKS
 struct mark *Marklist;	/* the marks list tail */
 #define MARKS_TAIL(buff) Marklist
+
+/* Keeping one freemark is a huge win for very little code. However,
+ * it is really only a gain when single threaded.
+ */
+static struct mark *freemark;
 #elif defined(HAVE_BUFFER_MARKS)
 #define MARKS_TAIL(buff) ((buff)->marks)
 #endif
@@ -23,7 +28,15 @@ int NumMarks;
 /* Create a mark at the current point and add it to the list. */
 struct mark *bcremark(struct buff *buff)
 {
-	struct mark *mrk = (struct mark *)calloc(1, sizeof(struct mark));
+	struct mark *mrk;
+
+#ifdef HAVE_GLOBAL_MARKS
+	if (freemark) {
+		mrk = freemark;
+		freemark = NULL;
+	} else
+#endif
+		mrk = (struct mark *)calloc(1, sizeof(struct mark));
 	if (mrk) {
 #ifdef MARKS_TAIL
 		struct mark **head = &MARKS_TAIL(buff);
@@ -49,9 +62,28 @@ void bdelmark(struct mark *mptr)
 		if (mptr->next)
 			mptr->next->prev = mptr->prev;
 #endif
-		free((char *)mptr);
+#ifdef HAVE_GLOBAL_MARKS
+		if (freemark == NULL) {
+			freemark = mptr;
+			freemark->prev = freemark->next = NULL;
+		} else
+#endif
+			free((char *)mptr);
 		--NumMarks;
 	}
+}
+
+void bdeleteallmarks(void)
+{
+	while (Marklist)
+		bdelmark(Marklist);
+
+#ifdef HAVE_GLOBAL_MARKS
+	if (freemark) {
+		free(freemark);
+		freemark = NULL;
+	}
+#endif
 }
 
 /* Returns true if point is after the mark. */

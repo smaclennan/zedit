@@ -232,7 +232,6 @@ const char *special_label(int key);
 struct mark *zcreatemrk(void);
 int zreadfile(char *fname);
 void set_shell_mark(void);
-void unmark(struct mark *);
 void message(struct zbuff *buff, const char *str);
 
 int batoi(void);

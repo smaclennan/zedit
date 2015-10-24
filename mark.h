@@ -33,6 +33,7 @@ extern int NumMarks; /* stats */
 
 struct mark *bcremark(struct buff *);
 void bdelmark(struct mark *);
+void bdeleteallmarks(void);
 
 #define bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))
 bool bisaftermrk(struct buff *, struct mark *);

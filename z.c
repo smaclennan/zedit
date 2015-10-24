@@ -539,26 +539,13 @@ void Zstats(void)
 	_putpaw(PawStr);
 }
 
-/* Keep around one mark */
-static struct mark *freemark;
-
+/* zcreatemrk will either return a mark or longjump.
+ * You should always pait zcreatemrk with unmark.
+ */
 struct mark *zcreatemrk(void)
 {
-	struct mark *mrk = freemark;
-
-	if (mrk) {
-		freemark = NULL;
-		bmrktopnt(Bbuff, mrk);
-	} else if (!(mrk = bcremark(Bbuff)))
+	struct mark *mrk = bcremark(Bbuff);
+	if (!mrk)
 		longjmp(zenv, -1);	/* ABORT */
-
 	return mrk;
-}
-
-void unmark(struct mark *mrk)
-{
-	if (freemark)
-		bdelmark(mrk);
-	else
-		freemark = mrk;
 }

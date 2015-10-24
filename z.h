@@ -156,6 +156,7 @@ struct zbuff {
 
 #define Curcptr (Bbuff->curcptr)
 #define Buff()  (*Bbuff->curcptr)
+#define unmark bdelmark
 
 extern char *Home;
 extern bool Argp;

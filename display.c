@@ -49,8 +49,7 @@ static void mfini(void)
 	else
 		Marklist = NULL;
 
-	while (Marklist)
-		unmark(Marklist);
+	bdeleteallmarks();
 }
 
 void display_init(void)

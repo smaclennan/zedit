@@ -33,6 +33,10 @@ one global list of marks. This is really for Zedit and is not thread
 safe. HAVE_BUFFER_MARKS gives you buffer local marks which have the
 same restrictions as buffers.
 
+Buffer local marks have a performance advantage since when you edit a
+buffer only that buffer's marks need to be checked. For global marks,
+it must go through the entire global mark list.
+
 Dynamic marks must be created with bcremrk() or they will not be on the
 proper list. The advantage of dynamic marks is that they move as
 characters are inserted or deleted. So they stay valid even as the

@@ -93,6 +93,9 @@ bool binsert(struct buff *buff, Byte byte)
 
 	struct mark *btmark;
 
+	foreach_global_pagemark(buff, btmark, buff->curpage)
+		if (btmark->moffset >= buff->curchar)
+			++(btmark->moffset);
 	foreach_pagemark(buff, btmark, buff->curpage)
 		if (btmark->moffset >= buff->curchar)
 			++(btmark->moffset);
@@ -195,6 +198,10 @@ void bdelete(struct buff *buff, int quantity)
 				noffset = tpage->plen;
 			}
 			struct mark *tmark;
+			foreach_global_pagemark(buff, tmark, curpage) {
+				tmark->mpage = tpage;
+				tmark->moffset = noffset;
+			}
 			foreach_pagemark(buff, tmark, curpage) {
 				tmark->mpage = tpage;
 				tmark->moffset = noffset;
@@ -208,6 +215,15 @@ void bdelete(struct buff *buff, int quantity)
 				noffset = 0;
 			}
 			struct mark *tmark;
+			foreach_global_pagemark(buff, tmark, curpage)
+				if (tmark->moffset >= buff->curchar) {
+					if (tmark->moffset >= buff->curchar + quan)
+						tmark->moffset -= quan;
+					else {
+						tmark->mpage = tpage;
+						tmark->moffset = noffset;
+					}
+				}
 			foreach_pagemark(buff, tmark, curpage)
 				if (tmark->moffset >= buff->curchar) {
 					if (tmark->moffset >= buff->curchar + quan)
@@ -384,6 +400,11 @@ void bempty(struct buff *buff)
 
 	struct mark *btmark;
 
+	foreach_global_buffmark(buff, btmark)
+		if (btmark->mpage) {
+			btmark->mpage = buff->firstp;
+			btmark->moffset = 0;
+		}
 	foreach_buffmark(buff, btmark)
 		if (btmark->mpage) {
 			btmark->mpage = buff->firstp;
@@ -496,6 +517,9 @@ int bindata(struct buff *buff, Byte *data, int size)
 		memmove(buff->curcptr + size, buff->curcptr, n);
 		memcpy(buff->curcptr, data, size);
 		struct mark *m;
+		foreach_global_pagemark(buff, m, buff->curpage)
+			if (m->moffset >= buff->curchar)
+				m->moffset += size;
 		foreach_pagemark(buff, m, buff->curpage)
 			if (m->moffset >= buff->curchar)
 				m->moffset += size;
@@ -593,6 +617,11 @@ struct page *pagesplit(struct buff *buff, unsigned dist)
 
 	struct mark *btmark;
 
+	foreach_global_pagemark(buff, btmark, curpage)
+		if (btmark->moffset >= dist) {
+			btmark->mpage = newp;
+			btmark->moffset -= dist;
+		}
 	foreach_pagemark(buff, btmark, curpage)
 		if (btmark->moffset >= dist) {
 			btmark->mpage = newp;

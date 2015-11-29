@@ -27,17 +27,14 @@ However they are still very useful. For example, you can set a mark,
 search, and then return to the mark. The regular expression code
 relies on marks.
 
-Dynamic marks are enabled with either the HAVE_GLOBAL_MARKS or
-HAVE_BUFFER_MARKS defines (don't set both).  HAVE_GLOBAL_MARKS defines
-one global list of marks. This is really for Zedit and is not thread
-safe. HAVE_BUFFER_MARKS gives you buffer local marks which have the
-same restrictions as buffers.
+Dynamic marks are enabled with the HAVE_GLOBAL_MARKS and/or
+HAVE_BUFFER_MARKS defines. The advantage of dynamic marks is that they
+move as characters are inserted or deleted. So they stay valid even as
+the text around them changes.
 
-Buffer local marks have a performance advantage since when you edit a
-buffer only that buffer's marks need to be checked. For global marks,
-it must go through the entire global mark list.
+HAVE_GLOBAL_MARKS defines a global list of marks. This is really for
+Zedit. The mark code does not maintain the global mark list, it just
+updates marks on the list in the approprate places.
 
-Dynamic marks must be created with bcremrk() or they will not be on the
-proper list. The advantage of dynamic marks is that they move as
-characters are inserted or deleted. So they stay valid even as the
-text around them changes.
+HAVE_BUFFER_MARKS gives you buffer local marks which have the same
+restrictions as buffers. Buffer marks are created with bcremrk().

@@ -81,6 +81,9 @@ int bcopyrgn(struct mark *tmark, struct buff *to)
 		memmove(to->curcptr, from->curcptr, dstlen);
 		curplen(to) += dstlen;
 		copied += dstlen;
+		foreach_global_pagemark(to, btmrk, to->curpage)
+			if (btmrk->moffset > to->curchar)
+					btmrk->moffset += dstlen;
 		foreach_pagemark(to, btmrk, to->curpage)
 			if (btmrk->moffset > to->curchar)
 					btmrk->moffset += dstlen;

@@ -13,14 +13,13 @@
 
 #ifdef HAVE_GLOBAL_MARKS
 struct mark *Marklist;	/* the marks list tail */
-#define MARKS_TAIL(buff) Marklist
+#endif
 
-/* Keeping one freemark is a huge win for very little code. However,
- * it is really only a gain when single threaded.
+#ifdef HAVE_FREEMARK
+/* Keeping one freemark is a huge win for very little code in single
+ * threaded apps.
  */
-static struct mark *freemark;
-#elif defined(HAVE_BUFFER_MARKS)
-#define MARKS_TAIL(buff) ((buff)->marks)
+struct mark *freemark;
 #endif
 
 int NumMarks;
@@ -30,7 +29,7 @@ struct mark *bcremark(struct buff *buff)
 {
 	struct mark *mrk;
 
-#ifdef HAVE_GLOBAL_MARKS
+#ifdef HAVE_FREEMARK
 	if (freemark) {
 		mrk = freemark;
 		freemark = NULL;
@@ -38,11 +37,10 @@ struct mark *bcremark(struct buff *buff)
 #endif
 		mrk = (struct mark *)calloc(1, sizeof(struct mark));
 	if (mrk) {
-#ifdef MARKS_TAIL
-		struct mark **head = &MARKS_TAIL(buff);
-		mrk->prev = *head; /* add to end of list */
-		if (*head) (*head)->next = mrk;
-		*head = mrk;
+#ifdef HAVE_BUFFER_MARKS
+		mrk->prev = buff->marks; /* add to end of list */
+		if (buff->marks) buff->marks->next = mrk;
+		buff->marks = mrk;
 #endif
 		bmrktopnt(buff, mrk);
 		++NumMarks;
@@ -54,15 +52,15 @@ struct mark *bcremark(struct buff *buff)
 void bdelmark(struct mark *mptr)
 {
 	if (mptr) {
-#ifdef MARKS_TAIL
-		if (mptr == MARKS_TAIL(mptr->mbuff))
-			MARKS_TAIL(mptr->mbuff) = mptr->prev;
+#ifdef HAVE_BUFFER_MARKS
+		if (mptr == mptr->mbuff->marks)
+			mptr->mbuff->marks = mptr->prev;
 		if (mptr->prev)
 			mptr->prev->next = mptr->next;
 		if (mptr->next)
 			mptr->next->prev = mptr->prev;
 #endif
-#ifdef HAVE_GLOBAL_MARKS
+#ifdef HAVE_FREEMARK
 		if (freemark == NULL) {
 			freemark = mptr;
 			freemark->prev = freemark->next = NULL;
@@ -71,19 +69,6 @@ void bdelmark(struct mark *mptr)
 			free((char *)mptr);
 		--NumMarks;
 	}
-}
-
-void bdeleteallmarks(void)
-{
-#ifdef HAVE_GLOBAL_MARKS
-	while (Marklist)
-		bdelmark(Marklist);
-
-	if (freemark) {
-		free(freemark);
-		freemark = NULL;
-	}
-#endif
 }
 
 /* Returns true if point is after the mark. */

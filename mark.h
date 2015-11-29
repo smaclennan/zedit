@@ -33,7 +33,6 @@ extern int NumMarks; /* stats */
 
 struct mark *bcremark(struct buff *);
 void bdelmark(struct mark *);
-void bdeleteallmarks(void);
 
 #define bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))
 bool bisaftermrk(struct buff *, struct mark *);
@@ -48,20 +47,21 @@ bool mrkatmrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
 
 #ifdef HAVE_GLOBAL_MARKS
-# ifdef HAVE_BUFFER_MARKS
-# error You cannot define HAVE_GLOBAL_MARKS and HAVE_BUFFER_MARKS
-# endif
-
 extern struct mark *Marklist;
 
-#define foreach_pagemark(buff, mark, page)				   \
+#define foreach_global_pagemark(buff, mark, page)				   \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mpage == (page))
 
-#define foreach_buffmark(buff, mark)				   \
+#define foreach_global_buffmark(buff, mark)				   \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mbuff == (buff))
-#elif defined(HAVE_BUFFER_MARKS)
+#else
+#define foreach_global_pagemark(buff, mark, page) if (0)
+#define foreach_global_buffmark(buff, mark) if (0)
+#endif
+
+#ifdef HAVE_BUFFER_MARKS
 #define foreach_pagemark(buff, mark, page)						 \
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	 \
 		if ((mark)->mpage == (page))
@@ -71,6 +71,10 @@ extern struct mark *Marklist;
 #else
 #define foreach_pagemark(buff, mark, page) if (0)
 #define foreach_buffmark(buff, mark) if (0)
+#endif
+
+#ifdef HAVE_FREEMARK
+extern struct mark *freemark;
 #endif
 
 #endif /* _mark_h */

@@ -78,10 +78,8 @@ void hang_up(int signo)
 
 	InPaw = true;	/* Kludge to turn off error */
 	foreachbuff(tbuff)
-		if (tbuff->buff->bmodf && !(tbuff->bmode & SYSBUFF) && Curbuff->fname) {
-			zswitchto(tbuff);
-			bwritefile(Curbuff->fname);
-		}
+		if (tbuff->buff->bmodf && !(tbuff->bmode & SYSBUFF) && Curbuff->fname)
+			bwritefile(tbuff->buff, tbuff->fname, file_mode());
 	unvoke(NULL);
 	checkpipes(0);
 	printf("\r\nThey hung up! (%d)\r\n", signo);

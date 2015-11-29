@@ -75,10 +75,10 @@ void bdelmark(struct mark *mptr)
 
 void bdeleteallmarks(void)
 {
+#ifdef HAVE_GLOBAL_MARKS
 	while (Marklist)
 		bdelmark(Marklist);
 
-#ifdef HAVE_GLOBAL_MARKS
 	if (freemark) {
 		free(freemark);
 		freemark = NULL;

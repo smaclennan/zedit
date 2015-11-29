@@ -20,6 +20,7 @@
 #include "z.h"
 
 static char Fname[PATHMAX + 1];
+int raw_mode;
 
 static bool cp(char *from, char *to)
 {
@@ -50,6 +51,19 @@ static char *make_bakname(char *bakname, char *fname)
 	strcpy(bakname, fname);
 	strcat(bakname, "~");
 	return bakname;
+}
+
+int file_mode(void)
+{
+	static int Cmask = 0;
+
+	if (Cmask == 0) {
+		Cmask = umask(0);	/* get the current umask */
+		umask(Cmask);		/* set it back */
+		Cmask = ~Cmask & 0666;	/* make it usable */
+	}
+
+	return Cmask | (Curbuff->bmode & (FILE_COMPRESSED | FILE_CRLF));
 }
 
 static bool zwritefile(char *fname)
@@ -93,10 +107,14 @@ static bool zwritefile(char *fname)
 	} else if (VAR(VBACKUP))
 		bak = rename(fname, bakname);
 
-	rc = bwritefile(fname);
-	if (rc)
+	rc = bwritefile(Bbuff, fname, file_mode());
+	if (rc) {
+		if (stat(fname, &sbuf) == 0)
+			Curbuff->mtime = sbuf.st_mtime;
+		else
+			Curbuff->mtime = -1;
 		clrpaw();
-	else {
+	} else {
 		if (errno == EACCES)
 			error("File is read only.");
 		else
@@ -125,7 +143,7 @@ static void crfixup(void)
 	if (raw_mode)
 		return;
 
-	Curbuff->bmode |= CRLF;
+	Curbuff->bmode |= FILE_CRLF;
 
 	while (bcsearch(Bbuff, '\r'))
 		if (*Curcptr == '\n') {
@@ -167,7 +185,7 @@ int zreadfile(char *fname)
 	}
 
 	if (compressed)
-		Curbuff->bmode |= COMPRESSED;
+		Curbuff->bmode |= FILE_COMPRESSED;
 	else if (curplen(Bbuff))
 		crfixup();
 

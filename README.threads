@@ -6,8 +6,9 @@ form of external locking.
 All the functions in the following files are thread safe:
 
  * buff.c
- * bmsearch.c
+ * bfile.c
  * mark.c (1)
+ * bmsearch.c
  * reg.c
  * bsocket.c (2)
 

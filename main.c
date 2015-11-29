@@ -117,14 +117,14 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	bmove(buff, -12);
-	struct mark *mark1 = bcremrk(buff);
+	struct mark *mark1 = bcremark(buff);
 
 	if (!bm_search(buff, "2 feet of snow", true)) {
 		puts("search2 failed");
 		exit(1);
 	}
 	bmove(buff, -14);
-	struct mark *mark2 = bcremrk(buff);
+	struct mark *mark2 = bcremark(buff);
 
 	if (mark1->moffset >= HALFP || mark2->moffset <= HALFP) {
 		puts("PROBLEMS");

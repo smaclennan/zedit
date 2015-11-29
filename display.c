@@ -482,9 +482,9 @@ static char *setmodes(struct zbuff *buff)
 
 	if (buff->bmode & VIEW)
 		strcat(PawStr, " RO");
-	if (buff->bmode & COMPRESSED)
+	if (buff->bmode & FILE_COMPRESSED)
 		strcat(PawStr, " Z");
-	if (buff->bmode & CRLF)
+	if (buff->bmode & FILE_CRLF)
 		strcat(PawStr, " CR");
 	if (buff->bmode & OVERWRITE)
 		strcat(PawStr, " OVWRT");

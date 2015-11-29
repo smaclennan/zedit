@@ -83,6 +83,12 @@ int bindata(struct buff *buff, Byte *, int);
 
 void binstr(struct buff *buff, const char *str, ...);
 
+/* bfile.c */
+#define FILE_COMPRESSED		0x10000
+#define FILE_CRLF			0x20000
+int breadfile(struct buff *buff, const char *, int *compressed);
+bool bwritefile(struct buff *buff, char *, int mode);
+
 /* reg.c */
 #ifdef BUILTIN_REG
 #define ESIZE		256			/* reg exp buffer size */

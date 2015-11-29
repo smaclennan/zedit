@@ -83,8 +83,6 @@ struct zbuff;
 #define OVERWRITE			0x0001
 #define EXACT				0x0002
 #define VIEW				0x0004
-#define COMPRESSED			0x0008
-#define CRLF				0x0010
 /* majour modes - only one allowed */
 #define NORMAL				0x0100
 #define CMODE				0x0200
@@ -92,6 +90,9 @@ struct zbuff;
 #define SHMODE				0x0800
 /* super modes - 0 to all allowed */
 #define SYSBUFF				0x1000
+/* File modes in buff.h */
+/* #define COMPRESSED		0x10000 */
+/* #define CRLF				0x20000 */
 /* some handy macro for buffer modes */
 #define MAJORMODE			0x0f00
 #define PROGMODE			(CMODE | SHMODE)

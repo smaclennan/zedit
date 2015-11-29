@@ -22,10 +22,6 @@
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
-#define READ_MODE	(O_RDONLY | O_BINARY)
-#define WRITE_MODE	(O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
-
-int raw_mode;
 
 /*
  * Load the file 'fname' into the current buffer.
@@ -76,10 +72,12 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 
 	btostart(buff);
 
+#if ZLIB
 	/* Ubuntu 12.04 has a bug where zero length files are reported as
 	 * compressed.
 	 */
 	if (compressed && count == 0) *compressed = 0;
+#endif
 
 	buff->bmodf = false;
 
@@ -87,10 +85,10 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 }
 
 #if ZLIB
-static bool bwritegzip(int fd)
+static bool bwritegzip(struct buff *buff, int fd)
 {
 	struct page *tpage;
-	int status = true;
+	bool status = true;
 
 	gzFile gz = gzdopen(fd, "wb");
 	if (!gz) {
@@ -98,7 +96,7 @@ static bool bwritegzip(int fd)
 		return false;
 	}
 
-	for (tpage = Bbuff->firstp; tpage && status; tpage = tpage->nextp)
+	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int n = gzwrite(gz, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
@@ -110,27 +108,27 @@ static bool bwritegzip(int fd)
 }
 #endif
 
-static bool bwritefd(int fd)
+static bool bwritefd(struct buff *buff, int fd)
 {
 	struct mark smark;
 	struct page *tpage;
 	int n, status = true;
 
-	bmrktopnt(Bbuff, &smark);
-	for (tpage = Bbuff->firstp; tpage && status; tpage = tpage->nextp)
+	bmrktopnt(buff, &smark);
+	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
-			makecur(Bbuff, tpage, 0);
+			makecur(buff, tpage, 0);
 			n = write(fd, tpage->pdata, tpage->plen);
 			status = n == tpage->plen;
 		}
 
 	close(fd);
 
-	bpnttomrk(Bbuff, &smark);
+	bpnttomrk(buff, &smark);
 	return status;
 }
 
-static bool bwritedos(int fd)
+static bool bwritedos(struct buff *buff, int fd)
 {
 	struct mark smark;
 	struct page *tpage;
@@ -138,11 +136,11 @@ static bool bwritedos(int fd)
 	unsigned i;
 	Byte buf[PSIZE * 2], *p;
 
-	bmrktopnt(Bbuff, &smark);
-	for (tpage = Bbuff->firstp; tpage && status; tpage = tpage->nextp)
+	bmrktopnt(buff, &smark);
+	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int len = tpage->plen;
-			makecur(Bbuff, tpage, 0);
+			makecur(buff, tpage, 0);
 			p = buf;
 			for (i = 0; i < tpage->plen; ++i) {
 				if (tpage->pdata[i] == '\n') {
@@ -158,62 +156,39 @@ static bool bwritedos(int fd)
 
 	close(fd);
 
-	bpnttomrk(Bbuff, &smark);
+	bpnttomrk(buff, &smark);
 	return status;
 }
 
-/*	Write the current buffer to the file 'fname'.
- *	Handles the backup scheme according to VAR(VBACKUP).
- *	Returns:	true	if write successful
- *				false	if write failed
+/* Write the buffer to the file 'fname'.
+ * Mode is umask + FILE_COMPRESSED + FILE_CRLF
+ * Returns:	true if write successful.
  */
-bool bwritefile(char *fname)
+bool bwritefile(struct buff *buff, char *fname, int mode)
 {
-	static int Cmask;
-	int fd, mode, status = true;
-	struct stat sbuf;
+	int fd;
+	bool status;
 
 	if (!fname)
 		return true;
 
-	/* If the file existed, check to see if it has been modified. */
-	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
-		if (sbuf.st_mtime > Curbuff->mtime) {
-			/* file has been modified */
-		}
-		mode  = sbuf.st_mode;
-	} else {
-		if (Cmask == 0) {
-			Cmask = umask(0);	/* get the current umask */
-			umask(Cmask);		/* set it back */
-			Cmask = ~Cmask & 0666;	/* make it usable */
-		}
-		mode  = Cmask;
-	}
-
 	/* Write the output file */
-	fd = open(fname, WRITE_MODE, mode);
-	if (fd != EOF) {
+	if ((fd = creat(fname, mode & 0777)) < 0)
+		return false;
+
 #if ZLIB
-		if (Curbuff->bmode & COMPRESSED)
-			status = bwritegzip(fd);
-		else
+	if (mode & FILE_COMPRESSED)
+		status = bwritegzip(buff, fd);
+	else
 #endif
-			if (Curbuff->bmode & CRLF)
-				status = bwritedos(fd);
-			else
-				status = bwritefd(fd);
-	} else
-		status = false;
+		if (mode & FILE_CRLF)
+			status = bwritedos(buff, fd);
+		else
+			status = bwritefd(buff, fd);
 
 	/* cleanup */
-	if (status) {
-		if (stat(fname, &sbuf) == 0)
-			Curbuff->mtime = sbuf.st_mtime;
-		else
-			Curbuff->mtime = -1;
-		Bbuff->bmodf = false;
-	}
+	if (status)
+		buff->bmodf = false;
 
 	return status;
 }

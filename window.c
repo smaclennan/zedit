@@ -23,6 +23,15 @@ struct wdo *Whead, *Curwdo;
 
 #define MINWDO		5		/* minimum window size */
 
+/* free wdo - may invalidate Curwdo and Whead */
+static void wfree(struct wdo *wdo)
+{
+	unmark(wdo->wpnt);
+	unmark(wdo->wmrk);
+	unmark(wdo->wstart);
+	free((char *)wdo);
+}
+
 /* Create a new window pointer - screen info invalid */
 static struct wdo *wcreate(int first, int last)
 {
@@ -30,9 +39,13 @@ static struct wdo *wcreate(int first, int last)
 
 	if (wdo) {
 		wdo->wbuff	= Curbuff;
-		wdo->wpnt	= zcreatemrk();
-		wdo->wmrk	= zcreatemrk();
-		wdo->wstart	= zcreatemrk();
+		wdo->wpnt	= bcremark(Bbuff);
+		wdo->wmrk	= bcremark(Bbuff);
+		wdo->wstart	= bcremark(Bbuff);
+		if (!wdo->wpnt || !wdo->wmrk || !wdo->wstart) {
+			wfree(wdo);
+			return NULL;
+		}
 		wdo->modeflags	= INVALID;
 		wdo->first	= first;
 		wdo->last	= last;
@@ -42,15 +55,6 @@ static struct wdo *wcreate(int first, int last)
 		}
 	}
 	return wdo;
-}
-
-/* free wdo - may invalidate Curwdo and Whead */
-static void wfree(struct wdo *wdo)
-{
-	unmark(wdo->wpnt);
-	unmark(wdo->wmrk);
-	unmark(wdo->wstart);
-	free((char *)wdo);
 }
 
 /*
@@ -395,6 +399,10 @@ void winit(void)
 {
 	/* Create first window over entire screen. */
 	Whead = wcreate(0, Rowmax - 2);
+	if (!Whead) {
+		puts("Unable to create first window!");
+		exit(1);
+	}
 	wswitchto(Whead);
 	atexit(wfini);
 }

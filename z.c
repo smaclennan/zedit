@@ -540,7 +540,7 @@ void Zstats(void)
 }
 
 /* zcreatemrk will either return a mark or longjump.
- * You should always pait zcreatemrk with unmark.
+ * You should always pair zcreatemrk with unmark.
  */
 struct mark *zcreatemrk(void)
 {

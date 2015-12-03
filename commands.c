@@ -89,18 +89,24 @@ void Zswap_words(void)
 {
 	struct mark *tmark, *tmp;
 
-	moveto(bistoken, FORWARD);
-	if (bisend(Bbuff))
-		return;
-	tmark = zcreatemrk();
-	movepast(bistoken, FORWARD);
-	tmp = zcreatemrk();
-	bpnttomrk(Bbuff, tmark);
-	moveto(bistoken, BACKWARD);
-	blockmove(tmark, tmp);
-	movepast(bistoken, BACKWARD);
-	blockmove(tmark, tmp);
-	bpnttomrk(Bbuff, tmp);
+	tmark = bcremark(Bbuff);
+	tmp = bcremark(Bbuff);
+	if (tmark && tmp) {
+		moveto(bistoken, FORWARD);
+		if (!bisend(Bbuff)) {
+			bmrktopnt(Bbuff, tmark);
+			movepast(bistoken, FORWARD);
+			bmrktopnt(Bbuff, tmp);
+			bpnttomrk(Bbuff, tmark);
+			moveto(bistoken, BACKWARD);
+			blockmove(tmark, tmp);
+			movepast(bistoken, BACKWARD);
+			blockmove(tmark, tmp);
+			bpnttomrk(Bbuff, tmp);
+		}
+	} else
+		tbell();
+
 	unmark(tmark);
 	unmark(tmp);
 }
@@ -125,14 +131,17 @@ void Zcenter(void)
 void Zc_insert(void)
 {	/* This code must handle any char so that expansion will work */
 	int cnt, crfound = false;
-	struct mark *tmark;
+	struct mark *tmark = NULL;
 	char word[16];
 
 	switch (Cmd) {
 	case '}':
 		/* line it up with last unmatched '{' */
 		Arg = 0;
-		tmark = zcreatemrk();
+		if (!(tmark = bcremark(Bbuff))) {
+			tbell();
+			break;
+		}
 		bmrktopnt(Bbuff, tmark);	/* save current position */
 		for (cnt = 0, bmove(Bbuff, -1); !bisstart(Bbuff); bmove(Bbuff, -1))
 			if (*Curcptr == '{') {
@@ -156,12 +165,14 @@ void Zc_insert(void)
 			else if (ISNL(*Curcptr))
 				crfound = true;
 		bpnttomrk(Bbuff, tmark);	/* no match - go back */
-		unmark(tmark);
 		tbell();		/* and warn user */
 		break;
 
 	case '#':
-		tmark = zcreatemrk();
+		if (!(tmark = bcremark(Bbuff))) {
+			tbell();
+			break;
+		}
 
 		do
 			bmove(Bbuff, -1);
@@ -172,7 +183,6 @@ void Zc_insert(void)
 			bdeltomrk(tmark);
 		} else
 			bpnttomrk(Bbuff, tmark);
-		unmark(tmark);
 		break;
 
 	case ':':
@@ -181,12 +191,14 @@ void Zc_insert(void)
 		if (strcmp(word, "public")    == 0 ||
 		   strcmp(word, "private")   == 0 ||
 		   strcmp(word, "protected") == 0) {
-			struct mark *tmark = zcreatemrk();
+			if (!(tmark = bcremark(Bbuff))) {
+				tbell();
+				break;
+			}
 			tobegline(Bbuff);
 			while (bisspace())
 				bdelete(Bbuff, 1);
 			bpnttomrk(Bbuff, tmark);
-			unmark(tmark);
 		}
 		break;
 
@@ -197,6 +209,7 @@ void Zc_insert(void)
 	}
 
 	binsert(Bbuff, Cmd);
+	unmark(tmark);
 }
 
 void Zc_indent(void)
@@ -337,7 +350,11 @@ void Zfill_check(void)
 	if (bgetcol(true, 0) < VAR(VFILLWIDTH) || InPaw)
 		CMD(Cmd == NL ? ZNEWLINE : ZINSERT);
 	else {
-		tmark = zcreatemrk();
+		tmark = bcremark(Bbuff);
+		if (!tmark) {
+			tbell();
+			return;
+		}
 		while (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
 			moveto(bisspace, BACKWARD);
 			movepast(bisspace, BACKWARD);
@@ -377,14 +394,21 @@ void Zfill_paragraph(void)
 		tbell();
 		return;
 	}
-	tmark = zcreatemrk();		/* save the current point */
+	tmp = bcremark(Bbuff);
+	tmark = bcremark(Bbuff);		/* save the current point */
+	if (!tmp || !tmark) {
+		unmark(tmp);
+		unmark(tmark);
+		tbell();
+		return;
+	}
 	putpaw("Reformatting...");
 	do {
 		/* mark the end of the paragraph and move the point to
 		 * the start */
 		Znext_paragraph();
 		movepast(bisspace, BACKWARD);
-		tmp = zcreatemrk();
+		bmrktopnt(Bbuff, tmp);
 		Zprevious_paragraph();
 		if (*Curcptr == '.')
 			bcsearch(Bbuff, '\n');	/* for nroff */
@@ -406,7 +430,6 @@ void Zfill_paragraph(void)
 			}
 		}
 
-		unmark(tmp);
 		movepast(bisspace, FORWARD); /* setup for next iteration */
 	} while (Argp && !bisend(Bbuff) && !tkbrdy());
 
@@ -418,6 +441,7 @@ void Zfill_paragraph(void)
 
 	bpnttomrk(Bbuff, tmark); /* restore point */
 	unmark(tmark);
+	unmark(tmp);
 }
 
 static bool ispara(char pc, char ch)
@@ -746,18 +770,21 @@ void Zcount(void)
 {
 	bool word, swapped = false;
 	unsigned l, w, c;
-	struct mark *tmark;
+	struct mark *tmark = bcremark(Bbuff);
+
+	if (!tmark) {
+		tbell();
+		return;
+	}
 
 	Arg = 0;
 	if (UMARK_SET) {
 		swapped = bisaftermrk(Bbuff, UMARK);
 		if (swapped)
 			bswappnt(Bbuff, UMARK);
-		tmark = zcreatemrk();
-	} else {
-		tmark = zcreatemrk();
+		bmrktopnt(Bbuff, tmark);
+	} else
 		btostart(Bbuff);
-	}
 	l = w = c = 0;
 	putpaw("Counting...");
 	word = false;
@@ -923,10 +950,17 @@ static void indent(bool flag)
 
 	NEED_UMARK;
 
-	psave = zcreatemrk();
+	if (!(psave = bcremark(Bbuff))) {
+		tbell();
+		return;
+	}
 	if (bisaftermrk(Bbuff, UMARK)) {
 		bswappnt(Bbuff, UMARK);
-		msave = zcreatemrk();
+		if (!(msave = bcremark(Bbuff))) {
+			tbell();
+			unmark(psave);
+			return;
+		}
 	}
 	bcrsearch(Bbuff, NL);
 	while (bisbeforemrk(Bbuff, UMARK)) {

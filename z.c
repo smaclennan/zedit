@@ -489,7 +489,7 @@ int bisspace(void)
 
 int bisword(void)
 {
-	return  isalnum(Buff()) || Buff() == '_' || Buff() == '.';
+	return  isalnum(Buff()) || Buff() == '_' || Buff() == '.' || Buff() == '-';
 }
 
 /* Must be a real function. */

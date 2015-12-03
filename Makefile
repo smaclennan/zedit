@@ -37,16 +37,19 @@ MAKEFLAGS += --no-print-directory
 
 ETAGS=`which etags || echo true`
 
-CFILES = bcmds.c bind.c buff.c bfile.c calc.c cnames.c \
+CFILES = bcmds.c bind.c calc.c cnames.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
-	reg.c shell.c spell.c srch.c tags.c term.c mark.c \
-	undo.c vars.c window.c varray.c z.c zgrep.c bmsearch.c \
+	shell.c spell.c srch.c tags.c term.c \
+	undo.c vars.c window.c varray.c z.c zgrep.c \
 	terminfo.c termcap.c gpm/liblow.c
+
+LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c
 
 HFILES = buff.h config.h funcs.h keys.h proto.h vars.h z.h
 
 O := $(CFILES:.c=.o)
+L := $(LFILES:.c=.o)
 
 #################
 
@@ -57,6 +60,7 @@ V	      = @
 Q	      = $(V:1=)
 QUIET_CC      = $(Q:@=@echo    '     CC       '$@;)
 QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
+QUIET_AR      = $(Q:@=@echo    '     AR       '$@;)
 
 .c.o:
 	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
@@ -65,18 +69,21 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 
 all:	fcheck $(ZEXE)
 
-$(ZEXE): $O
-	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
+$(ZEXE): $O libbuff.a
+	$(QUIET_LINK)$(CC) -o $@ $+ $(LIBS)
 	@$(ETAGS) $(CFILES) *.h
+
+libbuff.a: $L
+	@rm -f #@
+	@$(QUIET_AR)ar cr $@ $+
 
 fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
 # This is just to check that no zedit dependencies crept into buff.c
-main: main.c buff.c bmsearch.c reg.c mark.c bsocket.c bfile.c
-	$(QUIET_LINK)$(CC) -UHAVE_GLOBAL_MARKS -DHAVE_BUFFER_MARKS -g -o $@ $+
-	$(QUIET_LINK)$(CC) -UHAVE_GLOBAL_MARKS -UUNSIGNED_BYTES -g -o $@ $+
+main: main.c $(LFILES)
+	$(QUIET_LINK)$(CC) -UHAVE_GLOBAL_MARKS -UHAVE_BUFFER_MARKS -UUNSIGNED_BYTES -g -o $@ $+
 
 # Make all c files depend on all .h files
 *.o: $(HFILES)

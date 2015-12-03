@@ -188,7 +188,10 @@ static void doreplace(int type)
 	query = type == FORWARD ? false : true;
 
 	crgone = *olds && *(olds + strlen(olds) - 1) == '\n';
-	pmark = zcreatemrk();
+	if (!(pmark = bcremark(Bbuff))) {
+		tbell();
+		return;
+	}
 
 	if (type == REGEXP)
 		rc = re_compile(&re, olds, REG_EXTENDED);
@@ -268,10 +271,18 @@ static bool replaceone(int type, bool *query, bool *exit, regexp_t *re, bool crg
 	struct mark *prevmatch;
 	struct mark *REstart = NULL;
 
-	if (type == REGEXP)
-		REstart = zcreatemrk();
+	if (type == REGEXP) {
+		if (!(REstart = bcremark(Bbuff))) {
+			tbell();
+			return false;
+		}
+	}
 
-	prevmatch = zcreatemrk();
+	if (!(prevmatch = bcremark(Bbuff))) {
+		unmark(REstart);
+		tbell();
+		return false;
+	}
 	putpaw("Searching...");
 	while (!*exit && next_replace(re, REstart, type)) {
 		found = true;

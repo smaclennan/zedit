@@ -32,8 +32,9 @@ int Tlrow;			/* Last row displayed */
 
 static int NESTED;		/* zrefresh can go recursive... */
 static Byte tline[COLMAX + 1];
-static struct mark Scrnmarks[ROWMAX + 3];	/* Screen marks - one per line */
+static struct mark Scrnmarks[ROWMAX + 4];	/* Screen marks - one per line */
 static bool Scrnmodf[ROWMAX];
+static struct mark *was;	/* last location of user mark for zrefresh() */
 
 /* Keeping just one mark around is a HUGE win for a trivial amount of code. */
 static struct mark *freeumark;
@@ -61,9 +62,10 @@ void display_init(void)
 	Scrnmarks[cnt - 1].next = NULL;
 
 	/* Now point the display marks at the last 3 screen marks */
-	Sstart	= &Scrnmarks[ROWMAX];
-	Psstart	= &Scrnmarks[ROWMAX + 1];
-	Send	= &Scrnmarks[ROWMAX + 2];
+	was     = &Scrnmarks[ROWMAX + 0];
+	Sstart	= &Scrnmarks[ROWMAX + 1];
+	Psstart	= &Scrnmarks[ROWMAX + 2];
+	Send	= &Scrnmarks[ROWMAX + 3];
 	Sendp	= false;
 
 	/* init the mark list */
@@ -144,7 +146,6 @@ void zrefresh(void)
 	struct mark *pmark;
 	struct wdo *wdo;
 	int tsave;
-	static struct mark *was;	/* last location of user mark */
 
 	if (was == NULL)
 		was = zcreatemrk();

@@ -17,6 +17,7 @@
 #define unlink _unlink
 #define getcwd _getcwd
 
+#define creat _creat
 #define open _open
 #define read _read
 #define write _write

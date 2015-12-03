@@ -206,7 +206,7 @@ void Zdelete_blanks(void)
 		if (bcrsearch(Bbuff, NL)) {
 			bmove1(Bbuff);
 			bmrktopnt(Bbuff, tmark);
-			movepast(bisspace, BACKWARD);
+			movepast(isspace, BACKWARD);
 			if (!bisstart(Bbuff))
 				bcsearch(Bbuff, NL);
 			if (bisbeforemrk(Bbuff, tmark))
@@ -214,7 +214,7 @@ void Zdelete_blanks(void)
 		}
 		if (bcsearch(Bbuff, NL)) {
 			bmrktopnt(Bbuff, tmark);
-			movepast(bisspace, FORWARD);
+			movepast(isspace, FORWARD);
 			if (bcrsearch(Bbuff, NL))
 				bmove1(Bbuff);
 			if (bisaftermrk(Bbuff, tmark))

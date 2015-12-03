@@ -82,6 +82,8 @@ int bappend(struct buff *buff, Byte *, int);
 int bindata(struct buff *buff, Byte *, int);
 
 void binstr(struct buff *buff, const char *str, ...);
+void bmovepast(struct buff *buff, int (*pred)(int), bool forward);
+void bmoveto(struct buff *buff, int (*pred)(int), bool forward);
 
 /* bfile.c */
 #define FILE_COMPRESSED		0x10000

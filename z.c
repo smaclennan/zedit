@@ -409,7 +409,7 @@ int getbword(char word[], int max, int (*valid)())
 	struct mark tmark;
 
 	bmrktopnt(Bbuff, &tmark);
-	if (!bistoken())
+	if (!bistoken(Buff()))
 		moveto(bistoken, BACKWARD);
 	movepast(bistoken, BACKWARD);
 	for (i = 0; !bisend(Bbuff) && valid() && i < max; ++i, bmove1(Bbuff))
@@ -450,26 +450,19 @@ char *getbtxt(char txt[], int max)
 	return txt;
 }
 
-/* Go forward or back past a thingy */
-void movepast(int (*pred)(), bool forward)
+int bisword(int c)
 {
-	if (!forward)
-		bmove(Bbuff, -1);
-	while (!(forward ? bisend(Bbuff) : bisstart(Bbuff)) && (*pred)())
-		bmove(Bbuff, forward ? 1 : -1);
-	if (!forward && !(*pred)())
-		bmove1(Bbuff);
+	return  isalnum(c) || c == '_' || c == '.' || c == '-';
 }
 
-/* Go forward or back to a thingy */
-void moveto(int (*pred)(), bool forward)
+int bistoken(int c)
 {
-	if (!forward)
-		bmove(Bbuff, -1);
-	while (!(forward ? bisend(Bbuff) : bisstart(Bbuff)) && !(*pred)())
-		bmove(Bbuff, forward ? 1 : -1);
-	if (!forward && !bisstart(Bbuff))
-		bmove1(Bbuff);
+	return bisword(c) || c == '/';
+}
+
+int biswhite(int c)
+{
+	return c == ' ' || c == '\t';
 }
 
 /* Put in the right number of tabs and spaces */
@@ -480,27 +473,6 @@ void tindent(int arg)
 			binsert(Bbuff, '\t');
 	while (arg-- > 0)
 		binsert(Bbuff, ' ');
-}
-
-int bisspace(void)
-{
-	return isspace(Buff());
-}
-
-int bisword(void)
-{
-	return  isalnum(Buff()) || Buff() == '_' || Buff() == '.' || Buff() == '-';
-}
-
-/* Must be a real function. */
-int bistoken(void)
-{
-	return bisword() || Buff() == '/';
-}
-
-int biswhite(void)
-{
-	return Buff() == ' ' || Buff() == '\t';
 }
 
 /* Limit a filename to at most Colmax - 'num' cols */

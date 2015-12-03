@@ -156,6 +156,9 @@ struct zbuff {
 #define Buff()  (*Bbuff->curcptr)
 #define unmark bdelmark
 
+#define movepast(a, b) bmovepast(Bbuff, a, b)
+#define moveto(a, b) bmoveto(Bbuff, a, b)
+
 extern char *Home;
 extern bool Argp;
 extern int Arg;				/* must be signed */

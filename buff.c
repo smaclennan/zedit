@@ -571,6 +571,28 @@ int bindata(struct buff *buff, Byte *data, int size)
 	return copied;
 }
 
+/* Go forward or back past a thingy */
+void bmovepast(struct buff *buff, int (*pred)(int), bool forward)
+{
+	if (!forward)
+		bmove(buff, -1);
+	while (!(forward ? bisend(buff) : bisstart(buff)) && pred(*buff->curcptr))
+		bmove(buff, forward ? 1 : -1);
+	if (!forward && !pred(*buff->curcptr))
+		bmove1(buff);
+}
+
+/* Go forward or back to a thingy */
+void bmoveto(struct buff *buff, int (*pred)(int), bool forward)
+{
+	if (!forward)
+		bmove(buff, -1);
+	while (!(forward ? bisend(buff) : bisstart(buff)) && !pred(*buff->curcptr))
+		bmove(buff, forward ? 1 : -1);
+	if (!forward && !bisstart(buff))
+		bmove1(buff);
+}
+
 /* Low level memory page routines */
 
 /* Make page current at dist */

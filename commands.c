@@ -27,7 +27,7 @@ bool Argp;
 /* Find the start of a word. */
 static bool Findstart(void)
 {
-	while (!bisstart(Bbuff) && bistoken())
+	while (!bisstart(Bbuff) && bistoken(Buff()))
 		bmove(Bbuff, -1);
 	while (!bisend(Bbuff) && !isalpha(*Curcptr))
 		bmove1(Bbuff);
@@ -44,7 +44,7 @@ void Zcapitalize_word(void)
 {
 	if (Findstart()) {
 		bconvert(toupper);
-		for (bmove1(Bbuff); !bisend(Bbuff) && bistoken(); bmove1(Bbuff))
+		for (bmove1(Bbuff); !bisend(Bbuff) && bistoken(Buff()); bmove1(Bbuff))
 			bconvert(tolower);
 		vsetmod();
 	}
@@ -54,7 +54,7 @@ void Zcapitalize_word(void)
 void Zlowercase_word(void)
 {
 	if (Findstart()) {
-		for (; !bisend(Bbuff) && bistoken(); bmove1(Bbuff))
+		for (; !bisend(Bbuff) && bistoken(Buff()); bmove1(Bbuff))
 			bconvert(tolower);
 		vsetmod();
 	}
@@ -63,7 +63,7 @@ void Zlowercase_word(void)
 void Zuppercase_word(void)
 {
 	if (Findstart()) {
-		for (; !bisend(Bbuff) && bistoken(); bmove1(Bbuff))
+		for (; !bisend(Bbuff) && bistoken(Buff()); bmove1(Bbuff))
 			bconvert(toupper);
 		vsetmod();
 	}
@@ -176,7 +176,7 @@ void Zc_insert(void)
 
 		do
 			bmove(Bbuff, -1);
-		while (!bisstart(Bbuff) && biswhite());
+		while (!bisstart(Bbuff) && biswhite(Buff()));
 
 		if (ISNL(*Curcptr) && !bisstart(Bbuff)) {
 			bmove1(Bbuff);		/* skip NL */
@@ -196,7 +196,7 @@ void Zc_insert(void)
 				break;
 			}
 			tobegline(Bbuff);
-			while (bisspace())
+			while (isspace(Buff()))
 				bdelete(Bbuff, 1);
 			bpnttomrk(Bbuff, tmark);
 		}
@@ -356,8 +356,8 @@ void Zfill_check(void)
 			return;
 		}
 		while (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
-			moveto(bisspace, BACKWARD);
-			movepast(bisspace, BACKWARD);
+			moveto(isspace, BACKWARD);
+			movepast(isspace, BACKWARD);
 		}
 		Ztrim_white_space();
 		tmp = !bisatmrk(Bbuff, tmark);
@@ -372,11 +372,11 @@ void Zfill_check(void)
 
 void Ztrim_white_space(void)
 {
-	while (!bisend(Bbuff) && biswhite())
+	while (!bisend(Bbuff) && biswhite(Buff()))
 		bdelete(Bbuff, 1);
 	while (!bisstart(Bbuff)) {
 		bmove(Bbuff, -1);
-		if (biswhite())
+		if (biswhite(Buff()))
 			bdelete(Bbuff, 1);
 		else {
 			bmove1(Bbuff);
@@ -407,7 +407,7 @@ void Zfill_paragraph(void)
 		/* mark the end of the paragraph and move the point to
 		 * the start */
 		Znext_paragraph();
-		movepast(bisspace, BACKWARD);
+		movepast(isspace, BACKWARD);
 		bmrktopnt(Bbuff, tmp);
 		Zprevious_paragraph();
 		if (*Curcptr == '.')
@@ -415,12 +415,12 @@ void Zfill_paragraph(void)
 
 		/* main loop */
 		while (bisbeforemrk(Bbuff, tmp)) {
-			moveto(bisspace, FORWARD);
+			moveto(isspace, FORWARD);
 			if (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
-				moveto(bisspace, BACKWARD);
+				moveto(isspace, BACKWARD);
 				Ztrim_white_space();
 				binsert(Bbuff, NL);
-				moveto(bisspace, FORWARD);
+				moveto(isspace, FORWARD);
 			}
 			movepast(biswhite, FORWARD);
 			if (*Curcptr == NL && bisbeforemrk(Bbuff, tmp)) {
@@ -430,7 +430,7 @@ void Zfill_paragraph(void)
 			}
 		}
 
-		movepast(bisspace, FORWARD); /* setup for next iteration */
+		movepast(isspace, FORWARD); /* setup for next iteration */
 	} while (Argp && !bisend(Bbuff) && !tkbrdy());
 
 	clrpaw();
@@ -458,25 +458,25 @@ void Znext_paragraph(void)
 	char pc = '\0';
 
 	/* Only go back if between paras */
-	if (bisspace())
-		movepast(bisspace, BACKWARD);
+	if (isspace(Buff()))
+		movepast(isspace, BACKWARD);
 	while (!bisend(Bbuff) && !ispara(pc, *Curcptr)) {
 		pc = *Curcptr;
 		bmove1(Bbuff);
 	}
-	movepast(bisspace, FORWARD);
+	movepast(isspace, FORWARD);
 }
 
 void Zprevious_paragraph(void)
 {
 	char pc = '\0';
 
-	movepast(bisspace, BACKWARD);
+	movepast(isspace, BACKWARD);
 	while (!bisstart(Bbuff) && !ispara(*Curcptr, pc)) {
 		pc = *Curcptr;
 		bmove(Bbuff, -1);
 	}
-	movepast(bisspace, FORWARD);
+	movepast(isspace, FORWARD);
 }
 
 /* MISC COMMANDS */
@@ -791,7 +791,7 @@ void Zcount(void)
 	for (; UMARK_SET ? bisbeforemrk(Bbuff, UMARK) : !bisend(Bbuff); bmove1(Bbuff), ++c) {
 		if (ISNL(*Curcptr))
 			++l;
-		if (!bistoken())
+		if (!bistoken(Buff()))
 			word = false;
 		else if (!word) {
 			++w;

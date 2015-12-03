@@ -143,15 +143,13 @@ void redisplay(void)
 void zrefresh(void)
 {
 	int pntrow, col;
-	struct mark *pmark;
+	struct mark pmark;
 	struct wdo *wdo;
 	int tsave;
 
-	if (was == NULL)
-		was = zcreatemrk();
-	pmark = zcreatemrk();
+	bmrktopnt(Bbuff, &pmark);
 	if (InPaw) {
-		pawdisplay(pmark, was);
+		pawdisplay(&pmark, was);
 		return;
 	}
 	if (++NESTED > 10)
@@ -173,14 +171,13 @@ void zrefresh(void)
 	bpnttomrk(Bbuff, Sstart);
 	if (bisatmrk(Bbuff, Psstart) && !bisstart(Bbuff)) {
 		/* Deleted first char in window that is not at buffer start */
-		bpnttomrk(Bbuff, pmark);
+		bpnttomrk(Bbuff, &pmark);
 		reframe();
 		bpnttomrk(Bbuff, Sstart);
 	}
-	pntrow = innerdsp(Curwdo->first, Curwdo->last, pmark);
-	if (bisbeforemrk(Bbuff, pmark) && !tkbrdy()) {
-		bpnttomrk(Bbuff, pmark);
-		unmark(pmark);
+	pntrow = innerdsp(Curwdo->first, Curwdo->last, &pmark);
+	if (bisbeforemrk(Bbuff, &pmark) && !tkbrdy()) {
+		bpnttomrk(Bbuff, &pmark);
 		reframe();
 		zrefresh();
 		--NESTED;
@@ -191,15 +188,14 @@ void zrefresh(void)
 	tsave = Tabsize;
 	foreachwdo(wdo)
 		if (wdo != Curwdo) {
-			struct mark *point;
+			struct mark point;
 			zswitchto(wdo->wbuff);
 			settabsize(Curbuff->bmode);
-			point = zcreatemrk();
+			bmrktopnt(Bbuff, &point);
 			bpnttomrk(Bbuff, wdo->wstart);
 			innerdsp(wdo->first, wdo->last, NULL);
 			modeflags(wdo);
-			bpnttomrk(Bbuff, point);
-			unmark(point);
+			bpnttomrk(Bbuff, &point);
 			zswitchto(Curwdo->wbuff);
 		}
 	Tabsize = tsave;
@@ -207,12 +203,11 @@ void zrefresh(void)
 	/* position the cursor */
 	col = 0;
 	bpnttomrk(Bbuff, &Scrnmarks[pntrow]);
-	while (bisbeforemrk(Bbuff, pmark)) {
+	while (bisbeforemrk(Bbuff, &pmark)) {
 		col += chwidth(Buff(), col, false);
 		bmove1(Bbuff);
 	}
 	t_goto(pntrow, col);
-	unmark(pmark);
 
 	/*
 	 * If we display the cursor on the mark, they both disappear.
@@ -637,7 +632,6 @@ pawshift:
 		was->moffset = -1;		/* Invalidate it */
 	}
 
-	unmark(pmark);
 	--NESTED;
 	tforce();
 	tflush();

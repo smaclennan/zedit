@@ -45,9 +45,6 @@
 #include <strings.h> /* needed for c11 */
 #endif
 
-#include <setjmp.h>
-extern jmp_buf zenv;
-
 struct zbuff;
 
 #include "buff.h"

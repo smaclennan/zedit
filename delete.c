@@ -156,10 +156,14 @@ void Zdelete_to_eol(void)
 
 void Zdelete_line(void)
 {
-	struct mark *tmark;
+	struct mark *tmark = bcremark(Bbuff);
+	if (!tmark) {
+		tbell();
+		return;
+	}
 
 	tobegline(Bbuff);
-	tmark = zcreatemrk();
+	bmrktopnt(Bbuff, tmark);
 	bcsearch(Bbuff, NL);
 	killtomrk(tmark);
 	unmark(tmark);
@@ -239,7 +243,6 @@ void Zdelete_previous_word(void)
 void Zcopy_word(void)
 {
 	char word[STRMAX], *ptr;
-	struct mark *tmark, *start;
 
 	if (InPaw) {
 		zswitchto(Buff_save);
@@ -250,13 +253,17 @@ void Zcopy_word(void)
 			pinsert();
 		}
 	} else {
-		tmark = zcreatemrk();	/* save current Point */
-		moveto(bistoken, FORWARD); /* find start of word */
-		movepast(bistoken, BACKWARD);
-		start = zcreatemrk();
-		movepast(bistoken, FORWARD); /* move Point to end of word */
-		copytomrk(start); /* copy to Kill buffer */
-		bpnttomrk(Bbuff, tmark); /* move Point back */
+		struct mark *tmark = bcremark(Bbuff); /* save current Point */
+		struct mark *start = bcremark(Bbuff);
+		if (tmark && start) {
+			moveto(bistoken, FORWARD); /* find start of word */
+			movepast(bistoken, BACKWARD);
+			bmrktopnt(Bbuff, start);
+			movepast(bistoken, FORWARD); /* move Point to end of word */
+			copytomrk(start); /* copy to Kill buffer */
+			bpnttomrk(Bbuff, tmark); /* move Point back */
+		} else
+			tbell();
 		unmark(tmark);
 		unmark(start);
 	}
@@ -265,30 +272,31 @@ void Zcopy_word(void)
 
 void Zdelete_blanks(void)
 {
-	struct mark *tmark, *pmark;
-
-	pmark = zcreatemrk();
-	if (bcrsearch(Bbuff, NL)) {
-		bmove1(Bbuff);
-		tmark = zcreatemrk();
-		movepast(bisspace, BACKWARD);
-		if (!bisstart(Bbuff))
-			bcsearch(Bbuff, NL);
-		if (bisbeforemrk(Bbuff, tmark))
-			bdeltomrk(tmark);
-		unmark(tmark);
-	}
-	if (bcsearch(Bbuff, NL)) {
-		tmark = zcreatemrk();
-		movepast(bisspace, FORWARD);
-		if (bcrsearch(Bbuff, NL))
+	struct mark *pmark = bcremark(Bbuff);
+	struct mark *tmark = bcremark(Bbuff);
+	if (pmark && tmark) {
+		if (bcrsearch(Bbuff, NL)) {
 			bmove1(Bbuff);
-		if (bisaftermrk(Bbuff, tmark))
-			bdeltomrk(tmark);
-		unmark(tmark);
-	}
+			bmrktopnt(Bbuff, tmark);
+			movepast(bisspace, BACKWARD);
+			if (!bisstart(Bbuff))
+				bcsearch(Bbuff, NL);
+			if (bisbeforemrk(Bbuff, tmark))
+				bdeltomrk(tmark);
+		}
+		if (bcsearch(Bbuff, NL)) {
+			bmrktopnt(Bbuff, tmark);
+			movepast(bisspace, FORWARD);
+			if (bcrsearch(Bbuff, NL))
+				bmove1(Bbuff);
+			if (bisaftermrk(Bbuff, tmark))
+				bdeltomrk(tmark);
+		}
+	} else
+		tbell();
 	bpnttomrk(Bbuff, pmark);
 	unmark(pmark);
+	unmark(tmark);
 }
 
 void Zjoin(void)

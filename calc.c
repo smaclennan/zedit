@@ -18,6 +18,7 @@
  */
 
 #include "z.h"
+#include <setjmp.h>
 
 /*  Simple calculator.
  *

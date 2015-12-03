@@ -22,7 +22,6 @@
 
 bool Initializing = true;
 char *Home;
-jmp_buf	zenv;
 int verbose;
 
 unsigned Cmd;
@@ -167,13 +166,6 @@ int main(int argc, char **argv)
 	char path[PATHMAX + 1];
 	int arg, files = 0, textMode = 0, exitflag = 0, line = 0;
 	struct zbuff *tbuff = NULL;
-
-	/* A longjmp is called if zcreatemrk runs out of memory */
-	if (setjmp(zenv) != 0) {
-		error("FATAL ERROR: Out of memory");
-		Argp = false;	/* so Zexit will not default to save */
-		Zexit();
-	}
 
 	Home = gethomedir();
 	if (!Home) {
@@ -537,15 +529,4 @@ void Zstats(void)
 			  (undo_total + 521) / 1024, undo_total ? 'K' : ' ');
 #endif
 	_putpaw(PawStr);
-}
-
-/* zcreatemrk will either return a mark or longjump.
- * You should always pair zcreatemrk with unmark.
- */
-struct mark *zcreatemrk(void)
-{
-	struct mark *mrk = bcremark(Bbuff);
-	if (!mrk)
-		longjmp(zenv, -1);	/* ABORT */
-	return mrk;
 }

@@ -228,7 +228,6 @@ void hang_up(int);
 void dump_doc(const char *doc);
 int set_bookmark(char *bookname);
 const char *special_label(int key);
-struct mark *zcreatemrk(void);
 int zreadfile(char *fname);
 void set_shell_mark(void);
 void message(struct zbuff *buff, const char *str);

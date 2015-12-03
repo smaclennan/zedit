@@ -31,7 +31,8 @@ void set_shell_mark(void)
 {
 	NexterrorCalled = 0;
 	if (!shell_mark)
-		shell_mark = zcreatemrk();
+		/* not the end of the world if this fails */
+		shell_mark = bcremark(Bbuff);
 	else
 		bmrktopnt(Bbuff, shell_mark);
 }

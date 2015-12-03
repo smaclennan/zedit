@@ -251,8 +251,9 @@ int set_bookmark(char *bookname)
 		Bookname[Bookmark] = strdup(bookname);
 
 	if (Bookmark > Lastbook) {
+		if (!(Bookmrks[Bookmark] = bcremark(Bbuff)))
+			return -1;
 		Lastbook = Bookmark;
-		Bookmrks[Bookmark] = zcreatemrk();
 	} else
 		bmrktopnt(Bbuff, Bookmrks[Bookmark]);
 	return Bookmark;
@@ -264,9 +265,11 @@ void Zset_bookmark(void)
 		Arg = 0;
 		*PawStr = '\0';
 		if (getarg("Bookmark name: ", PawStr, STRMAX) == 0) {
-			set_bookmark(PawStr);
-			putpaw("Book Mark %s(%d) Set",
-				   Bookname[Bookmark], Bookmark + 1);
+			if (set_bookmark(PawStr) < 0)
+				putpaw("Out of memory.");
+			else
+				putpaw("Book Mark %s(%d) Set",
+					   Bookname[Bookmark], Bookmark + 1);
 		}
 	} else {
 		set_bookmark(NULL);
@@ -315,8 +318,9 @@ void Zredisplay(void)
 
 static void scroll(bool (*search)(struct buff *buff, Byte what))
 {
-	struct mark *pmark = zcreatemrk();
+	struct mark pmark;
 
+	bmrktopnt(Bbuff, &pmark);
 	bpnttomrk(Bbuff, Sstart);
 	while (Arg-- > 0 && search(Bbuff, NL))
 		;
@@ -326,12 +330,10 @@ static void scroll(bool (*search)(struct buff *buff, Byte what))
 	bmrktopnt(Bbuff, Psstart);
 	Sendp = false;
 
-	if (mrkaftermrk(Sstart, pmark))
+	if (mrkaftermrk(Sstart, &pmark))
 		bmove1(Bbuff);
 	else
-		bpnttomrk(Bbuff, pmark);
-
-	unmark(pmark);
+		bpnttomrk(Bbuff, &pmark);
 }
 
 void Zscroll_up(void)

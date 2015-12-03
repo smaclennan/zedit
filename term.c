@@ -540,7 +540,7 @@ void mouse_scroll(int row, bool down)
 void mouse_point(int row, int col, bool set_mark)
 {
 	int atcol;
-	struct mark *tmark;
+	struct mark tmark;
 	struct wdo *wdo = wfind(row);
 	if (!wdo) {
 		error("Not on a window."); /* XEmacs-ish */
@@ -553,7 +553,7 @@ void mouse_point(int row, int col, bool set_mark)
 		zrefresh();
 	}
 
-	tmark = zcreatemrk();
+	bmrktopnt(Bbuff, &tmark);
 
 	/* Move the point to row */
 	if (row > Prow)
@@ -580,10 +580,8 @@ void mouse_point(int row, int col, bool set_mark)
 
 	if (set_mark) {
 		Zset_mark(); /* mark to point */
-		bpnttomrk(Bbuff, tmark); /* reset mark */
+		bpnttomrk(Bbuff, &tmark); /* reset mark */
 	}
-
-	unmark(tmark);
 }
 
 #undef tbell

@@ -65,8 +65,6 @@ bool binsert(struct buff *, Byte);
 void bdelete(struct buff *, int);
 bool bmove(struct buff *, int);
 void bmove1(struct buff *);
-bool bisstart(struct buff *);
-bool bisend(struct buff *);
 void btostart(struct buff *);
 void btoend(struct buff *);
 void tobegline(struct buff *);
@@ -144,10 +142,6 @@ int bwrite(struct buff *buff, int fd, int size);
 /* These are for stats only and are not thread safe */
 extern int NumBuffs, NumPages;
 
-/* These should be called from buffer/mark code only */
-void makecur(struct buff *buff, struct page *, int);
-#define makeoffset(buff, dist) makecur((buff), (buff)->curpage, (dist))
-
 /* Page struct and functions. */
 
 /* Generally, the bigger the page size the faster the editor however
@@ -167,5 +161,30 @@ struct page {
 struct page *newpage(struct page *curpage);
 void freepage(struct buff *buff, struct page *page);
 struct page *pagesplit(struct buff *buff, unsigned dist);
+
+static inline bool bisstart(struct buff *buff)
+{
+	return buff->curpage == buff->firstp && buff->curchar == 0;
+}
+
+static inline bool bisend(struct buff *buff)
+{
+	return buff->curpage->nextp == NULL && buff->curchar >= buff->curpage->plen;
+}
+
+/* Make page current at offset */
+static inline void makecur(struct buff *buff, struct page *page, int dist)
+{
+	buff->curpage = page;
+	buff->curchar = dist;
+	buff->curcptr = page->pdata + dist;
+}
+
+/* Move current page to offset */
+static inline void makeoffset(struct buff *buff, int dist)
+{
+	buff->curchar = dist;
+	buff->curcptr = buff->curpage->pdata + dist;
+}
 
 #endif

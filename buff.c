@@ -291,16 +291,6 @@ void bmove1(struct buff *buff)
 		makeoffset(buff, curplen(buff));
 }
 
-bool bisstart(struct buff *buff)
-{
-	return (buff->curpage == buff->firstp) && (buff->curchar == 0);
-}
-
-bool bisend(struct buff *buff)
-{
-	return lastp(buff->curpage) && (buff->curchar >= curplen(buff));
-}
-
 void btostart(struct buff *buff)
 {
 	makecur(buff, buff->firstp, 0);
@@ -594,14 +584,6 @@ void bmoveto(struct buff *buff, int (*pred)(int), bool forward)
 }
 
 /* Low level memory page routines */
-
-/* Make page current at dist */
-void makecur(struct buff *buff, struct page *page, int dist)
-{
-	buff->curpage = page;
-	buff->curchar = dist;
-	buff->curcptr = page->pdata + dist;
-}
 
 /* Create a new memory page and link into chain after curpage */
 struct page *newpage(struct page *curpage)

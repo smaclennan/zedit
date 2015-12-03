@@ -141,7 +141,11 @@ void Zdelete_to_eol(void)
 		bdelete(Bbuff, 1);
 	else {
 		bool atstart = bpeek(Bbuff) == NL;
-		struct mark *tmark = zcreatemrk();
+		struct mark *tmark = bcremark(Bbuff);
+		if (!tmark) {
+			tbell();
+			return;
+		}
 		toendline(Bbuff);
 		if (atstart)
 			bmove1(Bbuff); /* delete the NL */
@@ -209,9 +213,11 @@ void Zyank(void)
 
 void Zdelete_word(void)
 {
-	struct mark *tmark;
-
-	tmark = zcreatemrk();
+	struct mark *tmark = bcremark(Bbuff);
+	if (!tmark) {
+		tbell();
+		return;
+	}
 	moveto(bisword, FORWARD);
 	movepast(bisword, FORWARD);
 	killtomrk(tmark);
@@ -220,9 +226,11 @@ void Zdelete_word(void)
 
 void Zdelete_previous_word(void)
 {
-	struct mark *tmark;
-
-	tmark = zcreatemrk();
+	struct mark *tmark = bcremark(Bbuff);
+	if (!tmark) {
+		tbell();
+		return;
+	}
 	Zprevious_word();
 	killtomrk(tmark);
 	unmark(tmark);

@@ -36,12 +36,14 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
 #endif
 		mptr = (struct mark *)calloc(1, sizeof(struct mark));
 	if (mptr) {
+#if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
 		if (tail) {
 			mptr->prev = *tail; /* add to end of list */
 			if (*tail)
 				(*tail)->next = mptr;
 			*tail = mptr;
 		}
+#endif
 		bmrktopnt(buff, mptr);
 		++NumMarks;
 	}
@@ -51,6 +53,7 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
 void _bdelmark(struct mark *mptr, struct mark **tail)
 {
 	if (mptr) {
+#if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
 		if (tail) {
 			if (mptr == *tail)
 				*tail = mptr->prev;
@@ -59,6 +62,7 @@ void _bdelmark(struct mark *mptr, struct mark **tail)
 			if (mptr->next)
 				mptr->next->prev = mptr->prev;
 		}
+#endif
 #ifdef HAVE_FREEMARK
 		if (freemark == NULL) {
 			freemark = mptr;
@@ -195,4 +199,82 @@ bool mrkatmrk(struct mark *mark1, struct mark *mark2)
 	return  mark1->mbuff == mark2->mbuff &&
 		mark1->mpage == mark2->mpage &&
 		mark1->moffset == mark2->moffset;
+}
+
+/* Copy from Point to mark to buffer 'to'. Returns bytes copied. */
+long bcopyrgn(struct mark *tmark, struct buff *to)
+{
+	struct mark *ltmrk, *btmrk;
+	bool flip;
+	int  srclen, dstlen;
+	long copied = 0;
+	struct buff *from = tmark->mbuff;
+
+	flip = bisaftermrk(from, tmark);
+	if (flip)
+		bswappnt(from, tmark);
+
+	if (!(ltmrk = bcremark(from)))
+		return 0;
+
+	while (bisbeforemrk(from, tmark)) {
+		if (from->curpage == tmark->mpage)
+			srclen = tmark->moffset - from->curchar;
+		else
+			srclen = curplen(from) - from->curchar;
+
+		dstlen = PSIZE - curplen(to);
+		if (dstlen == 0) {
+			if (pagesplit(to, HALFP))
+				dstlen = PSIZE - curplen(to);
+			else
+				break;
+		}
+		if (srclen < dstlen)
+			dstlen = srclen;
+		/* Make a gap */
+		memmove(to->curcptr + dstlen, to->curcptr, curplen(to) - to->curchar);
+		/* and fill it in */
+		memmove(to->curcptr, from->curcptr, dstlen);
+		curplen(to) += dstlen;
+		copied += dstlen;
+		foreach_global_pagemark(to, btmrk, to->curpage)
+			if (btmrk->moffset > to->curchar)
+					btmrk->moffset += dstlen;
+		foreach_pagemark(to, btmrk, to->curpage)
+			if (btmrk->moffset > to->curchar)
+					btmrk->moffset += dstlen;
+		makeoffset(to, to->curchar + dstlen);
+		bsetmod(to);
+		to->bmodf = true;
+		bmove(from, dstlen);
+	}
+
+	bpnttomrk(from, ltmrk);
+	bdelmark(ltmrk);
+
+	if (flip)
+		bswappnt(from, tmark);
+
+	return copied;
+}
+
+/* Delete from the point to the Mark. Returns bytes deleted. */
+long bdeltomrk(struct mark *tmark)
+{
+	long amount, deleted = 0;
+	struct buff *buff = tmark->mbuff;
+
+	if (bisaftermrk(buff, tmark))
+		bswappnt(buff, tmark);
+	while (bisbeforemrk(buff, tmark)) {
+		if (buff->curpage == tmark->mpage)
+			amount = tmark->moffset - buff->curchar;
+		else
+			amount = curplen(buff) = buff->curchar;
+		bdelete(buff, amount);
+		deleted += amount;
+	}
+
+	return deleted;
 }

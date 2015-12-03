@@ -204,15 +204,19 @@ void Zundo(void)
 		free_undo(&Curbuff->undo_tail);
 	} else {
 		unsigned long offset = undo->offset;
+		struct mark *tmark = bcremark(Bbuff);
+		if (!tmark) {
+			tbell();
+			return;
+		}
 		do {
-			struct mark *tmark = zcreatemrk();
 			for (i = 0; i < undo->size; ++i)
 				binsert(Bbuff, undo->data[i]);
-			bpnttomrk(Bbuff, tmark);
-			unmark(tmark);
 			free_undo(&Curbuff->undo_tail);
 			undo = (struct undo *)Curbuff->undo_tail;
 		} while (undo && !is_insert(undo) && undo->offset == offset);
+		bpnttomrk(Bbuff, tmark);
+		unmark(tmark);
 	}
 
 	InUndo = false;

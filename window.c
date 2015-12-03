@@ -26,9 +26,9 @@ struct wdo *Whead, *Curwdo;
 /* free wdo - may invalidate Curwdo and Whead */
 static void wfree(struct wdo *wdo)
 {
-	unmark(wdo->wpnt);
-	unmark(wdo->wmrk);
-	unmark(wdo->wstart);
+	_bdelmark(wdo->wpnt, &Marklist);
+	_bdelmark(wdo->wmrk, &Marklist);
+	_bdelmark(wdo->wstart, &Marklist);
 	free((char *)wdo);
 }
 
@@ -39,9 +39,9 @@ static struct wdo *wcreate(int first, int last)
 
 	if (wdo) {
 		wdo->wbuff	= Curbuff;
-		wdo->wpnt	= bcremark(Bbuff);
-		wdo->wmrk	= bcremark(Bbuff);
-		wdo->wstart	= bcremark(Bbuff);
+		wdo->wpnt	= _bcremark(Bbuff, &Marklist);
+		wdo->wmrk	= _bcremark(Bbuff, &Marklist);
+		wdo->wstart	= _bcremark(Bbuff, &Marklist);
 		if (!wdo->wpnt || !wdo->wmrk || !wdo->wstart) {
 			wfree(wdo);
 			return NULL;

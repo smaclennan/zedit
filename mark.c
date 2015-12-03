@@ -24,42 +24,41 @@ struct mark *freemark;
 
 int NumMarks;
 
-/* Create a mark at the current point and add it to the list. */
-struct mark *bcremark(struct buff *buff)
+struct mark *_bcremark(struct buff *buff, struct mark **tail)
 {
-	struct mark *mrk;
+	struct mark *mptr;
 
 #ifdef HAVE_FREEMARK
 	if (freemark) {
-		mrk = freemark;
+		mptr = freemark;
 		freemark = NULL;
 	} else
 #endif
-		mrk = (struct mark *)calloc(1, sizeof(struct mark));
-	if (mrk) {
-#ifdef HAVE_BUFFER_MARKS
-		mrk->prev = buff->marks; /* add to end of list */
-		if (buff->marks) buff->marks->next = mrk;
-		buff->marks = mrk;
-#endif
-		bmrktopnt(buff, mrk);
+		mptr = (struct mark *)calloc(1, sizeof(struct mark));
+	if (mptr) {
+		if (tail) {
+			mptr->prev = *tail; /* add to end of list */
+			if (*tail)
+				(*tail)->next = mptr;
+			*tail = mptr;
+		}
+		bmrktopnt(buff, mptr);
 		++NumMarks;
 	}
-	return mrk;
+	return mptr;
 }
 
-/* Free up the given mark and remove it from the list. */
-void bdelmark(struct mark *mptr)
+void _bdelmark(struct mark *mptr, struct mark **tail)
 {
 	if (mptr) {
-#ifdef HAVE_BUFFER_MARKS
-		if (mptr == mptr->mbuff->marks)
-			mptr->mbuff->marks = mptr->prev;
-		if (mptr->prev)
-			mptr->prev->next = mptr->next;
-		if (mptr->next)
-			mptr->next->prev = mptr->prev;
-#endif
+		if (tail) {
+			if (mptr == *tail)
+				*tail = mptr->prev;
+			if (mptr->prev)
+				mptr->prev->next = mptr->next;
+			if (mptr->next)
+				mptr->next->prev = mptr->prev;
+		}
 #ifdef HAVE_FREEMARK
 		if (freemark == NULL) {
 			freemark = mptr;
@@ -69,6 +68,26 @@ void bdelmark(struct mark *mptr)
 			free((char *)mptr);
 		--NumMarks;
 	}
+}
+
+/* Create a mark at the current point and add it to the list. */
+struct mark *bcremark(struct buff *buff)
+{
+#ifdef HAVE_BUFFER_MARKS
+	return _bcremark(buff, &buff->marks);
+#else
+	return _bcremark(buff, NULL);
+#endif
+}
+
+/* Free up the given mark and remove it from the list. */
+void bdelmark(struct mark *mptr)
+{
+#ifdef HAVE_BUFFER_MARKS
+	_bdelmark(mptr, &mptr->mbuff->marks);
+#else
+	_bdelmark(mptr, NULL);
+#endif
 }
 
 /* Returns true if point is after the mark. */

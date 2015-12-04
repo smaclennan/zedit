@@ -25,7 +25,7 @@ CC = cc
 D = -O2
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
 CFLAGS += -DHAVE_CONFIG_H -DUNSIGNED_BYTES
-CFLAGS += -DHAVE_GLOBAL_MARKS -DHAVE_BUFFER_MARKS -D HAVE_FREEMARK
+CFLAGS += -DHAVE_GLOBAL_MARKS -DHAVE_BUFFER_MARKS -DHAVE_FREEMARK
 #CFLAGS += -DBUILTIN_REG
 
 MAKEFLAGS += --no-print-directory
@@ -89,7 +89,7 @@ main: main.c $(LFILES)
 *.o: $(HFILES)
 
 checkit:
-	@sparse -D__unix__ $(CFLAGS) $(CFILES)
+	@sparse -D__unix__ $(CFLAGS) $(CFILES) $(LFILES)
 	@sparse -D__unix__ fcheck.c
 
 install: all

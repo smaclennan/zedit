@@ -403,7 +403,7 @@ void error(const char *fmt, ...)
  * Get at the most 'max' characters.
  * Leaves the point alone.
  */
-int getbword(char word[], int max, int (*valid)())
+int getbword(char word[], int max, int (*valid)(int))
 {
 	int i;
 	struct mark tmark;
@@ -412,7 +412,7 @@ int getbword(char word[], int max, int (*valid)())
 	if (!bistoken(Buff()))
 		moveto(bistoken, BACKWARD);
 	movepast(bistoken, BACKWARD);
-	for (i = 0; !bisend(Bbuff) && valid() && i < max; ++i, bmove1(Bbuff))
+	for (i = 0; !bisend(Bbuff) && valid(Buff()) && i < max; ++i, bmove1(Bbuff))
 		word[i] = Buff();
 	word[i] = '\0';
 	bpnttomrk(Bbuff, &tmark);

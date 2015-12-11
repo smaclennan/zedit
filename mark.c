@@ -271,7 +271,7 @@ long bdeltomrk(struct mark *tmark)
 		if (buff->curpage == tmark->mpage)
 			amount = tmark->moffset - buff->curchar;
 		else
-			amount = curplen(buff) = buff->curchar;
+			amount = curplen(buff) - buff->curchar;
 		bdelete(buff, amount);
 		deleted += amount;
 	}

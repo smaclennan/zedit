@@ -7,13 +7,12 @@ All the functions in the following files are thread safe:
 
  * buff.c
  * bfile.c
- * mark.c (1)
+ * mark.c
  * bmsearch.c
  * reg.c
- * bsocket.c (2)
+ * bsocket.c (1)
 
-(1) You can't enable GLOBAL_MARKS
-(2) Not supported in win32
+(1) Not supported in win32
 
 MARKS
 -----
@@ -34,7 +33,8 @@ the text around them changes.
 
 HAVE_GLOBAL_MARKS defines a global list of marks. This is really for
 Zedit. The mark code does not maintain the global mark list, it just
-updates marks on the list in the approprate places.
+updates marks on the list in the approprate places. This is only
+thread safe if you guarantee locking.
 
 HAVE_BUFFER_MARKS gives you buffer local marks which have the same
 restrictions as buffers. Buffer marks are created with bcremrk().

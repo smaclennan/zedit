@@ -24,9 +24,7 @@ CC = cc
 # returns -g, else it returns the default (-O2).
 D = -O2
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
-CFLAGS += -DHAVE_CONFIG_H -DUNSIGNED_BYTES
-CFLAGS += -DHAVE_GLOBAL_MARKS -DHAVE_BUFFER_MARKS -DHAVE_FREEMARK
-#CFLAGS += -DBUILTIN_REG
+CFLAGS += -DHAVE_CONFIG_H
 
 MAKEFLAGS += --no-print-directory
 

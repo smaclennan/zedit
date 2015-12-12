@@ -85,7 +85,7 @@ static void dotty(void)
 	First = false; /* used by pinsert when InPaw */
 }
 
-#if DOPIPES
+#ifdef DOPIPES
 #include <poll.h>
 
 #define MAX_FDS 3
@@ -131,7 +131,7 @@ void execute(void)
 {
 	zrefresh();
 	
-#if DOPIPES
+#ifdef DOPIPES
 #if GPM_MOUSE
 	handle_mouse_cursor();
 #endif

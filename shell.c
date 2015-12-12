@@ -78,7 +78,7 @@ void message(struct zbuff *buff, const char *str)
 	putpaw("%s", str);
 }
 
-#if DOPIPES
+#ifdef DOPIPES
 #include <signal.h>
 #include <sys/wait.h>
 

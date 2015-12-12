@@ -148,7 +148,7 @@ void tinit(void)
 #ifdef SIGWINCH
 	signal(SIGWINCH, sigwinch); /* window has changed size - update */
 #endif
-#if DOPIPES
+#ifdef DOPIPES
 	siginit();
 #endif
 

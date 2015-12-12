@@ -361,22 +361,6 @@ static int parse(char *fname)
 			*p++ = Buff();
 		*p = '\0';
 
-#ifdef __TURBOC__
-		/* Error|Warning <fname> <line>: <msg> */
-		if (strcmp(fname, "Error") == 0 || strcmp(fname, "Warning") == 0) {
-			bmove1(Bbuff);
-
-			for (p = fname; !isspace(Buff()); bmove1(Bbuff))
-				*p++ = Buff();
-			*p = '\0';
-
-			/* look for line number */
-			line = batoi();
-			if (Buff() == ':')
-				return line;
-		}
-#endif
-
 		/* try to get the line */
 		if (Buff() == ':') {
 			bmove1(Bbuff);

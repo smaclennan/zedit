@@ -20,7 +20,7 @@
 #include "z.h"
 #include <fnmatch.h>
 
-#if defined(WIN32)
+#ifdef WIN32
 #define FNM_FLAGS FNM_CASEFOLD
 #else
 #define FNM_FLAGS 0

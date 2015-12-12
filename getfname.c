@@ -27,7 +27,7 @@ struct llist {
 
 static struct llist *Flist;
 static bool Didmatch;
-#if defined(WIN32)
+#ifdef WIN32
 #define OBJEXT ".obj"
 #else
 #define OBJEXT ".o"
@@ -276,7 +276,7 @@ void Zfname(void)
 	}
 }
 
-#if !defined(WIN32)
+#ifndef WIN32
 #include <pwd.h>
 
 /* Must always end in /. Must always return something sane. */

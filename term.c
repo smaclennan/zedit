@@ -22,7 +22,7 @@
 #include <signal.h>
 
 #ifdef __unix__
-# ifdef HAVE_TERMIO
+#ifdef HAVE_TERMIO
 #include <termio.h>
 static struct termio save_tty;
 static struct termio settty;
@@ -30,11 +30,11 @@ static struct termio settty;
 #define tcsetattr(fd, type, tty) ioctl(fd, TCSETAW, tty)
 #undef TCSAFLUSH
 #define TCSAFLUSH TCSETAF
-# else
+#else
 #include <termios.h>
 static struct termios save_tty;
 static struct termios settty;
-# endif
+#endif
 #elif defined(WIN32)
 HANDLE hstdin, hstdout;	/* Console in and out handles */
 
@@ -120,7 +120,7 @@ static void tfini(void)
 /* Initalize the terminal. */
 void tinit(void)
 {
-#if defined(__unix__)
+#ifdef __unix__
 	tcgetattr(fileno(stdin), &save_tty);
 	tcgetattr(fileno(stdin), &settty);
 	settty.c_iflag = 0;

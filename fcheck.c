@@ -34,12 +34,12 @@ int Colmax, Rowmax;
 #include "kbd.c"
 #endif
 
-#if defined __unix__
+#ifdef __unix__
 #define OS unix
 
 #include <sys/utsname.h>
 static struct utsname utsname;
-#elif defined WIN32
+#elif defined(WIN32)
 #define OS win32
 #else
 #error Unknown OS

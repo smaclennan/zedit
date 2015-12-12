@@ -20,6 +20,8 @@
 #ifndef _mark_h
 #define _mark_h
 
+#include <stdbool.h>
+
 struct mark {
 	struct buff *mbuff;			/* buffer the mark is in */
 	struct page *mpage;			/* page in the buffer */

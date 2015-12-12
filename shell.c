@@ -97,7 +97,7 @@ static void sigchild(int signo) {}
 
 void siginit(void)
 {
-#if !defined(WNOWAIT)
+#ifndef WNOWAIT
 	signal(SIGCLD,  sigchild);
 #endif
 	signal(SIGPIPE, sigchild);

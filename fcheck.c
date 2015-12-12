@@ -65,6 +65,8 @@ void Dbg(const char *fmt, ...) { ((void)fmt); }
 void mouse_scroll(int row, bool down) { ((void)row); ((void)down); }
 void mouse_point(int row, int col, bool set_mark) {}
 
+void _putpaw(const char *str) { puts(str); }
+
 #if ZLIB || SPELL
 static int noinclude(int argc, char *argv[], const char *inc)
 {

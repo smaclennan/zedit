@@ -168,7 +168,7 @@ static int do_mouse(void)
 		mouse_scroll(row, button & 1);
 		break;
 	default:
-		printf("Unknown event\n");
+		_putpaw("Unknown mouse event");
 	}
 
 	return TC_MOUSE;

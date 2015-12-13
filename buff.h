@@ -39,8 +39,6 @@
 
 #include "mark.h"
 
-#define MAX_IOVS 16
-
 /* THE BUFFER STRUCTURES */
 
 struct buff {
@@ -89,41 +87,6 @@ void bmoveto(struct buff *buff, int (*pred)(int), bool forward);
 int breadfile(struct buff *buff, const char *, int *compressed);
 bool bwritefile(struct buff *buff, char *, int mode);
 
-/* reg.c */
-#ifdef BUILTIN_REG
-#define ESIZE		256			/* reg exp buffer size */
-
-typedef struct regex {
-	uint8_t ep[ESIZE];
-	int circf;
-} regexp_t;
-
-#define REG_EXTENDED	0
-#define REG_ICASE		0
-#define REG_NOSUB		0
-#define REG_NEWLINE		0
-#elif defined(HAVE_PCRE)
-#include "pcreposix.h"
-
-typedef struct regexp {
-	regex_t re;
-	int circf;
-} regexp_t;
-#else
-#include <regex.h>
-
-typedef struct regexp {
-	regex_t re;
-	int circf;
-} regexp_t;
-#endif
-
-int re_compile(regexp_t *re, const char *regex, int cflags);
-bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart);
-int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size);
-void re_free(regexp_t *re);
-bool lookingat(struct buff *buff, char *str);
-
 /* bmsearch.c */
 bool bm_search(struct buff *buff, const char *str, bool sensitive);
 bool bm_rsearch(struct buff *buff, const char *str, bool sensitive);
@@ -156,8 +119,6 @@ struct page {
 	struct page *nextp, *prevp;	/* list of pages */
 };
 
-#define lastp(pg) ((pg)->nextp == NULL)
-
 struct page *newpage(struct page *curpage);
 void freepage(struct buff *buff, struct page *page);
 struct page *pagesplit(struct buff *buff, unsigned dist);
@@ -185,6 +146,12 @@ static inline void makeoffset(struct buff *buff, int dist)
 {
 	buff->curchar = dist;
 	buff->curcptr = buff->curpage->pdata + dist;
+}
+
+/* Is this the last page in the buffer */
+static inline bool lastp(struct page *page)
+{
+	return page->nextp == NULL;
 }
 
 #endif

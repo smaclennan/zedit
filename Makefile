@@ -44,7 +44,7 @@ CFILES = bcmds.c bind.c calc.c cnames.c \
 
 LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c
 
-HFILES = buff.h config.h funcs.h keys.h proto.h vars.h z.h
+HFILES = buff.h config.h funcs.h keys.h mark.h proto.h reg.h vars.h z.h
 
 O := $(CFILES:.c=.o)
 L := $(LFILES:.c=.o)
@@ -81,7 +81,7 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 
 # This is just to check that no zedit dependencies crept into buff.c
 main: main.c $(LFILES)
-	$(QUIET_LINK)$(CC) -UHAVE_GLOBAL_MARKS -UHAVE_BUFFER_MARKS -UUNSIGNED_BYTES -g -o $@ $+
+	$(QUIET_LINK)$(CC) -g -o $@ $+
 
 # Make all c files depend on all .h files
 *.o: $(HFILES)

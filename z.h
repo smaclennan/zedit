@@ -49,6 +49,7 @@ struct zbuff;
 
 #include "buff.h"
 #include "mark.h"
+#include "reg.h"
 #include "vars.h"
 #include "funcs.h"
 #include "proto.h"

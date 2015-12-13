@@ -280,7 +280,7 @@ bool bmove(struct buff *buff, int dist)
 
 void bmove1(struct buff *buff)
 {
-	if (++buff->curchar < buff->curpage->plen)
+	if (++buff->curchar < curplen(buff))
 		/* within current page */
 		++buff->curcptr;
 	else if (buff->curpage->nextp)
@@ -304,7 +304,7 @@ void btoend(struct buff *buff)
 			lastp = lastp->nextp;
 		makecur(buff, lastp, lastp->plen);
 	} else
-		makeoffset(buff, buff->curpage->plen);
+		makeoffset(buff, curplen(buff));
 }
 
 void tobegline(struct buff *buff)

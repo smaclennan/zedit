@@ -9,6 +9,8 @@
 
 #include "buff.h"
 
+#define MAX_IOVS 16
+
 /* These can be used with files... but where written to use with
  * sockets. */
 

@@ -88,7 +88,8 @@ struct mark *bcremark(struct buff *buff)
 void bdelmark(struct mark *mptr)
 {
 #ifdef HAVE_BUFFER_MARKS
-	_bdelmark(mptr, &mptr->mbuff->marks);
+	if (mptr)
+		_bdelmark(mptr, &mptr->mbuff->marks);
 #else
 	_bdelmark(mptr, NULL);
 #endif

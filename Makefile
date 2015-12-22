@@ -32,7 +32,7 @@ MAKEFLAGS += --no-print-directory
 #LIBS += -ldl
 #LIBS += -lcurses
 #LIBS += -ltermcap
-LIBS += -lgpm
+#LIBS += -lgpm
 
 ETAGS=`which etags || echo true`
 

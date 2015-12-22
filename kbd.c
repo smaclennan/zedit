@@ -21,7 +21,7 @@
 #include "zterm.h"
 #include <poll.h>
 #if GPM_MOUSE
-#include "gpm/gpm.h"
+#include <gpm.h>
 #endif
 
 /* Note: We can currently only have 32 specials */

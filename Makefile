@@ -32,6 +32,7 @@ MAKEFLAGS += --no-print-directory
 #LIBS += -ldl
 #LIBS += -lcurses
 #LIBS += -ltermcap
+LIBS += -lgpm
 
 ETAGS=`which etags || echo true`
 
@@ -40,7 +41,7 @@ CFILES = bcmds.c bind.c calc.c cnames.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	shell.c spell.c srch.c tags.c term.c \
 	undo.c vars.c window.c varray.c z.c zgrep.c \
-	terminfo.c termcap.c gpm/liblow.c
+	terminfo.c termcap.c
 
 LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c
 

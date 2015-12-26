@@ -232,7 +232,7 @@ void tputchar(Byte c);
 extern int Prow, Pcol;			/* Point row and column */
 extern int Colmax, Rowmax;		/* Row and column maximums */
 extern int Tlrow;			/* Last row displayed (-1 for none) */
-extern int Tabsize;
+extern int Tabsize, Taboffset;
 
 #define ISNL(c)			((c) == '\n')
 

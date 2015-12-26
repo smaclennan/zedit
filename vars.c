@@ -126,6 +126,14 @@ static void do_var_match(int i, const char *vin)
 	/* Fillwidth must be > 0 */
 	if (VAR(VFILLWIDTH) == 0)
 		VAR(VFILLWIDTH) = 1;
+
+	/* Tabs must be >= 2 and <= 8 */
+	if (i == VTABS || i == VCTABS || i == VSHTABS) {
+		if (VAR(i) < 2)
+			VAR(i) = 2;
+		else if (VAR(i) > 8)
+			VAR(i) = 8;
+	}
 }
 
 static void setavar(const char *vin, bool display)
@@ -145,7 +153,7 @@ static void setavar(const char *vin, bool display)
 		if (strcasecmp(msg, Vars[i].vname) == 0) {
 			do_var_match(i, vin);
 			if (display) {
-				if (i == VTABS || i == VCTABS) {
+				if (i == VTABS || i == VCTABS || i == VSHTABS) {
 					settabsize(Curbuff->bmode);
 					redisplay();
 				}
@@ -172,25 +180,28 @@ static void setavar(const char *vin, bool display)
 	Arg = 0;
 }
 
-/* Set Tabsize variable. Tabs must be >= 2 and <= 8. */
+/* Tabs must be >= 2 and <= 8. Enforced in setavar. */
 int Tabsize = 8;
+int Taboffset; /* for shell mode */
 
+/* Returns non-zero if tab size changed */
 int settabsize(unsigned mode)
 {
-	int i;
-
-	/* Choose the correct tab size */
-	if (mode & CMODE)
-		i = VCTABS;
-	else if (mode & SHMODE)
-		i = VSHTABS;
-	else
-		i = VTABS;
-	if (VAR(i) <= 0)
-		VAR(i) = 2;
-	else if (VAR(i) > 8)
-		VAR(i) = 8;
-	return Tabsize = VAR(i);
+	switch (mode & MAJORMODE) {
+	case CMODE:
+		if (Tabsize == VAR(VCTABS))
+			return 0;
+		return Tabsize = VAR(VCTABS);
+	case SHMODE:
+		if (Tabsize == VAR(VTABS) && Taboffset == VAR(VSHTABS))
+			return 0;
+		Taboffset = VAR(VSHTABS);
+		return Tabsize = VAR(VTABS);
+	default:
+		if (Tabsize == VAR(VTABS))
+			return 0;
+		return Tabsize = VAR(VTABS);
+	}
 }
 
 void Zshow_config(void)

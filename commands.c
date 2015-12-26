@@ -306,22 +306,22 @@ void Zsh_indent(void)
 
 	if (lookingat(Bbuff, RE_IF)) {
 		if (find_line(RE_FI) == 0)
-			width += Tabsize;
+			width += Taboffset;
 	} else if (lookingat(Bbuff, RE_WHILE)) {
 		if (find_line(RE_DONE) == 0)
-			width += Tabsize;
+			width += Taboffset;
 	} else if (lookingat(Bbuff, RE_FI)) {
-		width -= Tabsize;
+		width -= Taboffset;
 		fixup = 1;
 	} else if (lookingat(Bbuff, RE_DONE)) {
-		width -= Tabsize;
+		width -= Taboffset;
 		fixup = 1;
 	} else if (*Curcptr == '}') {
-		width -= Tabsize;
+		width -= Taboffset;
 		fixup = 1;
 	} else if (lookingat(Bbuff, ".*\\{[ \t]*$")) {
 		/* Won't work if there is a comment */
-		width += Tabsize;
+		width += Taboffset;
 	}
 
 	if (fixup && tmark) {
@@ -831,10 +831,9 @@ void Zmode(void)
 	rc = getplete("Mode: ", modes[i].str, (char **)modes,
 			  AMODESIZE, NUMMODES);
 	if (rc != -1) {
-		int tsave = Tabsize;
 		toggle_mode(modes[rc].mode);
 		Curwdo->modeflags = INVALID;
-		if (settabsize(modes[rc].mode) != tsave)
+		if (settabsize(modes[rc].mode))
 			redisplay();
 	}
 }

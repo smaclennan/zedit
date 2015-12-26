@@ -40,8 +40,10 @@ struct avar Vars[] = {
 	  "also turn on shell mode."
 	},
 	{ "sh-tabs",		V_DECIMAL,	V(4),
-	  "This variable defines the number of spaces displayed per tab "
-	  "in shell mode buffers. See also tabs."
+	  "This variable defines the number of spaces displayed per indent in "
+	  "shell mode buffers. If `space-tabs' is set, the indent will always be "
+	  "spaces. Else, the indent will be a combination of physical tabs and "
+	  "spaces."
 	},
 	{ "space-tabs",		V_FLAG,		V(0),
 	  "The tab character is normally inserted into the buffer as a "
@@ -56,8 +58,9 @@ struct avar Vars[] = {
 	{ "tabs",		V_DECIMAL,	V(8),
 	  "A tab is a single character that is displayed as one or more "
 	  "spaces on the screen. This variable defines the number of "
-	  "space characters displayed per tab in buffers that are not in "
-	  "a program mode."
+	  "space characters displayed per physical tab.\n\n"
+	  "You generally don't want to change this. See `c-tabs' and "
+	  "`sh-tabs'."
 	},
 	{ "undo",		V_FLAG,		V(1),
 #if !UNDO

@@ -33,7 +33,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <time.h>
-#include <setjmp.h>
 #include <sys/stat.h>
 
 #include "config.h"

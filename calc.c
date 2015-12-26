@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "z.h"
+#include "calc.h"
 
 /*  Simple calculator.
  *
@@ -69,20 +69,17 @@ static struct values gvals[] = {
 	{ '\0', 0 }
 };
 
-#define STACK_OVERFLOW 1
-#define SYNTAX_ERROR   2
-
 static void push_op(struct calc *c, char op)
 {
 	if (c->cur_op >= c->max_ops)
-		longjmp(c->failed, STACK_OVERFLOW);
+		longjmp(c->failed, CALC_STACK_OVERFLOW);
 	c->ops[c->cur_op++] = op;
 }
 
 static char pop_op(struct calc *c)
 {
 	if (c->cur_op < 0)
-		longjmp(c->failed, SYNTAX_ERROR);
+		longjmp(c->failed, CALC_SYNTAX_ERROR);
 	return c->ops[--c->cur_op];
 }
 
@@ -96,21 +93,21 @@ static char top_op(struct calc *c)
 static void push_num(struct calc *c, int num)
 {
 	if (c->cur_num >= c->max_ops)
-		longjmp(c->failed, STACK_OVERFLOW);
+		longjmp(c->failed, CALC_STACK_OVERFLOW);
 	c->nums[c->cur_num++].i = num;
 }
 
 static void push_float(struct calc *c, double num)
 {
 	if (c->cur_num >= c->max_ops)
-		longjmp(c->failed, STACK_OVERFLOW);
+		longjmp(c->failed, CALC_STACK_OVERFLOW);
 	c->nums[c->cur_num++].f = num;
 }
 
 static union number pop_num(struct calc *c)
 {
 	if (c->cur_num == 0)
-		longjmp(c->failed, SYNTAX_ERROR);
+		longjmp(c->failed, CALC_SYNTAX_ERROR);
 
 	return c->nums[--c->cur_num];
 }
@@ -121,7 +118,7 @@ static int lookup(struct calc *c, struct values *vals, char op)
 
 	for (v = vals; v->op != op; ++v)
 		if (!v->op)
-			longjmp(c->failed, SYNTAX_ERROR);
+			longjmp(c->failed, CALC_SYNTAX_ERROR);
 	return v->val;
 }
 
@@ -172,32 +169,21 @@ static int calc_g(struct calc *c, char op)
 
 #define INT_OP(op) do {				       \
 		if (c->is_float)			       \
-			longjmp(c->failed, SYNTAX_ERROR); \
+			longjmp(c->failed, CALC_SYNTAX_ERROR); \
 		else				       \
 			push_num(c, one.i op two.i);			\
 	} while (0)
 
 int calc(struct calc *c, char *p)
 {
-	int f_val, g_val;
+	int f_val, g_val, n;
 
 	c->is_float = strchr(p, '.') != NULL;
 	c->cur_op = c->cur_num = 0;
 
 	/* A longjmp is called on error. */
-	switch (setjmp(c->failed)) {
-	case 0:
-		break;
-	case STACK_OVERFLOW:
-		error("Stack overflow.");
-		return -1;
-	case SYNTAX_ERROR:
-		error("Syntax error.");
-		return -1;
-	default:
-		error("Calc internal error.");
-		return -1;
-	}
+	if ((n = setjmp(c->failed)))
+		return n;
 
 	/* Continue until all input parsed and command stack empty. */
 	while (*p != '=' || top_op(c) != '=') {

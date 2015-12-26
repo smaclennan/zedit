@@ -1072,17 +1072,26 @@ void Zcalc(void)
 	strcpy(str, Calc_str);
 	strcat(str, "=");
 
-	if (calc(c, str))
-		goto cleanup;
-
-	if (c->is_float)
-		putpaw("= %g", c->result.f);
-	else {
-		long n = c->result.i;
-		putpaw("= %ld (%lx)", n, n);
+	int n = calc(c, str);
+	switch (n) {
+	case 0:
+		if (c->is_float)
+			putpaw("= %g", c->result.f);
+		else {
+			long n = c->result.i;
+			putpaw("= %ld (%lx)", n, n);
+		}
+		break;
+	case CALC_STACK_OVERFLOW:
+		error("Stack overflow.");
+		break;
+	case CALC_SYNTAX_ERROR:
+		error("Syntax error.");
+		break;
+	default:
+		error("Calc internal error.");
 	}
 
-cleanup:
 	free(c->ops);
 	free(c->nums);
 	free(c);

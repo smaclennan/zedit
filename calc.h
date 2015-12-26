@@ -1,6 +1,15 @@
 #ifndef _calc_h_
 #define _calc_h_
 
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <setjmp.h>
+
+#define CALC_STACK_OVERFLOW 1
+#define CALC_SYNTAX_ERROR   2
+#define CALC_INTERNAL_ERROR 3
+
 union number {
 	long i;
 	double f;

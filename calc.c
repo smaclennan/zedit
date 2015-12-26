@@ -197,7 +197,7 @@ static int calc_g(char op)
 int calc(char *p)
 {
 	int f_val, g_val;
-	is_float = strchr(Calc_str, '.') != NULL;
+	is_float = strchr(p, '.') != NULL;
 
 	cur_op = cur_num = 0;
 

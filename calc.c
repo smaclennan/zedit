@@ -194,31 +194,26 @@ static int calc_g(char op)
 			push_num(one.i op two.i);      \
 	} while (0)
 
-void Zcalc(void)
+int calc(char *p)
 {
-	int f_val, g_val, n;
-	char op, str[STRMAX], *p = str;
-
-	Arg = 0;
-	if (getarg("Calc: ", Calc_str, STRMAX - 1))
-		return;
-
-	/* We modify the string, leave Calc_str alone */
-	strcpy(str, Calc_str);
-	strcat(str, "=");
-
+	int f_val, g_val;
 	is_float = strchr(Calc_str, '.') != NULL;
 
 	cur_op = cur_num = 0;
 
 	/* A longjmp is called on error. */
-	n = setjmp(failed);
-	if (n == 1) {
+	switch (setjmp(failed)) {
+	case 0:
+		break;
+	case STACK_OVERFLOW:
 		error("Stack overflow.");
-		return;
-	} else if (n == 2) {
+		return -1;
+	case SYNTAX_ERROR:
 		error("Syntax error.");
-		return;
+		return -1;
+	default:
+		error("Calc internal error.");
+		return -1;
 	}
 
 	/* Continue until all input parsed and command stack empty. */
@@ -235,7 +230,7 @@ void Zcalc(void)
 		f_val = calc_f(top_op());
 		g_val = calc_g_num(&p);
 		if (g_val < 0)
-			return;
+			return -1;
 
 		if (f_val <= g_val) {
 			/* shift */
@@ -245,7 +240,7 @@ void Zcalc(void)
 		} else {
 			/* reduce */
 			do {
-				op = pop_op();
+				int op = pop_op();
 				if (is_op(op)) {
 					union number two = pop_num();
 					union number  one = pop_num();
@@ -289,6 +284,24 @@ void Zcalc(void)
 			} while (f_val >= g_val);
 		}
 	}
+
+	return 0;
+}
+
+void Zcalc(void)
+{
+	char str[STRMAX];
+
+	Arg = 0;
+	if (getarg("Calc: ", Calc_str, STRMAX - 1))
+		return;
+
+	/* We modify the string, leave Calc_str alone */
+	strcpy(str, Calc_str);
+	strcat(str, "=");
+
+	if (calc(str))
+		return;
 
 	if (is_float)
 		putpaw("= %g", pop_num().f);

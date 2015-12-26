@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include <setjmp.h>
 
 /*  Simple calculator.
  *
@@ -70,75 +69,59 @@ static struct values gvals[] = {
 	{ '\0', 0 }
 };
 
-#define MAX_OPS 10
-static char ops[MAX_OPS];
-static int cur_op;
-
-#define MAX_NUMS 10
-static union number {
-	long i;
-	double f;
-} nums[MAX_OPS];
-static int cur_num;
-static int is_float;
-
-static jmp_buf failed;
-
 #define STACK_OVERFLOW 1
 #define SYNTAX_ERROR   2
 
-static char Calc_str[STRMAX + 1] = "";
-
-static void push_op(char op)
+static void push_op(struct calc *c, char op)
 {
-	if (cur_op >= MAX_OPS)
-		longjmp(failed, STACK_OVERFLOW);
-	ops[cur_op++] = op;
+	if (c->cur_op >= c->max_ops)
+		longjmp(c->failed, STACK_OVERFLOW);
+	c->ops[c->cur_op++] = op;
 }
 
-static char pop_op(void)
+static char pop_op(struct calc *c)
 {
-	if (cur_op < 0)
-		longjmp(failed, SYNTAX_ERROR);
-	return ops[--cur_op];
+	if (c->cur_op < 0)
+		longjmp(c->failed, SYNTAX_ERROR);
+	return c->ops[--c->cur_op];
 }
 
-static char top_op(void)
+static char top_op(struct calc *c)
 {
-	if (cur_op == 0)
+	if (c->cur_op == 0)
 		return '=';
-	return ops[cur_op - 1];
+	return c->ops[c->cur_op - 1];
 }
 
-static void push_num(long num)
+static void push_num(struct calc *c, int num)
 {
-	if (cur_num >= MAX_NUMS)
-		longjmp(failed, STACK_OVERFLOW);
-	nums[cur_num++].i = num;
+	if (c->cur_num >= c->max_ops)
+		longjmp(c->failed, STACK_OVERFLOW);
+	c->nums[c->cur_num++].i = num;
 }
 
-static void push_float(double num)
+static void push_float(struct calc *c, double num)
 {
-	if (cur_num >= MAX_NUMS)
-		longjmp(failed, STACK_OVERFLOW);
-	nums[cur_num++].f = num;
+	if (c->cur_num >= c->max_ops)
+		longjmp(c->failed, STACK_OVERFLOW);
+	c->nums[c->cur_num++].f = num;
 }
 
-static union number pop_num(void)
+static union number pop_num(struct calc *c)
 {
-	if (cur_num == 0)
-		longjmp(failed, SYNTAX_ERROR);
+	if (c->cur_num == 0)
+		longjmp(c->failed, SYNTAX_ERROR);
 
-	return nums[--cur_num];
+	return c->nums[--c->cur_num];
 }
 
-static int lookup(struct values *vals, char op)
+static int lookup(struct calc *c, struct values *vals, char op)
 {
 	struct values *v;
 
 	for (v = vals; v->op != op; ++v)
 		if (!v->op)
-			longjmp(failed, SYNTAX_ERROR);
+			longjmp(c->failed, SYNTAX_ERROR);
 	return v->val;
 }
 
@@ -148,9 +131,9 @@ static int is_op(char op)
 }
 
 /* Precedence function `f'. */
-static int calc_f(char op)
+static int calc_f(struct calc *c, char op)
 {
-	return lookup(fvals, op);
+	return lookup(c, fvals, op);
 }
 
 /* Precedence function `g'.
@@ -158,51 +141,51 @@ static int calc_f(char op)
  * It reads the number, pushes it on the nums stack,
  * and replaces the number with the token `N' in the buffer.
  */
-static int calc_g_num(char **p)
+static int calc_g_num(struct calc *c, char **p)
 {
 	if (isdigit(**p) || **p == '.') {
 		char *e;
 
-		if (is_float)
-			push_float(strtod(*p, &e));
+		if (c->is_float)
+			push_float(c, strtod(*p, &e));
 		else
-			push_num(strtol(*p, &e, 0));
+			push_num(c, strtol(*p, &e, 0));
 		*p = e - 1;
 		**p = 'N';
 	}
 
-	return lookup(gvals, **p);
+	return lookup(c, gvals, **p);
 }
 
-static int calc_g(char op)
+static int calc_g(struct calc *c, char op)
 {
-	return lookup(gvals, op);
+	return lookup(c, gvals, op);
 }
 
 #define OP(op) do {					 \
-		if (is_float)				 \
-			push_float(one.f op two.f);	 \
+		if (c->is_float)				 \
+			push_float(c, one.f op two.f);		\
 		else					 \
-			push_num(one.i op two.i);	 \
+			push_num(c, one.i op two.i);			\
 	} while (0)
 
 
 #define INT_OP(op) do {				       \
-		if (is_float)			       \
-			longjmp(failed, SYNTAX_ERROR); \
+		if (c->is_float)			       \
+			longjmp(c->failed, SYNTAX_ERROR); \
 		else				       \
-			push_num(one.i op two.i);      \
+			push_num(c, one.i op two.i);			\
 	} while (0)
 
-int calc(char *p)
+int calc(struct calc *c, char *p)
 {
 	int f_val, g_val;
-	is_float = strchr(p, '.') != NULL;
 
-	cur_op = cur_num = 0;
+	c->is_float = strchr(p, '.') != NULL;
+	c->cur_op = c->cur_num = 0;
 
 	/* A longjmp is called on error. */
-	switch (setjmp(failed)) {
+	switch (setjmp(c->failed)) {
 	case 0:
 		break;
 	case STACK_OVERFLOW:
@@ -217,7 +200,7 @@ int calc(char *p)
 	}
 
 	/* Continue until all input parsed and command stack empty. */
-	while (*p != '=' || top_op() != '=') {
+	while (*p != '=' || top_op(c) != '=') {
 		while (isspace(*p))
 			++p;
 
@@ -227,23 +210,23 @@ int calc(char *p)
 		else if (*p == '>' && *(p + 1) == '>')
 			++p;
 
-		f_val = calc_f(top_op());
-		g_val = calc_g_num(&p);
+		f_val = calc_f(c, top_op(c));
+		g_val = calc_g_num(c, &p);
 		if (g_val < 0)
 			return -1;
 
 		if (f_val <= g_val) {
 			/* shift */
-			push_op(*p);
+			push_op(c, *p);
 			if (*p != '=')
 				++p;
 		} else {
 			/* reduce */
 			do {
-				int op = pop_op();
+				int op = pop_op(c);
 				if (is_op(op)) {
-					union number two = pop_num();
-					union number  one = pop_num();
+					union number two = pop_num(c);
+					union number  one = pop_num(c);
 
 					switch (op) {
 					case '*':
@@ -279,34 +262,12 @@ int calc(char *p)
 					}
 				}
 
-				f_val = calc_f(top_op());
-				g_val = calc_g(op);
+				f_val = calc_f(c, top_op(c));
+				g_val = calc_g(c, op);
 			} while (f_val >= g_val);
 		}
 	}
 
+	c->result = pop_num(c);
 	return 0;
-}
-
-void Zcalc(void)
-{
-	char str[STRMAX];
-
-	Arg = 0;
-	if (getarg("Calc: ", Calc_str, STRMAX - 1))
-		return;
-
-	/* We modify the string, leave Calc_str alone */
-	strcpy(str, Calc_str);
-	strcat(str, "=");
-
-	if (calc(str))
-		return;
-
-	if (is_float)
-		putpaw("= %g", pop_num().f);
-	else {
-		long n = pop_num().i;
-		putpaw("= %ld (%lx)", n, n);
-	}
 }

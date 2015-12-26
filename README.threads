@@ -10,6 +10,7 @@ All the functions in the following files are thread safe:
  * mark.c
  * bmsearch.c
  * reg.c
+ * calc.c
  * bsocket.c (1)
 
 (1) Not supported in win32

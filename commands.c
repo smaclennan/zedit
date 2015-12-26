@@ -1044,3 +1044,46 @@ void Zzap_to_char(void)
 
 	redisplay();
 }
+
+void Zcalc(void)
+{
+	static char Calc_str[STRMAX + 1];
+	char str[STRMAX];
+
+	Arg = 0;
+	if (getarg("Calc: ", Calc_str, STRMAX - 1))
+		return;
+
+	struct calc *c = calloc(1, sizeof(struct calc));
+	if (c) {
+		c->ops = calloc(MAX_OPS, sizeof(char));
+		c->nums = calloc(MAX_OPS, sizeof(union number));
+		c->max_ops = MAX_OPS;
+	}
+	if (!c || !c->ops || !c->nums) {
+		if (c) free(c);
+		if (c->ops) free(c->ops);
+		if (c->nums) free(c->nums);
+		error("Out of memory!");
+		return;
+	}
+
+	/* We modify the string, leave Calc_str alone */
+	strcpy(str, Calc_str);
+	strcat(str, "=");
+
+	if (calc(c, str))
+		goto cleanup;
+
+	if (c->is_float)
+		putpaw("= %g", c->result.f);
+	else {
+		long n = c->result.i;
+		putpaw("= %ld (%lx)", n, n);
+	}
+
+cleanup:
+	free(c->ops);
+	free(c->nums);
+	free(c);
+}

@@ -33,6 +33,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <time.h>
+#include <setjmp.h>
 #include <sys/stat.h>
 
 #include "config.h"
@@ -54,6 +55,7 @@ struct zbuff;
 #include "funcs.h"
 #include "proto.h"
 #include "keys.h"
+#include "calc.h"
 
 #define ZSTR	"Zedit"
 #define VERSION	"6.1"
@@ -245,5 +247,8 @@ void tbell_dbg(char *func, int line);
 #define NEED_UMARK do if (!UMARK_SET) { tbell(); return; } while (0)
 #define UMARK (Curbuff->umark) /* Must guarantee umark set! */
 #define CLEAR_UMARK clear_umark()
+
+/* for calc */
+#define MAX_OPS 10
 
 #endif /* _Z_H_ */

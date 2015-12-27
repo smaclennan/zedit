@@ -80,7 +80,7 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
-# This is just to check that no zedit dependencies crept into buff.c
+# This is just to check that no zedit dependencies crept into libbuff.a
 main: main.c $(LFILES)
 	$(QUIET_LINK)$(CC) -g -o $@ $+
 
@@ -96,6 +96,5 @@ install: all
 	install -s $(ZEXE) $(DESTDIR)/bin/z
 
 clean:
-	rm -f *.o gpm/*.o $(ZEXE) fcheck core* TAGS valgrind.out
-	@rm -f main mmain tsmain
+	rm -f *.o gpm/*.o $(ZEXE) fcheck main core* TAGS valgrind.out
 	@$(MAKE) -C docs clean

@@ -58,7 +58,7 @@ void Zprevious_line(void)
 	int col = forcecol();
 	while (Arg-- > 0)
 		bcrsearch(Bbuff, NL);
-	bmakecol(col, false);
+	bmakecol(col);
 }
 
 void Znext_line(void)
@@ -66,7 +66,7 @@ void Znext_line(void)
 	int col = forcecol();
 	while (Arg-- > 0)
 		bcsearch(Bbuff, NL);
-	bmakecol(col, false);
+	bmakecol(col);
 }
 
 void Zprevious_char(void)
@@ -99,21 +99,15 @@ int bgetcol(bool flag, int col)
 /* Try to put Point in a specific column.
  * Returns actual Point column.
  */
-int bmakecol(int col, bool must)
+int bmakecol(int col)
 {
 	int tcol = 0;
 
 	if (bcrsearch(Bbuff, '\n'))
 		bmove1(Bbuff);
 	while (tcol < col && *Curcptr != '\n' && !bisend(Bbuff)) {
-		tcol += chwidth(*Curcptr, tcol, !must);
+		tcol += chwidth(*Curcptr, tcol, true);
 		bmove1(Bbuff);
-	}
-	if (must && tcol < col) {
-		int wid = chwidth('\t', tcol, true);
-		if (tcol + wid < col)
-			tcol -= Tabsize - wid;
-		tindent(col - tcol);
 	}
 	return tcol;
 }
@@ -125,7 +119,7 @@ void Zprevious_page(void)
 	bpnttomrk(Bbuff, Sstart);
 	for (i = wheight() - prefline() - 2; i > 0 && bcrsearch(Bbuff, NL); --i)
 		i -= bgetcol(true, 0) / Colmax;
-	bmakecol(col, false);
+	bmakecol(col);
 	reframe();
 }
 
@@ -139,7 +133,7 @@ void Znext_page(void)
 		i -= bgetcol(true, 0) / Colmax;
 		bmove1(Bbuff);
 	}
-	bmakecol(col, false);
+	bmakecol(col);
 	reframe();
 }
 
@@ -219,10 +213,24 @@ void Zgoto_line(void)
 
 void Zout_to(void)
 {
-	int col = (int)getnum("Column: ");
+	int tcol = 0, col = (int)getnum("Column: ");
 	if (col == -1)
 		return;
-	bmakecol(--col, true);
+	--col;
+
+	if (bcrsearch(Bbuff, '\n'))
+		bmove1(Bbuff);
+	while (tcol < col && *Curcptr != '\n' && !bisend(Bbuff)) {
+		tcol += chwidth(*Curcptr, tcol, false);
+		bmove1(Bbuff);
+	}
+
+	if (tcol < col) {
+		int wid = chwidth('\t', tcol, true);
+		if (tcol + wid < col)
+			tcol -= Tabsize - wid;
+		tindent(col - tcol);
+	}
 }
 
 #define BOOKMARKS	10			/* number of book marks */

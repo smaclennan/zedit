@@ -376,7 +376,7 @@ void reframe(void)
 	for (cnt = prefline(); cnt > 0 && bcrsearch(Bbuff, NL); --cnt)
 			cnt -= bgetcol(true, 0) / Colmax;
 	if (cnt < 0)
-		bmakecol((-cnt) * Colmax, false);
+		bmakecol((-cnt) * Colmax);
 	else
 		tobegline(Bbuff);
 	bmrktopnt(Bbuff, Sstart);

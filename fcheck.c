@@ -67,27 +67,6 @@ void mouse_point(int row, int col, bool set_mark) {}
 
 void _putpaw(const char *str) { puts(str); }
 
-#if ZLIB || SPELL
-static int noinclude(int argc, char *argv[], const char *inc)
-{
-	char path[PATHMAX];
-	int arg;
-
-	snprintf(path, sizeof(path), "/usr/include/%s", inc);
-	if (access(path, F_OK) == 0)
-		return 0; /* found it */
-
-	for (arg = 1; arg < argc; ++arg)
-		if (strncmp(argv[arg], "-I", 2) == 0) {
-			snprintf(path, sizeof(path), "%s/%s", argv[arg] + 2, inc);
-			if (access(path, F_OK) == 0)
-				return 0; /* found it */
-		}
-
-	return 1; /* not found */
-}
-#endif
-
 int main(int argc, char *argv[])
 {
 	int i, s1, s2, err = 0;
@@ -204,36 +183,6 @@ int main(int argc, char *argv[])
 		       (int)sizeof(struct avar), (int)sizeof(char *));
 		err = 1;
 	}
-
-		/* Freebsd does not support sed -i */
-#if ZLIB
-	if (noinclude(argc, argv, "zlib.h")) {
-		puts("Cound not find zlib.h... disabling zlib support.");
-		puts("Maybe set ZLIBINC in Makefile?");
-		system("sed 's:^#define ZLIB://#define ZLIB:' config.h > config.h.new");
-		system("sed 's/^LIBS += -lz/#LIBS += -lz/' Makefile > Makefile.new");
-		rename("config.h.new", "config.h");
-		rename("Makefile.new", "Makefile");
-	}
-#endif
-#if SPELL
-	if (noinclude(argc, argv, "aspell.h") ||
-	    noinclude(argc, argv, "dlfcn.h")) {
-		puts("Cound not find aspell.h and/or dlfcn.h..."
-		     "disabling spell support.");
-		puts("Maybe set ASPELLINC in Makefile?");
-		system("sed 's:^#define SPELL://#define SPELL:' config.h > config.h.new");
-		system("sed 's/^LIBS += -ldl/#LIBS += -ldl/' Makefile > Makefile.new");
-		rename("config.h.new", "config.h");
-		rename("Makefile.new", "Makefile");
-	} else {
-		if (strcmp(utsname.sysname, "FreeBSD") == 0) {
-			/* FreeBSD does not need -ldl */
-			system("sed 's/^LIBS += -ldl/#LIBS += -ldl/' Makefile > Makefile.new");
-			rename("Makefile.new", "Makefile");
-		}
-	}
-#endif
 
 	return err;
 }

@@ -91,10 +91,18 @@ checkit:
 	@sparse -D__unix__ $(CFLAGS) $(CFILES) $(LFILES)
 	@sparse -D__unix__ fcheck.c
 
+doxy:
+	doxygen doxygen/Doxyfile
+
+graph:
+	@rm -f /tmp/graph
+	@../sparse/graph -D__unix__ $(CFLAGS) $(CFILES) $(LFILES)
+
 install: all
 	mkdir -p $(DESTDIR)/bin
 	install -s $(ZEXE) $(DESTDIR)/bin/z
 
 clean:
 	rm -f *.o gpm/*.o $(ZEXE) fcheck main core* TAGS valgrind.out
+	rm -rf doxygen/html
 	@$(MAKE) -C docs clean

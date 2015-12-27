@@ -7,8 +7,6 @@
 #include <stdlib.h>
 
 /* WIN32 sure likes underscores */
-#define inline __inline
-
 #define snprintf _snprintf
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp

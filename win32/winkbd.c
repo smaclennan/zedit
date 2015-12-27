@@ -37,6 +37,39 @@ static short convertKey(KEY_EVENT_RECORD *event)
 	if (key >= 128)
 		return key;
 
+	if (event->dwControlKeyState & (CAPSLOCK_ON | SHIFT_PRESSED)) {
+		switch (key) {
+		case '`': key = '~'; break;
+		case '1': key = '!'; break;
+		case '2': key = '@'; break;
+		case '3': key = '#'; break;
+		case '4': key = '$'; break;
+		case '5': key = '%'; break;
+		case '6': key = '^'; break;
+		case '7': key = '&'; break;
+		case '8': key = '*'; break;
+		case '9': key = '('; break;
+		case '0': key = ')'; break;
+		case '-': key = '_'; break;
+		case '=': key = '+'; break;
+
+		case '[': key = '{'; break;
+		case ']': key = '}'; break;
+		case '\\': key = '|'; break;
+
+		case ';': key = ':'; break;
+		case '\'': key = '"'; break;
+
+		case ',': key = '<'; break;
+		case '.': key = '>'; break;
+		case '/': key = '?'; break;
+
+		default:
+			if (isalpha(key))
+				key = toupper(key);
+		}
+	}
+
 	if (event->dwControlKeyState & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED))
 		return M(toupper(key));
 
@@ -58,39 +91,6 @@ static short convertKey(KEY_EVENT_RECORD *event)
 			else
 				return 0;
 		}
-
-	if (event->dwControlKeyState & (CAPSLOCK_ON | SHIFT_PRESSED)) {
-		switch (key) {
-		case '`': return '~';
-		case '1': return '!';
-		case '2': return '@';
-		case '3': return '#';
-		case '4': return '$';
-		case '5': return '%';
-		case '6': return '^';
-		case '7': return '&';
-		case '8': return '*';
-		case '9': return '(';
-		case '0': return ')';
-		case '-': return '_';
-		case '=': return '+';
-
-		case '[': return '{';
-		case ']': return '}';
-		case '\\': return '|';
-
-		case ';': return ':';
-		case '\'': return '"';
-
-		case ',': return '<';
-		case '.': return '>';
-		case '/': return '?';
-
-		default:
-			if (isalpha(key))
-				return toupper(key);
-		}
-	}
 
 	return key;
 }

@@ -158,10 +158,10 @@ void undo_del(int size)
 	if (undo && !is_insert(undo) && size == 1) {
 		switch (Lfunc) {
 		case ZDELETE_CHAR:
-			undo_append(undo, Curcptr);
+			undo_append(undo, Bbuff->curcptr);
 			return;
 		case ZDELETE_PREVIOUS_CHAR:
-			undo_prepend(undo, Curcptr);
+			undo_prepend(undo, Bbuff->curcptr);
 			undo->offset--;
 			return;
 		}
@@ -172,7 +172,7 @@ void undo_del(int size)
 	if (undo == NULL)
 		return;
 
-	memcpy(undo->data, Curcptr, size);
+	memcpy(undo->data, Bbuff->curcptr, size);
 }
 
 /* Must be a struct buff since it is called from the buff.c code */

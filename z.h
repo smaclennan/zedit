@@ -154,7 +154,6 @@ struct zbuff {
 
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)
 
-#define Curcptr (Bbuff->curcptr)
 #define Buff()  (*Bbuff->curcptr)
 #define unmark bdelmark
 

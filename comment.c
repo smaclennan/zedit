@@ -67,7 +67,7 @@ static void scanbuffer(struct zbuff *buff)
 		while (bcsearch(Bbuff, comchar) && !bisend(Bbuff)) {
 			if (bmove(Bbuff, -2) == 0) { /* skip to char *before* # */
 				/* # is first character in buffer */
-			} else if (isspace(*Curcptr))
+			} else if (isspace(Buff()))
 				bmove1(Bbuff);
 			else {
 				bmove(Bbuff, 2);

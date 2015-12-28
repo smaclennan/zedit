@@ -425,7 +425,7 @@ bool looking_at(const char *match)
 	struct mark tmark;
 
 	bmrktopnt(Bbuff, &tmark);
-	while (*match && *Curcptr == *match) {
+	while (*match && Buff() == *match) {
 		bmove1(Bbuff);
 		++match;
 	}

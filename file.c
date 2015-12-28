@@ -146,7 +146,7 @@ static void crfixup(void)
 	Curbuff->bmode |= FILE_CRLF;
 
 	while (bcsearch(Bbuff, '\r'))
-		if (*Curcptr == '\n') {
+		if (Buff() == '\n') {
 			bmove(Bbuff, -1);
 			bdelete(Bbuff, 1);
 		}

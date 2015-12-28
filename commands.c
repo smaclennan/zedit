@@ -29,14 +29,14 @@ static bool Findstart(void)
 {
 	while (!bisstart(Bbuff) && bistoken(Buff()))
 		bmove(Bbuff, -1);
-	while (!bisend(Bbuff) && !isalpha(*Curcptr))
+	while (!bisend(Bbuff) && !isalpha(Buff()))
 		bmove1(Bbuff);
 	return !bisend(Bbuff);
 }
 
 static void bconvert(int (*to)(int c))
 {
-	*Curcptr = to(*Curcptr);
+	Buff() = to(Buff());
 	Bbuff->bmodf = true;
 }
 
@@ -77,7 +77,7 @@ static void blockmove(struct mark *from, struct mark *to)
 	char tmp;
 
 	while (bisbeforemrk(Bbuff, from)) {
-		tmp = *Curcptr;
+		tmp = Buff();
 		bswappnt(Bbuff, to);
 		binsert(Bbuff, tmp);
 		bswappnt(Bbuff, to);
@@ -144,7 +144,7 @@ void Zc_insert(void)
 		}
 		bmrktopnt(Bbuff, tmark);	/* save current position */
 		for (cnt = 0, bmove(Bbuff, -1); !bisstart(Bbuff); bmove(Bbuff, -1))
-			if (*Curcptr == '{') {
+			if (Buff() == '{') {
 				if (cnt)
 					--cnt;
 				else {  /* matched */
@@ -160,9 +160,9 @@ void Zc_insert(void)
 					unmark(tmark);
 					return;
 				}
-			} else if (*Curcptr == '}')
+			} else if (Buff() == '}')
 				++cnt;
-			else if (ISNL(*Curcptr))
+			else if (ISNL(Buff()))
 				crfound = true;
 		bpnttomrk(Bbuff, tmark);	/* no match - go back */
 		tbell();		/* and warn user */
@@ -178,7 +178,7 @@ void Zc_insert(void)
 			bmove(Bbuff, -1);
 		while (!bisstart(Bbuff) && biswhite(Buff()));
 
-		if (ISNL(*Curcptr) && !bisstart(Bbuff)) {
+		if (ISNL(Buff()) && !bisstart(Bbuff)) {
 			bmove1(Bbuff);		/* skip NL */
 			bdeltomrk(tmark);
 		} else
@@ -224,10 +224,10 @@ void Zc_indent(void)
 
 		bmrktopnt(Bbuff, &tmark);
 		do {
-			if (*Curcptr == '#')
+			if (Buff() == '#')
 				bmove(Bbuff, -1);
 			tobegline(Bbuff);
-		} while (*Curcptr == '#' && !bisstart(Bbuff));
+		} while (Buff() == '#' && !bisstart(Bbuff));
 		movepast(biswhite, FORWARD);
 		if (looking_at("if") || looking_at("while")) {
 			width += Tabsize;
@@ -236,11 +236,11 @@ void Zc_indent(void)
 		if (bisaftermrk(Bbuff, &tmark))
 			bpnttomrk(Bbuff, &tmark);
 		for (width += bgetcol(true, 0); bisbeforemrk(Bbuff, &tmark); bmove1(Bbuff))
-			if (*Curcptr == '{') {
+			if (Buff() == '{') {
 				if (did_indent == 0 || sawstart > 0)
 					width += Tabsize;
 				++sawstart;
-			} else if (*Curcptr == '}' && sawstart) {
+			} else if (Buff() == '}' && sawstart) {
 				width -= Tabsize;
 				--sawstart;
 			}
@@ -316,7 +316,7 @@ void Zsh_indent(void)
 	} else if (lookingat(Bbuff, RE_DONE)) {
 		width -= Taboffset;
 		fixup = 1;
-	} else if (*Curcptr == '}') {
+	} else if (Buff() == '}') {
 		width -= Taboffset;
 		fixup = 1;
 	} else if (lookingat(Bbuff, ".*\\{[ \t]*$")) {
@@ -410,7 +410,7 @@ void Zfill_paragraph(void)
 		movepast(isspace, BACKWARD);
 		bmrktopnt(Bbuff, tmp);
 		Zprevious_paragraph();
-		if (*Curcptr == '.')
+		if (Buff() == '.')
 			bcsearch(Bbuff, '\n');	/* for nroff */
 
 		/* main loop */
@@ -423,7 +423,7 @@ void Zfill_paragraph(void)
 				moveto(isspace, FORWARD);
 			}
 			movepast(biswhite, FORWARD);
-			if (*Curcptr == NL && bisbeforemrk(Bbuff, tmp)) {
+			if (Buff() == NL && bisbeforemrk(Bbuff, tmp)) {
 				bdelete(Bbuff, 1);
 				Ztrim_white_space();
 				binsert(Bbuff, ' ');
@@ -460,8 +460,8 @@ void Znext_paragraph(void)
 	/* Only go back if between paras */
 	if (isspace(Buff()))
 		movepast(isspace, BACKWARD);
-	while (!bisend(Bbuff) && !ispara(pc, *Curcptr)) {
-		pc = *Curcptr;
+	while (!bisend(Bbuff) && !ispara(pc, Buff())) {
+		pc = Buff();
 		bmove1(Bbuff);
 	}
 	movepast(isspace, FORWARD);
@@ -472,8 +472,8 @@ void Zprevious_paragraph(void)
 	char pc = '\0';
 
 	movepast(isspace, BACKWARD);
-	while (!bisstart(Bbuff) && !ispara(*Curcptr, pc)) {
-		pc = *Curcptr;
+	while (!bisstart(Bbuff) && !ispara(Buff(), pc)) {
+		pc = Buff();
 		bmove(Bbuff, -1);
 	}
 	movepast(isspace, FORWARD);
@@ -618,9 +618,9 @@ static void mshow(unsigned ch)
 	bmrktopnt(Bbuff, &save);
 	do {
 		bmove(Bbuff, -1);
-		if (*Curcptr == match)
+		if (Buff() == match)
 			--cnt;
-		else if (*Curcptr == ch)
+		else if (Buff() == ch)
 			++cnt;
 	} while (cnt && !bisstart(Bbuff));
 	if (cnt)
@@ -635,7 +635,7 @@ static void mshow(unsigned ch)
 void Zinsert(void)
 {
 	if (Curbuff->bmode & OVERWRITE) {
-		if (!bisend(Bbuff) && *Curcptr != NL)
+		if (!bisend(Bbuff) && Buff() != NL)
 			bdelete(Bbuff, 1);
 	}
 
@@ -756,11 +756,11 @@ void Zswap_chars(void)
 {
 	int tmp;
 
-	if (bisend(Bbuff) || *Curcptr == NL)
+	if (bisend(Bbuff) || Buff() == NL)
 		bmove(Bbuff, -1);
 	if (!bisstart(Bbuff))
 		bmove(Bbuff, -1);
-	tmp = *Curcptr;
+	tmp = Buff();
 	bdelete(Bbuff, 1);
 	bmove1(Bbuff);
 	binsert(Bbuff, tmp);
@@ -789,7 +789,7 @@ void Zcount(void)
 	putpaw("Counting...");
 	word = false;
 	for (; UMARK_SET ? bisbeforemrk(Bbuff, UMARK) : !bisend(Bbuff); bmove1(Bbuff), ++c) {
-		if (ISNL(*Curcptr))
+		if (ISNL(Buff()))
 			++l;
 		if (!bistoken(Buff()))
 			word = false;
@@ -870,7 +870,7 @@ void toggle_mode(int mode)
 		if (matchit(VARSTR(VCEXTS), ext))
 			mode = CMODE;
 		else if (matchit(VARSTR(VSEXTS), ext) ||
-			 strncmp((char *)Curcptr, "#!/", 3) == 0)
+			 strncmp((char *)Bbuff->curcptr, "#!/", 3) == 0)
 			mode = SHMODE;
 		else if (matchit(VARSTR(VTEXTS), ext))
 			mode = TXTMODE;
@@ -920,7 +920,7 @@ static void setregion(int (*convert)(int))
 	bmrktopnt(Bbuff, &tmark);
 
 	for (; bisbeforemrk(Bbuff, UMARK); bmove1(Bbuff))
-		*Curcptr = (*convert)(*Curcptr);
+		Buff() = (*convert)(Buff());
 
 	if (swapped)
 		mrktomrk(UMARK, &tmark);
@@ -965,11 +965,11 @@ static void indent(bool flag)
 	while (bisbeforemrk(Bbuff, UMARK)) {
 		if (flag) {
 			/* skip comment lines */
-			if (*Curcptr != '#')
+			if (Buff() != '#')
 				for (i = 0; i < Arg; ++i)
 					binsert(Bbuff, '\t');
 		} else
-			for (i = 0; i < Arg && *Curcptr == '\t'; ++i)
+			for (i = 0; i < Arg && Buff() == '\t'; ++i)
 				bdelete(Bbuff, 1);
 		bcsearch(Bbuff, NL);
 	}

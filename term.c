@@ -571,8 +571,8 @@ void mouse_point(int row, int col, bool set_mark)
 
 	/* Move the point to col */
 	atcol = 0;
-	while (col > 0 && !bisend(Bbuff) && *Curcptr != '\n') {
-		int n = chwidth(*Curcptr, atcol, false);
+	while (col > 0 && !bisend(Bbuff) && Buff() != '\n') {
+		int n = chwidth(Buff(), atcol, false);
 		bmove1(Bbuff);
 		col -= n;
 		atcol += n;

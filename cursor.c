@@ -90,7 +90,7 @@ int bgetcol(bool flag, int col)
 	if (bcrsearch(Bbuff, '\n'))
 		bmove1(Bbuff);
 	while (!bisatmrk(Bbuff, &pmark) && !bisend(Bbuff)) {
-		col += chwidth(*Curcptr, col, flag);
+		col += chwidth(Buff(), col, flag);
 		bmove1(Bbuff);
 	}
 	return col;
@@ -105,8 +105,8 @@ int bmakecol(int col)
 
 	if (bcrsearch(Bbuff, '\n'))
 		bmove1(Bbuff);
-	while (tcol < col && *Curcptr != '\n' && !bisend(Bbuff)) {
-		tcol += chwidth(*Curcptr, tcol, true);
+	while (tcol < col && Buff() != '\n' && !bisend(Bbuff)) {
+		tcol += chwidth(Buff(), tcol, true);
 		bmove1(Bbuff);
 	}
 	return tcol;
@@ -220,8 +220,8 @@ void Zout_to(void)
 
 	if (bcrsearch(Bbuff, '\n'))
 		bmove1(Bbuff);
-	while (tcol < col && *Curcptr != '\n' && !bisend(Bbuff)) {
-		tcol += chwidth(*Curcptr, tcol, false);
+	while (tcol < col && Buff() != '\n' && !bisend(Bbuff)) {
+		tcol += chwidth(Buff(), tcol, false);
 		bmove1(Bbuff);
 	}
 

@@ -170,6 +170,21 @@ int main(int argc, char *argv[])
 	else if (argc == 2)
 		return test_bigwrite(buff, argv[1]);
 
+	/* Testing bcsearch/bcrsearch */
+	bappend(buff, str1k, strlen(str1k));
+	btostart(buff);
+	if (!bcsearch(buff, 'C'))
+		printf("Did not find C\n");
+	else if (*buff->curcptr != 'a')
+		printf("Problems with bcsearch\n");
+	else {
+		bmove(buff, 10);
+		if (!bcrsearch(buff, 'C'))
+			printf("Did not reverse find C\n");
+		else if (*buff->curcptr != 'C')
+			printf("Problems with bcrsearch\n");
+	}
+
 	/* testing pagesplit */
 	bappend(buff, (Byte *)str1k, 800); /* over half page */
 	btostart(buff);
@@ -179,6 +194,13 @@ int main(int argc, char *argv[])
 	}
 	bmove(buff, -12);
 	struct mark *mark1 = bcremark(buff);
+
+	bmove(buff, 12 + 11 + 10);
+	if (!bm_rsearch(buff, "wrong number", true)) {
+		puts("search1r failed");
+		exit(1);
+	}
+	printf("Buffer is %c\n", *buff->curcptr);
 
 	if (!bm_search(buff, "2 feet of snow", true)) {
 		puts("search2 failed");

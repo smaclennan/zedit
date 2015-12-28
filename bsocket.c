@@ -116,7 +116,7 @@ int bwrite(struct buff *buff, int fd, int size)
 /* Some bulk insert routines that are handy with sockets. */
 
 /* You must guarantee we are at the end of the page */
-static int bappendpage(struct buff *buff, Byte *data, int size)
+static int bappendpage(struct buff *buff, const Byte *data, int size)
 {
 	int appended = 0;
 
@@ -161,7 +161,7 @@ static int bappendpage(struct buff *buff, Byte *data, int size)
 /** Append data to the end of the buffer. Point is left at the end of
  * the buffer. Returns how much data was actually appended.
  */
-int bappend(struct buff *buff, Byte *data, int size)
+int bappend(struct buff *buff, const Byte *data, int size)
 {
 	btoend(buff);
 	return bappendpage(buff, data, size);

@@ -96,7 +96,7 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive);
 #define MAX_IOVS 16
 int bread(struct buff *buff, int fd);
 int bwrite(struct buff *buff, int fd, int size);
-int bappend(struct buff *buff, Byte *, int);
+int bappend(struct buff *buff, const Byte *, int);
 int bindata(struct buff *buff, Byte *, int);
 
 #ifndef NULL

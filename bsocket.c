@@ -18,8 +18,9 @@ void undo_add(int size, bool clumped);
 /* These can be used with files... but where written to use with
  * sockets. */
 
-/** Read from a file descriptor using readv.  Simple version,
- * optimized for appends. Can be used for file but meant for sockets.
+/** Read from a file descriptor using readv.  Simple version; only
+ * reads at most two pages. Can be used for file but meant for
+ * sockets.
  */
 int bread(struct buff *buff, int fd)
 {
@@ -74,36 +75,42 @@ int bread(struct buff *buff, int fd)
 	return n_read;
 }
 
-/** Write to a file descriptor using writev.  Can be used for file but
+/** Write to a file descriptor using writev.  Can be used for files but
  * meant for sockets. Leaves the point at the end of the write.
 */
 int bwrite(struct buff *buff, int fd, int size)
 {
 	struct iovec iovs[MAX_IOVS];
 	struct page *pg;
-	int i, n;
+	int i, n, amount, did = 0;
 
-	int have = curplen(buff) - buff->curchar;
-	iovs[0].iov_base = buff->curcptr;
-	iovs[0].iov_len = MIN(have, size);
-	size -= iovs[0].iov_len;
+	do {
+		int have = curplen(buff) - buff->curchar;
+		iovs[0].iov_base = buff->curcptr;
+		iovs[0].iov_len = MIN(have, size);
+		size -= iovs[0].iov_len;
+		amount = iovs[0].iov_len;
 
-	for (pg = buff->curpage->nextp, i = 1;
-		 i < MAX_IOVS && size > 0 && pg;
-		 ++i, pg = pg->nextp) {
-		iovs[i].iov_base = pg->pdata;
-		iovs[i].iov_len = MIN(pg->plen, size);
-		size -= iovs[i].iov_len;
-	}
+		for (pg = buff->curpage->nextp, i = 1;
+			 i < MAX_IOVS && size > 0 && pg;
+			 ++i, pg = pg->nextp) {
+			iovs[i].iov_base = pg->pdata;
+			iovs[i].iov_len = MIN(pg->plen, size);
+			size -= iovs[i].iov_len;
+			amount += iovs[i].iov_len;
+		}
 
-	do
-		n = writev(fd, iovs, i);
-	while (n < 0 && errno == EINTR);
+		do
+			n = writev(fd, iovs, i);
+		while (n < 0 && errno == EINTR);
 
-	if (n > 0)
-		bmove(buff, n);
+		if (n > 0) {
+			bmove(buff, n);
+			did += n;
+		}
+	} while (n == amount && size > 0);
 
-	return n;
+	return did;
 }
 
 /* Some bulk insert routines that are handy with sockets. */

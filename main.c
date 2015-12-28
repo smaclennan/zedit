@@ -97,6 +97,65 @@ int test_readwrite(struct buff *buff, char *in, char *out)
 	return 0;
 }
 
+/* Warning: Leaks memory on error. */
+static int test_bigwrite(struct buff *buff, const char *to)
+{
+	int fd = creat(to, 0644);
+	if (fd < 0) {
+		perror(to);
+		return 1;
+	}
+
+	int max = PSIZE * MAX_IOVS * 4;
+	char *big = malloc(max);
+	if (!big) {
+		close(fd);
+		puts("Out of memory!");
+		return 1;
+	}
+
+	memset(big, 'X', 100);
+	memset(big + 100, '.', max - 200);
+	memset(big + max - 100, 'X', 100);
+
+	bappend(buff, big, max);
+	btostart(buff);
+	bmove(buff, 100);
+
+	int size = max - 200;
+	int n = bwrite(buff, fd, size);
+	close(fd);
+
+	if (n != size) {
+		printf("Short write %d/%d\n", n, size);
+		return 1;
+	}
+
+	if ((fd = open(to, O_RDONLY)) < 0) {
+		perror(to);
+		return 1;
+	}
+	memset(big, 'S', max);
+	n = read(fd, big, size);
+	close(fd);
+
+	if (n != size) {
+		printf("Short read %d/%d\n", n, size);
+		return 1;
+	}
+
+	int i;
+	for (i = 0; i < size; ++i)
+		if (big[i] != '.') {
+			printf("%d: error %c\n", i, big[i]);
+			return 1;
+		}
+
+	free(big);
+	puts("Success!");
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	struct buff *buff;
@@ -108,6 +167,8 @@ int main(int argc, char *argv[])
 
 	if (argc > 2)
 		return test_readwrite(buff, argv[1], argv[2]);
+	else if (argc == 2)
+		return test_bigwrite(buff, argv[1]);
 
 	/* testing pagesplit */
 	bappend(buff, (Byte *)str1k, 800); /* over half page */

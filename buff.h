@@ -76,8 +76,6 @@ bool bcrsearch(struct buff *, Byte);
 void bempty(struct buff *buff);
 Byte bpeek(struct buff *buff);
 void boffset(struct buff *buff, unsigned long offset);
-int bappend(struct buff *buff, Byte *, int);
-int bindata(struct buff *buff, Byte *, int);
 
 bool binstr(struct buff *buff, const char *str, ...);
 void bmovepast(struct buff *buff, int (*pred)(int), bool forward);
@@ -96,6 +94,8 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive);
 /* bsocket.c */
 int bread(struct buff *buff, int fd);
 int bwrite(struct buff *buff, int fd, int size);
+int bappend(struct buff *buff, Byte *, int);
+int bindata(struct buff *buff, Byte *, int);
 
 #ifndef NULL
 #define NULL ((void *)0)
@@ -109,11 +109,13 @@ extern int NumBuffs, NumPages;
 
 /* Page struct and functions. */
 
-/* Generally, the bigger the page size the faster the editor however
- * the more wasted memory. A page size of 1k seems to be a very good trade off.
+/** Page size. Generally, the bigger the page size the faster the
+ * editor however the more wasted memory. A page size of 1k seems to
+ * be a very good trade off.
  */
-#define PSIZE		1024		/* size of page */
-#define HALFP		(PSIZE / 2)	/* half the page size */
+#define PSIZE		1024
+/** Half a page for pagesplit(). */
+#define HALFP		(PSIZE / 2)
 
 /** Describes one page in memory. */
 struct page {
@@ -127,17 +129,19 @@ struct page *newpage(struct page *curpage);
 void freepage(struct buff *buff, struct page *page);
 struct page *pagesplit(struct buff *buff, unsigned dist);
 
+/** Is the point at the start of the buffer? */
 static inline bool bisstart(struct buff *buff)
 {
 	return buff->curpage == buff->firstp && buff->curchar == 0;
 }
 
+/** Is the point at the end of the buffer? */
 static inline bool bisend(struct buff *buff)
 {
 	return buff->curpage->nextp == NULL && buff->curchar >= buff->curpage->plen;
 }
 
-/* Make page current at offset */
+/** Make page current at offset. */
 static inline void makecur(struct buff *buff, struct page *page, int dist)
 {
 	buff->curpage = page;
@@ -145,14 +149,14 @@ static inline void makecur(struct buff *buff, struct page *page, int dist)
 	buff->curcptr = page->pdata + dist;
 }
 
-/* Move current page to offset */
+/** Move current page to offset. */
 static inline void makeoffset(struct buff *buff, int dist)
 {
 	buff->curchar = dist;
 	buff->curcptr = buff->curpage->pdata + dist;
 }
 
-/* Is this the last page in the buffer */
+/** Is this the last page in the buffer? */
 static inline bool lastp(struct page *page)
 {
 	return page->nextp == NULL;

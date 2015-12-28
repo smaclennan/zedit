@@ -141,6 +141,11 @@ static bool out_str(struct buff *buff, const char *s, int saw_neg, int len)
 	return true;
 }
 
+/** Insert a string. Uses variable arguments.
+ *
+ * Supports a subset of printf: %s, %d, %u. Format can contain a width
+ * and a minus (-) for left justify.
+ */
 bool binstr(struct buff *buff, const char *fmt, ...)
 {
 	va_list ap;
@@ -301,11 +306,13 @@ void bmove1(struct buff *buff)
 		makeoffset(buff, curplen(buff));
 }
 
+/** Move point to start of buffer. */
 void btostart(struct buff *buff)
 {
 	makecur(buff, buff->firstp, 0);
 }
 
+/** Move point to end of buffer. */
 void btoend(struct buff *buff)
 {
 	struct page *lastp = buff->curpage->nextp;
@@ -317,6 +324,7 @@ void btoend(struct buff *buff)
 		makeoffset(buff, curplen(buff));
 }
 
+/** Move point to the beginning of the line. */
 void tobegline(struct buff *buff)
 {
 	if (buff->curchar > 0 && *(buff->curcptr - 1) == '\n')
@@ -325,6 +333,7 @@ void tobegline(struct buff *buff)
 		bmove1(buff);
 }
 
+/** Move point to the end of the line. */
 void toendline(struct buff *buff)
 {
 	if (bcsearch(buff, '\n'))
@@ -358,8 +367,6 @@ unsigned long blocation(struct buff *buff)
 /** Search forward for a single byte. If byte found leaves point at
  * byte and returns true. If not found leaves point at the end of
  * buffer and returns false.
- *
- * More efficient than bcrsearch().
  */
 bool bcsearch(struct buff *buff, Byte what)
 {
@@ -383,6 +390,8 @@ bool bcsearch(struct buff *buff, Byte what)
 /** Search backward for a single byte. If byte found leaves point at
  * byte and returns true. If not found leaves point at the start of
  * buffer and returns false.
+ *
+ * Not as efficient as bcsearch() since we cannot use memchr.
  */
 bool bcrsearch(struct buff *buff, Byte what)
 {

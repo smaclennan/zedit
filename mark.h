@@ -60,7 +60,7 @@ long bdeltomrk(struct mark *);
 
 #ifdef HAVE_GLOBAL_MARKS
 /**
- * Global mark list. The buffer code just keeps the marks in this list
+ * Global mark list. The buffer code keeps the marks in this list
  * up to date.
  */
 extern struct mark *Marklist;

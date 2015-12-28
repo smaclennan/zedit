@@ -37,28 +37,26 @@ void undo_clear(struct buff *buff);
 static void dummy_bsetmod(struct buff *buff) {}
 void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
 
-int NumBuffs;
-int NumPages;
+int NumBuffs; /**< Current number of buffers. Not thread safe. */
+int NumPages; /**< Current number of pages. Not thread safe. */
 
+/** Create a buffer and allocate the first page. */
 struct buff *bcreate(void)
 {
 	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));
 	if (buf) {
-		struct page *fpage;
-
-		if (!(fpage = newpage(NULL))) {
+		if (!(buf->firstp = newpage(NULL))) {
 			/* bad news, de-allocate */
 			free(buf);
 			return NULL;
 		}
-		buf->firstp = fpage;
-		makecur(buf, fpage, 0);
+		makecur(buf, buf->firstp, 0);
 		++NumBuffs;
 	}
-
 	return buf;
 }
 
+/** Delete a buffer. Buffer can be NULL. */
 void bdelbuff(struct buff *tbuff)
 {
 	if (!tbuff)
@@ -72,11 +70,14 @@ void bdelbuff(struct buff *tbuff)
 		bdelmark(tbuff->marks);
 #endif
 
-	free((char *)tbuff);	/* free the buffer proper */
+	free(tbuff);	/* free the buffer proper */
 
 	--NumBuffs;
 }
 
+/** Insert a byte into a buffer. Returns false if more space is needed
+ * but we cannot allocate it.
+ */
 bool binsert(struct buff *buff, Byte byte)
 {
 	if (curplen(buff) == PSIZE && !pagesplit(buff, HALFP))
@@ -120,50 +121,57 @@ static char valid_format(const char *fmt, int *saw_neg, int *len, int *n)
 	return *fmt;
 }
 
-static void out_str(struct buff *buff, const char *s, int saw_neg, int len)
+static bool out_str(struct buff *buff, const char *s, int saw_neg, int len)
 {
 	int slen = strlen(s);
 	if (saw_neg == 0)
 		while (slen++ < len)
-			binsert(buff, ' ');
+			if (!binsert(buff, ' '))
+				return false;
 	while (*s)
-		binsert(buff, *s++);
+		if (!binsert(buff, *s++))
+			return false;
 	while (slen++ < len)
-		binsert(buff, ' ');
+		if (!binsert(buff, ' '))
+			return false;
+	return true;
 }
 
-void binstr(struct buff *buff, const char *fmt, ...)
+bool binstr(struct buff *buff, const char *fmt, ...)
 {
 	va_list ap;
 	char tmp[21];
 	int saw_neg, len, n;
+	bool rc = true;
 
 	va_start(ap, fmt);
-	while (*fmt) {
+	while (*fmt && rc) {
 		if (*fmt == '%') {
 			switch (valid_format(fmt, &saw_neg, &len, &n)) {
 			case 's':
 				fmt += n;
-				out_str(buff, va_arg(ap, char *), saw_neg, len);
+				rc = out_str(buff, va_arg(ap, char *), saw_neg, len);
 				break;
 			case 'd':
 				fmt += n;
 				snprintf(tmp, sizeof(tmp), "%d", va_arg(ap, int));
-				out_str(buff, tmp, saw_neg, len);
+				rc = out_str(buff, tmp, saw_neg, len);
 				break;
 			case 'u':
 				fmt += n;
 				snprintf(tmp, sizeof(tmp), "%u", va_arg(ap, unsigned));
-				out_str(buff, tmp, saw_neg, len);
+				rc = out_str(buff, tmp, saw_neg, len);
 				break;
 			default:
-				binsert(buff, *fmt);
+				rc = binsert(buff, *fmt);
 			}
 		} else
-			binsert(buff, *fmt);
+			rc = binsert(buff, *fmt);
 		++fmt;
 	}
 	va_end(ap);
+
+	return rc;
 }
 
 void bdelete(struct buff *buff, int quantity)
@@ -482,6 +490,7 @@ static int bappendpage(struct buff *buff, Byte *data, int size)
 	return appended;
 }
 
+/** Append data to the end of the buffer. Point is left at the end of the buffer. */
 int bappend(struct buff *buff, Byte *data, int size)
 {
 	btoend(buff);
@@ -585,7 +594,7 @@ void bmoveto(struct buff *buff, int (*pred)(int), bool forward)
 
 /* Low level memory page routines */
 
-/* Create a new memory page and link into chain after curpage */
+/** Create a new memory page and link into chain after curpage. */
 struct page *newpage(struct page *curpage)
 {
 	struct page *page = (struct page *)calloc(1, sizeof(struct page));
@@ -604,7 +613,9 @@ struct page *newpage(struct page *curpage)
 	return page;
 }
 
-/* Split the current full page. Leaves dist in curpage. */
+/** Split the current full page and return a new page. Leaves dist in
+ * curpage. Point is moved to the new page if required.
+ */
 struct page *pagesplit(struct buff *buff, unsigned dist)
 {
 	if (dist > PSIZE) return NULL;
@@ -639,7 +650,7 @@ struct page *pagesplit(struct buff *buff, unsigned dist)
 	return newp;
 }
 
-/* Free a memory page */
+/** Free a memory page. */
 void freepage(struct buff *buff, struct page *page)
 {
 	if (page->nextp)

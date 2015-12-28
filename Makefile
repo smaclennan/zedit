@@ -70,7 +70,7 @@ all:	fcheck $(ZEXE)
 
 $(ZEXE): $O libbuff.a
 	$(QUIET_LINK)$(CC) -o $@ $+ $(LIBS)
-	@$(ETAGS) $(CFILES) *.h
+	@$(ETAGS) $(CFILES) $(LFILES) $(HFILES)
 
 libbuff.a: $L
 	@rm -f #@

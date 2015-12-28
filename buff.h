@@ -42,14 +42,15 @@
 
 /* THE BUFFER STRUCTURES */
 
+/** Main buffer structure. */
 struct buff {
-	struct page *firstp;		/* the pages */
-	struct page *curpage;		/* the position of the point */
-	unsigned curchar;
-	Byte *curcptr;
-	bool bmodf;					/* buffer modified? */
+	struct page *firstp;		/**< List of pages. */
+	struct page *curpage;		/**< Point page. */
+	unsigned curchar;			/**< Point index in the page. */
+	Byte *curcptr;				/**< Point position in the page. */
+	bool bmodf;					/**< Buffer modified? */
 #ifdef HAVE_BUFFER_MARKS
-	struct mark *marks;			/* buffer marks */
+	struct mark *marks;			/**< Buffer dynamic marks. */
 #endif
 };
 
@@ -78,7 +79,7 @@ void boffset(struct buff *buff, unsigned long offset);
 int bappend(struct buff *buff, Byte *, int);
 int bindata(struct buff *buff, Byte *, int);
 
-void binstr(struct buff *buff, const char *str, ...);
+bool binstr(struct buff *buff, const char *str, ...);
 void bmovepast(struct buff *buff, int (*pred)(int), bool forward);
 void bmoveto(struct buff *buff, int (*pred)(int), bool forward);
 
@@ -114,10 +115,12 @@ extern int NumBuffs, NumPages;
 #define PSIZE		1024		/* size of page */
 #define HALFP		(PSIZE / 2)	/* half the page size */
 
+/** Describes one page in memory. */
 struct page {
-	Byte pdata[PSIZE];		/* the page data */
-	unsigned plen;			/* current length of the page */
-	struct page *nextp, *prevp;	/* list of pages */
+	Byte pdata[PSIZE];		/**< Page data. */
+	unsigned plen;			/**< Current length of the page. */
+	struct page *prevp;		/**< List of pages. */
+	struct page *nextp;		/**< List of pages. */
 };
 
 struct page *newpage(struct page *curpage);

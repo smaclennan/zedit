@@ -22,12 +22,16 @@
 
 #include <stdbool.h>
 
+/**
+ * The static and/or dynamic mark structure.
+ */
 struct mark {
-	struct buff *mbuff;			/* buffer the mark is in */
-	struct page *mpage;			/* page in the buffer */
-	unsigned moffset;			/* offset in the page */
+	struct buff *mbuff;			/**< Buffer the mark is in. */
+	struct page *mpage;			/**< Page in the buffer. */
+	unsigned moffset;			/**< Offset in the page. */
 #if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
-	struct mark *prev, *next;	/* list of marks */
+	struct mark *prev;			/**< List of marks. */
+	struct mark *next;			/**< List of marks. */
 #endif
 };
 
@@ -55,6 +59,10 @@ long bcopyrgn(struct mark *, struct buff*);
 long bdeltomrk(struct mark *);
 
 #ifdef HAVE_GLOBAL_MARKS
+/**
+ * Global mark list. The buffer code just keeps the marks in this list
+ * up to date.
+ */
 extern struct mark *Marklist;
 
 #define foreach_global_pagemark(buff, mark, page)				   \
@@ -82,6 +90,12 @@ extern struct mark *Marklist;
 #endif
 
 #ifdef HAVE_FREEMARK
+/**
+ * The freemark keeps one mark around so that bcremark() can use the
+ * freemark rather than allocating a new mark. Since a lot of
+ * functions just need to allocate one mark, this is a huge win for
+ * very little code.
+ */
 extern struct mark *freemark;
 #endif
 

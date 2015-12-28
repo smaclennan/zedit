@@ -24,6 +24,12 @@ struct mark *freemark;
 
 int NumMarks;
 
+/** Low-level create mark.
+ *
+ * This is a helper function that creates a mark on a mark list. For
+ * example, it could be used to create marks on the global
+ * #Marklist. Normally you would use bcremark().
+ */
 struct mark *_bcremark(struct buff *buff, struct mark **tail)
 {
 	struct mark *mptr;
@@ -50,6 +56,7 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
 	return mptr;
 }
 
+/** Low-level delete mark. You probably want bdelmark(). */
 void _bdelmark(struct mark *mptr, struct mark **tail)
 {
 	if (mptr) {
@@ -74,7 +81,12 @@ void _bdelmark(struct mark *mptr, struct mark **tail)
 	}
 }
 
-/* Create a mark at the current point and add it to the list. */
+/** Create a mark in the specified buffer.
+ *
+ * If dynamic marks are enabled (HAVE_GLOBAL_MARKS or
+ * HAVE_BUFFER_MARKS) then the buffer code will keep the mark in place
+ * as bytes are inserted or deleted.
+ */
 struct mark *bcremark(struct buff *buff)
 {
 #ifdef HAVE_BUFFER_MARKS
@@ -84,7 +96,9 @@ struct mark *bcremark(struct buff *buff)
 #endif
 }
 
-/* Free up the given mark and remove it from the list. */
+/** Free up the given mark and remove it from the list.  The mark
+ * should be created with bcremark(). The mark can be NULL.
+ */
 void bdelmark(struct mark *mptr)
 {
 #ifdef HAVE_BUFFER_MARKS

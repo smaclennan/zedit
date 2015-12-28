@@ -364,9 +364,9 @@ unsigned long blocation(struct buff *buff)
 	return len + buff->curchar;
 }
 
-/** Search forward for a single byte. If byte found leaves point at
- * byte and returns true. If not found leaves point at the end of
- * buffer and returns false.
+/** Search forward for a single byte `what'. If what found leaves
+ * point at the byte after what and returns true. If not found leaves
+ * point at the end of buffer and returns false.
  */
 bool bcsearch(struct buff *buff, Byte what)
 {

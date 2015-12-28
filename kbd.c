@@ -24,7 +24,7 @@
 #include <gpm.h>
 #endif
 
-/* Note: We can currently only have 32 specials */
+/** The special multi-byte keys. Note: We can currently only have 32 specials */
 char *Tkeys[] = {
 	"\033[A",	/* up */
 	"\033[B",	/* down */
@@ -55,15 +55,22 @@ char *Tkeys[] = {
 	"\033[8^"	/* C-end */
 };
 
+/** The key mask of defined special keys. */
 unsigned Key_mask = KEY_MASK;
 
-/* stack and vars for t[un]getkb / tkbrdy */
-#define CSTACK 16 /* must be power of 2 */
-static Byte cstack[CSTACK];
-static int cptr = -1;
-static int cpushed;
-static bool Pending;
+/** The size of the keyboard input stack. Must be a power of 2 */
+#define CSTACK 16
+static Byte cstack[CSTACK]; /**< The keyboard input stack */
+static int cptr = -1; /**< Current pointer in keyboard input stack. */
+static int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
+static bool Pending; /**< Set to true if poll stdin detected input. */
 
+/** This is the lowest level keyboard routine. It reads the keys into
+ * a stack then returns the keys one at a time. When the stack is
+ * consumed it reads again.
+ *
+ * The read can block.
+ */
 static Byte tgetkb(void)
 {
 	cptr = (cptr + 1) & (CSTACK - 1);
@@ -85,7 +92,8 @@ static Byte tgetkb(void)
 	return cstack[cptr];
 }
 
-/* Xterm supports motion events but rxvt does not.
+/** Enable or disable mouse commands.
+ * Xterm supports motion events but rxvt does not.
  * Hint: Rxvt*termName: rxvt
  */
 void set_mouse(bool enable)
@@ -133,7 +141,7 @@ void set_mouse(bool enable)
 	if (n < 0) Dbg("Unable to set mouse mode.\n");
 }
 
-
+/** Handle a mouse command. */
 static int do_mouse(void)
 {
 	Byte button, col, row;
@@ -210,6 +218,9 @@ void handle_mouse_cursor(void)
 }
 #endif
 
+/** Check if the keyboard input is "special", i.e. One of the
+ * multi-byte #Tkeys or a mouse cmd.
+ */
 static int check_specials(void)
 {
 	int i, j, bit, mask = Key_mask;
@@ -239,6 +250,7 @@ static int check_specials(void)
 	return tgetkb() & 0x7f;
 }
 
+/** Get keyboard input. Handles the special keys. */
 int tgetcmd(void)
 {
 	int cmd = tgetkb() & 0x7f;
@@ -250,8 +262,10 @@ int tgetcmd(void)
 	return cmd;
 }
 
+/** A static pollfd for stdin. */
 static struct pollfd stdin_fd = { .fd = 0, .events = POLLIN };
 
+/** Is there a key waiting? Non-blocking command. */
 bool tkbrdy(void)
 {
 	if (cpushed || Pending)
@@ -260,6 +274,7 @@ bool tkbrdy(void)
 	return Pending = poll(&stdin_fd, 1, 0) == 1;
 }
 
+/** Delay for a set time or until there is keyboard input. */
 bool tdelay(int ms)
 {
 	if (InPaw || cpushed || Pending)

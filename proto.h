@@ -155,7 +155,6 @@ int ask(const char *);
 int ask2(const char *, bool);
 int bgetcol(bool, int);
 int bmakecol(int);
-bool bstrsearch(const char *, bool);
 void zswitchto(struct zbuff *);
 struct zbuff *cfindbuff(const char *);
 struct zbuff *cfindzbuff(struct buff *buff);

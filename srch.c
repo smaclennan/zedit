@@ -35,6 +35,14 @@ static int searchdir[2];	/* Current direction for Again. */
 #define QHELP	\
 "Options: ' ' 'y'=change; 'n'=don't; '.'=change & quit; 'u'=undo; '^G'=quit"
 
+static bool bstrsearch(const char *str, bool forward)
+{
+	if (forward)
+		return bm_search(Bbuff, str, Curbuff->bmode & EXACT);
+	else
+		return bm_rsearch(Bbuff, str, Curbuff->bmode & EXACT);
+}
+
 static void doincsrch(const char *prompt, bool forward)
 {
 	bool go = true;
@@ -455,14 +463,6 @@ static bool dosearch(void)
 	}
 	Arg = 0;
 	return fcnt;
-}
-
-bool bstrsearch(const char *str, bool forward)
-{
-	if (forward)
-		return bm_search(Bbuff, str, Curbuff->bmode & EXACT);
-	else
-		return bm_rsearch(Bbuff, str, Curbuff->bmode & EXACT);
 }
 
 char *nocase(const char *prompt)

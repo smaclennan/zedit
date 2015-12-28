@@ -18,7 +18,9 @@ void undo_add(int size, bool clumped);
 /* These can be used with files... but where written to use with
  * sockets. */
 
-/* Simple version. Optimized for appends. */
+/** Read from a file descriptor using readv.  Simple version,
+ * optimized for appends. Can be used for file but meant for sockets.
+ */
 int bread(struct buff *buff, int fd)
 {
 	int n, n_read;
@@ -72,7 +74,9 @@ int bread(struct buff *buff, int fd)
 	return n_read;
 }
 
-/* Writes are easy! Leaves the point at the end of the write. */
+/** Write to a file descriptor using writev.  Can be used for file but
+ * meant for sockets. Leaves the point at the end of the write.
+*/
 int bwrite(struct buff *buff, int fd, int size)
 {
 	struct iovec iovs[MAX_IOVS];

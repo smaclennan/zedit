@@ -10,9 +10,11 @@
 #define buff() (*buff->curcptr)
 #define buffint() ((uint8_t)buff())
 
-/* This is an implementation of the Boyer-Moore Search.
+/** This is an implementation of the Boyer-Moore Search.
  * It uses the delta1 only with the fast/slow loops.
  * It searches for the string 'str' starting at the current buffer location.
+ * If sensitive is false, then the match is case insensitive.
+ * The point is left at the byte after the search str.
  */
 bool bm_search(struct buff *buff, const char *str, bool sensitive)
 {
@@ -63,6 +65,12 @@ bool bm_search(struct buff *buff, const char *str, bool sensitive)
 	return false;
 }
 
+/** This is an implementation of the Boyer-Moore Search that searches backwards.
+ * It uses the delta1 only with the fast/slow loops.
+ * It searches for the string 'str' starting at the current buffer location.
+ * If sensitive is false, then the match is case insensitive.
+ * The point is left at the start of the search str.
+ */
 bool bm_rsearch(struct buff *buff, const char *str, bool sensitive)
 {
 	int delta[NUMASCII], len, i;

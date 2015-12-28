@@ -143,7 +143,7 @@ static bool out_str(struct buff *buff, const char *s, int saw_neg, int len)
 
 /** Insert a string. Uses variable arguments.
  *
- * Supports a subset of printf: %s, %d, %u. Format can contain a width
+ * Supports a subset of printf: %%s, %%d, %%u. Format can contain a width
  * and a minus (-) for left justify.
  */
 bool binstr(struct buff *buff, const char *fmt, ...)

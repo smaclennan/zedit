@@ -11,6 +11,10 @@
 
 #define MAX_IOVS 16
 
+#ifdef UNDO
+void undo_add(int size, bool clumped);
+#endif
+
 /* These can be used with files... but where written to use with
  * sockets. */
 
@@ -96,4 +100,134 @@ int bwrite(struct buff *buff, int fd, int size)
 		bmove(buff, n);
 
 	return n;
+}
+
+/* Some bulk insert routines that are handy with sockets. */
+
+/* You must guarantee we are at the end of the page */
+static int bappendpage(struct buff *buff, Byte *data, int size)
+{
+	int appended = 0;
+
+	/* Fill the current page */
+	int n, left = PSIZE - curplen(buff);
+	if (left > 0) {
+		n = MIN(left, size);
+		memcpy(buff->curcptr, data, n);
+		buff->curcptr += n;
+		buff->curchar += n;
+		curplen(buff) += n;
+		size -= n;
+		data += n;
+		appended += n;
+#ifdef UNDO
+		undo_add(n, false);
+#endif
+	}
+
+	/* Put the rest in new pages */
+	while (size > 0) {
+		struct page *npage = newpage(buff->curpage);
+		if (!npage)
+			return appended;
+		makecur(buff, npage, 0);
+
+		n = MIN(PSIZE, size);
+		memcpy(buff->curcptr, data, n);
+		curplen(buff) = n;
+		makeoffset(buff, n);
+#ifdef UNDO
+		undo_add(n, appended != 0);
+#endif
+		size -= n;
+		data += n;
+		appended += n;
+	}
+
+	return appended;
+}
+
+/** Append data to the end of the buffer. Point is left at the end of
+ * the buffer. Returns how much data was actually appended.
+ */
+int bappend(struct buff *buff, Byte *data, int size)
+{
+	btoend(buff);
+	return bappendpage(buff, data, size);
+}
+
+/* Simple version to start.
+ * Can use size / PSIZE + 1 + 1 pages.
+ */
+/** Insert data at the current point. Point is left at the end of the
+ * inserted data. Returns how much data was actually inserted.
+ */
+int bindata(struct buff *buff, Byte *data, int size)
+{
+	struct page *npage;
+	int n, copied = 0;
+
+	/* If we can append... use append */
+	if (buff->curchar == curplen(buff))
+		return bappendpage(buff, data, size);
+
+	n = PSIZE - curplen(buff);
+	if (n >= size) {
+		/* fits in this page */
+		n = curplen(buff) - buff->curchar;
+		memmove(buff->curcptr + size, buff->curcptr, n);
+		memcpy(buff->curcptr, data, size);
+		struct mark *m;
+		foreach_global_pagemark(buff, m, buff->curpage)
+			if (m->moffset >= buff->curchar)
+				m->moffset += size;
+		foreach_pagemark(buff, m, buff->curpage)
+			if (m->moffset >= buff->curchar)
+				m->moffset += size;
+		buff->curcptr += size;
+		buff->curchar += size;
+		curplen(buff) += size;
+#ifdef UNDO
+		undo_add(size, false);
+#endif
+		return size;
+	}
+
+	n = curplen(buff) - buff->curchar;
+	if (n > 0) {
+		if (!pagesplit(buff, buff->curchar))
+			return copied;
+
+		/* Copy as much as possible to the end of this page */
+		n = MIN(PSIZE - buff->curchar, size);
+		memcpy(buff->curcptr, data, n);
+		data += n;
+		size -= n;
+#ifdef UNDO
+		undo_add(n, copied > 0);
+#endif
+		copied += n;
+		buff->curcptr += n;
+		buff->curchar += n;
+		curplen(buff) = buff->curchar;
+	}
+
+	while (size > 0) {
+		if (!(npage = newpage(buff->curpage)))
+			break;
+
+		n = MIN(PSIZE, size);
+		memcpy(npage->pdata, data, n);
+		data += n;
+		size -= n;
+#ifdef UNDO
+		undo_add(n, copied > 0);
+#endif
+		copied += n;
+
+		makecur(buff, npage, n);
+		curplen(buff) = n;
+	}
+
+	return copied;
 }

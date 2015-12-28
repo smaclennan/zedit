@@ -174,7 +174,8 @@ bool binstr(struct buff *buff, const char *fmt, ...)
 	return rc;
 }
 
-void bdelete(struct buff *buff, int quantity)
+/** Delete quantity characters from the buffer at the current point. */
+void bdelete(struct buff *buff, unsigned quantity)
 {
 	int quan, noffset;
 	struct page *tpage, *curpage = buff->curpage;
@@ -247,13 +248,9 @@ void bdelete(struct buff *buff, int quantity)
 	bsetmod(buff);
 }
 
-/* Move the point relative to its current position.
- *
- * This routine is the most time-consuming routine in the editor.
- * Because of this, it is highly optimized. makeoffset() calls have
- * been inlined here.
- *
- * Since bmove(1) is used the most, a special call has been made.
+/** Move the point relative to its current position. The move can be
+ * forward (positive dist) or backwards (negative dist). Returns true
+ * if the full move was possible.
  */
 bool bmove(struct buff *buff, int dist)
 {
@@ -286,6 +283,7 @@ bool bmove(struct buff *buff, int dist)
 	return true;
 }
 
+/** Moves the point forward one. This function is highly optimized. */
 void bmove1(struct buff *buff)
 {
 	if (++buff->curchar < curplen(buff))
@@ -329,7 +327,7 @@ void toendline(struct buff *buff)
 		bmove(buff, -1);
 }
 
-/* Returns the length of the buffer. */
+/** Return the length of the buffer. */
 unsigned long blength(struct buff *tbuff)
 {
 	struct page *tpage;
@@ -341,7 +339,7 @@ unsigned long blength(struct buff *tbuff)
 	return len;
 }
 
-/* Return the current position of the point. */
+/** Return the current position of the point as an index. */
 unsigned long blocation(struct buff *buff)
 {
 	struct page *tpage;
@@ -353,6 +351,12 @@ unsigned long blocation(struct buff *buff)
 	return len + buff->curchar;
 }
 
+/** Search forward for a single byte. If byte found leaves point at
+ * byte and returns true. If not found leaves point at the end of
+ * buffer and returns false.
+ *
+ * More efficient than bcrsearch().
+ */
 bool bcsearch(struct buff *buff, Byte what)
 {
 	Byte *n;
@@ -372,6 +376,10 @@ bool bcsearch(struct buff *buff, Byte what)
 	return true;
 }
 
+/** Search backward for a single byte. If byte found leaves point at
+ * byte and returns true. If not found leaves point at the start of
+ * buffer and returns false.
+ */
 bool bcrsearch(struct buff *buff, Byte what)
 {
 	while (1) {
@@ -389,6 +397,10 @@ bool bcrsearch(struct buff *buff, Byte what)
 	}
 }
 
+/** Delete all bytes from a buffer and leave it with one empty page
+ * (ala bcreate()). More efficient than bdlete(blength(buff)) since it
+ * works on pages rather than bytes.
+ */
 void bempty(struct buff *buff)
 {
 	makecur(buff, buff->firstp, 0);
@@ -415,7 +427,7 @@ void bempty(struct buff *buff)
 	bsetmod(buff);
 }
 
-/* Peek the previous byte */
+/** Peek the previous byte. Does not move the point. Returns LF at start of buffer. */
 Byte bpeek(struct buff *buff)
 {
 	if (buff->curchar > 0)
@@ -433,6 +445,7 @@ Byte bpeek(struct buff *buff)
 	}
 }
 
+/** Move the point to a given absolute offset in the buffer. */
 void boffset(struct buff *buff, unsigned long offset)
 {
 	struct page *tpage;
@@ -447,130 +460,7 @@ void boffset(struct buff *buff, unsigned long offset)
 	makecur(buff, tpage, offset);
 }
 
-/* You must guarantee we are at the end of the page */
-static int bappendpage(struct buff *buff, Byte *data, int size)
-{
-	int appended = 0;
-
-	/* Fill the current page */
-	int n, left = PSIZE - curplen(buff);
-	if (left > 0) {
-		n = MIN(left, size);
-		memcpy(buff->curcptr, data, n);
-		buff->curcptr += n;
-		buff->curchar += n;
-		curplen(buff) += n;
-		size -= n;
-		data += n;
-		appended += n;
-#ifdef UNDO
-		undo_add(n, false);
-#endif
-	}
-
-	/* Put the rest in new pages */
-	while (size > 0) {
-		struct page *npage = newpage(buff->curpage);
-		if (!npage)
-			return appended;
-		makecur(buff, npage, 0);
-
-		n = MIN(PSIZE, size);
-		memcpy(buff->curcptr, data, n);
-		curplen(buff) = n;
-		makeoffset(buff, n);
-#ifdef UNDO
-		undo_add(n, appended != 0);
-#endif
-		size -= n;
-		data += n;
-		appended += n;
-	}
-
-	return appended;
-}
-
-/** Append data to the end of the buffer. Point is left at the end of the buffer. */
-int bappend(struct buff *buff, Byte *data, int size)
-{
-	btoend(buff);
-	return bappendpage(buff, data, size);
-}
-
-/* Simple version to start.
- * Can use size / PSIZE + 1 + 1 pages.
- */
-int bindata(struct buff *buff, Byte *data, int size)
-{
-	struct page *npage;
-	int n, copied = 0;
-
-	/* If we can append... use append */
-	if (buff->curchar == curplen(buff))
-		return bappendpage(buff, data, size);
-
-	n = PSIZE - curplen(buff);
-	if (n >= size) {
-		/* fits in this page */
-		n = curplen(buff) - buff->curchar;
-		memmove(buff->curcptr + size, buff->curcptr, n);
-		memcpy(buff->curcptr, data, size);
-		struct mark *m;
-		foreach_global_pagemark(buff, m, buff->curpage)
-			if (m->moffset >= buff->curchar)
-				m->moffset += size;
-		foreach_pagemark(buff, m, buff->curpage)
-			if (m->moffset >= buff->curchar)
-				m->moffset += size;
-		buff->curcptr += size;
-		buff->curchar += size;
-		curplen(buff) += size;
-#ifdef UNDO
-		undo_add(size, false);
-#endif
-		return size;
-	}
-
-	n = curplen(buff) - buff->curchar;
-	if (n > 0) {
-		if (!pagesplit(buff, buff->curchar))
-			return copied;
-
-		/* Copy as much as possible to the end of this page */
-		n = MIN(PSIZE - buff->curchar, size);
-		memcpy(buff->curcptr, data, n);
-		data += n;
-		size -= n;
-#ifdef UNDO
-		undo_add(n, copied > 0);
-#endif
-		copied += n;
-		buff->curcptr += n;
-		buff->curchar += n;
-		curplen(buff) = buff->curchar;
-	}
-
-	while (size > 0) {
-		if (!(npage = newpage(buff->curpage)))
-			break;
-
-		n = MIN(PSIZE, size);
-		memcpy(npage->pdata, data, n);
-		data += n;
-		size -= n;
-#ifdef UNDO
-		undo_add(n, copied > 0);
-#endif
-		copied += n;
-
-		makecur(buff, npage, n);
-		curplen(buff) = n;
-	}
-
-	return copied;
-}
-
-/* Go forward or back past a thingy */
+/** Go forward or back past a thingy */
 void bmovepast(struct buff *buff, int (*pred)(int), bool forward)
 {
 	if (!forward)
@@ -581,7 +471,7 @@ void bmovepast(struct buff *buff, int (*pred)(int), bool forward)
 		bmove1(buff);
 }
 
-/* Go forward or back to a thingy */
+/** Go forward or back to a thingy */
 void bmoveto(struct buff *buff, int (*pred)(int), bool forward)
 {
 	if (!forward)

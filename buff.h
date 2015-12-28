@@ -62,7 +62,7 @@ extern void (*bsetmod)(struct buff *buff);
 struct buff *bcreate(void);
 void bdelbuff(struct buff *);
 bool binsert(struct buff *, Byte);
-void bdelete(struct buff *, int);
+void bdelete(struct buff *, unsigned);
 bool bmove(struct buff *, int);
 void bmove1(struct buff *);
 void btostart(struct buff *);

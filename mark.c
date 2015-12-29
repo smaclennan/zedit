@@ -12,12 +12,18 @@
 #include "buff.h"
 
 #ifdef HAVE_GLOBAL_MARKS
+/** Global mark list. The buffer code keeps the marks in this list
+ * up to date.
+ */
 struct mark *Marklist;	/* the marks list tail */
 #endif
 
 #ifdef HAVE_FREEMARK
-/* Keeping one freemark is a huge win for very little code in single
- * threaded apps.
+/**
+ * The freemark keeps one mark around so that bcremark() can use the
+ * freemark rather than allocating a new mark. Since a lot of
+ * functions just need to allocate one mark, this is a huge win for
+ * very little code.
  */
 struct mark *freemark;
 #endif

@@ -23,11 +23,10 @@
 #define O_BINARY 0
 #endif
 
-/*
- * Load the file 'fname' into the current buffer.
- * Returns  0  successfully opened file
- * > 0 (errno) on error
- * -1 on gzdopen error
+/**
+ * Load the file 'fname' into the current buffer.  Returns 0
+ * successfully opened file, > 0 (errno) on error, -1 on gzdopen
+ * error.
  */
 int breadfile(struct buff *buff, const char *fname, int *compressed)
 {
@@ -85,6 +84,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 }
 
 #if ZLIB
+/** Write out a file compressed. */
 static bool bwritegzip(struct buff *buff, int fd)
 {
 	struct page *tpage;
@@ -108,6 +108,7 @@ static bool bwritegzip(struct buff *buff, int fd)
 }
 #endif
 
+/** Write out a file normally. */
 static bool bwritefd(struct buff *buff, int fd)
 {
 	struct mark smark;
@@ -128,6 +129,7 @@ static bool bwritefd(struct buff *buff, int fd)
 	return status;
 }
 
+/** Write out a DOS file. Converts LF to CR LF. */
 static bool bwritedos(struct buff *buff, int fd)
 {
 	struct mark smark;
@@ -160,7 +162,7 @@ static bool bwritedos(struct buff *buff, int fd)
 	return status;
 }
 
-/* Write the buffer to the file 'fname'.
+/** Write the buffer to the file 'fname'.
  * Mode is umask + FILE_COMPRESSED + FILE_CRLF
  * Returns:	true if write successful.
  */

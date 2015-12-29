@@ -26,6 +26,10 @@ static bool advance(struct buff *buff, regex_t *re, struct mark *REstart)
 	}
 }
 
+/** Step through the buffer looking for a regular expression. If
+ * REstart is non-null, then it points to the start of the match. The
+ * point is left at the end of the match.
+ */
 bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 {
 	struct mark tmark;
@@ -48,6 +52,7 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 	return false;
 }
 
+/** Compile a regular expression. */
 int re_compile(regexp_t *re, const char *regex, int cflags)
 {
 	re->circf = *regex == '^';
@@ -55,13 +60,16 @@ int re_compile(regexp_t *re, const char *regex, int cflags)
 	return regcomp(&re->re, regex, cflags);
 }
 
+/** Free a regular expression */
 void re_free(regexp_t *re) { regfree(&re->re); }
 
+/** Convert a regular expression error to a string. */
 int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
 {
 	return regerror(errcode, &preg->re, errbuf, errbuf_size);
 }
 
+/** Check if a regular expression matches at the point. */
 bool lookingat(struct buff *buff, char *str)
 {
 	regexp_t re;

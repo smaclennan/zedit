@@ -59,10 +59,6 @@ long bcopyrgn(struct mark *, struct buff*);
 long bdeltomrk(struct mark *);
 
 #ifdef HAVE_GLOBAL_MARKS
-/**
- * Global mark list. The buffer code keeps the marks in this list
- * up to date.
- */
 extern struct mark *Marklist;
 
 #define foreach_global_pagemark(buff, mark, page)				   \
@@ -90,12 +86,6 @@ extern struct mark *Marklist;
 #endif
 
 #ifdef HAVE_FREEMARK
-/**
- * The freemark keeps one mark around so that bcremark() can use the
- * freemark rather than allocating a new mark. Since a lot of
- * functions just need to allocate one mark, this is a huge win for
- * very little code.
- */
 extern struct mark *freemark;
 #endif
 

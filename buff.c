@@ -34,6 +34,7 @@ void undo_del(int size);
 void undo_clear(struct buff *buff);
 #endif
 
+/** Default #bsetmod function. Does nothing ;) */
 static void dummy_bsetmod(struct buff *buff) {}
 /** If you need to know when the buffer is modified, this callback
  * will get called to notify you. By default it is set to a dummy
@@ -109,6 +110,7 @@ bool binsert(struct buff *buff, Byte byte)
 	return true;
 }
 
+/** Helper function for binstr(). */
 static char valid_format(const char *fmt, int *saw_neg, int *len, int *n)
 {
 	*saw_neg = *len = *n = 0;
@@ -125,6 +127,7 @@ static char valid_format(const char *fmt, int *saw_neg, int *len, int *n)
 	return *fmt;
 }
 
+/** Helper function for binstr(). */
 static bool out_str(struct buff *buff, const char *s, int saw_neg, int len)
 {
 	int slen = strlen(s);

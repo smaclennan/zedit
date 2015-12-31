@@ -16,17 +16,17 @@ union number {
 };
 
 struct calc {
-	char *ops;
-	int cur_op;
-	int max_ops;
+	char *ops;			/**< Stack of operators. */
+	int cur_op;			/**< Current pointer in operator stack. */
+	int max_ops;		/**< Maximum number of operators/numbers. */
 
-	union number *nums;
-	int cur_num;
+	union number *nums; /**< Stack of numbers. */
+	int cur_num;		/**< Current pointer in numbers stack. */
 
-	jmp_buf failed;
+	jmp_buf failed;		/**< Errors longjmp to here. */
 
-	int is_float;
-	union number result;
+	int is_float;		/**< Are we dealing with floats? */
+	union number result;/**< The result. */
 };
 
 int calc(struct calc *c, char *p);

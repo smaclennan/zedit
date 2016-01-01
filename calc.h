@@ -10,6 +10,9 @@
 #define CALC_SYNTAX_ERROR   2
 #define CALC_INTERNAL_ERROR 3
 
+/** If you can't figure this one out, you probably shouldn't be
+ * looking at this code.
+ */
 union number {
 	long i;
 	double f;

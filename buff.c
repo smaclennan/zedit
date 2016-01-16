@@ -189,7 +189,7 @@ bool binstr(struct buff *buff, const char *fmt, ...)
 /** Delete quantity characters from the buffer at the current point. */
 void bdelete(struct buff *buff, unsigned quantity)
 {
-	int quan, noffset;
+	unsigned quan, noffset;
 	struct page *tpage, *curpage = buff->curpage;
 
 	while (quantity > 0) {
@@ -270,7 +270,7 @@ bool bmove(struct buff *buff, int dist)
 		struct page *curpage = buff->curpage;
 
 		dist += buff->curchar;
-		if (dist >= 0 && dist < curplen(buff)) {
+		if (dist >= 0 && (unsigned)dist < curplen(buff)) {
 			/* within current page makeoffset dist */
 			makeoffset(buff, dist);
 			return true;

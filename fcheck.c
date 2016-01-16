@@ -81,14 +81,14 @@ int main(int argc, char *argv[])
 
 	if (NUMVARS != VARSNUM) {
 		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",
-		       NUMVARS, VARSNUM);
+			   NUMVARS, VARSNUM);
 		err = 1;
 	}
 
 	s1 = sizeof(key_label) / sizeof(char *);
 	if (N_KEYS != NUM_SPECIAL || s1 != NUM_SPECIAL) {
 		printf("Mismatch N_KEYS %d NUM_SPECIAL %d labels %d\n",
-		       N_KEYS, NUM_SPECIAL, s1);
+			   N_KEYS, NUM_SPECIAL, s1);
 		err = 1;
 	}
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 			mask = (mask << 1) | 1;
 		if (mask != KEY_MASK) {
 			printf("Mismatch mask %08lx and %08lx\n",
-			       mask, (unsigned long)KEY_MASK);
+				   mask, (unsigned long)KEY_MASK);
 			err = 1;
 		}
 	}
@@ -121,19 +121,19 @@ int main(int argc, char *argv[])
 		}
 
 		if (Keys[CX('1')] != ZONE_WINDOW ||
-		    Keys[CX('=')] != ZPOSITION ||
-		    Keys[CX('O')] != ZNEXT_WINDOW ||
-		    Keys[CX('Z')] != ZZAP_TO_CHAR ||
-		    Keys[CX(127)] != ZDELETE_PREVIOUS_WORD) {
+			Keys[CX('=')] != ZPOSITION ||
+			Keys[CX('O')] != ZNEXT_WINDOW ||
+			Keys[CX('Z')] != ZZAP_TO_CHAR ||
+			Keys[CX(127)] != ZDELETE_PREVIOUS_WORD) {
 			printf("Problems with Keys array 2\n");
 			err = 1;
 		}
 
 		if (Keys[M('A')] != ZAGAIN ||
-		    Keys[M('Z')] != ZSAVE_AND_EXIT ||
-		    Keys[TC_UP] != ZPREVIOUS_LINE ||
-		    Keys[TC_F12] != ZREVERT_FILE ||
-		    Keys[M(127)] != ZDELETE_PREVIOUS_WORD) {
+			Keys[M('Z')] != ZSAVE_AND_EXIT ||
+			Keys[TC_UP] != ZPREVIOUS_LINE ||
+			Keys[TC_F12] != ZREVERT_FILE ||
+			Keys[M(127)] != ZDELETE_PREVIOUS_WORD) {
 			printf("Problems with Keys array 3\n");
 			err = 1;
 		}
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
 	for (s1 = 1; s1 < NUMFUNCS; ++s1) {
 		if (strcasecmp(Cnames[s1].name, Cnames[s1 - 1].name) <= 0) {
 			printf("Problem: (%d) %s and %s\n",
-			    s1, Cnames[s1 - 1].name, Cnames[s1].name);
+				s1, Cnames[s1 - 1].name, Cnames[s1].name);
 			err = 1;
 		}
 		if (strlen(Cnames[s1].name) > (size_t)30) {
@@ -168,21 +168,27 @@ int main(int argc, char *argv[])
 	for (s1 = 1; s1 < NUMVARS; ++s1)
 		if (strcasecmp(Vars[s1].vname, Vars[s1 - 1].vname) <= 0) {
 			printf("Problem: (%d) %s and %s\n",
-			    s1, Vars[s1 - 1].vname, Vars[s1].vname);
+				s1, Vars[s1 - 1].vname, Vars[s1].vname);
 			err = 1;
 		}
 
 	/* getplete structs must be aligned */
 	if (sizeof(struct cnames) % sizeof(char *)) {
 		printf("struct cnames not aligned [%d/%d]\n",
-		       (int)sizeof(struct cnames), (int)sizeof(char *));
+			   (int)sizeof(struct cnames), (int)sizeof(char *));
 		err = 1;
 	}
 	if (sizeof(struct avar) % sizeof(char *)) {
 		printf("struct avar not aligned [%d/%d]\n",
-		       (int)sizeof(struct avar), (int)sizeof(char *));
+			   (int)sizeof(struct avar), (int)sizeof(char *));
 		err = 1;
 	}
+
+#ifdef WIN32
+	if (err) {
+		printf("Problems found! Hit enter to exit:"); getchar();
+	}
+#endif
 
 	return err;
 }

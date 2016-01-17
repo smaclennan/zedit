@@ -202,27 +202,51 @@ void Zdelete_blanks(void)
 {
 	struct mark *pmark = bcremark(Bbuff);
 	struct mark *tmark = bcremark(Bbuff);
-	if (pmark && tmark) {
-		if (bcrsearch(Bbuff, NL)) {
-			bmove1(Bbuff);
-			bmrktopnt(Bbuff, tmark);
-			movepast(isspace, BACKWARD);
-			if (!bisstart(Bbuff))
-				bcsearch(Bbuff, NL);
-			if (bisbeforemrk(Bbuff, tmark))
-				bdeltomrk(tmark);
-		}
-		if (bcsearch(Bbuff, NL)) {
-			bmrktopnt(Bbuff, tmark);
-			movepast(isspace, FORWARD);
-			if (bcrsearch(Bbuff, NL))
-				bmove1(Bbuff);
-			if (bisaftermrk(Bbuff, tmark))
-				bdeltomrk(tmark);
-		}
-	} else
+	if (!pmark || !tmark) {
 		tbell();
-	bpnttomrk(Bbuff, pmark);
+		goto done;
+	}
+
+	if (Argp) {
+		regexp_t re;
+		Arg = 0;
+
+		if (re_compile(&re, "^[ \t]*\r?$", REG_EXTENDED)) {
+			error("Internal re error.");
+			goto done;
+		}
+
+		btostart(Bbuff);
+		while (re_step(Bbuff, &re, tmark)) {
+			bmove1(Bbuff); /* skip over the NL */
+			bdeltomrk(tmark);
+		}
+
+		re_free(&re);
+		goto done;
+	}
+
+	if (bcrsearch(Bbuff, NL)) {
+		bmove1(Bbuff);
+		bmrktopnt(Bbuff, tmark);
+		movepast(isspace, BACKWARD);
+		if (!bisstart(Bbuff))
+			bcsearch(Bbuff, NL);
+		if (bisbeforemrk(Bbuff, tmark))
+			bdeltomrk(tmark);
+	}
+	if (bcsearch(Bbuff, NL)) {
+		bmrktopnt(Bbuff, tmark);
+		movepast(isspace, FORWARD);
+		if (bcrsearch(Bbuff, NL))
+			bmove1(Bbuff);
+		if (bisaftermrk(Bbuff, tmark))
+			bdeltomrk(tmark);
+	}
+
+done:
+	if (pmark)
+		bpnttomrk(Bbuff, pmark);
 	unmark(pmark);
 	unmark(tmark);
 }

@@ -96,9 +96,10 @@ struct cnames Cnames[] = {
 	{"ctrl-x",			ZCTRL_X,		0,
 	 C("Command prefix.")
 	},
-	{"delete-blanks",		ZDELETE_BLANKS,		AN,
-	 C("Delete all the blank lines around the Point. The lines are not "
-	   "put in the Kill Buffer.")
+	{"delete-blanks",		ZDELETE_BLANKS,		0,
+	 C("Delete all the blank lines around the Point. With a Universal Argument "
+	   "all blanks lines in the file are deleted. The lines are NOT put in the "
+	   "Kill Buffer.")
 	},
 	{"delete-buffer",		ZDELETE_BUFFER,		0,
 	 C("Deletes the current buffer and goes to a previous buffer. There "

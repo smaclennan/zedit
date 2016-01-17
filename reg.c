@@ -36,15 +36,14 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 
 	if (REstart == NULL) REstart = &tmark;
 
-	/* ^ must match from start */
-	if (re->circf)
-		/* if not at the start of the current line - go to the
-		 * next line */
-		if (bpeek(buff) != '\n')
-			bcsearch(buff, '\n');	/* goto next line */
-
-	/* regular algorithm */
 	while (!bisend(buff)) {
+		/* ^ must match from start */
+		if (re->circf)
+			/* if not at the start of the current line - go to the
+			 * next line */
+			if (bpeek(buff) != '\n')
+				bcsearch(buff, '\n');	/* goto next line */
+
 		bmrktopnt(buff, REstart);
 		if (advance(buff, &re->re, REstart))
 			return true;

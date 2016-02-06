@@ -32,4 +32,8 @@ void tforce(void);
 void tputchar(Byte ch);
 void t_goto(int row, int col);
 void t_cleol(void);
+
+/** Keyboard input. */
+Byte tgetkb(void);
+
 #endif

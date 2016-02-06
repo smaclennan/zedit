@@ -23,6 +23,9 @@
 #include <gpm.h>
 #endif
 
+/* Make sure we don't pickup the tgetkb from tinit.c */
+#define tgetkb bogus
+
 /** The special multi-byte keys. Note: We can currently only have 32 specials */
 char *Tkeys[] = {
 	"\033[A",	/* up */
@@ -70,7 +73,7 @@ static bool Pending; /**< Set to true if poll stdin detected input. */
  *
  * The read can block.
  */
-static Byte tgetkb(void)
+static Byte _tgetkb(void)
 {
 	cptr = (cptr + 1) & (CSTACK - 1);
 	if (cpushed)
@@ -145,10 +148,10 @@ static int do_mouse(void)
 {
 	Byte button, col, row;
 
-	tgetkb(); tgetkb(); tgetkb(); /* suck up \033[M */
-	button = tgetkb();
-	col = tgetkb() - 33; /* zero based */
-	row = tgetkb() - 33; /* zero based */
+	_tgetkb(); _tgetkb(); _tgetkb(); /* suck up \033[M */
+	button = _tgetkb();
+	col = _tgetkb() - 33; /* zero based */
+	row = _tgetkb() - 33; /* zero based */
 
 	switch (button & 0x60) {
 	case 0x20:
@@ -188,7 +191,7 @@ static int need_mouse_cursor;
 void handle_gpm_mouse(void)
 {
 	Gpm_GetEvent(&event);
-	
+
 	switch (GPM_BARE_EVENTS(event.type)) {
 	case GPM_DOWN:
 		switch (event.buttons) {
@@ -225,7 +228,7 @@ static int check_specials(void)
 	int i, j, bit, mask = Key_mask;
 
 	for (j = 1; mask; ++j) {
-		int cmd = tgetkb() & 0x7f;
+		int cmd = _tgetkb() & 0x7f;
 		for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
 			if ((mask & bit) && cmd == Tkeys[i][j]) {
 				if (Tkeys[i][j + 1] == '\0')
@@ -246,13 +249,13 @@ static int check_specials(void)
 			cpushed = 2;
 	}
 
-	return tgetkb() & 0x7f;
+	return _tgetkb() & 0x7f;
 }
 
 /** Get keyboard input. Handles the special keys. */
 int tgetcmd(void)
 {
-	int cmd = tgetkb() & 0x7f;
+	int cmd = _tgetkb() & 0x7f;
 
 	/* All special keys start with ESC */
 	if (cmd == '\033' && tkbrdy())

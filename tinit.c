@@ -243,3 +243,37 @@ void tclrwind(void)
 	Prow = Pcol = 0;
 	tflush();
 }
+
+/* Keyboard input */
+
+/** The size of the keyboard input stack. Must be a power of 2 */
+#define CSTACK 16
+static Byte cstack[CSTACK]; /**< The keyboard input stack */
+static int cptr = -1; /**< Current pointer in keyboard input stack. */
+static int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
+
+/** This is the lowest level keyboard routine. It reads the keys into
+ * a stack then returns the keys one at a time. When the stack is
+ * consumed it reads again.
+ *
+ * The read can block.
+ */
+Byte tgetkb(void)
+{
+	cptr = (cptr + 1) & (CSTACK - 1);
+	if (cpushed)
+		--cpushed;
+	else {
+		Byte buff[CSTACK];
+		int i, p = cptr;
+
+		cpushed = read(0, (char *)buff, CSTACK) - 1;
+		if (cpushed < 0)
+			hang_up(1);	/* we lost connection */
+		for (i = 0; i <= cpushed; ++i) {
+			cstack[p] = buff[i];
+			p = (p + 1) & (CSTACK - 1);
+		}
+	}
+	return cstack[cptr];
+}

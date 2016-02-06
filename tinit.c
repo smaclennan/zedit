@@ -19,10 +19,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <signal.h>
 #include "tinit.h"
 
 #ifdef __unix__
+#include <unistd.h>
+
 #ifdef HAVE_TERMIO
 #include <termio.h>
 static struct termio save_tty;
@@ -42,6 +45,7 @@ HANDLE hstdin, hstdout;	/* Console in and out handles */
 
 int Prow, Pcol;
 static int Srow = -1, Scol = -1;
+static int Clrcol[ROWMAX];
 
 /* App specific init and fini */
 void __attribute__ ((weak)) tainit(void) {}
@@ -94,8 +98,50 @@ void tinit(void)
 	tainit();
 }
 
+
+void tsize(int *rows, int *cols)
+{
+#ifdef WIN32
+	static int first_time = 1;
+
+	if (first_time) {
+		/* Win8 creates a huge screen buffer (300 lines) */
+		COORD size;
+		size.X = *cols = 80;
+		size.Y = *rows = 25;
+		SetConsoleScreenBufferSize(hstdout, size);
+		first_time = 0;
+	} else {
+		CONSOLE_SCREEN_BUFFER_INFO info;
+		if (GetConsoleScreenBufferInfo(hstdout, &info)) {
+			*cols = info.dwSize.X;
+			*rows = info.dwSize.Y;
+		}
+	}
+#else
+	char buf[12];
+	int n, w;
+
+	/* Save cursor position */
+	w = write(0, "\033[s", 3);
+	/* Send the cursor to the extreme right corner */
+	w += write(0, "\033[999;999H", 10);
+	/* Ask where we really ended up */
+	w += write(0, "\033[6n", 4);
+	n = read(0, buf, sizeof(buf) - 1);
+	/* Restore cursor */
+	w += write(0, "\033[u", 3);
+
+	if (n > 0) {
+		buf[n] = '\0';
+		sscanf(buf, "\033[%d;%dR", rows, cols);
+	}
+#endif
+}
+
 /* Optimized routines to minimize output */
 
+/** Move the cursor to the current Prow+Pcol */
 void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
@@ -117,6 +163,7 @@ void tforce(void)
 	}
 }
 
+/** Print a character at the current Prow+Pcol */
 void tputchar(Byte ch)
 {
 	tforce();
@@ -128,10 +175,71 @@ void tputchar(Byte ch)
 #endif
 	++Scol;
 	++Pcol;
+	if (Clrcol[Prow] < Pcol)
+		Clrcol[Prow] = Pcol;
 }
 
+/** Move the cursor to row+col */
 void t_goto(int row, int col)
 {
 	tsetpoint(row, col);
 	tforce();
+}
+
+/** Clear from Prow+Pcol to end of line */
+void tcleol(void)
+{
+	if (Prow >= ROWMAX)
+		Prow = ROWMAX - 1;
+
+	if (Pcol < Clrcol[Prow]) {
+#ifdef WIN32
+		COORD where;
+		DWORD written;
+
+		where.X = Pcol;
+		where.Y = Prow;
+		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol,
+					   where, &written);
+
+		/* This is to clear a possible mark */
+		if (Clrcol[Prow])
+			where.X = Clrcol[Prow] - 1;
+		FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, 1,
+					   where, &written);
+#else
+		tforce();
+#ifdef TERMINFO
+		TPUTS(clr_eol);
+#elif defined(TERMCAP)
+		TPUTS(cm[1]);
+#else
+		fputs("\033[K", stdout);
+#endif
+#endif
+		Clrcol[Prow] = Pcol;
+	}
+}
+
+/** Clear the entire window (screen) */
+void tclrwind(void)
+{
+#ifdef WIN32
+	COORD where;
+	DWORD written;
+	where.X = where.Y = 0;
+	FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, COLMAX * ROWMAX,
+				   where, &written);
+	FillConsoleOutputCharacter(hstdout, ' ', COLMAX * ROWMAX,
+				   where, &written);
+#elif defined(TERMINFO)
+	TPUTS(clear_screen);
+#elif defined(TERMCAP)
+	TPUTS(cm[2]);
+#else
+	fputs("\033[2J", stdout);
+#endif
+	memset(Clrcol, 0, ROWMAX);
+	Prow = Pcol = 0;
+	tflush();
 }

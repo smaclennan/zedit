@@ -26,7 +26,6 @@
 #define ATTR_REGION	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
 #endif
 
-static int Clrcol[ROWMAX + 1];		/* Clear if past this */
 int Colmax = EOF, Rowmax;		/* Row and column maximums */
 
 int ring_bell;				/* tbell called */
@@ -129,43 +128,6 @@ void setmark(bool prntchar)
 	tstyle(T_NORMAL);
 }
 
-static void tsize(int *rows, int *cols)
-{
-#ifdef WIN32
-	if (Colmax == EOF) {
-		/* Win8 creates a huge screen buffer (300 lines) */
-		COORD size;
-		size.X = *cols = 80;
-		size.Y = *rows = 25;
-		SetConsoleScreenBufferSize(hstdout, size);
-	} else {
-		CONSOLE_SCREEN_BUFFER_INFO info;
-		if (GetConsoleScreenBufferInfo(hstdout, &info)) {
-			*cols = info.dwSize.X;
-			*rows = info.dwSize.Y;
-		}
-	}
-#else
-	char buf[12];
-	int n, w;
-
-	/* Save cursor position */
-	w = write(0, "\033[s", 3);
-	/* Send the cursor to the extreme right corner */
-	w += write(0, "\033[999;999H", 10);
-	/* Ask where we really ended up */
-	w += write(0, "\033[6n", 4);
-	n = read(0, buf, sizeof(buf) - 1);
-	/* Restore cursor */
-	w += write(0, "\033[u", 3);
-
-	if (n > 0) {
-		buf[n] = '\0';
-		sscanf(buf, "\033[%d;%dR", rows, cols);
-	}
-#endif
-}
-
 void termsize(void)
 {
 	int rows = 0, cols = 0;
@@ -201,8 +163,6 @@ void tprntchar(Byte ichar)
 
 	if (ZISPRINT(ichar)) {
 		tputchar(ichar);
-		if (Clrcol[Prow] < Pcol)
-			Clrcol[Prow] = Pcol;
 	} else
 		switch (ichar) {
 		case '\t':
@@ -276,59 +236,6 @@ int prefline(void)
 	w = wheight();
 	line = PREFLINE * w / (Rowmax - 2);
 	return line < w ? line : w >> 1;
-}
-
-void tcleol(void)
-{
-	if (Pcol < Clrcol[Prow]) {
-#ifdef WIN32
-		COORD where;
-		DWORD written;
-
-		where.X = Pcol;
-		where.Y = Prow;
-		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol,
-					   where, &written);
-
-		/* This is to clear a possible mark */
-		if (Clrcol[Prow])
-			where.X = Clrcol[Prow] - 1;
-		FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, 1,
-					   where, &written);
-#else
-		tforce();
-#ifdef TERMINFO
-		TPUTS(clr_eol);
-#elif defined(TERMCAP)
-		TPUTS(cm[1]);
-#else
-		fputs("\033[K", stdout);
-#endif
-#endif
-		Clrcol[Prow] = Pcol;
-	}
-}
-
-void tclrwind(void)
-{
-#ifdef WIN32
-	COORD where;
-	DWORD written;
-	where.X = where.Y = 0;
-	FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, Colmax * Rowmax,
-				   where, &written);
-	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
-				   where, &written);
-#elif defined(TERMINFO)
-	TPUTS(clear_screen);
-#elif defined(TERMCAP)
-	TPUTS(cm[2]);
-#else
-	fputs("\033[2J", stdout);
-#endif
-	memset(Clrcol, 0, ROWMAX);
-	Prow = Pcol = 0;
-	tflush();
 }
 
 void tstyle(int style)

@@ -107,7 +107,10 @@ static bool zwritefile(char *fname)
 	} else if (VAR(VBACKUP))
 		bak = rename(fname, bakname);
 
+	struct mark smark;
+	bmrktopnt(Bbuff, &smark);
 	rc = bwritefile(Bbuff, fname, file_mode());
+	bpnttomrk(Bbuff, &smark);
 	if (rc) {
 		if (stat(fname, &sbuf) == 0)
 			Curbuff->mtime = sbuf.st_mtime;

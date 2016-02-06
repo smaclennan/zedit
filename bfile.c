@@ -30,12 +30,15 @@
  * Load the file 'fname' into the current buffer.  Returns 0
  * successfully opened file, > 0 (errno) on error, -1 on gzdopen
  * error.
+ * Leaves point at start of buffer.
  */
 int breadfile(struct buff *buff, const char *fname, int *compressed)
 {
 	char buf[PSIZE];
 	int fd, len;
 	unsigned count = 0; /* to check for zero length files */
+
+	btostart(buff);
 
 	fd = open(fname, O_RDONLY | O_BINARY);
 	if (fd < 0)
@@ -114,11 +117,9 @@ static bool bwritegzip(struct buff *buff, int fd)
 /** Write out a file normally. */
 static bool bwritefd(struct buff *buff, int fd)
 {
-	struct mark smark;
 	struct page *tpage;
 	int n, status = true;
 
-	bmrktopnt(buff, &smark);
 	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			makecur(buff, tpage, 0);
@@ -128,20 +129,17 @@ static bool bwritefd(struct buff *buff, int fd)
 
 	close(fd);
 
-	bpnttomrk(buff, &smark);
 	return status;
 }
 
 /** Write out a DOS file. Converts LF to CR LF. */
 static bool bwritedos(struct buff *buff, int fd)
 {
-	struct mark smark;
 	struct page *tpage;
 	int n, status = true;
 	unsigned i;
 	Byte buf[PSIZE * 2], *p;
 
-	bmrktopnt(buff, &smark);
 	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int len = tpage->plen;
@@ -161,25 +159,25 @@ static bool bwritedos(struct buff *buff, int fd)
 
 	close(fd);
 
-	bpnttomrk(buff, &smark);
 	return status;
 }
 
 /** Write the buffer to the file 'fname'.
  * Mode is umask + FILE_COMPRESSED + FILE_CRLF
  * Returns:	true if write successful.
+ * Leaves point at start of buffer.
  */
 bool bwritefile(struct buff *buff, char *fname, int mode)
 {
 	int fd;
-	bool status;
+	bool status = false;
 
 	if (!fname)
-		return true;
+		goto done;
 
 	/* Write the output file */
 	if ((fd = creat(fname, mode & 0777)) < 0)
-		return false;
+		goto done;
 
 #if ZLIB
 	if (mode & FILE_COMPRESSED)
@@ -195,5 +193,7 @@ bool bwritefile(struct buff *buff, char *fname, int mode)
 	if (status)
 		buff->bmodf = false;
 
+done:
+	btostart(buff);
 	return status;
 }

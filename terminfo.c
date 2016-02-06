@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-#if TERMINFO
+#ifdef TERMINFO
 #include "zterm.h"
 
 static char *Term;

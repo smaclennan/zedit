@@ -1,10 +1,10 @@
 #ifndef _ZTERM_H_
 #define _ZTERM_H_
 
-#if TERMINFO
+#ifdef TERMINFO
 #include <term.h>
 #include <curses.h>
-#elif TERMCAP || TERMCAP_KEYS
+#elif defined(TERMCAP) || defined(TERMCAP_KEYS)
 #include <termcap.h>
 
 extern char *cm[];
@@ -13,7 +13,7 @@ extern char *cm[];
 #define tlfini()
 #endif
 
-#if TERMINFO || TERMCAP || TERMCAP_KEYS
+#if defined(TERMINFO) || defined(TERMCAP) || defined(TERMCAP_KEYS)
 #define TPUTS(s) tputs(s, 1, putchar)
 
 void tlinit(void);

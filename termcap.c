@@ -18,7 +18,7 @@
  */
 #include "z.h"
 
-#if TERMCAP || TERMCAP_KEYS
+#if defined(TERMCAP) || defined(TERMCAP_KEYS)
 #include "zterm.h"
 
 static char *key_names[] = {
@@ -86,7 +86,7 @@ static char *termcap_keys(void)
 	return end;
 }
 
-#if TERMCAP
+#ifdef TERMCAP
 #define NUMCM	7
 #define MUST	3
 char *cm[NUMCM];

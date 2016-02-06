@@ -343,9 +343,9 @@ void tforce(void)
 		where.X = Pcol;
 		where.Y = Prow;
 		SetConsoleCursorPosition(hstdout, where);
-#elif TERMINFO
+#elif defined(TERMINFO)
 		TPUTS(tparm(cursor_address, Prow, Pcol));
-#elif TERMCAP
+#elif defined(TERMCAP)
 		TPUTS(tgoto(cm[0], Pcol, Prow));
 #else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
@@ -374,9 +374,9 @@ void tcleol(void)
 					   where, &written);
 #else
 		tforce();
-#if TERMINFO
+#ifdef TERMINFO
 		TPUTS(clr_eol);
-#elif TERMCAP
+#elif defined(TERMCAP)
 		TPUTS(cm[1]);
 #else
 		fputs("\033[K", stdout);
@@ -396,9 +396,9 @@ void tclrwind(void)
 				   where, &written);
 	FillConsoleOutputCharacter(hstdout, ' ', Colmax * Rowmax,
 				   where, &written);
-#elif TERMINFO
+#elif defined(TERMINFO)
 	TPUTS(clear_screen);
-#elif TERMCAP
+#elif defined(TERMCAP)
 	TPUTS(cm[2]);
 #else
 	fputs("\033[2J", stdout);
@@ -440,7 +440,7 @@ void tstyle(int style)
 		SetConsoleTextAttribute(hstdout, ATTR_REGION);
 		break;
 	}
-#elif TERMINFO
+#elif defined(TERMINFO)
 	switch (style) {
 	case T_NORMAL:
 		TPUTS(exit_attribute_mode);
@@ -462,7 +462,7 @@ void tstyle(int style)
 		TPUTS(tparm(set_a_foreground, COLOR_RED));
 		break;
 	}
-#elif TERMCAP
+#elif defined(TERMCAP)
 	switch (style) {
 	case T_NORMAL:
 		TPUTS(cm[3]);

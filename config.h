@@ -11,10 +11,10 @@
 #define SHOW_REGION	1
 #define UNDO        1
 
-/* If not set defaults to ANSI */
-#define TERMINFO		0
-#define TERMCAP			0
-#define TERMCAP_KEYS	0
+/* If nothing defined defaults to ANSI */
+/* #define TERMINFO */
+/* #define TERMCAP */
+/* #define TERMCAP_KEYS */
 
 /* DOPIPES: Output in real time and you can continue editing.
  * default: Output in real time but you must wait until command complete.

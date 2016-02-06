@@ -33,6 +33,10 @@ set_one() {
     [ -n "$2" ] && echo "#define $1 $2" >> config.h
 }
 
+set_if_one() {
+    [ -n "$2" -a "$2" -eq 1 ] && echo "#define $1 $2" >> config.h
+}
+
 while [ -n "$1" ]; do
     case "$1" in
       --enable-*) enable=1;;
@@ -81,9 +85,9 @@ if [ $termcap = 1 -o $termcap_keys = 1 ]; then
 fi
 [ $terminfo = 1 ] && sed -i 's/#LIBS += -lcurses/LIBS += -lcurses/' Makefile
 
-set_one TERMINFO $terminfo
-set_one TERMCAP $termcap
-set_one TERMCAP_KEYS $termcap_keys
+set_if_one TERMINFO $terminfo
+set_if_one TERMCAP $termcap
+set_if_one TERMCAP_KEYS $termcap_keys
 
 if [ -f /usr/include/termios.h ]; then
     true

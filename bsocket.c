@@ -13,6 +13,8 @@
 
 #ifdef UNDO
 void undo_add(int size, bool clumped);
+#else
+#define undo_add(size, clumped)
 #endif
 
 /* These can be used with files... but where written to use with
@@ -131,9 +133,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 		size -= n;
 		data += n;
 		appended += n;
-#ifdef UNDO
 		undo_add(n, false);
-#endif
 	}
 
 	/* Put the rest in new pages */
@@ -147,9 +147,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 		memcpy(buff->curcptr, data, n);
 		curplen(buff) = n;
 		makeoffset(buff, n);
-#ifdef UNDO
 		undo_add(n, appended != 0);
-#endif
 		size -= n;
 		data += n;
 		appended += n;
@@ -198,9 +196,7 @@ int bindata(struct buff *buff, Byte *data, int size)
 		buff->curcptr += size;
 		buff->curchar += size;
 		curplen(buff) += size;
-#ifdef UNDO
 		undo_add(size, false);
-#endif
 		return size;
 	}
 
@@ -214,9 +210,7 @@ int bindata(struct buff *buff, Byte *data, int size)
 		memcpy(buff->curcptr, data, n);
 		data += n;
 		size -= n;
-#ifdef UNDO
 		undo_add(n, copied > 0);
-#endif
 		copied += n;
 		buff->curcptr += n;
 		buff->curchar += n;
@@ -231,9 +225,7 @@ int bindata(struct buff *buff, Byte *data, int size)
 		memcpy(npage->pdata, data, n);
 		data += n;
 		size -= n;
-#ifdef UNDO
 		undo_add(n, copied > 0);
-#endif
 		copied += n;
 
 		makecur(buff, npage, n);

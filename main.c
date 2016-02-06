@@ -256,5 +256,7 @@ int main(int argc, char *argv[])
 
 	printf("%-15s %8u\n", "fred", n);
 
+	tinit();
+
 	return 0;
 }

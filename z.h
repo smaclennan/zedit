@@ -218,11 +218,9 @@ char *zgetcwd(char *cwd, int len);
 #ifdef WIN32
 char *gethomedir(void);
 void tputchar(Byte c);
-#define tflush()
 #else
 #define gethomedir()		getenv("HOME")
 #define tputchar(c)		putchar(c)
-#define tflush()		fflush(stdout)
 #endif
 
 /* this is MUCH faster than an isascii isprint pair */

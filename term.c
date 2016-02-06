@@ -21,28 +21,12 @@
 #include "zterm.h"
 #include <signal.h>
 
-#ifdef __unix__
-#ifdef HAVE_TERMIO
-#include <termio.h>
-static struct termio save_tty;
-static struct termio settty;
-#define tcgetattr(fd, tty) ioctl(fd, TCGETA, tty)
-#define tcsetattr(fd, type, tty) ioctl(fd, TCSETAW, tty)
-#undef TCSAFLUSH
-#define TCSAFLUSH TCSETAF
-#else
-#include <termios.h>
-static struct termios save_tty;
-static struct termios settty;
-#endif
-#elif defined(WIN32)
+#if defined(WIN32)
 HANDLE hstdin, hstdout;	/* Console in and out handles */
 
 #define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
 #define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
 #define ATTR_REGION	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
-#else
-#error No term driver
 #endif
 
 static int Clrcol[ROWMAX + 1];		/* Clear if past this */
@@ -101,12 +85,8 @@ static void initline(void)
 	tflush();
 }
 
-static void tfini(void)
+void tafini(void)
 {
-#ifdef __unix__
-	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
-#endif
-
 	tlfini();
 
 	set_mouse(false);
@@ -114,22 +94,12 @@ static void tfini(void)
 	clrpaw();
 	t_goto(Rowmax - 1, 0);
 	tstyle(T_NORMAL);
-	tflush();
 }
 
 /* Initalize the terminal. */
-void tinit(void)
+void tainit(void)
 {
-#ifdef __unix__
-	tcgetattr(fileno(stdin), &save_tty);
-	tcgetattr(fileno(stdin), &settty);
-	settty.c_iflag = 0;
-	settty.c_oflag = TAB3;
-	settty.c_lflag = ECHOE | ECHOK;
-	settty.c_cc[VMIN] = (char) 1;
-	settty.c_cc[VTIME] = (char) 1;
-	tcsetattr(fileno(stdin), TCSANOW, &settty);
-#elif defined(WIN32)
+#ifdef WIN32
 	hstdin = GetStdHandle(STD_INPUT_HANDLE);
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -137,14 +107,10 @@ void tinit(void)
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 #endif
 
+	tlinit();
+
 	set_mouse(true);
 
-#ifdef SIGHUP
-	signal(SIGHUP,  hang_up);
-#endif
-#ifdef SIGTERM
-	signal(SIGTERM, hang_up);
-#endif
 #ifdef SIGWINCH
 	signal(SIGWINCH, sigwinch); /* window has changed size - update */
 #endif
@@ -157,16 +123,12 @@ void tinit(void)
 
 	if (Rowmax < 3) {
 		/* screen too small */
-		tfini();
 		exit(1);
 	}
-
-	tlinit();
 
 	tsetcursor(false);
 
 	initline();		/* Curwdo not defined yet */
-	atexit(tfini);
 }
 
 void setmark(bool prntchar)

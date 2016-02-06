@@ -43,7 +43,7 @@ CFILES = bcmds.c bind.c cnames.c \
 	undo.c vars.c window.c varray.c z.c zgrep.c \
 	terminfo.c termcap.c
 
-LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c calc.c
+LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c tinit.c calc.c
 
 HFILES = buff.h config.h funcs.h keys.h mark.h proto.h reg.h vars.h z.h
 
@@ -84,7 +84,7 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 main: main.c $(LFILES)
 	@rm -rf tmpdir
 	@mkdir tmpdir
-	@cp $+ buff.h calc.h mark.h reg.h tmpdir
+	@cp $+ buff.h calc.h mark.h reg.h tinit.h tmpdir
 	@echo -e "all:\n\t$(CC) -g -o $@ $+" > tmpdir/Makefile
 	@make -C tmpdir
 

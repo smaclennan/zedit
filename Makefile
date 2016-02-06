@@ -36,14 +36,14 @@ MAKEFLAGS += --no-print-directory
 
 ETAGS=`which etags || echo true`
 
-CFILES = bcmds.c bind.c calc.c cnames.c \
+CFILES = bcmds.c bind.c cnames.c \
 	comment.c commands.c cursor.c delete.c display.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	shell.c spell.c srch.c tags.c term.c \
 	undo.c vars.c window.c varray.c z.c zgrep.c \
 	terminfo.c termcap.c
 
-LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c
+LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c calc.c
 
 HFILES = buff.h config.h funcs.h keys.h mark.h proto.h reg.h vars.h z.h
 
@@ -82,7 +82,11 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 
 # This is just to check that no zedit dependencies crept into libbuff.a
 main: main.c $(LFILES)
-	$(QUIET_LINK)$(CC) -g -o $@ $+
+	@rm -rf tmpdir
+	@mkdir tmpdir
+	@cp $+ buff.h calc.h mark.h reg.h tmpdir
+	@echo -e "all:\n\t$(CC) -g -o $@ $+" > tmpdir/Makefile
+	@make -C tmpdir
 
 # Make all c files depend on all .h files
 *.o: $(HFILES)
@@ -96,15 +100,11 @@ checkit:
 doxy:
 	doxygen doxygen/Doxyfile
 
-graph:
-	@rm -f /tmp/graph
-	@../sparse/graph -D__unix__ $(CFLAGS) $(CFILES) $(LFILES)
-
 install: all
 	mkdir -p $(DESTDIR)/bin
 	install -s $(ZEXE) $(DESTDIR)/bin/z
 
 clean:
 	rm -f *.o gpm/*.o $(ZEXE) fcheck main core* TAGS valgrind.out
-	rm -rf doxygen/html
+	rm -rf doxygen/html tmpdir
 	@$(MAKE) -C docs clean

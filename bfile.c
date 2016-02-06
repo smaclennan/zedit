@@ -5,8 +5,11 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/stat.h>
+#ifndef WIN32
+#include <unistd.h>
+#endif
 
-#include "z.h"
+#include "buff.h"
 
 #if ZLIB
 #undef Byte

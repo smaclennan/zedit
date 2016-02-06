@@ -87,8 +87,10 @@ main: main.c $(LFILES)
 # Make all c files depend on all .h files
 *.o: $(HFILES)
 
+# The second sparse checks just the buffer code
 checkit:
 	@sparse -D__unix__ $(CFLAGS) $(CFILES) $(LFILES)
+	@sparse -D__unix__ $(LFILES)
 	@sparse -D__unix__ fcheck.c
 
 doxy:

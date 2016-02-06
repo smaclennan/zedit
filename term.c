@@ -18,21 +18,15 @@
  */
 
 #include "z.h"
-#include "zterm.h"
 #include <signal.h>
 
 #if defined(WIN32)
-HANDLE hstdin, hstdout;	/* Console in and out handles */
-
 #define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
 #define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
 #define ATTR_REGION	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
 #endif
 
 static int Clrcol[ROWMAX + 1];		/* Clear if past this */
-
-int Prow, Pcol;				/* Point row and column */
-static int Srow = -1 , Scol = -1;	/* Saved row and column */
 int Colmax = EOF, Rowmax;		/* Row and column maximums */
 
 int ring_bell;				/* tbell called */
@@ -100,9 +94,6 @@ void tafini(void)
 void tainit(void)
 {
 #ifdef WIN32
-	hstdin = GetStdHandle(STD_INPUT_HANDLE);
-	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
-
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 #endif
@@ -209,10 +200,7 @@ void tprntchar(Byte ichar)
 	int tcol;
 
 	if (ZISPRINT(ichar)) {
-		tforce();
 		tputchar(ichar);
-		++Scol;
-		++Pcol;
 		if (Clrcol[Prow] < Pcol)
 			Clrcol[Prow] = Pcol;
 	} else
@@ -281,12 +269,6 @@ void tprntstr(const char *str)
 		tprntchar(*str++);
 }
 
-void t_goto(int row, int col)
-{
-	tsetpoint(row, col);
-	tforce();
-}
-
 int prefline(void)
 {
 	int line, w;
@@ -294,27 +276,6 @@ int prefline(void)
 	w = wheight();
 	line = PREFLINE * w / (Rowmax - 2);
 	return line < w ? line : w >> 1;
-}
-
-void tforce(void)
-{
-	if (Scol != Pcol || Srow != Prow) {
-#ifdef WIN32
-		COORD where;
-
-		where.X = Pcol;
-		where.Y = Prow;
-		SetConsoleCursorPosition(hstdout, where);
-#elif defined(TERMINFO)
-		TPUTS(tparm(cursor_address, Prow, Pcol));
-#elif defined(TERMCAP)
-		TPUTS(tgoto(cm[0], Pcol, Prow));
-#else
-		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
-#endif
-		Srow = Prow;
-		Scol = Pcol;
-	}
 }
 
 void tcleol(void)
@@ -477,14 +438,6 @@ void tsetcursor(bool hide)
 #endif
 }
 
-#ifdef WIN32
-void tputchar(Byte c)
-{
-	DWORD written;
-	WriteConsole(hstdout, &c, 1, &written, NULL);
-}
-#endif
-
 void mouse_scroll(int row, bool down)
 {
 	struct wdo *wdo = wfind(row);
@@ -559,3 +512,10 @@ void tbell_dbg(char *func, int line)
 	Dbg("tbell %s:%d\n", func, line);
 	tbell();
 }
+
+#if !defined(TERMINFO) && !defined(TERMCAP) && !defined(TERMCAP_KEYS)
+void tlinit(void) {}
+void tlfini(void) {}
+#endif
+
+

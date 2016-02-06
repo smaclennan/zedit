@@ -10,14 +10,11 @@
 #include <termcap.h>
 #endif
 
-#if defined(TERMINFO) || defined(TERMCAP) || defined(TERMCAP_KEYS)
-#define TPUTS(s) tputs(s, 1, putchar)
-
 void tlinit(void);
 void tlfini(void);
-#else
-#define tlinit()
-#define tlfini()
+
+#if defined(TERMINFO) || defined(TERMCAP) || defined(TERMCAP_KEYS)
+#define TPUTS(s) tputs(s, 1, putchar)
 #endif
 
 /* Defined in kbd.c */

@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include "zterm.h"
 #include <poll.h>
 #if GPM_MOUSE
 #include <gpm.h>

@@ -36,7 +36,12 @@ static struct termio settty;
 static struct termios save_tty;
 static struct termios settty;
 #endif
+#elif defined(WIN32)
+HANDLE hstdin, hstdout;	/* Console in and out handles */
 #endif
+
+int Prow, Pcol;
+static int Srow = -1, Scol = -1;
 
 /* App specific init and fini */
 void __attribute__ ((weak)) tainit(void) {}
@@ -71,6 +76,9 @@ void tinit(void)
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(fileno(stdin), TCSANOW, &settty);
+#elif defined(WIN32)
+	hstdin = GetStdHandle(STD_INPUT_HANDLE);
+	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 #endif
 
 #ifdef SIGHUP
@@ -84,4 +92,46 @@ void tinit(void)
 	atexit(tfini);
 
 	tainit();
+}
+
+/* Optimized routines to minimize output */
+
+void tforce(void)
+{
+	if (Scol != Pcol || Srow != Prow) {
+#ifdef WIN32
+		COORD where;
+
+		where.X = Pcol;
+		where.Y = Prow;
+		SetConsoleCursorPosition(hstdout, where);
+#elif defined(TERMINFO)
+		TPUTS(tparm(cursor_address, Prow, Pcol));
+#elif defined(TERMCAP)
+		TPUTS(tgoto(cm[0], Pcol, Prow));
+#else
+		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
+#endif
+		Srow = Prow;
+		Scol = Pcol;
+	}
+}
+
+void tputchar(Byte ch)
+{
+	tforce();
+#ifdef WIN32
+	DWORD written;
+	WriteConsole(hstdout, &c, 1, &written, NULL);
+#else
+	putchar(ch);
+#endif
+	++Scol;
+	++Pcol;
+}
+
+void t_goto(int row, int col)
+{
+	tsetpoint(row, col);
+	tforce();
 }

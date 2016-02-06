@@ -20,8 +20,6 @@
 #include "z.h"
 
 #ifdef TERMINFO
-#include "zterm.h"
-
 static char *Term;
 
 void tlinit(void)

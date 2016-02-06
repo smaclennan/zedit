@@ -19,8 +19,6 @@
 #include "z.h"
 
 #if defined(TERMCAP) || defined(TERMCAP_KEYS)
-#include "zterm.h"
-
 static char *key_names[] = {
 	"ku",
 	"kd",

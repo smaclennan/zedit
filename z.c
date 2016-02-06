@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include "zterm.h"
 #include <stdarg.h>
 
 bool Initializing = true;

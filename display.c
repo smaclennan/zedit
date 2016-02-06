@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include "zterm.h"
 
 static int innerdsp(int from, int to, struct mark *pmark);
 static void modeflags(struct wdo *wdo);

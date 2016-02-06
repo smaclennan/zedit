@@ -55,6 +55,7 @@ struct zbuff;
 #include "proto.h"
 #include "keys.h"
 #include "calc.h"
+#include "zterm.h"
 
 #define ZSTR	"Zedit"
 #define VERSION	"6.1"
@@ -212,15 +213,11 @@ extern void (*Nextpart)(void);
 #define T_COMMENT			4
 #define T_REGION			5
 
-#define tsetpoint(r, c)		(Prow = r, Pcol = c)
-
 char *zgetcwd(char *cwd, int len);
 #ifdef WIN32
 char *gethomedir(void);
-void tputchar(Byte c);
 #else
 #define gethomedir()		getenv("HOME")
-#define tputchar(c)		putchar(c)
 #endif
 
 /* this is MUCH faster than an isascii isprint pair */

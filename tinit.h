@@ -13,8 +13,8 @@ void tsize(int *rows, int *cols);
 
 /* These are weak functions that can be overridden by the app */
 void tainit(void);
-void tafinit(void);
-void hangup(int signo);
+void tafini(void);
+void hang_up(int signo);
 
 #ifdef WIN32
 #define tflush()

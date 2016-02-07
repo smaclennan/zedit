@@ -3,10 +3,20 @@
 
 /* WARNING: Currently -DTERMINFO or -DTERMCAP* only work for zedit */
 
+#include "buff.h"
+
+#ifdef TERMINFO
+#include <term.h>
+#include <curses.h>
+#define TPUTS(s) tputs(s, 1, putchar)
+#elif defined(TERMCAP) || defined(TERMCAP_KEYS)
+#include <termcap.h>
+#define TPUTS(s) tputs(s, 1, putchar)
+extern char *cm[]; /* Zedit only */
+#endif
+
 #define	ROWMAX			110
 #define COLMAX			256
-
-#include "buff.h"
 
 void tinit(void);
 void tsize(int *rows, int *cols);

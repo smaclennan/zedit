@@ -324,7 +324,7 @@ void Zredisplay(void)
 		uncomment(buff);
 }
 
-static void scroll(bool (*search)(struct buff *buff, Byte what))
+static void do_scroll(bool (*search)(struct buff *buff, Byte what))
 {
 	struct mark pmark;
 
@@ -346,10 +346,10 @@ static void scroll(bool (*search)(struct buff *buff, Byte what))
 
 void Zscroll_up(void)
 {
-	scroll(bcrsearch);
+	do_scroll(bcrsearch);
 }
 
 void Zscroll_down(void)
 {
-	scroll(bcsearch);
+	do_scroll(bcsearch);
 }

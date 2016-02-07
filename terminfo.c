@@ -20,13 +20,11 @@
 #include "z.h"
 
 #ifdef TERMINFO
-static char *Term;
-
 void tlinit(void)
 {
 	int rc, i, k;
 
-	Term = getenv("TERM");
+	char *Term = getenv("TERM");
 	if (Term == NULL) {
 		printf("FATAL ERROR: environment variable TERM not set.\n");
 		exit(1);

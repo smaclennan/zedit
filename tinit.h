@@ -11,9 +11,6 @@
 void tinit(void);
 void tsize(int *rows, int *cols);
 
-/* These are weak functions that can be overridden by the app */
-void hang_up(int signo);
-
 #ifdef WIN32
 #define tflush()
 extern HANDLE hstdin, hstdout;	/* Console in and out handles */

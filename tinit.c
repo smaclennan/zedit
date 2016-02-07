@@ -48,9 +48,9 @@ static int Srow = -1, Scol = -1;
 static int Clrcol[ROWMAX];
 
 /* Come here on SIGHUP or SIGTERM */
-void __attribute__ ((weak)) hang_up(int signo)
+static void t_hang_up(int signo)
 {
-	printf("\r\nThey hung up! (%d)\r\n", signo);
+	printf("\r\nHang up! (%d)\r\n", signo);
 	exit(1);
 }
 
@@ -80,10 +80,10 @@ void tinit(void)
 #endif
 
 #ifdef SIGHUP
-	signal(SIGHUP,  hang_up);
+	signal(SIGHUP,  t_hang_up);
 #endif
 #ifdef SIGTERM
-	signal(SIGTERM, hang_up);
+	signal(SIGTERM, t_hang_up);
 #endif
 
 	atexit(tfini);
@@ -262,7 +262,7 @@ Byte tgetkb(void)
 
 		cpushed = read(0, (char *)buff, CSTACK) - 1;
 		if (cpushed < 0)
-			hang_up(1);	/* we lost connection */
+			kill(getpid(), SIGHUP); /* we lost connection */
 		for (i = 0; i <= cpushed; ++i) {
 			cstack[p] = buff[i];
 			p = (p + 1) & (CSTACK - 1);

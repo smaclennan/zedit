@@ -100,6 +100,13 @@ void tainit(void)
 
 	set_mouse(true);
 
+	/* Override the signal handler in tinit() */
+#ifdef SIGHUP
+	signal(SIGHUP,  hang_up);
+#endif
+#ifdef SIGTERM
+	signal(SIGTERM, hang_up);
+#endif
 #ifdef SIGWINCH
 	signal(SIGWINCH, sigwinch); /* window has changed size - update */
 #endif

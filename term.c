@@ -51,7 +51,6 @@ static void sigwinch(int sig)
 void hang_up(int signo)
 {
 	struct zbuff *tbuff;
-	((void)signal);
 
 	InPaw = true;	/* Kludge to turn off error */
 	foreachbuff(tbuff)
@@ -78,7 +77,7 @@ static void initline(void)
 	tflush();
 }
 
-void tafini(void)
+static void tafini(void)
 {
 	tlfini();
 
@@ -119,6 +118,8 @@ void tainit(void)
 	tsetcursor(false);
 
 	initline();		/* Curwdo not defined yet */
+
+	atexit(tafini);
 }
 
 void setmark(bool prntchar)

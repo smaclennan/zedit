@@ -47,10 +47,6 @@ int Prow, Pcol;
 static int Srow = -1, Scol = -1;
 static int Clrcol[ROWMAX];
 
-/* App specific init and fini */
-void __attribute__ ((weak)) tainit(void) {}
-void __attribute__ ((weak)) tafini(void) {}
-
 /* Come here on SIGHUP or SIGTERM */
 void __attribute__ ((weak)) hang_up(int signo)
 {
@@ -63,8 +59,6 @@ static void tfini(void)
 #ifdef __unix__
 	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
 #endif
-
-	tafini();
 	tflush();
 }
 
@@ -92,10 +86,7 @@ void tinit(void)
 	signal(SIGTERM, hang_up);
 #endif
 
-	/* Must set this before tainit() in case it calls exit */
 	atexit(tfini);
-
-	tainit();
 }
 
 

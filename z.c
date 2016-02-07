@@ -221,6 +221,7 @@ int main(int argc, char **argv)
 	}
 
 	tinit();
+	tainit();
 	fd_init();
 
 	for (; optind < argc; ++optind, ++files)

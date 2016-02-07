@@ -157,6 +157,7 @@ void tforce(void)
 		TPUTS(tgoto(cm[0], Pcol, Prow));
 #else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
+		tflush();
 #endif
 		Srow = Prow;
 		Scol = Pcol;
@@ -215,6 +216,7 @@ void tcleol(void)
 		TPUTS(cm[1]);
 #else
 		fputs("\033[K", stdout);
+		tflush();
 #endif
 #endif
 		Clrcol[Prow] = Pcol;

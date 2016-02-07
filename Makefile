@@ -68,13 +68,9 @@ QUIET_AR      = $(Q:@=@echo    '     AR       '$@;)
 
 all:	fcheck $(ZEXE)
 
-$(ZEXE): $O libbuff.a
+$(ZEXE): $O $L
 	$(QUIET_LINK)$(CC) -o $@ $+ $(LIBS)
 	@$(ETAGS) $(CFILES) $(LFILES) $(HFILES)
-
-libbuff.a: $L
-	@rm -f #@
-	@$(QUIET_AR)ar cr $@ $+
 
 fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c

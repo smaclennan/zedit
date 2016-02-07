@@ -161,7 +161,7 @@ void tputchar(Byte ch)
 	tforce();
 #ifdef WIN32
 	DWORD written;
-	WriteConsole(hstdout, &c, 1, &written, NULL);
+	WriteConsole(hstdout, &ch, 1, &written, NULL);
 #else
 	putchar(ch);
 #endif
@@ -245,6 +245,7 @@ static Byte cstack[CSTACK]; /**< The keyboard input stack */
 static int cptr = -1; /**< Current pointer in keyboard input stack. */
 static int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
 
+#ifndef WIN32
 /** This is the lowest level keyboard routine. It reads the keys into
  * a stack then returns the keys one at a time. When the stack is
  * consumed it reads again.
@@ -270,3 +271,4 @@ Byte tgetkb(void)
 	}
 	return cstack[cptr];
 }
+#endif

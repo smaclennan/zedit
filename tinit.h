@@ -3,8 +3,6 @@
 
 /* WARNING: Currently -DTERMINFO or -DTERMCAP* only work for zedit */
 
-#include "buff.h"
-
 #ifdef TERMINFO
 #include <term.h>
 #include <curses.h>
@@ -22,11 +20,19 @@ void tinit(void);
 void tsize(int *rows, int *cols);
 
 #ifdef WIN32
+#include <Windows.h>
 #define tflush()
 extern HANDLE hstdin, hstdout;	/* Console in and out handles */
+
+#define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
+#define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
+#define ATTR_REGION	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
 #else
 #define tflush() fflush(stdout)
 #endif
+
+/* windows.h must be before buff.h... no idea why */
+#include "buff.h"
 
 /* Optimized routines for output */
 extern int Prow, Pcol;

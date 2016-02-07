@@ -114,6 +114,12 @@
     <ClCompile Include="..\bfile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dbg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tinit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\z.h">

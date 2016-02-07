@@ -20,12 +20,6 @@
 #include "z.h"
 #include <signal.h>
 
-#if defined(WIN32)
-#define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
-#define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
-#define ATTR_REGION	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED)
-#endif
-
 int Colmax = EOF, Rowmax;		/* Row and column maximums */
 
 int ring_bell;				/* tbell called */

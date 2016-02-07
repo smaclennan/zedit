@@ -5,6 +5,10 @@
 
 #include "buff.h"
 
+#ifdef WIN32
+#define strdup _strdup
+#endif
+
 static char *dbgfname;
 
 const char *Dbgfname(const char *fname)
@@ -16,11 +20,12 @@ const char *Dbgfname(const char *fname)
 
 void Dbg(const char *fmt, ...)
 {
+	FILE *fp;
+
 	if (!dbgfname)
 		dbgfname = strdup("/tmp/z.out");
 
-	FILE *fp = fopen(dbgfname, "a");
-	if (fp) {
+	if ((fp = fopen(dbgfname, "a"))) {
 		va_list arg_ptr;
 
 		va_start(arg_ptr, fmt);

@@ -99,6 +99,10 @@ int bwrite(struct buff *buff, int fd, int size);
 int bappend(struct buff *buff, const Byte *, int);
 int bindata(struct buff *buff, Byte *, int);
 
+/* dbg.c */
+const char *Dbgfname(const char *fname);
+void Dbg(const char *fmt, ...);
+
 #ifndef NULL
 #define NULL ((void *)0)
 #endif

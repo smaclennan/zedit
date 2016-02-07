@@ -141,6 +141,6 @@ int main(int argc, char *argv[])
 
 /*
  * Local Variables:
- * compile-command: "gcc -g -Wall sless.c buff.c bfile.c tinit.c -o sless"
+ * compile-command: "gcc -g -Wall sless.c buff.c bfile.c tinit.c dbg.c -o sless"
  * End:
  */

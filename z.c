@@ -27,8 +27,6 @@ int verbose;
 unsigned Cmd;
 int Cmdpushed = -1; /* Search pushed a key */
 
-static char dbgfname[PATHMAX];
-
 #ifndef CONFIGDIR
 #define CONFIGDIR "/usr/share/zedit"
 #endif
@@ -173,8 +171,9 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	snprintf(dbgfname, sizeof(dbgfname), "%s/z.out", Home);
-	unlink(dbgfname);
+	snprintf(path, sizeof(path), "%s/z.out", Home);
+	unlink(path);
+	Dbgfname(path);
 
 	while ((arg = getopt(argc, argv, "hl:rtvE")) != EOF)
 		switch (arg) {
@@ -259,19 +258,6 @@ int main(int argc, char **argv)
 }
 
 /* Support functions */
-
-void Dbg(const char *fmt, ...)
-{
-	FILE *fp = fopen(dbgfname, "a");
-	if (fp) {
-		va_list arg_ptr;
-
-		va_start(arg_ptr, fmt);
-		vfprintf(fp, fmt, arg_ptr);
-		va_end(arg_ptr);
-		fclose(fp);
-	}
-}
 
 /* For debugging */
 const char *func2name(Byte func)

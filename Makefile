@@ -43,7 +43,7 @@ CFILES = bcmds.c bind.c cnames.c \
 	undo.c vars.c window.c varray.c z.c zgrep.c \
 	terminfo.c termcap.c
 
-LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c tinit.c calc.c
+LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c tinit.c calc.c dbg.c
 
 HFILES = buff.h config.h funcs.h keys.h mark.h proto.h reg.h vars.h z.h
 

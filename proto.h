@@ -248,7 +248,6 @@ void checkpipes(int type);
 void siginit(void);
 bool unvoke(struct zbuff *);
 
-void Dbg(const char *fmt, ...);
 const char *func2name(Byte func);
 
 /* for getfname */

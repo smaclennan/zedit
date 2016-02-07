@@ -14,33 +14,36 @@ int rows, cols;
 
 #define bchar (*buff->curcptr)
 
-/* Currently we truncate to cols. */
-static void dump_line(struct buff *buff)
+static int dump_line(struct buff *buff, int row)
 {
-	int i;
+	int i, did = 1;
 
-	for (i = 0; i < cols; ++i, bmove1(buff))
-		switch (bchar) {
-		case '\t':
-			/* SAM not quite right... */
-			i += 7;
-			if (i < cols)
+	while (1) {
+		for (i = 0; i < cols; ++i, bmove1(buff))
+			switch (bchar) {
+			case '\t':
+				i += 8 - (i & (8 - 1)) - 1; /* we increment 1 */
 				tputchar('\t');
-			break;
-		case '\n':
-			tputchar('\r');
-			tputchar('\n');
-			tcleol();
-			bmove1(buff);
-			return;
-		default:
-			tputchar(bchar);
-	}
+				break;
+			case '\n':
+				tputchar('\r');
+				tputchar('\n');
+				tcleol();
+				bmove1(buff);
+				return did;
+			default:
+				tputchar(bchar);
+			}
 
-	/* Read to NL */
-	while (bchar != '\n')
-		bmove1(buff);
-	bmove1(buff);
+		tputchar('\r');
+		tputchar('\n');
+		tcleol();
+
+		if (++row < rows)
+			++did;
+		else
+			return did;
+	}
 }
 
 static void backup(struct buff *buff)
@@ -73,14 +76,14 @@ static void goto_line(struct buff *buff, Byte c)
 
 int main(int argc, char *argv[])
 {
-	if (argc == 0) {
-		puts("I need a filename");
+	if (argc == 1) {
+		fputs("I need a filename\n", stderr);
 		exit(1);
 	}
 
 	struct buff *buff = bcreate();
 	if (!buff) {
-		puts("Unable to create buffer!");
+		fputs("Unable to create buffer!\n", stderr);
 		exit(1);
 	}
 
@@ -98,8 +101,8 @@ int main(int argc, char *argv[])
 	int i, cont, needclear;
 	Byte c;
 	while (!bisend(buff)) {
-		for (i = 0; i < rows && !bisend(buff); ++i)
-			dump_line(buff);
+		for (i = 0; i < rows && !bisend(buff); )
+			i += dump_line(buff, i);
 
 		t_goto(rows, 0);
 		tputchar('>');

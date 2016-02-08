@@ -61,7 +61,7 @@ static char *termcap_keys(void)
 	}
 	if (tgetent(bp, term) != 1) {
 		printf("ERROR: Unable to get termcap entry for %s.\n", term);
-		NULL;
+		return NULL;
 	}
 
 	/* get the cursor and function key defines */

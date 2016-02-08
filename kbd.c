@@ -241,6 +241,20 @@ static int check_specials(void)
 	cptr = (cptr - j) & (CSTACK - 1);
 	cpushed += j;
 
+	/* Check for ESC O keys - happens a lot on ssh */
+	if (cstack[(cptr + 2) & (CSTACK - 1)] == 'O')
+		switch (cstack[(cptr + 3) & (CSTACK - 1)]) {
+		case 'A'...'D':
+			/* rewrite the arrow keys */
+			Tkeys[0] = "\033OA";	/* up */
+			Tkeys[1] = "\033OB";	/* down */
+			Tkeys[2] = "\033OC";	/* right */
+			Tkeys[3] = "\033OD";	/* left */
+			cptr = (cptr + 1) & (CSTACK - 1);
+			cpushed--;
+			return check_specials();
+		}
+
 	/* If it is an unknown CSI string, suck it up */
 	if (cstack[(cptr + 2) & (CSTACK - 1)] == '[') {
 		if (cstack[(cptr + 3) & (CSTACK - 1)] == 'M')

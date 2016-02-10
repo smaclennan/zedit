@@ -77,7 +77,7 @@ static void free_undo(void **tail)
 
 static inline int no_undo(struct zbuff *buff)
 {
-	return VAR(VUNDO) == 0 || InUndo || *buff->bname == '*';
+	return InUndo || *buff->bname == '*';
 }
 
 static inline bool clump(void)

@@ -62,10 +62,4 @@ struct avar Vars[] = {
 	  "You generally don't want to change this. See `c-tabs' and "
 	  "`sh-tabs'."
 	},
-	{ "undo",		V_FLAG,		V(1),
-#if !UNDO
-	  "Note: Disabled in this version of Zedit.\n\n"
-#endif
-	  "If set undo is enabled. Saves memory if undo is off."
-	},
 };

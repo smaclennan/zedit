@@ -28,12 +28,6 @@
 
 #include "buff.h"
 
-#ifdef UNDO
-void undo_add(int size, bool clumped);
-void undo_del(int size);
-void undo_clear(struct buff *buff);
-#endif
-
 /** Default #bsetmod function. Does nothing ;) */
 static void dummy_bsetmod(struct buff *buff) {}
 /** If you need to know when the buffer is modified, this callback
@@ -93,9 +87,7 @@ bool binsert(struct buff *buff, Byte byte)
 	curplen(buff)++;
 	buff->bmodf = true;
 
-#ifdef UNDO
-	undo_add(1, false);
-#endif
+	undo_add(buff, 1, false);
 
 	struct mark *btmark;
 
@@ -198,9 +190,7 @@ void bdelete(struct buff *buff, unsigned quantity)
 		if (quan < 0)
 			quan = 0; /* May need to switch pages */
 
-#ifdef UNDO
-		undo_del(quan);
-#endif
+		undo_del(buff, quan);
 
 		curplen(buff) -= quan;
 
@@ -437,9 +427,7 @@ void bempty(struct buff *buff)
 			btmark->moffset = 0;
 		}
 
-#ifdef UNDO
 	undo_clear(buff);
-#endif
 	bsetmod(buff);
 }
 

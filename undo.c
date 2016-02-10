@@ -1,5 +1,5 @@
-/* undo.c - Zedit undo commands
- * Copyright (C) 1988-2013 Sean MacLennan
+/* undo.c - undo functions
+ * Copyright (C) 1988-2016 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,11 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "z.h"
+#include "buff.h"
 
 #if UNDO
-
-#define is_insert(u) ((u)->data == NULL)
+#include <stdlib.h>
+#include <string.h>
 
 /* We cannot use marks here since pages may come and go and the marks
  * become useless. Use an offset instead.
@@ -33,18 +33,18 @@ struct undo {
 	int size;
 };
 
-static bool InUndo;
+#define is_insert(u) ((u)->data == NULL)
 
 unsigned long undo_total; /* stats only */
 
-static struct undo *new_undo(void **tail, bool insert, int size)
+static struct undo *new_undo(struct buff *buff, void **tail, bool insert, int size)
 {
 	struct undo *undo = (struct undo *)calloc(1, sizeof(struct undo));
 	if (!undo)
 		return NULL;
 
 	undo->size = size;
-	undo->offset = blocation(Bbuff);
+	undo->offset = blocation(buff);
 	if (!insert) {
 		undo->data = (Byte *)malloc(size);
 		if (!undo->data) {
@@ -75,42 +75,22 @@ static void free_undo(void **tail)
 	}
 }
 
-static inline int no_undo(struct zbuff *buff)
-{
-	return InUndo || *buff->bname == '*';
-}
-
-static inline bool clump(void)
-{	/* commands we clump together */
-	switch (Lfunc) {
-	case ZINSERT:
-	case ZNEWLINE:
-	case ZTAB:
-	case ZC_INSERT:
-	case ZC_INDENT:
-	case ZSH_INDENT:
-		return true;
-	default:
-		return false;
-	}
-}
-
 /* Exports */
 
-void undo_add(int size, bool clumped)
+void undo_add(struct buff *buff, int size, bool clumped)
 {
-	if (no_undo(Curbuff))
+	if (buff->in_undo)
 		return;
 
-	struct undo *undo = (struct undo *)Curbuff->undo_tail;
+	struct undo *undo = (struct undo *)buff->undo_tail;
 
-	if (undo && is_insert(undo) && (clumped || clump())) {
+	if (undo && is_insert(undo) && (clumped || undo_add_clumped(buff, size))) {
 		/* clump with last undo */
 		undo->size += size;
 		undo->offset += size;
 	} else
 		/* need a new undo */
-		undo = new_undo(&Curbuff->undo_tail, true, size);
+		undo = new_undo(buff, &buff->undo_tail, true, size);
 }
 
 static void undo_append(struct undo *undo, Byte *data)
@@ -144,87 +124,74 @@ static void undo_prepend(struct undo *undo, Byte *data)
 }
 
 /* Size is always within the current page. */
-void undo_del(int size)
+void undo_del(struct buff *buff, int size)
 {
-	if (no_undo(Curbuff))
+	if (buff->in_undo)
 		return;
 
 	if (size == 0) /* this can happen on page boundaries */
 		return;
 
-	struct undo *undo = (struct undo *)Curbuff->undo_tail;
+	struct undo *undo = (struct undo *)buff->undo_tail;
 
 	/* We only merge simple deletes */
-	if (undo && !is_insert(undo) && size == 1) {
-		switch (Lfunc) {
-		case ZDELETE_CHAR:
-			undo_append(undo, Bbuff->curcptr);
+	if (undo && !is_insert(undo))
+		switch (undo_del_clumped(buff, size)) {
+		case 1: /* delete forward */
+			undo_append(undo, buff->curcptr);
 			return;
-		case ZDELETE_PREVIOUS_CHAR:
-			undo_prepend(undo, Bbuff->curcptr);
+		case -1: /* delete previous */
+			undo_prepend(undo, buff->curcptr);
 			undo->offset--;
 			return;
 		}
-	}
 
 	/* need a new undo */
-	undo = new_undo(&Curbuff->undo_tail, false, size);
+	undo = new_undo(buff, &buff->undo_tail, false, size);
 	if (undo == NULL)
 		return;
 
-	memcpy(undo->data, Bbuff->curcptr, size);
+	memcpy(undo->data, buff->curcptr, size);
 }
 
-/* Must be a struct buff since it is called from the buff.c code */
 void undo_clear(struct buff *buff)
 {
-	struct zbuff *tbuff = cfindzbuff(buff);
-	if (tbuff)
-		while (tbuff->undo_tail)
-			free_undo(&tbuff->undo_tail);
+	while (buff->undo_tail)
+		free_undo(&buff->undo_tail);
 }
 
-void Zundo(void)
+int do_undo(struct buff *buff)
 {
 	struct undo *undo;
 	int i;
 
-	if (!Curbuff->undo_tail) {
-		tbell();
-		return;
-	}
+	if (!buff->undo_tail)
+		return 1;
 
-	undo = (struct undo *)Curbuff->undo_tail;
-	InUndo = true;
-	boffset(Bbuff, undo->offset);
+	undo = (struct undo *)buff->undo_tail;
+	buff->in_undo = true;
+	boffset(buff, undo->offset);
 
 	if (is_insert(undo)) {
-		bmove(Bbuff, -undo->size);
-		bdelete(Bbuff, undo->size);
-		free_undo(&Curbuff->undo_tail);
+		bmove(buff, -undo->size);
+		bdelete(buff, undo->size);
+		free_undo(&buff->undo_tail);
 	} else {
 		unsigned long offset = undo->offset;
-		struct mark *tmark = bcremark(Bbuff);
-		if (!tmark) {
-			tbell();
-			return;
-		}
+		struct mark *tmark = bcremark(buff);
+		if (!tmark)
+			return 1;
 		do {
 			for (i = 0; i < undo->size; ++i)
-				binsert(Bbuff, undo->data[i]);
-			free_undo(&Curbuff->undo_tail);
-			undo = (struct undo *)Curbuff->undo_tail;
+				binsert(buff, undo->data[i]);
+			free_undo(&buff->undo_tail);
+			undo = (struct undo *)buff->undo_tail;
 		} while (undo && !is_insert(undo) && undo->offset == offset);
-		bpnttomrk(Bbuff, tmark);
-		unmark(tmark);
+		bpnttomrk(buff, tmark);
+		bdelmark(tmark);
 	}
 
-	InUndo = false;
-
-	if (!Curbuff->undo_tail)
-		/* Last undo */
-		Bbuff->bmodf = false;
+	buff->in_undo = false;
+	return 0;
 }
-#else
-void Zundo(void) { tbell(); }
 #endif

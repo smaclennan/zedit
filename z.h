@@ -147,7 +147,6 @@ struct zbuff {
 	time_t mtime;           /* file modified time */
 	void *chead, *ctail;	/* list of comments in file */
 	Byte comchar;			/* single char comment character */
-	void *undo_tail;        /* list of undos */
 	struct mark *umark;     /* user mark */
 	struct buff *buff;	    /* low-level buffer */
 	struct zbuff *prev, *next;	/* list of buffers */

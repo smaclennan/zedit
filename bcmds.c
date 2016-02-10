@@ -283,8 +283,13 @@ struct zbuff *cmakebuff(const char *bname, char *fname)
 	bptr->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 		(VAR(VEXACT) ? EXACT : 0);
 
-	if (bname && *bname == '*')
+	if (bname && *bname == '*') {
 		bptr->bmode |= SYSBUFF;
+#ifdef UNDO
+		/* this disables undo for system buffers */
+		bptr->buff->in_undo = 1;
+#endif
+	}
 
 	zswitchto(bptr);
 	return bptr;

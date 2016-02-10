@@ -11,12 +11,6 @@
 
 #define MAX_IOVS 16
 
-#ifdef UNDO
-void undo_add(int size, bool clumped);
-#else
-#define undo_add(size, clumped)
-#endif
-
 /* These can be used with files... but where written to use with
  * sockets. */
 
@@ -133,7 +127,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 		size -= n;
 		data += n;
 		appended += n;
-		undo_add(n, false);
+		undo_add(buff, n, false);
 	}
 
 	/* Put the rest in new pages */
@@ -147,7 +141,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 		memcpy(buff->curcptr, data, n);
 		curplen(buff) = n;
 		makeoffset(buff, n);
-		undo_add(n, appended != 0);
+		undo_add(buff, n, appended != 0);
 		size -= n;
 		data += n;
 		appended += n;
@@ -196,7 +190,7 @@ int bindata(struct buff *buff, Byte *data, int size)
 		buff->curcptr += size;
 		buff->curchar += size;
 		curplen(buff) += size;
-		undo_add(size, false);
+		undo_add(buff, size, false);
 		return size;
 	}
 
@@ -210,7 +204,7 @@ int bindata(struct buff *buff, Byte *data, int size)
 		memcpy(buff->curcptr, data, n);
 		data += n;
 		size -= n;
-		undo_add(n, copied > 0);
+		undo_add(buff, n, copied > 0);
 		copied += n;
 		buff->curcptr += n;
 		buff->curchar += n;
@@ -225,7 +219,7 @@ int bindata(struct buff *buff, Byte *data, int size)
 		memcpy(npage->pdata, data, n);
 		data += n;
 		size -= n;
-		undo_add(n, copied > 0);
+		undo_add(buff, n, copied > 0);
 		copied += n;
 
 		makecur(buff, npage, n);

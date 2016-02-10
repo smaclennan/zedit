@@ -265,14 +265,3 @@ unsigned long bline(struct buff *buff);
 void resetcomments(void);
 void uncomment(struct zbuff *buff);
 void cprntchar(Byte ch);
-
-#ifdef UNDO
-extern unsigned long undo_total;
-void undo_add(int size, bool clumped);
-void undo_del(int size);
-void undo_clear(struct buff *buff);
-#else
-#define undo_add(size, clumped)
-#define undo_del(size)
-#define undo_clear(buff)
-#endif

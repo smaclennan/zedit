@@ -1096,3 +1096,43 @@ void Zcalc(void)
 	free(c->nums);
 	free(c);
 }
+
+
+#ifdef UNDO
+int undo_add_clumped(struct buff *buff, int size)
+{	/* commands we clump together */
+	switch (Lfunc) {
+	case ZINSERT:
+	case ZNEWLINE:
+	case ZTAB:
+	case ZC_INSERT:
+	case ZC_INDENT:
+	case ZSH_INDENT:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
+int undo_del_clumped(struct buff *buff, int size)
+{
+	if (size == 1)
+		switch (Lfunc) {
+		case ZDELETE_CHAR: return 1;
+		case ZDELETE_PREVIOUS_CHAR: return -1;
+		}
+	return 0;
+}
+
+
+void Zundo(void)
+{
+	if (do_undo(Bbuff))
+		tbell();
+	else if (!Bbuff->undo_tail)
+		/* Last undo */
+		Bbuff->bmodf = false;
+}
+#else
+void Zundo(void) { tbell(); }
+#endif

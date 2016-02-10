@@ -241,8 +241,9 @@ static int check_specials(void)
 	cptr = (cptr - j) & (CSTACK - 1);
 	cpushed += j;
 
-	/* Check for ESC O keys - happens a lot on ssh */
-	if (cstack[(cptr + 2) & (CSTACK - 1)] == 'O')
+	switch (cstack[(cptr + 2) & (CSTACK - 1)]) {
+	case 'O':
+		/* Check for ESC O keys - happens a lot on ssh */
 		switch (cstack[(cptr + 3) & (CSTACK - 1)]) {
 		case 'A'...'D':
 			/* rewrite the arrow keys */
@@ -250,17 +251,20 @@ static int check_specials(void)
 			Tkeys[1] = "\033OB";	/* down */
 			Tkeys[2] = "\033OC";	/* right */
 			Tkeys[3] = "\033OD";	/* left */
+			/* skip the ESC */
 			cptr = (cptr + 1) & (CSTACK - 1);
 			cpushed--;
 			return check_specials();
 		}
+		break;
 
-	/* If it is an unknown CSI string, suck it up */
-	if (cstack[(cptr + 2) & (CSTACK - 1)] == '[') {
+	case '[':
+		/* If it is an unknown CSI string, suck it up */
 		if (cstack[(cptr + 3) & (CSTACK - 1)] == 'M')
 			return do_mouse();
 		else
 			cpushed = 2;
+		break;
 	}
 
 	return _tgetkb() & 0x7f;

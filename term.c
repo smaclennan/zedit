@@ -272,28 +272,6 @@ void tstyle(int style)
 		SetConsoleTextAttribute(hstdout, ATTR_REGION);
 		break;
 	}
-#elif defined(TERMINFO)
-	switch (style) {
-	case T_NORMAL:
-		TPUTS(exit_attribute_mode);
-		break;
-	case T_STANDOUT: /* modeline */
-		if (ring_bell)
-			TPUTS(tparm(set_a_background, COLOR_RED));
-		else
-			TPUTS(enter_standout_mode);
-		break;
-	case T_REVERSE:
-	case T_REGION:
-		TPUTS(enter_reverse_mode);
-		break;
-	case T_BOLD:
-		TPUTS(enter_bold_mode);
-		break;
-	case T_COMMENT:
-		TPUTS(tparm(set_a_foreground, COLOR_RED));
-		break;
-	}
 #elif defined(TERMCAP)
 	switch (style) {
 	case T_NORMAL:
@@ -422,7 +400,7 @@ void tbell_dbg(char *func, int line)
 	tbell();
 }
 
-#if !defined(TERMINFO) && !defined(TERMCAP) && !defined(TERMCAP_KEYS)
+#if !defined(TERMCAP) && !defined(TERMCAP_KEYS)
 void tlinit(void) {}
 void tlfini(void) {}
 #endif

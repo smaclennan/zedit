@@ -1,13 +1,9 @@
 #ifndef _TINIT_H_
 #define _TINIT_H_
 
-/* WARNING: Currently -DTERMINFO or -DTERMCAP* only work for zedit */
+/* WARNING: Currently -DTERMCAP* only works for zedit */
 
-#ifdef TERMINFO
-#include <term.h>
-#include <curses.h>
-#define TPUTS(s) tputs(s, 1, putchar)
-#elif defined(TERMCAP) || defined(TERMCAP_KEYS)
+#if defined(TERMCAP) || defined(TERMCAP_KEYS)
 #include <termcap.h>
 #define TPUTS(s) tputs(s, 1, putchar)
 extern char *cm[]; /* Zedit only */

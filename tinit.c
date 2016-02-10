@@ -142,8 +142,6 @@ void tforce(void)
 		where.X = Pcol;
 		where.Y = Prow;
 		SetConsoleCursorPosition(hstdout, where);
-#elif defined(TERMINFO)
-		TPUTS(tparm(cursor_address, Prow, Pcol));
 #elif defined(TERMCAP)
 		TPUTS(tgoto(cm[0], Pcol, Prow));
 #else
@@ -201,9 +199,7 @@ void tcleol(void)
 					   where, &written);
 #else
 		tforce();
-#ifdef TERMINFO
-		TPUTS(clr_eol);
-#elif defined(TERMCAP)
+#ifdef TERMCAP
 		TPUTS(cm[1]);
 #else
 		fputs("\033[K", stdout);
@@ -225,8 +221,6 @@ void tclrwind(void)
 				   where, &written);
 	FillConsoleOutputCharacter(hstdout, ' ', COLMAX * ROWMAX,
 				   where, &written);
-#elif defined(TERMINFO)
-	TPUTS(clear_screen);
 #elif defined(TERMCAP)
 	TPUTS(cm[2]);
 #else

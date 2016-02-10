@@ -12,7 +12,6 @@
 #define UNDO        1
 
 /* If nothing defined defaults to ANSI */
-/* #define TERMINFO */
 /* #define TERMCAP */
 /* #define TERMCAP_KEYS */
 

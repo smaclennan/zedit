@@ -30,7 +30,6 @@ MAKEFLAGS += --no-print-directory
 
 #LIBS += -lz
 #LIBS += -ldl
-#LIBS += -lcurses
 #LIBS += -ltermcap
 #LIBS += -lgpm
 
@@ -41,7 +40,7 @@ CFILES = bcmds.c bind.c cnames.c \
 	file.c funcs.c getarg.c getfname.c help.c kbd.c \
 	shell.c spell.c srch.c tags.c term.c \
 	undo.c vars.c window.c varray.c z.c zgrep.c \
-	terminfo.c termcap.c
+	termcap.c
 
 LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c tinit.c calc.c dbg.c
 

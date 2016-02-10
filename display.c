@@ -177,7 +177,7 @@ void zrefresh(void)
 		bpnttomrk(Bbuff, Sstart);
 	}
 	pntrow = innerdsp(Curwdo->first, Curwdo->last, &pmark);
-	if (bisbeforemrk(Bbuff, &pmark) && !tkbrdy()) {
+	if (bisbeforemrk(Bbuff, &pmark)) {
 		bpnttomrk(Bbuff, &pmark);
 		reframe();
 		zrefresh();

@@ -24,7 +24,7 @@
 #endif
 
 /** The special multi-byte keys. Note: We can currently only have 32 specials */
-char *Tkeys[] = {
+static char *Tkeys[] = {
 	"\033[A",	/* up */
 	"\033[B",	/* down */
 	"\033[C",	/* right */
@@ -261,3 +261,57 @@ bool tdelay(int ms)
 
 	return poll(&stdin_fd, 1, ms) != 1;
 }
+
+#ifdef TERMCAP_KEYS
+static char *key_names[] = {
+	"ku",
+	"kd",
+	"kr",
+	"kl",
+
+	"kI",
+	"kD",
+	"kP",
+	"kN",
+	"kh",
+	"@7",
+
+	"k1",
+	"k2",
+	"k3",
+	"k4",
+	"k5",
+	"k6",
+	"k7",
+	"k8",
+	"k9",
+	"k;",
+	"F1",
+	"F2",
+};
+
+char *termcap_keys(char *end)
+{
+	int i;
+	char *key;
+
+	/* get the cursor and function key defines */
+	for (i = 0; i < 22; ++i) {
+		key = end;
+		tgetstr(key_names[i], &end);
+		if (key != end) {
+			if (*key != 033) {
+				/* This is mainly to catch 0177 for delete */
+				if (verbose)
+					dump_key(i, key, "skipped");
+			} else {
+				Tkeys[i] = key;
+				if (verbose)
+					dump_key(i, key, NULL);
+			}
+		}
+	}
+
+	return end;
+}
+#endif

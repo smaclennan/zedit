@@ -43,6 +43,7 @@ static struct termios settty;
 HANDLE hstdin, hstdout;	/* Console in and out handles */
 #endif
 
+int verbose;
 int Prow, Pcol;
 static int Srow = -1, Scol = -1;
 static int Clrcol[ROWMAX];
@@ -61,6 +62,63 @@ static void tfini(void)
 #endif
 	tflush();
 }
+
+#if defined(TERMCAP) || (TERMCAP_KEYS)
+#define NUMCM	7
+#define MUST	3
+char *cm[NUMCM];
+static char bp[1024];
+static char area[1024];
+
+static void tlinit(void)
+{
+#ifdef TERMCAP
+	static char *names[] = { "cm", "ce", "cl", "me", "so", "vb", "md" };
+#endif
+	char *end = area;
+
+	char *term = getenv("TERM");
+	if (term == NULL) {
+		printf("ERROR: environment variable TERM not set.\n");
+		exit(1);
+	}
+	if (tgetent(bp, term) != 1) {
+		printf("ERROR: Unable to get termcap entry for %s.\n", term);
+		exit(1);
+	}
+
+#ifdef TERMCAP_KEYS
+	end = termcap_keys(end);
+	if (end == NULL)
+		exit(1);
+#endif
+
+#ifdef TERMCAP
+	/* get the initialziation string and send to stdout */
+	char *was = end;
+	tgetstr("is", &end);
+	if (end != was)
+		TPUTS(was);
+
+	/* get the termcap strings needed - must be done last */
+	int i;
+	for (i = 0; i < NUMCM; ++i) {
+		cm[i] = end;
+		tgetstr(names[i], &end);
+		if (cm[i] == end) {
+			if (i < MUST || verbose)
+				printf("Missing termcap entry for %s\n", names[i]);
+			if (i < MUST)
+				exit(1);
+			else
+				cm[i] = "";
+		}
+	}
+#endif
+}
+#else
+static void tlinit(void) {}
+#endif
 
 /* Initalize the terminal. */
 void tinit(void)
@@ -86,9 +144,9 @@ void tinit(void)
 	signal(SIGTERM, t_hang_up);
 #endif
 
+	tlinit();
 	atexit(tfini);
 }
-
 
 void tsize(int *rows, int *cols)
 {

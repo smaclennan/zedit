@@ -73,8 +73,6 @@ static void initline(void)
 
 static void tafini(void)
 {
-	tlfini();
-
 	set_mouse(false);
 
 	clrpaw();
@@ -89,8 +87,6 @@ void tainit(void)
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 #endif
-
-	tlinit();
 
 	set_mouse(true);
 
@@ -399,10 +395,5 @@ void tbell_dbg(char *func, int line)
 	Dbg("tbell %s:%d\n", func, line);
 	tbell();
 }
-
-#if !defined(TERMCAP) && !defined(TERMCAP_KEYS)
-void tlinit(void) {}
-void tlfini(void) {}
-#endif
 
 

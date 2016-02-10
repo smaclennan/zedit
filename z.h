@@ -55,7 +55,7 @@ struct zbuff;
 #include "proto.h"
 #include "keys.h"
 #include "calc.h"
-#include "zterm.h"
+#include "tinit.h"
 
 #define ZSTR	"Zedit"
 #define VERSION	"6.1"

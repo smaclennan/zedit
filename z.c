@@ -22,7 +22,6 @@
 
 bool Initializing = true;
 char *Home;
-int verbose;
 
 unsigned Cmd;
 int Cmdpushed = -1; /* Search pushed a key */

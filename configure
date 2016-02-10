@@ -81,6 +81,7 @@ if [ $termcap = 1 -o $termcap_keys = 1 ]; then
 fi
 
 set_if_one TERMCAP $termcap
+set_if_one TERMCAP_KEYS $termcap
 set_if_one TERMCAP_KEYS $termcap_keys
 
 if [ -f /usr/include/termios.h ]; then

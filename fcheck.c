@@ -32,6 +32,7 @@ int Colmax, Rowmax;
 #else
 #undef GPM_MOUSE
 #include "kbd.c"
+#include "tinit.c"
 #endif
 
 #ifdef __unix__

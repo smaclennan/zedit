@@ -41,7 +41,11 @@ void t_goto(int row, int col);
 void tcleol(void);
 void tclrwind(void);
 
-/** Keyboard input. */
+/* Keyboard input. */
+int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
+
 Byte tgetkb(void);
+void tungetkb(int n);
+Byte tpeek(int offset);
 
 #endif

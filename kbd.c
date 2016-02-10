@@ -23,9 +23,6 @@
 #include <gpm.h>
 #endif
 
-/* Make sure we don't pickup the tgetkb from tinit.c */
-#define tgetkb bogus
-
 /** The special multi-byte keys. Note: We can currently only have 32 specials */
 char *Tkeys[] = {
 	"\033[A",	/* up */
@@ -57,42 +54,7 @@ char *Tkeys[] = {
 	"\033[8^"	/* C-end */
 };
 
-/** The key mask of defined special keys. */
-unsigned Key_mask = KEY_MASK;
-
-/** The size of the keyboard input stack. Must be a power of 2 */
-#define CSTACK 16
-static Byte cstack[CSTACK]; /**< The keyboard input stack */
-static int cptr = -1; /**< Current pointer in keyboard input stack. */
-static int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
 static bool Pending; /**< Set to true if poll stdin detected input. */
-
-/** This is the lowest level keyboard routine. It reads the keys into
- * a stack then returns the keys one at a time. When the stack is
- * consumed it reads again.
- *
- * The read can block.
- */
-static Byte _tgetkb(void)
-{
-	cptr = (cptr + 1) & (CSTACK - 1);
-	if (cpushed)
-		--cpushed;
-	else {
-		Byte buff[CSTACK];
-		int i, p = cptr;
-
-		cpushed = read(0, (char *)buff, CSTACK) - 1;
-		if (cpushed < 0)
-			hang_up(1);	/* we lost connection */
-		for (i = 0; i <= cpushed; ++i) {
-			cstack[p] = buff[i];
-			p = (p + 1) & (CSTACK - 1);
-		}
-	}
-	Pending = false;
-	return cstack[cptr];
-}
 
 /** Enable or disable mouse commands.
  * Xterm supports motion events but rxvt does not.
@@ -148,10 +110,10 @@ static int do_mouse(void)
 {
 	Byte button, col, row;
 
-	_tgetkb(); _tgetkb(); _tgetkb(); /* suck up \033[M */
-	button = _tgetkb();
-	col = _tgetkb() - 33; /* zero based */
-	row = _tgetkb() - 33; /* zero based */
+	tgetkb(); tgetkb(); tgetkb(); /* suck up \033[M */
+	button = tgetkb();
+	col = tgetkb() - 33; /* zero based */
+	row = tgetkb() - 33; /* zero based */
 
 	switch (button & 0x60) {
 	case 0x20:
@@ -225,10 +187,10 @@ void handle_mouse_cursor(void)
  */
 static int check_specials(void)
 {
-	int i, j, bit, mask = Key_mask;
+	int i, j, bit, mask = KEY_MASK;
 
 	for (j = 1; mask; ++j) {
-		int cmd = _tgetkb() & 0x7f;
+		int cmd = tgetkb() & 0x7f;
 		for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
 			if ((mask & bit) && cmd == Tkeys[i][j]) {
 				if (Tkeys[i][j + 1] == '\0')
@@ -238,13 +200,12 @@ static int check_specials(void)
 	}
 
 	/* No match - push back the chars */
-	cptr = (cptr - j) & (CSTACK - 1);
-	cpushed += j;
+	tungetkb(j);
 
-	switch (cstack[(cptr + 2) & (CSTACK - 1)]) {
+	switch (tpeek(2)) {
 	case 'O':
 		/* Check for ESC O keys - happens a lot on ssh */
-		switch (cstack[(cptr + 3) & (CSTACK - 1)]) {
+		switch (tpeek(3)) {
 		case 'A'...'D':
 			/* rewrite the arrow keys */
 			Tkeys[0] = "\033OA";	/* up */
@@ -252,28 +213,26 @@ static int check_specials(void)
 			Tkeys[2] = "\033OC";	/* right */
 			Tkeys[3] = "\033OD";	/* left */
 			/* skip the ESC */
-			cptr = (cptr + 1) & (CSTACK - 1);
-			cpushed--;
+			tgetkb();
 			return check_specials();
 		}
 		break;
 
 	case '[':
-		/* If it is an unknown CSI string, suck it up */
-		if (cstack[(cptr + 3) & (CSTACK - 1)] == 'M')
+		/* Handle mouse input */
+		if (tpeek(3) == 'M')
 			return do_mouse();
-		else
-			cpushed = 2;
 		break;
 	}
 
-	return _tgetkb() & 0x7f;
+	return tgetkb() & 0x7f;
 }
 
 /** Get keyboard input. Handles the special keys. */
 int tgetcmd(void)
 {
-	int cmd = _tgetkb() & 0x7f;
+	int cmd = tgetkb() & 0x7f;
+	Pending = false;
 
 	/* All special keys start with ESC */
 	if (cmd == '\033' && tkbrdy())

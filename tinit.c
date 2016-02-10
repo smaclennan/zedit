@@ -233,13 +233,13 @@ void tclrwind(void)
 
 /* Keyboard input */
 
+#ifndef WIN32
 /** The size of the keyboard input stack. Must be a power of 2 */
 #define CSTACK 16
 static Byte cstack[CSTACK]; /**< The keyboard input stack */
 static int cptr = -1; /**< Current pointer in keyboard input stack. */
-static int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
+int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
 
-#ifndef WIN32
 /** This is the lowest level keyboard routine. It reads the keys into
  * a stack then returns the keys one at a time. When the stack is
  * consumed it reads again.
@@ -264,5 +264,18 @@ Byte tgetkb(void)
 		}
 	}
 	return cstack[cptr];
+}
+
+/** Push back n keys */
+void tungetkb(int n)
+{
+	cptr = (cptr - n) & (CSTACK - 1);
+	cpushed += n;
+}
+
+/** Peek the key at a given offset */
+Byte tpeek(int offset)
+{
+	return cstack[(cptr + offset) & (CSTACK - 1)];
 }
 #endif

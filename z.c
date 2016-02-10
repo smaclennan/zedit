@@ -406,20 +406,6 @@ int getbword(char word[], int max, int (*valid)(int))
 	return i;
 }
 
-/* Kinda like the emacs looking-at command. Does not move the point. */
-bool looking_at(const char *match)
-{
-	struct mark tmark;
-
-	bmrktopnt(Bbuff, &tmark);
-	while (*match && Buff() == *match) {
-		bmove1(Bbuff);
-		++match;
-	}
-	bpnttomrk(Bbuff, &tmark);
-	return *match == '\0';
-}
-
 /* Get the current buffer text and store in 'txt'.
  * Get at the most 'max' characters.
  * Leaves the point alone.

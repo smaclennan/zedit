@@ -229,7 +229,7 @@ void Zc_indent(void)
 			tobegline(Bbuff);
 		} while (Buff() == '#' && !bisstart(Bbuff));
 		movepast(biswhite, FORWARD);
-		if (looking_at("if") || looking_at("while")) {
+		if (lookingat(Bbuff, "if") || lookingat(Bbuff, "while")) {
 			width += Tabsize;
 			did_indent = 1;
 		}

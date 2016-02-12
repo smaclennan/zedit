@@ -204,7 +204,7 @@ void setmark(bool);
 void tbell(void);
 void tainit(void);
 void termsize(void);
-void tsetcursor(bool hide);
+void tsetcursor(void);
 int tgetcmd(void);
 void tindent(int);
 bool tkbrdy(void);

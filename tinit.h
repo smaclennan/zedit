@@ -55,4 +55,22 @@ Byte tgetkb(void);
 void tungetkb(int n);
 Byte tpeek(int offset);
 
+/* tstyle() attributes */
+#define T_NORMAL		0
+#define T_BOLD			1
+#define T_REVERSE		7
+#define T_FG			30
+#define T_BG			40
+/* Colors should be added to T_FG or T_BG */
+#define T_BLACK			 0
+#define T_RED			 1
+#define T_GREEN			 2
+#define T_YELLOW		 3
+#define T_BLUE			 4
+#define T_MAGENTA		 5
+#define T_CYAN			 6
+#define T_WHITE			 7
+
+void tstyle(int style);
+
 #endif

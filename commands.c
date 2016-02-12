@@ -667,7 +667,7 @@ void Zinsert_overwrite(void)
 	if (!InPaw)
 		Curwdo->modeflags = INVALID;
 	Arg = 0;
-	tsetcursor(false);
+	tsetcursor();
 }
 
 void Ztoggle_case(void)

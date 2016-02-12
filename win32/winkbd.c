@@ -25,7 +25,7 @@
 #define CSTACK 16 /* must be power of 2 */
 static int cstack[CSTACK];
 static int cptr = -1;
-static int cpushed;	/* needed in shell.c */
+int cpushed;
 static bool Pending;
 
 static short convertKey(KEY_EVENT_RECORD *event)

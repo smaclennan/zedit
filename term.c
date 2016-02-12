@@ -248,9 +248,6 @@ void tstyle(int style)
 	case T_NORMAL:
 		SetConsoleTextAttribute(hstdout, ATTR_NORMAL);
 		break;
-	case T_BELL:
-		SetConsoleTextAttribute(hstdout, BACKGROUND_RED);
-		break;
 	case T_REVERSE:
 		SetConsoleTextAttribute(hstdout, ATTR_REVERSE);
 		break;
@@ -258,38 +255,38 @@ void tstyle(int style)
 		SetConsoleTextAttribute(hstdout,
 					ATTR_NORMAL | FOREGROUND_INTENSITY);
 		break;
-	case T_FG | T_BLACK:
+	case T_FG + T_BLACK:
 		SetConsoleTextAttribute(hstdout, ATTR_NORMAL); break;
-	case T_FG | T_RED:
+	case T_FG + T_RED:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_RED); break;
-	case T_FG | T_GREEN:
+	case T_FG + T_GREEN:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN); break;
-	case T_FG | T_YELLOW:
+	case T_FG + T_YELLOW:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_GREEN); break;
-	case T_FG | T_BLUE:
+	case T_FG + T_BLUE:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_BLUE); break;
-	case T_FG | T_MAGENTA:
+	case T_FG + T_MAGENTA:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_BLUE); break;
-	case T_FG | T_CYAN:
+	case T_FG + T_CYAN:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_BLUE); break;
-	case T_FG | T_WHITE:
+	case T_FG + T_WHITE:
 		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 		break;
-	case T_BG | T_BLACK:
+	case T_BG + T_BLACK:
 		SetConsoleTextAttribute(hstdout, ATTR_REVERSE); break;
-	case T_BG | T_RED:
+	case T_BG + T_RED:
 		SetConsoleTextAttribute(hstdout, BACKGROUND_RED); break;
-	case T_BG | T_GREEN:
+	case T_BG + T_GREEN:
 		SetConsoleTextAttribute(hstdout, BACKGROUND_GREEN); break;
-	case T_BG | T_YELLOW:
+	case T_BG + T_YELLOW:
 		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_GREEN); break;
-	case T_BG | T_BLUE:
+	case T_BG + T_BLUE:
 		SetConsoleTextAttribute(hstdout, BACKGROUND_BLUE); break;
-	case T_BG | T_MAGENTA:
+	case T_BG + T_MAGENTA:
 		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_BLUE); break;
-	case T_BG | T_CYAN:
+	case T_BG + T_CYAN:
 		SetConsoleTextAttribute(hstdout, BACKGROUND_GREEN | BACKGROUND_BLUE); break;
-	case T_BG | T_WHITE:
+	case T_BG + T_WHITE:
 		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 		break;
 }

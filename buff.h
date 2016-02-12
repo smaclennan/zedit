@@ -75,6 +75,7 @@ void tobegline(struct buff *);
 void toendline(struct buff *);
 unsigned long blength(struct buff *);
 unsigned long blocation(struct buff *);
+unsigned long bline(struct buff *buff);
 bool bcsearch(struct buff *, Byte);
 bool bcrsearch(struct buff *, Byte);
 void bempty(struct buff *buff);

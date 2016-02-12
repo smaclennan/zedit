@@ -259,8 +259,6 @@ void set_mouse(bool enable);
 void mouse_scroll(int row, bool down);
 void mouse_point(int row, int col, bool set_mark);
 
-unsigned long bline(struct buff *buff);
-
 /* COMMENTBOLD */
 void resetcomments(void);
 void uncomment(struct zbuff *buff);

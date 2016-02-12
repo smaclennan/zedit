@@ -357,6 +357,20 @@ unsigned long blocation(struct buff *buff)
 	return len + buff->curchar;
 }
 
+/** Return the current line of the point. */
+unsigned long bline(struct buff *buff)
+{
+	struct mark tmark;
+	unsigned long line = 1;
+
+	bmrktopnt(buff, &tmark);
+	btostart(buff);
+	while (bcsearch(buff, '\n') && !bisaftermrk(buff, &tmark))
+		++line;
+	bpnttomrk(buff, &tmark);
+	return line;
+}
+
 /** Search forward for a single byte `what'. If what found leaves
  * point at the byte after what and returns true. If not found leaves
  * point at the end of buffer and returns false.

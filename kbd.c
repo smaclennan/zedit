@@ -262,7 +262,7 @@ bool tdelay(int ms)
 	return poll(&stdin_fd, 1, ms) != 1;
 }
 
-#ifdef TERMCAP_KEYS
+#ifdef TERMCAP
 static char *key_names[] = {
 	"ku",
 	"kd",
@@ -290,16 +290,17 @@ static char *key_names[] = {
 	"F2",
 };
 
-char *termcap_keys(char *end)
+void termcap_keys(void)
 {
+	extern char *termcap_end;
 	int i;
 	char *key;
 
 	/* get the cursor and function key defines */
 	for (i = 0; i < 22; ++i) {
-		key = end;
-		tgetstr(key_names[i], &end);
-		if (key != end) {
+		key = termcap_end;
+		tgetstr(key_names[i], &termcap_end);
+		if (key != termcap_end) {
 			if (*key != 033) {
 				/* This is mainly to catch 0177 for delete */
 				if (verbose)
@@ -311,7 +312,5 @@ char *termcap_keys(char *end)
 			}
 		}
 	}
-
-	return end;
 }
 #endif

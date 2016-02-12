@@ -95,8 +95,8 @@ doxy:
 	doxygen doxygen/Doxyfile
 
 install: all
-	mkdir -p $(DESTDIR)/bin
-	install -s $(ZEXE) $(DESTDIR)/bin/z
+	install -s -D $(ZEXE) $(DESTDIR)/bin/z
+	install -m644 -D zedit-termcap $(DESTDIR)/usr/share/zedit/termcap
 
 clean:
 	rm -f *.o gpm/*.o $(ZEXE) fcheck main core* TAGS valgrind.out

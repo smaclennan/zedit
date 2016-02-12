@@ -63,18 +63,17 @@ static void tfini(void)
 	tflush();
 }
 
-#if defined(TERMCAP) || (TERMCAP_KEYS)
+#ifdef TERMCAP
 #define NUMCM	7
 #define MUST	3
 char *cm[NUMCM];
 static char bp[1024];
 static char area[1024];
+char *termcap_end;
 
 static void tlinit(void)
 {
-#ifdef TERMCAP
 	static char *names[] = { "cm", "ce", "cl", "me", "so", "vb", "md" };
-#endif
 	char *end = area;
 
 	char *term = getenv("TERM");
@@ -87,13 +86,6 @@ static void tlinit(void)
 		exit(1);
 	}
 
-#ifdef TERMCAP_KEYS
-	end = termcap_keys(end);
-	if (end == NULL)
-		exit(1);
-#endif
-
-#ifdef TERMCAP
 	/* get the initialziation string and send to stdout */
 	char *was = end;
 	tgetstr("is", &end);
@@ -107,14 +99,15 @@ static void tlinit(void)
 		tgetstr(names[i], &end);
 		if (cm[i] == end) {
 			if (i < MUST || verbose)
-				printf("Missing termcap entry for %s\n", names[i]);
+				Dbg("Missing termcap entry for %s\n", names[i]);
 			if (i < MUST)
 				exit(1);
 			else
 				cm[i] = "";
 		}
 	}
-#endif
+
+	termcap_end = end;
 }
 #else
 static void tlinit(void) {}

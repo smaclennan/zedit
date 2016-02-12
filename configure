@@ -14,7 +14,6 @@ do_help() {
     echo "  --enable-spell	Enable spell commands"
     echo "  --enable-zlib		Enable gzip compression support"
     echo "  --enable-termcap	Enable termcap."
-    echo "  --enable-termcap-keys	Enable termcap for keys only."
     echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
     echo "  --enable-undo		Enable undo"
     echo "  --enable-show-region	Enable show region"
@@ -48,7 +47,6 @@ while [ -n "$1" ]; do
     case "$1" in
       *-clang) clang=$enable;;
       *-termcap) termcap=$enable;;
-      *-termcap-keys) termcap_keys=$enable;;
       *-dopipes) dopipes=$enable;;
       *-spell) spell=$enable;;
       *-zlib) zlib=$enable;;
@@ -81,8 +79,6 @@ if [ $termcap = 1 -o $termcap_keys = 1 ]; then
 fi
 
 set_if_one TERMCAP $termcap
-set_if_one TERMCAP_KEYS $termcap
-set_if_one TERMCAP_KEYS $termcap_keys
 
 if [ -f /usr/include/termios.h ]; then
     true

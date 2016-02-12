@@ -1,8 +1,6 @@
 #ifndef _TINIT_H_
 #define _TINIT_H_
 
-/* WARNING: Currently -DTERMCAP_KEYS only works for zedit */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -11,10 +9,6 @@
 #include <termcap.h>
 #define TPUTS(s) tputs(s, 1, putchar)
 extern char *cm[];
-#endif
-#ifdef TERMCAP_KEYS
-#include <termcap.h>
-char *termcap_keys(char *end);
 #endif
 
 #define	ROWMAX			110

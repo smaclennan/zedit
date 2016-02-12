@@ -71,6 +71,12 @@ Byte tpeek(int offset);
 #define T_CYAN			 6
 #define T_WHITE			 7
 
+#ifdef TERMCAP
+#define T_BELL			256
+#else
+#define T_BELL			(T_BG | T_RED)
+#endif
+
 void tstyle(int style);
 
 #endif

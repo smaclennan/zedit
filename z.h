@@ -201,7 +201,6 @@ extern void (*Nextpart)(void);
 #define	NL	('\n')
 
 /* Zedit specific attributes */
-#define T_BELL			(T_BG | T_RED)
 #define T_STANDOUT		T_REVERSE
 #ifdef TERMCAP
 #define T_COMMENT		T_BOLD

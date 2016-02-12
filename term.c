@@ -248,11 +248,8 @@ void tstyle(int style)
 	case T_NORMAL:
 		SetConsoleTextAttribute(hstdout, ATTR_NORMAL);
 		break;
-	case T_STANDOUT: /* modeline */
-		if (ring_bell)
-			SetConsoleTextAttribute(hstdout, BACKGROUND_RED);
-		else
-			SetConsoleTextAttribute(hstdout, ATTR_REVERSE);
+	case T_BELL:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_RED);
 		break;
 	case T_REVERSE:
 		SetConsoleTextAttribute(hstdout, ATTR_REVERSE);
@@ -261,46 +258,60 @@ void tstyle(int style)
 		SetConsoleTextAttribute(hstdout,
 					ATTR_NORMAL | FOREGROUND_INTENSITY);
 		break;
-	case T_COMMENT:
-		SetConsoleTextAttribute(hstdout, FOREGROUND_RED);
+	case T_FG | T_BLACK:
+		SetConsoleTextAttribute(hstdout, ATTR_NORMAL); break;
+	case T_FG | T_RED:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED); break;
+	case T_FG | T_GREEN:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN); break;
+	case T_FG | T_YELLOW:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_GREEN); break;
+	case T_FG | T_BLUE:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_BLUE); break;
+	case T_FG | T_MAGENTA:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_BLUE); break;
+	case T_FG | T_CYAN:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_BLUE); break;
+	case T_FG | T_WHITE:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 		break;
-	case T_REGION:
-		SetConsoleTextAttribute(hstdout, ATTR_REGION);
+	case T_BG | T_BLACK:
+		SetConsoleTextAttribute(hstdout, ATTR_REVERSE); break;
+	case T_BG | T_RED:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_RED); break;
+	case T_BG | T_GREEN:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_GREEN); break;
+	case T_BG | T_YELLOW:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_GREEN); break;
+	case T_BG | T_BLUE:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_BLUE); break;
+	case T_BG | T_MAGENTA:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_BLUE); break;
+	case T_BG | T_CYAN:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_GREEN | BACKGROUND_BLUE); break;
+	case T_BG | T_WHITE:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 		break;
-	}
+}
 #elif defined(TERMCAP)
 	switch (style) {
 	case T_NORMAL:
 		TPUTS(cm[3]);
 		break;
-	case T_STANDOUT: /* modeline */
-		if (ring_bell && *cm[5])
-			TPUTS(cm[5]);
-		else
-			TPUTS(cm[4]);
-		break;
 	case T_REVERSE:
-	case T_REGION:
 		TPUTS(cm[4]);
 		break;
-	case T_COMMENT:
+	case T_BELL:
+		TPUTS(cm[5]);
+		break;
+	case T_BOLD:
 		TPUTS(cm[6]);
 		break;
+	default:
+		return;
 	}
 #else
-	switch (style) {
-	case T_NORMAL:
-		fputs("\033[0m", stdout); break;
-	case T_STANDOUT: /* modeline */
-		fputs(ring_bell ? "\033[41m" : "\033[7m", stdout); break;
-	case T_REVERSE:
-	case T_REGION:
-		fputs("\033[7m", stdout); break;
-	case T_BOLD:
-		fputs("\033[1m", stdout); break;
-	case T_COMMENT:
-		fputs("\033[31m", stdout); break; /* red */
-	}
+	printf("\033[%dm", style);
 #endif
 
 	cur_style = style;

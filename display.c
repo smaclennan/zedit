@@ -386,6 +386,11 @@ void reframe(void)
 	bpnttomrk(Bbuff, &pmark);
 }
 
+static inline void modeline_style(void)
+{
+	tstyle(ring_bell ? T_BELL : T_STANDOUT);
+}
+
 /* Redraw the modeline except for flags. */
 static void modeline(struct wdo *wdo)
 {
@@ -393,7 +398,7 @@ static void modeline(struct wdo *wdo)
 	int len;
 
 	tsetpoint(wdo->last, 0);
-	tstyle(T_STANDOUT);
+	modeline_style();
 	sprintf(str, "%s %s  (%s)  %s: ", ZSTR, VERSION,
 			setmodes(wdo->wbuff), wdo->wbuff->bname);
 	tprntstr(str);
@@ -421,7 +426,7 @@ static void modeflags(struct wdo *wdo)
 	if (wdo->modeflags == INVALID)
 		modeline(wdo);
 
-	tstyle(T_STANDOUT);
+	modeline_style();
 
 	mask = delcmd() | (wdo->wbuff->buff->bmodf ? 2 : 0);
 	if (!InPaw && wdo->modeflags != mask) {

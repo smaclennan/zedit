@@ -57,6 +57,7 @@ bool mrkbeforemrk(struct mark *, struct mark *);
 
 long bcopyrgn(struct mark *, struct buff*);
 long bdeltomrk(struct mark *);
+unsigned long bline(struct buff *buff);
 
 #ifdef HAVE_GLOBAL_MARKS
 extern struct mark *Marklist;

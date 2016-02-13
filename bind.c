@@ -244,25 +244,3 @@ const char *special_label(int key)
 	else
 		return "???";
 }
-
-void dump_key(int keyn, char *key, const char *suffix)
-{
-	char str[100];
-	int n = 0;
-
-	while (*key) {
-		if (isprint(*key))
-			n += sprintf(str + n, "%c ", *key);
-		else
-			n += sprintf(str + n, "\\%03o ", *key);
-		++key;
-	}
-	str[n] = '\0';
-	if (suffix)
-		snprintf(str + n, sizeof(str) - n, "%s", suffix);
-
-	if (keyn + SPECIAL_START <= SPECIAL_END)
-		Dbg("%-9s  %s\n", special_label(keyn + SPECIAL_START), str);
-	else
-		Dbg("Key %2d:    %s\n", keyn, str);
-}

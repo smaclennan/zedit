@@ -43,7 +43,6 @@ static struct termios settty;
 HANDLE hstdin, hstdout;	/* Console in and out handles */
 #endif
 
-int verbose;
 int Prow, Pcol;
 static int Srow = -1, Scol = -1;
 static int Clrcol[ROWMAX];
@@ -98,11 +97,10 @@ static void tlinit(void)
 		cm[i] = end;
 		tgetstr(names[i], &end);
 		if (cm[i] == end) {
-			if (i < MUST || verbose)
+			if (i < MUST) {
 				Dbg("Missing termcap entry for %s\n", names[i]);
-			if (i < MUST)
 				exit(1);
-			else
+			} else
 				cm[i] = "";
 		}
 	}

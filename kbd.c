@@ -209,17 +209,9 @@ void termcap_keys(void)
 	for (i = 0; i < 22; ++i) {
 		key = termcap_end;
 		tgetstr(key_names[i], &termcap_end);
-		if (key != termcap_end) {
-			if (*key != 033) {
-				/* This is mainly to catch 0177 for delete */
-				if (verbose)
-					dump_key(i, key, "skipped");
-			} else {
+		if (key != termcap_end)
+			if (*key == 033)
 				Tkeys[i] = key;
-				if (verbose)
-					dump_key(i, key, NULL);
-			}
-		}
 	}
 }
 #endif

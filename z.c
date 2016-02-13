@@ -20,6 +20,7 @@
 #include "z.h"
 #include <stdarg.h>
 
+int verbose;
 bool Initializing = true;
 char *Home;
 

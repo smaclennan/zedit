@@ -42,12 +42,14 @@ void t_goto(int row, int col);
 void tcleol(void);
 void tclrwind(void);
 
-/* Keyboard input. */
-int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
-
+/* kbd.c */
 Byte tgetkb(void);
 void tungetkb(int n);
 Byte tpeek(int offset);
+int tgetcmd(void);
+bool tkbrdy(void);
+bool tdelay(int ms);
+void termcap_keys(void);
 
 /* tstyle() attributes */
 #define T_NORMAL		0

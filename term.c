@@ -85,10 +85,6 @@ void tainit(void)
 	/* We want everything else disabled */
 	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 #endif
-#ifdef TERMCAP
-	extern void termcap_keys(void);
-	termcap_keys();
-#endif
 
 	/* Override the signal handler in tinit() */
 #ifdef SIGHUP

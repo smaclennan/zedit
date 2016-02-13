@@ -10,7 +10,7 @@
 #include "buff.h"
 #include "tinit.h"
 
-int rows, cols;
+static int rows, cols;
 
 #define bchar (*buff->curcptr)
 
@@ -141,6 +141,6 @@ int main(int argc, char *argv[])
 
 /*
  * Local Variables:
- * compile-command: "gcc -g -Wall sless.c buff.c bfile.c tinit.c dbg.c -o sless"
+ * compile-command: "gcc -g -Wall sless.c buff.c bfile.c tinit.c kbd.c dbg.c -o sless"
  * End:
  */

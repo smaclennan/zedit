@@ -17,8 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "z.h"
+#include "tinit.h"
+#include "keys.h"
 #include <poll.h>
+#include <signal.h>
+#include <unistd.h>
 
 /** The special multi-byte keys. Note: We can currently only have 32 specials */
 static char *Tkeys[] = {
@@ -51,7 +54,51 @@ static char *Tkeys[] = {
 	"\033[8^"	/* C-end */
 };
 
+/** The size of the keyboard input stack. Must be a power of 2 */
+#define CSTACK 16
+static Byte cstack[CSTACK]; /**< The keyboard input stack */
+static int cptr = -1; /**< Current pointer in keyboard input stack. */
+static int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
 static bool Pending; /**< Set to true if poll stdin detected input. */
+
+/** This is the lowest level keyboard routine. It reads the keys into
+ * a stack then returns the keys one at a time. When the stack is
+ * consumed it reads again.
+ *
+ * The read can block.
+ */
+Byte tgetkb(void)
+{
+	cptr = (cptr + 1) & (CSTACK - 1);
+	if (cpushed)
+		--cpushed;
+	else {
+		Byte buff[CSTACK];
+		int i, p = cptr;
+
+		cpushed = read(0, (char *)buff, CSTACK) - 1;
+		if (cpushed < 0)
+			kill(getpid(), SIGHUP); /* we lost connection */
+		for (i = 0; i <= cpushed; ++i) {
+			cstack[p] = buff[i];
+			p = (p + 1) & (CSTACK - 1);
+		}
+	}
+	return cstack[cptr];
+}
+
+/** Push back n keys */
+void tungetkb(int n)
+{
+	cptr = (cptr - n) & (CSTACK - 1);
+	cpushed += n;
+}
+
+/** Peek the key at a given offset */
+Byte tpeek(int offset)
+{
+	return cstack[(cptr + offset) & (CSTACK - 1)];
+}
 
 /** Check if the keyboard input is "special", i.e. One of the
  * multi-byte #Tkeys.
@@ -118,7 +165,7 @@ bool tkbrdy(void)
 /** Delay for a set time or until there is keyboard input. */
 bool tdelay(int ms)
 {
-	if (InPaw || cpushed || Pending)
+	if (cpushed || Pending)
 		return false;
 
 	return poll(&stdin_fd, 1, ms) != 1;

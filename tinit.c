@@ -108,6 +108,8 @@ static void tlinit(void)
 	}
 
 	termcap_end = end;
+
+	termcap_keys();
 }
 #else
 static void tlinit(void) {}
@@ -360,52 +362,3 @@ void tstyle(int style)
 	cur_style = style;
 	tflush();
 }
-
-/* Keyboard input */
-
-#ifndef WIN32
-/** The size of the keyboard input stack. Must be a power of 2 */
-#define CSTACK 16
-static Byte cstack[CSTACK]; /**< The keyboard input stack */
-static int cptr = -1; /**< Current pointer in keyboard input stack. */
-int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
-
-/** This is the lowest level keyboard routine. It reads the keys into
- * a stack then returns the keys one at a time. When the stack is
- * consumed it reads again.
- *
- * The read can block.
- */
-Byte tgetkb(void)
-{
-	cptr = (cptr + 1) & (CSTACK - 1);
-	if (cpushed)
-		--cpushed;
-	else {
-		Byte buff[CSTACK];
-		int i, p = cptr;
-
-		cpushed = read(0, (char *)buff, CSTACK) - 1;
-		if (cpushed < 0)
-			kill(getpid(), SIGHUP); /* we lost connection */
-		for (i = 0; i <= cpushed; ++i) {
-			cstack[p] = buff[i];
-			p = (p + 1) & (CSTACK - 1);
-		}
-	}
-	return cstack[cptr];
-}
-
-/** Push back n keys */
-void tungetkb(int n)
-{
-	cptr = (cptr - n) & (CSTACK - 1);
-	cpushed += n;
-}
-
-/** Peek the key at a given offset */
-Byte tpeek(int offset)
-{
-	return cstack[(cptr + offset) & (CSTACK - 1)];
-}
-#endif

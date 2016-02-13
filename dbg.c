@@ -17,9 +17,9 @@ const char *Dbgfname(const char *fname)
 		free(dbgfname);
 		dbgfname = NULL;
 	}
-	if (!fname)
-		return NULL;
-	return dbgfname = strdup(fname);
+	if (fname)
+		dbgfname = strdup(fname);
+	return dbgfname;
 }
 
 void Dbg(const char *fmt, ...)

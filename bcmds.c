@@ -233,6 +233,8 @@ static void bfini(void)
 		cdelbuff(Bufflist);
 
 	cdelbuff(Paw);
+
+	Dbgfname(NULL);
 }
 
 static void binit(void)

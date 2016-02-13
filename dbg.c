@@ -13,8 +13,12 @@ static char *dbgfname;
 
 const char *Dbgfname(const char *fname)
 {
-	if (dbgfname)
+	if (dbgfname) {
 		free(dbgfname);
+		dbgfname = NULL;
+	}
+	if (!fname)
+		return NULL;
 	return dbgfname = strdup(fname);
 }
 

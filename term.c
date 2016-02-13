@@ -73,8 +73,6 @@ static void initline(void)
 
 static void tafini(void)
 {
-	set_mouse(false);
-
 	clrpaw();
 	t_goto(Rowmax - 1, 0);
 	tstyle(T_NORMAL);
@@ -91,8 +89,6 @@ void tainit(void)
 	extern void termcap_keys(void);
 	termcap_keys();
 #endif
-
-	set_mouse(true);
 
 	/* Override the signal handler in tinit() */
 #ifdef SIGHUP
@@ -252,67 +248,6 @@ void tsetcursor(void)
 	cursorinfo.bVisible = true;
 	SetConsoleCursorInfo(hstdout, &cursorinfo);
 #endif
-}
-
-void mouse_scroll(int row, bool down)
-{
-	struct wdo *wdo = wfind(row);
-	if (!wdo) {
-		error("Not on a window."); /* XEmacs-ish */
-		return;
-	}
-
-	wswitchto(wdo);
-
-	Arg = 3;
-	down ? Znext_line() : Zprevious_line();
-}
-
-void mouse_point(int row, int col, bool set_mark)
-{
-	int atcol;
-	struct mark tmark;
-	struct wdo *wdo = wfind(row);
-	if (!wdo) {
-		error("Not on a window."); /* XEmacs-ish */
-		return;
-	}
-
-	if (wdo != Curwdo) {
-		wswitchto(wdo);
-		/* We need Prow and Pcol to be correct. */
-		zrefresh();
-	}
-
-	bmrktopnt(Bbuff, &tmark);
-
-	/* Move the point to row */
-	if (row > Prow)
-		while (Prow < row) {
-			bcsearch(Bbuff, '\n');
-			++Prow;
-		}
-	else if (row <= Prow) {
-		while (Prow > row) {
-			bcrsearch(Bbuff, '\n');
-			--Prow;
-		}
-		tobegline(Bbuff);
-	}
-
-	/* Move the point to col */
-	atcol = 0;
-	while (col > 0 && !bisend(Bbuff) && Buff() != '\n') {
-		int n = chwidth(Buff(), atcol, false);
-		bmove1(Bbuff);
-		col -= n;
-		atcol += n;
-	}
-
-	if (set_mark) {
-		Zset_mark(); /* mark to point */
-		bpnttomrk(Bbuff, &tmark); /* reset mark */
-	}
 }
 
 #undef tbell

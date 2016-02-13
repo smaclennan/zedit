@@ -31,7 +31,6 @@ MAKEFLAGS += --no-print-directory
 #LIBS += -lz
 #LIBS += -ldl
 LIBS += -ltermcap
-#LIBS += -lgpm
 
 ETAGS=`which etags || echo true`
 
@@ -99,6 +98,6 @@ install: all
 	install -m644 -D zedit-termcap $(DESTDIR)/usr/share/zedit/termcap
 
 clean:
-	rm -f *.o gpm/*.o $(ZEXE) fcheck main core* TAGS valgrind.out
+	rm -f *.o $(ZEXE) fcheck main core* TAGS valgrind.out
 	rm -rf doxygen/html tmpdir
 	@$(MAKE) -C docs clean

@@ -228,11 +228,6 @@ int batoi(void);
 void vsetmod_callback(struct buff *buff);
 #define vsetmod() vsetmod_callback(NULL);
 
-#if GPM_MOUSE
-void handle_gpm_mouse(void);
-void handle_mouse_cursor(void);
-#endif
-
 /* umark routines */
 void set_umark(struct mark *tmark); /* tmark == NULL means set to point */
 void clear_umark(void);
@@ -254,10 +249,6 @@ void wsize(void);
 bool wuseother(const char *);
 struct wdo *wfind(int row);
 void wgoto(struct buff *);
-
-void set_mouse(bool enable);
-void mouse_scroll(int row, bool down);
-void mouse_point(int row, int col, bool set_mark);
 
 /* COMMENTBOLD */
 void resetcomments(void);

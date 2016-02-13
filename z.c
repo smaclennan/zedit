@@ -65,7 +65,6 @@ static void dotty(void)
 		Cmd = Cmdpushed;
 		Cmdpushed = -1;
 	}
-	if (Cmd == TC_MOUSE) return;
 
 	if (ring_bell) {
 		ring_bell = 0;
@@ -99,10 +98,6 @@ static void fd_init(void)
 	}
 
 	fds[0].fd = 0; /* stdin */
-#if GPM_MOUSE
-	extern int gpm_fd;
-	fds[1].fd = gpm_fd;
-#endif
 }
 
 bool fd_add(int fd)
@@ -129,10 +124,6 @@ void execute(void)
 	zrefresh();
 	
 #ifdef DOPIPES
-#if GPM_MOUSE
-	handle_mouse_cursor();
-#endif
-
 	if (tkbrdy() || Cmdpushed != -1)
 		dotty();
 	else {
@@ -146,10 +137,6 @@ void execute(void)
 
 		if (fds[0].revents)
 			dotty();
-#if GPM_MOUSE
-		if (fds[1].revents)
-			handle_gpm_mouse();
-#endif
 		if (fds[PIPEFD].revents)
 			readapipe();
 	}

@@ -58,7 +58,7 @@ static void doincsrch(const char *prompt, bool forward)
 		putpaw("%s: %s", promptstr, str);
 		cmd = tgetcmd();
 
-		if (cmd == TC_UNKNOWN || cmd == TC_MOUSE) {
+		if (cmd == TC_UNKNOWN) {
 			tbell();
 			continue;
 		}

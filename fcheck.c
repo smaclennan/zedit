@@ -30,7 +30,6 @@ HANDLE hstdin;
 int Colmax, Rowmax;
 #include "winkbd.c"
 #else
-#undef GPM_MOUSE
 #include "kbd.c"
 #include "tinit.c"
 #endif
@@ -62,9 +61,6 @@ struct wdo *Curwdo;
 void hang_up(int sig) { ((void)sig); }
 
 void Dbg(const char *fmt, ...) { ((void)fmt); }
-
-void mouse_scroll(int row, bool down) { ((void)row); ((void)down); }
-void mouse_point(int row, int col, bool set_mark) {}
 
 void _putpaw(const char *str) { puts(str); }
 

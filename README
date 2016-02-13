@@ -26,20 +26,3 @@ About the Name
 The program is called Zedit, but the executable was always z. I liked
 the fact that if you say z the British/Canadian way (zed not zee) it
 has the word ed in it but only needs one letter.
-
-Mouse Support
--------------
-
-Zedit is finally getting some mouse support. Let's first describe what
-we are trying to support and then mention what is supported where.
-
-  1. The left button sets the point.
-  2. The right button sets the mark.
-  3. You can drag to set the region.
-  4. The scroll wheel should scroll.
-
-* Xterm supports everything and requires no libraries.
-* Rxvt supports everything except drag (3) and requires no libraries.
-* The Linux console supports everything but requires gpm.
-* Win32 supports everything except drag (3). Drag is probably doable.
-* DOS supports only simple button presses (1 & 2).

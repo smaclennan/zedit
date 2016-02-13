@@ -19,9 +19,6 @@
 
 #include "z.h"
 #include <poll.h>
-#if GPM_MOUSE
-#include <gpm.h>
-#endif
 
 /** The special multi-byte keys. Note: We can currently only have 32 specials */
 static char *Tkeys[] = {
@@ -56,134 +53,8 @@ static char *Tkeys[] = {
 
 static bool Pending; /**< Set to true if poll stdin detected input. */
 
-/** Enable or disable mouse commands.
- * Xterm supports motion events but rxvt does not.
- * Hint: Rxvt*termName: rxvt
- */
-void set_mouse(bool enable)
-{
-	static int is_real_xterm = -1;
-	int n = 0;
-
-	if (enable) {
-		char *term = getenv("TERM");
-		if (term) {
-			if (strncmp(term, "xterm", 5) == 0) {
-				is_real_xterm = 1;
-				n = write(1, "\033[?1002h", 8);
-			} else if (strncmp(term, "rxvt", 4) == 0) {
-				is_real_xterm = 0;
-				n = write(1, "\033[?1000h", 8);
-			}
-#if GPM_MOUSE
-			else {
-				Gpm_Connect conn;
-				memset(&conn, 0, sizeof(conn));
-				conn.eventMask  = GPM_DOWN | GPM_UP | GPM_DRAG;
-				conn.defaultMask = GPM_MOVE; /* so that mouse cursor displayed */
-				gpm_zerobased = 1;
-
-				if (Gpm_Open(&conn, 0) < 0) {
-					/* Cannot connect to gpm server */
-					gpm_fd = -1; /* paranoia */
-					return;
-				}
-			}
-#endif
-		}
-	} else {
-		if (is_real_xterm == 1)
-			n = write(1, "\033[?1002l", 8);
-		else if (is_real_xterm == 0)
-			n = write(1, "\033[?1000l", 8);
-#if GPM_MOUSE
-		else if (gpm_fd	> 0)
-			Gpm_Close();
-#endif
-	}
-
-	if (n < 0) Dbg("Unable to set mouse mode.\n");
-}
-
-/** Handle a mouse command. */
-static int do_mouse(void)
-{
-	Byte button, col, row;
-
-	tgetkb(); tgetkb(); tgetkb(); /* suck up \033[M */
-	button = tgetkb();
-	col = tgetkb() - 33; /* zero based */
-	row = tgetkb() - 33; /* zero based */
-
-	switch (button & 0x60) {
-	case 0x20:
-		/* button event */
-		switch (button & 3) {
-		case 0:
-		case 1:
-			mouse_point(row, col, false);
-			break;
-		case 2:
-			mouse_point(row, col, true);
-			break;
-		case 3:
-			/* release */
-			break;
-		}
-		break;
-	case 0x40:
-		/* motion event */
-		mouse_point(row, col, true);
-		break;
-	case 0x60:
-		/* scroll wheel */
-		mouse_scroll(row, button & 1);
-		break;
-	default:
-		_putpaw("Unknown mouse event");
-	}
-
-	return TC_MOUSE;
-}
-
-#if GPM_MOUSE
-static Gpm_Event event;
-static int need_mouse_cursor;
-
-void handle_gpm_mouse(void)
-{
-	Gpm_GetEvent(&event);
-
-	switch (GPM_BARE_EVENTS(event.type)) {
-	case GPM_DOWN:
-		switch (event.buttons) {
-		case 1: mouse_point(event.y, event.x, true); break;
-		case 2:
-		case 4: mouse_point(event.y, event.x, false); break;
-		}
-		break;
-	case GPM_DRAG: mouse_point(event.y, event.x, true); break;
-	case GPM_UP: break;
-	case GPM_MOVE:
-		switch (event.wdy) {
-		case 0:  need_mouse_cursor = 1; break;
-		case -1: mouse_scroll(event.y, true); break;
-		case 1:  mouse_scroll(event.y, false); break;
-		}
-	}
-}
-
-void handle_mouse_cursor(void)
-{
-	if (need_mouse_cursor) {
-		GPM_DRAWPOINTER(&event);
-		need_mouse_cursor = 0;
-	}
-}
-#endif
-
 /** Check if the keyboard input is "special", i.e. One of the
- * multi-byte #Tkeys or a mouse cmd.
+ * multi-byte #Tkeys.
  */
 static int check_specials(void)
 {
@@ -202,8 +73,7 @@ static int check_specials(void)
 	/* No match - push back the chars */
 	tungetkb(j);
 
-	switch (tpeek(2)) {
-	case 'O':
+	if (tpeek(2) == '0')
 		/* Check for ESC O keys - happens a lot on ssh */
 		switch (tpeek(3)) {
 		case 'A'...'D':
@@ -216,14 +86,6 @@ static int check_specials(void)
 			tgetkb();
 			return check_specials();
 		}
-		break;
-
-	case '[':
-		/* Handle mouse input */
-		if (tpeek(3) == 'M')
-			return do_mouse();
-		break;
-	}
 
 	return tgetkb() & 0x7f;
 }

@@ -26,11 +26,14 @@ D = -O2
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
 CFLAGS += -DHAVE_CONFIG_H
 
+# Saves about 20k
+#CFLAGS += -DNO_HELP
+
 MAKEFLAGS += --no-print-directory
 
 #LIBS += -lz
 #LIBS += -ldl
-LIBS += -ltermcap
+#LIBS += -ltermcap
 
 ETAGS=`which etags || echo true`
 

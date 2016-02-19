@@ -104,7 +104,7 @@ int bappend(struct buff *buff, const Byte *, int);
 int bindata(struct buff *buff, Byte *, int);
 
 /* undo.c */
-#ifdef UNDO
+#if defined(UNDO) && UNDO
 extern unsigned long undo_total; /* Not thread safe */
 
 void undo_add(struct buff *buff, int size, bool clumped);
@@ -119,7 +119,7 @@ int undo_del_clumped(struct buff *buff, int size);
 #define undo_add(b, s, c)
 #define undo_del(b, s)
 #define undo_clear(b)
-#define do_undo(b)
+#define do_undo(b) 0
 #endif
 
 /* dbg.c */

@@ -287,7 +287,7 @@ struct zbuff *cmakebuff(const char *bname, char *fname)
 
 	if (bname && *bname == '*') {
 		bptr->bmode |= SYSBUFF;
-#ifdef UNDO
+#if UNDO
 		/* this disables undo for system buffers */
 		bptr->buff->in_undo = 1;
 #endif

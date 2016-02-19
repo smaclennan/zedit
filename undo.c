@@ -19,7 +19,7 @@
 
 #include "buff.h"
 
-#if UNDO
+#if defined(UNDO) && UNDO
 #include <stdlib.h>
 #include <string.h>
 

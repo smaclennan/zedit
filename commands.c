@@ -25,7 +25,7 @@ bool Argp;
 /* Word COMMANDS */
 
 /* Find the start of a word. */
-static bool Findstart(void)
+static bool findstart(void)
 {
 	while (!bisstart(Bbuff) && bistoken(Buff()))
 		bmove(Bbuff, -1);
@@ -42,7 +42,7 @@ static void bconvert(int (*to)(int c))
 
 void Zcapitalize_word(void)
 {
-	if (Findstart()) {
+	if (findstart()) {
 		bconvert(toupper);
 		for (bmove1(Bbuff); !bisend(Bbuff) && bistoken(Buff()); bmove1(Bbuff))
 			bconvert(tolower);
@@ -53,7 +53,7 @@ void Zcapitalize_word(void)
 
 void Zlowercase_word(void)
 {
-	if (Findstart()) {
+	if (findstart()) {
 		for (; !bisend(Bbuff) && bistoken(Buff()); bmove1(Bbuff))
 			bconvert(tolower);
 		vsetmod();
@@ -62,7 +62,7 @@ void Zlowercase_word(void)
 
 void Zuppercase_word(void)
 {
-	if (Findstart()) {
+	if (findstart()) {
 		for (; !bisend(Bbuff) && bistoken(Buff()); bmove1(Bbuff))
 			bconvert(toupper);
 		vsetmod();
@@ -1084,7 +1084,7 @@ void Zcalc(void)
 }
 
 
-#ifdef UNDO
+#if UNDO
 int undo_add_clumped(struct buff *buff, int size)
 {	/* commands we clump together */
 	switch (Lfunc) {

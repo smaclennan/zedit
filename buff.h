@@ -49,7 +49,7 @@ struct buff {
 	unsigned curchar;			/**< Point index in the page. */
 	Byte *curcptr;				/**< Point position in the page. */
 	bool bmodf;					/**< Buffer modified? */
-#ifdef UNDO
+#if defined(UNDO) && UNDO
 	bool in_undo;				/**< Are we currently performing an undo? */
 	void *undo_tail;			/**< list of undos */
 #endif

@@ -81,4 +81,15 @@
 /* 128 ASCII + 128 meta + 128 C-X */
 #define NUMKEYS			(128 + 128 + 128)
 
+/* kbd.c */
+Byte tgetkb(void);
+void tungetkb(int n);
+Byte tpeek(int offset);
+int tgetcmd(void);
+bool tkbrdy(void);
+bool tdelay(int ms);
+const char *special_label(int key);
+int is_special(int key);
+void termcap_keys(void);
+
 #endif

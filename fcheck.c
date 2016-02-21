@@ -58,9 +58,9 @@ unsigned Cmd;
 int ring_bell;
 struct wdo *Curwdo;
 
-void hang_up(int sig) { ((void)sig); }
+void hang_up(int sig) {}
 
-void Dbg(const char *fmt, ...) { ((void)fmt); }
+void Dbg(const char *fmt, ...) {}
 
 void _putpaw(const char *str) { puts(str); }
 
@@ -68,9 +68,6 @@ int main(int argc, char *argv[])
 {
 	int i, s1, s2, err = 0;
 	Byte array[97];
-
-	((void)argc);
-	((void)argv);
 
 #ifdef __unix__
 	uname(&utsname);

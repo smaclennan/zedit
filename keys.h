@@ -65,4 +65,14 @@
 
 #define is_special(cmd) (cmd >= SPECIAL_START && cmd <= SPECIAL_END)
 
+/* kbd.c */
+Byte tgetkb(void);
+void tungetkb(int n);
+Byte tpeek(int offset);
+int tgetcmd(void);
+bool tkbrdy(void);
+bool tdelay(int ms);
+const char *special_label(int key);
+void termcap_keys(void);
+
 #endif

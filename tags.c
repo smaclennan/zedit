@@ -25,6 +25,23 @@ static char Tagfile[PATHMAX];
 /* Leaves the point at the char offset */
 #define TAG_REGEX "[^a-zA-Z0-9_]%s(.*[0-9][0-9]*,"
 
+#define BOOKMARKS	16			/* number of book marks */
+static struct mark *Bookmrks[BOOKMARKS];	/* stack of book marks */
+static int  Bookmark = -1;			/* current book mark */
+static int  Lastbook = -1;			/* last bookmark */
+
+static int set_bookmark(void)
+{
+	Bookmark = (Bookmark + 1) & (BOOKMARKS - 1);
+	if (Bookmark > Lastbook) {
+		if (!(Bookmrks[Bookmark] = bcremark(Bbuff)))
+			return -1;
+		Lastbook = Bookmark;
+	} else
+		bmrktopnt(Bbuff, Bookmrks[Bookmark]);
+	return Bookmark;
+}
+
 static int get_tagfile(void)
 {
 	if (Argp) {
@@ -130,7 +147,7 @@ static bool find_tag(char *word)
 	getbword(p, sizeof(path), bistoken);
 
 	zswitchto(save);
-	set_bookmark(word);
+	set_bookmark();
 
 	if (findfile(path)) {
 		boffset(Bbuff, offset);
@@ -161,4 +178,29 @@ void Ztag_word(void)
 
 	getbword(tag, sizeof(tag), bisword);
 	find_tag(tag);
+}
+
+void Zset_bookmark(void)
+{
+	Arg = 0;
+	set_bookmark();
+	putpaw("Book Mark %d Set", Bookmark + 1);
+}
+
+void Znext_bookmark(void)
+{
+	if (Bookmark < 0) {
+		putpaw("No bookmarks set.");
+		return;
+	}
+
+	if (Bookmrks[Bookmark]->mbuff != Bbuff) {
+		strcpy(Lbufname, Curbuff->bname);
+		wgoto(Bookmrks[Bookmark]->mbuff);
+	}
+	bpnttomrk(Bbuff, Bookmrks[Bookmark]);
+	Curwdo->modeflags = INVALID;
+	putpaw("Book Mark %d", Bookmark + 1);
+	if (--Bookmark < 0)
+		Bookmark = Lastbook;
 }

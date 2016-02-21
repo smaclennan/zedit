@@ -283,7 +283,7 @@ struct cnames Cnames[] = {
 	   "overwrite mode, a NL goes to start of next line. In insert mode, "
 	   "its just inserted.")
 	},
-	{"next-bookmark",		ZNEXT_BOOKMARK,		0,
+	{"next-bookmark",		ZNEXT_BOOKMARK,		AN,
 	 C("Moves the Point to the last bookmark set in the bookmark ring. "
 	   "The bookmark moved to is displayed in the echo window. A "
 	   "Universal Argument in the range 1 to 10 corresponding to a set "
@@ -500,8 +500,8 @@ struct cnames Cnames[] = {
 	   "or replace commands will default to the last search string. If "
 	   "the mode Exact is set, the search will be case sensitive.")
 	},
-	{"set-bookmark",		ZSET_BOOKMARK,		AN,
-	 C("Places an invisible 'bookmark' at the Point. There are 10 "
+	{"set-bookmark",		ZSET_BOOKMARK,		AI,
+	 C("Places an invisible 'bookmark' at the Point. There are 16 "
 	   "bookmarks placed in a ring. The bookmark set is displayed in the "
 	   "PAW.")
 	},

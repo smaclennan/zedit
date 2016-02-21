@@ -54,6 +54,21 @@ static char *Tkeys[] = {
 	"\033[8^"	/* C-end */
 };
 
+static char *Tkeys2[] = {
+	"\033[23~",	/* f1 */
+	"\033[24~",	/* f2 */
+	"\033[25~",	/* f3 */
+	"\033[26~",	/* f4 */
+	"\033[28~",	/* f5 */
+	"\033[29~",	/* f6 */
+	"\033[31~",	/* f7 */
+	"\033[32~",	/* f8 */
+	"\033[33~",	/* f9 */
+	"\033[34~",	/* f10 */
+	"\033[23$",	/* f11 */
+	"\033[24$",	/* f12 */
+};
+
 /** The size of the keyboard input stack. Must be a power of 2 */
 #define CSTACK 16
 static Byte cstack[CSTACK]; /**< The keyboard input stack */
@@ -105,16 +120,24 @@ Byte tpeek(int offset)
  */
 static int check_specials(void)
 {
-	int i, j, bit, mask = KEY_MASK;
+	int i, j, bit, mask = KEY_MASK, mask2 = KEY_MASK2;
 
-	for (j = 1; mask; ++j) {
+	for (j = 1; mask || mask2; ++j) {
 		int cmd = tgetkb() & 0x7f;
-		for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
-			if ((mask & bit) && cmd == Tkeys[i][j]) {
-				if (Tkeys[i][j + 1] == '\0')
-					return i + SPECIAL_START;
-			} else
-				mask &= ~bit;
+		if (mask)
+			for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
+				if ((mask & bit) && cmd == Tkeys[i][j]) {
+					if (Tkeys[i][j + 1] == '\0')
+						return i + SPECIAL_START;
+				} else
+					mask &= ~bit;
+		if (mask2)
+			for (bit = 1, i = 0; i < NUM_SPECIAL2; ++i, bit <<= 1)
+				if ((mask2 & bit) && cmd == Tkeys2[i][j]) {
+					if (Tkeys2[i][j + 1] == '\0')
+						return i + SPECIAL_START2;
+				} else
+					mask2 &= ~bit;
 	}
 
 	/* No match - push back the chars */
@@ -169,6 +192,38 @@ bool tdelay(int ms)
 		return false;
 
 	return poll(&stdin_fd, 1, ms) != 1;
+}
+
+static const char *key_label[] = {
+	"up", "down", "right", "left",
+	"insert", "delete", "page up", "page down", "home", "end",
+	"f1", "f2", "f3", "f4", "f5", "f6",
+	"f7", "f8", "f9", "f10", "f11", "f12",
+	"C-home", "C-end",
+};
+
+static const char *key_label2[] = {
+	"s-f1", "s-f2", "s-f3", "s-f4", "s-f5", "s-f6",
+	"s-f7", "s-f8", "s-f9", "s-f10", "s-f11", "s-f12",
+};
+
+const char *special_label(int key)
+{
+	if (key >= SPECIAL_START && key <= SPECIAL_END)
+		return key_label[key - SPECIAL_START];
+	else if (key >= SPECIAL_START2 && key <= SPECIAL_END2)
+		return key_label2[key - SPECIAL_START2];
+	else
+		return "???";
+}
+
+int is_special(int cmd)
+{
+	if (cmd >= SPECIAL_START && cmd <= SPECIAL_END)
+		return 1;
+	if (cmd >= SPECIAL_START2 && cmd <= SPECIAL_END2)
+		return 1;
+	return 0;
 }
 
 #ifdef TERMCAP

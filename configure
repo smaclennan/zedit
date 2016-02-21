@@ -15,7 +15,6 @@ do_help() {
     echo "  --enable-termcap	Enable termcap."
     echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
     echo "  --enable-undo		Enable undo"
-    echo "  --enable-show-region	Enable show region"
     echo "  --enable-dopipes	Enable non-blocking shell commands"
     echo "  --config-dir <dir>	Default config directory."
     echo
@@ -50,7 +49,6 @@ while [ -n "$1" ]; do
       *-zlib) zlib=$enable;;
       *-sysv4) sysv4=$enable;;
       *-undo) undo=$enable;;
-      *-show-region) show_region=$enable;;
       --config-dir) shift; confdir=$1;;
       *) echo "Unknown arg '$1' ignored";;
     esac
@@ -92,7 +90,6 @@ echo >> config.h
 
 set_one SPELL $spell
 set_one ZLIB $zlib
-set_one SHOW_REGION $show_region
 set_one UNDO $undo
 
 if [ -n "$dopipes" ]; then

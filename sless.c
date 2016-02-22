@@ -9,6 +9,7 @@
 
 #include "buff.h"
 #include "tinit.h"
+#include "keys.h"
 
 static int rows, cols;
 

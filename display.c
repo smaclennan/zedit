@@ -99,14 +99,10 @@ void set_umark(struct mark *tmark)
 void clear_umark(void)
 {
 	if (UMARK_SET) {
-#if SHOW_REGION
 		int i;
 		for (i = 0; i < ROWMAX; ++i)
 			Scrnmodf[i] = true;
 		Tlrow = -1;
-#else
-		vsetmrk(UMARK);
-#endif
 
 		if (freeumark)
 			unmark(UMARK);
@@ -249,7 +245,6 @@ static void extendedlinemarker(void)
 
 static bool in_region(struct mark *pmark)
 {
-#if SHOW_REGION
 	if (!UMARK_SET || !pmark)
 		return false;
 
@@ -258,7 +253,6 @@ static bool in_region(struct mark *pmark)
 
 	if (bisaftermrk(Bbuff, pmark) && bisbeforemrk(Bbuff, UMARK))
 		return true;
-#endif
 
 	return false;
 }
@@ -271,12 +265,6 @@ static void bshove(void)
 	++Bbuff->curcptr;
 	++Bbuff->curchar;
 }
-
-#if SHOW_REGION
-#define REGION_ON UMARK_SET
-#else
-#define REGION_ON false
-#endif
 
 /*
  * Do the acutal screen update.
@@ -296,7 +284,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 		tsetcursor();
 
 	for (trow = from; trow < to; ++trow) {
-		if (Scrnmodf[trow] || !bisatmrk(Bbuff, &Scrnmarks[trow]) || REGION_ON) {
+		if (Scrnmodf[trow] || !bisatmrk(Bbuff, &Scrnmarks[trow]) || UMARK_SET) {
 			Scrnmodf[trow] = false;
 			bmrktopnt(Bbuff, &Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;

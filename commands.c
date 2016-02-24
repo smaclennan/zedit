@@ -1,5 +1,5 @@
 /* commands.c - Zedit commands
- * Copyright (C) 1988-2013 Sean MacLennan
+ * Copyright (C) 1988-2016 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the

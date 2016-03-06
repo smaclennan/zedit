@@ -10,6 +10,7 @@
 #include "buff.h"
 #include "tinit.h"
 #include "keys.h"
+#include "reg.h"
 
 static int rows, cols;
 
@@ -75,6 +76,60 @@ static void goto_line(struct buff *buff, Byte c)
 		bcsearch(buff, '\n');
 }
 
+static int get_line(char *line, int len)
+{
+	int c, i = 0;
+
+	while ((c = tgetkb()) != '\r')
+		switch (c) {
+		case ' '...'~':
+			tputchar(c);
+			tflush();
+			if (i < len - 1)
+				line[i++] = c;
+			break;
+		case 0177: /* backspace */
+			if (i > 0) {
+				tputchar('\b');
+				tputchar(' ');
+				tputchar('\b');
+				tflush();
+				--i;
+			}
+			break;
+		case 03: /* ctrl-c */
+		case 07: /* ctrl-g */
+			tsetpoint(rows, 0);
+			tcleol();
+			return 1;
+		case 04: /* ctrl-d */
+			tsetpoint(rows, 0);
+			tcleol();
+			exit(0);
+		}
+
+	if (i > 0)
+		line[i] = 0;
+	return 0;
+}
+
+static int do_search(struct buff *buff)
+{
+	static char search[80];
+	regexp_t re;
+
+	tputchar('\b');
+	tputchar('/');
+	tflush();
+	if (get_line(search, sizeof(search)))
+		return 1;
+
+	if (re_compile(&re, search, REG_EXTENDED))
+		return 1;
+
+	return re_step(buff, &re, NULL) ? 0 : 1;
+}
+
 int main(int argc, char *argv[])
 {
 	if (argc == 1) {
@@ -105,6 +160,7 @@ int main(int argc, char *argv[])
 		for (i = 0; i < rows && !bisend(buff); )
 			i += dump_line(buff, i);
 
+	again:
 		t_goto(rows, 0);
 		tputchar('>');
 		tflush();
@@ -122,9 +178,16 @@ int main(int argc, char *argv[])
 				needclear = 1;
 				break;
 			case 'q':
+			case 04: /* ctrl-d */
 				tsetpoint(rows, 0);
 				tcleol();
 				exit(0);
+			case '/':
+				if (do_search(buff))
+					goto again;
+				needclear = 1;
+				tobegline(buff);
+				break;
 			default:
 				cont = 0;
 			}
@@ -142,6 +205,6 @@ int main(int argc, char *argv[])
 
 /*
  * Local Variables:
- * compile-command: "gcc -g -Wall sless.c buff.c bfile.c tinit.c kbd.c dbg.c -o sless"
+ * compile-command: "gcc -g -Wall sless.c buff.c mark.c bfile.c tinit.c kbd.c dbg.c reg.c -o sless"
  * End:
  */

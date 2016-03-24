@@ -60,11 +60,12 @@ done
 
 if [ "$clang" = 1 ]; then
     sed 's/^#CC = clang/CC = clang/' Makefile > Makefile.tmp
+    mv Makefile.tmp Makefile
     [ $count -eq 1 ] && exit 0
 else
     sed 's/^CC = clang/#CC = clang/' Makefile > Makefile.tmp
+    mv Makefile.tmp Makefile
 fi
-mv Makefile.tmp Makefile
 
 if [ $zlib = 1 -a ! -f /usr/include/zlib.h ]; then
     echo "Missing zlib.h"

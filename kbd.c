@@ -124,20 +124,22 @@ static int check_specials(void)
 
 	for (j = 1; mask || mask2; ++j) {
 		int cmd = tgetkb() & 0x7f;
-		if (mask)
+		if (mask) {
 			for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
 				if ((mask & bit) && cmd == Tkeys[i][j]) {
 					if (Tkeys[i][j + 1] == '\0')
 						return i + SPECIAL_START;
 				} else
 					mask &= ~bit;
-		if (mask2)
+		}
+		if (mask2) {
 			for (bit = 1, i = 0; i < NUM_SPECIAL2; ++i, bit <<= 1)
 				if ((mask2 & bit) && cmd == Tkeys2[i][j]) {
 					if (Tkeys2[i][j + 1] == '\0')
 						return i + SPECIAL_START2;
 				} else
 					mask2 &= ~bit;
+		}
 	}
 
 	/* No match - push back the chars */

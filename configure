@@ -6,6 +6,7 @@ zlib=0
 spell=0
 termcap=0
 termcap_keys=0
+count=0
 
 do_help() {
     echo "Optional features:"
@@ -53,8 +54,17 @@ while [ -n "$1" ]; do
       *) echo "Unknown arg '$1' ignored";;
     esac
 
+    count=$(($count + 1))
     shift
 done
+
+if [ "$clang" = 1 ]; then
+    sed 's/^#CC = clang/CC = clang/' Makefile > Makefile.tmp
+    [ $count -eq 1 ] && exit 0
+else
+    sed 's/^CC = clang/#CC = clang/' Makefile > Makefile.tmp
+fi
+mv Makefile.tmp Makefile
 
 if [ $zlib = 1 -a ! -f /usr/include/zlib.h ]; then
     echo "Missing zlib.h"
@@ -111,13 +121,6 @@ if [ "$zlib" = 1 ]; then
     sed 's/^#LIBS += -lz/LIBS += -lz/' Makefile > Makefile.tmp
 else
     sed 's/^LIBS += -lz/#LIBS += -lz/' Makefile > Makefile.tmp
-fi
-mv Makefile.tmp Makefile
-
-if [ "$clang" = 1 ]; then
-    sed 's/^#CC = clang/CC = clang/' Makefile > Makefile.tmp
-else
-    sed 's/^CC = clang/#CC = clang/' Makefile > Makefile.tmp
 fi
 mv Makefile.tmp Makefile
 

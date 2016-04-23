@@ -17,6 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#define _GNU_SOURCE /* for memrchr */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -369,11 +370,26 @@ bool bcsearch(struct buff *buff, Byte what)
 /** Search backward for a single byte. If byte found leaves point at
  * byte and returns true. If not found leaves point at the start of
  * buffer and returns false.
- *
- * Not as efficient as bcsearch() since we cannot use memchr.
  */
 bool bcrsearch(struct buff *buff, Byte what)
 {
+#ifdef _GNU_SOURCE
+	/* About 4x the performance */
+	Byte *n;
+
+	if (bisstart(buff))
+		return false;
+
+	while ((n = memrchr(buff->curpage->pdata, what, buff->curchar)) == NULL)
+		if (buff->curpage == buff->firstp) {
+			makeoffset(buff, 0);
+			return false;
+		} else
+			makecur(buff, buff->curpage->prevp, buff->curpage->prevp->plen);
+
+	makeoffset(buff, n - buff->curpage->pdata);
+	return true;
+#else
 	while (1) {
 		if (buff->curchar <= 0) {
 			if (buff->curpage == buff->firstp)
@@ -387,6 +403,7 @@ bool bcrsearch(struct buff *buff, Byte what)
 		if (*buff->curcptr == what)
 			return true;
 	}
+#endif
 }
 
 /** Delete all bytes from a buffer and leave it with one empty page

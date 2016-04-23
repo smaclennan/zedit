@@ -68,7 +68,6 @@ void bdelbuff(struct buff *);
 bool binsert(struct buff *, Byte);
 void bdelete(struct buff *, unsigned);
 bool bmove(struct buff *, int);
-void bmove1(struct buff *);
 void btostart(struct buff *);
 void btoend(struct buff *);
 void tobegline(struct buff *);
@@ -189,6 +188,20 @@ static inline void makeoffset(struct buff *buff, int dist)
 static inline bool lastp(struct page *page)
 {
 	return page->nextp == NULL;
+}
+
+/** Moves the point forward one. This function is highly optimized. */
+static inline void bmove1(struct buff *buff)
+{
+	if (++buff->curchar < curplen(buff))
+		/* within current page */
+		++buff->curcptr;
+	else if (buff->curpage->nextp)
+		/* goto start of next page */
+		makecur(buff, buff->curpage->nextp, 0);
+	else
+		/* Already at EOB */
+		makeoffset(buff, curplen(buff));
 }
 
 #endif

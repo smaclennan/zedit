@@ -285,20 +285,6 @@ bool bmove(struct buff *buff, int dist)
 	return true;
 }
 
-/** Moves the point forward one. This function is highly optimized. */
-void bmove1(struct buff *buff)
-{
-	if (++buff->curchar < curplen(buff))
-		/* within current page */
-		++buff->curcptr;
-	else if (buff->curpage->nextp)
-		/* goto start of next page */
-		makecur(buff, buff->curpage->nextp, 0);
-	else
-		/* Already at EOB */
-		makeoffset(buff, curplen(buff));
-}
-
 /** Move point to start of buffer. */
 void btostart(struct buff *buff)
 {

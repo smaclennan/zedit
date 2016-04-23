@@ -155,35 +155,32 @@ void tprntchar(Byte ichar)
 {
 	int tcol;
 
-	if (ZISPRINT(ichar)) {
+	switch (ichar) {
+	case ' '...'~':
 		tputchar(ichar);
-	} else
-		switch (ichar) {
-		case '\t':
-			if (InPaw)
-				tprntstr("^I");
-			else
-				for (tcol = tabsize(Pcol); tcol > 0; --tcol)
-					tprntchar(' ');
-			break;
-
-		case 0x89:
-			tstyle(T_BOLD);
-			tprntstr("~^I");
-			tstyle(T_NORMAL);
-			break;
-
-		default:
-			tstyle(T_BOLD);
-			if (ichar & 0x80) {
-				tprntchar('~');
-				tprntchar(ichar & 0x7f);
-			} else {
-				tprntchar('^');
-				tprntchar(ichar ^ '@');
-			}
-			tstyle(T_NORMAL);
-			break;
+		break;
+	case '\t':
+		if (InPaw)
+			tprntstr("^I");
+		else
+			for (tcol = tabsize(Pcol); tcol > 0; --tcol)
+				tprntchar(' ');
+		break;
+	case 0x89:
+		tstyle(T_BOLD);
+		tprntstr("~^I");
+		tstyle(T_NORMAL);
+		break;
+	default:
+		tstyle(T_BOLD);
+		if (ichar & 0x80) {
+			tprntchar('~');
+			tprntchar(ichar & 0x7f);
+		} else {
+			tprntchar('^');
+			tprntchar(ichar ^ '@');
+		}
+		tstyle(T_NORMAL);
 	}
 }
 
@@ -194,9 +191,9 @@ int chwidth(Byte ch, int col, bool adjust)
 {
 	int wid;
 
-	if (ZISPRINT(ch))
-		return 1;
 	switch (ch) {
+	case ' '...'~':
+		return 1;
 	case '\n':
 		return InPaw ? 2 : 0;
 	case '\t':

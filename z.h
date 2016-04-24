@@ -186,7 +186,7 @@ extern bool Sendp;
 extern char Lbufname[];
 extern struct zbuff *Bufflist;
 extern struct zbuff *Buff_save;
-extern struct mark *Sstart, *Psstart, *Send;
+extern struct mark *Sstart, *Psstart;
 extern bool Initializing;
 extern bool Insearch;
 extern int circf;

@@ -25,7 +25,7 @@ static char *setmodes(struct zbuff *);
 static void pawdisplay(struct mark *, struct mark *);
 
 struct mark *Sstart, *Psstart;	/* Screen start and 'prestart' */
-struct mark *Send;		/* Screen end */
+static struct mark *Send;		/* Screen end */
 bool Sendp;			/* Screen end set */
 static int Tlrow;			/* Last row displayed */
 
@@ -165,6 +165,7 @@ void zrefresh(void)
 	   Sstart->mbuff != Bbuff)
 		/* The cursor has moved before/after the screen marks */
 		reframe();
+
 	bpnttomrk(Bbuff, Sstart);
 	if (bisatmrk(Bbuff, Psstart) && !bisstart(Bbuff)) {
 		/* Deleted first char in window that is not at buffer start */

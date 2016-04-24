@@ -114,14 +114,13 @@ void Zcopy_region(void)
 
 void Zyank(void)
 {
-	struct mark *tmark, save;	/* save must NOT be a pointer */
+	struct mark *tmark;	/* save must NOT be a pointer */
 
 	if (InPaw && First) {
 		bempty(Bbuff);
 		First = false;
 	}
 
-	mrktomrk(&save, Send);
 #if !UNDO
 	/* This leaves the mark at the start of the yank and
 	 * the point at the end. */
@@ -139,8 +138,6 @@ void Zyank(void)
 	bcopyrgn(tmark, Bbuff);
 #endif
 	unmark(tmark);
-	if (bisaftermrk(Bbuff, &save))
-		reframe();
 }
 
 void Zdelete_word(void)

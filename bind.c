@@ -180,8 +180,6 @@ Byte Keys[] = {
 	/* Init the Meta functions */
 
 	[M(7)] = ZABORT,		/* M-C-G */
-	[M(14)] = ZSCROLL_DOWN,		/* M-C-N */
-	[M(16)] = ZSCROLL_UP,		/* M-C-P */
 	[M(19)] = ZINCREMENTAL_SEARCH,	/* M-C-S */
 	[M(27)] = ZABORT,		/* M-M */
 	[M(' ')] = ZSEARCH,

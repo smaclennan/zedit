@@ -243,33 +243,3 @@ void Zredisplay(void)
 	foreachbuff(buff)
 		uncomment(buff);
 }
-
-static void do_scroll(bool (*search)(struct buff *buff, Byte what))
-{
-	struct mark pmark;
-
-	bmrktopnt(Bbuff, &pmark);
-	bpnttomrk(Bbuff, Sstart);
-	while (Arg-- > 0 && search(Bbuff, NL))
-		;
-	tobegline(Bbuff);
-	bmrktopnt(Bbuff, Sstart);
-	bmove(Bbuff, -1);
-	bmrktopnt(Bbuff, Psstart);
-	Sendp = false;
-
-	if (mrkaftermrk(Sstart, &pmark))
-		bmove1(Bbuff);
-	else
-		bpnttomrk(Bbuff, &pmark);
-}
-
-void Zscroll_up(void)
-{
-	do_scroll(bcrsearch);
-}
-
-void Zscroll_down(void)
-{
-	do_scroll(bcsearch);
-}

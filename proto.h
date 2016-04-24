@@ -112,8 +112,6 @@ Z(Zre_search);
 Z(Zreverse_search);
 Z(Zsave_all_files);
 Z(Zshow_config);
-Z(Zscroll_down);
-Z(Zscroll_up);
 Z(Zsearch);
 Z(Zset_variable);
 Z(Zset_bookmark);

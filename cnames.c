@@ -504,12 +504,6 @@ struct cnames Cnames[] = {
 	   "no path name, a path name is prompted for (with file name "
 	   "completion).")
 	},
-	{"scroll-down",			ZSCROLL_DOWN,		AN,
-	 C("Scrolls the screen down one line.")
-	},
-	{"scroll-up",			ZSCROLL_UP,		AN,
-	 C("Scrolls the screen up one line.")
-	},
 	{"search",			ZSEARCH,		AN,
 	 C("Prompts for a search string and searches from the Point forward "
 	   "for a match in the buffer. If a match is found, the Point is "

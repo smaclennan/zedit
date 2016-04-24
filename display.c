@@ -24,10 +24,11 @@ static void modeflags(struct wdo *wdo);
 static char *setmodes(struct zbuff *);
 static void pawdisplay(struct mark *, struct mark *);
 
-struct mark *Sstart, *Psstart;	/* Screen start and 'prestart' */
+struct mark *Sstart;			/* Screen start */
+static struct mark *Psstart;	/* Screen 'prestart' */
 static struct mark *Send;		/* Screen end */
-bool Sendp;			/* Screen end set */
-static int Tlrow;			/* Last row displayed */
+bool Sendp;						/* Screen end set */
+static int Tlrow;				/* Last row displayed */
 
 static int NESTED;		/* zrefresh can go recursive... */
 static Byte tline[COLMAX + 1];

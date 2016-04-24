@@ -139,8 +139,7 @@ void wswitchto(struct wdo *wdo)
 		bpnttomrk(Bbuff, wdo->wpnt);
 		if (Curwdo->umark_set)
 			set_umark(wdo->wmrk);
-		mrktomrk(Sstart, wdo->wstart);
-		Sendp = false;
+		set_sstart(wdo->wstart);
 	}
 	Curwdo->modeflags = INVALID;
 }

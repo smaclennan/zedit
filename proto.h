@@ -219,6 +219,7 @@ int batoi(void);
 
 void vsetmod_callback(struct buff *buff);
 #define vsetmod() vsetmod_callback(NULL);
+void set_sstart(struct mark *mrk);
 
 /* umark routines */
 void set_umark(struct mark *tmark); /* tmark == NULL means set to point */

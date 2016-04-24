@@ -182,7 +182,6 @@ extern int raw_mode;
 
 #define CMD(n) (*Cmds[n][Curcmds])()
 
-extern bool Sendp;
 extern char Lbufname[];
 extern struct zbuff *Bufflist;
 extern struct zbuff *Buff_save;

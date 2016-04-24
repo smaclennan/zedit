@@ -27,7 +27,7 @@ static void pawdisplay(struct mark *, struct mark *);
 struct mark *Sstart;			/* Screen start */
 static struct mark *Psstart;	/* Screen 'prestart' */
 static struct mark *Send;		/* Screen end */
-bool Sendp;						/* Screen end set */
+static bool Sendp;				/* Screen end set */
 static int Tlrow;				/* Last row displayed */
 
 static int NESTED;		/* zrefresh can go recursive... */
@@ -117,6 +117,15 @@ void clear_umark(void)
 static bool bisatumark(void)
 {
 	return  UMARK_SET && bisatmrk(Bbuff, UMARK);
+}
+
+/* Set Sstart, Psstart, and Sendp. */
+void set_sstart(struct mark *mrk)
+{
+	mrktomrk(Sstart, mrk);
+	mrktomrk(Psstart, mrk);
+	mrkmove(Psstart, -1);
+	Sendp = false;
 }
 
 /* Mark screen invalid */
@@ -357,7 +366,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 void reframe(void)
 {
 	int cnt;
-	struct mark pmark;
+	struct mark pmark, new_start;
 
 	bmrktopnt(Bbuff, &pmark);
 	for (cnt = prefline(); cnt > 0 && bcrsearch(Bbuff, NL); --cnt)
@@ -366,10 +375,8 @@ void reframe(void)
 		bmakecol((-cnt) * Colmax);
 	else
 		tobegline(Bbuff);
-	bmrktopnt(Bbuff, Sstart);
-	bmove(Bbuff, -1);
-	bmrktopnt(Bbuff, Psstart);
-	Sendp = false;
+	bmrktopnt(Bbuff, &new_start);
+	set_sstart(&new_start);
 	bpnttomrk(Bbuff, &pmark);
 }
 

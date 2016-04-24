@@ -54,6 +54,7 @@ void mrktomrk(struct mark *, struct mark *);
 bool mrkaftermrk(struct mark *, struct mark *);
 bool mrkatmrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
+bool mrkmove(struct mark *mrk, int dist);
 
 long bcopyrgn(struct mark *, struct buff*);
 long bdeltomrk(struct mark *);

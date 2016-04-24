@@ -237,6 +237,39 @@ bool mrkatmrk(struct mark *mark1, struct mark *mark2)
 		mark1->moffset == mark2->moffset;
 }
 
+bool mrkmove(struct mark *mrk, int dist)
+{
+	while (dist) {
+		dist += mrk->moffset;
+		if (dist >= 0 && (unsigned)dist < mrk->mpage->plen) {
+			/* within current page */
+			mrk->moffset = dist;
+			return true;
+		}
+		if (dist < 0) { /* goto previous page */
+			if (mrk->mpage->prevp) {
+				mrk->mpage = mrk->mpage->prevp;
+				mrk->moffset = mrk->mpage->plen;
+			} else {
+				/* past start of buffer */
+				mrk->moffset = 0;
+				return false;
+			}
+		} else {	/* goto next page */
+			if (mrk->mpage->nextp) {
+				dist -= mrk->mpage->plen; /* must use this curplen */
+				mrk->mpage = mrk->mpage->nextp;
+				mrk->moffset = 0;
+			} else {
+				/* past end of buffer */
+				mrk->moffset = mrk->mpage->plen;
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 /* Copy from Point to mark to buffer 'to'. Returns bytes copied. */
 long bcopyrgn(struct mark *tmark, struct buff *to)
 {

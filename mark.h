@@ -21,6 +21,7 @@
 #define _mark_h
 
 #include <stdbool.h>
+#include <string.h>
 
 /**
  * The static and/or dynamic mark structure.
@@ -34,6 +35,8 @@ struct mark {
 	struct mark *next;			/**< List of marks. */
 #endif
 };
+/* Size of mark without list pointers */
+#define __MRKSIZE (sizeof(void *) * 3)
 
 extern int NumMarks; /* stats */
 
@@ -50,15 +53,25 @@ void bmrktopnt(struct buff *, struct mark *);
 bool bpnttomrk(struct buff *, struct mark *);
 bool bswappnt(struct buff *, struct mark *);
 
-void mrktomrk(struct mark *, struct mark *);
 bool mrkaftermrk(struct mark *, struct mark *);
-bool mrkatmrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
 bool mrkmove(struct mark *mrk, int dist);
 
 long bcopyrgn(struct mark *, struct buff*);
 long bdeltomrk(struct mark *);
 unsigned long bline(struct buff *buff);
+
+static inline void mrktomrk(struct mark *m1, struct mark *m2)
+{
+	memcpy(m1, m2, __MRKSIZE);
+}
+
+/* True if mark1 is at mark2 */
+static inline bool mrkatmrk(struct mark *m1, struct mark *m2)
+{
+	return memcmp(m1, m2, __MRKSIZE) == 0;
+}
+
 
 #ifdef HAVE_GLOBAL_MARKS
 extern struct mark *Marklist;

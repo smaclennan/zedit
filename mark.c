@@ -176,13 +176,6 @@ bool bpnttomrk(struct buff *buff, struct mark *tmark)
 	return true;
 }
 
-void mrktomrk(struct mark *m1, struct mark *m2)
-{
-	m1->mbuff = m2->mbuff;
-	m1->mpage = m2->mpage;
-	m1->moffset = m2->moffset;
-}
-
 /* Swap the point and the mark. */
 bool bswappnt(struct buff *buff, struct mark *tmark)
 {
@@ -227,14 +220,6 @@ bool mrkaftermrk(struct mark *mark1, struct mark *mark2)
 		;
 
 	return tpage != NULL;
-}
-
-/* True if mark1 is at mark2 */
-bool mrkatmrk(struct mark *mark1, struct mark *mark2)
-{
-	return  mark1->mbuff == mark2->mbuff &&
-		mark1->mpage == mark2->mpage &&
-		mark1->moffset == mark2->moffset;
 }
 
 bool mrkmove(struct mark *mrk, int dist)

@@ -176,6 +176,18 @@ int main(int argc, char *argv[])
 		err = 1;
 	}
 
+	/* verify the __MRKSIZE */
+	ulong ptr;
+	void *dummy = &ptr;
+	struct mark mrk1 = { NULL, NULL, 0x12345678, NULL, NULL };
+	struct mark mrk2 = { dummy, dummy, 0x22223333, dummy, NULL };
+
+	mrktomrk(&mrk2, &mrk1);
+	if (mrk2.moffset != 0x12345678 || mrk2.prev != dummy) {
+		printf("Problems with __MRKSIZE\n");
+		err = 1;
+	}
+
 #ifdef WIN32
 	if (err) {
 		printf("Problems found! Hit enter to exit:"); getchar();

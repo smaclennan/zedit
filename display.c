@@ -27,7 +27,7 @@ static void pawdisplay(struct mark *, struct mark *);
 struct mark *Sstart, *Psstart;	/* Screen start and 'prestart' */
 struct mark *Send;		/* Screen end */
 bool Sendp;			/* Screen end set */
-int Tlrow;			/* Last row displayed */
+static int Tlrow;			/* Last row displayed */
 
 static int NESTED;		/* zrefresh can go recursive... */
 static Byte tline[COLMAX + 1];

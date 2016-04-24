@@ -85,8 +85,8 @@ static void dotty(void)
 #ifdef DOPIPES
 #include <poll.h>
 
-#define MAX_FDS 3
-#define PIPEFD 2
+#define MAX_FDS 2
+#define PIPEFD 1
 
 static struct pollfd fds[MAX_FDS];
 
@@ -332,7 +332,7 @@ bool delcmd(void)
 
 char PawStr[COLMAX + 10];
 
-void _putpaw(const char *str)
+static void _putpaw(const char *str)
 {
 	int trow = Prow, tcol = Pcol;
 

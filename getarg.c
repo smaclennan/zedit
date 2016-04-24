@@ -207,7 +207,7 @@ void pinsert(void)
 	if (First) {
 		bempty(Bbuff);
 		First = false;
-		Tlrow = -1;
+		invalidate_scrnmarks(Rowmax - 1, Rowmax);
 	}
 
 	width = chwidth(Cmd, Pcol, false);

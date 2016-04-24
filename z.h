@@ -193,7 +193,7 @@ extern int circf;
 
 extern void (*Nextpart)(void);
 
-#define clrpaw()	_putpaw("")
+#define clrpaw()	putpaw("")
 
 #define PREFLINE			10
 
@@ -222,7 +222,6 @@ char *gethomedir(void);
 /* terminal variables */
 extern int Prow, Pcol;			/* Point row and column */
 extern int Colmax, Rowmax;		/* Row and column maximums */
-extern int Tlrow;			/* Last row displayed (-1 for none) */
 extern int Tabsize, Taboffset;
 
 #define ISNL(c)			((c) == '\n')

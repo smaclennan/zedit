@@ -191,7 +191,6 @@ char *nocase(const char *);
 int pathfixup(char *, char *);
 bool promptsave(struct zbuff *tbuff, bool must);
 int prefline(void);
-void _putpaw(const char *str);
 void putpaw(const char *fmt, ...);
 void error(const char *fmt, ...);
 void readvfile(const char *path);

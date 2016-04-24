@@ -62,8 +62,6 @@ void hang_up(int sig) {}
 
 void Dbg(const char *fmt, ...) {}
 
-void _putpaw(const char *str) { puts(str); }
-
 int main(int argc, char *argv[])
 {
 	int i, s1, s2, err = 0;

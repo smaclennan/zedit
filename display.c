@@ -166,14 +166,11 @@ void zrefresh(void)
 	   Sstart->mbuff != Bbuff)
 		/* The cursor has moved before/after the screen marks */
 		reframe();
+	else if (mrkatmrk(Sstart, Psstart) && !bisstart(Bbuff))
+		/* Deleted first char in window that is not at buffer start */
+		reframe();
 
 	bpnttomrk(Bbuff, Sstart);
-	if (bisatmrk(Bbuff, Psstart) && !bisstart(Bbuff)) {
-		/* Deleted first char in window that is not at buffer start */
-		bpnttomrk(Bbuff, &pmark);
-		reframe();
-		bpnttomrk(Bbuff, Sstart);
-	}
 	pntrow = innerdsp(Curwdo->first, Curwdo->last, &pmark);
 	if (bisbeforemrk(Bbuff, &pmark)) {
 		bpnttomrk(Bbuff, &pmark);

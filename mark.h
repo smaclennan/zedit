@@ -36,7 +36,7 @@ struct mark {
 #endif
 };
 /* Size of mark without list pointers */
-#define __MRKSIZE (sizeof(void *) * 3)
+#define __MRKSIZE (sizeof(void *) * 2 + sizeof(unsigned))
 
 extern int NumMarks; /* stats */
 

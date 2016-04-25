@@ -46,9 +46,9 @@ static bool cp(char *from, char *to)
 	return rc;
 }
 
-static char *make_bakname(char *bakname, char *fname)
+static char *make_bakname(char *bakname, int len, const char *fname)
 {
-	strcpy(bakname, fname);
+	snprintf(bakname, len - 1, "%s", fname);
 	strcat(bakname, "~");
 	return bakname;
 }
@@ -86,7 +86,7 @@ static bool zwritefile(char *fname)
 	}
 
 	/* check for links and handle backup file */
-	make_bakname(bakname, fname);
+	make_bakname(bakname, sizeof(bakname), fname);
 	if (nlink > 1) {
 		sprintf(PawStr, "WARNING: %s is linked. Preserve? ",
 			lastpart(fname));

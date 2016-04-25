@@ -188,8 +188,6 @@ void bdelete(struct buff *buff, unsigned quantity)
 	while (quantity > 0) {
 		/* Delete as many characters as possible from this page */
 		quan = MIN(curplen(buff) - buff->curchar, quantity);
-		if (quan < 0)
-			quan = 0; /* May need to switch pages */
 
 		undo_del(buff, quan);
 

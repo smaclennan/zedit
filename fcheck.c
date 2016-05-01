@@ -177,8 +177,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* verify the __MRKSIZE */
-	ulong ptr;
-	void *dummy = &ptr;
+	struct mark dummy_mrk, *dummy = &dummy_mrk;
 	struct mark mrk1 = { NULL, NULL, 0x1234, NULL, NULL };
 	struct mark mrk2;
 

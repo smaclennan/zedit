@@ -98,7 +98,11 @@ static void sigchild(int signo) {}
 void siginit(void)
 {
 #ifndef WNOWAIT
+#ifdef SIGCHLD
+	signal(SIGCHLD,  sigchild);
+#else
 	signal(SIGCLD,  sigchild);
+#endif
 #endif
 	signal(SIGPIPE, sigchild);
 }

@@ -120,7 +120,9 @@ void tinit(void)
 	tcgetattr(fileno(stdin), &save_tty);
 	tcgetattr(fileno(stdin), &settty);
 	settty.c_iflag = 0;
+#ifdef TAB3
 	settty.c_oflag = TAB3;
+#endif
 	settty.c_lflag = ECHOE | ECHOK;
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;

@@ -124,7 +124,14 @@ void set_sstart(struct mark *mrk)
 {
 	mrktomrk(Sstart, mrk);
 	mrktomrk(Psstart, mrk);
-	mrkmove(Psstart, -1);
+	/* Psstart - 1 */
+	if (Psstart->moffset)
+		--Psstart->moffset;
+	else if (Psstart->mpage->prevp) {
+		Psstart->mpage = Psstart->mpage->prevp;
+		Psstart->moffset = Psstart->mpage->plen;
+	} else
+		Psstart->moffset = 0;
 	Sendp = false;
 }
 

@@ -480,8 +480,13 @@ static char *setmodes(struct zbuff *buff)
 
 	if (buff->bmode & VIEW)
 		strcat(PawStr, " RO");
-	if (buff->bmode & FILE_COMPRESSED)
+	if (buff->bmode & FILE_COMPRESSED) {
+#if HUGE_FILES
+		strcat(PawStr, " H");
+#else
 		strcat(PawStr, " Z");
+#endif
+	}
 	if (buff->bmode & FILE_CRLF)
 		strcat(PawStr, " CR");
 	if (buff->bmode & OVERWRITE)

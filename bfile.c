@@ -45,6 +45,90 @@
 #define O_BINARY 0
 #endif
 
+#if HUGE_FILES
+#if ZLIB
+#error HUGE_FILES and ZLIB not supported.
+#endif
+
+/* Warning: keeps the fd open. */
+int breadhuge(struct buff *buff, int fd, struct stat *sbuf)
+{
+	int len, pages, i;
+	struct page *page;
+
+	/* always read the first page */
+	len = fileread(fd, buff->curcptr, PSIZE);
+	if (len <= 0) {
+		close(fd);
+		return EIO;
+	}
+	buff->curpage->plen = len;
+	buff->fd = fd;
+
+	/* Round up... but we have one page */
+	pages = (sbuf->st_size + PSIZE - 1) / PSIZE;
+	page = buff->curpage;
+	for (i = 1; i < pages; ++i) {
+		page = newpage(page);
+		if (!page) {
+			bempty(buff); /* will close fd */
+			return ENOMEM;
+		}
+		page->pgoffset = i;
+	}
+
+	btostart(buff);
+
+	return 0;
+}
+
+/* SAM If we where smart we would read the last partial page and check
+ * that all the pages in between where of length PSIZE.
+ */
+static void breadpage(struct buff *buff, struct page *page)
+{
+	unsigned long offset;
+	int len;
+
+	if (page->pgoffset == 0 || buff->fd == -1)
+		return;
+
+	offset = page->pgoffset * PSIZE;
+	if (lseek(buff->fd, offset, SEEK_SET) != offset)
+		goto fatal;
+	len = fileread(buff->fd, page->pdata, PSIZE);
+	if (len < 0)
+		goto fatal;
+
+	page->plen = len;
+	page->pgoffset = 0;
+	return;
+
+fatal:
+	printf("\r\nFATAL I/O Error: page %u\r\n", page->pgoffset);
+	exit(2);
+}
+
+void makecur(struct buff *buff, struct page *page, int dist)
+{
+	if (page->pgoffset) {
+		breadpage(buff, page);
+		if (dist > page->plen)
+			dist = page->plen - 1;
+	}
+	buff->curpage = page;
+	makeoffset(buff, dist);
+}
+
+void bhugecleanup(struct buff *buff)
+{
+	if (buff->fd >= 0) {
+		close(buff->fd);
+		buff->fd = -1;
+	}
+}
+#endif
+
 /**
  * Load the file 'fname' into the current buffer.  Returns 0
  * successfully opened file, > 0 (errno) on error, -1 on gzdopen
@@ -55,13 +139,18 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 {
 	char buf[PSIZE];
 	int fd, len;
-	unsigned count = 0; /* to check for zero length files */
+	struct stat sbuf;
 
 	btostart(buff);
 
 	fd = open(fname, O_RDONLY | O_BINARY);
 	if (fd < 0)
 		return errno;
+
+	if (fstat(fd, &sbuf)) {
+		close(fd);
+		return EIO;
+	}
 
 	bempty(buff);
 
@@ -77,6 +166,14 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 	if (compressed) *compressed = 0;
 #endif
 
+#if HUGE_FILES
+	if (sbuf.st_size > HUGE_SIZE) {
+		if (compressed) *compressed = 1;
+		return breadhuge(buff, fd, &sbuf);
+	}
+#endif
+
+
 	while ((len = fileread(fd, buf, PSIZE)) > 0) {
 		if (curplen(buff)) {
 			if (!newpage(buff->curpage)) {
@@ -90,7 +187,6 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 		buff->curcptr += len;
 		buff->curchar += len;
 		curplen(buff) += len;
-		count += len;
 	}
 	fileclose(fd);
 
@@ -100,7 +196,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 	/* Ubuntu 12.04 has a bug where zero length files are reported as
 	 * compressed.
 	 */
-	if (compressed && count == 0) *compressed = 0;
+	if (compressed && sbuf.st_size == 0) *compressed = 0;
 #endif
 
 	buff->bmodf = false;

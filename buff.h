@@ -49,6 +49,9 @@ struct buff {
 	unsigned curchar;			/**< Point index in the page. */
 	Byte *curcptr;				/**< Point position in the page. */
 	bool bmodf;					/**< Buffer modified? */
+#if HUGE_FILES
+	int fd;
+#endif
 #if defined(UNDO) && UNDO
 	bool in_undo;				/**< Are we currently performing an undo? */
 	void *undo_tail;			/**< list of undos */
@@ -145,10 +148,18 @@ extern int NumBuffs, NumPages;
 /** Half a page for pagesplit(). */
 #define HALFP		(PSIZE / 2)
 
+/** Huge file size. If HUGE_FILES is defined, files bigger than
+ * HUGE_SIZE will be read on demand.
+ */
+#define HUGE_SIZE (PSIZE * 3) // SAM (1UL << 30)
+
 /** Describes one page in memory. */
 struct page {
 	Byte pdata[PSIZE];		/**< Page data. */
-	unsigned plen;			/**< Current length of the page. */
+#if HUGE_FILES
+	unsigned pgoffset;     /**< Offset in file or 0 if in memory. */
+#endif
+	unsigned plen;          /**< Current length of the page. */
 	struct page *prevp;		/**< List of pages. */
 	struct page *nextp;		/**< List of pages. */
 };
@@ -170,12 +181,16 @@ static inline bool bisend(struct buff *buff)
 }
 
 /** Make page current at offset. */
+#if HUGE_FILES
+void makecur(struct buff *buff, struct page *page, int dist);
+#else
 static inline void makecur(struct buff *buff, struct page *page, int dist)
 {
 	buff->curpage = page;
 	buff->curchar = dist;
 	buff->curcptr = page->pdata + dist;
 }
+#endif
 
 /** Move current page to offset. */
 static inline void makeoffset(struct buff *buff, int dist)
@@ -203,5 +218,9 @@ static inline void bmove1(struct buff *buff)
 		/* Already at EOB */
 		makeoffset(buff, curplen(buff));
 }
+
+#if HUGE_FILES
+void bhugecleanup(struct buff *buff);
+#endif
 
 #endif

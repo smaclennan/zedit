@@ -52,6 +52,9 @@ struct buff *bcreate(void)
 		}
 		makecur(buf, buf->firstp, 0);
 		++NumBuffs;
+#if HUGE_FILES
+		buf->fd = -1;
+#endif
 	}
 	return buf;
 }
@@ -68,6 +71,10 @@ void bdelbuff(struct buff *tbuff)
 #ifdef HAVE_BUFFER_MARKS
 	while (tbuff->marks) /* delete the marks */
 		bdelmark(tbuff->marks);
+#endif
+
+#if HUGE_FILES
+	bhugecleanup(tbuff);
 #endif
 
 	free(tbuff);	/* free the buffer proper */
@@ -430,6 +437,9 @@ void bempty(struct buff *buff)
 
 	undo_clear(buff);
 	bsetmod(buff);
+#if HUGE_FILES
+	bhugecleanup(buff);
+#endif
 }
 
 /** Peek the previous byte. Does not move the point. Returns LF at start of buffer. */

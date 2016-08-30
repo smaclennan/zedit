@@ -5,6 +5,8 @@
 #define SPELL		0	/* Requires libaspell */
 #endif
 
+#define HUGE_FILES  1
+
 #define UNDO        1
 
 /* If TERMCAP not defined defaults to ANSI */

@@ -23,7 +23,8 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <sys/stat.h>
+#include <pthread.h>
+#include <signal.h>
 #ifndef WIN32
 #include <unistd.h>
 #endif
@@ -33,6 +34,80 @@
 #if HUGE_FILES
 #if ZLIB
 #error HUGE_FILES and ZLIB not supported.
+#endif
+
+static pthread_mutex_t read_lock = PTHREAD_MUTEX_INITIALIZER;
+
+/* SAM If we where smart we would read the last partial page and check
+ * that all the pages in between where of length PSIZE.
+ */
+static void breadpage(struct buff *buff, struct page *page)
+{
+	unsigned long offset;
+	int len;
+
+	pthread_mutex_lock(&read_lock);
+	if (page->pgoffset == 0 || buff->fd == -1) {
+		pthread_mutex_unlock(&read_lock);
+		return;
+	}
+
+	offset = page->pgoffset * PSIZE;
+	page->pgoffset = 0;
+
+	if (lseek(buff->fd, offset, SEEK_SET) != offset)
+		goto fatal;
+	len = read(buff->fd, page->pdata, PSIZE);
+	if (len < 0)
+		goto fatal;
+
+	page->plen = len;
+	pthread_mutex_unlock(&read_lock);
+	return;
+
+fatal:
+	printf("\r\nFATAL I/O Error: page %u\r\n", page->pgoffset);
+	exit(2);
+}
+
+#if defined(HUGE_THREADED) && defined(DOPIPES)
+/* We allow only one huge file at a time. */
+static pthread_t thread;
+static int thread_running;
+
+static void *read_thread(void *arg)
+{
+	struct buff *buff = arg;
+	struct page *page;
+
+	Dbg("read_thread running %d\n", thread_running);
+
+	for (page = buff->firstp; page; page = page->nextp)
+		if (page->pgoffset)
+			breadpage(buff, page);
+
+	close(buff->fd);
+	buff->fd = -1;
+
+	thread_running = 0;
+	Dbg("read_thread done\n");
+
+	return NULL;
+}
+
+static void start_thread(struct buff *buff)
+{
+	if (!__sync_bool_compare_and_swap(&thread_running, 0, 1))
+		return;
+
+	if (pthread_create(&thread, NULL, read_thread, buff)) {
+		thread_running = 0;
+		Dbg("Unable to create thread\n");
+		return;
+	}
+}
+#else
+static void start_thread(struct buff *buff) {}
 #endif
 
 /* Warning: keeps the fd open. */
@@ -64,34 +139,9 @@ int breadhuge(struct buff *buff, int fd, unsigned long size)
 
 	btostart(buff);
 
+	start_thread(buff);
+
 	return 0;
-}
-
-/* SAM If we where smart we would read the last partial page and check
- * that all the pages in between where of length PSIZE.
- */
-static void breadpage(struct buff *buff, struct page *page)
-{
-	unsigned long offset;
-	int len;
-
-	if (page->pgoffset == 0 || buff->fd == -1)
-		return;
-
-	offset = page->pgoffset * PSIZE;
-	if (lseek(buff->fd, offset, SEEK_SET) != offset)
-		goto fatal;
-	len = read(buff->fd, page->pdata, PSIZE);
-	if (len < 0)
-		goto fatal;
-
-	page->plen = len;
-	page->pgoffset = 0;
-	return;
-
-fatal:
-	printf("\r\nFATAL I/O Error: page %u\r\n", page->pgoffset);
-	exit(2);
 }
 
 void makecur(struct buff *buff, struct page *page, int dist)

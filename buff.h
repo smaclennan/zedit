@@ -220,6 +220,7 @@ static inline void bmove1(struct buff *buff)
 }
 
 #if HUGE_FILES
+int breadhuge(struct buff *buff, int fd, unsigned long size);
 void bhugecleanup(struct buff *buff);
 #endif
 

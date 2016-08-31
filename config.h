@@ -5,8 +5,6 @@
 #define SPELL		0	/* Requires libaspell */
 #endif
 
-#define HUGE_FILES  1
-
 #define UNDO        1
 
 /* If TERMCAP not defined defaults to ANSI */
@@ -18,6 +16,10 @@
 #ifdef __unix__
 #define DOPIPES
 #endif
+
+/* Very very experimental */
+#define HUGE_FILES  0
+#define HUGE_THREADED 0
 
 /* Don't touch these unless you really know what you are doing. */
 #define UNSIGNED_BYTES

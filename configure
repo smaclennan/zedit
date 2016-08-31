@@ -17,6 +17,7 @@ do_help() {
     echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
     echo "  --enable-undo		Enable undo"
     echo "  --enable-dopipes	Enable non-blocking shell commands"
+    echo "  --enable-huge       Enable HUGE_FILES and HUGE_THREADED"
     echo "  --config-dir <dir>	Default config directory."
     echo
     echo "To disable a feature replace --enable with --disable."
@@ -50,6 +51,7 @@ while [ -n "$1" ]; do
       *-zlib) zlib=$enable;;
       *-sysv4) sysv4=$enable;;
       *-undo) undo=$enable;;
+      *-huge) huge=$enable;;
       --config-dir) shift; confdir=$1;;
       *) echo "Unknown arg '$1' ignored";;
     esac
@@ -123,6 +125,17 @@ if [ "$zlib" = 1 ]; then
     sed 's/^#LIBS += -lz/LIBS += -lz/' Makefile > Makefile.tmp
 else
     sed 's/^LIBS += -lz/#LIBS += -lz/' Makefile > Makefile.tmp
+fi
+mv Makefile.tmp Makefile
+
+if [ "$huge" = 1 ]; then
+    echo "--enable-huge is very experimental. It can corrupt files."
+    echo "You have been warned!!!"
+    echo "#define HUGE_FILES 1" >> config.h
+    echo "#define HUGE_THREADED 1" >> config.h
+    sed 's/^#LIBS += -lpthread/LIBS += -lpthread/' Makefile > Makefile.tmp
+else
+    sed 's/^LIBS += -lpthread/#LIBS += -lpthread/' Makefile > Makefile.tmp
 fi
 mv Makefile.tmp Makefile
 

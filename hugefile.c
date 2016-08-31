@@ -70,7 +70,7 @@ fatal:
 	exit(2);
 }
 
-#if defined(HUGE_THREADED) && defined(DOPIPES)
+#if HUGE_THREADED
 /* We allow only one huge file at a time. */
 static pthread_t thread;
 static int thread_running;

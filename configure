@@ -129,8 +129,9 @@ fi
 mv Makefile.tmp Makefile
 
 if [ "$huge" = 1 ]; then
-    echo "--enable-huge is very experimental. It can corrupt files."
+    echo "--enable-huge is very experimental. IT CAN CORRUPT FILES."
     echo "You have been warned!!!"
+    echo >> config.h
     echo "#define HUGE_FILES 1" >> config.h
     echo "#define HUGE_THREADED 1" >> config.h
     sed 's/^#LIBS += -lpthread/LIBS += -lpthread/' Makefile > Makefile.tmp

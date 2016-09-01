@@ -214,7 +214,11 @@ void zrefresh(void)
 
 	bpnttomrk(Bbuff, Sstart);
 	pntrow = innerdsp(Curwdo->first, Curwdo->last, &pmark);
-	if (bisbeforemrk(Bbuff, &pmark)) {
+	/* Buffer is almost always after mark.. this is more efficient for
+	 * huge buffers.
+	 */
+	if (!bisaftermrk(Bbuff, &pmark) || bisatmrk(Bbuff, &pmark)) {
+		/* Point is off the end of the screen. Mainly for yanks. */
 		bpnttomrk(Bbuff, &pmark);
 		reframe();
 		zrefresh();

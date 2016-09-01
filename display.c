@@ -153,6 +153,33 @@ void redisplay(void)
 	uncomment(NULL);
 }
 
+/* Check if the buffer is between Sstart and Send. This is really
+ * worth optimizing with huge buffers.
+ */
+static inline bool in_range(void)
+{
+	struct page *page;
+
+	if (!Sstart->mpage || Sstart->mbuff != Bbuff)
+		return false;
+
+	if (Bbuff->curpage == Sstart->mpage)
+		return Bbuff->curchar >= Sstart->moffset;
+
+	if (!Sendp)
+		return false;
+
+	if (Bbuff->curpage == Send->mpage)
+		return Bbuff->curchar < Send->moffset;
+
+	/* Start at Sstart->mpage to handle Sstart->mpage == Send->mpage */
+	for (page = Sstart->mpage; page && page != Send->mpage; page = page->nextp)
+			if (page == Bbuff->curpage)
+				return true;
+
+	return false;
+}
+
 /* Do the actual display update from the buffer */
 void zrefresh(void)
 {
@@ -178,8 +205,7 @@ void zrefresh(void)
 		mrktomrk(was, UMARK);
 	}
 
-	if (bisbeforemrk(Bbuff, Sstart) || (Sendp && !bisbeforemrk(Bbuff, Send)) ||
-	   Sstart->mbuff != Bbuff)
+	if (!in_range())
 		/* The cursor has moved before/after the screen marks */
 		reframe();
 	else if (mrkatmrk(Sstart, Psstart) && !bisstart(Bbuff))
@@ -188,7 +214,11 @@ void zrefresh(void)
 
 	bpnttomrk(Bbuff, Sstart);
 	pntrow = innerdsp(Curwdo->first, Curwdo->last, &pmark);
-	if (bisbeforemrk(Bbuff, &pmark)) {
+	/* Buffer is almost always after mark.. this is more efficient for
+	 * huge buffers.
+	 */
+	if (!bisaftermrk(Bbuff, &pmark) || bisatmrk(Bbuff, &pmark)) {
+		/* Point is off the end of the screen. Mainly for yanks. */
 		bpnttomrk(Bbuff, &pmark);
 		reframe();
 		zrefresh();
@@ -345,7 +375,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			}
 		} else
 			bpnttomrk(Bbuff, &Scrnmarks[trow + 1]);
-		if (pmark && bisaftermrk(Bbuff, pmark) && needpnt) {
+		if (needpnt && pmark && bisaftermrk(Bbuff, pmark)) {
 			pntrow = trow;
 			needpnt = false;
 		}

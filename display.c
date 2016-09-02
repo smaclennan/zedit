@@ -42,6 +42,15 @@ static struct mark *freeumark;
 
 static void (*printchar)(Byte ichar) = tprntchar;
 
+#if HUGE_THREADED
+static void modeline_invalidate(struct buff *buff)
+{
+	struct wdo *wdo = findwdo(buff);
+	if (wdo)
+		wdo->modeflags = INVALID;
+}
+#endif
+
 static void mfini(void)
 {
 	if (freemark) {
@@ -75,6 +84,10 @@ void display_init(struct mark *mrk)
 	if (mrk)
 		/* user provided a start mark */
 		set_sstart(mrk);
+
+#if HUGE_THREADED
+	huge_thread_cb = modeline_invalidate;
+#endif
 }
 
 /* True if user mark moved */
@@ -484,13 +497,12 @@ static char *setmodes(struct zbuff *buff)
 
 	if (buff->bmode & VIEW)
 		strcat(PawStr, " RO");
-	if (buff->bmode & FILE_COMPRESSED) {
 #if HUGE_FILES
+	if (buff->buff->fd != -1)
 		strcat(PawStr, " H");
-#else
-		strcat(PawStr, " Z");
 #endif
-	}
+	if (buff->bmode & FILE_COMPRESSED)
+		strcat(PawStr, " Z");
 	if (buff->bmode & FILE_CRLF)
 		strcat(PawStr, " CR");
 	if (buff->bmode & OVERWRITE)

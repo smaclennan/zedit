@@ -74,6 +74,7 @@ fatal:
 /* We allow only one huge file at a time. */
 static pthread_t thread;
 static int thread_running;
+void (*huge_thread_cb)(struct buff *buff);
 
 static void *read_thread(void *arg)
 {
@@ -88,6 +89,9 @@ static void *read_thread(void *arg)
 
 	close(buff->fd);
 	buff->fd = -1;
+
+	if (huge_thread_cb)
+		huge_thread_cb(buff);
 
 	thread_running = 0;
 	Dbg("read_thread done\n");

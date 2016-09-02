@@ -83,10 +83,8 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 #endif
 
 #if HUGE_FILES
-	if (sbuf.st_size > HUGE_SIZE) {
-		if (compressed) *compressed = 1;
+	if (sbuf.st_size > HUGE_SIZE)
 		return breadhuge(buff, fd, sbuf.st_size);
-	}
 #endif
 
 

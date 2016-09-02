@@ -42,7 +42,7 @@ static struct mark *freeumark;
 
 static void (*printchar)(Byte ichar) = tprntchar;
 
-#if HUGE_THREADED
+#if HUGE_FILES
 static void modeline_invalidate(struct buff *buff)
 {
 	struct wdo *wdo = findwdo(buff);
@@ -85,8 +85,8 @@ void display_init(struct mark *mrk)
 		/* user provided a start mark */
 		set_sstart(mrk);
 
-#if HUGE_THREADED
-	huge_thread_cb = modeline_invalidate;
+#if HUGE_FILES
+	huge_file_cb = modeline_invalidate;
 #endif
 }
 

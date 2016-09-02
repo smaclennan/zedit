@@ -36,6 +36,8 @@
 #error HUGE_FILES and ZLIB not supported.
 #endif
 
+void (*huge_file_cb)(struct buff *buff);
+
 static pthread_mutex_t read_lock = PTHREAD_MUTEX_INITIALIZER;
 
 /* SAM If we where smart we would read the last partial page and check
@@ -63,6 +65,24 @@ static void breadpage(struct buff *buff, struct page *page)
 
 	page->plen = len;
 	pthread_mutex_unlock(&read_lock);
+
+#if ! HUGE_THREADED
+	if (page->nextp)
+		return;
+
+	/* last page - verify all pages read */
+	struct page *tp;
+
+	for (tp = buff->firstp; tp; tp = tp->nextp)
+		if (tp->pgoffset) {
+			Dbg("Problem: page offset %u\n", tp->pgoffset);
+			breadpage(buff, tp);
+		}
+
+	close(buff->fd);
+	buff->fd = -1;
+	huge_file_cb(buff);
+#endif
 	return;
 
 fatal:
@@ -74,7 +94,6 @@ fatal:
 /* We allow only one huge file at a time. */
 static pthread_t thread;
 static int thread_running;
-void (*huge_thread_cb)(struct buff *buff);
 
 static void *read_thread(void *arg)
 {
@@ -90,8 +109,8 @@ static void *read_thread(void *arg)
 	close(buff->fd);
 	buff->fd = -1;
 
-	if (huge_thread_cb)
-		huge_thread_cb(buff);
+	if (huge_file_cb)
+		huge_file_cb(buff);
 
 	thread_running = 0;
 	Dbg("read_thread done\n");
@@ -150,11 +169,10 @@ int breadhuge(struct buff *buff, int fd, unsigned long size)
 
 void makecur(struct buff *buff, struct page *page, int dist)
 {
-	if (page->pgoffset) {
+	if (page->pgoffset)
 		breadpage(buff, page);
-		if (dist > page->plen)
-			dist = page->plen - 1;
-	}
+	if (dist > page->plen)
+			dist = page->plen;
 	buff->curpage = page;
 	makeoffset(buff, dist);
 }

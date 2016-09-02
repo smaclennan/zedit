@@ -337,7 +337,7 @@ bool cdelbuff(struct zbuff *tbuff)
 	if (tbuff == Bufflist)
 		Bufflist = tbuff->next;
 	if (tbuff->prev)
-		tbuff->next->prev = tbuff->next;
+		tbuff->prev->next = tbuff->next;
 	if (tbuff->next)
 		tbuff->next->prev = tbuff->prev;
 

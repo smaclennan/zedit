@@ -159,7 +159,7 @@ struct zbuff *cfindzbuff(struct buff *buff);
 struct zbuff *cmakebuff(const char *, char *);
 bool cdelbuff(struct zbuff *buff);
 void cswitchto(struct zbuff *);
-void display_init(void);
+void display_init(struct mark *mrk);
 bool tdelay(int ms);
 int delayprompt(const char *);
 void delinit(void);

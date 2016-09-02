@@ -158,6 +158,28 @@ bool bisbeforemrk(struct buff *buff, struct mark *tmark)
 	return tp != NULL;
 }
 
+/* True if point is between start and end. */
+bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end)
+{
+	struct page *tp;
+	bool found = false;
+
+	if (start->mbuff != buff || end->mbuff != buff)
+		return false;
+
+	for (tp = start->mpage; tp && tp != end->mpage; tp = tp->nextp)
+		if (tp == buff->curpage) {
+			if (tp == start->mpage)
+				if (buff->curchar < start->moffset)
+					return false;
+			if (tp == end->mpage)
+				return buff->curchar < start->moffset;
+			found = true;
+		}
+
+	return tp ? found : false;
+}
+
 /* Put the mark where the point is. */
 void bmrktopnt(struct buff *buff, struct mark *tmark)
 {

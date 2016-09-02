@@ -27,7 +27,6 @@ static void pawdisplay(struct mark *, struct mark *);
 struct mark *Sstart;			/* Screen start */
 static struct mark *Psstart;	/* Screen 'prestart' */
 static struct mark *Send;		/* Screen end */
-static bool Sendp;				/* Screen end set */
 static int Tlrow;				/* Last row displayed */
 
 static int NESTED;		/* zrefresh can go recursive... */
@@ -68,7 +67,6 @@ void display_init(void)
 	Sstart	= &Scrnmarks[ROWMAX + 1];
 	Psstart	= &Scrnmarks[ROWMAX + 2];
 	Send	= &Scrnmarks[ROWMAX + 3];
-	Sendp	= false;
 
 	/* init the mark list */
 	Marklist = Send;
@@ -119,7 +117,7 @@ static bool bisatumark(void)
 	return  UMARK_SET && bisatmrk(Bbuff, UMARK);
 }
 
-/* Set Sstart, Psstart, and Sendp. */
+/* Set Sstart and Psstart. Mark Send as invalid. */
 void set_sstart(struct mark *mrk)
 {
 	mrktomrk(Sstart, mrk);
@@ -132,7 +130,7 @@ void set_sstart(struct mark *mrk)
 		Psstart->moffset = Psstart->mpage->plen;
 	} else
 		Psstart->moffset = 0;
-	Sendp = false;
+	Send->mbuff = NULL; /* mark as invalid */
 }
 
 /* Mark screen invalid */
@@ -151,33 +149,6 @@ void redisplay(void)
 
 	/* This is needed to set Comstate to false */
 	uncomment(NULL);
-}
-
-/* Check if the buffer is between Sstart and Send. This is really
- * worth optimizing with huge buffers.
- */
-static inline bool in_range(void)
-{
-	struct page *page;
-
-	if (!Sstart->mpage || Sstart->mbuff != Bbuff)
-		return false;
-
-	if (Bbuff->curpage == Sstart->mpage)
-		return Bbuff->curchar >= Sstart->moffset;
-
-	if (!Sendp)
-		return false;
-
-	if (Bbuff->curpage == Send->mpage)
-		return Bbuff->curchar < Send->moffset;
-
-	/* Start at Sstart->mpage to handle Sstart->mpage == Send->mpage */
-	for (page = Sstart->mpage; page && page != Send->mpage; page = page->nextp)
-			if (page == Bbuff->curpage)
-				return true;
-
-	return false;
 }
 
 /* Do the actual display update from the buffer */
@@ -205,7 +176,7 @@ void zrefresh(void)
 		mrktomrk(was, UMARK);
 	}
 
-	if (!in_range())
+	if (!bisbetweenmrks(Bbuff, Sstart, Send))
 		/* The cursor has moved before/after the screen marks */
 		reframe();
 	else if (mrkatmrk(Sstart, Psstart) && !bisstart(Bbuff))
@@ -383,7 +354,6 @@ static int innerdsp(int from, int to, struct mark *pmark)
 	bmrktopnt(Bbuff, &Scrnmarks[trow]);
 	if (pmark) {
 		bmrktopnt(Bbuff, Send);
-		Sendp = true;
 		if (needpnt) {
 			/* the user has typed past the end of the screen */
 			reframe();

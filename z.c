@@ -149,7 +149,7 @@ void execute(void)
 int main(int argc, char **argv)
 {
 	char path[PATHMAX + 1];
-	int arg, files = 0, textMode = 0, exitflag = 0, line = 0;
+	int arg, textMode = 0, exitflag = 0, line = 0;
 	struct mark tmark;
 	struct zbuff *tbuff = NULL;
 
@@ -213,7 +213,7 @@ int main(int argc, char **argv)
 	tainit();
 	fd_init();
 
-	for (; optind < argc; ++optind, ++files)
+	for (; optind < argc; ++optind)
 		if (pathfixup(path, argv[optind]) == 0)
 			if (findfile(path) && !tbuff)
 				tbuff = Curbuff;

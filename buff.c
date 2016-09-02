@@ -300,13 +300,11 @@ void btostart(struct buff *buff)
 /** Move point to end of buffer. */
 void btoend(struct buff *buff)
 {
-	struct page *lastp = buff->curpage->nextp;
-	if (lastp) {
-		while (lastp->nextp)
-			lastp = lastp->nextp;
+	struct page *lastp;
+
+	for (lastp = buff->curpage->nextp; lastp; lastp = lastp->nextp)
 		makecur(buff, lastp, lastp->plen);
-	} else
-		makeoffset(buff, curplen(buff));
+	makeoffset(buff, curplen(buff));
 }
 
 /** Move point to the beginning of the line. */

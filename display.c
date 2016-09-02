@@ -50,7 +50,7 @@ static void mfini(void)
 	}
 }
 
-void display_init(void)
+void display_init(struct mark *mrk)
 {
 	int cnt;
 
@@ -71,6 +71,10 @@ void display_init(void)
 	/* init the mark list */
 	Marklist = Send;
 	atexit(mfini);
+
+	if (mrk)
+		/* user provided a start mark */
+		set_sstart(mrk);
 }
 
 /* True if user mark moved */

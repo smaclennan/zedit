@@ -150,6 +150,7 @@ int main(int argc, char **argv)
 {
 	char path[PATHMAX + 1];
 	int arg, files = 0, textMode = 0, exitflag = 0, line = 0;
+	struct mark tmark;
 	struct zbuff *tbuff = NULL;
 
 	Home = gethomedir();
@@ -191,8 +192,6 @@ int main(int argc, char **argv)
 	if (textMode)
 		VAR(VNORMAL) = 0;
 
-	display_init();
-
 	delinit();
 
 	/* PAW must not be on the Bufflist */
@@ -206,6 +205,9 @@ int main(int argc, char **argv)
 		puts("Not enough memory.");
 		exit(1);
 	}
+
+	bmrktopnt(Bbuff, &tmark);
+	display_init(&tmark);
 
 	tinit();
 	tainit();

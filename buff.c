@@ -65,16 +65,16 @@ void bdelbuff(struct buff *tbuff)
 	if (!tbuff)
 		return;
 
+#if HUGE_FILES
+	bhugecleanup(tbuff);
+#endif
+
 	while (tbuff->firstp)	/* delete the pages */
 		freepage(tbuff, tbuff->firstp);
 
 #ifdef HAVE_BUFFER_MARKS
 	while (tbuff->marks) /* delete the marks */
 		bdelmark(tbuff->marks);
-#endif
-
-#if HUGE_FILES
-	bhugecleanup(tbuff);
 #endif
 
 	free(tbuff);	/* free the buffer proper */
@@ -410,11 +410,15 @@ bool bcrsearch(struct buff *buff, Byte what)
 }
 
 /** Delete all bytes from a buffer and leave it with one empty page
- * (ala bcreate()). More efficient than bdlete(blength(buff)) since it
+ * (ala bcreate()). More efficient than bdelete(blength(buff)) since it
  * works on pages rather than bytes.
  */
 void bempty(struct buff *buff)
 {
+#if HUGE_FILES
+	bhugecleanup(buff);
+#endif
+
 	makecur(buff, buff->firstp, 0);
 	curplen(buff) = 0;
 	while (buff->curpage->nextp)
@@ -435,9 +439,6 @@ void bempty(struct buff *buff)
 
 	undo_clear(buff);
 	bsetmod(buff);
-#if HUGE_FILES
-	bhugecleanup(buff);
-#endif
 }
 
 /** Peek the previous byte. Does not move the point. Returns LF at start of buffer. */

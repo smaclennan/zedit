@@ -106,8 +106,13 @@ static void *read_thread(void *arg)
 		if (page->pgoffset)
 			breadpage(buff, page);
 
-	close(buff->fd);
-	buff->fd = -1;
+	/* Grab lock in case we are closing */
+	pthread_mutex_lock(&read_lock);
+	if (buff->fd >= 0) {
+		close(buff->fd);
+		buff->fd = -1;
+	}
+	pthread_mutex_unlock(&read_lock);
 
 	if (huge_file_cb)
 		huge_file_cb(buff);
@@ -148,7 +153,6 @@ int breadhuge(struct buff *buff, int fd, unsigned long size)
 	buff->curpage->plen = len;
 	buff->fd = fd;
 
-	/* Round up... but we have one page */
 	pages = (size + PSIZE - 1) / PSIZE;
 	page = buff->curpage;
 	for (i = 1; i < pages; ++i) {
@@ -179,9 +183,19 @@ void makecur(struct buff *buff, struct page *page, int dist)
 
 void bhugecleanup(struct buff *buff)
 {
+	struct page *page;
+
+	if (buff->fd == -1)
+		return; /* normal case */
+
+	pthread_mutex_lock(&read_lock);
+	for (page = buff->firstp; page; page = page->nextp)
+		page->pgoffset = 0;
+
 	if (buff->fd >= 0) {
 		close(buff->fd);
 		buff->fd = -1;
 	}
+	pthread_mutex_unlock(&read_lock);
 }
 #endif

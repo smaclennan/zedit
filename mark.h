@@ -49,6 +49,7 @@ void _bdelmark(struct mark *mark, struct mark **tail);
 #define bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))
 bool bisaftermrk(struct buff *, struct mark *);
 bool bisbeforemrk(struct buff *, struct mark *);
+bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end);
 void bmrktopnt(struct buff *, struct mark *);
 bool bpnttomrk(struct buff *, struct mark *);
 bool bswappnt(struct buff *, struct mark *);

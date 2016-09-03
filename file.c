@@ -166,14 +166,20 @@ Returns  0  successfully opened file
 int zreadfile(char *fname)
 {
 	struct stat sbuf;
-	int compressed;
+	int compressed, rc;
 
-	if (stat(fname, &sbuf) == 0)
-		Curbuff->mtime = sbuf.st_mtime;
-	else
-		Curbuff->mtime = -1;
+	if (stat(fname, &sbuf))
+		return -1;
 
-	int rc = breadfile(Bbuff, fname, &compressed);
+	Curbuff->mtime = sbuf.st_mtime;
+
+#if HUGE_FILES
+	if (sbuf.st_size > HUGE_SIZE) {
+		compressed = 0;
+		rc = breadhuge(Bbuff, fname);
+	} else
+#endif
+		rc = breadfile(Bbuff, fname, &compressed);
 
 	if (rc > 0) {
 		if (rc == ENOENT)

@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <signal.h>
+#include <sys/stat.h>
 #ifndef WIN32
 #include <unistd.h>
 #endif
@@ -34,6 +35,10 @@
 #if HUGE_FILES
 #if ZLIB
 #error HUGE_FILES and ZLIB not supported.
+#endif
+
+#ifndef O_BINARY
+#define O_BINARY 0
 #endif
 
 void (*huge_file_cb)(struct buff *buff);
@@ -139,10 +144,22 @@ static void start_thread(struct buff *buff) {}
 #endif
 
 /* Warning: keeps the fd open. */
-int breadhuge(struct buff *buff, int fd, unsigned long size)
+int breadhuge(struct buff *buff, const char *fname)
 {
-	int len, pages, i;
+	int fd, len, pages, i;
+	struct stat sbuf;
 	struct page *page;
+
+	fd = open(fname, O_RDONLY | O_BINARY);
+	if (fd < 0)
+		return errno;
+
+	if (fstat(fd, &sbuf)) {
+		close(fd);
+		return EIO;
+	}
+
+	bempty(buff);
 
 	/* always read the first page */
 	len = read(fd, buff->curcptr, PSIZE);
@@ -153,7 +170,7 @@ int breadhuge(struct buff *buff, int fd, unsigned long size)
 	buff->curpage->plen = len;
 	buff->fd = fd;
 
-	pages = (size + PSIZE - 1) / PSIZE;
+	pages = (sbuf.st_size + PSIZE - 1) / PSIZE;
 	page = buff->curpage;
 	for (i = 1; i < pages; ++i) {
 		page = newpage(page);
@@ -173,12 +190,13 @@ int breadhuge(struct buff *buff, int fd, unsigned long size)
 
 void makecur(struct buff *buff, struct page *page, int dist)
 {
-	if (page->pgoffset)
+	if (page->pgoffset) {
 		breadpage(buff, page);
-	if (dist > page->plen)
+		if (dist > page->plen)
 			dist = page->plen;
-	buff->curpage = page;
-	makeoffset(buff, dist);
+	}
+
+	__makecur(buff, page, dist);
 }
 
 void bhugecleanup(struct buff *buff)

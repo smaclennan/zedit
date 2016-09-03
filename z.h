@@ -76,6 +76,11 @@ struct zbuff;
 #define AGAIN		-1			/* go again */
 #define AGAIN_WRAP	128			/* wrap and go again */
 
+/** Huge file size. If HUGE_FILES is defined, files bigger than
+ * HUGE_SIZE will be read on demand.
+ */
+#define HUGE_SIZE (1UL << 30)
+
 /*
  * BUFFER MODES
  */

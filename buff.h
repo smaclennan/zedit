@@ -150,11 +150,6 @@ extern int NumBuffs, NumPages;
 /** Half a page for pagesplit(). */
 #define HALFP		(PSIZE / 2)
 
-/** Huge file size. If HUGE_FILES is defined, files bigger than
- * HUGE_SIZE will be read on demand.
- */
-#define HUGE_SIZE (1UL << 30)
-
 /** Describes one page in memory. */
 struct page {
 	Byte pdata[PSIZE];		/**< Page data. */
@@ -182,16 +177,19 @@ static inline bool bisend(struct buff *buff)
 	return buff->curpage->nextp == NULL && buff->curchar >= buff->curpage->plen;
 }
 
-/** Make page current at offset. */
-#if HUGE_FILES
-void makecur(struct buff *buff, struct page *page, int dist);
-#else
-static inline void makecur(struct buff *buff, struct page *page, int dist)
+/* Helper function - use makecur */
+static inline void __makecur(struct buff *buff, struct page *page, int dist)
 {
 	buff->curpage = page;
 	buff->curchar = dist;
 	buff->curcptr = page->pdata + dist;
 }
+
+/** Make page current at offset. */
+#if HUGE_FILES
+void makecur(struct buff *buff, struct page *page, int dist);
+#else
+#define makecur __makecur
 #endif
 
 /** Move current page to offset. */
@@ -221,7 +219,7 @@ static inline void bmove1(struct buff *buff)
 
 #if HUGE_FILES
 extern void (*huge_file_cb)(struct buff *buff);
-int breadhuge(struct buff *buff, int fd, unsigned long size);
+int breadhuge(struct buff *buff, const char *fname);
 void bhugecleanup(struct buff *buff);
 #endif
 

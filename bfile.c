@@ -55,20 +55,10 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 {
 	char buf[PSIZE];
 	int fd, len;
-	struct stat sbuf;
-
-	btostart(buff);
 
 	fd = open(fname, O_RDONLY | O_BINARY);
 	if (fd < 0)
 		return errno;
-
-	if (fstat(fd, &sbuf)) {
-		close(fd);
-		return EIO;
-	}
-
-	bempty(buff);
 
 #if ZLIB
 	gzFile gz = gzdopen(fd, "rb");
@@ -82,11 +72,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 	if (compressed) *compressed = 0;
 #endif
 
-#if HUGE_FILES
-	if (sbuf.st_size > HUGE_SIZE)
-		return breadhuge(buff, fd, sbuf.st_size);
-#endif
-
+	bempty(buff);
 
 	while ((len = fileread(fd, buf, PSIZE)) > 0) {
 		if (curplen(buff)) {
@@ -110,7 +96,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 	/* Ubuntu 12.04 has a bug where zero length files are reported as
 	 * compressed.
 	 */
-	if (compressed && sbuf.st_size == 0) *compressed = 0;
+	if (compressed && curplen(buff) == 0) *compressed = 0;
 #endif
 
 	buff->bmodf = false;

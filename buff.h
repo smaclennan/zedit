@@ -141,7 +141,9 @@ extern int NumBuffs, NumPages;
  * editor however the more wasted memory. A page size of 1k seems to
  * be a very good trade off. 4k probably better on modern systems.
  */
+#ifndef PSIZE
 #define PSIZE		4096
+#endif
 /** Half a page for pagesplit(). */
 #define HALFP		(PSIZE / 2)
 

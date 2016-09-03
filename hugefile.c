@@ -33,9 +33,6 @@
 #include "buff.h"
 
 #if HUGE_FILES
-#if ZLIB
-#error HUGE_FILES and ZLIB not supported.
-#endif
 
 #ifndef O_BINARY
 #define O_BINARY 0

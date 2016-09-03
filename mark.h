@@ -54,6 +54,7 @@ bool bisbeforemrk(struct buff *, struct mark *);
  * ranges and terrible if end is before start.
  */
 bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end);
+#define bisatmrks(b, m1, m2) (bisatmrk(b, m1) && bisatmrk(b, m2))
 void bmrktopnt(struct buff *, struct mark *);
 bool bpnttomrk(struct buff *, struct mark *);
 bool bswappnt(struct buff *, struct mark *);

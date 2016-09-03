@@ -21,7 +21,7 @@ CC = cc
 #LIBS += -lpcreposix -lpcre
 
 # For HUGE_THREADED
-LIBS += -lpthread
+#LIBS += -lpthread
 
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).

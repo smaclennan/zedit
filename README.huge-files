@@ -1,13 +1,16 @@
-I quite often have to read huge trace files at work on very slow
-computers. The HUGE_FILES and HUGE_THREADED options make working with
-files that take 60 seconds or more to load more manageable.
+I quite often have to read huge trace files on slow computers at
+work. The HUGE_FILES and HUGE_THREADED options make working with files
+that take 60 seconds or more to load more manageable. I am not
+particularly proud of this code, but it serves a real need...  at
+least for now.
 
 But it is not without risk. HUGE_FILES is not too bad as long as the
 file backing the buffer doesn't change. If it changes, the buffer will
-get messed up.
+get messed up. There is NO protection against this.
 
 There is currently minimal locking. The routine to read a page from
-the file has a lock so that the editor and the thread don't conflict.
+the file has a lock so that the editor and the thread don't
+conflict. And closing the file is protected.
 
 The lack of locking isn't too bad for HUGE_FILES, but for
 HUGE_THREADED it can cause big problems since it walks the page
@@ -17,9 +20,8 @@ safe if you can see the data.... but....
 
 Once HUGE_THREADED is done reading, it closes the file and from then
 on you are safe. Zedit puts an H in the mode line while huge file mode
-is running. Note that only the threaded version closes the file, the
-non-threaded version always keeps it open.
+is running.
 
 I use a different version of Zedit (zhuge) to edit huge trace
-files. So I known when I have to be careful. I really wish now I had
-kept read-only mode :(
+files. So I known when I have to be careful. These files are also
+basically read only. I really wish now I had kept read-only mode :(

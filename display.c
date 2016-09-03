@@ -133,7 +133,7 @@ void set_sstart(struct mark *mrk)
 		Psstart->mpage = Psstart->mpage->prevp;
 		Psstart->moffset = Psstart->mpage->plen;
 	} else
-		Psstart->moffset = 0;
+		Psstart->mbuff = NULL; /* mark as invalid */
 	Send->mbuff = NULL; /* mark as invalid */
 }
 

@@ -158,7 +158,10 @@ bool bisbeforemrk(struct buff *buff, struct mark *tmark)
 	return tp != NULL;
 }
 
-/* True if point is between start and end. */
+/* True if point is between start and end. This has to walk all the
+ * pages between start and end. So it is most efficient for small
+ * ranges and terrible if end is before start.
+ */
 bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end)
 {
 	struct page *tp;

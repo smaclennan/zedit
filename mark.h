@@ -49,6 +49,10 @@ void _bdelmark(struct mark *mark, struct mark **tail);
 #define bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))
 bool bisaftermrk(struct buff *, struct mark *);
 bool bisbeforemrk(struct buff *, struct mark *);
+/* True if point is between start and end. This has to walk all the
+ * pages between start and end. So it is most efficient for small
+ * ranges and terrible if end is before start.
+ */
 bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end);
 void bmrktopnt(struct buff *, struct mark *);
 bool bpnttomrk(struct buff *, struct mark *);

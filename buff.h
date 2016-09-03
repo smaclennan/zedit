@@ -154,7 +154,7 @@ extern int NumBuffs, NumPages;
 struct page {
 	Byte pdata[PSIZE];		/**< Page data. */
 #if HUGE_FILES
-	unsigned pgoffset;     /**< Offset in file or 0 if in memory. */
+	unsigned pgoffset;      /**< Offset in file or 0 if in memory. */
 #endif
 	unsigned plen;          /**< Current length of the page. */
 	struct page *prevp;		/**< List of pages. */

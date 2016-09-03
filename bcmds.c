@@ -26,7 +26,7 @@ static int Numbnames;			/* number of buffers */
 static int Maxbnames;			/* max buffers Bnames can hold */
 
 struct zbuff *Bufflist;		/* the buffer list */
-struct zbuff *Bufflist_tail;
+static struct zbuff *Bufflist_tail;
 struct zbuff *Curbuff;		/* the current buffer */
 struct buff *Bbuff;         /* the current low-level buffer */
 

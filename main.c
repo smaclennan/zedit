@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <time.h>
+#include <assert.h>
 
 #include "buff.h"
 #include "mark.h"
@@ -159,7 +160,12 @@ static int test_bigwrite(struct buff *buff, const char *to)
 int main(int argc, char *argv[])
 {
 	struct buff *buff;
+	struct mark tmark, tmark1, tmark2, tmark3;
 	int total, offset;
+	int i, size;
+
+	/* These tests assume a 1k page size */
+	assert(PSIZE == 1024);
 
 	buff = bcreate();
 
@@ -170,93 +176,11 @@ int main(int argc, char *argv[])
 	else if (argc == 2)
 		return test_bigwrite(buff, argv[1]);
 
-	/* Testing bcsearch/bcrsearch */
-	bappend(buff, str1k, strlen(str1k));
-	btostart(buff);
-	if (!bcsearch(buff, 'C'))
-		printf("Did not find C\n");
-	else if (*buff->curcptr != 'a')
-		printf("Problems with bcsearch\n");
-	else {
-		bmove(buff, 10);
-		if (!bcrsearch(buff, 'C'))
-			printf("Did not reverse find C\n");
-		else if (*buff->curcptr != 'C')
-			printf("Problems with bcrsearch\n");
-	}
-
-	/* testing pagesplit */
-	bappend(buff, (Byte *)str1k, 800); /* over half page */
-	btostart(buff);
-	if (!bm_search(buff, "wrong number", true)) {
-		puts("search1 failed");
-		exit(1);
-	}
-	bmove(buff, -12);
-	struct mark *mark1 = bcremark(buff);
-
-	bmove(buff, 12 + 11 + 10);
-	if (!bm_rsearch(buff, "wrong number", true)) {
-		puts("search1r failed");
-		exit(1);
-	}
-	printf("Buffer is %c\n", *buff->curcptr);
-
-	if (!bm_search(buff, "2 feet of snow", true)) {
-		puts("search2 failed");
-		exit(1);
-	}
-	bmove(buff, -14);
-	struct mark *mark2 = bcremark(buff);
-
-	if (mark1->moffset >= HALFP || mark2->moffset <= HALFP) {
-		puts("PROBLEMS");
-		exit(1);
-	}
-
-	dump_str_at_mark(buff, "1", mark1);
-	dump_str_at_mark(buff, "2", mark2);
-
-	pagesplit(buff, 600);
-
-	dump_str_at_mark(buff, "1", mark1);
-	dump_str_at_mark(buff, "2", mark2);
-
-	btostart(buff);
-#if 1
-	/* Here is what Jeff Foxworthy has to say about Canadians, during
-	 * ^
-	 */
-	if (lookingat(buff, "is what")) puts("la probs 1");
-	bmove(buff, 4);
-	/* Here is what Jeff Foxworthy has to say about Canadians, during
-	 *     ^
-	 */
-	if (lookingat(buff, "is what")) puts("la probs 2");
-	bmove1(buff);
-#else
-	bmove(buff, 5);
-#endif
-	/* Here is what Jeff Foxworthy has to say about Canadians, during
-	 *      ^
-	 */
-	if (!lookingat(buff, "is what")) puts("la probs 3");
-	btostart(buff);
-	bmove(buff, 5);
-	if (lookingat(buff, "is what nope")) puts("la probs 4");
-	if (!lookingat(buff, "is what")) puts("la probs 6");
-
-	bempty(buff);
-	int n = 1234;
-	binstr(buff, "%-32s %8u\n", "fred", n);
-	binstr(buff, "%15s %8d\n", "fred", n);
-	binstr(buff, "%-15s %8u\n", "fredrick the first", n);
-	binstr(buff, "%-15s left\n", "fredrick the first");
-	printf("%.*s", curplen(buff), buff->curpage->pdata);
-
-	printf("%-15s %8u\n", "fred", n);
-
-	tinit();
+	/* Create a buffer bigger with at least three pages */
+	for (i = 0; i < 3; ++i)
+		bappend(buff, str1k, strlen(str1k));
+	size = blength(buff); /* real size */
+	printf("Buffer is %d\n", size);
 
 	return 0;
 }

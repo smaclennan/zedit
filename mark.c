@@ -139,6 +139,8 @@ bool bisaftermrk(struct buff *buff, struct mark *tmark)
 		return false;
 	if (tmark->mpage == buff->curpage)
 		return buff->curchar > tmark->moffset;
+	if (tmark->mpage == buff->curpage->nextp)
+		return false;
 	for (tp = buff->curpage->prevp; tp && tp != tmark->mpage; tp = tp->prevp)
 		;
 	return tp != NULL;
@@ -153,16 +155,23 @@ bool bisbeforemrk(struct buff *buff, struct mark *tmark)
 		return false;
 	if (tmark->mpage == buff->curpage)
 		return buff->curchar < tmark->moffset;
+	if (tmark->mpage == buff->curpage->prevp)
+		return false;
 	for (tp = buff->curpage->nextp; tp && tp != tmark->mpage; tp = tp->nextp)
 		;
 	return tp != NULL;
 }
 
-/* True if point is between start and end. */
+/* True if point is between start and end. This has to walk all the
+ * pages between start and end. So it is most efficient for small
+ * ranges and terrible if end is before start.
+ *
+ * Note: point == start == end returns false: it is not between.
+ */
 bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end)
 {
 	struct page *tp;
-	int found = false;
+	bool found = false;
 
 	if (start->mbuff != buff || end->mbuff != buff)
 		return false;

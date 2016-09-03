@@ -43,17 +43,19 @@ const char *Dbgfname(const char *fname)
 
 void Dbg(const char *fmt, ...)
 {
-	FILE *fp;
+	va_list arg_ptr;
 
-	if (!dbgfname)
-		dbgfname = strdup("/tmp/z.out");
-
-	if ((fp = fopen(dbgfname, "a"))) {
-		va_list arg_ptr;
-
+	if (dbgfname) {
+		FILE *fp = fopen(dbgfname, "a");
+		if(fp) {
+			va_start(arg_ptr, fmt);
+			vfprintf(fp, fmt, arg_ptr);
+			va_end(arg_ptr);
+			fclose(fp);
+		}
+	} else {
 		va_start(arg_ptr, fmt);
-		vfprintf(fp, fmt, arg_ptr);
+		vfprintf(stderr, fmt, arg_ptr);
 		va_end(arg_ptr);
-		fclose(fp);
 	}
 }

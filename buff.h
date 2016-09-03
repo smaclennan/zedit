@@ -139,9 +139,9 @@ extern int NumBuffs, NumPages;
 
 /** Page size. Generally, the bigger the page size the faster the
  * editor however the more wasted memory. A page size of 1k seems to
- * be a very good trade off.
+ * be a very good trade off. 4k probably better on modern systems.
  */
-#define PSIZE		1024
+#define PSIZE		4096
 /** Half a page for pagesplit(). */
 #define HALFP		(PSIZE / 2)
 
@@ -199,9 +199,7 @@ static inline void bmove1(struct buff *buff)
 	else if (buff->curpage->nextp)
 		/* goto start of next page */
 		makecur(buff, buff->curpage->nextp, 0);
-	else
-		/* Already at EOB */
-		makeoffset(buff, curplen(buff));
+	/* else already at EOB */
 }
 
 #endif

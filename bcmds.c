@@ -26,6 +26,7 @@ static int Numbnames;			/* number of buffers */
 static int Maxbnames;			/* max buffers Bnames can hold */
 
 struct zbuff *Bufflist;		/* the buffer list */
+struct zbuff *Bufflist_tail;
 struct zbuff *Curbuff;		/* the current buffer */
 struct buff *Bbuff;         /* the current low-level buffer */
 
@@ -63,12 +64,10 @@ void Zswitch_to_buffer(void)
 
 void Znext_buffer(void)
 {
-	struct zbuff *next = Curbuff->prev;
+	struct zbuff *next = Curbuff->next;
 
-
-	if (!next && Curbuff->next)
-		for (next = Curbuff->next; next->next; next = next->next)
-			;
+	if (!next)
+		next = Bufflist;
 	if (next) {
 		strcpy(Lbufname, Curbuff->bname);
 		uncomment(Curbuff);
@@ -80,18 +79,11 @@ void Znext_buffer(void)
 
 static void delbuff(struct zbuff *buff)
 {
-	int wascur;
 	struct wdo *wdo;
 
-	wascur = buff == Curbuff;
 	if (strcmp(Lbufname, buff->bname) == 0)
 		*Lbufname = '\0';
 	if (cdelbuff(buff)) {
-		if (wascur && *Lbufname) {
-			struct zbuff *tbuff = cfindbuff(Lbufname);
-			if (tbuff)
-				zswitchto(tbuff);
-		}
 		cswitchto(Curbuff);
 
 		/* make sure all windows pointed to deleted buff are updated */
@@ -276,11 +268,13 @@ struct zbuff *cmakebuff(const char *bname, char *fname)
 		return NULL;
 	}
 
-	/* add the buffer to the head of the list */
-	if (Bufflist)
-		Bufflist->prev = bptr;
-	bptr->next = Bufflist;
-	Bufflist = bptr;
+	/* add the buffer to the tail of the list */
+	if (Bufflist) {
+		Bufflist_tail->next = bptr;
+		bptr->prev = Bufflist_tail;
+	} else
+		Bufflist = bptr;
+	Bufflist_tail = bptr;
 
 	bptr->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
 		(VAR(VEXACT) ? EXACT : 0);
@@ -336,8 +330,10 @@ bool cdelbuff(struct zbuff *tbuff)
 
 	if (tbuff == Bufflist)
 		Bufflist = tbuff->next;
+	if (tbuff == Bufflist_tail)
+		Bufflist_tail = tbuff->prev;
 	if (tbuff->prev)
-		tbuff->next->prev = tbuff->next;
+		tbuff->prev->next = tbuff->next;
 	if (tbuff->next)
 		tbuff->next->prev = tbuff->prev;
 

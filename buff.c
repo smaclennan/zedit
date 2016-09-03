@@ -405,7 +405,7 @@ bool bcrsearch(struct buff *buff, Byte what)
 }
 
 /** Delete all bytes from a buffer and leave it with one empty page
- * (ala bcreate()). More efficient than bdlete(blength(buff)) since it
+ * (ala bcreate()). More efficient than bdelete(blength(buff)) since it
  * works on pages rather than bytes.
  */
 void bempty(struct buff *buff)

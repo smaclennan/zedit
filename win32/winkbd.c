@@ -95,6 +95,9 @@ static short convertKey(KEY_EVENT_RECORD *event)
 	return key;
 }
 
+#ifdef FCHECK
+static _inline void do_mouse(MOUSE_EVENT_RECORD *mouse) {}
+#else
 static void mouse_scroll(int row, bool down)
 {
 	struct wdo *wdo = wfind(row);
@@ -109,7 +112,6 @@ static void mouse_scroll(int row, bool down)
 	down ? Znext_line() : Zprevious_line();
 }
 
-#ifdef SAM_NOT_YET
 static void mouse_point(int row, int col, bool set_mark)
 {
 	int atcol;
@@ -208,7 +210,7 @@ again:
 			zrefresh();		/* force a screen update */
 			break;
 		case MOUSE_EVENT:
-// SAM			do_mouse(&input[i].Event.MouseEvent);
+			do_mouse(&input[i].Event.MouseEvent);
 			break;
 		}
 

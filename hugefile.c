@@ -47,9 +47,20 @@ static pthread_mutex_t read_lock = PTHREAD_MUTEX_INITIALIZER;
 
 static void do_lock(void) { pthread_mutex_lock(&read_lock); }
 static void do_unlock(void) { pthread_mutex_unlock(&read_lock); }
+
+static void *read_thread(void *arg);
+
+static void start_thread(struct buff *buff)
+{
+	pthread_t thread;
+
+	if (pthread_create(&thread, NULL, read_thread, buff))
+		Dbg("Unable to create thread\n");
+}
 #else
 #define do_lock()
 #define do_unlock()
+#define start_thread(b)
 #endif
 
 void (*huge_file_cb)(struct buff *buff);
@@ -108,16 +119,12 @@ fatal:
 }
 
 #if HUGE_THREADED
-/* We allow only one huge file at a time. */
-static pthread_t thread;
-static int thread_running;
-
 static void *read_thread(void *arg)
 {
 	struct buff *buff = arg;
 	struct page *page;
 
-	Dbg("read_thread running %d\n", thread_running);
+	Dbg("read_thread running\n");
 
 	for (page = buff->firstp; page; page = page->nextp)
 		if (page->pgoffset)
@@ -134,25 +141,10 @@ static void *read_thread(void *arg)
 	if (huge_file_cb)
 		huge_file_cb(buff);
 
-	thread_running = 0;
 	Dbg("read_thread done\n");
 
 	return NULL;
 }
-
-static void start_thread(struct buff *buff)
-{
-	if (!__sync_bool_compare_and_swap(&thread_running, 0, 1))
-		return;
-
-	if (pthread_create(&thread, NULL, read_thread, buff)) {
-		thread_running = 0;
-		Dbg("Unable to create thread\n");
-		return;
-	}
-}
-#else
-static void start_thread(struct buff *buff) {}
 #endif
 
 /* Warning: keeps the fd open. */

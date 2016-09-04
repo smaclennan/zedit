@@ -155,10 +155,20 @@ void tprntchar(Byte ichar)
 {
 	int tcol;
 
+#ifdef WIN32
+	/* Visual Studio does not support ... in case */
+	if (ichar >= ' ' && ichar <= '~') {
+		tputchar(ichar);
+		return;
+	}
+#endif
+
 	switch (ichar) {
+#ifndef WIN32
 	case ' '...'~':
 		tputchar(ichar);
 		break;
+#endif
 	case '\t':
 		if (InPaw)
 			tprntstr("^I");
@@ -191,9 +201,16 @@ int chwidth(Byte ch, int col, bool adjust)
 {
 	int wid;
 
+#ifdef WIN32
+	if (ch >= ' ' && ch <= '~')
+		return 1;
+#endif
+
 	switch (ch) {
+#ifndef WIN32
 	case ' '...'~':
 		return 1;
+#endif
 	case '\n':
 		return InPaw ? 2 : 0;
 	case '\t':

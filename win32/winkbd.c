@@ -97,6 +97,67 @@ static short convertKey(KEY_EVENT_RECORD *event)
 
 void set_mouse(bool enable) {}
 
+static void mouse_scroll(int row, bool down)
+{
+	struct wdo *wdo = wfind(row);
+	if (!wdo) {
+		error("Not on a window."); /* XEmacs-ish */
+		return;
+	}
+
+	wswitchto(wdo);
+
+	Arg = 3;
+	down ? Znext_line() : Zprevious_line();
+}
+
+static void mouse_point(int row, int col, bool set_mark)
+{
+	int atcol;
+	struct mark tmark;
+	struct wdo *wdo = wfind(row);
+	if (!wdo) {
+		error("Not on a window."); /* XEmacs-ish */
+		return;
+	}
+
+	if (wdo != Curwdo) {
+		wswitchto(wdo);
+		/* We need Prow and Pcol to be correct. */
+		zrefresh();
+	}
+
+	bmrktopnt(Bbuff, &tmark);
+
+	/* Move the point to row */
+	if (row > Prow)
+		while (Prow < row) {
+			bcsearch(Bbuff, '\n');
+			++Prow;
+		}
+	else if (row <= Prow) {
+		while (Prow > row) {
+			bcrsearch(Bbuff, '\n');
+			--Prow;
+		}
+		tobegline(Bbuff);
+	}
+
+	/* Move the point to col */
+	atcol = 0;
+	while (col > 0 && !bisend(Bbuff) && Buff() != '\n') {
+		int n = chwidth(Buff(), atcol, false);
+		bmove1(Bbuff);
+		col -= n;
+		atcol += n;
+	}
+
+	if (set_mark) {
+		Zset_mark(); /* mark to point */
+		bpnttomrk(Bbuff, &tmark); /* reset mark */
+	}
+}
+
 static _inline void do_mouse(MOUSE_EVENT_RECORD *mouse)
 {
 	if (mouse->dwEventFlags & MOUSE_WHEELED) {

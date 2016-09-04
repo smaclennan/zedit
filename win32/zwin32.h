@@ -15,11 +15,6 @@
 #define unlink _unlink
 #define getcwd _getcwd
 
-#define creat(a, b) _creat(a, _S_IWRITE)
-#define open _open
-#define read _read
-#define write _write
-#define close _close
 #define access _access
 #define umask _umask
 #define chdir _chdir

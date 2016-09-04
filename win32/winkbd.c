@@ -109,6 +109,7 @@ static void mouse_scroll(int row, bool down)
 	down ? Znext_line() : Zprevious_line();
 }
 
+#ifdef SAM_NOT_YET
 static void mouse_point(int row, int col, bool set_mark)
 {
 	int atcol;
@@ -160,15 +161,16 @@ static _inline void do_mouse(MOUSE_EVENT_RECORD *mouse)
 {
 	if (mouse->dwEventFlags & MOUSE_WHEELED) {
 		mouse_scroll(mouse->dwMousePosition.Y,
-			     mouse->dwButtonState & 0x80000000);
+				 mouse->dwButtonState & 0x80000000);
 		zrefresh();
 	} else if (mouse->dwButtonState & 0xffff) {
 		mouse_point(mouse->dwMousePosition.Y,
-			    mouse->dwMousePosition.X,
-			    mouse->dwButtonState & RIGHTMOST_BUTTON_PRESSED);
+				mouse->dwMousePosition.X,
+				mouse->dwButtonState & RIGHTMOST_BUTTON_PRESSED);
 		zrefresh();
 	}
 }
+#endif
 
 int tgetcmd(void)
 {
@@ -206,7 +208,7 @@ again:
 			zrefresh();		/* force a screen update */
 			break;
 		case MOUSE_EVENT:
-			do_mouse(&input[i].Event.MouseEvent);
+// SAM			do_mouse(&input[i].Event.MouseEvent);
 			break;
 		}
 

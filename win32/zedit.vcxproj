@@ -107,7 +107,6 @@
     <ClCompile Include="..\mark.c" />
     <ClCompile Include="..\reg.c" />
     <ClCompile Include="..\shell.c" />
-    <ClCompile Include="..\spell.c" />
     <ClCompile Include="..\srch.c" />
     <ClCompile Include="..\tags.c" />
     <ClCompile Include="..\term.c" />

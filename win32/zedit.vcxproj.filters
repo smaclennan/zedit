@@ -60,9 +60,6 @@
     <ClCompile Include="..\shell.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\spell.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\srch.c">
       <Filter>Source Files</Filter>
     </ClCompile>

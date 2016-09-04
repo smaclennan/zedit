@@ -214,7 +214,9 @@ static inline void bmove1(struct buff *buff)
 	else if (buff->curpage->nextp)
 		/* goto start of next page */
 		makecur(buff, buff->curpage->nextp, 0);
-	/* else already at EOB */
+	else
+		/* already at eob - paw needs this */
+		makeoffset(buff, curplen(buff));
 }
 
 #if HUGE_FILES

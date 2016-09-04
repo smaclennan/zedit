@@ -23,10 +23,10 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <pthread.h>
 #include <signal.h>
 #include <sys/stat.h>
 #ifndef WIN32
+#include <pthread.h>
 #include <unistd.h>
 #endif
 

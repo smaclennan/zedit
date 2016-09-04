@@ -95,8 +95,6 @@ static short convertKey(KEY_EVENT_RECORD *event)
 	return key;
 }
 
-void set_mouse(bool enable) {}
-
 static void mouse_scroll(int row, bool down)
 {
 	struct wdo *wdo = wfind(row);
@@ -233,4 +231,16 @@ bool tdelay(int ms)
 		return false;
 
 	return WaitForSingleObject(hstdin, ms) != WAIT_OBJECT_0;
+}
+
+/* SAM FIXME */
+int is_special(int key)
+{
+	return 0;
+}
+
+/* SAM FIXME */
+char *special_label(int key)
+{
+	return "undefined";
 }

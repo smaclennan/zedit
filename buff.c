@@ -17,7 +17,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#ifndef WIN32
 #define _GNU_SOURCE /* for memrchr */
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>

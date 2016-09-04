@@ -77,14 +77,11 @@ int main(int argc, char *argv[])
 		err = 1;
 	}
 
-#ifndef WIN32
-	s1 = sizeof(key_label) / sizeof(char *);
-	if (N_KEYS != NUM_SPECIAL || s1 != NUM_SPECIAL) {
-		printf("Mismatch N_KEYS %d NUM_SPECIAL %d labels %d\n",
-			   N_KEYS, NUM_SPECIAL, s1);
+	if (N_KEYS != NUM_SPECIAL) {
+		printf("Mismatch N_KEYS %d NUM_SPECIAL %d\n",
+			   N_KEYS, NUM_SPECIAL);
 		err = 1;
 	}
-#endif
 
 	if (NUM_SPECIAL > 32) {
 		printf("Too many special keys\n");

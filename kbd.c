@@ -196,38 +196,6 @@ bool tdelay(int ms)
 	return poll(&stdin_fd, 1, ms) != 1;
 }
 
-static const char *key_label[] = {
-	"up", "down", "right", "left",
-	"insert", "delete", "page up", "page down", "home", "end",
-	"f1", "f2", "f3", "f4", "f5", "f6",
-	"f7", "f8", "f9", "f10", "f11", "f12",
-	"C-home", "C-end",
-};
-
-static const char *key_label2[] = {
-	"s-f1", "s-f2", "s-f3", "s-f4", "s-f5", "s-f6",
-	"s-f7", "s-f8", "s-f9", "s-f10", "s-f11", "s-f12",
-};
-
-const char *special_label(int key)
-{
-	if (key >= SPECIAL_START && key <= SPECIAL_END)
-		return key_label[key - SPECIAL_START];
-	else if (key >= SPECIAL_START2 && key <= SPECIAL_END2)
-		return key_label2[key - SPECIAL_START2];
-	else
-		return "???";
-}
-
-int is_special(int cmd)
-{
-	if (cmd >= SPECIAL_START && cmd <= SPECIAL_END)
-		return 1;
-	if (cmd >= SPECIAL_START2 && cmd <= SPECIAL_END2)
-		return 1;
-	return 0;
-}
-
 #ifdef TERMCAP
 static char *key_names[] = {
 	"ku",

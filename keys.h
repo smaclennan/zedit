@@ -88,8 +88,6 @@ Byte tpeek(int offset);
 int tgetcmd(void);
 bool tkbrdy(void);
 bool tdelay(int ms);
-const char *special_label(int key);
-int is_special(int key);
 void termcap_keys(void);
 
 #endif

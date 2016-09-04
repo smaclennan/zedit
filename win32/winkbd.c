@@ -234,15 +234,3 @@ bool tdelay(int ms)
 
 	return WaitForSingleObject(hstdin, ms) != WAIT_OBJECT_0;
 }
-
-/* SAM FIXME */
-int is_special(int key)
-{
-	return 0;
-}
-
-/* SAM FIXME */
-const char *special_label(int key)
-{
-	return "undefined";
-}

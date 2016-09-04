@@ -25,7 +25,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #ifdef WIN32
-#include <Windows.h>
+#include <windows.h>
 #include <io.h>
 #else
 #include <unistd.h>

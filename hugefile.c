@@ -25,8 +25,10 @@
 #include <errno.h>
 #include <signal.h>
 #include <sys/stat.h>
-#ifndef WIN32
-#include <pthread.h>
+#ifdef WIN32
+#include <windows.h>
+#include <io.h>
+#else
 #include <unistd.h>
 #endif
 
@@ -38,21 +40,28 @@
 #define O_BINARY 0
 #endif
 
-void (*huge_file_cb)(struct buff *buff);
+#if HUGE_THREADED
+#include <pthread.h>
 
 static pthread_mutex_t read_lock = PTHREAD_MUTEX_INITIALIZER;
 
-/* SAM If we where smart we would read the last partial page and check
- * that all the pages in between where of length PSIZE.
- */
+static void do_lock(void) { pthread_mutex_lock(&read_lock); }
+static void do_unlock(void) { pthread_mutex_unlock(&read_lock); }
+#else
+#define do_lock()
+#define do_unlock()
+#endif
+
+void (*huge_file_cb)(struct buff *buff);
+
 static void breadpage(struct buff *buff, struct page *page)
 {
 	unsigned long offset;
 	int len;
 
-	pthread_mutex_lock(&read_lock);
+	do_lock();
 	if (page->pgoffset == 0 || buff->fd == -1) {
-		pthread_mutex_unlock(&read_lock);
+		do_unlock();
 		return;
 	}
 
@@ -62,11 +71,16 @@ static void breadpage(struct buff *buff, struct page *page)
 	if (lseek(buff->fd, offset, SEEK_SET) != offset)
 		goto fatal;
 	len = read(buff->fd, page->pdata, PSIZE);
-	if (len < 0)
-		goto fatal;
+	/* All pages should be PSIZE except the last page */
+	if (len != PSIZE) {
+		if (page->nextp)
+			goto fatal;
+		if (len <= 0)
+			goto fatal;
+	}
 
 	page->plen = len;
-	pthread_mutex_unlock(&read_lock);
+	do_unlock();
 
 #if ! HUGE_THREADED
 	if (page->nextp)
@@ -83,7 +97,8 @@ static void breadpage(struct buff *buff, struct page *page)
 
 	close(buff->fd);
 	buff->fd = -1;
-	huge_file_cb(buff);
+	if (huge_file_cb)
+		huge_file_cb(buff);
 #endif
 	return;
 
@@ -109,12 +124,12 @@ static void *read_thread(void *arg)
 			breadpage(buff, page);
 
 	/* Grab lock in case we are closing */
-	pthread_mutex_lock(&read_lock);
+	do_lock();
 	if (buff->fd >= 0) {
 		close(buff->fd);
 		buff->fd = -1;
 	}
-	pthread_mutex_unlock(&read_lock);
+	do_unlock();
 
 	if (huge_file_cb)
 		huge_file_cb(buff);
@@ -203,7 +218,7 @@ void bhugecleanup(struct buff *buff)
 	if (buff->fd == -1)
 		return; /* normal case */
 
-	pthread_mutex_lock(&read_lock);
+	do_lock();
 	for (page = buff->firstp; page; page = page->nextp)
 		page->pgoffset = 0;
 
@@ -211,6 +226,6 @@ void bhugecleanup(struct buff *buff)
 		close(buff->fd);
 		buff->fd = -1;
 	}
-	pthread_mutex_unlock(&read_lock);
+	do_unlock();
 }
 #endif

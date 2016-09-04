@@ -67,6 +67,7 @@ void (*huge_file_cb)(struct buff *buff);
 
 static void breadpage(struct buff *buff, struct page *page)
 {
+	struct stat sbuf;
 	unsigned long offset;
 	int len;
 
@@ -79,6 +80,8 @@ static void breadpage(struct buff *buff, struct page *page)
 	offset = page->pgoffset * PSIZE;
 	page->pgoffset = 0;
 
+	if (fstat(buff->fd, &sbuf) || sbuf.st_size != buff->size)
+		goto fatal_mod;
 	if (lseek(buff->fd, offset, SEEK_SET) != offset)
 		goto fatal;
 	len = read(buff->fd, page->pdata, PSIZE);
@@ -114,7 +117,10 @@ static void breadpage(struct buff *buff, struct page *page)
 	return;
 
 fatal:
-	printf("\r\nFATAL I/O Error: page %u\r\n", page->pgoffset);
+	printf("\033[2JFATAL I/O Error: page %u\r\n", page->pgoffset);
+	exit(2);
+fatal_mod:
+	printf("\033[2JFATAL I/O Error: file modified\r\n");
 	exit(2);
 }
 
@@ -173,6 +179,7 @@ int breadhuge(struct buff *buff, const char *fname)
 	}
 	buff->curpage->plen = len;
 	buff->fd = fd;
+	buff->size = sbuf.st_size;
 
 	pages = (sbuf.st_size + PSIZE - 1) / PSIZE;
 	page = buff->curpage;

@@ -5,8 +5,8 @@ particularly proud of this code, but it serves a real need...  at
 least for now.
 
 But it is not without risk. HUGE_FILES is not too bad as long as the
-file backing the buffer doesn't change. If it changes, the buffer will
-get messed up. There is NO protection against this.
+file backing the buffer doesn't change. If it changes, it is
+considered a fatal error.
 
 There is currently minimal locking. The routine to read a page from
 the file has a lock so that the editor and the thread don't
@@ -25,3 +25,5 @@ is running.
 I use a different version of Zedit (zhuge) to edit huge trace
 files. So I known when I have to be careful. These files are also
 basically read only. I really wish now I had kept read-only mode :(
+
+WARNING: I/O errors on huge files are considered fatal!

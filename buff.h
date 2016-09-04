@@ -51,6 +51,7 @@ struct buff {
 	bool bmodf;					/**< Buffer modified? */
 #if HUGE_FILES
 	int fd;
+	long size;
 #endif
 #if defined(UNDO) && UNDO
 	bool in_undo;				/**< Are we currently performing an undo? */

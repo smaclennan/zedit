@@ -247,10 +247,7 @@ void Zrevert_file(void)
 	uncomment(Curbuff);
 }
 
-/* Read one file, creating the buffer if necessary.
- * Returns false if unable to create buffer only.
- * false means that there is no use continuing.
- */
+/* Read one file, creating the buffer if necessary. */
 static bool readone(char *bname, char *path)
 {
 	int rc;
@@ -259,34 +256,34 @@ static bool readone(char *bname, char *path)
 	if (cfindbuff(bname))
 		return true;
 
-	if (cmakebuff(bname, path)) {
-		putpaw("Reading %s", lastpart(path));
-		rc = zreadfile(path);
-		if (rc >= 0) {
-			toggle_mode(0);
-			if (rc > 0)
-				putpaw("New File");
-#ifdef R_OK
-			else if (access(path, R_OK | W_OK) == EOF)
-				Curbuff->bmode |= VIEW;
-#endif
-			strcpy(Lbufname, was->bname);
-		} else { /* error */
-			cdelbuff(Curbuff);
-			zswitchto(was);
-		}
-		return true;
-	}
-	return false;
-}
+	if (!cmakebuff(bname, path))
+		return false;
 
+	putpaw("Reading %s", lastpart(path));
+	rc = zreadfile(path);
+	if (rc < 0) {
+		cdelbuff(Curbuff);
+		zswitchto(was);
+		putpaw("Read Error %s", lastpart(path));
+		return false;
+	}
+
+	toggle_mode(0);
+	if (rc > 0)
+		putpaw("New File");
+#ifdef R_OK
+	else if (access(path, R_OK | W_OK) == EOF)
+		Curbuff->bmode |= VIEW;
+#endif
+	strcpy(Lbufname, was->bname);
+	return true;
+}
 
 bool findfile(char *path)
 {
 	char tbname[BUFNAMMAX + 1];
 	char *was;
 	struct zbuff *tbuff;
-	int rc = true;
 
 	Arg = 0;
 	was = Curbuff->bname;
@@ -322,7 +319,8 @@ bool findfile(char *path)
 			while (cfindbuff(tbname));
 		}
 
-		rc = readone(tbname, path);
+		if (!readone(tbname, path))
+			return false;
 	}
 
 	if (!Initializing) {
@@ -331,7 +329,7 @@ bool findfile(char *path)
 	} else if (!*Fname)
 		strcpy(Fname, path);
 
-	return rc;
+	return true;
 }
 
 void Zsave_all_files(void)

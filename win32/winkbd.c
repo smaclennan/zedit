@@ -240,7 +240,7 @@ int is_special(int key)
 }
 
 /* SAM FIXME */
-char *special_label(int key)
+const char *special_label(int key)
 {
 	return "undefined";
 }

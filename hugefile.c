@@ -41,6 +41,44 @@
 #endif
 
 #if HUGE_THREADED
+#ifdef WIN32
+static HANDLE read_lock = NULL;
+
+static void do_lock(void)
+{
+	if (read_lock == NULL) {
+		read_lock = CreateMutex(NULL, FALSE, NULL);
+		if (!read_lock) {
+			Dbg("Unable to create mutex");
+			return;
+		}
+	}
+
+	WaitForSingleObject(read_lock, INFINITE);
+}
+
+static void do_unlock(void)
+{
+	if (read_lock)
+		ReleaseMutex(read_lock);
+}
+
+static void *read_thread(void *arg);
+
+static DWORD WINAPI read_thread_wrapper(void *arg)
+{
+	read_thread(arg);
+	return 0;
+}
+
+static void start_thread(struct buff *buff)
+{
+	DWORD thread;
+
+	if (CreateThread(NULL, 0, read_thread_wrapper, buff, 0, &thread) == NULL)
+		Dbg("Unable to create thread.");
+}
+#else
 #include <pthread.h>
 
 static pthread_mutex_t read_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -57,6 +95,7 @@ static void start_thread(struct buff *buff)
 	if (pthread_create(&thread, NULL, read_thread, buff))
 		Dbg("Unable to create thread\n");
 }
+#endif
 #else
 #define do_lock()
 #define do_unlock()
@@ -203,7 +242,7 @@ void makecur(struct buff *buff, struct page *page, int dist)
 {
 	if (page->pgoffset) {
 		breadpage(buff, page);
-		if (dist > page->plen)
+		if (dist > (int)page->plen)
 			dist = page->plen;
 	}
 

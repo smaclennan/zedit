@@ -231,6 +231,7 @@ void bhugecleanup(struct buff *buff);
 #define open _open
 #define read _read
 #define write _write
+#define lseek _lseek
 #define close _close
 #endif
 

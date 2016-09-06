@@ -117,6 +117,9 @@
     <ClCompile Include="..\tinit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\hugefile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\z.h">
@@ -129,6 +132,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="zwin32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\buff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

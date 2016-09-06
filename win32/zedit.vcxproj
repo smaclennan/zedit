@@ -104,6 +104,7 @@
     <ClCompile Include="..\getarg.c" />
     <ClCompile Include="..\getfname.c" />
     <ClCompile Include="..\help.c" />
+    <ClCompile Include="..\hugefile.c" />
     <ClCompile Include="..\mark.c" />
     <ClCompile Include="..\reg.c" />
     <ClCompile Include="..\shell.c" />
@@ -122,6 +123,7 @@
     <ClCompile Include="zwin32.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\buff.h" />
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\z.h" />
     <ClInclude Include="winkeys.h" />

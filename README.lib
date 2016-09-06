@@ -14,8 +14,8 @@ outside of Zedit. The following files are "Zedit free":
  * dbg.c
  * tinit.c
  * hugefile.c
+ * bsocket.c
  * kbd.c (1)
- * bsocket.c (1)
 
 (1) Not supported in win32
 

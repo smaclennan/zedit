@@ -56,7 +56,7 @@ static void doincsrch(const char *prompt, bool forward)
 	while (go) {
 		zrefresh();
 		putpaw("%s: %s", promptstr, str);
-		cmd = tgetcmd();
+		cmd = tgetkb();
 
 		if (cmd == TC_UNKNOWN) {
 			tbell();
@@ -299,7 +299,7 @@ replace:
 			putpaw("Replace? ");
 			zrefresh();
 input:
-			switch (tchar = tgetcmd()) {
+			switch (tchar = tgetkb()) {
 			case ' ':
 			case ',':	/* handled later */
 			case 'Y':

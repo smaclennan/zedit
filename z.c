@@ -61,7 +61,7 @@ static void findpath(char *path, const char *f, void (*action)(const char *))
 static void dotty(void)
 {
 	if (Cmdpushed == -1)
-		Cmd = tgetcmd();
+		Cmd = tgetkb();
 	else {
 		Cmd = Cmdpushed;
 		Cmdpushed = -1;
@@ -123,7 +123,7 @@ static void fd_init(void) {}
 void execute(void)
 {
 	zrefresh();
-	
+
 #ifdef DOPIPES
 	if (tkbrdy() || Cmdpushed != -1)
 		dotty();
@@ -270,7 +270,7 @@ int ask2(const char *msg, bool allow_bang)
 
 	putpaw("%s", msg);
 	while (rc == BADCHAR)
-		switch (cmd = tgetcmd()) {
+		switch (cmd = tgetkb()) {
 		case 'y':
 		case 'Y':
 			rc = YES;
@@ -308,7 +308,7 @@ int delayprompt(const char *msg)
 	int cmd, rc = tdelay(600);
 	if (rc)
 		putpaw(msg);
-	cmd = tgetcmd();
+	cmd = tgetkb();
 	if (rc)
 		clrpaw();
 	return cmd;

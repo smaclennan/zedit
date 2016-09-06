@@ -64,10 +64,7 @@
 #define NUMKEYS			(128 + 128 + 128)
 
 /* kbd.c */
-Byte tgetkb(void);
-void tungetkb(int n);
-Byte tpeek(int offset);
-int tgetcmd(void);
+int tgetkb(void);
 bool tkbrdy(void);
 bool tdelay(int ms);
 void termcap_keys(void);

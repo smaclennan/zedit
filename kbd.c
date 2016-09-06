@@ -67,7 +67,7 @@ static bool Pending; /**< Set to true if poll stdin detected input. */
  *
  * The read can block.
  */
-Byte tgetkb(void)
+static Byte _tgetkb(void)
 {
 	cptr = (cptr + 1) & (CSTACK - 1);
 	if (cpushed)
@@ -88,14 +88,14 @@ Byte tgetkb(void)
 }
 
 /** Push back n keys */
-void tungetkb(int n)
+static void tungetkb(int n)
 {
 	cptr = (cptr - n) & (CSTACK - 1);
 	cpushed += n;
 }
 
 /** Peek the key at a given offset */
-Byte tpeek(int offset)
+static Byte tpeek(int offset)
 {
 	return cstack[(cptr + offset) & (CSTACK - 1)];
 }
@@ -108,7 +108,7 @@ static int check_specials(void)
 	int i, j, bit, mask = KEY_MASK;
 
 	for (j = 1; mask; ++j) {
-		int cmd = tgetkb() & 0x7f;
+		int cmd = _tgetkb() & 0x7f;
 		if (mask) {
 			for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
 				if ((mask & bit) && cmd == Tkeys[i][j]) {
@@ -132,17 +132,17 @@ static int check_specials(void)
 			Tkeys[2] = "\033OC";	/* right */
 			Tkeys[3] = "\033OD";	/* left */
 			/* skip the ESC */
-			tgetkb();
+			_tgetkb();
 			return check_specials();
 		}
 
-	return tgetkb() & 0x7f;
+	return _tgetkb() & 0x7f;
 }
 
 /** Get keyboard input. Handles the special keys. */
-int tgetcmd(void)
+int tgetkb(void)
 {
-	int cmd = tgetkb() & 0x7f;
+	int cmd = _tgetkb() & 0x7f;
 	Pending = false;
 
 	/* All special keys start with ESC */

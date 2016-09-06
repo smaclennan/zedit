@@ -436,7 +436,7 @@ void Zfill_paragraph(void)
 	clrpaw();
 	if (Argp && !bisend(Bbuff)) {
 		putpaw("Aborted");
-		tgetcmd();
+		tgetkb();
 	}
 
 	bpnttomrk(Bbuff, tmark); /* restore point */
@@ -677,7 +677,7 @@ void Zarg(void)
 	strcpy(str, "Arg: 0");
 	p = str + 5;	/* point to first digit */
 	putpaw(str);
-	while ((Cmd = tgetcmd()) >= '0' && Cmd <= '9') {
+	while ((Cmd = tgetkb()) >= '0' && Cmd <= '9') {
 		Arg = Arg * 10 + Cmd - '0';
 		*p++ = Cmd;
 		*p = '\0';
@@ -1014,7 +1014,7 @@ void Zsetenv(void)
 
 void Zzap_to_char(void)
 {
-	Cmd = tgetcmd();
+	Cmd = tgetkb();
 	if (Keys[Cmd] == ZABORT) {
 		tbell();
 		return;

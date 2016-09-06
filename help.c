@@ -228,7 +228,7 @@ void Zhelp_key(void)
 
 	Arg = 0;
 	putpaw("Key: ");
-	Cmd = tgetcmd();
+	Cmd = tgetkb();
 	if (Cmd == TC_UNKNOWN) {
 		putpaw("Sorry, I don't recognize that key.");
 		Cmd = was;
@@ -237,11 +237,11 @@ void Zhelp_key(void)
 	key = Keys[Cmd];
 	if (key == ZCTRL_X) {
 		putpaw("Key: C-X ");
-		Cmd = toupper(tgetcmd()) + CX(0);
+		Cmd = toupper(tgetkb()) + CX(0);
 		key = Keys[Cmd];
 	} else if (key == ZMETA) {
 		putpaw("Key: M-");
-		Cmd = toupper(tgetcmd()) + M(0);
+		Cmd = toupper(tgetkb()) + M(0);
 		key = Keys[Cmd];
 	}
 

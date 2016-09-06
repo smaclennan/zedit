@@ -156,7 +156,7 @@ int tgetkb(void)
 static struct pollfd stdin_fd = { .fd = 0, .events = POLLIN };
 
 /** Is there a key waiting? Non-blocking command. */
-bool tkbrdy(void)
+int tkbrdy(void)
 {
 	if (cpushed || Pending)
 		return true;
@@ -165,13 +165,15 @@ bool tkbrdy(void)
 }
 
 /** Delay for a set time or until there is keyboard input. */
-bool tdelay(int ms)
+int tdelay(int ms)
 {
 	if (cpushed || Pending)
 		return false;
 
 	return poll(&stdin_fd, 1, ms) != 1;
 }
+
+void tkbdinit(void) {}
 
 #ifdef TERMCAP
 static char *key_names[] = {

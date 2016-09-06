@@ -147,6 +147,12 @@ Z(Zzap_to_char);
 Z(pinsert);
 Z(pnewline);
 
+#ifdef WIN32
+void os_init(void);
+#else
+#define os_init()
+#endif
+
 /* General routines */
 
 int ask(const char *);
@@ -160,7 +166,6 @@ struct zbuff *cmakebuff(const char *, char *);
 bool cdelbuff(struct zbuff *buff);
 void cswitchto(struct zbuff *);
 void display_init(struct mark *mrk);
-bool tdelay(int ms);
 int delayprompt(const char *);
 void delinit(void);
 bool delcmd(void);

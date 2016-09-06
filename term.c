@@ -81,17 +81,16 @@ static void tafini(void)
 /* Initalize the terminal. */
 void tainit(void)
 {
-#ifdef WIN32
-	/* We want everything else disabled */
-	SetConsoleMode(hstdin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
-#endif
-
 	/* Override the signal handler in tinit() */
 #ifdef SIGHUP
 	signal(SIGHUP,  hang_up);
 #endif
 #ifdef SIGTERM
 	signal(SIGTERM, hang_up);
+#endif
+#ifdef WIN32
+	/* This is called by tgetkb on EOF */
+	signal(SIGABRT, hang_up);
 #endif
 #ifdef SIGWINCH
 	signal(SIGWINCH, sigwinch); /* window has changed size - update */

@@ -192,6 +192,8 @@ int main(int argc, char **argv)
 	if (textMode)
 		VAR(VNORMAL) = 0;
 
+	os_init();
+
 	delinit();
 
 	/* PAW must not be on the Bufflist */
@@ -209,6 +211,7 @@ int main(int argc, char **argv)
 	bmrktopnt(Bbuff, &tmark);
 	display_init(&tmark);
 
+	tkbdinit();
 	tinit();
 	tainit();
 	fd_init();

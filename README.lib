@@ -17,7 +17,7 @@ outside of Zedit. The following files are "Zedit free":
  * bsocket.c
  * kbd.c (1)
 
-(1) Not supported in win32
+(1) For windows you also need win32/winkbd.c and win32/winkeys.h
 
 Basically anything in LFILES in the Makefile. These functions should
 all work in both Unix and Windows except tgetkb() which is Unix only.

@@ -256,3 +256,5 @@ static Byte virt[] = {
 	0,		/* 0xFE VK_OEM_CLEAR */
 	0
 };
+
+extern HANDLE hstdin;

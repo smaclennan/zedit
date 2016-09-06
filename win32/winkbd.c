@@ -17,16 +17,24 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "z.h"
+#include <windows.h>
+#include "buff.h"
 #include "keys.h"
 #include "winkeys.h"
+
+HANDLE hstdin;
 
 /* stack and vars for t[un]getkb / tkbrdy */
 #define CSTACK 16 /* must be power of 2 */
 static int cstack[CSTACK];
 static int cptr = -1;
-int cpushed;
+static int cpushed;
 static bool Pending;
+
+static int dummy_cb(INPUT_RECORD *event) { return 0; }
+
+/* Return non-zero if you don't want tgetkb to handle the event */
+int (*winkbd_event_cb)(INPUT_RECORD *event) = dummy_cb;
 
 static short convertKey(KEY_EVENT_RECORD *event)
 {
@@ -98,83 +106,15 @@ static short convertKey(KEY_EVENT_RECORD *event)
 #ifdef FCHECK
 static _inline void do_mouse(MOUSE_EVENT_RECORD *mouse) {}
 #else
-static void mouse_scroll(int row, bool down)
-{
-	struct wdo *wdo = wfind(row);
-	if (!wdo) {
-		error("Not on a window."); /* XEmacs-ish */
-		return;
-	}
-
-	wswitchto(wdo);
-
-	Arg = 3;
-	down ? Znext_line() : Zprevious_line();
-}
-
-static void mouse_point(int row, int col, bool set_mark)
-{
-	int atcol;
-	struct mark tmark;
-	struct wdo *wdo = wfind(row);
-	if (!wdo) {
-		error("Not on a window."); /* XEmacs-ish */
-		return;
-	}
-
-	if (wdo != Curwdo) {
-		wswitchto(wdo);
-		/* We need Prow and Pcol to be correct. */
-		zrefresh();
-	}
-
-	bmrktopnt(Bbuff, &tmark);
-
-	/* Move the point to row */
-	if (row > Prow)
-		while (Prow < row) {
-			bcsearch(Bbuff, '\n');
-			++Prow;
-		}
-	else if (row <= Prow) {
-		while (Prow > row) {
-			bcrsearch(Bbuff, '\n');
-			--Prow;
-		}
-		tobegline(Bbuff);
-	}
-
-	/* Move the point to col */
-	atcol = 0;
-	while (col > 0 && !bisend(Bbuff) && Buff() != '\n') {
-		int n = chwidth(Buff(), atcol, false);
-		bmove1(Bbuff);
-		col -= n;
-		atcol += n;
-	}
-
-	if (set_mark) {
-		Zset_mark(); /* mark to point */
-		bpnttomrk(Bbuff, &tmark); /* reset mark */
-	}
-}
-
-static _inline void do_mouse(MOUSE_EVENT_RECORD *mouse)
-{
-	if (mouse->dwEventFlags & MOUSE_WHEELED) {
-		mouse_scroll(mouse->dwMousePosition.Y,
-				 mouse->dwButtonState & 0x80000000);
-		zrefresh();
-	} else if (mouse->dwButtonState & 0xffff) {
-		mouse_point(mouse->dwMousePosition.Y,
-				mouse->dwMousePosition.X,
-				mouse->dwButtonState & RIGHTMOST_BUTTON_PRESSED);
-		zrefresh();
-	}
-}
 #endif
 
-int tgetcmd(void)
+void tkbdinit(void)
+{
+	hstdin = GetStdHandle(STD_INPUT_HANDLE);
+	SetConsoleMode(hstdin, WINKBD_EVENT_MASK);
+}
+
+int tgetkb(void)
 {
 	Pending = false;
 
@@ -190,29 +130,20 @@ int tgetcmd(void)
 
 again:
 	if (!ReadConsoleInput(hstdin, input, CSTACK, &n))
-		hang_up(1);	/* we lost connection */
+		abort(); /* you can install an abort handler */
 
-	for (i = 0; i < n; ++i)
-		switch (input[i].EventType) {
-		case KEY_EVENT: /* 1 */
-			if (input[i].Event.KeyEvent.bKeyDown == 1)
-				break;
-			cstack[p] = convertKey(&input[i].Event.KeyEvent);
-			if (cstack[p]) {
-				p = (p + 1) & (CSTACK - 1);
-				++cpushed;
+	for (i = 0; i < n; ++i) {
+		if (winkbd_event_cb(&input[i]))
+			continue;
+		if (input[i].EventType == KEY_EVENT)
+			if (input[i].Event.KeyEvent.bKeyDown == 0) {
+				cstack[p] = convertKey(&input[i].Event.KeyEvent);
+				if (cstack[p]) {
+					p = (p + 1) & (CSTACK - 1);
+					++cpushed;
+				}
 			}
-			break;
-		case WINDOW_BUFFER_SIZE_EVENT:
-			Rowmax = input[i].Event.WindowBufferSizeEvent.dwSize.Y;
-			Colmax = input[i].Event.WindowBufferSizeEvent.dwSize.X;
-			Zredisplay();		/* update the windows */
-			zrefresh();		/* force a screen update */
-			break;
-		case MOUSE_EVENT:
-			do_mouse(&input[i].Event.MouseEvent);
-			break;
-		}
+	}
 
 	if (cpushed == 0)
 		goto again; /* keep reading till we get a key */
@@ -221,7 +152,7 @@ again:
 	return cstack[cptr];
 }
 
-bool tkbrdy(void)
+int tkbrdy(void)
 {
 	if (cpushed || Pending)
 		return true;
@@ -229,9 +160,9 @@ bool tkbrdy(void)
 	return Pending = WaitForSingleObject(hstdin, 0) == WAIT_OBJECT_0;
 }
 
-bool tdelay(int ms)
+int tdelay(int ms)
 {
-	if (InPaw || cpushed || Pending)
+	if (cpushed || Pending)
 		return false;
 
 	return WaitForSingleObject(hstdin, ms) != WAIT_OBJECT_0;

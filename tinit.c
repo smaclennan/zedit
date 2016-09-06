@@ -40,7 +40,7 @@ static struct termios save_tty;
 static struct termios settty;
 #endif
 #elif defined(WIN32)
-HANDLE hstdin, hstdout;	/* Console in and out handles */
+HANDLE hstdout;	/* Console out handle */
 #endif
 
 int Prow, Pcol;
@@ -128,7 +128,6 @@ void tinit(void)
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(fileno(stdin), TCSANOW, &settty);
 #elif defined(WIN32)
-	hstdin = GetStdHandle(STD_INPUT_HANDLE);
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 #endif
 

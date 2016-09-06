@@ -22,8 +22,6 @@
 #define popen _popen
 #define pclose _pclose
 
-extern HANDLE hstdin, hstdout;
-
 struct dirent {
 	char *d_name;
 };

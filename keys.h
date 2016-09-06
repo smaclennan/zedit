@@ -55,28 +55,10 @@
 /* Unknown key - always bound to Znotimpl */
 #define TC_UNKNOWN		CX('z')
 
-#define TC_S_F1			M('a')
-#define TC_S_F2			M('b')
-#define TC_S_F3			M('c')
-#define TC_S_F4			M('d')
-#define TC_S_F5			M('e')
-#define TC_S_F6			M('f')
-#define TC_S_F7			M('g')
-#define TC_S_F8			M('h')
-#define TC_S_F9			M('i')
-#define TC_S_F10		M('j')
-#define TC_S_F11		M('k')
-#define TC_S_F12		M('l')
-
 #define KEY_MASK		0x00ffffff
 #define SPECIAL_START	TC_UP
 #define SPECIAL_END		TC_C_END
 #define NUM_SPECIAL		(SPECIAL_END - SPECIAL_START + 1)
-
-#define KEY_MASK2		0xfff
-#define SPECIAL_START2	TC_S_F1
-#define SPECIAL_END2	TC_S_F12
-#define NUM_SPECIAL2	(SPECIAL_END2 - SPECIAL_START2 + 1)
 
 /* 128 ASCII + 128 meta + 128 C-X */
 #define NUMKEYS			(128 + 128 + 128)

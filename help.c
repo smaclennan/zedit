@@ -27,28 +27,17 @@ static const char *key_label[] = {
 	"C-home", "C-end",
 };
 
-static const char *key_label2[] = {
-	"s-f1", "s-f2", "s-f3", "s-f4", "s-f5", "s-f6",
-	"s-f7", "s-f8", "s-f9", "s-f10", "s-f11", "s-f12",
-};
-
 static const char *special_label(int key)
 {
 	if (key >= SPECIAL_START && key <= SPECIAL_END)
 		return key_label[key - SPECIAL_START];
-	else if (key >= SPECIAL_START2 && key <= SPECIAL_END2)
-		return key_label2[key - SPECIAL_START2];
 	else
 		return "???";
 }
 
 static int is_special(int cmd)
 {
-	if (cmd >= SPECIAL_START && cmd <= SPECIAL_END)
-		return 1;
-	if (cmd >= SPECIAL_START2 && cmd <= SPECIAL_END2)
-		return 1;
-	return 0;
+	return cmd >= SPECIAL_START && cmd <= SPECIAL_END;
 }
 
 static char *dispkey(unsigned key, char *s)

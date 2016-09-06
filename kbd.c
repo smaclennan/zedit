@@ -54,21 +54,6 @@ static char *Tkeys[] = {
 	"\033[8^"	/* C-end */
 };
 
-static char *Tkeys2[] = {
-	"\033[23~",	/* f1 */
-	"\033[24~",	/* f2 */
-	"\033[25~",	/* f3 */
-	"\033[26~",	/* f4 */
-	"\033[28~",	/* f5 */
-	"\033[29~",	/* f6 */
-	"\033[31~",	/* f7 */
-	"\033[32~",	/* f8 */
-	"\033[33~",	/* f9 */
-	"\033[34~",	/* f10 */
-	"\033[23$",	/* f11 */
-	"\033[24$",	/* f12 */
-};
-
 /** The size of the keyboard input stack. Must be a power of 2 */
 #define CSTACK 16
 static Byte cstack[CSTACK]; /**< The keyboard input stack */
@@ -120,9 +105,9 @@ Byte tpeek(int offset)
  */
 static int check_specials(void)
 {
-	int i, j, bit, mask = KEY_MASK, mask2 = KEY_MASK2;
+	int i, j, bit, mask = KEY_MASK;
 
-	for (j = 1; mask || mask2; ++j) {
+	for (j = 1; mask; ++j) {
 		int cmd = tgetkb() & 0x7f;
 		if (mask) {
 			for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
@@ -131,14 +116,6 @@ static int check_specials(void)
 						return i + SPECIAL_START;
 				} else
 					mask &= ~bit;
-		}
-		if (mask2) {
-			for (bit = 1, i = 0; i < NUM_SPECIAL2; ++i, bit <<= 1)
-				if ((mask2 & bit) && cmd == Tkeys2[i][j]) {
-					if (Tkeys2[i][j + 1] == '\0')
-						return i + SPECIAL_START2;
-				} else
-					mask2 &= ~bit;
 		}
 	}
 

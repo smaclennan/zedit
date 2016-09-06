@@ -90,6 +90,7 @@
     <ClCompile Include="..\bfile.c" />
     <ClCompile Include="..\bind.c" />
     <ClCompile Include="..\bmsearch.c" />
+    <ClCompile Include="..\bsocket.c" />
     <ClCompile Include="..\buff.c" />
     <ClCompile Include="..\calc.c" />
     <ClCompile Include="..\cnames.c" />

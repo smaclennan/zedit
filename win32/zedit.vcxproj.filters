@@ -120,6 +120,9 @@
     <ClCompile Include="..\hugefile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\bsocket.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\z.h">

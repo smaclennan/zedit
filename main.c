@@ -2,15 +2,23 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
 #include <time.h>
 #include <assert.h>
+#ifdef WIN32
+#include <Windows.h>
+#include <io.h>
+#include <sys/stat.h> /* for _S_IWRITE */
+#else
+#include <unistd.h>
+#endif
 
 #include "buff.h"
 #include "mark.h"
+#include "tinit.h"
+#include "keys.h"
 
 
 /* A little over 1k */
@@ -85,7 +93,7 @@ int test_readwrite(struct buff *buff, char *in, char *out)
 	}
 
 	do
-		count = random() % 4096;
+		count = rand() % 4096;
 	while ((n = bwrite(buff, fd, count)) > 0);
 
 	close(fd);
@@ -160,12 +168,15 @@ static int test_bigwrite(struct buff *buff, const char *to)
 int main(int argc, char *argv[])
 {
 	struct buff *buff;
-	struct mark tmark, tmark1, tmark2, tmark3;
-	int total, offset;
 	int i, size;
 
+#ifndef WIN32 /* SAM FIX LATER */
 	/* These tests assume a 1k page size */
 	assert(PSIZE == 1024);
+#endif
+
+	tkbdinit();
+	tinit();
 
 	buff = bcreate();
 
@@ -182,6 +193,9 @@ int main(int argc, char *argv[])
 	size = blength(buff); /* real size */
 	printf("Buffer is %d\n", size);
 
+#ifdef WIN32
+	printf("Success. Hit return to exit..."); getchar();
+#endif
 	return 0;
 }
 

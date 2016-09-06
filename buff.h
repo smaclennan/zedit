@@ -34,8 +34,7 @@
 #endif
 
 #ifdef WIN32
-#define inline __inline
-#define snprintf _snprintf
+#include "bwin32.h"
 #endif
 
 #include "mark.h"
@@ -224,15 +223,6 @@ static inline void bmove1(struct buff *buff)
 extern void (*huge_file_cb)(struct buff *buff);
 int breadhuge(struct buff *buff, const char *fname);
 void bhugecleanup(struct buff *buff);
-#endif
-
-#ifdef WIN32
-#define creat(a, b) _creat(a, _S_IWRITE)
-#define open _open
-#define read _read
-#define write _write
-#define lseek _lseek
-#define close _close
 #endif
 
 #endif

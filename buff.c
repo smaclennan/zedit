@@ -89,7 +89,7 @@ void bdelbuff(struct buff *tbuff)
  */
 bool binsert(struct buff *buff, Byte byte)
 {
-	if (curplen(buff) == PSIZE && !pagesplit(buff, HALFP))
+	if (curplen(buff) == PGSIZE && !pagesplit(buff, HALFP))
 		return false;
 	memmove(buff->curcptr + 1, buff->curcptr, curplen(buff) - buff->curchar);
 	*buff->curcptr++ = byte;
@@ -520,10 +520,10 @@ long bcopyrgn(struct mark *tmark, struct buff *to)
 		else
 			srclen = curplen(from) - from->curchar;
 
-		dstlen = PSIZE - curplen(to);
+		dstlen = PGSIZE - curplen(to);
 		if (dstlen == 0) {
 			if (pagesplit(to, HALFP))
-				dstlen = PSIZE - curplen(to);
+				dstlen = PGSIZE - curplen(to);
 			else
 				break;
 		}
@@ -616,7 +616,7 @@ struct page *newpage(struct page *curpage)
  */
 struct page *pagesplit(struct buff *buff, unsigned dist)
 {
-	if (dist > PSIZE) return NULL;
+	if (dist > PGSIZE) return NULL;
 
 	struct page *curpage = buff->curpage;
 	struct page *newp = newpage(curpage);

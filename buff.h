@@ -145,15 +145,15 @@ extern int NumBuffs, NumPages;
  * editor however the more wasted memory. A page size of 1k seems to
  * be a very good trade off. 4k probably better on modern systems.
  */
-#ifndef PSIZE
-#define PSIZE		4096
+#ifndef PGSIZE
+#define PGSIZE		4096
 #endif
 /** Half a page for pagesplit(). */
-#define HALFP		(PSIZE / 2)
+#define HALFP		(PGSIZE / 2)
 
 /** Describes one page in memory. */
 struct page {
-	Byte pdata[PSIZE];		/**< Page data. */
+	Byte pdata[PGSIZE];		/**< Page data. */
 #if HUGE_FILES
 	unsigned pgoffset;      /**< Offset in file or 0 if in memory. */
 #endif

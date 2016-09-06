@@ -56,7 +56,7 @@
  */
 int breadfile(struct buff *buff, const char *fname, int *compressed)
 {
-	char buf[PSIZE];
+	char buf[PGSIZE];
 	int fd, len;
 
 	fd = open(fname, O_RDONLY | O_BINARY);
@@ -77,7 +77,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 
 	bempty(buff);
 
-	while ((len = fileread(fd, buf, PSIZE)) > 0) {
+	while ((len = fileread(fd, buf, PGSIZE)) > 0) {
 		if (curplen(buff)) {
 			if (!newpage(buff->curpage)) {
 				bempty(buff);
@@ -156,7 +156,7 @@ static bool bwritedos(struct buff *buff, int fd)
 	struct page *tpage;
 	int n, status = true;
 	unsigned i;
-	Byte buf[PSIZE * 2], *p;
+	Byte buf[PGSIZE * 2], *p;
 
 	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {

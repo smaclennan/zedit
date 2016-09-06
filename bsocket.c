@@ -96,7 +96,7 @@ int bread(struct buff *buff, int fd)
 			return -ENOMEM;
 	}
 
-	int left = PSIZE - curplen(buff);
+	int left = PGSIZE - curplen(buff);
 
 	/* try to fill current page */
 	if (left) {
@@ -111,7 +111,7 @@ int bread(struct buff *buff, int fd)
 		return -ENOMEM;
 
 	iovs[1].iov_base = npage->pdata;
-	iovs[1].iov_len = PSIZE;
+	iovs[1].iov_len = PGSIZE;
 
 	n = n_read = readv(fd, iovs, 2);
 
@@ -183,7 +183,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 	int appended = 0;
 
 	/* Fill the current page */
-	int n, left = PSIZE - curplen(buff);
+	int n, left = PGSIZE - curplen(buff);
 	if (left > 0) {
 		n = MIN(left, size);
 		memcpy(buff->curcptr, data, n);
@@ -203,7 +203,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 			return appended;
 		makecur(buff, npage, 0);
 
-		n = MIN(PSIZE, size);
+		n = MIN(PGSIZE, size);
 		memcpy(buff->curcptr, data, n);
 		curplen(buff) = n;
 		makeoffset(buff, n);
@@ -226,7 +226,7 @@ int bappend(struct buff *buff, const Byte *data, int size)
 }
 
 /* Simple version to start.
- * Can use size / PSIZE + 1 + 1 pages.
+ * Can use size / PGSIZE + 1 + 1 pages.
  */
 /** Insert data at the current point. Point is left at the end of the
  * inserted data. Returns how much data was actually inserted.
@@ -240,7 +240,7 @@ int bindata(struct buff *buff, Byte *data, int size)
 	if (buff->curchar == curplen(buff))
 		return bappendpage(buff, data, size);
 
-	n = PSIZE - curplen(buff);
+	n = PGSIZE - curplen(buff);
 	if (n >= size) {
 		/* fits in this page */
 		n = curplen(buff) - buff->curchar;
@@ -266,7 +266,7 @@ int bindata(struct buff *buff, Byte *data, int size)
 			return copied;
 
 		/* Copy as much as possible to the end of this page */
-		n = MIN(PSIZE - buff->curchar, size);
+		n = MIN(PGSIZE - buff->curchar, size);
 		memcpy(buff->curcptr, data, n);
 		data += n;
 		size -= n;
@@ -281,7 +281,7 @@ int bindata(struct buff *buff, Byte *data, int size)
 		if (!(npage = newpage(buff->curpage)))
 			break;
 
-		n = MIN(PSIZE, size);
+		n = MIN(PGSIZE, size);
 		memcpy(npage->pdata, data, n);
 		data += n;
 		size -= n;

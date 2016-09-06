@@ -116,16 +116,16 @@ static void breadpage(struct buff *buff, struct page *page)
 		return;
 	}
 
-	offset = page->pgoffset * PSIZE;
+	offset = page->pgoffset * PGSIZE;
 	page->pgoffset = 0;
 
 	if (fstat(buff->fd, &sbuf) || sbuf.st_size != buff->size)
 		goto fatal_mod;
 	if (lseek(buff->fd, offset, SEEK_SET) != offset)
 		goto fatal;
-	len = read(buff->fd, page->pdata, PSIZE);
-	/* All pages should be PSIZE except the last page */
-	if (len != PSIZE) {
+	len = read(buff->fd, page->pdata, PGSIZE);
+	/* All pages should be PGSIZE except the last page */
+	if (len != PGSIZE) {
 		if (page->nextp)
 			goto fatal;
 		if (len <= 0)
@@ -211,7 +211,7 @@ int breadhuge(struct buff *buff, const char *fname)
 	bempty(buff);
 
 	/* always read the first page */
-	len = read(fd, buff->curcptr, PSIZE);
+	len = read(fd, buff->curcptr, PGSIZE);
 	if (len <= 0) {
 		close(fd);
 		return EIO;
@@ -220,7 +220,7 @@ int breadhuge(struct buff *buff, const char *fname)
 	buff->fd = fd;
 	buff->size = sbuf.st_size;
 
-	pages = (sbuf.st_size + PSIZE - 1) / PSIZE;
+	pages = (sbuf.st_size + PGSIZE - 1) / PGSIZE;
 	page = buff->curpage;
 	for (i = 1; i < pages; ++i) {
 		page = newpage(page);

@@ -115,7 +115,7 @@ static int test_bigwrite(struct buff *buff, const char *to)
 		return 1;
 	}
 
-	int max = PSIZE * MAX_IOVS * 4;
+	int max = PGSIZE * MAX_IOVS * 4;
 	char *big = malloc(max);
 	if (!big) {
 		close(fd);
@@ -170,13 +170,8 @@ int main(int argc, char *argv[])
 	struct buff *buff;
 	int i, size;
 
-#ifndef WIN32 /* SAM FIX LATER */
 	/* These tests assume a 1k page size */
-	assert(PSIZE == 1024);
-#endif
-
-	tkbdinit();
-	tinit();
+	assert(PGSIZE == 1024);
 
 	buff = bcreate();
 
@@ -192,6 +187,9 @@ int main(int argc, char *argv[])
 		bappend(buff, str1k, strlen(str1k));
 	size = blength(buff); /* real size */
 	printf("Buffer is %d\n", size);
+
+	tkbdinit();
+	tinit();
 
 #ifdef WIN32
 	printf("Success. Hit return to exit..."); getchar();

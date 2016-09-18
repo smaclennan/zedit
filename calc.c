@@ -19,7 +19,7 @@
 
 #include "calc.h"
 
-/** Structture for the precedence values. */
+/** Structure for the precedence values. */
 struct values {
 	char op; /**< The operator. */
 	int val; /**< The precedence. */

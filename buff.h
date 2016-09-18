@@ -35,6 +35,8 @@
 
 #ifdef WIN32
 #include "bwin32.h"
+#else
+#include <unistd.h>
 #endif
 
 #include "mark.h"
@@ -77,11 +79,14 @@ void tobegline(struct buff *);
 void toendline(struct buff *);
 unsigned long blength(struct buff *);
 unsigned long blocation(struct buff *);
+unsigned long bline(struct buff *buff);
 bool bcsearch(struct buff *, Byte);
 bool bcrsearch(struct buff *, Byte);
 void bempty(struct buff *buff);
 Byte bpeek(struct buff *buff);
 void boffset(struct buff *buff, unsigned long offset);
+long bcopyrgn(struct mark *, struct buff*);
+long bdeltomrk(struct mark *);
 
 bool binstr(struct buff *buff, const char *str, ...);
 void bmovepast(struct buff *buff, int (*pred)(int), bool forward);

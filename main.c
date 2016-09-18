@@ -8,11 +8,8 @@
 #include <time.h>
 #include <assert.h>
 #ifdef WIN32
-#include <Windows.h>
-#include <io.h>
+#warning SAM CHECKME
 #include <sys/stat.h> /* for _S_IWRITE */
-#else
-#include <unistd.h>
 #endif
 
 #include "buff.h"

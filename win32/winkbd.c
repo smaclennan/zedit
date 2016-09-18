@@ -17,7 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <windows.h>
 #include "buff.h"
 #include "keys.h"
 #include "winkeys.h"

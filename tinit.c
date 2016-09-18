@@ -336,7 +336,7 @@ void tstyle(int style)
 	case T_BG + T_WHITE:
 		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 		break;
-}
+	}
 #elif defined(TERMCAP)
 	switch (style) {
 	case T_NORMAL:

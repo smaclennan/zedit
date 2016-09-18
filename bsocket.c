@@ -23,11 +23,7 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
-#ifdef WIN32
-#include <Windows.h>
-#include <io.h>
-#else
-#include <unistd.h>
+#ifndef WIN32
 #include <sys/uio.h>
 #endif
 

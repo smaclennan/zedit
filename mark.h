@@ -62,10 +62,6 @@ bool bswappnt(struct buff *, struct mark *);
 bool mrkaftermrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
 
-long bcopyrgn(struct mark *, struct buff*);
-long bdeltomrk(struct mark *);
-unsigned long bline(struct buff *buff);
-
 static inline void mrktomrk(struct mark *m1, struct mark *m2)
 {
 	memcpy(m1, m2, __MRKSIZE);

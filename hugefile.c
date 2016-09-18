@@ -25,12 +25,6 @@
 #include <errno.h>
 #include <signal.h>
 #include <sys/stat.h>
-#ifdef WIN32
-#include <windows.h>
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
 
 #include "buff.h"
 

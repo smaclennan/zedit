@@ -171,18 +171,18 @@ static int calc_g(struct calc *c, char op)
  * by Alfred V. Aho, Ravi Sethi, and Jeffery D. Ullman.
  *
  * Supports the following integer operations:
- *	* ( )	grouping
- *	* * / %	multiplication, division, modulo
- *	* +  -	addition and subtraction
- *	* << >>	arithmetic shift left and right
- *	* &	bitwise and
- *	* ^	bitwise exclusive or
- *	* |	bitwise or
+ *	( )	grouping
+ *	* / %	multiplication, division, modulo
+ *	+  -	addition and subtraction
+ *	<< >>	arithmetic shift left and right
+ *	&		bitwise and
+ *	^		bitwise exclusive or
+ *	|		bitwise or
  *
  * Supports the following floating point operations:
- *	* ( )	grouping
- *	* * /	multiplication, division
- *	* +  -	addition and subtraction
+ *	( )	  grouping
+ *	* /	  multiplication, division
+ *	+  -  addition and subtraction
  */
 
 int calc(struct calc *c, char *p)
@@ -223,7 +223,7 @@ int calc(struct calc *c, char *p)
 				int op = pop_op(c);
 				if (is_op(op)) {
 					union number two = pop_num(c);
-					union number  one = pop_num(c);
+					union number one = pop_num(c);
 
 					switch (op) {
 					case '*':

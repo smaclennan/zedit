@@ -168,8 +168,12 @@ int zreadfile(char *fname)
 	struct stat sbuf;
 	int compressed, rc;
 
-	if (stat(fname, &sbuf))
-		return -1;
+	if (stat(fname, &sbuf)) {
+		if (errno == ENOENT)
+			memset(&sbuf, 0, sizeof(sbuf));
+		else
+			return -1;
+	}
 
 	Curbuff->mtime = sbuf.st_mtime;
 

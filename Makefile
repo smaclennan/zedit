@@ -40,16 +40,16 @@ MAKEFLAGS += --no-print-directory
 
 ETAGS=`which etags || echo true`
 
-CFILES = bcmds.c bind.c cnames.c \
-	comment.c commands.c cursor.c delete.c display.c \
-	file.c funcs.c getarg.c getfname.c help.c \
-	shell.c srch.c tags.c term.c \
-	vars.c window.c varray.c z.c zgrep.c
+CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
+	display.c file.c funcs.c getarg.c getfname.c help.c shell.c \
+	srch.c tags.c term.c vars.c window.c varray.c z.c zgrep.c
 
-LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c tinit.c calc.c dbg.c
-LFILES += undo.c kbd.c hugefile.c
+LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c tinit.c calc.c \
+	dbg.c undo.c kbd.c hugefile.c
 
-HFILES = buff.h config.h funcs.h keys.h mark.h proto.h reg.h vars.h z.h
+LHFILES = buff.h calc.h mark.h reg.h tinit.h keys.h
+
+HFILES = config.h funcs.h proto.h vars.h z.h $(LHFILES)
 
 O := $(CFILES:.c=.o)
 L := $(LFILES:.c=.o)
@@ -84,7 +84,7 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 main: main.c $(LFILES)
 	@rm -rf tmpdir
 	@mkdir tmpdir
-	@cp $+ buff.h calc.h mark.h reg.h tinit.h keys.h tmpdir
+	@cp $+ $(LHFILES) tmpdir
 	@echo -e "all:\n\t$(CC) -DUNDO -DPGSIZE=1024 -g -o $@ $+" > tmpdir/Makefile
 	@make -C tmpdir
 
@@ -103,8 +103,8 @@ doxy:
 install: all
 	mkdir -p $(DESTDIR)/bin
 	install -s $(ZEXE) $(DESTDIR)/bin/z
-	mkdir -p $(DESTDIR)/usr/share/zedit
-	install -m644 zedit-termcap $(DESTDIR)/usr/share/zedit/termcap
+#	mkdir -p $(DESTDIR)/usr/share/zedit
+#	install -m644 zedit-termcap $(DESTDIR)/usr/share/zedit/termcap
 
 clean:
 	rm -f *.o $(ZEXE) fcheck main core* TAGS valgrind.out

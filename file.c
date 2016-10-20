@@ -202,6 +202,8 @@ int zreadfile(char *fname)
 	else if (curplen(Bbuff))
 		crfixup();
 
+	Bbuff->bmodf = false;
+
 	clrpaw();
 	return 0;
 }

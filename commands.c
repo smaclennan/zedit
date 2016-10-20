@@ -1084,6 +1084,11 @@ void Zcalc(void)
 	free(c);
 }
 
+void Zdos2unix(void)
+{
+	Curbuff->bmode &= ~FILE_CRLF;
+	Bbuff->bmodf = true;
+}
 
 #if UNDO
 int undo_add_clumped(struct buff *buff, int size)

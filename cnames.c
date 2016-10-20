@@ -158,9 +158,10 @@ struct cnames Cnames[] = {
 	 C("Deletes the word to the right of and including the Point. The "
 	   "word is put in the Kill Buffer.")
 	},
-	{"dos2unix",		    ZDOS2UNIX,			AI,
+	{"dos2unix",		    ZDOS2UNIX,			0,
 	 C("Convert a DOS file (CR in the modeline) to a normal unix file."
-	   "The conversion only takes place if the file is written.")
+	   "The conversion only takes place if the file is written.\n"
+	   "A Universal Argument causes the CR state of the buffer to be flipped.")
 	},
 	{"empty-buffer",		ZEMPTY_BUFFER,		AI,
 	 C("Deletes the entire contents of the current buffer.")

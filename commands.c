@@ -1086,7 +1086,10 @@ void Zcalc(void)
 
 void Zdos2unix(void)
 {
-	Curbuff->bmode &= ~FILE_CRLF;
+	if (Argp)
+		Curbuff->bmode ^= FILE_CRLF;
+	else
+		Curbuff->bmode &= ~FILE_CRLF;
 	Bbuff->bmodf = true;
 }
 

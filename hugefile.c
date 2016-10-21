@@ -32,6 +32,7 @@
 
 #if HUGE_THREADED
 static void *read_thread(void *arg);
+static void breadpage(struct buff *buff, struct page *page);
 
 #ifdef WIN32
 static HANDLE read_lock = NULL;
@@ -84,6 +85,33 @@ static void start_thread(struct buff *buff)
 		Dbg("Unable to create thread\n");
 }
 #endif
+
+static void *read_thread(void *arg)
+{
+	struct buff *buff = arg;
+	struct page *page;
+
+	Dbg("read_thread running\n");
+
+	for (page = buff->firstp; page; page = page->nextp)
+		if (page->pgoffset)
+			breadpage(buff, page);
+
+	/* Grab lock in case we are closing */
+	do_lock();
+	if (buff->fd >= 0) {
+		close(buff->fd);
+		buff->fd = -1;
+	}
+	do_unlock();
+
+	if (huge_file_cb)
+		huge_file_cb(buff);
+
+	Dbg("read_thread done\n");
+
+	return NULL;
+}
 #else
 #define do_lock()
 #define do_unlock()
@@ -150,35 +178,6 @@ fatal_mod:
 	printf("\033[2JFATAL I/O Error: file modified\r\n");
 	exit(2);
 }
-
-#if HUGE_THREADED
-static void *read_thread(void *arg)
-{
-	struct buff *buff = arg;
-	struct page *page;
-
-	Dbg("read_thread running\n");
-
-	for (page = buff->firstp; page; page = page->nextp)
-		if (page->pgoffset)
-			breadpage(buff, page);
-
-	/* Grab lock in case we are closing */
-	do_lock();
-	if (buff->fd >= 0) {
-		close(buff->fd);
-		buff->fd = -1;
-	}
-	do_unlock();
-
-	if (huge_file_cb)
-		huge_file_cb(buff);
-
-	Dbg("read_thread done\n");
-
-	return NULL;
-}
-#endif
 
 /* Warning: keeps the fd open. */
 int breadhuge(struct buff *buff, const char *fname)

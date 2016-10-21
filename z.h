@@ -237,7 +237,4 @@ void tbell_dbg(char *func, int line);
 #define UMARK (Curbuff->umark) /* Must guarantee umark set! */
 #define CLEAR_UMARK clear_umark()
 
-/* for calc */
-#define MAX_OPS 10
-
 #endif /* _Z_H_ */

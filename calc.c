@@ -17,7 +17,24 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <setjmp.h>
 #include "calc.h"
+
+/** Main calc struct */
+struct calc {
+	char ops[MAX_OPS];			/**< Stack of operators. */
+	int cur_op;			/**< Current pointer in operator stack. */
+
+	union number nums[MAX_OPS]; /**< Stack of numbers. */
+	int cur_num;		/**< Current pointer in numbers stack. */
+
+	jmp_buf failed;		/**< Errors longjmp to here. */
+
+	int is_float;		/**< Are we dealing with floats? */
+};
 
 /** Structure for the precedence values. */
 struct values {
@@ -52,7 +69,7 @@ static struct values gvals[] = {
 /** Push an operator on the operator stack */
 static void push_op(struct calc *c, char op)
 {
-	if (c->cur_op >= c->max_ops)
+	if (c->cur_op >= MAX_OPS)
 		longjmp(c->failed, CALC_STACK_OVERFLOW);
 	c->ops[c->cur_op++] = op;
 }
@@ -76,7 +93,7 @@ static char top_op(struct calc *c)
 /** Push an integer on the number stack */
 static void push_num(struct calc *c, int num)
 {
-	if (c->cur_num >= c->max_ops)
+	if (c->cur_num >= MAX_OPS)
 		longjmp(c->failed, CALC_STACK_OVERFLOW);
 	c->nums[c->cur_num++].i = num;
 }
@@ -84,7 +101,7 @@ static void push_num(struct calc *c, int num)
 /** Push a floating point number on the number stack */
 static void push_float(struct calc *c, double num)
 {
-	if (c->cur_num >= c->max_ops)
+	if (c->cur_num >= MAX_OPS)
 		longjmp(c->failed, CALC_STACK_OVERFLOW);
 	c->nums[c->cur_num++].f = num;
 }
@@ -184,17 +201,17 @@ static int calc_g(struct calc *c, char op)
  *	* /	  multiplication, division
  *	+  -  addition and subtraction
  */
-
-int calc(struct calc *c, char *p)
+int calc(char *p, struct calc_result *result)
 {
-	int f_val, g_val, n;
+	struct calc calc, *c = &calc;
+	int f_val, g_val, rc;
+
+	/* A longjmp is called on error. */
+	if ((rc = setjmp(c->failed)))
+		return rc;
 
 	c->is_float = strchr(p, '.') != NULL;
 	c->cur_op = c->cur_num = 0;
-
-	/* A longjmp is called on error. */
-	if ((n = setjmp(c->failed)))
-		return n;
 
 	/* Continue until all input parsed and command stack empty. */
 	while (*p != '=' || top_op(c) != '=') {
@@ -265,6 +282,10 @@ int calc(struct calc *c, char *p)
 		}
 	}
 
-	c->result = pop_num(c);
+	if (result) {
+		result->is_float = c->is_float;
+		result->result = pop_num(c);
+	}
+
 	return 0;
 }

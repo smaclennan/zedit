@@ -1036,36 +1036,23 @@ void Zcalc(void)
 {
 	static char Calc_str[STRMAX + 1];
 	char str[STRMAX];
+	struct calc_result result;
 
 	Arg = 0;
 	if (getarg("Calc: ", Calc_str, STRMAX - 1))
 		return;
 
-	struct calc *c = calloc(1, sizeof(struct calc));
-	if (c) {
-		c->ops = calloc(MAX_OPS, sizeof(char));
-		c->nums = calloc(MAX_OPS, sizeof(union number));
-		c->max_ops = MAX_OPS;
-	}
-	if (!c || !c->ops || !c->nums) {
-		if (c) free(c);
-		if (c->ops) free(c->ops);
-		if (c->nums) free(c->nums);
-		error("Out of memory!");
-		return;
-	}
-
 	/* We modify the string, leave Calc_str alone */
 	strcpy(str, Calc_str);
 	strcat(str, "=");
 
-	int n = calc(c, str);
+	int n = calc(str, &result);
 	switch (n) {
 	case 0:
-		if (c->is_float)
-			putpaw("= %g", c->result.f);
+		if (result.is_float)
+			putpaw("= %g", result.result.f);
 		else {
-			long n = c->result.i;
+			long n = result.result.i;
 			putpaw("= %ld (%lx)", n, n);
 		}
 		break;
@@ -1075,13 +1062,12 @@ void Zcalc(void)
 	case CALC_SYNTAX_ERROR:
 		error("Syntax error.");
 		break;
+	case CALC_OUT_OF_MEMORY:
+		error("Out of memory.");
+		break;
 	default:
 		error("Calc internal error.");
 	}
-
-	free(c->ops);
-	free(c->nums);
-	free(c);
 }
 
 void Zdos2unix(void)

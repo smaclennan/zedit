@@ -38,10 +38,6 @@
 #define fileclose(a) close(a)
 #endif
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
-
 /**
  * Load the file 'fname' into the current buffer.  Returns 0
  * successfully opened file, > 0 (errno) on error, -1 on gzdopen

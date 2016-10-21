@@ -30,11 +30,9 @@
 
 #if HUGE_FILES
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
-
 #if HUGE_THREADED
+static void *read_thread(void *arg);
+
 #ifdef WIN32
 static HANDLE read_lock = NULL;
 
@@ -57,8 +55,6 @@ static void do_unlock(void)
 		ReleaseMutex(read_lock);
 }
 
-static void *read_thread(void *arg);
-
 static DWORD WINAPI read_thread_wrapper(void *arg)
 {
 	read_thread(arg);
@@ -79,8 +75,6 @@ static pthread_mutex_t read_lock = PTHREAD_MUTEX_INITIALIZER;
 
 static void do_lock(void) { pthread_mutex_lock(&read_lock); }
 static void do_unlock(void) { pthread_mutex_unlock(&read_lock); }
-
-static void *read_thread(void *arg);
 
 static void start_thread(struct buff *buff)
 {

@@ -140,6 +140,10 @@ void Dbg(const char *fmt, ...);
 #define MIN(a, b)	(a < b ? a : b)
 #define MAX(a, b)	(a > b ? a : b)
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 /* These are for stats only and are not thread safe */
 extern int NumBuffs, NumPages;
 

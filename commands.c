@@ -92,15 +92,15 @@ void Zswap_words(void)
 	tmark = bcremark(Bbuff);
 	tmp = bcremark(Bbuff);
 	if (tmark && tmp) {
-		moveto(bistoken, FORWARD);
+		bmoveto(Bbuff, bistoken, FORWARD);
 		if (!bisend(Bbuff)) {
 			bmrktopnt(Bbuff, tmark);
-			movepast(bistoken, FORWARD);
+			bmovepast(Bbuff, bistoken, FORWARD);
 			bmrktopnt(Bbuff, tmp);
 			bpnttomrk(Bbuff, tmark);
-			moveto(bistoken, BACKWARD);
+			bmoveto(Bbuff, bistoken, BACKWARD);
 			blockmove(tmark, tmp);
-			movepast(bistoken, BACKWARD);
+			bmovepast(Bbuff, bistoken, BACKWARD);
 			blockmove(tmark, tmp);
 			bpnttomrk(Bbuff, tmp);
 		}
@@ -149,7 +149,7 @@ void Zc_insert(void)
 					--cnt;
 				else {  /* matched */
 					tobegline(Bbuff);
-					movepast(biswhite, FORWARD);
+					bmovepast(Bbuff, biswhite, FORWARD);
 					cnt = bgetcol(true, 0);
 					bpnttomrk(Bbuff, tmark);
 					if (crfound) {
@@ -228,7 +228,7 @@ void Zc_indent(void)
 				bmove(Bbuff, -1);
 			tobegline(Bbuff);
 		} while (Buff() == '#' && !bisstart(Bbuff));
-		movepast(biswhite, FORWARD);
+		bmovepast(Bbuff, biswhite, FORWARD);
 		if (lookingat(Bbuff, "if") || lookingat(Bbuff, "while")) {
 			width += Tabsize;
 			did_indent = 1;
@@ -300,7 +300,7 @@ void Zsh_indent(void)
 	}
 
 	tobegline(Bbuff);
-	movepast(biswhite, FORWARD);
+	bmovepast(Bbuff, biswhite, FORWARD);
 	tmark = bcremark(Bbuff);
 	width = bgetcol(true, 0);
 
@@ -356,8 +356,8 @@ void Zfill_check(void)
 			return;
 		}
 		while (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
-			moveto(isspace, BACKWARD);
-			movepast(isspace, BACKWARD);
+			bmoveto(Bbuff, isspace, BACKWARD);
+			bmovepast(Bbuff, isspace, BACKWARD);
 		}
 		Ztrim_white_space();
 		tmp = !bisatmrk(Bbuff, tmark);
@@ -407,7 +407,7 @@ void Zfill_paragraph(void)
 		/* mark the end of the paragraph and move the point to
 		 * the start */
 		Znext_paragraph();
-		movepast(isspace, BACKWARD);
+		bmovepast(Bbuff, isspace, BACKWARD);
 		bmrktopnt(Bbuff, tmp);
 		Zprevious_paragraph();
 		if (Buff() == '.')
@@ -415,14 +415,14 @@ void Zfill_paragraph(void)
 
 		/* main loop */
 		while (bisbeforemrk(Bbuff, tmp)) {
-			moveto(isspace, FORWARD);
+			bmoveto(Bbuff, isspace, FORWARD);
 			if (bgetcol(true, 0) > VAR(VFILLWIDTH)) {
-				moveto(isspace, BACKWARD);
+				bmoveto(Bbuff, isspace, BACKWARD);
 				Ztrim_white_space();
 				binsert(Bbuff, NL);
-				moveto(isspace, FORWARD);
+				bmoveto(Bbuff, isspace, FORWARD);
 			}
-			movepast(biswhite, FORWARD);
+			bmovepast(Bbuff, biswhite, FORWARD);
 			if (Buff() == NL && bisbeforemrk(Bbuff, tmp)) {
 				bdelete(Bbuff, 1);
 				Ztrim_white_space();
@@ -430,7 +430,7 @@ void Zfill_paragraph(void)
 			}
 		}
 
-		movepast(isspace, FORWARD); /* setup for next iteration */
+		bmovepast(Bbuff, isspace, FORWARD); /* setup for next iteration */
 	} while (Argp && !bisend(Bbuff) && !tkbrdy());
 
 	clrpaw();
@@ -459,24 +459,24 @@ void Znext_paragraph(void)
 
 	/* Only go back if between paras */
 	if (isspace(Buff()))
-		movepast(isspace, BACKWARD);
+		bmovepast(Bbuff, isspace, BACKWARD);
 	while (!bisend(Bbuff) && !ispara(pc, Buff())) {
 		pc = Buff();
 		bmove1(Bbuff);
 	}
-	movepast(isspace, FORWARD);
+	bmovepast(Bbuff, isspace, FORWARD);
 }
 
 void Zprevious_paragraph(void)
 {
 	char pc = '\0';
 
-	movepast(isspace, BACKWARD);
+	bmovepast(Bbuff, isspace, BACKWARD);
 	while (!bisstart(Bbuff) && !ispara(Buff(), pc)) {
 		pc = Buff();
 		bmove(Bbuff, -1);
 	}
-	movepast(isspace, FORWARD);
+	bmovepast(Bbuff, isspace, FORWARD);
 }
 
 /* MISC COMMANDS */

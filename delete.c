@@ -147,8 +147,8 @@ void Zdelete_word(void)
 		tbell();
 		return;
 	}
-	moveto(bisword, FORWARD);
-	movepast(bisword, FORWARD);
+	bmoveto(Bbuff, bisword, FORWARD);
+	bmovepast(Bbuff, bisword, FORWARD);
 	killtomrk(tmark);
 	unmark(tmark);
 }
@@ -181,10 +181,10 @@ void Zcopy_word(void)
 		struct mark *tmark = bcremark(Bbuff); /* save current Point */
 		struct mark *start = bcremark(Bbuff);
 		if (tmark && start) {
-			moveto(bistoken, FORWARD); /* find start of word */
-			movepast(bistoken, BACKWARD);
+			bmoveto(Bbuff, bistoken, FORWARD); /* find start of word */
+			bmovepast(Bbuff, bistoken, BACKWARD);
 			bmrktopnt(Bbuff, start);
-			movepast(bistoken, FORWARD); /* move Point to end of word */
+			bmovepast(Bbuff, bistoken, FORWARD); /* move Point to end of word */
 			copytomrk(start); /* copy to Kill buffer */
 			bpnttomrk(Bbuff, tmark); /* move Point back */
 		} else
@@ -226,7 +226,7 @@ void Zdelete_blanks(void)
 	if (bcrsearch(Bbuff, NL)) {
 		bmove1(Bbuff);
 		bmrktopnt(Bbuff, tmark);
-		movepast(isspace, BACKWARD);
+		bmovepast(Bbuff, isspace, BACKWARD);
 		if (!bisstart(Bbuff))
 			bcsearch(Bbuff, NL);
 		if (bisbeforemrk(Bbuff, tmark))
@@ -234,7 +234,7 @@ void Zdelete_blanks(void)
 	}
 	if (bcsearch(Bbuff, NL)) {
 		bmrktopnt(Bbuff, tmark);
-		movepast(isspace, FORWARD);
+		bmovepast(Bbuff, isspace, FORWARD);
 		if (bcrsearch(Bbuff, NL))
 			bmove1(Bbuff);
 		if (bisaftermrk(Bbuff, tmark))

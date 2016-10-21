@@ -389,8 +389,8 @@ int getbword(char word[], int max, int (*valid)(int))
 
 	bmrktopnt(Bbuff, &tmark);
 	if (!bistoken(Buff()))
-		moveto(bistoken, BACKWARD);
-	movepast(bistoken, BACKWARD);
+		bmoveto(Bbuff, bistoken, BACKWARD);
+	bmovepast(Bbuff, bistoken, BACKWARD);
 	for (i = 0; !bisend(Bbuff) && valid(Buff()) && i < max; ++i, bmove1(Bbuff))
 		word[i] = Buff();
 	word[i] = '\0';

@@ -148,12 +148,12 @@ extern struct buff *Bbuff;
 struct zbuff {
 	char *bname;            /* buffer name */
 	char *fname;            /* file associated with buffer */
-	unsigned bmode;		    /* buffer mode - unused in core */
+	unsigned bmode;		    /* buffer mode */
 	time_t mtime;           /* file modified time */
-	void *chead, *ctail;	/* list of comments in file */
-	Byte comchar;			/* single char comment character */
 	struct mark *umark;     /* user mark */
 	struct buff *buff;	    /* low-level buffer */
+	void *chead, *ctail;	/* list of comments in file */
+	Byte comchar;			/* single char comment character */
 	struct zbuff *prev, *next;	/* list of buffers */
 };
 
@@ -161,9 +161,6 @@ struct zbuff {
 
 #define Buff()  (*Bbuff->curcptr)
 #define unmark bdelmark
-
-#define movepast(a, b) bmovepast(Bbuff, a, b)
-#define moveto(a, b) bmoveto(Bbuff, a, b)
 
 extern char *Home;
 extern bool Argp;

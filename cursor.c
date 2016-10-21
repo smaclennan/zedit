@@ -141,14 +141,14 @@ void Znext_page(void)
 
 void Zprevious_word(void)
 {
-	moveto(ISWORD, BACKWARD);
-	movepast(ISWORD, BACKWARD);
+	bmoveto(Bbuff, ISWORD, BACKWARD);
+	bmovepast(Bbuff, ISWORD, BACKWARD);
 }
 
 void Znext_word(void)
 {
-	movepast(ISWORD, FORWARD);
-	moveto(ISWORD, FORWARD);
+	bmovepast(Bbuff, ISWORD, FORWARD);
+	bmoveto(Bbuff, ISWORD, FORWARD);
 }
 
 void Zbeginning_of_buffer(void)

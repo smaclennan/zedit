@@ -58,7 +58,7 @@ struct zbuff;
 #include "tinit.h"
 
 #define ZSTR	"Zedit"
-#define VERSION	"6.1"
+#define VERSION	"6.2"
 
 #define INVALID		-1
 

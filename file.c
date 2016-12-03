@@ -69,6 +69,7 @@ int file_mode(void)
 static bool zwritefile(char *fname)
 {
 	char bakname[PATHMAX + 1];
+	struct mark smark;
 	struct stat sbuf;
 	int nlink = 1, rc;
 	bool bak = false;
@@ -107,7 +108,6 @@ static bool zwritefile(char *fname)
 	} else if (VAR(VBACKUP))
 		bak = rename(fname, bakname);
 
-	struct mark smark;
 	bmrktopnt(Bbuff, &smark);
 	rc = bwritefile(Bbuff, fname, file_mode());
 	bpnttomrk(Bbuff, &smark);

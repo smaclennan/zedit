@@ -79,10 +79,10 @@ static void free_undo(void **tail)
 
 void undo_add(struct buff *buff, int size, bool clumped)
 {
+	struct undo *undo = (struct undo *)buff->undo_tail;
+
 	if (buff->in_undo)
 		return;
-
-	struct undo *undo = (struct undo *)buff->undo_tail;
 
 	if (undo && is_insert(undo) && (clumped || undo_add_clumped(buff, size))) {
 		/* clump with last undo */
@@ -126,13 +126,13 @@ static void undo_prepend(struct undo *undo, Byte *data)
 /* Size is always within the current page. */
 void undo_del(struct buff *buff, int size)
 {
+	struct undo *undo = (struct undo *)buff->undo_tail;
+
 	if (buff->in_undo)
 		return;
 
 	if (size == 0) /* this can happen on page boundaries */
 		return;
-
-	struct undo *undo = (struct undo *)buff->undo_tail;
 
 	/* We only merge simple deletes */
 	if (undo && !is_insert(undo))

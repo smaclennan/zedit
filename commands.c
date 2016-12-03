@@ -1037,6 +1037,7 @@ void Zcalc(void)
 	static char Calc_str[STRMAX + 1];
 	char str[STRMAX];
 	struct calc_result result;
+	int n;
 
 	Arg = 0;
 	if (getarg("Calc: ", Calc_str, STRMAX - 1))
@@ -1046,7 +1047,7 @@ void Zcalc(void)
 	strcpy(str, Calc_str);
 	strcat(str, "=");
 
-	int n = calc(str, &result);
+	n = calc(str, &result);
 	switch (n) {
 	case 0:
 		if (result.is_float)

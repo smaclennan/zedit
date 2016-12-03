@@ -89,6 +89,8 @@ void bdelbuff(struct buff *tbuff)
  */
 bool binsert(struct buff *buff, Byte byte)
 {
+	struct mark *btmark;
+
 	if (curplen(buff) == PGSIZE && !pagesplit(buff, HALFP))
 		return false;
 	memmove(buff->curcptr + 1, buff->curcptr, curplen(buff) - buff->curchar);
@@ -98,8 +100,6 @@ bool binsert(struct buff *buff, Byte byte)
 	buff->bmodf = true;
 
 	undo_add(buff, 1, false);
-
-	struct mark *btmark;
 
 	foreach_global_pagemark(buff, btmark, buff->curpage)
 		if (btmark->moffset >= buff->curchar)
@@ -192,6 +192,7 @@ bool binstr(struct buff *buff, const char *fmt, ...)
 void bdelete(struct buff *buff, unsigned quantity)
 {
 	unsigned quan, noffset;
+	struct mark *tmark;
 	struct page *tpage, *curpage = buff->curpage;
 
 	while (quantity > 0) {
@@ -216,7 +217,6 @@ void bdelete(struct buff *buff, unsigned quantity)
 				tpage = curpage->prevp;
 				noffset = tpage->plen;
 			}
-			struct mark *tmark;
 			foreach_global_pagemark(buff, tmark, curpage) {
 				tmark->mpage = tpage;
 				tmark->moffset = noffset;
@@ -233,7 +233,6 @@ void bdelete(struct buff *buff, unsigned quantity)
 				tpage = curpage->nextp;
 				noffset = 0;
 			}
-			struct mark *tmark;
 			foreach_global_pagemark(buff, tmark, curpage)
 				if (tmark->moffset >= buff->curchar) {
 					if (tmark->moffset >= buff->curchar + quan)
@@ -416,6 +415,8 @@ bool bcrsearch(struct buff *buff, Byte what)
  */
 void bempty(struct buff *buff)
 {
+	struct mark *btmark;
+
 #if HUGE_FILES
 	bhugecleanup(buff);
 #endif
@@ -424,8 +425,6 @@ void bempty(struct buff *buff)
 	curplen(buff) = 0;
 	while (buff->curpage->nextp)
 		freepage(buff, buff->curpage->nextp);
-
-	struct mark *btmark;
 
 	foreach_global_buffmark(buff, btmark)
 		if (btmark->mpage) {
@@ -615,19 +614,21 @@ struct page *newpage(struct page *curpage)
  */
 struct page *pagesplit(struct buff *buff, unsigned dist)
 {
+	struct page *curpage, *newp;
+	struct mark *btmark;
+	int newsize;
+
 	if (dist > PGSIZE) return NULL;
 
-	struct page *curpage = buff->curpage;
-	struct page *newp = newpage(curpage);
+	curpage = buff->curpage;
+	newp = newpage(curpage);
 	if (!newp)
 		return NULL;
 
-	int newsize = curpage->plen - dist;
+	newsize = curpage->plen - dist;
 	memmove(newp->pdata, curpage->pdata + dist, newsize);
 	curpage->plen = dist;
 	newp->plen = newsize;
-
-	struct mark *btmark;
 
 	foreach_global_pagemark(buff, btmark, curpage)
 		if (btmark->moffset >= dist) {

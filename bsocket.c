@@ -82,7 +82,7 @@ int writev(int fd, const struct iovec *iov, int iovcnt)
  */
 int bread(struct buff *buff, int fd)
 {
-	int n, n_read;
+	int n, n_read, left;
 	struct page *npage;
 	struct iovec iovs[2];
 
@@ -92,7 +92,7 @@ int bread(struct buff *buff, int fd)
 			return -ENOMEM;
 	}
 
-	int left = PGSIZE - curplen(buff);
+	left = PGSIZE - curplen(buff);
 
 	/* try to fill current page */
 	if (left) {
@@ -237,12 +237,12 @@ int bindata(struct buff *buff, Byte *data, int size)
 		return bappendpage(buff, data, size);
 
 	n = PGSIZE - curplen(buff);
-	if (n >= size) {
-		/* fits in this page */
+	if (n >= size) { /* fits in this page */
+		struct mark *m;
+
 		n = curplen(buff) - buff->curchar;
 		memmove(buff->curcptr + size, buff->curcptr, n);
 		memcpy(buff->curcptr, data, size);
-		struct mark *m;
 		foreach_global_pagemark(buff, m, buff->curpage)
 			if (m->moffset >= buff->curchar)
 				m->moffset += size;

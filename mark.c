@@ -212,10 +212,11 @@ bool bpnttomrk(struct buff *buff, struct mark *tmark)
 /* Swap the point and the mark. */
 bool bswappnt(struct buff *buff, struct mark *tmark)
 {
+	struct mark tmp;
+
 	if (tmark->mbuff != buff)
 		return false;
 
-	struct mark tmp;
 	bmrktopnt(buff, &tmp);
 	bpnttomrk(buff, tmark);
 	mrktomrk(tmark, &tmp);

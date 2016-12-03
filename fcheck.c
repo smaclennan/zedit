@@ -175,18 +175,19 @@ int main(int argc, char *argv[])
 		err = 1;
 	}
 
-	/* verify the __MRKSIZE */
-	struct mark dummy_mrk, *dummy = &dummy_mrk;
-	struct mark mrk1 = { NULL, NULL, 0x1234, NULL, NULL };
-	struct mark mrk2;
+	{   /* verify the __MRKSIZE */
+		struct mark dummy_mrk, *dummy = &dummy_mrk;
+		struct mark mrk1 = { NULL, NULL, 0x1234, NULL, NULL };
+		struct mark mrk2;
 
-	memset(&mrk2, 0xea, sizeof(struct mark));
-	mrk2.prev = mrk2.next = dummy;
+		memset(&mrk2, 0xea, sizeof(struct mark));
+		mrk2.prev = mrk2.next = dummy;
 
-	mrktomrk(&mrk2, &mrk1);
-	if (mrk2.moffset != 0x1234 || mrk2.prev != dummy) {
-		printf("Problems with __MRKSIZE\n");
-		err = 1;
+		mrktomrk(&mrk2, &mrk1);
+		if (mrk2.moffset != 0x1234 || mrk2.prev != dummy) {
+			printf("Problems with __MRKSIZE\n");
+			err = 1;
+		}
 	}
 
 #ifdef WIN32

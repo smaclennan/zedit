@@ -372,14 +372,28 @@ bool bcsearch(struct buff *buff, Byte what)
 	return true;
 }
 
+#ifdef NO_MEMRCHR
+static void *memrchr(const void *s, int c, size_t n)
+{
+	if (n) {
+		const unsigned char *p = (const unsigned char *)s + n;
+		const unsigned char cmp = c;
+
+		do
+			if (*--p == cmp)
+				return (void *)p;
+		while (--n != 0);
+	}
+	return NULL;
+}
+#endif
+
 /** Search backward for a single byte. If byte found leaves point at
  * byte and returns true. If not found leaves point at the start of
  * buffer and returns false.
  */
 bool bcrsearch(struct buff *buff, Byte what)
 {
-#ifdef _GNU_SOURCE
-	/* About 4x the performance */
 	Byte *n;
 
 	if (bisstart(buff))
@@ -394,21 +408,6 @@ bool bcrsearch(struct buff *buff, Byte what)
 
 	makeoffset(buff, n - buff->curpage->pdata);
 	return true;
-#else
-	while (1) {
-		if (buff->curchar <= 0) {
-			if (buff->curpage == buff->firstp)
-				return false;
-			else
-				makecur(buff, buff->curpage->prevp, buff->curpage->prevp->plen - 1);
-		} else {
-			--buff->curchar;
-			--buff->curcptr;
-		}
-		if (*buff->curcptr == what)
-			return true;
-	}
-#endif
 }
 
 /** Delete all bytes from a buffer and leave it with one empty page

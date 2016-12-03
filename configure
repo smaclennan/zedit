@@ -151,3 +151,12 @@ cat >> config.h <<EOF
 #define BUILTIN_REG
 #endif
 EOF
+
+cat > ztmp.c <<EOF
+#define _GNU_SOURCE
+#include <string.h>
+void *foo(const void *s) { return memrchr(s, ' ', 1); }
+EOF
+
+cc -Wall -Werror -c ztmp.c >/dev/null 2>&1 || echo "#define NO_MEMRCHR" >> config.h
+rm -f ztmp.c ztmp.o

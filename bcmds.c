@@ -226,6 +226,8 @@ static void bfini(void)
 
 	cdelbuff(Paw);
 
+	delfini();
+
 #ifdef HAVE_FREEMARK
 	struct buff dummy;
 	struct mark *mrk;
@@ -244,6 +246,7 @@ static void binit(void)
 
 	if (!binitialized) {
 		bsetmod = vsetmod_callback;
+		delinit();
 		atexit(bfini);
 		binitialized = 1;
 	}

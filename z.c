@@ -201,9 +201,6 @@ int main(int argc, char **argv)
 	Bufflist = NULL;
 	Curbuff = NULL;
 
-	/* Do this after first cmakebuff so bfini will be last atexit called. */
-	delinit();
-
 	if (!cmakebuff(MAINBUFF, NULL)) {
 		puts("Not enough memory.");
 		exit(1);

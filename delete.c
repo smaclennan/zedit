@@ -22,7 +22,7 @@
 
 static struct buff *Killbuff;
 
-static void delfini(void)
+void delfini(void)
 {
 	bdelbuff(Killbuff);
 }
@@ -30,7 +30,6 @@ static void delfini(void)
 void delinit(void)
 {
 	Killbuff = bcreate();
-	atexit(delfini);
 }
 
 static void copytomrk(struct mark *tmark)

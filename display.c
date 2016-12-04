@@ -51,16 +51,6 @@ static void modeline_invalidate(struct buff *buff)
 }
 #endif
 
-static void mfini(void)
-{
-#ifdef HAVE_FREEMARK
-	if (freemark) {
-		free(freemark);
-		freemark = NULL;
-	}
-#endif
-}
-
 void display_init(struct mark *mrk)
 {
 	int cnt;
@@ -81,7 +71,6 @@ void display_init(struct mark *mrk)
 
 	/* init the mark list */
 	Marklist = Send;
-	atexit(mfini);
 
 	if (mrk)
 		/* user provided a start mark */

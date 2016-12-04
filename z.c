@@ -194,14 +194,15 @@ int main(int argc, char **argv)
 
 	os_init();
 
-	delinit();
-
 	/* PAW must not be on the Bufflist */
 	if (!(Paw = cmakebuff("*paw*", NULL)))
 		exit(1);
 	Paw->prev = Paw->next = NULL;
 	Bufflist = NULL;
 	Curbuff = NULL;
+
+	/* Do this after first cmakebuff so bfini will be last atexit called. */
+	delinit();
 
 	if (!cmakebuff(MAINBUFF, NULL)) {
 		puts("Not enough memory.");

@@ -143,7 +143,7 @@ int bwrite(struct buff *buff, int fd, unsigned size)
 	int i, n, amount, did = 0;
 
 	do {
-		int have = curplen(buff) - buff->curchar;
+		unsigned have = curplen(buff) - buff->curchar;
 		iovs[0].iov_base = buff->curcptr;
 		iovs[0].iov_len = MIN(have, size);
 		size -= iovs[0].iov_len;
@@ -230,7 +230,7 @@ int bappend(struct buff *buff, const Byte *data, int size)
 int bindata(struct buff *buff, Byte *data, unsigned size)
 {
 	struct page *npage;
-	int n, copied = 0;
+	unsigned n, copied = 0;
 
 	/* If we can append... use append */
 	if (buff->curchar == curplen(buff))

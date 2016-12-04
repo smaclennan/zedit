@@ -119,6 +119,7 @@
     <ClCompile Include="..\window.c" />
     <ClCompile Include="..\z.c" />
     <ClCompile Include="..\zgrep.c" />
+    <ClCompile Include="bwin32.c" />
     <ClCompile Include="fnmatch.c" />
     <ClCompile Include="winkbd.c" />
     <ClCompile Include="zwin32.c" />
@@ -127,6 +128,7 @@
     <ClInclude Include="..\buff.h" />
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\z.h" />
+    <ClInclude Include="bwin32.h" />
     <ClInclude Include="winkeys.h" />
     <ClInclude Include="zwin32.h" />
   </ItemGroup>

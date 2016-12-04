@@ -1,3 +1,4 @@
+#include <stdio.h> /* for snprintf */
 #include "bwin32.h"
 
 int optind = 1;
@@ -55,7 +56,7 @@ DIR *opendir(const char *dirname)
 	if (!dir)
 		return NULL;
 
-	char path[PATHMAX];
+	char path[MAX_PATH];
 	snprintf(path, sizeof(path), "%s/*", dirname);
 	dir->handle = FindFirstFileA(path, &dir->data);
 	if (dir->handle == INVALID_HANDLE_VALUE) {

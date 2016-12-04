@@ -123,6 +123,9 @@
     <ClCompile Include="..\bsocket.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="bwin32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\z.h">
@@ -138,6 +141,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\buff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bwin32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

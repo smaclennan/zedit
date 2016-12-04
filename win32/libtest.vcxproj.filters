@@ -13,6 +13,7 @@
     <ClCompile Include="..\reg.c" />
     <ClCompile Include="..\tinit.c" />
     <ClCompile Include="winkbd.c" />
+    <ClCompile Include="bwin32.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\buff.h" />

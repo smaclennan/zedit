@@ -8,7 +8,6 @@
 #include <time.h>
 #include <assert.h>
 #ifdef WIN32
-#warning SAM CHECKME
 #include <sys/stat.h> /* for _S_IWRITE */
 #endif
 
@@ -172,7 +171,7 @@ int main(int argc, char *argv[])
 
 	buff = bcreate();
 
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 
 	if (argc > 2)
 		return test_readwrite(buff, argv[1], argv[2]);

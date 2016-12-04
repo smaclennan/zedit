@@ -40,7 +40,17 @@ struct mark *Marklist;	/* the marks list tail */
  * functions just need to allocate one mark, this is a huge win for
  * very little code.
  */
-struct mark *freemark;
+static struct mark *freemark;
+
+void mrkfini(void)
+{
+	if (freemark) {
+		free(freemark);
+		freemark = NULL;
+	}
+}
+#else
+void mrkfini(void) {}
 #endif
 
 int NumMarks;

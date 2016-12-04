@@ -227,15 +227,7 @@ static void bfini(void)
 	cdelbuff(Paw);
 
 	delfini();
-
-#ifdef HAVE_FREEMARK
-	struct buff dummy;
-	struct mark *mrk;
-
-	memset(&dummy, 0, sizeof(dummy));
-	mrk = bcremark(&dummy);
-	free(mrk);
-#endif
+	mrkfini(); /* must be last */
 
 	Dbgfname(NULL);
 }

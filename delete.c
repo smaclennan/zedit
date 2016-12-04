@@ -78,7 +78,7 @@ void Zdelete_to_eol(void)
 		if (atstart)
 			bmove1(Bbuff); /* delete the NL */
 		killtomrk(tmark);
-		unmark(tmark);
+		bdelmark(tmark);
 	}
 }
 
@@ -94,7 +94,7 @@ void Zdelete_line(void)
 	bmrktopnt(Bbuff, tmark);
 	bcsearch(Bbuff, NL);
 	killtomrk(tmark);
-	unmark(tmark);
+	bdelmark(tmark);
 }
 
 void Zdelete_region(void)
@@ -137,7 +137,7 @@ void Zyank(void)
 #else
 	bcopyrgn(tmark, Bbuff);
 #endif
-	unmark(tmark);
+	bdelmark(tmark);
 }
 
 void Zdelete_word(void)
@@ -150,7 +150,7 @@ void Zdelete_word(void)
 	bmoveto(Bbuff, bisword, FORWARD);
 	bmovepast(Bbuff, bisword, FORWARD);
 	killtomrk(tmark);
-	unmark(tmark);
+	bdelmark(tmark);
 }
 
 void Zdelete_previous_word(void)
@@ -162,7 +162,7 @@ void Zdelete_previous_word(void)
 	}
 	Zprevious_word();
 	killtomrk(tmark);
-	unmark(tmark);
+	bdelmark(tmark);
 }
 
 void Zcopy_word(void)
@@ -189,8 +189,8 @@ void Zcopy_word(void)
 			bpnttomrk(Bbuff, tmark); /* move Point back */
 		} else
 			tbell();
-		unmark(tmark);
-		unmark(start);
+		bdelmark(tmark);
+		bdelmark(start);
 	}
 	Arg = 0;
 }
@@ -244,8 +244,8 @@ void Zdelete_blanks(void)
 done:
 	if (pmark)
 		bpnttomrk(Bbuff, pmark);
-	unmark(pmark);
-	unmark(tmark);
+	bdelmark(pmark);
+	bdelmark(tmark);
 }
 
 void Zjoin(void)

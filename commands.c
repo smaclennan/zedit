@@ -107,8 +107,8 @@ void Zswap_words(void)
 	} else
 		tbell();
 
-	unmark(tmark);
-	unmark(tmp);
+	bdelmark(tmark);
+	bdelmark(tmp);
 }
 
 void Zcenter(void)
@@ -157,7 +157,7 @@ void Zc_insert(void)
 						tindent(cnt);
 					}
 					binsert(Bbuff, Cmd);
-					unmark(tmark);
+					bdelmark(tmark);
 					return;
 				}
 			} else if (Buff() == '}')
@@ -209,7 +209,7 @@ void Zc_insert(void)
 	}
 
 	binsert(Bbuff, Cmd);
-	unmark(tmark);
+	bdelmark(tmark);
 }
 
 void Zc_indent(void)
@@ -366,7 +366,7 @@ void Zfill_check(void)
 			bpnttomrk(Bbuff, tmark);
 			binsert(Bbuff, Cmd);
 		}
-		unmark(tmark);
+		bdelmark(tmark);
 	}
 }
 
@@ -397,8 +397,8 @@ void Zfill_paragraph(void)
 	tmp = bcremark(Bbuff);
 	tmark = bcremark(Bbuff);		/* save the current point */
 	if (!tmp || !tmark) {
-		unmark(tmp);
-		unmark(tmark);
+		bdelmark(tmp);
+		bdelmark(tmark);
 		tbell();
 		return;
 	}
@@ -440,8 +440,8 @@ void Zfill_paragraph(void)
 	}
 
 	bpnttomrk(Bbuff, tmark); /* restore point */
-	unmark(tmark);
-	unmark(tmp);
+	bdelmark(tmark);
+	bdelmark(tmp);
 }
 
 static bool ispara(char pc, char ch)
@@ -790,7 +790,7 @@ void Zcount(void)
 		bswappnt(Bbuff, UMARK);
 	else
 		bpnttomrk(Bbuff, tmark);
-	unmark(tmark);
+	bdelmark(tmark);
 }
 
 /* this struct must be sorted */
@@ -944,7 +944,7 @@ static void indent(bool flag)
 		bswappnt(Bbuff, UMARK);
 		if (!(msave = bcremark(Bbuff))) {
 			tbell();
-			unmark(psave);
+			bdelmark(psave);
 			return;
 		}
 	}
@@ -961,10 +961,10 @@ static void indent(bool flag)
 		bcsearch(Bbuff, NL);
 	}
 	bpnttomrk(Bbuff, psave);
-	unmark(psave);
+	bdelmark(psave);
 	if (msave) {
 		mrktomrk(UMARK, msave);
-		unmark(msave);
+		bdelmark(msave);
 	}
 
 	CLEAR_UMARK;

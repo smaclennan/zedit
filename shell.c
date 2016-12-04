@@ -419,7 +419,7 @@ void Znext_error(void)
 		tobegline(Bbuff);
 	} else {
 		btoend(Bbuff);
-		unmark(shell_mark);
+		bdelmark(shell_mark);
 		shell_mark = NULL;
 		zswitchto(save);
 		putpaw("No more errors");

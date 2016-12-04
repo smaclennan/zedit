@@ -409,7 +409,7 @@ void Zread_file(void)
 			if ((tmark = bcremark(tbuff))) {
 				btostart(tbuff);
 				bcopyrgn(tmark, Bbuff);
-				unmark(tmark);
+				bdelmark(tmark);
 			} else
 				error("Out of memory");
 		}

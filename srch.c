@@ -229,7 +229,7 @@ static void doreplace(int type)
 		clrpaw();
 
 	bpnttomrk(Bbuff, pmark);
-	unmark(pmark);
+	bdelmark(pmark);
 	if (type == REGEXP)
 		re_free(&re);
 }
@@ -287,7 +287,7 @@ static bool replaceone(int type, bool *query, bool *exit, regexp_t *re, bool crg
 	}
 
 	if (!(prevmatch = bcremark(Bbuff))) {
-		unmark(REstart);
+		bdelmark(REstart);
 		tbell();
 		return false;
 	}
@@ -403,8 +403,8 @@ input:
 		else if (tkbrdy())
 			*exit = true;
 	}
-	unmark(prevmatch);
-	unmark(REstart);
+	bdelmark(prevmatch);
+	bdelmark(REstart);
 	return found;
 }
 

@@ -160,7 +160,6 @@ struct zbuff {
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)
 
 #define Buff()  (*Bbuff->curcptr)
-#define unmark bdelmark
 
 extern char *Home;
 extern bool Argp;

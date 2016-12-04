@@ -53,10 +53,12 @@ static void modeline_invalidate(struct buff *buff)
 
 static void mfini(void)
 {
+#ifdef HAVE_FREEMARK
 	if (freemark) {
 		free(freemark);
 		freemark = NULL;
 	}
+#endif
 }
 
 void display_init(struct mark *mrk)
@@ -121,7 +123,7 @@ void clear_umark(void)
 		Tlrow = -1;
 
 		if (freeumark)
-			unmark(UMARK);
+			bdelmark(UMARK);
 		else
 			freeumark = UMARK;
 		UMARK = NULL;

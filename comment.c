@@ -35,8 +35,8 @@ static void newcomment(struct mark *start)
 	com->start = bcremark(Bbuff);
 	com->end   = bcremark(Bbuff);
 	if (!com->start || !com->end) {
-		unmark(com->start);
-		unmark(com->end);
+		bdelmark(com->start);
+		bdelmark(com->end);
 		free(com);
 		return;
 	}
@@ -169,8 +169,8 @@ void uncomment(struct zbuff *buff)
 		while (buff->chead) {
 			struct comment *com = buff->chead;
 			buff->chead = com->next;
-			unmark(com->start);
-			unmark(com->end);
+			bdelmark(com->start);
+			bdelmark(com->end);
 			free(com);
 		}
 

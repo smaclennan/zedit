@@ -106,9 +106,9 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive);
 /** Max iovs used for one writev in bwrite(). */
 #define MAX_IOVS 16
 int bread(struct buff *buff, int fd);
-int bwrite(struct buff *buff, int fd, int size);
+int bwrite(struct buff *buff, int fd, unsigned size);
 int bappend(struct buff *buff, const Byte *, int);
-int bindata(struct buff *buff, Byte *, int);
+int bindata(struct buff *buff, Byte *, unsigned);
 
 /* undo.c */
 #if defined(UNDO) && UNDO

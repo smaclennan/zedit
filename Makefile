@@ -44,8 +44,10 @@ CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 	display.c file.c funcs.c getarg.c getfname.c help.c shell.c \
 	srch.c tags.c term.c vars.c window.c varray.c z.c zgrep.c
 
-LFILES = buff.c bfile.c bmsearch.c bsocket.c mark.c reg.c tinit.c calc.c \
-	dbg.c undo.c kbd.c hugefile.c
+LFILES = buff.c bfile.c bmsearch.c mark.c reg.c tinit.c calc.c dbg.c undo.c \
+	kbd.c hugefile.c
+# Not used in Zedit
+L1FILES=bsocket.c
 
 LHFILES = buff.h calc.h mark.h reg.h tinit.h keys.h
 
@@ -81,7 +83,7 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
 # This is just to check that no zedit dependencies crept into libbuff.a
-main: main.c $(LFILES)
+main: main.c $(LFILES) $(L1FILES)
 	@rm -rf tmpdir
 	@mkdir tmpdir
 	@cp $+ $(LHFILES) tmpdir

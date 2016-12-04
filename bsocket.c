@@ -136,7 +136,7 @@ int bread(struct buff *buff, int fd)
 /** Write to a file descriptor using writev.  Can be used for files but
  * meant for sockets. Leaves the point at the end of the write.
 */
-int bwrite(struct buff *buff, int fd, int size)
+int bwrite(struct buff *buff, int fd, unsigned size)
 {
 	struct iovec iovs[MAX_IOVS];
 	struct page *pg;
@@ -227,7 +227,7 @@ int bappend(struct buff *buff, const Byte *data, int size)
 /** Insert data at the current point. Point is left at the end of the
  * inserted data. Returns how much data was actually inserted.
  */
-int bindata(struct buff *buff, Byte *data, int size)
+int bindata(struct buff *buff, Byte *data, unsigned size)
 {
 	struct page *npage;
 	int n, copied = 0;

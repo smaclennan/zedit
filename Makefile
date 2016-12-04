@@ -109,6 +109,6 @@ install: all
 #	install -m644 zedit-termcap $(DESTDIR)/usr/share/zedit/termcap
 
 clean:
-	rm -f *.o $(ZEXE) fcheck main core* TAGS valgrind.out
+	rm -f *.o $(ZEXE) fcheck main core* TAGS valgrind.out sless
 	rm -rf doxygen/html tmpdir
 	@$(MAKE) -C docs clean

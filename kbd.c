@@ -122,7 +122,7 @@ static int check_specials(void)
 	/* No match - push back the chars */
 	tungetkb(j);
 
-	if (tpeek(2) == '0')
+	if (tpeek(2) == 'O')
 		/* Check for ESC O keys - happens a lot on ssh */
 		switch (tpeek(3)) {
 		case 'A'...'D':

@@ -82,6 +82,27 @@ static void query_replace(FILE *out, const char *doc)
 			fputc(*doc, out);
 }
 
+static const char *key_label[] = {
+	"up", "down", "right", "left",
+	"insert", "delete", "page up", "page down", "home", "end",
+	"f1", "f2", "f3", "f4", "f5", "f6",
+	"f7", "f8", "f9", "f10", "f11", "f12",
+	"C-home", "C-end",
+};
+
+static const char *special_label(int key)
+{
+	if (key >= SPECIAL_START && key <= SPECIAL_END)
+		return key_label[key - SPECIAL_START];
+	else
+		return "???";
+}
+
+static int is_special(int cmd)
+{
+	return cmd >= SPECIAL_START && cmd <= SPECIAL_END;
+}
+
 static char *dispkey(unsigned key, char *s)
 {
 	char *p;

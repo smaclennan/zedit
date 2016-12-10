@@ -24,6 +24,7 @@
 #define _XOPEN_SOURCE
 #define _POSIX_SOURCE
 #define _SVID_SOURCE
+#define _DEFAULT_SOURCE
 #endif
 
 #include <stdio.h>

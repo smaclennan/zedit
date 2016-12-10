@@ -20,6 +20,12 @@
 #ifndef _buff_h
 #define _buff_h
 
+#ifdef __STRICT_ANSI__
+#ifndef _POSIX_SOURCE
+#define _POSIX_SOURCE
+#endif
+#endif
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif

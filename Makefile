@@ -95,8 +95,8 @@ main: main.c $(LFILES) $(L1FILES)
 
 # The second sparse checks just the buffer code
 checkit:
-	@sparse -D__unix__ $(CFLAGS) $(CFILES) $(LFILES)
-	@sparse -D__unix__ $(LFILES)
+	@sparse -D__unix__ $(CFLAGS) $(CFILES) $(LFILES) $(L1FILES)
+	@sparse -D__unix__ $(LFILES) $(L1FILES)
 	@sparse -D__unix__ fcheck.c
 
 doxy:

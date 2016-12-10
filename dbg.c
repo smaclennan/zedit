@@ -36,8 +36,11 @@ const char *Dbgfname(const char *fname)
 		free(dbgfname);
 		dbgfname = NULL;
 	}
-	if (fname)
-		dbgfname = strdup(fname);
+	if (fname) {
+		dbgfname = malloc(strlen(fname) + 1);
+		if (dbgfname)
+			strcpy(dbgfname, fname);
+	}
 	return dbgfname;
 }
 

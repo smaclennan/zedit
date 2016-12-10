@@ -57,7 +57,7 @@ static void t_hang_up(int signo)
 static void tfini(void)
 {
 #ifdef __unix__
-	tcsetattr(fileno(stdin), TCSAFLUSH, &save_tty);
+	tcsetattr(0, TCSAFLUSH, &save_tty);
 #endif
 	tflush();
 }
@@ -117,8 +117,8 @@ static void tlinit(void) {}
 void tinit(void)
 {
 #ifdef __unix__
-	tcgetattr(fileno(stdin), &save_tty);
-	tcgetattr(fileno(stdin), &settty);
+	tcgetattr(0, &save_tty);
+	tcgetattr(0, &settty);
 	settty.c_iflag = 0;
 #ifdef TAB3
 	settty.c_oflag = TAB3;
@@ -126,7 +126,7 @@ void tinit(void)
 	settty.c_lflag = ECHOE | ECHOK;
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
-	tcsetattr(fileno(stdin), TCSANOW, &settty);
+	tcsetattr(0, TCSANOW, &settty);
 #elif defined(WIN32)
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 #endif

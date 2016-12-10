@@ -305,9 +305,9 @@ void btoend(struct buff *buff)
 {
 	struct page *lastp;
 
-	for (lastp = buff->curpage->nextp; lastp; lastp = lastp->nextp)
-		makecur(buff, lastp, lastp->plen);
-	makeoffset(buff, curplen(buff));
+	/* For huge files we don't want to make every page current */
+	for (lastp = buff->curpage; lastp->nextp; lastp = lastp->nextp) ;
+	makecur(buff, lastp, lastp->plen);
 }
 
 /** Move point to the beginning of the line. */

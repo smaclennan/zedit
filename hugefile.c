@@ -35,25 +35,14 @@ static void *read_thread(void *arg);
 static void breadpage(struct buff *buff, struct page *page);
 
 #ifdef WIN32
-static HANDLE read_lock = NULL;
-
-static void do_lock(void)
+static void do_lock(struct buff *buff)
 {
-	if (read_lock == NULL) {
-		read_lock = CreateMutex(NULL, FALSE, NULL);
-		if (!read_lock) {
-			Dbg("Unable to create mutex");
-			return;
-		}
-	}
-
-	WaitForSingleObject(read_lock, INFINITE);
+	WaitForSingleObject((HANDLE)read_lock, INFINITE);
 }
 
-static void do_unlock(void)
+static void do_unlock(struct buff *buff)
 {
-	if (read_lock)
-		ReleaseMutex(read_lock);
+	ReleaseMutex((HANDLE)buff->lock);
 }
 
 static DWORD WINAPI read_thread_wrapper(void *arg)
@@ -65,24 +54,34 @@ static DWORD WINAPI read_thread_wrapper(void *arg)
 static void start_thread(struct buff *buff)
 {
 	DWORD thread;
+	HANDLE read_lock;
+
+	read_lock = CreateMutex(NULL, FALSE, NULL);
+	if (!read_lock) {
+		Dbg("Unable to create mutex");
+		return;
+	}
+
+	buff->lock = read_lock;
 
 	if (CreateThread(NULL, 0, read_thread_wrapper, buff, 0, &thread) == NULL)
-		Dbg("Unable to create thread.");
+		error("Unable to create thread.");
 }
 #else
 #include <pthread.h>
 
-static pthread_mutex_t read_lock = PTHREAD_MUTEX_INITIALIZER;
-
-static void do_lock(void) { pthread_mutex_lock(&read_lock); }
-static void do_unlock(void) { pthread_mutex_unlock(&read_lock); }
+static void do_lock(struct buff *buff)   { pthread_mutex_lock(buff->lock); }
+static void do_unlock(struct buff *buff) { pthread_mutex_unlock(buff->lock); }
 
 static void start_thread(struct buff *buff)
 {
 	pthread_t thread;
 
-	if (pthread_create(&thread, NULL, read_thread, buff))
-		Dbg("Unable to create thread\n");
+	buff->lock = malloc(sizeof(pthread_mutex_t));
+	if (!buff->lock ||
+		pthread_mutex_init(buff->lock, NULL) ||
+		pthread_create(&thread, NULL, read_thread, buff))
+		huge_file_cb(buff, EAGAIN);
 }
 #endif
 
@@ -97,28 +96,41 @@ static void *read_thread(void *arg)
 		if (page->pgoffset)
 			breadpage(buff, page);
 
-	/* Grab lock in case we are closing */
-	do_lock();
-	if (buff->fd >= 0) {
-		close(buff->fd);
-		buff->fd = -1;
-	}
-	do_unlock();
+	bhugecleanup(buff);
 
-	if (huge_file_cb)
-		huge_file_cb(buff);
+	huge_file_cb(buff, 0);
 
 	Dbg("read_thread done\n");
 
 	return NULL;
 }
 #else
-#define do_lock()
-#define do_unlock()
+#define do_lock(b)
+#define do_unlock(b)
 #define start_thread(b)
 #endif
 
-void (*huge_file_cb)(struct buff *buff);
+void default_huge_file_cb(struct buff *buff, int rc)
+{
+	switch (rc) {
+	case 0:
+		return; /* success */
+	case EAGAIN:
+		printf("Unable to create thread\r\n");
+		return;
+	case EIO:
+		printf("FATAL I/O Error: page read\r\n");
+		exit(2);
+	case EBADF:
+		printf("FATAL I/O Error: file modified\r\n");
+		exit(2);
+	default:
+		printf("FATAL I/O Error: unexpected error %d\r\n", rc);
+		exit(2);
+	}
+}
+
+void (*huge_file_cb)(struct buff *buff, int rc) = default_huge_file_cb;
 
 static void breadpage(struct buff *buff, struct page *page)
 {
@@ -126,9 +138,9 @@ static void breadpage(struct buff *buff, struct page *page)
 	unsigned long offset;
 	int len;
 
-	do_lock();
+	do_lock(buff);
 	if (page->pgoffset == 0 || buff->fd == -1) {
-		do_unlock();
+		do_unlock(buff);
 		return;
 	}
 
@@ -149,7 +161,7 @@ static void breadpage(struct buff *buff, struct page *page)
 	}
 
 	page->plen = len;
-	do_unlock();
+	do_unlock(buff);
 
 #if ! HUGE_THREADED
 	if (page->nextp)
@@ -166,17 +178,14 @@ static void breadpage(struct buff *buff, struct page *page)
 
 	close(buff->fd);
 	buff->fd = -1;
-	if (huge_file_cb)
-		huge_file_cb(buff);
+	huge_file_cb(buff, 0);
 #endif
 	return;
 
 fatal:
-	printf("\033[2JFATAL I/O Error: page %u\r\n", page->pgoffset);
-	exit(2);
+	huge_file_cb(buff, EIO);
 fatal_mod:
-	printf("\033[2JFATAL I/O Error: file modified\r\n");
-	exit(2);
+	huge_file_cb(buff, EBADF);
 }
 
 /* Warning: keeps the fd open. */
@@ -243,7 +252,7 @@ void bhugecleanup(struct buff *buff)
 	if (buff->fd == -1)
 		return; /* normal case */
 
-	do_lock();
+	do_lock(buff);
 	for (page = buff->firstp; page; page = page->nextp)
 		page->pgoffset = 0;
 
@@ -251,6 +260,8 @@ void bhugecleanup(struct buff *buff)
 		close(buff->fd);
 		buff->fd = -1;
 	}
-	do_unlock();
+	do_unlock(buff);
+
+	free(buff->lock);
 }
 #endif

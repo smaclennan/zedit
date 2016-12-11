@@ -59,6 +59,7 @@ struct buff {
 #if HUGE_FILES
 	int fd;
 	long size;
+	void *lock;
 #endif
 #if defined(UNDO) && UNDO
 	bool in_undo;				/**< Are we currently performing an undo? */
@@ -235,7 +236,8 @@ static inline void bmove1(struct buff *buff)
 }
 
 #if HUGE_FILES
-extern void (*huge_file_cb)(struct buff *buff);
+extern void (*huge_file_cb)(struct buff *buff, int rc);
+void default_huge_file_cb(struct buff *buff, int rc);
 int breadhuge(struct buff *buff, const char *fname);
 void bhugecleanup(struct buff *buff);
 #endif

@@ -191,6 +191,13 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef WIN32
+#if HUGE_FILES && HUGE_THREADED
+	if (sizeof(HANDLE) != sizeof(void *)) {
+		printf("Problems with huge file lock\n");
+		err = 1;
+	}
+#endif
+
 	if (err) {
 		printf("Problems found! Hit enter to exit:"); getchar();
 	}

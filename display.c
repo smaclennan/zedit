@@ -43,11 +43,22 @@ static struct mark *freeumark;
 static void (*printchar)(Byte ichar) = tprntchar;
 
 #if HUGE_FILES
-static void modeline_invalidate(struct buff *buff)
+static void modeline_invalidate(struct buff *buff, int rc)
 {
-	struct wdo *wdo = findwdo(buff);
-	if (wdo)
-		wdo->modeflags = INVALID;
+	switch (rc) {
+	case 0:
+	{
+		struct wdo *wdo = findwdo(buff);
+		if (wdo)
+			wdo->modeflags = INVALID;
+		return; /* success */
+	}
+	case EAGAIN:
+		error("Unable to create huge file thread.");
+		return;
+	default:
+		default_huge_file_cb(buff, rc);
+	}
 }
 #endif
 

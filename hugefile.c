@@ -70,8 +70,17 @@ static void start_thread(struct buff *buff)
 #else
 #include <pthread.h>
 
-static void do_lock(struct buff *buff)   { pthread_mutex_lock(buff->lock); }
-static void do_unlock(struct buff *buff) { pthread_mutex_unlock(buff->lock); }
+static void do_lock(struct buff *buff)
+{
+	if (buff->lock)
+		pthread_mutex_lock(buff->lock);
+}
+
+static void do_unlock(struct buff *buff)
+{
+	if (buff->lock)
+		pthread_mutex_unlock(buff->lock);
+}
 
 static void start_thread(struct buff *buff)
 {
@@ -80,8 +89,13 @@ static void start_thread(struct buff *buff)
 	buff->lock = malloc(sizeof(pthread_mutex_t));
 	if (!buff->lock ||
 		pthread_mutex_init(buff->lock, NULL) ||
-		pthread_create(&thread, NULL, read_thread, buff))
+		pthread_create(&thread, NULL, read_thread, buff)) {
+		if (buff->lock) {
+			free(buff->lock);
+			buff->lock = NULL;
+		}
 		huge_file_cb(buff, EAGAIN);
+	}
 }
 #endif
 
@@ -117,7 +131,7 @@ void default_huge_file_cb(struct buff *buff, int rc)
 		return; /* success */
 	case EAGAIN:
 		printf("Unable to create thread\r\n");
-		return;
+		return; /* not fatal */
 	case EIO:
 		printf("FATAL I/O Error: page read\r\n");
 		exit(2);

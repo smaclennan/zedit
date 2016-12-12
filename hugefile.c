@@ -128,10 +128,8 @@ void default_huge_file_cb(struct buff *buff, int rc)
 {
 	switch (rc) {
 	case 0:
-		return; /* success */
 	case EAGAIN:
-		printf("Unable to create thread\r\n");
-		return; /* not fatal */
+		return; /* success */
 	case EIO:
 		printf("FATAL I/O Error: page read\r\n");
 		exit(2);
@@ -200,6 +198,7 @@ static void breadpage(struct buff *buff, struct page *page)
 
 fatal:
 	huge_file_cb(buff, EIO);
+	return; /* assume they dealt with it */
 fatal_mod:
 	huge_file_cb(buff, EBADF);
 }

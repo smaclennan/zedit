@@ -53,8 +53,11 @@ static void modeline_invalidate(struct buff *buff, int rc)
 			wdo->modeflags = INVALID;
 		return; /* success */
 	}
-	case EAGAIN:
-		error("Unable to create huge file thread.");
+	case EBADF:
+		huge_file_modified(buff);
+		return;
+	case EIO:
+		huge_file_io(buff);
 		return;
 	default:
 		default_huge_file_cb(buff, rc);

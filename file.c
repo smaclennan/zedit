@@ -167,6 +167,51 @@ static void crfixup(void)
 	btostart(Bbuff);
 }
 
+#if HUGE_FILES
+#if HUGE_THREADED
+/* Because these callbacks could be called from the thread, we
+ * currently cannot handle HUGE_THREADED.
+ */
+#error Zedit cannot handle huge threaded
+#endif
+
+void huge_file_modified(struct buff *buff)
+{
+	struct zbuff *zbuff = cfindzbuff(buff);
+	if (!zbuff) { /* can't happen */
+		printf("\n\nUnable to get zbuff for huge buffer\n\n\n");
+		exit(1);
+	}
+
+again:
+	sprintf(PawStr,
+			"WARNING: huge file %s has been modified. Re-read? ",
+			lastpart(zbuff->fname));
+	if (ask(PawStr) != YES) {
+		if (ask("Delete buffer? ") != YES)
+			goto again;
+		cdelbuff(zbuff);
+		return;
+	}
+
+	bempty(buff);
+	breadhuge(buff, zbuff->fname);
+}
+
+void huge_file_io(struct buff *buff)
+{
+	struct zbuff *zbuff = cfindzbuff(buff);
+	if (!zbuff) { /* can't happen */
+		printf("\n\nUnable to get zbuff for huge buffer\n\n\n");
+		exit(1);
+	}
+
+	sprintf(PawStr, "FATAL: huge file %s had an I/O. ", lastpart(zbuff->fname));
+	ask(PawStr);
+	cdelbuff(zbuff);
+}
+#endif
+
 /*
 Load the file 'fname' into the current buffer.
 Returns  0  successfully opened file

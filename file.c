@@ -86,6 +86,16 @@ static bool zwritefile(char *fname)
 		nlink = sbuf.st_nlink;
 	}
 
+#if HUGE_FILES
+	if (Bbuff->fd != -1) {
+		sprintf(PawStr,
+				"WARNING: huge file %s not yet read. Are you sure? ",
+				lastpart(fname));
+		if (ask(PawStr) != YES)
+			return false;
+	}
+#endif
+
 	/* check for links and handle backup file */
 	make_bakname(bakname, sizeof(bakname), fname);
 	if (nlink > 1) {

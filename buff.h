@@ -58,7 +58,7 @@ struct buff {
 	bool bmodf;					/**< Buffer modified? */
 #if HUGE_FILES
 	int fd;
-	long size;
+	struct stat *stat;
 	void *lock;
 #endif
 #if defined(UNDO) && UNDO

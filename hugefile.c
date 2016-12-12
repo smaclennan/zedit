@@ -161,7 +161,9 @@ static void breadpage(struct buff *buff, struct page *page)
 	offset = page->pgoffset * PGSIZE;
 	page->pgoffset = 0;
 
-	if (fstat(buff->fd, &sbuf) || sbuf.st_size != buff->size)
+	if (fstat(buff->fd, &sbuf) ||
+		sbuf.st_size != buff->stat->st_size ||
+		sbuf.st_mtime != buff->stat->st_mtime)
 		goto fatal_mod;
 	if (lseek(buff->fd, offset, SEEK_SET) != offset)
 		goto fatal;
@@ -205,17 +207,25 @@ fatal_mod:
 /* Warning: keeps the fd open. */
 int breadhuge(struct buff *buff, const char *fname)
 {
-	int fd, len, pages, i;
-	struct stat sbuf;
+	int fd, len, pages, i, rc;
 	struct page *page;
+
+	if (buff->fd != -1)
+		return EBUSY;
 
 	fd = open(fname, O_RDONLY | O_BINARY);
 	if (fd < 0)
 		return errno;
 
-	if (fstat(fd, &sbuf)) {
-		close(fd);
-		return EIO;
+	buff->stat = malloc(sizeof(struct stat));
+	if (!buff->stat) {
+		rc = ENOMEM;
+		goto failed;
+	}
+
+	if (fstat(fd, buff->stat)) {
+		rc = EIO;
+		goto failed;
 	}
 
 	bempty(buff);
@@ -223,14 +233,13 @@ int breadhuge(struct buff *buff, const char *fname)
 	/* always read the first page */
 	len = read(fd, buff->curcptr, PGSIZE);
 	if (len <= 0) {
-		close(fd);
-		return EIO;
+		rc = EIO;
+		goto failed;
 	}
 	buff->curpage->plen = len;
 	buff->fd = fd;
-	buff->size = sbuf.st_size;
 
-	pages = (sbuf.st_size + PGSIZE - 1) / PGSIZE;
+	pages = (buff->stat->st_size + PGSIZE - 1) / PGSIZE;
 	page = buff->curpage;
 	for (i = 1; i < pages; ++i) {
 		page = newpage(page);
@@ -246,6 +255,12 @@ int breadhuge(struct buff *buff, const char *fname)
 	start_thread(buff);
 
 	return 0;
+
+failed:
+	close(fd);
+	if (buff->stat)
+		free(buff->stat);
+	return rc;
 }
 
 void makecur(struct buff *buff, struct page *page, int dist)
@@ -276,6 +291,8 @@ void bhugecleanup(struct buff *buff)
 	}
 	do_unlock(buff);
 
+	if (buff->stat)
+		free(buff->stat);
 	free(buff->lock);
 }
 #endif

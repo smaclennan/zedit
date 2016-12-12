@@ -80,7 +80,7 @@ struct zbuff;
 /** Huge file size. If HUGE_FILES is defined, files bigger than
  * HUGE_SIZE will be read on demand.
  */
-#define HUGE_SIZE (1UL << 30)
+#define HUGE_SIZE (2UL << 30)
 
 /*
  * BUFFER MODES

@@ -18,6 +18,7 @@
  */
 
 #include "z.h"
+#include <setjmp.h>
 
 static int innerdsp(int from, int to, struct mark *pmark);
 static void modeflags(struct wdo *wdo);
@@ -173,6 +174,10 @@ void redisplay(void)
 	uncomment(NULL);
 }
 
+#if HUGE_FILES
+jmp_buf zrefresh_jmp;
+#endif
+
 /* Do the actual display update from the buffer */
 void zrefresh(void)
 {
@@ -180,6 +185,10 @@ void zrefresh(void)
 	struct mark pmark;
 	struct wdo *wdo;
 	int tsave;
+
+#if HUGE_FILES
+	setjmp(zrefresh_jmp);
+#endif
 
 	bmrktopnt(Bbuff, &pmark);
 	if (InPaw) {

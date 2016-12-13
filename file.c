@@ -18,6 +18,7 @@
  */
 
 #include "z.h"
+#include <setjmp.h>
 
 static char Fname[PATHMAX + 1];
 int raw_mode;
@@ -175,6 +176,8 @@ static void crfixup(void)
 #error Zedit cannot handle huge threaded
 #endif
 
+extern jmp_buf zrefresh_jmp;
+
 void huge_file_modified(struct buff *buff)
 {
 	struct zbuff *zbuff = cfindzbuff(buff);
@@ -196,6 +199,8 @@ again:
 
 	bempty(buff);
 	breadhuge(buff, zbuff->fname);
+	btostart(buff);
+	longjmp(zrefresh_jmp, 1);
 }
 
 void huge_file_io(struct buff *buff)
@@ -209,6 +214,7 @@ void huge_file_io(struct buff *buff)
 	sprintf(PawStr, "FATAL: huge file %s had an I/O. ", lastpart(zbuff->fname));
 	ask(PawStr);
 	cdelbuff(zbuff);
+	longjmp(zrefresh_jmp, 1);
 }
 #endif
 

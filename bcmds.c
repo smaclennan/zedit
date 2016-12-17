@@ -57,7 +57,7 @@ void Zswitch_to_buffer(void)
 	Nextpart = NULL;
 	if (rc == -1)
 		return;
-	strcpy(Lbufname, was);
+	snprintf(Lbufname, sizeof(Lbufname), "%s", was);
 	uncomment(Curbuff);
 	cswitchto(cfindbuff(Bnames[rc]));
 }

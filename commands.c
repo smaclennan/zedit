@@ -544,7 +544,7 @@ bool promptsave(struct zbuff *tbuff, bool must)
 
 	if (tbuff->buff->bmodf) {
 		if (!must && !save_all) {
-			sprintf(str, "save buffer %s? ", tbuff->bname);
+			snprintf(str, sizeof(str), "save buffer %s? ", tbuff->bname);
 			ok = ask2(str, true);
 			if (ok == BANG)
 				save_all = 1;
@@ -1044,8 +1044,7 @@ void Zcalc(void)
 		return;
 
 	/* We modify the string, leave Calc_str alone */
-	strcpy(str, Calc_str);
-	strcat(str, "=");
+	snprintf(str, sizeof(str), "%s=", Calc_str);
 
 	n = calc(str, &result);
 	switch (n) {

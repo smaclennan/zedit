@@ -428,7 +428,7 @@ static void modeline(struct wdo *wdo)
 
 	tsetpoint(wdo->last, 0);
 	modeline_style();
-	sprintf(str, "%s %s  (%s)  %s: ", ZSTR, VERSION,
+	snprintf(str, sizeof(str), "%s %s  (%s)  %s: ", ZSTR, VERSION,
 			setmodes(wdo->wbuff), wdo->wbuff->bname);
 	tprntstr(str);
 	if (wdo->wbuff->fname) {

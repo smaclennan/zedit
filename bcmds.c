@@ -109,7 +109,7 @@ void Zdelete_buffer(void)
 	char bname[BUFNAMMAX + 1];
 
 	if (Argp) {
-		strcpy(bname, Lbufname);
+		snprintf(bname, sizeof(bname), "%s", Lbufname);
 		do
 			if (getarg("Buffer: ", bname, BUFNAMMAX))
 				return;

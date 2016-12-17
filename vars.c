@@ -33,7 +33,7 @@ void Zset_variable(void)
 		snprintf(pstr, sizeof(pstr), "%s: ", Vars[rc].vname);
 		if (Vars[rc].vtype == V_STRING)
 			if (VARSTR(rc))
-				strcpy(arg, VARSTR(rc));
+				snprintf(arg, sizeof(arg), "%s", VARSTR(rc));
 			else
 				*arg = '\0';
 		else
@@ -138,16 +138,11 @@ static void do_var_match(int i, const char *vin)
 
 static void setavar(const char *vin, bool display)
 {
-	char *ptr, msg[STRMAX + 1];
+	char msg[STRMAX + 1];
 	int i = 0;
 
-	strcpy(msg, vin);
-	ptr = strchr(msg, ' ');
-	if (ptr)
-		*ptr = '\0';
-	ptr = strchr(msg, '\t');
-	if (ptr)
-		*ptr = '\0';
+	snprintf(msg, sizeof(msg), "%s", vin);
+	strtok(msg, " \t");
 
 	for (i = 0; i < NUMVARS; ++i)
 		if (strcasecmp(msg, Vars[i].vname) == 0) {

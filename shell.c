@@ -54,7 +54,7 @@ int do_chdir(struct zbuff *buff)
 	if (buff->fname) {
 		char dir[PATHMAX + 1], *p;
 
-		strcpy(dir, buff->fname);
+		snprintf(dir, sizeof(dir), "%s", buff->fname);
 		p = strrchr(dir, '/');
 		if (p) {
 			*p = '\0';
@@ -219,8 +219,8 @@ static bool _cmdtobuff(struct zbuff *tbuff, const char *icmd)
 		return false;
 	}
 
-	strcpy(p = cmd, icmd);
-	for (arg = 0; arg < 10 && (argv[arg] = wordit(&p)); ++arg)
+	snprintf(cmd, sizeof(cmd), "%s", icmd);
+	for (p = cmd, arg = 0; arg < 10 && (argv[arg] = wordit(&p)); ++arg)
 		;
 
 	if (pipe(from) == 0) {

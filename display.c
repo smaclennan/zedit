@@ -469,9 +469,13 @@ static void modeflags(struct wdo *wdo)
 	t_goto(trow, tcol);
 }
 
+#define PAWCAT(s) n += snprintf(PawStr + n, PAWSTRLEN - n, "%s", s)
+
 /* local routine to set PawStr to the correct mode */
 static char *setmodes(struct zbuff *buff)
 {
+	int n = 0;
+
 	if (!InPaw)	/* we should never be in the Paw but .... */
 		Curcmds = 0;
 
@@ -484,7 +488,7 @@ static char *setmodes(struct zbuff *buff)
 	/* Set PawStr to majour mode and setup any special keys */
 	switch (buff->bmode & MAJORMODE) {
 	case CMODE:
-		strcpy(PawStr, "C");
+		PAWCAT("C");
 		Keys[CR] = ZC_INDENT;
 		Keys['}'] = Keys['#'] = Keys[':'] = ZC_INSERT;
 		if (VAR(VCOMMENTS)) {
@@ -493,31 +497,31 @@ static char *setmodes(struct zbuff *buff)
 		}
 		break;
 	case SHMODE:
-		strcpy(PawStr, "sh");
+		PAWCAT("sh");
 		Keys[CR] = ZSH_INDENT;
 		if (VAR(VCOMMENTS))
 			printchar = cprntchar;
 		break;
 	case TXTMODE:
-		strcpy(PawStr, "Text");
+		PAWCAT("Text");
 		Keys[' '] = Keys[CR] = ZFILL_CHECK;
 		break;
 	default:
-		strcpy(PawStr, "Normal");
+		PAWCAT("Normal");
 	}
 
 	if (buff->bmode & VIEW)
-		strcat(PawStr, " RO");
+		PAWCAT(" RO");
 #if HUGE_FILES
 	if (buff->buff->fd != -1)
-		strcat(PawStr, " H");
+		PAWCAT(" H");
 #endif
 	if (buff->bmode & FILE_COMPRESSED)
-		strcat(PawStr, " Z");
+		PAWCAT(" Z");
 	if (buff->bmode & FILE_CRLF)
-		strcat(PawStr, " CR");
+		PAWCAT(" CR");
 	if (buff->bmode & OVERWRITE)
-		strcat(PawStr, " OVWRT");
+		PAWCAT(" OVWRT");
 
 	settabsize(buff->bmode);
 	return PawStr;

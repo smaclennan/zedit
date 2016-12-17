@@ -49,8 +49,7 @@ static bool cp(char *from, char *to)
 
 static char *make_bakname(char *bakname, int len, const char *fname)
 {
-	snprintf(bakname, len - 1, "%s", fname);
-	strcat(bakname, "~");
+	snprintf(bakname, len, "%s~", fname);
 	return bakname;
 }
 

@@ -713,7 +713,7 @@ void Zmeta_x(void)
 
 	int rc = getplete("M-X: ", cmd, (char **)Cnames, CNAMESIZE, NUMFUNCS);
 	if (rc != -1) {
-		strcpy(cmd, Cnames[rc].name);
+		snprintf(cmd, sizeof(cmd), "%s", Cnames[rc].name);
 		Cmd = Cnames[rc].fnum;
 		Lfunc = ZMETA_X;
 		for (Arg = Arg == 0 ? 1 : Arg; Arg > 0; --Arg)
@@ -841,7 +841,7 @@ static bool matchit(char *extstr, char *str)
 void toggle_mode(int mode)
 {
 	char tmp[PATHMAX], *ext;
-	strcpy(tmp, Curbuff->fname);
+	snprintf(tmp, sizeof(tmp), "%s", Curbuff->fname);
 
 	ext = strrchr(tmp, '.');
 #if ZLIB
@@ -983,6 +983,7 @@ void Zundent(void)
 void Zsetenv(void)
 {
 	char env[STRMAX + 2], set[STRMAX + 1], *p;
+	int len;
 
 	*env = '\0';
 	if (getarg("Env: ", env, STRMAX))
@@ -993,7 +994,7 @@ void Zsetenv(void)
 			error("Variable is too long.");
 			return;
 		}
-		strcpy(set, p);
+		snprintf(set, sizeof(set), "%s", p);
 	} else
 		*set = '\0';
 
@@ -1002,10 +1003,10 @@ void Zsetenv(void)
 		return;
 
 	/* putenv cannot be passed an automatic: alloc the space */
-	p = (char *)calloc(1, strlen(env) + strlen(set));
+	len = strlen(env) + strlen(set) + 1;
+	p = (char *)calloc(1, len);
 	if (p) {
-		strcpy(p, env);
-		strcat(p, set);
+		snprintf(p, len, "%s%s", env, set);
 		if (putenv(p))
 			error("Unable to set environment variable.");
 	} else

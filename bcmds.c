@@ -69,7 +69,7 @@ void Znext_buffer(void)
 	if (!next)
 		next = Bufflist;
 	if (next) {
-		strcpy(Lbufname, Curbuff->bname);
+		snprintf(Lbufname, sizeof(Lbufname), "%s", Curbuff->bname);
 		uncomment(Curbuff);
 		cswitchto(next);
 		reframe();

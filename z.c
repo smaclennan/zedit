@@ -333,7 +333,7 @@ bool delcmd(void)
 	}
 }
 
-char PawStr[COLMAX + 10];
+char PawStr[PAWSTRLEN];
 
 static void _putpaw(const char *str)
 {

@@ -167,6 +167,7 @@ extern bool Argp;
 extern int Arg;				/* must be signed */
 extern int InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
+#define PAWSTRLEN (COLMAX + 10)
 extern int Pawcol, Pawlen, Pshift;
 extern struct zbuff *Paw;
 extern int verbose;

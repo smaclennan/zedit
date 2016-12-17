@@ -30,17 +30,17 @@ void Zset_variable(void)
 		return;
 
 	if (!Argp || Vars[rc].vtype == V_STRING) {
-		sprintf(pstr, "%s: ", Vars[rc].vname);
+		snprintf(pstr, sizeof(pstr), "%s: ", Vars[rc].vname);
 		if (Vars[rc].vtype == V_STRING)
 			if (VARSTR(rc))
 				strcpy(arg, VARSTR(rc));
 			else
 				*arg = '\0';
 		else
-			sprintf(arg, "%d", VAR(rc));
+			snprintf(arg, sizeof(arg), "%d", VAR(rc));
 		if (getarg(pstr, arg, STRMAX))
 			return;
-		sprintf(pstr, "%s %s", Vars[rc].vname, arg);
+		snprintf(pstr, sizeof(pstr), "%s %s", Vars[rc].vname, arg);
 		setavar(pstr, true);
 	} else
 		setavar(Vars[rc].vname, true);

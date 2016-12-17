@@ -78,9 +78,9 @@ static bool zwritefile(char *fname)
 	/* If the file existed, check to see if it has been modified. */
 	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
 		if (sbuf.st_mtime > Curbuff->mtime) {
-			sprintf(PawStr,
-					"WARNING: %s has been modified. Overwrite? ",
-					lastpart(fname));
+			snprintf(PawStr, PAWSTRLEN,
+					 "WARNING: %s has been modified. Overwrite? ",
+					 lastpart(fname));
 			if (ask(PawStr) != YES)
 				return false;
 		}
@@ -89,9 +89,9 @@ static bool zwritefile(char *fname)
 
 #if HUGE_FILES
 	if (Bbuff->fd != -1) {
-		sprintf(PawStr,
-				"WARNING: huge file %s not yet read. Are you sure? ",
-				lastpart(fname));
+		snprintf(PawStr, PAWSTRLEN,
+				 "WARNING: huge file %s not yet read. Are you sure? ",
+				 lastpart(fname));
 		if (ask(PawStr) != YES)
 			return false;
 	}
@@ -100,8 +100,8 @@ static bool zwritefile(char *fname)
 	/* check for links and handle backup file */
 	make_bakname(bakname, sizeof(bakname), fname);
 	if (nlink > 1) {
-		sprintf(PawStr, "WARNING: %s is linked. Preserve? ",
-			lastpart(fname));
+		snprintf(PawStr, PAWSTRLEN, "WARNING: %s is linked. Preserve? ",
+				 lastpart(fname));
 		switch (ask(PawStr)) {
 		case YES:
 			if (VAR(VBACKUP))
@@ -187,9 +187,9 @@ void huge_file_modified(struct buff *buff)
 	}
 
 again:
-	sprintf(PawStr,
-			"WARNING: huge file %s has been modified. Re-read? ",
-			lastpart(zbuff->fname));
+	snprintf(PawStr, PAWSTRLEN,
+			 "WARNING: huge file %s has been modified. Re-read? ",
+			 lastpart(zbuff->fname));
 	if (ask(PawStr) != YES) {
 		if (ask("Delete buffer? ") != YES)
 			goto again;
@@ -211,7 +211,8 @@ void huge_file_io(struct buff *buff)
 		exit(1);
 	}
 
-	sprintf(PawStr, "FATAL: huge file %s had an I/O. ", lastpart(zbuff->fname));
+	snprintf(PawStr, PAWSTRLEN, "FATAL: huge file %s had an I/O. ",
+			 lastpart(zbuff->fname));
 	ask(PawStr);
 	cdelbuff(zbuff);
 	longjmp(zrefresh_jmp, 1);
@@ -382,7 +383,7 @@ bool findfile(char *path)
 			p = &tbname[i < BUFNAMMAX - 3 ? i : BUFNAMMAX - 3];
 			i = 0;
 			do
-				sprintf(p, ".%d", ++i);
+				snprintf(p, 3, ".%d", ++i);
 			while (cfindbuff(tbname));
 		}
 

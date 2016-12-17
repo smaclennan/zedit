@@ -202,7 +202,7 @@ void Zhelp_apropos(void)
 		if (strstr(Cnames[i].name, word)) {
 			if (match++ == 0)
 				wuseother(HELPBUFF);
-			n += sprintf(line + n, "%-24s", Cnames[i].name);
+			n += snprintf(line + n, sizeof(line) - n, "%-24s", Cnames[i].name);
 			if (++j == 3) {
 				binstr(Bbuff, "%s\n", line);
 				j = n = 0;

@@ -142,9 +142,7 @@ static void exit_status(struct zbuff *tbuff, int status)
 		if (status == 0)
 			message(tbuff, "Done.");
 		else {
-			sprintf(PawStr,
-				"Exit %d.",
-				status);
+			snprintf(PawStr, PAWSTRLEN, "Exit %d.", status);
 			message(tbuff, PawStr);
 		}
 	}

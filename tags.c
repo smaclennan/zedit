@@ -54,7 +54,7 @@ static int get_tagfile(void)
 
 	if (Curbuff->fname) {
 		char *p;
-		strcpy(Tagfile, Curbuff->fname);
+		snprintf(Tagfile, sizeof(Tagfile) - 4, "%s", Curbuff->fname);
 		p = strrchr(Tagfile, '/');
 		if (p) {
 			++p;
@@ -62,12 +62,11 @@ static int get_tagfile(void)
 			if (access(Tagfile, F_OK) == 0)
 				return 0;
 		}
-	} else {
-		zgetcwd(Tagfile, sizeof(Tagfile) - 5);
-		strcat(Tagfile, "TAGS");
-		if (access(Tagfile, F_OK) == 0)
-			return 0;
 	}
+
+	snprintf(Tagfile, sizeof(Tagfile), "%sTAGS", zgetcwd(Tagfile, sizeof(Tagfile)));
+	if (access(Tagfile, F_OK) == 0)
+		return 0;
 
 	*Tagfile = '\0';
 	return getfname("Tagfile: ", Tagfile);

@@ -52,7 +52,7 @@ static void doincsrch(const char *prompt, bool forward)
 
 	bmrktopnt(Bbuff, &marks[0]); /* make sure this is set */
 	memset(str, '\0', sizeof(str));
-	strcpy(promptstr, nocase(prompt));
+	snprintf(promptstr, sizeof(promptstr), "%s", nocase(prompt));
 	while (go) {
 		zrefresh();
 		putpaw("%s: %s", promptstr, str);
@@ -80,8 +80,7 @@ static void doincsrch(const char *prompt, bool forward)
 again:
 			if (!bstrsearch(str, forward)) {
 				if (++count == 2) {
-					if (strstr(promptstr, "Wrap") == NULL)
-						strcat(promptstr, " (Wrapped)");
+					snprintf(promptstr, sizeof(promptstr), "%s (Wrapped)", nocase(prompt));
 					count = 0;
 					btostart(Bbuff);
 					goto again;

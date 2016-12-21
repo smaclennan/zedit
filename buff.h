@@ -126,7 +126,7 @@ void undo_del(struct buff *buff, int size);
 void undo_clear(struct buff *buff);
 int do_undo(struct buff *buff);
 #else
-#define undo_add(b, s, c)
+#define undo_add(b, s)
 #define undo_del(b, s)
 #define undo_clear(b)
 #define do_undo(b) 0

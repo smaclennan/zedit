@@ -189,7 +189,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 		size -= n;
 		data += n;
 		appended += n;
-		undo_add(buff, n, false);
+		undo_add(buff, n);
 	}
 
 	/* Put the rest in new pages */
@@ -203,7 +203,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 		memcpy(buff->curcptr, data, n);
 		curplen(buff) = n;
 		makeoffset(buff, n);
-		undo_add(buff, n, appended != 0);
+		undo_add(buff, n);
 		size -= n;
 		data += n;
 		appended += n;
@@ -252,7 +252,7 @@ int bindata(struct buff *buff, Byte *data, unsigned size)
 		buff->curcptr += size;
 		buff->curchar += size;
 		curplen(buff) += size;
-		undo_add(buff, size, false);
+		undo_add(buff, size);
 		return size;
 	}
 
@@ -266,7 +266,7 @@ int bindata(struct buff *buff, Byte *data, unsigned size)
 		memcpy(buff->curcptr, data, n);
 		data += n;
 		size -= n;
-		undo_add(buff, n, copied > 0);
+		undo_add(buff, n);
 		copied += n;
 		buff->curcptr += n;
 		buff->curchar += n;
@@ -281,7 +281,7 @@ int bindata(struct buff *buff, Byte *data, unsigned size)
 		memcpy(npage->pdata, data, n);
 		data += n;
 		size -= n;
-		undo_add(buff, n, copied > 0);
+		undo_add(buff, n);
 		copied += n;
 
 		makecur(buff, npage, n);

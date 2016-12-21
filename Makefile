@@ -87,7 +87,7 @@ main: main.c $(LFILES) $(L1FILES)
 	@rm -rf tmpdir
 	@mkdir tmpdir
 	@cp $+ $(LHFILES) tmpdir
-	@echo -e "all:\n\t$(CC) -DUNDO -DPGSIZE=1024 -g -o $@ $+" > tmpdir/Makefile
+	@echo -e "all:\n\t$(CC) -DPGSIZE=1024 -g -o $@ $+" > tmpdir/Makefile
 	@make -C tmpdir
 
 # Make all c files depend on all .h files

@@ -132,7 +132,7 @@ void Zyank(void)
 	}
 	btostart(Killbuff);
 #if UNDO
-	undo_add(Bbuff, bcopyrgn(tmark, Bbuff), false);
+	undo_add(Bbuff, bcopyrgn(tmark, Bbuff));
 #else
 	bcopyrgn(tmark, Bbuff);
 #endif

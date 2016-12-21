@@ -121,13 +121,12 @@ int bindata(struct buff *buff, Byte *, unsigned);
 #if defined(UNDO) && UNDO
 extern unsigned long undo_total; /* Not thread safe */
 
-void undo_add(struct buff *buff, int size, bool clumped);
+void undo_add(struct buff *buff, int size);
 void undo_del(struct buff *buff, int size);
 void undo_clear(struct buff *buff);
 int do_undo(struct buff *buff);
 
 /* These must be implemented by the app. It is safe to return 0. */
-int undo_add_clumped(struct buff *buff, int size);
 int undo_del_clumped(struct buff *buff, int size);
 #else
 #define undo_add(b, s, c)

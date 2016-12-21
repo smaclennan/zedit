@@ -30,6 +30,7 @@ struct undo {
 	struct undo *prev;
 	Byte *data;
 	unsigned long offset;
+	struct mark mrk;
 	int size;
 };
 
@@ -75,22 +76,54 @@ static void free_undo(void **tail)
 	}
 }
 
+static bool add_clumped(struct buff *buff, struct undo *undo, int size)
+{
+	int left;
+	struct mark *mrk = &undo->mrk;
+
+	if (mrk->mbuff != buff)
+		return false;
+
+	/* move the undo mark */
+	left = mrk->mpage->plen - mrk->moffset;
+	if (left >= size)
+		mrk->moffset += size;
+	else {
+		size -= left;
+		while (size > 0) {
+			mrk->mpage = mrk->mpage->nextp;
+			mrk->moffset = 0;
+			if (!mrk->mpage)
+				return false;
+			if (mrk->mpage->plen >= size) {
+				mrk->moffset = size;
+				size = 0;
+			} else
+				size -= mrk->mpage->plen;
+		}
+	}
+
+	return bisatmrk(buff, mrk);
+}
+
 /* Exports */
 
-void undo_add(struct buff *buff, int size, bool clumped)
+void undo_add(struct buff *buff, int size)
 {
 	struct undo *undo = (struct undo *)buff->undo_tail;
 
 	if (buff->in_undo)
 		return;
 
-	if (undo && is_insert(undo) && (clumped || undo_add_clumped(buff, size))) {
+	if (undo && is_insert(undo) && add_clumped(buff, undo, size)) {
 		/* clump with last undo */
 		undo->size += size;
 		undo->offset += size;
 	} else
 		/* need a new undo */
 		undo = new_undo(buff, &buff->undo_tail, true, size);
+
+	bmrktopnt(buff, &undo->mrk);
 }
 
 static void undo_append(struct undo *undo, Byte *data)
@@ -152,6 +185,7 @@ void undo_del(struct buff *buff, int size)
 		return;
 
 	memcpy(undo->data, buff->curcptr, size);
+	bmrktopnt(buff, &undo->mrk);
 }
 
 void undo_clear(struct buff *buff)

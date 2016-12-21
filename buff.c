@@ -101,7 +101,7 @@ bool binsert(struct buff *buff, Byte byte)
 	curplen(buff)++;
 	buff->bmodf = true;
 
-	undo_add(buff, 1, false);
+	undo_add(buff, 1);
 
 	foreach_global_pagemark(buff, btmark, buff->curpage)
 		if (btmark->moffset >= buff->curchar)

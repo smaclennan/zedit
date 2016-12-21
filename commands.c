@@ -1081,21 +1081,6 @@ void Zdos2unix(void)
 }
 
 #if UNDO
-int undo_add_clumped(struct buff *buff, int size)
-{	/* commands we clump together */
-	switch (Lfunc) {
-	case ZINSERT:
-	case ZNEWLINE:
-	case ZTAB:
-	case ZC_INSERT:
-	case ZC_INDENT:
-	case ZSH_INDENT:
-		return 1;
-	default:
-		return 0;
-	}
-}
-
 int undo_del_clumped(struct buff *buff, int size)
 {
 	if (size == 1)

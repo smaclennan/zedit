@@ -193,5 +193,4 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-int undo_add_clumped(struct buff *buff, int size) { return 0; }
 int undo_del_clumped(struct buff *buff, int size) { return 0; }

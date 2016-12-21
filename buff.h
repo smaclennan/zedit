@@ -125,9 +125,6 @@ void undo_add(struct buff *buff, int size);
 void undo_del(struct buff *buff, int size);
 void undo_clear(struct buff *buff);
 int do_undo(struct buff *buff);
-
-/* These must be implemented by the app. It is safe to return 0. */
-int undo_del_clumped(struct buff *buff, int size);
 #else
 #define undo_add(b, s, c)
 #define undo_del(b, s)

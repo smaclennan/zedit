@@ -1081,17 +1081,6 @@ void Zdos2unix(void)
 }
 
 #if UNDO
-int undo_del_clumped(struct buff *buff, int size)
-{
-	if (size == 1)
-		switch (Lfunc) {
-		case ZDELETE_CHAR: return 1;
-		case ZDELETE_PREVIOUS_CHAR: return -1;
-		}
-	return 0;
-}
-
-
 void Zundo(void)
 {
 	if (do_undo(Bbuff))

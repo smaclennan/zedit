@@ -46,6 +46,7 @@ static struct undo *new_undo(struct buff *buff, void **tail, bool insert, int si
 
 	undo->size = size;
 	undo->offset = blocation(buff);
+	bmrktopnt(buff, &undo->mrk);
 	if (!insert) {
 		undo->data = (Byte *)malloc(size);
 		if (!undo->data) {
@@ -81,9 +82,6 @@ static bool add_clumped(struct buff *buff, struct undo *undo, int size)
 	int left;
 	struct mark *mrk = &undo->mrk;
 
-	if (mrk->mbuff != buff)
-		return false;
-
 	/* move the undo mark */
 	left = mrk->mpage->plen - mrk->moffset;
 	if (left >= size)
@@ -104,6 +102,28 @@ static bool add_clumped(struct buff *buff, struct undo *undo, int size)
 	}
 
 	return bisatmrk(buff, mrk);
+}
+
+/* Always within current buffer page... may not be current mrk page */
+static int del_clumped(struct buff *buff, struct undo *undo, int size)
+{
+	struct mark *mrk = &undo->mrk;
+
+	if (bisatmrk(buff, mrk))
+		return 1;
+
+	/* Move mark back */
+	if (mrk->moffset >= size) {
+		mrk->moffset -= size;
+	} else if (mrk->mpage->prevp) { /* paranoia */
+		mrk->mpage = mrk->mpage->prevp;
+		mrk->moffset = mrk->mpage->plen - size;
+	}
+
+	if (bisatmrk(buff, mrk))
+		return -1;
+
+	return 0;
 }
 
 /* Exports */
@@ -167,9 +187,8 @@ void undo_del(struct buff *buff, int size)
 	if (size == 0) /* this can happen on page boundaries */
 		return;
 
-	/* We only merge simple deletes */
 	if (undo && !is_insert(undo))
-		switch (undo_del_clumped(buff, size)) {
+		switch (del_clumped(buff, undo, size)) {
 		case 1: /* delete forward */
 			undo_append(undo, buff->curcptr);
 			return;
@@ -185,7 +204,6 @@ void undo_del(struct buff *buff, int size)
 		return;
 
 	memcpy(undo->data, buff->curcptr, size);
-	bmrktopnt(buff, &undo->mrk);
 }
 
 void undo_clear(struct buff *buff)

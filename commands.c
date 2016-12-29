@@ -22,6 +22,21 @@
 int Arg;
 bool Argp;
 
+int bisword(int c)
+{
+	return  isalnum(c) || c == '_' || c == '.' || c == '-';
+}
+
+int bistoken(int c)
+{
+	return bisword(c) || c == '/';
+}
+
+int biswhite(int c)
+{
+	return c == ' ' || c == '\t';
+}
+
 /* Word COMMANDS */
 
 /* Find the start of a word. */
@@ -532,6 +547,48 @@ void Zsave_and_exit(void)
 	Zexit();
 }
 
+/* ask Yes/No question.
+ * Returns YES, NO, BANG, or ABORT
+ */
+static int ask2(const char *msg, bool allow_bang)
+{
+	int rc = BADCHAR;
+	unsigned cmd;
+
+	putpaw("%s", msg);
+	while (rc == BADCHAR)
+		switch (cmd = tgetkb()) {
+		case 'y':
+		case 'Y':
+			rc = YES;
+			break;
+		case 'N':
+		case 'n':
+			rc = NO;
+			break;
+		case '!':
+			if (allow_bang)
+				rc = BANG;
+			else
+				tbell();
+			break;
+		default:
+			tbell();
+			if (Keys[cmd] == ZABORT)
+				rc = ABORT;
+		}
+	clrpaw();
+	return rc;
+}
+
+/* ask Yes/No question.
+ * Returns YES, NO, or ABORT
+ */
+int ask(const char *msg)
+{
+	return ask2(msg, false);
+}
+
 /* Prompt to save buffer if the buffer has been modified.
  * Always saves if 'must' is true or saveOnExit is set.
  * Returns false if the user ABORTS the prompt.
@@ -685,6 +742,18 @@ void Zarg(void)
 	}
 	clrpaw();
 	CMD(Keys[Cmd]);
+}
+
+/* Delay before displaying a prompt and wait for a cmd */
+int delayprompt(const char *msg)
+{
+	int cmd, rc = tdelay(600);
+	if (rc)
+		putpaw(msg);
+	cmd = tgetkb();
+	if (rc)
+		clrpaw();
+	return cmd;
 }
 
 static void do_prefix_cmd(const char *prompt, int mask)
@@ -1092,3 +1161,13 @@ void Zundo(void)
 #else
 void Zundo(void) { tbell(); }
 #endif
+
+/* Put in the right number of tabs and spaces */
+void tindent(int arg)
+{
+	if (VAR(VSPACETAB) == 0)
+		for (; arg >= Tabsize; arg -= Tabsize)
+			binsert(Bbuff, '\t');
+	while (arg-- > 0)
+		binsert(Bbuff, ' ');
+}

@@ -32,6 +32,24 @@ void delinit(void)
 	Killbuff = bcreate();
 }
 
+/* Was the last command a delete to kill buffer command? */
+bool delcmd(void)
+{
+	switch (Lfunc) {
+	case ZDELETE_TO_EOL:
+	case ZDELETE_LINE:
+	case ZDELETE_REGION:
+	case ZDELETE_WORD:
+	case ZDELETE_PREVIOUS_WORD:
+	case ZCOPY_REGION:
+	case ZCOPY_WORD:
+	case ZAPPEND_KILL:
+		return true;
+	default:
+		return false;
+	}
+}
+
 static void copytomrk(struct mark *tmark)
 {
 	if (delcmd())

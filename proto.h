@@ -157,7 +157,6 @@ void os_init(void);
 /* General routines */
 
 int ask(const char *);
-int ask2(const char *, bool);
 int bgetcol(bool, int);
 int bmakecol(int);
 void zswitchto(struct zbuff *);
@@ -237,8 +236,6 @@ void winit(void);
 void checkpipes(int type);
 void siginit(void);
 bool unvoke(struct zbuff *);
-
-const char *func2name(Byte func);
 
 /* for getfname */
 int getfname(const char *, char *);

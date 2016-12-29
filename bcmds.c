@@ -30,6 +30,43 @@ static struct zbuff *Bufflist_tail;
 struct zbuff *Curbuff;		/* the current buffer */
 struct buff *Bbuff;         /* the current low-level buffer */
 
+/* Get the word at the current buffer point and store in 'word'.
+ * Get at the most 'max' characters.
+ * Leaves the point alone.
+ */
+int getbword(char word[], int max, int (*valid)(int))
+{
+	int i;
+	struct mark tmark;
+
+	bmrktopnt(Bbuff, &tmark);
+	if (!bistoken(Buff()))
+		bmoveto(Bbuff, bistoken, BACKWARD);
+	bmovepast(Bbuff, bistoken, BACKWARD);
+	for (i = 0; !bisend(Bbuff) && valid(Buff()) && i < max; ++i, bmove1(Bbuff))
+		word[i] = Buff();
+	word[i] = '\0';
+	bpnttomrk(Bbuff, &tmark);
+	return i;
+}
+
+/* Get the current buffer text and store in 'txt'.
+ * Get at the most 'max' characters.
+ * Leaves the point alone.
+ */
+char *getbtxt(char txt[], int max)
+{
+	int i;
+	struct mark tmark;
+
+	bmrktopnt(Bbuff, &tmark);
+	for (btostart(Bbuff), i = 0; !bisend(Bbuff) && i < max; bmove1(Bbuff), ++i)
+		txt[i] = Buff();
+	txt[i] = '\0';
+	bpnttomrk(Bbuff, &tmark);
+	return txt;
+}
+
 static void switchto_part(void)
 {
 	char word[STRMAX + 1];
@@ -127,6 +164,13 @@ void Zdelete_buffer(void)
 }
 
 #define WASTED		(BUFNAMMAX + 14)
+
+/* Limit a filename to at most Colmax - 'num' cols */
+char *limit(char *fname, int num)
+{
+	int off = strlen(fname) - (Colmax - num);
+	return off > 0 ? fname + off : fname;
+}
 
 static void lstbuff(struct zbuff *tbuff)
 {

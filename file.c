@@ -23,6 +23,16 @@
 static char Fname[PATHMAX + 1];
 int raw_mode;
 
+/* Return a pointer to the start of the last part of fname */
+char *lastpart(char *fname)
+{
+	char *p = strrchr(fname, '/');
+	if (p)
+		return p + 1;
+	else
+		return fname;
+}
+
 static bool cp(char *from, char *to)
 {
 	FILE *in, *out;

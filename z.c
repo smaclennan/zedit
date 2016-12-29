@@ -57,6 +57,49 @@ static void findpath(char *path, const char *f, void (*action)(const char *))
 		action(f);
 }
 
+char PawStr[PAWSTRLEN];
+
+static void _putpaw(const char *str)
+{
+	int trow = Prow, tcol = Pcol;
+
+	if (InPaw)
+		return;
+
+	tsetpoint(Rowmax - 1, 0);
+	tprntstr(str);
+	tcleol();
+	tsetpoint(trow, tcol);
+	tforce();
+	tflush();
+}
+
+/* Put a string into the PAW. */
+void putpaw(const char *fmt, ...)
+{
+	char str[STRMAX];
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(str, sizeof(str), fmt, ap);
+	va_end(ap);
+
+	_putpaw(str);
+}
+
+void error(const char *fmt, ...)
+{
+	char str[STRMAX];
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(str, sizeof(str), fmt, ap);
+	va_end(ap);
+
+	tbell();
+	_putpaw(str);
+}
+
 /* NOTE: Dotty blocks */
 static void dotty(void)
 {
@@ -246,213 +289,6 @@ int main(int argc, char **argv)
 
 	while (1)
 		execute();
-}
-
-/* Support functions */
-
-/* For debugging */
-const char *func2name(Byte func)
-{
-	int i;
-
-	for (i = 0; i < NUMFUNCS; ++i)
-		if (Cnames[i].fnum == func)
-			return Cnames[i].name;
-	return "???";
-}
-
-/* ask Yes/No question.
- * Returns YES, NO, BANG, or ABORT
- */
-int ask2(const char *msg, bool allow_bang)
-{
-	int rc = BADCHAR;
-	unsigned cmd;
-
-	putpaw("%s", msg);
-	while (rc == BADCHAR)
-		switch (cmd = tgetkb()) {
-		case 'y':
-		case 'Y':
-			rc = YES;
-			break;
-		case 'N':
-		case 'n':
-			rc = NO;
-			break;
-		case '!':
-			if (allow_bang)
-				rc = BANG;
-			else
-				tbell();
-			break;
-		default:
-			tbell();
-			if (Keys[cmd] == ZABORT)
-				rc = ABORT;
-		}
-	clrpaw();
-	return rc;
-}
-
-/* ask Yes/No question.
- * Returns YES, NO, or ABORT
- */
-int ask(const char *msg)
-{
-	return ask2(msg, false);
-}
-
-/* Delay before displaying a prompt and wait for a cmd */
-int delayprompt(const char *msg)
-{
-	int cmd, rc = tdelay(600);
-	if (rc)
-		putpaw(msg);
-	cmd = tgetkb();
-	if (rc)
-		clrpaw();
-	return cmd;
-}
-
-/* Was the last command a delete to kill buffer command? */
-bool delcmd(void)
-{
-	switch (Lfunc) {
-	case ZDELETE_TO_EOL:
-	case ZDELETE_LINE:
-	case ZDELETE_REGION:
-	case ZDELETE_WORD:
-	case ZDELETE_PREVIOUS_WORD:
-	case ZCOPY_REGION:
-	case ZCOPY_WORD:
-	case ZAPPEND_KILL:
-		return true;
-	default:
-		return false;
-	}
-}
-
-char PawStr[PAWSTRLEN];
-
-static void _putpaw(const char *str)
-{
-	int trow = Prow, tcol = Pcol;
-
-	if (InPaw)
-		return;
-
-	tsetpoint(Rowmax - 1, 0);
-	tprntstr(str);
-	tcleol();
-	tsetpoint(trow, tcol);
-	tforce();
-	tflush();
-}
-
-/* Put a string into the PAW. */
-void putpaw(const char *fmt, ...)
-{
-	char str[STRMAX];
-	va_list ap;
-
-	va_start(ap, fmt);
-	vsnprintf(str, sizeof(str), fmt, ap);
-	va_end(ap);
-
-	_putpaw(str);
-}
-
-void error(const char *fmt, ...)
-{
-	char str[STRMAX];
-	va_list ap;
-
-	va_start(ap, fmt);
-	vsnprintf(str, sizeof(str), fmt, ap);
-	va_end(ap);
-
-	tbell();
-	_putpaw(str);
-}
-
-/* Get the word at the current buffer point and store in 'word'.
- * Get at the most 'max' characters.
- * Leaves the point alone.
- */
-int getbword(char word[], int max, int (*valid)(int))
-{
-	int i;
-	struct mark tmark;
-
-	bmrktopnt(Bbuff, &tmark);
-	if (!bistoken(Buff()))
-		bmoveto(Bbuff, bistoken, BACKWARD);
-	bmovepast(Bbuff, bistoken, BACKWARD);
-	for (i = 0; !bisend(Bbuff) && valid(Buff()) && i < max; ++i, bmove1(Bbuff))
-		word[i] = Buff();
-	word[i] = '\0';
-	bpnttomrk(Bbuff, &tmark);
-	return i;
-}
-
-/* Get the current buffer text and store in 'txt'.
- * Get at the most 'max' characters.
- * Leaves the point alone.
- */
-char *getbtxt(char txt[], int max)
-{
-	int i;
-	struct mark tmark;
-
-	bmrktopnt(Bbuff, &tmark);
-	for (btostart(Bbuff), i = 0; !bisend(Bbuff) && i < max; bmove1(Bbuff), ++i)
-		txt[i] = Buff();
-	txt[i] = '\0';
-	bpnttomrk(Bbuff, &tmark);
-	return txt;
-}
-
-int bisword(int c)
-{
-	return  isalnum(c) || c == '_' || c == '.' || c == '-';
-}
-
-int bistoken(int c)
-{
-	return bisword(c) || c == '/';
-}
-
-int biswhite(int c)
-{
-	return c == ' ' || c == '\t';
-}
-
-/* Put in the right number of tabs and spaces */
-void tindent(int arg)
-{
-	if (VAR(VSPACETAB) == 0)
-		for (; arg >= Tabsize; arg -= Tabsize)
-			binsert(Bbuff, '\t');
-	while (arg-- > 0)
-		binsert(Bbuff, ' ');
-}
-
-/* Limit a filename to at most Colmax - 'num' cols */
-char *limit(char *fname, int num)
-{
-	int off = strlen(fname) - (Colmax - num);
-	return off > 0 ? fname + off : fname;
-}
-
-/* Return a pointer to the start of the last part of fname */
-char *lastpart(char *fname)
-{
-	char *p = strrchr(fname, '/');
-	if (p)
-		return p + 1;
-	else
-		return fname;
 }
 
 void Zstats(void)

@@ -57,9 +57,9 @@ struct buff {
 	Byte *curcptr;				/**< Point position in the page. */
 	bool bmodf;					/**< Buffer modified? */
 #if HUGE_FILES
-	int fd;
-	struct stat *stat;
-	void *lock;
+	int fd;						/**< File descriptor for huge files. */
+	struct stat *stat;			/**< Stat buffer for huge files. */
+	void *lock;					/**< Lock for huge files. */
 #endif
 #if defined(UNDO) && UNDO
 	bool in_undo;				/**< Are we currently performing an undo? */
@@ -166,7 +166,7 @@ extern int NumBuffs, NumPages;
 struct page {
 	Byte pdata[PGSIZE];		/**< Page data. */
 #if HUGE_FILES
-	unsigned pgoffset;      /**< Offset in file or 0 if in memory. */
+	unsigned pgoffset;      /**< Huge files offset in file or 0 if in memory. */
 #endif
 	unsigned plen;          /**< Current length of the page. */
 	struct page *prevp;		/**< List of pages. */

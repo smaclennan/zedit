@@ -185,10 +185,8 @@ static void breadpage(struct buff *buff, struct page *page)
 	struct page *tp;
 
 	for (tp = buff->firstp; tp; tp = tp->nextp)
-		if (tp->pgoffset) {
-			Dbg("Problem: page offset %u\n", tp->pgoffset);
+		if (tp->pgoffset)
 			breadpage(buff, tp);
-		}
 
 	close(buff->fd);
 	buff->fd = -1;

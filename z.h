@@ -147,15 +147,17 @@ extern struct zbuff *Curbuff;
 extern struct buff *Bbuff;
 
 struct zbuff {
-	char *bname;            /* buffer name */
-	char *fname;            /* file associated with buffer */
-	unsigned bmode;		    /* buffer mode */
-	time_t mtime;           /* file modified time */
-	struct mark *umark;     /* user mark */
-	struct buff *buff;	    /* low-level buffer */
-	void *chead, *ctail;	/* list of comments in file */
-	Byte comchar;			/* single char comment character */
-	struct zbuff *prev, *next;	/* list of buffers */
+	char *bname;            /**< buffer name */
+	char *fname;            /**< file associated with buffer */
+	unsigned bmode;		    /**< buffer mode */
+	time_t mtime;           /**< file modified time */
+	struct mark *umark;     /**< user mark */
+	struct buff *buff;	    /**< low-level buffer */
+	void *chead;			/**< list of comments in file */
+	void *ctail;		    /**< list of comments in file */
+	Byte comchar;			/**< single char comment character */
+	struct zbuff *prev;		/**< list of buffers */
+	struct zbuff *next;		/**< list of buffers */
 };
 
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)

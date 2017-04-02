@@ -24,10 +24,6 @@
 
 #include "buff.h"
 
-#ifdef WIN32
-#define strdup _strdup
-#endif
-
 static char *dbgfname;
 
 const char *Dbgfname(const char *fname)
@@ -48,17 +44,14 @@ void Dbg(const char *fmt, ...)
 {
 	va_list arg_ptr;
 
+	va_start(arg_ptr, fmt);
 	if (dbgfname) {
 		FILE *fp = fopen(dbgfname, "a");
 		if(fp) {
-			va_start(arg_ptr, fmt);
 			vfprintf(fp, fmt, arg_ptr);
-			va_end(arg_ptr);
 			fclose(fp);
 		}
-	} else {
-		va_start(arg_ptr, fmt);
+	} else
 		vfprintf(stderr, fmt, arg_ptr);
-		va_end(arg_ptr);
-	}
+	va_end(arg_ptr);
 }

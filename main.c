@@ -203,7 +203,6 @@ int main(int argc, char *argv[])
 	size = blength(buff); /* real size */
 	printf("Buffer is %d\n", size);
 
-	tkbdinit();
 	tinit();
 
 #ifdef WIN32

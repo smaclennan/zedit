@@ -64,7 +64,6 @@
 #define NUMKEYS			(128 + 128 + 128)
 
 /* kbd.c */
-void tkbdinit(void);
 int tgetkb(void);
 int tkbrdy(void);
 int tdelay(int ms);

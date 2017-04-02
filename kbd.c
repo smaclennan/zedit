@@ -173,8 +173,6 @@ int tdelay(int ms)
 	return poll(&stdin_fd, 1, ms) != 1;
 }
 
-void tkbdinit(void) {}
-
 #ifdef TERMCAP
 static char *key_names[] = {
 	"ku",

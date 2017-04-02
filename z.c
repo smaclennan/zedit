@@ -252,7 +252,6 @@ int main(int argc, char **argv)
 	bmrktopnt(Bbuff, &tmark);
 	display_init(&tmark);
 
-	tkbdinit();
 	tinit();
 	tainit();
 	fd_init();

@@ -166,7 +166,6 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	tkbdinit();
 	tinit();
 	tsize(&rows, &cols);
 	--rows;

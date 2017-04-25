@@ -41,8 +41,8 @@ static void dummy_bsetmod(struct buff *buff) {}
  */
 void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
 
-int NumBuffs; /**< Current number of buffers. Not thread safe. */
-int NumPages; /**< Current number of pages. Not thread safe. */
+int NumBuffs; /**< Current number of buffers. */
+int NumPages; /**< Current number of pages. */
 
 /** Create a buffer and allocate the first page. */
 struct buff *bcreate(void)
@@ -55,7 +55,7 @@ struct buff *bcreate(void)
 			return NULL;
 		}
 		makecur(buf, buf->firstp, 0);
-		++NumBuffs;
+		atomic_inc(NumBuffs);
 #if HUGE_FILES
 		buf->fd = -1;
 #endif
@@ -83,7 +83,7 @@ void bdelbuff(struct buff *tbuff)
 
 	free(tbuff);	/* free the buffer proper */
 
-	--NumBuffs;
+	atomic_dec(NumBuffs);
 }
 
 /** Insert a byte into a buffer. Returns false if more space is needed
@@ -607,7 +607,7 @@ struct page *newpage(struct page *curpage)
 		curpage->nextp = page;
 	}
 
-	++NumPages;
+	atomic_inc(NumPages);
 	return page;
 }
 
@@ -661,5 +661,5 @@ void freepage(struct buff *buff, struct page *page)
 		buff->firstp = page->nextp;
 
 	free(page);
-	--NumPages;
+	atomic_dec(NumPages);
 }

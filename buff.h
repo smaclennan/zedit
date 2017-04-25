@@ -147,7 +147,6 @@ void Dbg(const char *fmt, ...);
 #define O_BINARY 0
 #endif
 
-/* These are for stats only and are not thread safe */
 extern int NumBuffs, NumPages;
 
 /* Page struct and functions. */
@@ -236,6 +235,15 @@ extern void (*huge_file_cb)(struct buff *buff, int rc);
 void default_huge_file_cb(struct buff *buff, int rc);
 int breadhuge(struct buff *buff, const char *fname);
 void bhugecleanup(struct buff *buff);
+#endif
+
+#ifdef __GNUC__
+#define atomic_inc(a) __sync_fetch_and_add(&a, 1)
+#define atomic_dec(a) __sync_fetch_and_sub(&a, 1)
+#else
+#warning no atomic functions
+#define atomic_inc(a) ++(a)
+#define atomic_dec(a) --(a)
 #endif
 
 #endif

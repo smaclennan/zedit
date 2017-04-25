@@ -82,7 +82,7 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
 		}
 #endif
 		bmrktopnt(buff, mptr);
-		++NumMarks;
+		atomic_inc(NumMarks);
 	}
 	return mptr;
 }
@@ -108,7 +108,7 @@ void _bdelmark(struct mark *mptr, struct mark **tail)
 		} else
 #endif
 			free((char *)mptr);
-		--NumMarks;
+		atomic_inc(NumMarks);
 	}
 }
 

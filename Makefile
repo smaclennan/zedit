@@ -4,7 +4,7 @@ ZEXE = ze
 
 CC = cc
 #CC = gcc -std=c11
-#CC = clang -fno-color-diagnostics
+CC = clang -fno-color-diagnostics
 
 # Portable C Compiler
 #LIBDIR=/usr/local/lib/pcc/x86_64-unknown-linux-gnu/1.2.0.DEVEL/lib

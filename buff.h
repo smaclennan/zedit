@@ -240,6 +240,9 @@ void bhugecleanup(struct buff *buff);
 #ifdef __GNUC__
 #define atomic_inc(a) __sync_fetch_and_add(&a, 1)
 #define atomic_dec(a) __sync_fetch_and_sub(&a, 1)
+#elif defined(WIN32)
+#define atomic_inc(a) InterlockedIncrement(&a)
+#define atomic_dec(a) InterlockedDecrement(&a)
 #else
 #warning no atomic functions
 #define atomic_inc(a) ++(a)

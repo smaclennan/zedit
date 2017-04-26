@@ -66,10 +66,8 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
 	struct mark *mptr;
 
 #ifdef HAVE_FREEMARK
-	if (freemark) {
-		mptr = freemark;
-		freemark = NULL;
-	} else
+	mptr = atomic_exchange(&freemark, freemark, NULL);
+	if (!mptr)
 #endif
 		mptr = (struct mark *)calloc(1, sizeof(struct mark));
 	if (mptr) {
@@ -102,10 +100,8 @@ void _bdelmark(struct mark *mptr, struct mark **tail)
 		}
 #endif
 #ifdef HAVE_FREEMARK
-		if (freemark == NULL) {
-			freemark = mptr;
-			freemark->prev = freemark->next = NULL;
-		} else
+		mptr->prev = mptr->next = NULL;
+		if (atomic_exchange(&freemark, NULL, mptr))
 #endif
 			free((char *)mptr);
 		atomic_inc(NumMarks);

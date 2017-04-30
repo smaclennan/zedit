@@ -44,6 +44,55 @@ static struct mark *freeumark;
 static void (*printchar)(Byte ichar) = tprntchar;
 
 #if HUGE_FILES
+#if HUGE_THREADED
+/* Because these callbacks could be called from the thread, we
+ * currently cannot handle HUGE_THREADED.
+ */
+#error Zedit cannot handle huge threaded
+#endif
+
+static jmp_buf zrefresh_jmp;
+
+static void huge_file_modified(struct buff *buff)
+{
+	struct zbuff *zbuff = cfindzbuff(buff);
+	if (!zbuff) { /* can't happen */
+		printf("\n\nUnable to get zbuff for huge buffer\n\n\n");
+		exit(1);
+	}
+
+again:
+	snprintf(PawStr, PAWSTRLEN,
+			 "WARNING: huge file %s has been modified. Re-read? ",
+			 lastpart(zbuff->fname));
+	if (ask(PawStr) != YES) {
+		if (ask("Delete buffer? ") != YES)
+			goto again;
+		cdelbuff(zbuff);
+		return;
+	}
+
+	bempty(buff);
+	breadhuge(buff, zbuff->fname);
+	btostart(buff);
+	longjmp(zrefresh_jmp, 1);
+}
+
+static void huge_file_io(struct buff *buff)
+{
+	struct zbuff *zbuff = cfindzbuff(buff);
+	if (!zbuff) { /* can't happen */
+		printf("\n\nUnable to get zbuff for huge buffer\n\n\n");
+		exit(1);
+	}
+
+	snprintf(PawStr, PAWSTRLEN, "FATAL: huge file %s had an I/O. ",
+			 lastpart(zbuff->fname));
+	ask(PawStr);
+	cdelbuff(zbuff);
+	longjmp(zrefresh_jmp, 1);
+}
+
 static void modeline_invalidate(struct buff *buff, int rc)
 {
 	switch (rc) {
@@ -173,10 +222,6 @@ void redisplay(void)
 	/* This is needed to set Comstate to false */
 	uncomment(NULL);
 }
-
-#if HUGE_FILES
-jmp_buf zrefresh_jmp;
-#endif
 
 /* Do the actual display update from the buffer */
 void zrefresh(void)

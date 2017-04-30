@@ -251,7 +251,3 @@ void wgoto(struct buff *);
 void resetcomments(void);
 void uncomment(struct zbuff *buff);
 void cprntchar(Byte ch);
-
-/* huge files */
-void huge_file_modified(struct buff *buff);
-void huge_file_io(struct buff *buff);

@@ -150,8 +150,33 @@ static int calc_g_num(struct calc *c, char **p)
 
 		if (c->is_float)
 			push_float(c, strtod(*p, &e));
-		else
-			push_num(c, strtol(*p, &e, 0));
+		else {
+			long num = strtol(*p, &e, 0);
+			switch (*e) {
+			case 't':
+			case 'T':
+				num *= 1024;
+				/* fall thru */
+			case 'g':
+			case 'G':
+				num *= 1024;
+				/* fall thru */
+			case 'm':
+			case 'M':
+				num *= 1024;
+				/* fall thru */
+			case 'k':
+			case 'K':
+				num *= 1024;
+				++e;
+				break;
+			case 'p':
+			case 'P':
+				num *= 4096; /* page */
+				++e;
+			}
+			push_num(c, num);
+		}
 		*p = e - 1;
 		**p = 'N';
 	}

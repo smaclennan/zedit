@@ -1105,7 +1105,7 @@ void Zzap_to_char(void)
 void Zcalc(void)
 {
 	static char Calc_str[STRMAX + 1];
-	char str[STRMAX];
+	char str[STRMAX + 2], *p, format = 0;
 	struct calc_result result;
 	int n;
 
@@ -1114,7 +1114,13 @@ void Zcalc(void)
 		return;
 
 	/* We modify the string, leave Calc_str alone */
-	snprintf(str, sizeof(str), "%s=", Calc_str);
+	strcpy(str, Calc_str);
+
+	p = strchr(str, '=');
+	if (p)
+		format = *(p + 1);
+	else
+		strcat(str, "=");
 
 	n = calc(str, &result);
 	switch (n) {
@@ -1123,7 +1129,32 @@ void Zcalc(void)
 			putpaw("= %g", result.result.f);
 		else {
 			long n = result.result.i;
-			putpaw("= %ld (%lx)", n, n);
+			switch (format) {
+			case 't':
+			case 'T':
+				n >>= 10;
+				/* fall thru */
+			case 'g':
+			case 'G':
+				n >>= 10;
+				/* fall thru*/
+			case 'm':
+			case 'M':
+				n >>= 10;
+				/* fall thru*/
+			case 'k':
+			case 'K':
+				n >>= 10;
+				putpaw("= %ld%c (%lx%c)", n, format, n, format);
+				break;
+			case 'p':
+			case 'P':
+				n >>= 12;
+				putpaw("= %ld%c (%lx%c)", n, format, n, format);
+				break;
+			default:
+				putpaw("= %ld (%lx)", n, n);
+			}
 		}
 		break;
 	case CALC_STACK_OVERFLOW:

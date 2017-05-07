@@ -601,9 +601,10 @@ struct page *newpage(struct page *curpage)
 
 	if (curpage) {
 		page->prevp = curpage;
-		page->nextp = curpage->nextp;
-		if (curpage->nextp)
+		if (curpage->nextp) {
+			page->nextp = curpage->nextp;
 			curpage->nextp->prevp = page;
+		}
 		curpage->nextp = page;
 	}
 

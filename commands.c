@@ -271,7 +271,7 @@ void Zc_indent(void)
 /* The builtin reg cannot handle extended expressions. But if you are
  * on windows, why are you editing shell scripts?
  */
-static bool find_line(char *str)
+static bool find_line(const char *str)
 {
 	struct mark end, save;
 

@@ -24,7 +24,7 @@
 #include <unistd.h>
 
 /** The special multi-byte keys. Note: We can currently only have 32 specials */
-static char *Tkeys[] = {
+static const char *Tkeys[] = {
 	"\033[A",	/* up */
 	"\033[B",	/* down */
 	"\033[C",	/* right */

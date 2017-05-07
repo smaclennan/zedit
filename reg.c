@@ -88,7 +88,7 @@ int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
 }
 
 /** Check if a regular expression matches at the point. */
-bool lookingat(struct buff *buff, char *str)
+bool lookingat(struct buff *buff, const char *str)
 {
 	struct mark start, REstart;
 	regexp_t re;

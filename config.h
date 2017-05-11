@@ -6,7 +6,7 @@
 #endif
 
 #define UNDO        1
-#define HUGE_FILES	0
+#define HUGE_FILES	1
 
 /* If TERMCAP not defined defaults to ANSI */
 /* #define TERMCAP */

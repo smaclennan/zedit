@@ -175,23 +175,22 @@ static void breadpage(struct buff *buff, struct page *page)
 	}
 
 	page->plen = len;
+	--buff->n_huge;
 	do_unlock(buff);
 
-#if ! HUGE_THREADED
-	if (page->nextp)
-		return;
+	if (buff->n_huge <= 0) {
+		/* last page - verify all pages read */
+		struct page *tp;
 
-	/* last page - verify all pages read */
-	struct page *tp;
+		for (tp = buff->firstp; tp; tp = tp->nextp)
+			if (tp->pgoffset)
+				breadpage(buff, tp);
 
-	for (tp = buff->firstp; tp; tp = tp->nextp)
-		if (tp->pgoffset)
-			breadpage(buff, tp);
+		close(buff->fd);
+		buff->fd = -1;
+		huge_file_cb(buff, 0);
+	}
 
-	close(buff->fd);
-	buff->fd = -1;
-	huge_file_cb(buff, 0);
-#endif
 	return;
 
 fatal:
@@ -204,7 +203,7 @@ fatal_mod:
 /* Warning: keeps the fd open. */
 int breadhuge(struct buff *buff, const char *fname)
 {
-	int fd, len, pages, i, rc;
+	int fd, len, pages, i, rc, left;
 	struct page *page;
 
 	if (buff->fd != -1)
@@ -236,8 +235,10 @@ int breadhuge(struct buff *buff, const char *fname)
 	buff->curpage->plen = len;
 	buff->fd = fd;
 
-	pages = (buff->stat->st_size + PGSIZE - 1) / PGSIZE;
+	pages = buff->stat->st_size / PGSIZE;
+	left = buff->stat->st_size % PGSIZE;
 	page = buff->curpage;
+	buff->n_huge = pages - 1;
 	for (i = 1; i < pages; ++i) {
 		page = newpage(page);
 		if (!page) {
@@ -245,6 +246,18 @@ int breadhuge(struct buff *buff, const char *fname)
 			return ENOMEM;
 		}
 		page->pgoffset = i;
+		page->plen = PGSIZE;
+	}
+
+	if (left) {
+		page = newpage(page);
+		if (!page) {
+			bempty(buff); /* will close fd */
+			return ENOMEM;
+		}
+		page->pgoffset = i;
+		page->plen = left;
+		++buff->n_huge;
 	}
 
 	btostart(buff);

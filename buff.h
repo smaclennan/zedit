@@ -60,6 +60,7 @@ struct buff {
 	int fd;						/**< File descriptor for huge files. */
 	struct stat *stat;			/**< Stat buffer for huge files. */
 	void *lock;					/**< Lock for huge files. */
+	int n_huge;
 #endif
 #if defined(UNDO) && UNDO
 	bool in_undo;				/**< Are we currently performing an undo? */

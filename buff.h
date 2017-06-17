@@ -51,23 +51,23 @@
 
 /** Main buffer structure. */
 struct buff {
+#ifdef HAVE_BUFFER_MARKS
+	struct mark *marks;			/**< Buffer dynamic marks. */
+#endif
 	struct page *firstp;		/**< List of pages. */
 	struct page *curpage;		/**< Point page. */
-	unsigned curchar;			/**< Point index in the page. */
 	Byte *curcptr;				/**< Point position in the page. */
+	unsigned curchar;			/**< Point index in the page. */
 	bool bmodf;					/**< Buffer modified? */
-#if HUGE_FILES
-	int fd;						/**< File descriptor for huge files. */
-	struct stat *stat;			/**< Stat buffer for huge files. */
-	void *lock;					/**< Lock for huge files. */
-	int n_huge;
-#endif
 #if defined(UNDO) && UNDO
 	bool in_undo;				/**< Are we currently performing an undo? */
 	void *undo_tail;			/**< list of undos */
 #endif
-#ifdef HAVE_BUFFER_MARKS
-	struct mark *marks;			/**< Buffer dynamic marks. */
+#if HUGE_FILES
+	struct stat *stat;			/**< Stat buffer for huge files. */
+	void *lock;					/**< Lock for huge files. */
+	int fd;						/**< File descriptor for huge files. */
+	int n_huge;
 #endif
 };
 

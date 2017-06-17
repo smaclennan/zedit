@@ -128,6 +128,7 @@ struct cnames {
 #define CNAMESIZE sizeof(struct cnames)
 
 struct wdo {
+	struct wdo *next;
 	struct zbuff *wbuff;		/* buffer window looks on */
 	struct mark *wpnt;		/* saved Point */
 	struct mark *wmrk;		/* saved Mark */
@@ -136,7 +137,6 @@ struct wdo {
 	int first, last;		/* screen line boundries */
 	int modecol;			/* column for modeflags */
 	int modeflags;			/* flags for modeflags */
-	struct wdo *next;
 };
 
 #define foreachwdo(wdo) for (wdo = Whead; wdo; wdo = wdo->next)
@@ -147,17 +147,17 @@ extern struct zbuff *Curbuff;
 extern struct buff *Bbuff;
 
 struct zbuff {
+	struct zbuff *prev;		/**< list of buffers */
+	struct zbuff *next;		/**< list of buffers */
 	char *bname;            /**< buffer name */
 	char *fname;            /**< file associated with buffer */
-	unsigned bmode;		    /**< buffer mode */
-	time_t mtime;           /**< file modified time */
 	struct mark *umark;     /**< user mark */
 	struct buff *buff;	    /**< low-level buffer */
+	time_t mtime;           /**< file modified time */
 	void *chead;			/**< list of comments in file */
 	void *ctail;		    /**< list of comments in file */
 	Byte comchar;			/**< single char comment character */
-	struct zbuff *prev;		/**< list of buffers */
-	struct zbuff *next;		/**< list of buffers */
+	unsigned bmode;		    /**< buffer mode */
 };
 
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)

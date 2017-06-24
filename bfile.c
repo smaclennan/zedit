@@ -77,9 +77,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 			makecur(buff, buff->curpage->nextp, 0);
 		}
 		memcpy(buff->curcptr, buf, len);
-		buff->curcptr += len;
-		buff->curchar += len;
-		curplen(buff) += len;
+		curplen(buff) = len;
 	}
 	fileclose(fd);
 

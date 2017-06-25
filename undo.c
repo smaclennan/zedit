@@ -53,12 +53,12 @@ static struct undo *new_undo(struct buff *buff, void **tail, bool insert, int si
 			free(undo);
 			return NULL;
 		}
-		undo_total += size;
+		atomic_add(undo_total, size);
 	}
 	undo->prev = *tail;
 	*tail = undo;
 
-	undo_total += sizeof(struct undo);
+	atomic_add(undo_total, sizeof(struct undo));
 
 	return undo;
 }
@@ -69,7 +69,7 @@ static void free_undo(void **tail)
 	if (undo) {
 		*tail = undo->prev;
 
-		undo_total -= sizeof(struct undo) + undo->size;
+		atomic_sub(undo_total, sizeof(struct undo) + undo->size);
 
 		if (undo->data)
 			free(undo->data);
@@ -156,7 +156,7 @@ static void undo_append(struct undo *undo, Byte *data)
 
 	undo->data = buf;
 
-	undo_total++;
+	atomic_inc(undo_total);
 }
 
 static void undo_prepend(struct undo *undo, Byte *data)
@@ -173,7 +173,7 @@ static void undo_prepend(struct undo *undo, Byte *data)
 	undo->data = buf;
 	undo->size++;
 
-	undo_total++;
+	atomic_inc(undo_total);
 }
 
 /* Size is always within the current page. */

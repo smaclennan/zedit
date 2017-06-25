@@ -238,16 +238,24 @@ int breadhuge(struct buff *buff, const char *fname);
 void bhugecleanup(struct buff *buff);
 #endif
 
-#ifdef __GNUC__
+#ifdef __GNUC__ /* also clang */
+#define HAVE_ATOMIC
+#define atomic_exchange  __sync_val_compare_and_swap
+#define atomic_add(a, n) __sync_fetch_and_add(&a, n)
+#define atomic_sub(a, n) __sync_fetch_and_sub(&a, n)
 #define atomic_inc(a) __sync_fetch_and_add(&a, 1)
 #define atomic_dec(a) __sync_fetch_and_sub(&a, 1)
-#define atomic_exchange  __sync_val_compare_and_swap
 #elif defined(WIN32)
+#define HAVE_ATOMIC
+#define atomic_exchange InterlockedCompareExchangePointer
+#define atomic_add(a, n) InterlockedAdd(&a, n)
+#define atomic_sub(a, n) InterlockedAdd(&a, -n)
 #define atomic_inc(a) InterlockedIncrement(&a)
 #define atomic_dec(a) InterlockedDecrement(&a)
-#define atomic_exchange InterlockedCompareExchangePointer
 #else
 #warning no atomic functions
+#define atomic_add(a, n) ((a) += n)
+#define atomic_sub(a, n) ((a) -= n)
 #define atomic_inc(a) ++(a)
 #define atomic_dec(a) --(a)
 #endif

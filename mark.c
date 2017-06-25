@@ -33,7 +33,7 @@
 struct mark *Marklist;	/* the marks list tail */
 #endif
 
-#ifdef HAVE_FREEMARK
+#ifdef HAVE_ATOMIC
 /**
  * The freemark keeps one mark around so that bcremark() can use the
  * freemark rather than allocating a new mark. Since a lot of
@@ -65,7 +65,7 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
 {
 	struct mark *mptr;
 
-#ifdef HAVE_FREEMARK
+#ifdef HAVE_ATOMIC
 	mptr = atomic_exchange(&freemark, freemark, NULL);
 	if (!mptr)
 #endif
@@ -99,7 +99,7 @@ void _bdelmark(struct mark *mptr, struct mark **tail)
 				mptr->next->prev = mptr->prev;
 		}
 #endif
-#ifdef HAVE_FREEMARK
+#ifdef HAVE_ATOMIC
 		mptr->prev = mptr->next = NULL;
 		if (atomic_exchange(&freemark, NULL, mptr))
 #endif

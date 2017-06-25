@@ -22,7 +22,6 @@
 #define UNSIGNED_BYTES
 #define HAVE_GLOBAL_MARKS
 #define HAVE_BUFFER_MARKS
-#define HAVE_FREEMARK
 #ifdef WIN32
 #define BUILTIN_REG
 #endif

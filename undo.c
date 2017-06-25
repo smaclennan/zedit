@@ -36,8 +36,6 @@ struct undo {
 
 #define is_insert(u) ((u)->data == NULL)
 
-unsigned long undo_total; /* stats only */
-
 static struct undo *new_undo(struct buff *buff, void **tail, bool insert, int size)
 {
 	struct undo *undo = (struct undo *)calloc(1, sizeof(struct undo));
@@ -53,12 +51,9 @@ static struct undo *new_undo(struct buff *buff, void **tail, bool insert, int si
 			free(undo);
 			return NULL;
 		}
-		atomic_add(undo_total, size);
 	}
 	undo->prev = *tail;
 	*tail = undo;
-
-	atomic_add(undo_total, sizeof(struct undo));
 
 	return undo;
 }
@@ -68,8 +63,6 @@ static void free_undo(void **tail)
 	struct undo *undo = (struct undo *)*tail;
 	if (undo) {
 		*tail = undo->prev;
-
-		atomic_sub(undo_total, sizeof(struct undo) + undo->size);
 
 		if (undo->data)
 			free(undo->data);
@@ -155,8 +148,6 @@ static void undo_append(struct undo *undo, Byte *data)
 	buf[undo->size++] = *data;
 
 	undo->data = buf;
-
-	atomic_inc(undo_total);
 }
 
 static void undo_prepend(struct undo *undo, Byte *data)
@@ -172,8 +163,6 @@ static void undo_prepend(struct undo *undo, Byte *data)
 
 	undo->data = buf;
 	undo->size++;
-
-	atomic_inc(undo_total);
 }
 
 /* Size is always within the current page. */

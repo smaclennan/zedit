@@ -53,8 +53,6 @@ void mrkfini(void)
 void mrkfini(void) {}
 #endif
 
-int NumMarks;
-
 /** Low-level create mark.
  *
  * This is a helper function that creates a mark on a mark list. For
@@ -80,7 +78,6 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
 		}
 #endif
 		bmrktopnt(buff, mptr);
-		atomic_inc(NumMarks);
 	}
 	return mptr;
 }
@@ -104,7 +101,6 @@ void _bdelmark(struct mark *mptr, struct mark **tail)
 		if (atomic_exchange(&freemark, NULL, mptr))
 #endif
 			free((char *)mptr);
-		atomic_inc(NumMarks);
 	}
 }
 

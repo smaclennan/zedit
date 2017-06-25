@@ -120,8 +120,6 @@ int bindata(struct buff *buff, Byte *, unsigned);
 
 /* undo.c */
 #if defined(UNDO) && UNDO
-extern unsigned long undo_total; /* Not thread safe */
-
 void undo_add(struct buff *buff, int size);
 void undo_del(struct buff *buff, int size);
 void undo_clear(struct buff *buff);
@@ -147,8 +145,6 @@ void Dbg(const char *fmt, ...);
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
-
-extern int NumBuffs, NumPages;
 
 /* Page struct and functions. */
 

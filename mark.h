@@ -38,8 +38,6 @@ struct mark {
 /* Size of mark without list pointers */
 #define __MRKSIZE (sizeof(void *) * 2 + sizeof(unsigned))
 
-extern int NumMarks; /* stats */
-
 struct mark *bcremark(struct buff *);
 void bdelmark(struct mark *);
 

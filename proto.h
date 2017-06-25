@@ -169,6 +169,7 @@ void display_init(struct mark *mrk);
 int delayprompt(const char *);
 void delinit(void);
 void delfini(void);
+unsigned delpages(void);
 bool delcmd(void);
 int do_chdir(struct zbuff *buff);
 void execute(void);

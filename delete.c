@@ -22,14 +22,23 @@
 
 static struct buff *Killbuff;
 
+void delinit(void)
+{
+	Killbuff = bcreate();
+}
+
 void delfini(void)
 {
 	bdelbuff(Killbuff);
 }
 
-void delinit(void)
+unsigned delpages(void)
 {
-	Killbuff = bcreate();
+	struct page *page;
+	unsigned npage = 0;
+	for (page = Killbuff->firstp; page; page = page->nextp)
+			++npage;
+	return npage;
 }
 
 /* Was the last command a delete to kill buffer command? */

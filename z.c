@@ -292,11 +292,22 @@ int main(int argc, char **argv)
 
 void Zstats(void)
 {
-	int n = snprintf(PawStr, Colmax, "Buffers: %u  Pages: %u  Marks: %u",
-					 NumBuffs, NumPages, NumMarks);
-#if UNDO
-	n += snprintf(PawStr + n, Colmax - n, "  Undos: %luK",
-				  (undo_total + 512) / 1024);
-#endif
+	struct zbuff *buff;
+	struct mark *mark;
+	struct page *page;
+	unsigned nbuff = 2; /* paw + kill */
+	unsigned npage = 1 + delpages(); /* paw page + kill */
+	unsigned nmarks = 0;
+
+	foreachbuff(buff) {
+		++nbuff;
+		for (page = buff->buff->firstp; page; page = page->nextp)
+			++npage;
+		foreach_buffmark(buff->buff, mark)
+			++nmarks;
+	}
+
+	snprintf(PawStr, Colmax, "Buffers: %u  Pages: %u  Marks: %u",
+			 nbuff, npage, nmarks);
 	_putpaw(PawStr);
 }

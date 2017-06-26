@@ -95,9 +95,9 @@ void _bdelmark(struct mark *mptr, struct mark **tail)
 			if (mptr->next)
 				mptr->next->prev = mptr->prev;
 		}
+		mptr->prev = mptr->next = NULL;
 #endif
 #ifdef HAVE_ATOMIC
-		mptr->prev = mptr->next = NULL;
 		if (atomic_exchange(&freemark, NULL, mptr))
 #endif
 			free((char *)mptr);

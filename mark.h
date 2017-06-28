@@ -53,13 +53,20 @@ bool bisbeforemrk(struct buff *, struct mark *);
  */
 bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end);
 #define bisatmrks(b, m1, m2) (bisatmrk(b, m1) && bisatmrk(b, m2))
-void bmrktopnt(struct buff *, struct mark *);
 bool bpnttomrk(struct buff *, struct mark *);
 bool bswappnt(struct buff *, struct mark *);
 void mrkfini(void);
 
 bool mrkaftermrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
+
+/* Put the mark where the point is. */
+static inline void bmrktopnt(struct buff *buff, struct mark *tmark)
+{
+	tmark->mbuff   = buff;
+	tmark->mpage   = buff->curpage;
+	tmark->moffset = buff->curchar;
+}
 
 static inline void mrktomrk(struct mark *m1, struct mark *m2)
 {

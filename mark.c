@@ -193,14 +193,6 @@ bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end)
 	return false;
 }
 
-/* Put the mark where the point is. */
-void bmrktopnt(struct buff *buff, struct mark *tmark)
-{
-	tmark->mbuff   = buff;
-	tmark->mpage   = buff->curpage;
-	tmark->moffset = buff->curchar;
-}
-
 /* Put the current buffer point at the mark */
 bool bpnttomrk(struct buff *buff, struct mark *tmark)
 {

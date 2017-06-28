@@ -45,8 +45,6 @@
 #include <unistd.h>
 #endif
 
-#include "mark.h"
-
 /* THE BUFFER STRUCTURES */
 
 /** Main buffer structure. */
@@ -70,6 +68,9 @@ struct buff {
 	int n_huge;
 #endif
 };
+
+/* mark.h needs the buffer structure */
+#include "mark.h"
 
 /* This is used a lot */
 #define curplen(b) ((b)->curpage->plen)

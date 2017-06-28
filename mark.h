@@ -35,7 +35,7 @@ struct mark {
 	struct mark *next;			/**< List of marks. */
 #endif
 };
-/* Size of mark without list pointers */
+/** Size of mark struct without list pointers */
 #define __MRKSIZE (sizeof(void *) * 2 + sizeof(unsigned))
 
 struct mark *bcremark(struct buff *);
@@ -44,6 +44,7 @@ void bdelmark(struct mark *);
 struct mark *_bcremark(struct buff *buff, struct mark **tail);
 void _bdelmark(struct mark *mark, struct mark **tail);
 
+/** Returns true if buffer is at mark */
 #define bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))
 bool bisaftermrk(struct buff *, struct mark *);
 bool bisbeforemrk(struct buff *, struct mark *);
@@ -52,7 +53,6 @@ bool bisbeforemrk(struct buff *, struct mark *);
  * ranges and terrible if end is before start.
  */
 bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end);
-#define bisatmrks(b, m1, m2) (bisatmrk(b, m1) && bisatmrk(b, m2))
 bool bpnttomrk(struct buff *, struct mark *);
 bool bswappnt(struct buff *, struct mark *);
 void mrkfini(void);
@@ -60,7 +60,7 @@ void mrkfini(void);
 bool mrkaftermrk(struct mark *, struct mark *);
 bool mrkbeforemrk(struct mark *, struct mark *);
 
-/* Put the mark where the point is. */
+/** Move the mark to the point. */
 static inline void bmrktopnt(struct buff *buff, struct mark *tmark)
 {
 	tmark->mbuff   = buff;
@@ -68,12 +68,13 @@ static inline void bmrktopnt(struct buff *buff, struct mark *tmark)
 	tmark->moffset = buff->curchar;
 }
 
+/** Move mark 1 to mark 2 */
 static inline void mrktomrk(struct mark *m1, struct mark *m2)
 {
 	memcpy(m1, m2, __MRKSIZE);
 }
 
-/* True if mark1 is at mark2 */
+/** True if mark1 is at mark2 */
 static inline bool mrkatmrk(struct mark *m1, struct mark *m2)
 {
 	return memcmp(m1, m2, __MRKSIZE) == 0;
@@ -82,10 +83,12 @@ static inline bool mrkatmrk(struct mark *m1, struct mark *m2)
 #ifdef HAVE_GLOBAL_MARKS
 extern struct mark *Marklist;
 
-#define foreach_global_pagemark(buff, mark, page)				   \
+/** Walk through all the global marks that match page */
+#define foreach_global_pagemark(mark, page)				   \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mpage == (page))
 
+/** Walk through all the global marks that match buff */
 #define foreach_global_buffmark(buff, mark)				   \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mbuff == (buff))
@@ -95,10 +98,12 @@ extern struct mark *Marklist;
 #endif
 
 #ifdef HAVE_BUFFER_MARKS
+/** Walk through all the buffer marks in buff that match page */
 #define foreach_pagemark(buff, mark, page)						 \
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	 \
 		if ((mark)->mpage == (page))
 
+/** Walk through all the buffer marks in buff */
 #define foreach_buffmark(buff, mark)							\
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)
 #else

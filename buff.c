@@ -92,7 +92,7 @@ bool binsert(struct buff *buff, Byte byte)
 
 	undo_add(buff, 1);
 
-	foreach_global_pagemark(buff, btmark, buff->curpage)
+	foreach_global_pagemark(btmark, buff->curpage)
 		if (btmark->moffset >= buff->curchar)
 			++(btmark->moffset);
 	foreach_pagemark(buff, btmark, buff->curpage)
@@ -208,7 +208,7 @@ void bdelete(struct buff *buff, unsigned quantity)
 				tpage = curpage->prevp;
 				noffset = tpage->plen;
 			}
-			foreach_global_pagemark(buff, tmark, curpage) {
+			foreach_global_pagemark(tmark, curpage) {
 				tmark->mpage = tpage;
 				tmark->moffset = noffset;
 			}
@@ -224,7 +224,7 @@ void bdelete(struct buff *buff, unsigned quantity)
 				tpage = curpage->nextp;
 				noffset = 0;
 			}
-			foreach_global_pagemark(buff, tmark, curpage)
+			foreach_global_pagemark(tmark, curpage)
 				if (tmark->moffset >= buff->curchar) {
 					if (tmark->moffset >= buff->curchar + quan)
 						tmark->moffset -= quan;
@@ -463,7 +463,7 @@ long bcopyrgn(struct mark *tmark, struct buff *to)
 		memmove(to->curcptr, from->curcptr, dstlen);
 		curplen(to) += dstlen;
 		copied += dstlen;
-		foreach_global_pagemark(to, btmrk, to->curpage)
+		foreach_global_pagemark(btmrk, to->curpage)
 			if (btmrk->moffset > to->curchar)
 					btmrk->moffset += dstlen;
 		foreach_pagemark(to, btmrk, to->curpage)
@@ -560,7 +560,7 @@ struct page *pagesplit(struct buff *buff, unsigned dist)
 	curpage->plen = dist;
 	newp->plen = newsize;
 
-	foreach_global_pagemark(buff, btmark, curpage)
+	foreach_global_pagemark(btmark, curpage)
 		if (btmark->moffset >= dist) {
 			btmark->mpage = newp;
 			btmark->moffset -= dist;

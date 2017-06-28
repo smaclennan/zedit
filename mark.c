@@ -41,17 +41,21 @@ struct mark *Marklist;	/* the marks list tail */
  * very little code.
  */
 static struct mark *freemark;
+#endif
 
+/**
+ * If you are pedantic about freeing all memory you should call this
+ * at exit.
+ */
 void mrkfini(void)
 {
+#ifdef HAVE_ATOMIC
 	if (freemark) {
 		free(freemark);
 		freemark = NULL;
 	}
-}
-#else
-void mrkfini(void) {}
 #endif
+}
 
 /** Low-level create mark.
  *
@@ -106,8 +110,8 @@ void _bdelmark(struct mark *mptr, struct mark **tail)
 
 /** Create a mark in the specified buffer.
  *
- * If dynamic marks are enabled (HAVE_GLOBAL_MARKS or
- * HAVE_BUFFER_MARKS) then the buffer code will keep the mark in place
+ * If dynamic marks are enabled (#HAVE_GLOBAL_MARKS or
+ * #HAVE_BUFFER_MARKS) then the buffer code will keep the mark in place
  * as bytes are inserted or deleted.
  */
 struct mark *bcremark(struct buff *buff)
@@ -132,7 +136,7 @@ void bdelmark(struct mark *mptr)
 #endif
 }
 
-/* Returns true if point is after the mark. */
+/** Returns true if point is after the mark. */
 bool bisaftermrk(struct buff *buff, struct mark *tmark)
 {
 	struct page *tp;
@@ -148,7 +152,7 @@ bool bisaftermrk(struct buff *buff, struct mark *tmark)
 	return tp != NULL;
 }
 
-/* True if the point precedes the mark. */
+/** Return true if the point precedes the mark. */
 bool bisbeforemrk(struct buff *buff, struct mark *tmark)
 {
 	struct page *tp;
@@ -164,9 +168,9 @@ bool bisbeforemrk(struct buff *buff, struct mark *tmark)
 	return tp != NULL;
 }
 
-/* True if point is between start and end. This has to walk all the
- * pages between start and end. So it is most efficient for small
- * ranges and terrible if end is before start.
+/** Returns true if point is between start and end. This has to walk
+ * all the pages between start and end. So it is most efficient for
+ * small ranges and terrible if end is before start.
  *
  * Note: point == start == end returns false: it is not between.
  */
@@ -193,7 +197,7 @@ bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end)
 	return false;
 }
 
-/* Put the current buffer point at the mark */
+/** Put the current buffer point at the mark */
 bool bpnttomrk(struct buff *buff, struct mark *tmark)
 {
 	if (tmark->mbuff != buff)
@@ -203,7 +207,7 @@ bool bpnttomrk(struct buff *buff, struct mark *tmark)
 	return true;
 }
 
-/* Swap the point and the mark. */
+/** Swap the point and the mark. */
 bool bswappnt(struct buff *buff, struct mark *tmark)
 {
 	struct mark tmp;
@@ -217,7 +221,7 @@ bool bswappnt(struct buff *buff, struct mark *tmark)
 	return true;
 }
 
-/* True if mark1 precedes mark2 */
+/** True if mark1 precedes mark2 */
 bool mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 {
 	struct page *tpage;
@@ -237,7 +241,7 @@ bool mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 	return tpage != NULL;
 }
 
-/* True if mark1 follows mark2 */
+/** True if mark1 follows mark2 */
 bool mrkaftermrk(struct mark *mark1, struct mark *mark2)
 {
 	struct page *tpage;

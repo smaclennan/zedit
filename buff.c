@@ -556,7 +556,7 @@ struct page *pagesplit(struct buff *buff, unsigned dist)
 		return NULL;
 
 	newsize = curpage->plen - dist;
-	memmove(newp->pdata, curpage->pdata + dist, newsize);
+	memcpy(newp->pdata, curpage->pdata + dist, newsize);
 	curpage->plen = dist;
 	newp->plen = newsize;
 

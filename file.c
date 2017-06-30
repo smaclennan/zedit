@@ -19,6 +19,9 @@
 
 #include "z.h"
 #include <setjmp.h>
+#ifdef __linux__
+#include <sys/sendfile.h>
+#endif
 
 static char Fname[PATHMAX + 1];
 int raw_mode;
@@ -35,25 +38,39 @@ char *lastpart(char *fname)
 
 static bool cp(char *from, char *to)
 {
-	FILE *in, *out;
-	char buf[1024];
+	int in, out;
 	int rc = true;
 	size_t n;
+	struct stat sbuf;
 
-	in = fopen(from, "r");
-	out = fopen(to, "w");
-	if (!in || !out) {
-		if (!in)
-			fclose(in);
+	in = open(from, O_RDONLY);
+	if (in < 0)
+		return false;
+	if (fstat(in, &sbuf)) {
+		close(in);
 		return false;
 	}
-	while ((n = fread(buf, 1, 1024, in)) > 0)
-		if (fwrite(buf, 1, n, out) != n) {
-			rc = false;
+	out = open(to, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (out < 0) {
+		close(in);
+		return false;
+	}
+
+#ifdef __linux__
+	n = sendfile(out, in, NULL, sbuf.st_size);
+	if (n != sbuf.st_size)
+		rc = false;
+#else
+	char buf[1024];
+	while ((n = read(in, buf, sizeof(buf))) > 0)
+		if (write(out, buf, n) != n)
 			break;
-		}
-	fclose(in);
-	fclose(out);
+	if (n)
+		rc = false;
+#endif
+
+	close(in);
+	close(out);
 	return rc;
 }
 

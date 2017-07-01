@@ -38,9 +38,6 @@ static struct mark Scrnmarks[ROWMAX + EXTRA_MARKS];	/* Screen marks - one per li
 static bool Scrnmodf[ROWMAX];
 static struct mark *was;	/* last location of user mark for zrefresh() */
 
-/* Keeping just one mark around is a HUGE win for a trivial amount of code. */
-static struct mark *freeumark;
-
 static void (*printchar)(Byte ichar) = tprntchar;
 
 #if HUGE_FILES
@@ -153,13 +150,9 @@ static bool umarkmoved(struct mark *tmark)
 
 void set_umark(struct mark *tmark)
 {
-	if (!UMARK_SET) {
-		if (freeumark) {
-			UMARK = freeumark;
-			freeumark = NULL;
-		} else if (!(UMARK = bcremark(Bbuff)))
+	if (!UMARK_SET)
+		if (!(UMARK = bcremark(Bbuff)))
 			return;
-	}
 
 	if (tmark)
 		mrktomrk(UMARK, tmark);
@@ -175,10 +168,7 @@ void clear_umark(void)
 			Scrnmodf[i] = true;
 		Tlrow = -1;
 
-		if (freeumark)
-			bdelmark(UMARK);
-		else
-			freeumark = UMARK;
+		bdelmark(UMARK);
 		UMARK = NULL;
 	}
 }

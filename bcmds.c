@@ -353,6 +353,20 @@ bool cdelbuff(struct zbuff *tbuff)
 	if (!tbuff)
 		return false;
 
+	 /* Make sure we can switch to a safe buffer before tearing
+	  * anything down.
+	  */
+	if (tbuff == Curbuff) {
+		CLEAR_UMARK;
+
+		if (tbuff->next)
+			zswitchto(tbuff->next);
+		else if (tbuff->prev)
+			zswitchto(tbuff->prev);
+		else
+			return false;
+	}
+
 	/* Do this before deleting bname */
 	undo_clear(tbuff->buff);
 	uncomment(tbuff);
@@ -364,17 +378,6 @@ bool cdelbuff(struct zbuff *tbuff)
 
 	if (unvoke(tbuff))
 		checkpipes(1);
-
-	if (tbuff == Curbuff) { /* switch to a safe buffer */
-		CLEAR_UMARK;
-
-		if (tbuff->next)
-			zswitchto(tbuff->next);
-		else if (tbuff->prev)
-			zswitchto(tbuff->prev);
-		else
-			return false;
-	}
 
 	if (tbuff == Bufflist)
 		Bufflist = tbuff->next;

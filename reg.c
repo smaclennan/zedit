@@ -87,25 +87,32 @@ int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
 	return regerror(errcode, &preg->re, errbuf, errbuf_size);
 }
 
-/** Check if a regular expression matches at the point. */
-bool lookingat(struct buff *buff, const char *str)
+/** Check if a pre-compiled regular expression matches at the point. */
+bool _lookingat(struct buff *buff, regexp_t *re)
 {
 	struct mark start, REstart;
-	regexp_t re;
-	if (re_compile(&re, str, REG_EXTENDED))
-		return false;
 
 	bmrktopnt(buff, &start);
 	bmrktopnt(buff, &REstart);
-	if (advance(buff, &re.re, &REstart))
-		if (mrkatmrk(&start, &REstart)) {
-			re_free(&re);
+	if (advance(buff, &re->re, &REstart))
+		if (mrkatmrk(&start, &REstart))
 			return true;
-		}
 
 	bpnttomrk(buff, &start);
-	re_free(&re);
 	return false;
+}
+
+/** Check if a regular expression matches at the point. */
+bool lookingat(struct buff *buff, const char *str)
+{
+	regexp_t re;
+	bool rc;
+
+	if (re_compile(&re, str, REG_EXTENDED))
+		return false;
+	rc = _lookingat(buff, &re);
+	re_free(&re);
+	return rc;
 }
 
 #else
@@ -187,22 +194,27 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 	return false;
 }
 
+bool _lookingat(struct buff *buff, regexp_t *re)
+{
+	struct mark tmark;
+	bmrktopnt(buff, &tmark);
+	if (advance(buff, &re->ep))
+		return true;
+
+	bpnttomrk(buff, &tmark);
+	return false;
+}
+
 bool lookingat(struct buff *buff, char *str)
 {
 	regexp_t re;
+	bool rc;
+
 	if (re_compile(&re, str, 0))
 		return false;
-
-	struct mark tmark;
-	bmrktopnt(buff, &tmark);
-	if (advance(buff, re.ep)) {
-		re_free(&re);
-		return true;
-	}
-
-	bpnttomrk(buff, &tmark);
+	rc = _lookingat(buff, &re);
 	re_free(&re);
-	return false;
+	return rc;
 }
 
 /* Called by step to try to match at current position. */

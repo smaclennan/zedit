@@ -45,15 +45,12 @@ typedef struct regex {
 #define REG_ICASE		0
 #define REG_NOSUB		0
 #define REG_NEWLINE		0
-#elif defined(HAVE_PCRE)
-#include "pcreposix.h"
-
-typedef struct regexp {
-	regex_t re;
-	int circf;
-} regexp_t;
 #else
-#include <regex.h>
+# ifdef HAVE_PCRE
+#  include "pcreposix.h"
+# else
+#  include <regex.h>
+# endif
 
 typedef struct regexp {
 	regex_t re;
@@ -66,5 +63,6 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart);
 int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size);
 void re_free(regexp_t *re);
 bool lookingat(struct buff *buff, const char *str);
+bool _lookingat(struct buff *buff, regexp_t *re);
 
 #endif

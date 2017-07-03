@@ -536,6 +536,8 @@ static char *setmodes(struct zbuff *buff)
 		Keys[CR] = ZSH_INDENT;
 		if (VAR(VCOMMENTS))
 			printchar = cprntchar;
+
+		shell_init();
 		break;
 	case TXTMODE:
 		PAWCAT("Text");

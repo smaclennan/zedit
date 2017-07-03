@@ -205,6 +205,7 @@ void zrefresh(void);
 bool saveall(bool);
 int settabsize(unsigned);
 void setmark(bool);
+void shell_init(void);
 void tbell(void);
 void tainit(void);
 void termsize(void);

@@ -271,7 +271,39 @@ void Zc_indent(void)
 /* The builtin reg cannot handle extended expressions. But if you are
  * on windows, why are you editing shell scripts?
  */
-static bool find_line(const char *str)
+
+#define RE_IF			0
+#define RE_FI			1
+#define RE_WHILE		2
+#define RE_DONE			3
+#define RE_MAX			4
+
+static regexp_t sh_re[RE_MAX];
+static char *sh_restr[RE_MAX] = {
+#ifdef HAVE_PCRE
+	"\\bif\\b", "\\bfi\\b", "\\bwhile\\b", "\\bdone\\b"
+#else
+	"\\<if\\>", "\\<fi\\>", "\\<while\\>", "\\<done\\>"
+#endif
+};
+
+void shell_init(void)
+{
+	static int first_time = 1;
+
+	if (first_time) {
+		int i;
+
+		for (i = 0; i < RE_MAX; ++i)
+			if (re_compile(&sh_re[i], sh_restr[i], REG_EXTENDED))
+				/* This is a programming error */
+				error("Unable to compile re '%s'\n", sh_restr[i]);
+
+		first_time = 0;
+	}
+}
+
+static bool find_line(int re_index)
 {
 	struct mark end, save;
 
@@ -281,7 +313,7 @@ static bool find_line(const char *str)
 	bswappnt(Bbuff, &end);
 
 	while (bisbeforemrk(Bbuff, &end)) {
-		if (lookingat(Bbuff, str)) {
+		if (_lookingat(Bbuff, &sh_re[re_index])) {
 			bpnttomrk(Bbuff, &save);
 			return true;
 		}
@@ -291,18 +323,6 @@ static bool find_line(const char *str)
 	bpnttomrk(Bbuff, &save);
 	return false;
 }
-
-#ifdef HAVE_PCRE
-#define RE_IF "\\bif\\b"
-#define RE_FI "\\bfi\\b"
-#define RE_WHILE "\\bwhile\\b"
-#define RE_DONE "\\bdone\\b"
-#else
-#define RE_IF "\\<if\\>"
-#define RE_FI "\\<fi\\>"
-#define RE_WHILE "\\<while\\>"
-#define RE_DONE "\\<done\\>"
-#endif
 
 void Zsh_indent(void)
 {
@@ -319,16 +339,16 @@ void Zsh_indent(void)
 	tmark = bcremark(Bbuff);
 	width = bgetcol(true, 0);
 
-	if (lookingat(Bbuff, RE_IF)) {
+	if (_lookingat(Bbuff, &sh_re[RE_IF])) {
 		if (find_line(RE_FI) == 0)
 			width += Taboffset;
-	} else if (lookingat(Bbuff, RE_WHILE)) {
+	} else if (_lookingat(Bbuff, &sh_re[RE_WHILE])) {
 		if (find_line(RE_DONE) == 0)
 			width += Taboffset;
-	} else if (lookingat(Bbuff, RE_FI)) {
+	} else if (_lookingat(Bbuff, &sh_re[RE_FI])) {
 		width -= Taboffset;
 		fixup = 1;
-	} else if (lookingat(Bbuff, RE_DONE)) {
+	} else if (_lookingat(Bbuff, &sh_re[RE_DONE])) {
 		width -= Taboffset;
 		fixup = 1;
 	} else if (Buff() == '}') {

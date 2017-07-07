@@ -243,7 +243,7 @@ int bindata(struct buff *buff, Byte *data, unsigned size)
 		n = curplen(buff) - buff->curchar;
 		memmove(buff->curcptr + size, buff->curcptr, n);
 		memcpy(buff->curcptr, data, size);
-		foreach_global_pagemark(buff, m, buff->curpage)
+		foreach_global_pagemark(m, buff->curpage)
 			if (m->moffset >= buff->curchar)
 				m->moffset += size;
 		foreach_pagemark(buff, m, buff->curpage)

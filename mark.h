@@ -93,7 +93,7 @@ extern struct mark *Marklist;
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mbuff == (buff))
 #else
-#define foreach_global_pagemark(buff, mark, page) if (0)
+#define foreach_global_pagemark(mark, page) if (0)
 #define foreach_global_buffmark(buff, mark) if (0)
 #endif
 

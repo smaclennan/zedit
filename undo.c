@@ -86,7 +86,7 @@ static bool add_clumped(struct buff *buff, struct undo *undo, int size)
 			mrk->moffset = 0;
 			if (!mrk->mpage)
 				return false;
-			if (mrk->mpage->plen >= size) {
+			if (mrk->mpage->plen >= (unsigned)size) {
 				mrk->moffset = size;
 				size = 0;
 			} else
@@ -106,7 +106,7 @@ static int del_clumped(struct buff *buff, struct undo *undo, int size)
 		return 1;
 
 	/* Move mark back */
-	if (mrk->moffset >= size) {
+	if (mrk->moffset >= (unsigned)size) {
 		mrk->moffset -= size;
 	} else if (mrk->mpage->prevp) { /* paranoia */
 		mrk->mpage = mrk->mpage->prevp;

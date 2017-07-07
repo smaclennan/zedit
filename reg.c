@@ -198,14 +198,14 @@ bool _lookingat(struct buff *buff, regexp_t *re)
 {
 	struct mark tmark;
 	bmrktopnt(buff, &tmark);
-	if (advance(buff, &re->ep))
+	if (advance(buff, re->ep))
 		return true;
 
 	bpnttomrk(buff, &tmark);
 	return false;
 }
 
-bool lookingat(struct buff *buff, char *str)
+bool lookingat(struct buff *buff, const char *str)
 {
 	regexp_t re;
 	bool rc;

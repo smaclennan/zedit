@@ -16,7 +16,6 @@ do_help() {
     echo "  --enable-termcap	Enable termcap."
     echo "  --enable-sysv4	Enable if signal handlers cannot reset themselves"
     echo "  --enable-undo		Enable undo"
-    echo "  --enable-dopipes	Enable non-blocking shell commands"
     echo "  --enable-huge       Enable HUGE_FILES"
     echo "  --enable-huge-threaded Enable HUGE_THREADED"
     echo "  --config-dir <dir>	Default config directory."
@@ -47,7 +46,6 @@ while [ -n "$1" ]; do
     case "$1" in
       *-clang) clang=$enable;;
       *-termcap) termcap=$enable;;
-      *-dopipes) dopipes=$enable;;
       *-spell) spell=$enable;;
       *-zlib) zlib=$enable;;
       *-sysv4) sysv4=$enable;;
@@ -107,14 +105,6 @@ echo >> config.h
 set_one SPELL $spell
 set_one ZLIB $zlib
 set_one UNDO $undo
-
-if [ -n "$dopipes" ]; then
-    [ "$dopipes" -eq 1 ] && echo "#define DOPIPES" >> config.h
-else
-    echo "#ifdef __unix__" >> config.h
-    echo "#define DOPIPES" >> config.h
-    echo "#endif" >> config.h
-fi
 
 if [ "$spell" = 1 ]; then
     sed 's/^#LIBS += -ldl/LIBS += -ldl/' Makefile > Makefile.tmp

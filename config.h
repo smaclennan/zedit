@@ -9,13 +9,6 @@
 /* If TERMCAP not defined defaults to ANSI */
 /* #define TERMCAP */
 
-/* DOPIPES: Output in real time and you can continue editing.
- * default: Output in real time but you must wait until command complete.
- */
-#ifdef __unix__
-#define DOPIPES
-#endif
-
 /* Don't touch these unless you really know what you are doing. */
 #define UNSIGNED_BYTES
 #define HAVE_GLOBAL_MARKS

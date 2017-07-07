@@ -125,7 +125,6 @@ static void dotty(void)
 	First = false; /* used by pinsert when InPaw */
 }
 
-#ifdef DOPIPES
 #include <poll.h>
 
 #define MAX_FDS 2
@@ -159,15 +158,11 @@ void fd_remove(int fd)
 		fds[PIPEFD].fd = -1;
 	}
 }
-#else
-static void fd_init(void) {}
-#endif
 
 void execute(void)
 {
 	zrefresh();
 
-#ifdef DOPIPES
 	if (tkbrdy() || Cmdpushed != -1)
 		dotty();
 	else {
@@ -184,9 +179,6 @@ void execute(void)
 		if (fds[PIPEFD].revents)
 			readapipe();
 	}
-#else
-	dotty();
-#endif
 }
 
 int main(int argc, char **argv)

@@ -261,12 +261,8 @@ struct cnames Cnames[] = {
 	   "Line, Delete Newline, Trim Whitespace, Insert space.")
 	},
 	{"kill",			ZKILL,			AI,
-#ifndef DOPIPES
-	 "Note: Disabled in this version of Zedit.\n\n"
-#else
 	 C("Kills the current make. The command must wait for the make to die "
 	   "before it can continue.")
-#endif
 	},
 	{"list-buffers",		ZLIST_BUFFERS,		AI,
 	 C("Displays a list of the current buffers on the display.")

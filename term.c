@@ -91,9 +91,7 @@ void tainit(void)
 #ifdef SIGWINCH
 	signal(SIGWINCH, sigwinch); /* window has changed size - update */
 #endif
-#ifdef DOPIPES
 	siginit();
-#endif
 
 	/* Must be after setting up tty */
 	termsize();

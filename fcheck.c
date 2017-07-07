@@ -27,22 +27,12 @@
 #include "kbd.c"
 #include "tinit.c"
 
-#ifdef __unix__
-#define OS unix
-
 #include <sys/utsname.h>
 static struct utsname utsname;
-#else
-#error Unknown OS
-#endif
 
 #define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))
 
-#ifdef __unix__
 #define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
-#else
-#define N_KEYS NUM_SPECIAL
-#endif
 
 int InPaw;
 unsigned Cmd;
@@ -58,9 +48,7 @@ int main(int argc, char *argv[])
 	int i, s1, s2, err = 0;
 	Byte array[97];
 
-#ifdef __unix__
 	uname(&utsname);
-#endif
 
 	if (NUMVARS != VARSNUM) {
 		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",

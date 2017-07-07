@@ -21,10 +21,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include "tinit.h"
-
-#ifdef __unix__
 #include <unistd.h>
+#include "tinit.h"
 
 #ifdef HAVE_TERMIO
 #include <termio.h>
@@ -38,7 +36,6 @@ static struct termio settty;
 #include <termios.h>
 static struct termios save_tty;
 static struct termios settty;
-#endif
 #endif
 
 int Prow, Pcol;
@@ -54,9 +51,7 @@ static void t_hang_up(int signo)
 
 static void tfini(void)
 {
-#ifdef __unix__
 	tcsetattr(0, TCSAFLUSH, &save_tty);
-#endif
 	tflush();
 }
 
@@ -114,7 +109,6 @@ static void tlinit(void) {}
 /* Initalize the terminal. */
 void tinit(void)
 {
-#ifdef __unix__
 	tcgetattr(0, &save_tty);
 	tcgetattr(0, &settty);
 	settty.c_iflag = 0;
@@ -125,7 +119,6 @@ void tinit(void)
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(0, TCSANOW, &settty);
-#endif
 
 #ifdef SIGHUP
 	signal(SIGHUP,  t_hang_up);

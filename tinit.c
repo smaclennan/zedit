@@ -128,6 +128,7 @@ void tinit(void)
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(0, TCSANOW, &settty);
 #elif defined(WIN32)
+	tkbdinit();
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 #endif
 
@@ -145,21 +146,20 @@ void tinit(void)
 void tsize(int *rows, int *cols)
 {
 #ifdef WIN32
-	static int first_time = 1;
+	CONSOLE_SCREEN_BUFFER_INFO info;
+	COORD size;
 
-	if (first_time) {
-		/* Win8 creates a huge screen buffer (300 lines) */
-		COORD size;
-		size.X = *cols = 80;
-		size.Y = *rows = 25;
+	if (GetConsoleScreenBufferInfo(hstdout, &info)) {
+		size.Y = info.srWindow.Bottom - info.srWindow.Top + 1;
+		size.X = info.srWindow.Right - info.srWindow.Left + 1;
+	}
+
+	if (size.X != *cols || size.Y != *rows) {
+		if (size.X > COLMAX) size.X = COLMAX;
+		if (size.Y > ROWMAX) size.Y = ROWMAX;
+		*cols = size.X;
+		*rows = size.Y;
 		SetConsoleScreenBufferSize(hstdout, size);
-		first_time = 0;
-	} else {
-		CONSOLE_SCREEN_BUFFER_INFO info;
-		if (GetConsoleScreenBufferInfo(hstdout, &info)) {
-			*cols = info.dwSize.X;
-			*rows = info.dwSize.Y;
-		}
 	}
 #else
 	char buf[12];

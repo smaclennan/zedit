@@ -32,17 +32,12 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <unistd.h>
 
 #ifdef UNSIGNED_BYTES
 #define Byte unsigned char
 #else
 #define Byte char
-#endif
-
-#ifdef WIN32
-#include "bwin32.h"
-#else
-#include <unistd.h>
 #endif
 
 /* THE BUFFER STRUCTURES */
@@ -242,13 +237,6 @@ void bhugecleanup(struct buff *buff);
 #define atomic_sub(a, n) __sync_fetch_and_sub(&a, n)
 #define atomic_inc(a) __sync_fetch_and_add(&a, 1)
 #define atomic_dec(a) __sync_fetch_and_sub(&a, 1)
-#elif defined(WIN32)
-#define HAVE_ATOMIC
-#define atomic_exchange InterlockedCompareExchangePointer
-#define atomic_add(a, n) InterlockedAdd(&a, n)
-#define atomic_sub(a, n) InterlockedAdd(&a, -n)
-#define atomic_inc(a) InterlockedIncrement(&a)
-#define atomic_dec(a) InterlockedDecrement(&a)
 #else
 #warning no atomic functions
 #define atomic_add(a, n) ((a) += n)

@@ -23,55 +23,11 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
-#ifndef WIN32
 #include <sys/uio.h>
-#endif
 
 #include "buff.h"
 
 #define MAX_IOVS 16
-
-#ifdef WIN32
-/* These aren't optimal... but they should work */
-struct iovec {
-	void *iov_base;
-	size_t iov_len;
-};
-
-int readv(int fd, const struct iovec *iov, int iovcnt)
-{
-	int i, n, n_read = 0;
-
-	for (i = 0; i < iovcnt; ++i, ++iov)
-		if (iov->iov_len) {
-			n = read(fd, iov->iov_base, iov->iov_len);
-			if (n < 0)
-				return n;
-			else if (n == 0)
-				return n_read;
-			n_read += n;
-		}
-
-	return n_read;
-}
-
-int writev(int fd, const struct iovec *iov, int iovcnt)
-{
-	int i, n, n_wrote = 0;
-
-	for (i = 0; i < iovcnt; ++i, ++iov)
-		if (iov->iov_len) {
-			n = write(fd, iov->iov_base, iov->iov_len);
-			if (n < 0)
-				return n;
-			else if (n == 0)
-				return n_wrote;
-			n_wrote += n;
-		}
-
-	return n_wrote;
-}
-#endif
 
 /* These can be used with files... but where written to use with
  * sockets. */

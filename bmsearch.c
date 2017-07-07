@@ -17,11 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef WIN32
-#define NO_MEMRCHR
-#else
 #define _GNU_SOURCE /* for memrchr */
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -166,23 +162,6 @@ bool bcsearch(struct buff *buff, Byte what)
 	bmove1(buff);
 	return true;
 }
-
-#ifdef NO_MEMRCHR
-/** Simple memrchr() for simple systems. */
-static void *memrchr(const void *s, int c, size_t n)
-{
-	if (n) {
-		const unsigned char *p = (const unsigned char *)s + n;
-		const unsigned char cmp = c;
-
-		do
-			if (*--p == cmp)
-				return (void *)p;
-		while (--n != 0);
-	}
-	return NULL;
-}
-#endif
 
 /** Search backward for a single byte. If byte found leaves point at
  * byte and returns true. If not found leaves point at the start of

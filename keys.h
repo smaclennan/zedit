@@ -23,7 +23,6 @@
 #define CX(n)	((n) + 128)
 #define M(n)	((n) + 256)
 
-/* WIN32 needs these to fit in a byte */
 #define TC_UP			CX('a')
 #define TC_DOWN			CX('b')
 #define TC_RIGHT		CX('c')
@@ -68,13 +67,5 @@ int tgetkb(void);
 int tkbrdy(void);
 int tdelay(int ms);
 void termcap_keys(void);
-
-#ifdef WIN32
-/* This mask defines which events are sent to the winkbd_event_cb */
-#define WINKBD_EVENT_MASK (ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT)
-
-/* Return non-zero if you don't want tgetkb to handle the event */
-extern int (*winkbd_event_cb)(INPUT_RECORD *event);
-#endif
 
 #endif

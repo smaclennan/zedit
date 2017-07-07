@@ -34,17 +34,12 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <time.h>
-#include <sys/stat.h>
-
-#include "config.h"
-
-#ifdef WIN32
-#include "zwin32.h"
-#else
 #include <unistd.h>
 #include <dirent.h>
 #include <strings.h> /* needed for c11 */
-#endif
+#include <sys/stat.h>
+
+#include "config.h"
 
 struct zbuff;
 
@@ -214,11 +209,7 @@ extern void (*Nextpart)(void);
 #define T_REGION		T_REVERSE
 
 char *zgetcwd(char *cwd, int len);
-#ifdef WIN32
-char *gethomedir(void);
-#else
 #define gethomedir()		getenv("HOME")
-#endif
 
 /* this is MUCH faster than an isascii isprint pair */
 #define ZISPRINT(c)		(c >= ' ' && c <= '~')

@@ -235,8 +235,6 @@ int main(int argc, char **argv)
 	if (textMode)
 		VAR(VNORMAL) = 0;
 
-	os_init();
-
 	/* PAW must not be on the Bufflist */
 	if (!(Paw = cmakebuff("*paw*", NULL)))
 		exit(1);

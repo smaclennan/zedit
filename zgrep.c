@@ -20,11 +20,7 @@
 #include "z.h"
 #include <fnmatch.h>
 
-#ifdef WIN32
-#define FNM_FLAGS FNM_CASEFOLD
-#else
 #define FNM_FLAGS 0
-#endif
 
 static void grep_one(char *fname, regexp_t *re,
 					 struct buff *inbuff, struct buff *outbuff)

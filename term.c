@@ -222,8 +222,6 @@ int prefline(void)
 	return line < w ? line : w >> 1;
 }
 
-void tsetcursor(void) {}
-
 #undef tbell
 void tbell(void)
 {

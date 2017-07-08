@@ -590,6 +590,83 @@ Argument will always prompt for the tag file to read.
 <li>DOS supports only simple button presses (1 & 2).
 </ul>
 
+<h1>Huge Files</h1>
+
+<p>I quite often have to read huge trace files on slow computers at
+work. The HUGE_FILES and HUGE_THREADED options make working with files
+that take 60 seconds or more to load more manageable. I am not
+particularly proud of this code, but it serves a real need...  at
+least for now.
+
+<p>But it is not without risk. It is not too bad as long as the file
+backing the buffer doesn't change. If it changes, it is considered a
+fatal error.
+
+<p>Once the reading is done, the file is closed and from then on you are
+safe. Zedit puts an H in the mode line while huge file mode is
+running.
+
+<p>WARNING: I/O errors on huge files are considered fatal!
+
+<h1>Buffer Library</h1>
+
+<h2>Generic Functions</h2>
+
+<p>The core buffer routines in Zedit are now generic enough to use
+outside of Zedit. The following files are "Zedit free":
+
+<ul>
+<li>buff.c
+<li>mark.c
+<li>bfile.c
+<li>bmsearch.c
+<li>reg.c
+<li>calc.c
+<li>undo.c
+<li>dbg.c
+<li>tinit.c
+<li>hugefile.c
+<li>bsocket.c
+<li>kbd.c
+</ul>
+
+<p>Basically anything in LFILES in the Makefile.
+
+<h2>Threading</h2>
+
+<p>All of the routines in the files listed above are partially thread
+safe. If you only access the buffer in one thread at a time, then they
+are safe. However buffers cannot be shared between threads without
+some form of external locking.
+
+<p>The exceptions are dbg.c and tinit.c. tinit.c could be made thread safe,
+but character at a time output to the screen does not lend itself to
+multi-threading.
+
+<h2>Marks</h2>
+
+<p>There are two types of marks: static and dynamic. By default, only
+static marks are supported. Static marks point at one place in a
+buffer and never move. So if you insert or delete characters, the mark
+could end up pointing at nothing.
+
+<p>However they are still very useful. For example, you can set a mark,
+search, and then return to the mark. The regular expression code
+relies on marks.
+
+<p>Dynamic marks are enabled with the HAVE_GLOBAL_MARKS and/or
+HAVE_BUFFER_MARKS defines. The advantage of dynamic marks is that they
+move as characters are inserted or deleted. So they stay valid even as
+the text around them changes.
+
+<p>HAVE_GLOBAL_MARKS defines a global list of marks. This is really for
+Zedit. The mark code does not maintain the global mark list, it just
+updates marks on the list in the approprate places. This is only
+thread safe if you guarantee locking.
+
+<p>HAVE_BUFFER_MARKS gives you buffer local marks which have the same
+restrictions as buffers. Buffer marks are created with bcremrk().
+
  <hr>
 <h2><a href="app-a.html">Appendix A: Commands</a></h2>
 <h2><a href="app-b.html">Appendix B: Variables</a></h2>

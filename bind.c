@@ -21,9 +21,6 @@
 
 Byte Lfunc;
 
-#ifdef __cplusplus
-#include "win32/dosbind.c"
-#else
 Byte Keys[] = {
 	ZSET_MARK,				/* C-@ */
 	ZBEGINNING_OF_LINE,		/* C-A */
@@ -225,4 +222,3 @@ Byte Keys[] = {
 
 	[M(127)] = ZDELETE_PREVIOUS_WORD,	/* M-DEL */
 };
-#endif

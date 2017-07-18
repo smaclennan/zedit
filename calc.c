@@ -91,7 +91,7 @@ static char top_op(struct calc *c)
 }
 
 /** Push an integer on the number stack */
-static void push_num(struct calc *c, int num)
+static void push_num(struct calc *c, long num)
 {
 	if (c->cur_num >= MAX_OPS)
 		longjmp(c->failed, CALC_STACK_OVERFLOW);

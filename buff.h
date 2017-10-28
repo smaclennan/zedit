@@ -54,13 +54,13 @@ struct buff {
 	bool bmodf;					/**< Buffer modified? */
 #if defined(UNDO) && UNDO
 	bool in_undo;				/**< Are we currently performing an undo? */
-	void *undo_tail;			/**< list of undos */
+	void *undo_tail;			/**< List of undos. */
 #endif
 #if HUGE_FILES
 	struct stat *stat;			/**< Stat buffer for huge files. */
 	void *lock;					/**< Lock for huge files. */
 	int fd;						/**< File descriptor for huge files. */
-	int n_huge;
+	int n_huge;					/**< Number of huge pages to read. */
 #endif
 };
 

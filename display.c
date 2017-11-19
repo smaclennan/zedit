@@ -539,6 +539,12 @@ static char *setmodes(struct zbuff *buff)
 
 		shell_init();
 		break;
+	case PYMODE:
+		PAWCAT("py");
+		Keys[CR] = ZPY_INDENT;
+		if (VAR(VCOMMENTS))
+			printchar = cprntchar;
+		break;
 	case TXTMODE:
 		PAWCAT("Text");
 		Keys[' '] = Keys[CR] = ZFILL_CHECK;

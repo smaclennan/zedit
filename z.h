@@ -89,14 +89,15 @@ struct zbuff;
 #define CMODE				0x0200
 #define TXTMODE				0x0400
 #define SHMODE				0x0800
+#define PYMODE              0x1000
 /* super modes - 0 to all allowed */
-#define SYSBUFF				0x1000
+#define SYSBUFF				0x2000
 /* File modes in buff.h */
 /* #define COMPRESSED		0x10000 */
 /* #define CRLF				0x20000 */
 /* some handy macro for buffer modes */
-#define MAJORMODE			0x0f00
-#define PROGMODE			(CMODE | SHMODE)
+#define MAJORMODE			0x1f00
+#define PROGMODE			(CMODE | SHMODE | PYMODE)
 
 /* System buffer names */
 #define UNTITLED	"NoFile"	/* for buffers with no fname */

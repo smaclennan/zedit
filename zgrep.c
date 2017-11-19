@@ -95,6 +95,8 @@ void Zgrep(void)
 		strcpy(files, "*.[ch]");
 	else if (Curbuff->bmode & SHMODE)
 		strcpy(files, "*.sh");
+	else if (Curbuff->bmode & PYMODE)
+		strcpy(files, "*.py");
 	else
 		strcpy(files, "*");
 	if (getarg("File(s): ", files, STRMAX))

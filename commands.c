@@ -373,6 +373,37 @@ void Zsh_indent(void)
 	bdelmark(save);
 }
 
+/* PYTHON MODE COMMANDS */
+
+void Zpy_indent(void)
+{
+	static int first_time = 1;
+	static regexp_t py_re;
+	int width;
+	struct mark save;
+
+	if (first_time) {
+		if (re_compile(&py_re, "[^:]+:", REG_EXTENDED))
+			/* This is a programming error */
+			error("Unable to compile re '%s'\n", py_re);
+		first_time = 0;
+	}
+
+	bmrktopnt(Bbuff, &save);
+	tobegline(Bbuff);
+	bmovepast(Bbuff, biswhite, FORWARD);
+	width = bgetcol(true, 0);
+
+	/* Simple version to start with. */
+	if (_lookingat(Bbuff, &py_re))
+		width += Taboffset;
+
+	bpnttomrk(Bbuff, &save);
+	binsert(Bbuff, NL);
+	Lfunc = ZINSERT; /* for undo */
+	tindent(width);
+}
+
 /* FILL MODE COMMANDS */
 
 void Zfill_check(void)
@@ -891,6 +922,7 @@ static struct _amode
 	{ "C",		CMODE	},
 	{ "Normal",	NORMAL	},
 	{ "Shell",	SHMODE	},
+	{ "Python",	PYMODE	},
 	{ "Text",	TXTMODE	},
 };
 #define AMODESIZE	sizeof(struct _amode)
@@ -945,6 +977,9 @@ void toggle_mode(int mode)
 	if (mode == 0) {
 		if (matchit(VARSTR(VCEXTS), ext))
 			mode = CMODE;
+		else if (strcmp(ext, ".py") == 0 ||
+				 strncmp((char *)Bbuff->curcptr, "#!/usr/bin/python", 17) == 0)
+			mode = PYMODE;
 		else if (matchit(VARSTR(VSEXTS), ext) ||
 			 strncmp((char *)Bbuff->curcptr, "#!/", 3) == 0)
 			mode = SHMODE;
@@ -961,7 +996,9 @@ void toggle_mode(int mode)
 			Curbuff->comchar = ';';
 		else
 			Curbuff->comchar = '#';
-	} else
+	} else if (mode == PYMODE)
+		Curbuff->comchar = '#';
+	else
 		Curbuff->comchar = 0;
 
 	Curbuff->bmode = (Curbuff->bmode & ~MAJORMODE) | mode;

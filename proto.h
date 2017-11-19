@@ -118,6 +118,7 @@ Z(Zset_bookmark);
 Z(Zsetenv);
 Z(Zset_mark);
 Z(Zsh_indent);
+Z(Zpy_indent);
 Z(Zsize_window);
 Z(Zswap_chars);
 Z(Zswap_mark);

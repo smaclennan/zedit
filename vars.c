@@ -192,6 +192,10 @@ int settabsize(unsigned mode)
 			return 0;
 		Taboffset = VAR(VSHTABS);
 		return Tabsize = VAR(VTABS);
+	case PYMODE:
+		if (Tabsize == VAR(VSHTABS) && Taboffset == VAR(VSHTABS))
+			return 0;
+		return Tabsize = Taboffset = VAR(VSHTABS);
 	default:
 		if (Tabsize == VAR(VTABS))
 			return 0;

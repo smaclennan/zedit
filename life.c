@@ -257,7 +257,6 @@ static void fill_matrix1(char *p1)
 			binsert(Bbuff, NL);
 
 	}
-	invalidate_scrnmarks(0, SROWS);
 }
 
 void Zlife(void)
@@ -265,9 +264,34 @@ void Zlife(void)
 	char *matrix1, *matrix2;
 	bool go = true, step = true;
 	unsigned cmd;
+	struct zbuff *buff;
 
-	if (!promptsave(Curbuff, false))
+	buff = zcreatebuff(LIFEBUFF, NULL);
+	if (buff == NULL) {
+		error("Unable to create life buffer.");
 		return;
+	}
+
+	if (buff != Curbuff) {
+		/* Copy the first SROWS lines to life buffer */
+		struct mark save;
+		int i;
+
+		bempty(buff->buff);
+
+		bmrktopnt(Bbuff, &save);
+		bpnttomrk(Bbuff, Sstart); /* screen start */
+		for (i = 0; i < SROWS + 1; ++i)
+			if (!bcsearch(Bbuff, NL))
+				break; /* EOB */
+
+		bcopyrgn(Sstart, buff->buff);
+		bpnttomrk(Bbuff, &save);
+
+		invalidate_scrnmarks(0, SROWS);
+	}
+
+	cswitchto(buff);
 
 	matrix1 = malloc(MATRIX);
 	matrix2 = malloc(MATRIX);

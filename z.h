@@ -107,6 +107,7 @@ struct zbuff;
 #define LISTBUFF	"*list*"
 #define CONFBUFF	"*config*"
 #define TAGBUFF		"*tags*"
+#define LIFEBUFF    "*life*"
 
 /* ask return values */
 #define BANG		2

@@ -115,6 +115,7 @@ void (*Cmds[][2])() = {
 	{ Znext_error,			Znotimpl },
 	{ Zcmd_to_buffer,		Znotimpl },
 	{ Zkill,			Znotimpl },
+	{ Zlife,			Znotimpl },
 	{ Zindent,			Znotimpl },
 	{ Zundent,			Znotimpl },
 	{ Zempty_buffer,		Zempty_buffer },

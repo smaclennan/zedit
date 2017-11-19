@@ -264,6 +264,9 @@ struct cnames Cnames[] = {
 	 C("Kills the current make. The command must wait for the make to die "
 	   "before it can continue.")
 	},
+	{"life",			ZLIFE,			0,
+	 C("Plays the Game of Life.")
+	},
 	{"list-buffers",		ZLIST_BUFFERS,		AI,
 	 C("Displays a list of the current buffers on the display.")
 	},

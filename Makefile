@@ -42,7 +42,7 @@ ETAGS=`which etags || echo true`
 
 CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 	display.c file.c funcs.c getarg.c getfname.c help.c shell.c \
-	srch.c tags.c term.c vars.c window.c varray.c z.c zgrep.c
+	srch.c tags.c term.c vars.c window.c varray.c z.c zgrep.c life.c
 
 LFILES = buff.c bfile.c bmsearch.c mark.c reg.c tinit.c calc.c dbg.c undo.c \
 	kbd.c hugefile.c

@@ -977,7 +977,7 @@ void toggle_mode(int mode)
 	if (mode == 0) {
 		if (matchit(VARSTR(VCEXTS), ext))
 			mode = CMODE;
-		else if (strcmp(ext, ".py") == 0 ||
+		else if ((ext && strcmp(ext, ".py") == 0) ||
 				 strncmp((char *)Bbuff->curcptr, "#!/usr/bin/python", 17) == 0)
 			mode = PYMODE;
 		else if (matchit(VARSTR(VSEXTS), ext) ||

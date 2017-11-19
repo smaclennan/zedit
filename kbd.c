@@ -24,7 +24,7 @@
 #include <unistd.h>
 
 /** The special multi-byte keys. Note: We can currently only have 32 specials */
-static const char *Tkeys[] = {
+static char *Tkeys[] = {
 	"\033[A",	/* up */
 	"\033[B",	/* down */
 	"\033[C",	/* right */
@@ -109,6 +109,7 @@ static int check_specials(void)
 
 	for (j = 1; mask; ++j) {
 		int cmd = _tgetkb() & 0x7f;
+
 		if (mask) {
 			for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
 				if ((mask & bit) && cmd == Tkeys[i][j]) {
@@ -143,6 +144,7 @@ static int check_specials(void)
 int tgetkb(void)
 {
 	int cmd = _tgetkb() & 0x7f;
+
 	Pending = false;
 
 	/* All special keys start with ESC */
@@ -203,7 +205,6 @@ static char *key_names[] = {
 
 void termcap_keys(void)
 {
-	extern char *termcap_end;
 	int i;
 	char *key;
 

@@ -147,7 +147,9 @@ bool bisaftermrk(struct buff *buff, struct mark *tmark)
 		return buff->curchar > tmark->moffset;
 	if (tmark->mpage == buff->curpage->nextp)
 		return false;
-	for (tp = buff->curpage->prevp; tp && tp != tmark->mpage; tp = tp->prevp)
+	for (tp = buff->curpage->prevp;
+	     tp && tp != tmark->mpage;
+	     tp = tp->prevp)
 		;
 	return tp != NULL;
 }
@@ -163,7 +165,9 @@ bool bisbeforemrk(struct buff *buff, struct mark *tmark)
 		return buff->curchar < tmark->moffset;
 	if (tmark->mpage == buff->curpage->prevp)
 		return false;
-	for (tp = buff->curpage->nextp; tp && tp != tmark->mpage; tp = tp->nextp)
+	for (tp = buff->curpage->nextp;
+	     tp && tp != tmark->mpage;
+	     tp = tp->nextp)
 		;
 	return tp != NULL;
 }

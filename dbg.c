@@ -47,7 +47,8 @@ void Dbg(const char *fmt, ...)
 	va_start(arg_ptr, fmt);
 	if (dbgfname) {
 		FILE *fp = fopen(dbgfname, "a");
-		if(fp) {
+
+		if (fp) {
 			vfprintf(fp, fmt, arg_ptr);
 			fclose(fp);
 		}

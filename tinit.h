@@ -28,6 +28,7 @@
 #include <termcap.h>
 #define TPUTS(s) tputs(s, 1, putchar)
 extern char *cm[];
+extern char *termcap_end;
 #endif
 
 #define	ROWMAX			110

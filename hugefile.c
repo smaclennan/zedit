@@ -172,20 +172,20 @@ int breadhuge(struct buff *buff, const char *fname)
 	struct page *page;
 
 	if (buff->fd != -1)
-		return EBUSY;
+		return -EBUSY;
 
 	fd = open(fname, O_RDONLY | O_BINARY);
 	if (fd < 0)
-		return errno;
+		return -errno;
 
 	buff->stat = malloc(sizeof(struct stat));
 	if (!buff->stat) {
-		rc = ENOMEM;
+		rc = -ENOMEM;
 		goto failed;
 	}
 
 	if (fstat(fd, buff->stat)) {
-		rc = EIO;
+		rc = -EIO;
 		goto failed;
 	}
 
@@ -194,7 +194,7 @@ int breadhuge(struct buff *buff, const char *fname)
 	/* always read the first page */
 	len = read(fd, buff->curcptr, PGSIZE);
 	if (len <= 0) {
-		rc = EIO;
+		rc = -EIO;
 		goto failed;
 	}
 	buff->curpage->plen = len;
@@ -208,7 +208,7 @@ int breadhuge(struct buff *buff, const char *fname)
 		page = newpage(page);
 		if (!page) {
 			bempty(buff); /* will close fd */
-			return ENOMEM;
+			return -ENOMEM;
 		}
 		page->pgoffset = i;
 		page->plen = PGSIZE;
@@ -218,7 +218,7 @@ int breadhuge(struct buff *buff, const char *fname)
 		page = newpage(page);
 		if (!page) {
 			bempty(buff); /* will close fd */
-			return ENOMEM;
+			return -ENOMEM;
 		}
 		page->pgoffset = i;
 		page->plen = left;

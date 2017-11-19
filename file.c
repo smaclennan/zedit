@@ -222,14 +222,14 @@ int zreadfile(char *fname)
 #endif
 		rc = breadfile(Bbuff, fname, &compressed);
 
-	if (rc > 0) {
-		if (rc == ENOENT)
+	if (rc < 0) {
+		if (rc == -ENOENT)
 			return 1;
-		error("%s: %s", fname, strerror(errno));
+		error("%s: %s", fname, strerror(-rc));
 		return -1;
 	}
 
-	if (rc == -1) {
+	if (rc == 1) {
 		error("gzdopen %s", fname);
 		return -1;
 	}
@@ -453,6 +453,6 @@ void Zread_file(void)
 		bdelbuff(tbuff);
 	}
 
-	if (rc > 0)
+	if (rc)
 		error("Unable to read %s", Fname);
 }

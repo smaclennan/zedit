@@ -40,7 +40,7 @@
 
 /**
  * Load the file 'fname' into the current buffer.  Returns 0
- * successfully opened file, > 0 (errno) on error, -1 on gzdopen
+ * successfully opened file, < 0 (errno) on error, 1 on gzdopen
  * error.
  * Leaves point at start of buffer.
  */
@@ -51,18 +51,21 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 
 	fd = open(fname, O_RDONLY | O_BINARY);
 	if (fd < 0)
-		return errno;
+		return -errno;
 
 #if ZLIB
 	gzFile gz = gzdopen(fd, "rb");
+
 	if (!gz) {
 		close(fd);
-		return -1;
+		return 1;
 	}
 
-	if (compressed) *compressed = gzdirect(gz) == 0;
+	if (compressed)
+		*compressed = gzdirect(gz) == 0;
 #else
-	if (compressed) *compressed = 0;
+	if (compressed)
+		*compressed = 0;
 #endif
 
 	bempty(buff);
@@ -72,7 +75,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 			if (!newpage(buff->curpage)) {
 				bempty(buff);
 				fileclose(fd);
-				return ENOMEM;
+				return -ENOMEM;
 			}
 			makecur(buff, buff->curpage->nextp, 0);
 		}
@@ -87,7 +90,8 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 	/* Ubuntu 12.04 has a bug where zero length files are reported as
 	 * compressed.
 	 */
-	if (compressed && curplen(buff) == 0) *compressed = 0;
+	if (compressed && curplen(buff) == 0)
+		*compressed = 0;
 #endif
 
 	buff->bmodf = false;
@@ -101,8 +105,8 @@ static bool bwritegzip(struct buff *buff, int fd)
 {
 	struct page *tpage;
 	bool status = true;
-
 	gzFile gz = gzdopen(fd, "wb");
+
 	if (!gz) {
 		close(fd);
 		return false;
@@ -111,6 +115,7 @@ static bool bwritegzip(struct buff *buff, int fd)
 	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int n = gzwrite(gz, tpage->pdata, tpage->plen);
+
 			status = n == tpage->plen;
 		}
 
@@ -149,6 +154,7 @@ static bool bwritedos(struct buff *buff, int fd)
 	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
 			int len = tpage->plen;
+
 			makecur(buff, tpage, 0);
 			p = buf;
 			for (i = 0; i < tpage->plen; ++i) {
@@ -182,7 +188,8 @@ bool bwritefile(struct buff *buff, char *fname, int mode)
 		goto done;
 
 	/* Write the output file */
-	if ((fd = creat(fname, mode & 0777)) < 0)
+	fd = creat(fname, mode & 0777);
+	if (fd < 0)
 		goto done;
 
 #if ZLIB

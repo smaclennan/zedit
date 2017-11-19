@@ -36,9 +36,11 @@ struct undo {
 
 #define is_insert(u) ((u)->data == NULL)
 
-static struct undo *new_undo(struct buff *buff, void **tail, bool insert, int size)
+static struct undo *new_undo(struct buff *buff, void **tail,
+			     bool insert, int size)
 {
 	struct undo *undo = (struct undo *)calloc(1, sizeof(struct undo));
+
 	if (!undo)
 		return NULL;
 
@@ -61,6 +63,7 @@ static struct undo *new_undo(struct buff *buff, void **tail, bool insert, int si
 static void free_undo(void **tail)
 {
 	struct undo *undo = (struct undo *)*tail;
+
 	if (undo) {
 		*tail = undo->prev;
 
@@ -142,6 +145,7 @@ void undo_add(struct buff *buff, int size)
 static void undo_append(struct undo *undo, Byte *data)
 {
 	Byte *buf = (Byte *)realloc(undo->data, undo->size + 1);
+
 	if (!buf)
 		return;
 
@@ -153,6 +157,7 @@ static void undo_append(struct undo *undo, Byte *data)
 static void undo_prepend(struct undo *undo, Byte *data)
 {
 	Byte *buf = (Byte *)realloc(undo->data, undo->size + 1);
+
 	if (!buf)
 		return;
 
@@ -220,6 +225,7 @@ int do_undo(struct buff *buff)
 	} else {
 		unsigned long offset = undo->offset;
 		struct mark *tmark = bcremark(buff);
+
 		if (!tmark)
 			return 1;
 		do {

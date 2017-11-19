@@ -25,8 +25,8 @@
 
 /** Main calc struct */
 struct calc {
-	char ops[MAX_OPS];			/**< Stack of operators. */
-	int cur_op;			/**< Current pointer in operator stack. */
+	char ops[MAX_OPS];	/**< Stack of operators. */
+	int cur_op;		/**< Current pointer in operator stack. */
 
 	union number nums[MAX_OPS]; /**< Stack of numbers. */
 	int cur_num;		/**< Current pointer in numbers stack. */
@@ -152,6 +152,7 @@ static int calc_g_num(struct calc *c, char **p)
 			push_float(c, strtod(*p, &e));
 		else {
 			long num = strtol(*p, &e, 0);
+
 			switch (*e) {
 			case 't':
 			case 'T':
@@ -198,7 +199,9 @@ static int calc_g(struct calc *c, char op)
 			push_num(c, one.i op two.i);			\
 	} while (0)
 
-/** Push an integer on the numbers stack verifying that we are not doing floats. */
+/** Push an integer on the numbers stack verifying that we are not
+ * doing floats.
+ */
 #define INT_OP(op) do {				       \
 		if (c->is_float)			       \
 			longjmp(c->failed, CALC_SYNTAX_ERROR); \
@@ -232,7 +235,8 @@ int calc(char *p, struct calc_result *result)
 	int f_val, g_val, rc;
 
 	/* A longjmp is called on error. */
-	if ((rc = setjmp(c->failed)))
+	rc = setjmp(c->failed);
+	if (rc)
 		return rc;
 
 	c->is_float = strchr(p, '.') != NULL;
@@ -263,6 +267,7 @@ int calc(char *p, struct calc_result *result)
 			/* reduce */
 			do {
 				int op = pop_op(c);
+
 				if (is_op(op)) {
 					union number two = pop_num(c);
 					union number one = pop_num(c);

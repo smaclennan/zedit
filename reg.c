@@ -39,10 +39,11 @@ static bool advance(struct buff *buff, regex_t *re, struct mark *REstart)
 		bmrktopnt(buff, REstart);
 		bmove(buff, match[0].rm_eo - match[0].rm_so);
 		return true;
-	} else {
-		if (i == 0) bmove1(buff);
-		return false;
 	}
+
+	if (i == 0)
+		bmove1(buff);
+	return false;
 }
 
 /** Step through the buffer looking for a regular expression. If
@@ -53,13 +54,15 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 {
 	struct mark tmark;
 
-	if (REstart == NULL) REstart = &tmark;
+	if (REstart == NULL)
+		REstart = &tmark;
 
 	while (!bisend(buff)) {
 		/* ^ must match from start */
 		if (re->circf)
 			/* if not at the start of the current line - go to the
-			 * next line */
+			 * next line
+			 */
 			if (bpeek(buff) != '\n')
 				bcsearch(buff, '\n');	/* goto next line */
 
@@ -170,12 +173,14 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 	uint8_t *ep = re->ep;
 	struct mark tmark;
 
-	if (REstart == NULL) REstart = &tmark;
+	if (REstart == NULL)
+		REstart = &tmark;
 
 	/* ^ must match from start */
 	if (re->circf)
 		/* if not at the start of the current line - go to the
-		 * next line */
+		 * next line
+		 */
 		if (bpeek(buff) != '\n')
 			bcsearch(buff, '\n');	/* goto next line */
 
@@ -197,6 +202,7 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 bool _lookingat(struct buff *buff, regexp_t *re)
 {
 	struct mark tmark;
+
 	bmrktopnt(buff, &tmark);
 	if (advance(buff, re->ep))
 		return true;
@@ -274,11 +280,11 @@ static bool advance(struct buff *buff, uint8_t *ep)
 
 		case CDOT | RNGE:
 			getrnge(ep);
-			while (low--)
+			while (low--) {
 				if (ISNL(buff()))
 					return false;
-				else
-					bmove1(buff);
+				bmove1(buff);
+			}
 			bmrktopnt(buff, &curlp);
 			while (size-- && !ISNL(buff()))
 				bmove1(buff);
@@ -302,9 +308,6 @@ static bool advance(struct buff *buff, uint8_t *ep)
 				if (!ISTHERE(c))
 					break;
 			}
-			/* SAM why? goes one too far for \{m\} */
-// SAM			if (size < 0)
-// SAM				bmove1(buff);
 			ep += 18;		/* 16 + 2 */
 			goto star;
 
@@ -321,7 +324,8 @@ static bool advance(struct buff *buff, uint8_t *ep)
 			bmrktopnt(buff, &curlp);
 			while (ecmp(buff, bbeg, ct))
 				;
-			while (bisaftermrk(buff, &curlp) || bisatmrk(buff, &curlp)) {
+			while (bisaftermrk(buff, &curlp) ||
+			       bisatmrk(buff, &curlp)) {
 				if (advance(buff, ep))
 					return true;
 				bmove(buff, -ct);
@@ -347,14 +351,14 @@ static bool advance(struct buff *buff, uint8_t *ep)
 			ep += 16;
 
 star:
-			do {
+			do {	/* till back to start */
 				bmrktopnt(buff, &tmark);
 				if (advance(buff, ep)) /* try to match */
 					return true;
 				bpnttomrk(buff, &tmark);
-				if (!bmove(buff, -1)) /* go back and try again */
-					break;
-			} while (!bisbeforemrk(buff, &curlp)); /* till back to start */
+				if (!bmove(buff, -1))
+					break; /* go back and try again */
+			} while (!bisbeforemrk(buff, &curlp));
 			bpnttomrk(buff, &curlp); /* Don't slip backwards */
 			return false;
 		}

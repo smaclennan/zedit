@@ -93,7 +93,7 @@ int bread(struct buff *buff, int fd)
 
 /** Write to a file descriptor using writev.  Can be used for files but
  * meant for sockets. Leaves the point at the end of the write.
-*/
+ */
 int bwrite(struct buff *buff, int fd, unsigned size)
 {
 	struct iovec iovs[MAX_IOVS];

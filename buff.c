@@ -40,8 +40,10 @@ void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
 struct buff *bcreate(void)
 {
 	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));
+
 	if (buf) {
-		if (!(buf->firstp = newpage(NULL))) {
+		buf->firstp = newpage(NULL);
+		if (!buf->firstp) {
 			/* bad news, de-allocate */
 			free(buf);
 			return NULL;
@@ -84,7 +86,9 @@ bool binsert(struct buff *buff, Byte byte)
 
 	if (curplen(buff) == PGSIZE && !pagesplit(buff, HALFP))
 		return false;
-	memmove(buff->curcptr + 1, buff->curcptr, curplen(buff) - buff->curchar);
+	memmove(buff->curcptr + 1,
+		buff->curcptr,
+		curplen(buff) - buff->curchar);
 	*buff->curcptr++ = byte;
 	buff->curchar++;
 	curplen(buff)++;
@@ -116,7 +120,8 @@ static char valid_format(const char *fmt, int *saw_neg, int *len, int *n)
 		*len = *len * 10 + *fmt - '0';
 		++fmt; ++*n;
 	}
-	if (*fmt == 'u' || *fmt == 'd') *saw_neg = 0;
+	if (*fmt == 'u' || *fmt == 'd')
+		*saw_neg = 0;
 	return *fmt;
 }
 
@@ -124,6 +129,7 @@ static char valid_format(const char *fmt, int *saw_neg, int *len, int *n)
 static bool out_str(struct buff *buff, const char *s, int saw_neg, int len)
 {
 	int slen = strlen(s);
+
 	if (saw_neg == 0)
 		while (slen++ < len)
 			if (!binsert(buff, ' '))
@@ -137,6 +143,28 @@ static bool out_str(struct buff *buff, const char *s, int saw_neg, int len)
 	return true;
 }
 
+static bool handle_format(struct buff *buff, const char **fmt, va_list ap)
+{
+	char tmp[21];
+	int saw_neg, len, n;
+
+	switch (valid_format(*fmt, &saw_neg, &len, &n)) {
+	case 's':
+		*fmt += n;
+		return out_str(buff, va_arg(ap, char *), saw_neg, len);
+	case 'd':
+		*fmt += n;
+		snprintf(tmp, sizeof(tmp), "%d", va_arg(ap, int));
+		return out_str(buff, tmp, saw_neg, len);
+	case 'u':
+		*fmt += n;
+		snprintf(tmp, sizeof(tmp), "%u", va_arg(ap, unsigned));
+		return out_str(buff, tmp, saw_neg, len);
+	default:
+		return binsert(buff, **fmt);
+	}
+}
+
 /** Insert a string. Uses variable arguments.
  *
  * Supports a subset of printf: %%s, %%d, %%u. Format can contain a width
@@ -145,32 +173,13 @@ static bool out_str(struct buff *buff, const char *s, int saw_neg, int len)
 bool binstr(struct buff *buff, const char *fmt, ...)
 {
 	va_list ap;
-	char tmp[21];
-	int saw_neg, len, n;
 	bool rc = true;
 
 	va_start(ap, fmt);
 	while (*fmt && rc) {
-		if (*fmt == '%') {
-			switch (valid_format(fmt, &saw_neg, &len, &n)) {
-			case 's':
-				fmt += n;
-				rc = out_str(buff, va_arg(ap, char *), saw_neg, len);
-				break;
-			case 'd':
-				fmt += n;
-				snprintf(tmp, sizeof(tmp), "%d", va_arg(ap, int));
-				rc = out_str(buff, tmp, saw_neg, len);
-				break;
-			case 'u':
-				fmt += n;
-				snprintf(tmp, sizeof(tmp), "%u", va_arg(ap, unsigned));
-				rc = out_str(buff, tmp, saw_neg, len);
-				break;
-			default:
-				rc = binsert(buff, *fmt);
-			}
-		} else
+		if (*fmt == '%')
+			rc = handle_format(buff, &fmt, ap);
+		else
 			rc = binsert(buff, *fmt);
 		++fmt;
 	}
@@ -194,7 +203,9 @@ void bdelete(struct buff *buff, unsigned quantity)
 
 		curplen(buff) -= quan;
 
-		memmove(buff->curcptr, buff->curcptr + quan, curplen(buff) - buff->curchar);
+		memmove(buff->curcptr,
+			buff->curcptr + quan,
+			curplen(buff) - buff->curchar);
 		if (lastp(curpage))
 			quantity = 0;
 		else
@@ -295,7 +306,8 @@ void btoend(struct buff *buff)
 	struct page *lastp;
 
 	/* For huge files we don't want to make every page current */
-	for (lastp = buff->curpage; lastp->nextp; lastp = lastp->nextp) ;
+	for (lastp = buff->curpage; lastp->nextp; lastp = lastp->nextp)
+		;
 	makecur(buff, lastp, lastp->plen);
 }
 
@@ -371,22 +383,24 @@ void bempty(struct buff *buff)
 	bsetmod(buff);
 }
 
-/** Peek the previous byte. Does not move the point. Returns LF at start of buffer. */
+/** Peek the previous byte. Does not move the point. Returns LF at
+ * start of buffer.
+ */
 Byte bpeek(struct buff *buff)
 {
+	Byte ch;
+
 	if (buff->curchar > 0)
 		return *(buff->curcptr - 1);
-	else if (bisstart(buff))
+	if (bisstart(buff))
 		/* Pretend we are at the start of a line.
-		 * Needed for delete-to-eol and step in reg.c. */
+		 * Needed for delete-to-eol and step in reg.c.
+		 */
 		return '\n';
-	else {
-		Byte ch;
-		bmove(buff, -1);
-		ch = *buff->curcptr;
-		bmove1(buff);
-		return ch;
-	}
+	bmove(buff, -1);
+	ch = *buff->curcptr;
+	bmove1(buff);
+	return ch;
 }
 
 /** Move the point to a given absolute offset in the buffer. */
@@ -395,11 +409,11 @@ void boffset(struct buff *buff, unsigned long offset)
 	struct page *tpage;
 
 	/* find the correct page */
-	for (tpage = buff->firstp; tpage->nextp; tpage = tpage->nextp)
+	for (tpage = buff->firstp; tpage->nextp; tpage = tpage->nextp) {
 		if (tpage->plen >= offset)
 			break;
-		else
-			offset -= tpage->plen;
+		offset -= tpage->plen;
+	}
 
 	makecur(buff, tpage, offset);
 }
@@ -407,23 +421,31 @@ void boffset(struct buff *buff, unsigned long offset)
 /** Go forward or back past a thingy */
 void bmovepast(struct buff *buff, int (*pred)(int), bool forward)
 {
-	if (!forward)
+	if (forward)
+		while (!bisend(buff) && pred(*buff->curcptr))
+			bmove1(buff);
+	else {
 		bmove(buff, -1);
-	while (!(forward ? bisend(buff) : bisstart(buff)) && pred(*buff->curcptr))
-		bmove(buff, forward ? 1 : -1);
-	if (!forward && !pred(*buff->curcptr))
-		bmove1(buff);
+		while (!bisstart(buff) && pred(*buff->curcptr))
+			bmove(buff, -1);
+		if (!pred(*buff->curcptr))
+			bmove1(buff);
+	}
 }
 
 /** Go forward or back to a thingy */
 void bmoveto(struct buff *buff, int (*pred)(int), bool forward)
 {
-	if (!forward)
+	if (forward)
+		while (!bisend(buff) && !pred(*buff->curcptr))
+			bmove1(buff);
+	else {
 		bmove(buff, -1);
-	while (!(forward ? bisend(buff) : bisstart(buff)) && !pred(*buff->curcptr))
-		bmove(buff, forward ? 1 : -1);
-	if (!forward && !bisstart(buff))
-		bmove1(buff);
+		while (!bisstart(buff) && !pred(*buff->curcptr))
+			bmove(buff, -1);
+		if (!bisstart(buff))
+			bmove1(buff);
+	}
 }
 
 /** Copy from Point to mark to buffer 'to'. Returns bytes copied. */
@@ -439,7 +461,8 @@ long bcopyrgn(struct mark *tmark, struct buff *to)
 	if (flip)
 		bswappnt(from, tmark);
 
-	if (!(ltmrk = bcremark(from)))
+	ltmrk = bcremark(from);
+	if (!ltmrk)
 		return 0;
 
 	while (bisbeforemrk(from, tmark)) {
@@ -458,7 +481,9 @@ long bcopyrgn(struct mark *tmark, struct buff *to)
 		if (srclen < dstlen)
 			dstlen = srclen;
 		/* Make a gap */
-		memmove(to->curcptr + dstlen, to->curcptr, curplen(to) - to->curchar);
+		memmove(to->curcptr + dstlen,
+			to->curcptr,
+			curplen(to) - to->curchar);
 		/* and fill it in */
 		memmove(to->curcptr, from->curcptr, dstlen);
 		curplen(to) += dstlen;
@@ -524,6 +549,7 @@ unsigned long bline(struct buff *buff)
 struct page *newpage(struct page *curpage)
 {
 	struct page *page = (struct page *)calloc(1, sizeof(struct page));
+
 	if (!page)
 		return NULL;
 
@@ -548,7 +574,8 @@ struct page *pagesplit(struct buff *buff, unsigned dist)
 	struct mark *btmark;
 	int newsize;
 
-	if (dist > PGSIZE) return NULL;
+	if (dist > PGSIZE)
+		return NULL;
 
 	curpage = buff->curpage;
 	newp = newpage(curpage);

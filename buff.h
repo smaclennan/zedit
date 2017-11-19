@@ -45,22 +45,22 @@
 /** Main buffer structure. */
 struct buff {
 #ifdef HAVE_BUFFER_MARKS
-	struct mark *marks;			/**< Buffer dynamic marks. */
+	struct mark *marks;	/**< Buffer dynamic marks. */
 #endif
-	struct page *firstp;		/**< List of pages. */
-	struct page *curpage;		/**< Point page. */
-	Byte *curcptr;				/**< Point position in the page. */
-	unsigned curchar;			/**< Point index in the page. */
-	bool bmodf;					/**< Buffer modified? */
+	struct page *firstp;	/**< List of pages. */
+	struct page *curpage;	/**< Point page. */
+	Byte *curcptr;		/**< Point position in the page. */
+	unsigned curchar;	/**< Point index in the page. */
+	bool bmodf;		/**< Buffer modified? */
 #if defined(UNDO) && UNDO
-	bool in_undo;				/**< Are we currently performing an undo? */
-	void *undo_tail;			/**< List of undos. */
+	bool in_undo;		/**< Are we currently performing an undo? */
+	void *undo_tail;	/**< List of undos. */
 #endif
 #if HUGE_FILES
-	struct stat *stat;			/**< Stat buffer for huge files. */
-	void *lock;					/**< Lock for huge files. */
-	int fd;						/**< File descriptor for huge files. */
-	int n_huge;					/**< Number of huge pages to read. */
+	struct stat *stat;	/**< Stat buffer for huge files. */
+	void *lock;		/**< Lock for huge files. */
+	int fd;			/**< File descriptor for huge files. */
+	int n_huge;		/**< Number of huge pages to read. */
 #endif
 };
 
@@ -156,13 +156,13 @@ void Dbg(const char *fmt, ...);
 
 /** Describes one page in memory. */
 struct page {
-	Byte pdata[PGSIZE];		/**< Page data. */
+	Byte pdata[PGSIZE];	/**< Page data. */
 #if HUGE_FILES
 	unsigned pgoffset;      /**< Huge files offset in file or 0 if in memory. */
 #endif
 	unsigned plen;          /**< Current length of the page. */
-	struct page *prevp;		/**< List of pages. */
-	struct page *nextp;		/**< List of pages. */
+	struct page *prevp;	/**< List of pages. */
+	struct page *nextp;	/**< List of pages. */
 };
 
 struct page *newpage(struct page *curpage);
@@ -178,7 +178,8 @@ static inline bool bisstart(struct buff *buff)
 /** Is the point at the end of the buffer? */
 static inline bool bisend(struct buff *buff)
 {
-	return buff->curpage->nextp == NULL && buff->curchar >= buff->curpage->plen;
+	return buff->curpage->nextp == NULL &&
+		buff->curchar >= buff->curpage->plen;
 }
 
 /* Helper function - use makecur */
@@ -241,8 +242,8 @@ void bhugecleanup(struct buff *buff);
 #warning no atomic functions
 #define atomic_add(a, n) ((a) += n)
 #define atomic_sub(a, n) ((a) -= n)
-#define atomic_inc(a) ++(a)
-#define atomic_dec(a) --(a)
+#define atomic_inc(a) (++(a))
+#define atomic_dec(a) (--(a))
 #endif
 
 #endif

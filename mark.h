@@ -84,12 +84,12 @@ static inline bool mrkatmrk(struct mark *m1, struct mark *m2)
 extern struct mark *Marklist;
 
 /** Walk through all the global marks that match page */
-#define foreach_global_pagemark(mark, page)				   \
+#define foreach_global_pagemark(mark, page)		       \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mpage == (page))
 
 /** Walk through all the global marks that match buff */
-#define foreach_global_buffmark(buff, mark)				   \
+#define foreach_global_buffmark(buff, mark)		       \
 	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
 		if ((mark)->mbuff == (buff))
 #else
@@ -99,12 +99,12 @@ extern struct mark *Marklist;
 
 #ifdef HAVE_BUFFER_MARKS
 /** Walk through all the buffer marks in buff that match page */
-#define foreach_pagemark(buff, mark, page)						 \
-	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	 \
+#define foreach_pagemark(buff, mark, page)				\
+	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	\
 		if ((mark)->mpage == (page))
 
 /** Walk through all the buffer marks in buff */
-#define foreach_buffmark(buff, mark)							\
+#define foreach_buffmark(buff, mark)					\
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)
 #else
 #define foreach_pagemark(buff, mark, page) if (0)

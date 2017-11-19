@@ -30,7 +30,8 @@
 #define MAX_IOVS 16
 
 /* These can be used with files... but where written to use with
- * sockets. */
+ * sockets.
+ */
 
 /** Read from a file descriptor using readv.  Simple version; only
  * reads at most two pages. Can be used for file but meant for
@@ -74,6 +75,7 @@ int bread(struct buff *buff, int fd)
 
 	if (left) {
 		int wrote = MIN(left, n);
+
 		buff->curcptr += wrote;
 		buff->curchar += wrote;
 		curplen(buff) += wrote;
@@ -100,6 +102,7 @@ int bwrite(struct buff *buff, int fd, unsigned size)
 
 	do {
 		unsigned have = curplen(buff) - buff->curchar;
+
 		iovs[0].iov_base = buff->curcptr;
 		iovs[0].iov_len = MIN(have, size);
 		size -= iovs[0].iov_len;
@@ -136,6 +139,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 
 	/* Fill the current page */
 	int n, left = PGSIZE - curplen(buff);
+
 	if (left > 0) {
 		n = MIN(left, size);
 		memcpy(buff->curcptr, data, n);
@@ -151,6 +155,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 	/* Put the rest in new pages */
 	while (size > 0) {
 		struct page *npage = newpage(buff->curpage);
+
 		if (!npage)
 			return appended;
 		makecur(buff, npage, 0);
@@ -230,7 +235,8 @@ int bindata(struct buff *buff, Byte *data, unsigned size)
 	}
 
 	while (size > 0) {
-		if (!(npage = newpage(buff->curpage)))
+		npage = newpage(buff->curpage);
+		if (!npage)
 			break;
 
 		n = MIN(PGSIZE, size);

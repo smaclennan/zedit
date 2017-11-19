@@ -288,15 +288,14 @@ static void binit(void)
 	}
 }
 
-/* Create a buffer and add to Bufflist. */
-struct zbuff *cmakebuff(const char *bname, char *fname)
+/* Create a buffer and add to Bufflist. Do not switch to buffer. */
+struct zbuff *zcreatebuff(const char *bname, char *fname)
 {
 	struct zbuff *bptr;
 
-	if ((bptr = cfindbuff(bname))) {
-		zswitchto(bptr);
+	bptr = cfindbuff(bname);
+	if (bptr)
 		return bptr;
-	}
 
 	binit();
 
@@ -335,6 +334,13 @@ struct zbuff *cmakebuff(const char *bname, char *fname)
 #endif
 	}
 
+	return bptr;
+}
+
+/* Create a buffer and add to Bufflist. Switch to buffer. */
+struct zbuff *cmakebuff(const char *bname, char *fname)
+{
+	struct zbuff *bptr = zcreatebuff(bname, fname);
 	zswitchto(bptr);
 	return bptr;
 }

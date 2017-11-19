@@ -158,6 +158,7 @@ int bmakecol(int);
 void zswitchto(struct zbuff *);
 struct zbuff *cfindbuff(const char *);
 struct zbuff *cfindzbuff(struct buff *buff);
+struct zbuff *zcreatebuff(const char *bname, char *fname);
 struct zbuff *cmakebuff(const char *, char *);
 bool cdelbuff(struct zbuff *buff);
 void cswitchto(struct zbuff *);

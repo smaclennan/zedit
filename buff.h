@@ -158,7 +158,7 @@ void Dbg(const char *fmt, ...);
 struct page {
 	Byte pdata[PGSIZE];	/**< Page data. */
 #if HUGE_FILES
-	unsigned pgoffset;      /**< Huge files offset in file or 0 if in memory. */
+	unsigned pgoffset;      /**< Huge files offset or 0 if in memory. */
 #endif
 	unsigned plen;          /**< Current length of the page. */
 	struct page *prevp;	/**< List of pages. */

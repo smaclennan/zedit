@@ -30,6 +30,12 @@
 #define buff() (*buff->curcptr)
 #define buffint() ((uint8_t)buff())
 
+static inline bool bequal(struct buff *buff, char ch, bool sensitive)
+{
+	return buff() == ch ||
+		(!sensitive && tolower(buff()) == tolower(ch));
+}
+
 /** This is an implementation of the Boyer-Moore Search.
  * It uses the delta1 only with the fast/slow loops.
  * It searches for the string 'str' starting at the current buffer location.
@@ -67,9 +73,8 @@ bool bm_search(struct buff *buff, const char *str, bool sensitive)
 			bmove(buff, delta[buffint()]);
 		/* slow loop */
 		for (i = len;
-			 buff() == str[i] ||
-				 (!sensitive && tolower(buff()) == tolower(str[i]));
-			 bmove(buff, -1), --i)
+		     bequal(buff, str[i], sensitive);
+		     bmove(buff, -1), --i)
 			if (i == 0) {
 				bmove(buff, len + 1);
 				return true;
@@ -93,7 +98,7 @@ bool bm_search(struct buff *buff, const char *str, bool sensitive)
  */
 bool bm_rsearch(struct buff *buff, const char *str, bool sensitive)
 {
-	int delta[NUMASCII], len, i;
+	int delta[NUMASCII], len, i, shift;
 
 	len = strlen(str) - 1;
 
@@ -120,11 +125,8 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive)
 			bmove(buff, delta[buffint()]);
 		/* slow loop */
 		for (i = 0;
-			 i <= len &&
-				 ((char)buff() == str[i] ||
-				  (!sensitive &&
-				   tolower(buff()) == tolower(str[i])));
-			 ++i, bmove1(buff))
+		     i <= len && bequal(buff, str[i], sensitive);
+		     ++i, bmove1(buff))
 			;
 		if (i > len) {
 			/* we matched! */
@@ -132,10 +134,17 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive)
 			return true;
 		}
 		/* compute shift. shift must be backward! */
-		bmove(buff, delta[buffint()] + i < 0 ? delta[buffint()] : -i - 1);
+		shift = delta[buffint()] + i < 0 ? delta[buffint()] : -i - 1;
+		bmove(buff, shift);
 	}
 
 	return false;
+}
+
+/** Search for `what' in current buffer page starting at point. */
+static inline Byte *memchrpage(struct buff *buff, Byte what)
+{
+	return memchr(buff->curcptr, what, curplen(buff) - buff->curchar);
 }
 
 /* Not Boyer-Moore.. but I think it makes sense to put it here */
@@ -151,12 +160,13 @@ bool bcsearch(struct buff *buff, Byte what)
 	if (bisend(buff))
 		return false;
 
-	while ((n = (Byte *)memchr(buff->curcptr, what, buff->curpage->plen - buff->curchar)) == NULL)
+	while ((n = memchrpage(buff, what)) == NULL) {
 		if (lastp(buff->curpage)) {
 			makeoffset(buff, buff->curpage->plen);
 			return false;
-		} else
-			makecur(buff, buff->curpage->nextp, 0);
+		}
+		makecur(buff, buff->curpage->nextp, 0);
+	}
 
 	makeoffset(buff, n - buff->curpage->pdata);
 	bmove1(buff);
@@ -174,12 +184,13 @@ bool bcrsearch(struct buff *buff, Byte what)
 	if (bisstart(buff))
 		return false;
 
-	while ((n = memrchr(buff->curpage->pdata, what, buff->curchar)) == NULL)
+	while (!(n = memrchr(buff->curpage->pdata, what, buff->curchar))) {
 		if (buff->curpage == buff->firstp) {
 			makeoffset(buff, 0);
 			return false;
-		} else
-			makecur(buff, buff->curpage->prevp, buff->curpage->prevp->plen);
+		}
+		makecur(buff, buff->curpage->prevp, buff->curpage->prevp->plen);
+	}
 
 	makeoffset(buff, n - buff->curpage->pdata);
 	return true;

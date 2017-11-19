@@ -65,10 +65,12 @@ char *termcap_end;
 
 static void tlinit(void)
 {
-	static char *names[] = { "cm", "ce", "cl", "me", "so", "vb", "md" };
-	char *end = area;
+	static const char * const names[] = {
+		"cm", "ce", "cl", "me", "so", "vb", "md"
+	};
+	char *was = area, *end = area, *term = getenv("TERM");
+	int i;
 
-	char *term = getenv("TERM");
 	if (term == NULL) {
 		printf("ERROR: environment variable TERM not set.\n");
 		exit(1);
@@ -78,14 +80,12 @@ static void tlinit(void)
 		exit(1);
 	}
 
-	/* get the initialziation string and send to stdout */
-	char *was = end;
+	/* get the initialization string and send to stdout */
 	tgetstr("is", &end);
 	if (end != was)
 		TPUTS(was);
 
 	/* get the termcap strings needed - must be done last */
-	int i;
 	for (i = 0; i < NUMCM; ++i) {
 		cm[i] = end;
 		tgetstr(names[i], &end);
@@ -148,7 +148,10 @@ void tsize(int *rows, int *cols)
 
 	if (n > 0) {
 		buf[n] = '\0';
-		sscanf(buf, "\033[%d;%dR", rows, cols);
+		if (sscanf(buf, "\033[%d;%dR", rows, cols) != 2) {
+			*rows = 25;
+			*cols = 80;
+		}
 	}
 }
 

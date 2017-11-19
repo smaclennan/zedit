@@ -45,7 +45,10 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail);
 void _bdelmark(struct mark *mark, struct mark **tail);
 
 /** Returns true if buffer is at mark */
-#define bisatmrk(b, m)	(((b)->curpage == (m)->mpage) && ((b)->curchar == (m)->moffset))
+static inline int bisatmrk(struct buff *b, struct mark *m)
+{
+	return b->curpage == m->mpage && b->curchar == m->moffset;
+}
 bool bisaftermrk(struct buff *, struct mark *);
 bool bisbeforemrk(struct buff *, struct mark *);
 /* True if point is between start and end. This has to walk all the

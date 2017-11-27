@@ -5,9 +5,12 @@
 #include <io.h>
 #include <direct.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 /* WIN32 sure likes underscores */
+#ifndef snprintf
 #define snprintf _snprintf
+#endif
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 #define strdup _strdup

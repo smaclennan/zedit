@@ -21,8 +21,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include <unistd.h>
 #include "tinit.h"
+
+#ifdef __unix__
+#include <unistd.h>
 
 #ifdef HAVE_TERMIO
 #include <termio.h>
@@ -36,6 +38,9 @@ static struct termio settty;
 #include <termios.h>
 static struct termios save_tty;
 static struct termios settty;
+#endif
+#elif defined(WIN32)
+HANDLE hstdout;	/* Console out handle */
 #endif
 
 int Prow, Pcol;
@@ -51,7 +56,9 @@ static void t_hang_up(int signo)
 
 static void tfini(void)
 {
+#ifdef __unix__
 	tcsetattr(0, TCSAFLUSH, &save_tty);
+#endif
 	tflush();
 }
 
@@ -109,6 +116,7 @@ static void tlinit(void) {}
 /* Initalize the terminal. */
 void tinit(void)
 {
+#ifdef __unix__
 	tcgetattr(0, &save_tty);
 	tcgetattr(0, &settty);
 	settty.c_iflag = 0;
@@ -119,6 +127,10 @@ void tinit(void)
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(0, TCSANOW, &settty);
+#elif defined(WIN32)
+	tkbdinit();
+	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
 
 #ifdef SIGHUP
 	signal(SIGHUP,  t_hang_up);
@@ -133,6 +145,23 @@ void tinit(void)
 
 void tsize(int *rows, int *cols)
 {
+#ifdef WIN32
+	CONSOLE_SCREEN_BUFFER_INFO info;
+	COORD size;
+
+	if (GetConsoleScreenBufferInfo(hstdout, &info)) {
+		size.Y = info.srWindow.Bottom - info.srWindow.Top + 1;
+		size.X = info.srWindow.Right - info.srWindow.Left + 1;
+	}
+
+	if (size.X != *cols || size.Y != *rows) {
+		if (size.X > COLMAX) size.X = COLMAX;
+		if (size.Y > ROWMAX) size.Y = ROWMAX;
+		*cols = size.X;
+		*rows = size.Y;
+		SetConsoleScreenBufferSize(hstdout, size);
+	}
+#else
 	char buf[12];
 	int n, w;
 
@@ -153,6 +182,7 @@ void tsize(int *rows, int *cols)
 			*cols = 80;
 		}
 	}
+#endif
 }
 
 /* Optimized routines to minimize output */
@@ -161,7 +191,13 @@ void tsize(int *rows, int *cols)
 void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
-#ifdef TERMCAP
+#ifdef WIN32
+		COORD where;
+
+		where.X = Pcol;
+		where.Y = Prow;
+		SetConsoleCursorPosition(hstdout, where);
+#elif defined(TERMCAP)
 		TPUTS(tgoto(cm[0], Pcol, Prow));
 #else
 		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
@@ -176,7 +212,12 @@ void tforce(void)
 void tputchar(Byte ch)
 {
 	tforce();
+#ifdef WIN32
+	DWORD written;
+	WriteConsole(hstdout, &ch, 1, &written, NULL);
+#else
 	putchar(ch);
+#endif
 	++Scol;
 	++Pcol;
 	if (Clrcol[Prow] < Pcol)
@@ -197,12 +238,28 @@ void tcleol(void)
 		Prow = ROWMAX - 1;
 
 	if (Pcol < Clrcol[Prow]) {
+#ifdef WIN32
+		COORD where;
+		DWORD written;
+
+		where.X = Pcol;
+		where.Y = Prow;
+		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol,
+					   where, &written);
+
+		/* This is to clear a possible mark */
+		if (Clrcol[Prow])
+			where.X = Clrcol[Prow] - 1;
+		FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, 1,
+					   where, &written);
+#else
 		tforce();
 #ifdef TERMCAP
 		TPUTS(cm[1]);
 #else
 		fputs("\033[K", stdout);
 		tflush();
+#endif
 #endif
 		Clrcol[Prow] = Pcol;
 	}
@@ -211,7 +268,15 @@ void tcleol(void)
 /** Clear the entire window (screen) */
 void tclrwind(void)
 {
-#ifdef TERMCAP
+#ifdef WIN32
+	COORD where;
+	DWORD written;
+	where.X = where.Y = 0;
+	FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, COLMAX * ROWMAX,
+				   where, &written);
+	FillConsoleOutputCharacter(hstdout, ' ', COLMAX * ROWMAX,
+				   where, &written);
+#elif defined(TERMCAP)
 	TPUTS(cm[2]);
 #else
 	fputs("\033[2J", stdout);
@@ -228,7 +293,54 @@ void tstyle(int style)
 	if (style == cur_style)
 		return;
 
-#ifdef TERMCAP
+#ifdef WIN32
+	switch (style) {
+	case T_NORMAL:
+		SetConsoleTextAttribute(hstdout, ATTR_NORMAL);
+		break;
+	case T_REVERSE:
+		SetConsoleTextAttribute(hstdout, ATTR_REVERSE);
+		break;
+	case T_BOLD:
+		SetConsoleTextAttribute(hstdout,
+					ATTR_NORMAL | FOREGROUND_INTENSITY);
+		break;
+	case T_FG + T_BLACK:
+		SetConsoleTextAttribute(hstdout, ATTR_NORMAL); break;
+	case T_FG + T_RED:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED); break;
+	case T_FG + T_GREEN:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN); break;
+	case T_FG + T_YELLOW:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_GREEN); break;
+	case T_FG + T_BLUE:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_BLUE); break;
+	case T_FG + T_MAGENTA:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_BLUE); break;
+	case T_FG + T_CYAN:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_BLUE); break;
+	case T_FG + T_WHITE:
+		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+		break;
+	case T_BG + T_BLACK:
+		SetConsoleTextAttribute(hstdout, ATTR_REVERSE); break;
+	case T_BG + T_RED:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_RED); break;
+	case T_BG + T_GREEN:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_GREEN); break;
+	case T_BG + T_YELLOW:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_GREEN); break;
+	case T_BG + T_BLUE:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_BLUE); break;
+	case T_BG + T_MAGENTA:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_BLUE); break;
+	case T_BG + T_CYAN:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_GREEN | BACKGROUND_BLUE); break;
+	case T_BG + T_WHITE:
+		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
+		break;
+	}
+#elif defined(TERMCAP)
 	switch (style) {
 	case T_NORMAL:
 		TPUTS(cm[3]);

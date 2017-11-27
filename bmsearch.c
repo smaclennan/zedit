@@ -17,7 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#ifdef WIN32
+#define NO_MEMRCHR
+#else
 #define _GNU_SOURCE /* for memrchr */
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -73,8 +77,8 @@ bool bm_search(struct buff *buff, const char *str, bool sensitive)
 			bmove(buff, delta[buffint()]);
 		/* slow loop */
 		for (i = len;
-		     bequal(buff, str[i], sensitive);
-		     bmove(buff, -1), --i)
+			 bequal(buff, str[i], sensitive);
+			 bmove(buff, -1), --i)
 			if (i == 0) {
 				bmove(buff, len + 1);
 				return true;
@@ -125,8 +129,8 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive)
 			bmove(buff, delta[buffint()]);
 		/* slow loop */
 		for (i = 0;
-		     i <= len && bequal(buff, str[i], sensitive);
-		     ++i, bmove1(buff))
+			 i <= len && bequal(buff, str[i], sensitive);
+			 ++i, bmove1(buff))
 			;
 		if (i > len) {
 			/* we matched! */
@@ -172,6 +176,23 @@ bool bcsearch(struct buff *buff, Byte what)
 	bmove1(buff);
 	return true;
 }
+
+#ifdef NO_MEMRCHR
+/** Simple memrchr() for simple systems. */
+static void *memrchr(const void *s, int c, size_t n)
+{
+	if (n) {
+		const unsigned char *p = (const unsigned char *)s + n;
+		const unsigned char cmp = c;
+
+		do
+			if (*--p == cmp)
+				return (void *)p;
+		while (--n != 0);
+	}
+	return NULL;
+}
+#endif
 
 /** Search backward for a single byte. If byte found leaves point at
  * byte and returns true. If not found leaves point at the start of

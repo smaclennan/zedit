@@ -88,10 +88,16 @@ void tainit(void)
 #ifdef SIGTERM
 	signal(SIGTERM, hang_up);
 #endif
+#ifdef WIN32
+	/* This is called by tgetkb on EOF */
+	signal(SIGABRT, hang_up);
+#endif
 #ifdef SIGWINCH
 	signal(SIGWINCH, sigwinch); /* window has changed size - update */
 #endif
+#ifdef DOPIPES
 	siginit();
+#endif
 
 	/* Must be after setting up tty */
 	termsize();
@@ -148,10 +154,20 @@ void tprntchar(Byte ichar)
 {
 	int tcol;
 
+#ifdef WIN32
+	/* Visual Studio does not support ... in case */
+	if (ichar >= ' ' && ichar <= '~') {
+		tputchar(ichar);
+		return;
+	}
+#endif
+
 	switch (ichar) {
+#ifndef WIN32
 	case ' '...'~':
 		tputchar(ichar);
 		break;
+#endif
 	case '\t':
 		if (InPaw)
 			tprntstr("^I");
@@ -184,9 +200,16 @@ int chwidth(Byte ch, int col, bool adjust)
 {
 	int wid;
 
+#ifdef WIN32
+	if (ch >= ' ' && ch <= '~')
+		return 1;
+#endif
+
 	switch (ch) {
+#ifndef WIN32
 	case ' '...'~':
 		return 1;
+#endif
 	case '\n':
 		return InPaw ? 2 : 0;
 	case '\t':
@@ -220,6 +243,20 @@ int prefline(void)
 	w = wheight();
 	line = PREFLINE * w / (Rowmax - 2);
 	return line < w ? line : w >> 1;
+}
+
+void tsetcursor(void)
+{
+#ifdef WIN32
+	CONSOLE_CURSOR_INFO cursorinfo;
+
+	if (Curbuff->bmode & OVERWRITE)
+		cursorinfo.dwSize = 25; /* default */
+	else
+		cursorinfo.dwSize = 100; /* solid */
+	cursorinfo.bVisible = true;
+	SetConsoleCursorInfo(hstdout, &cursorinfo);
+#endif
 }
 
 #undef tbell

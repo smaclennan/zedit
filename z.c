@@ -125,6 +125,7 @@ static void dotty(void)
 	First = false; /* used by pinsert when InPaw */
 }
 
+#ifdef DOPIPES
 #include <poll.h>
 
 #define MAX_FDS 2
@@ -158,11 +159,15 @@ void fd_remove(int fd)
 		fds[PIPEFD].fd = -1;
 	}
 }
+#else
+static void fd_init(void) {}
+#endif
 
 void execute(void)
 {
 	zrefresh();
 
+#ifdef DOPIPES
 	if (tkbrdy() || Cmdpushed != -1)
 		dotty();
 	else {
@@ -179,6 +184,9 @@ void execute(void)
 		if (fds[PIPEFD].revents)
 			readapipe();
 	}
+#else
+	dotty();
+#endif
 }
 
 int main(int argc, char **argv)
@@ -226,6 +234,8 @@ int main(int argc, char **argv)
 	/* User wants Text mode as default */
 	if (textMode)
 		VAR(VNORMAL) = 0;
+
+	os_init();
 
 	/* PAW must not be on the Bufflist */
 	if (!(Paw = cmakebuff("*paw*", NULL)))

@@ -24,15 +24,34 @@
 #include "funcs.c"
 #include "cnames.c"
 #include "bind.c"
+#ifdef WIN32
+#define zrefresh()
+HANDLE hstdin;
+int Colmax, Rowmax;
+#include "winkbd.c"
+#else
 #include "kbd.c"
 #include "tinit.c"
+#endif
+
+#ifdef __unix__
+#define OS unix
 
 #include <sys/utsname.h>
 static struct utsname utsname;
+#elif defined(WIN32)
+#define OS win32
+#else
+#error Unknown OS
+#endif
 
 #define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))
 
+#ifdef __unix__
 #define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
+#else
+#define N_KEYS NUM_SPECIAL
+#endif
 
 int InPaw;
 unsigned Cmd;
@@ -48,7 +67,9 @@ int main(int argc, char *argv[])
 	int i, s1, s2, err = 0;
 	Byte array[97];
 
+#ifdef __unix__
 	uname(&utsname);
+#endif
 
 	if (NUMVARS != VARSNUM) {
 		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",
@@ -168,6 +189,19 @@ int main(int argc, char *argv[])
 			err = 1;
 		}
 	}
+
+#ifdef WIN32
+#if HUGE_FILES && HUGE_THREADED
+	if (sizeof(HANDLE) != sizeof(void *)) {
+		printf("Problems with huge file lock\n");
+		err = 1;
+	}
+#endif
+
+	if (err) {
+		printf("Problems found! Hit enter to exit:"); getchar();
+	}
+#endif
 
 	return err;
 }

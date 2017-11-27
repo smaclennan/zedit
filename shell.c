@@ -78,6 +78,7 @@ void message(struct zbuff *buff, const char *str)
 	putpaw("%s", str);
 }
 
+#ifdef DOPIPES
 #include <signal.h>
 #include <sys/wait.h>
 
@@ -266,6 +267,38 @@ void Zkill(void)
 	if (!unvoke(NULL))
 		tbell();
 }
+#else
+void Zkill(void) { tbell(); }
+bool unvoke(struct zbuff *child) { ((void)child); return false; }
+void checkpipes(int type) { ((void)type); }
+
+static void _cmdtobuff(struct zbuff *buff, const char *cmdin)
+{
+	FILE *pfp;
+	int rc;
+	char cmd[PATHMAX], line[STRMAX];
+	snprintf(cmd, sizeof(cmd), "%s 2>&1", cmdin);
+
+	pfp = popen(cmd, "r");
+	if (pfp == NULL) {
+		error("Unable to execute %s.", cmd);
+		return;
+	}
+
+	putpaw("Please wait...");
+	while (fgets(line, sizeof(line), pfp)) {
+		binstr(buff->buff, line);
+		zrefresh();
+	}
+
+	rc = pclose(pfp) >> 8;
+	if (rc == 0) {
+		btostart(buff->buff);
+		putpaw("Done.");
+	} else
+		putpaw("Returned %d", rc);
+}
+#endif /* DOPIPES */
 
 static void cmdtobuff(const char *bname, const char *cmd)
 {

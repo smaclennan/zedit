@@ -150,6 +150,12 @@ Z(Zdos2unix);
 Z(pinsert);
 Z(pnewline);
 
+#ifdef WIN32
+void os_init(void);
+#else
+#define os_init()
+#endif
+
 /* General routines */
 
 int ask(const char *);
@@ -206,7 +212,7 @@ void shell_init(void);
 void tbell(void);
 void tainit(void);
 void termsize(void);
-#define tsetcursor()
+void tsetcursor(void);
 void tindent(int);
 void toggle_mode(int);
 void tprntchar(Byte);

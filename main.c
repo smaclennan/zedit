@@ -26,6 +26,9 @@
 #include <errno.h>
 #include <time.h>
 #include <assert.h>
+#ifdef WIN32
+#include <sys/stat.h> /* for _S_IWRITE */
+#endif
 
 #include "buff.h"
 #include "mark.h"
@@ -202,5 +205,8 @@ int main(int argc, char *argv[])
 
 	tinit();
 
+#ifdef WIN32
+	printf("Success. Hit return to exit..."); getchar();
+#endif
 	return 0;
 }

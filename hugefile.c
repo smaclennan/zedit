@@ -34,6 +34,40 @@
 static void *read_thread(void *arg);
 static void breadpage(struct buff *buff, struct page *page);
 
+#ifdef WIN32
+static void do_lock(struct buff *buff)
+{
+	WaitForSingleObject((HANDLE)read_lock, INFINITE);
+}
+
+static void do_unlock(struct buff *buff)
+{
+	ReleaseMutex((HANDLE)buff->lock);
+}
+
+static DWORD WINAPI read_thread_wrapper(void *arg)
+{
+	read_thread(arg);
+	return 0;
+}
+
+static void start_thread(struct buff *buff)
+{
+	DWORD thread;
+	HANDLE read_lock;
+
+	read_lock = CreateMutex(NULL, FALSE, NULL);
+	if (!read_lock) {
+		Dbg("Unable to create mutex");
+		return;
+	}
+
+	buff->lock = read_lock;
+
+	if (CreateThread(NULL, 0, read_thread_wrapper, buff, 0, &thread) == NULL)
+		error("Unable to create thread.");
+}
+#else
 #include <pthread.h>
 
 static void do_lock(struct buff *buff)
@@ -63,6 +97,7 @@ static void start_thread(struct buff *buff)
 		huge_file_cb(buff, EAGAIN);
 	}
 }
+#endif
 
 static void *read_thread(void *arg)
 {

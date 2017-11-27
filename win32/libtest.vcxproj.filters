@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\main.c" />
+    <ClCompile Include="..\bfile.c" />
+    <ClCompile Include="..\bmsearch.c" />
+    <ClCompile Include="..\bsocket.c" />
+    <ClCompile Include="..\buff.c" />
+    <ClCompile Include="..\calc.c" />
+    <ClCompile Include="..\dbg.c" />
+    <ClCompile Include="..\hugefile.c" />
+    <ClCompile Include="..\mark.c" />
+    <ClCompile Include="..\reg.c" />
+    <ClCompile Include="..\tinit.c" />
+    <ClCompile Include="winkbd.c" />
+    <ClCompile Include="bwin32.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\buff.h" />
+    <ClInclude Include="..\calc.h" />
+    <ClInclude Include="..\keys.h" />
+    <ClInclude Include="..\mark.h" />
+    <ClInclude Include="..\reg.h" />
+    <ClInclude Include="..\tinit.h" />
+    <ClInclude Include="winkeys.h" />
+  </ItemGroup>
+</Project>

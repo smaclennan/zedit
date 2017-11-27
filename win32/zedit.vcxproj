@@ -106,6 +106,7 @@
     <ClCompile Include="..\getfname.c" />
     <ClCompile Include="..\help.c" />
     <ClCompile Include="..\hugefile.c" />
+    <ClCompile Include="..\life.c" />
     <ClCompile Include="..\mark.c" />
     <ClCompile Include="..\reg.c" />
     <ClCompile Include="..\shell.c" />

@@ -126,6 +126,9 @@
     <ClCompile Include="bwin32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\life.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\z.h">

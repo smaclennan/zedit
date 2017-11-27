@@ -35,7 +35,7 @@ CFLAGS += -DHAVE_CONFIG_H
 MAKEFLAGS += --no-print-directory
 
 #LIBS += -lz
-#LIBS += -ldl
+LIBS += -ldl
 #LIBS += -ltermcap
 
 ETAGS=`which etags || echo true`

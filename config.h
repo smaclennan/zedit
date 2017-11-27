@@ -2,7 +2,7 @@
 
 #ifndef WIN32
 #define ZLIB		0	/* Requires zlib -lz */
-#define SPELL		0	/* Requires libaspell */
+#define SPELL		1	/* Requires libaspell */
 #endif
 
 #define UNDO        1

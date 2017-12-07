@@ -25,3 +25,7 @@
 #ifdef WIN32
 #define BUILTIN_REG
 #endif
+#ifdef __QNXNTO__
+#define __unix__
+#define NO_MEMRCHR
+#endif

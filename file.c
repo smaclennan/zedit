@@ -110,7 +110,9 @@ static bool zwritefile(char *fname)
 			if (ask(PawStr) != YES)
 				return false;
 		}
+#ifndef __QNXNTO__
 		nlink = sbuf.st_nlink;
+#endif
 	}
 
 #if HUGE_FILES

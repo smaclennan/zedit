@@ -32,7 +32,7 @@ struct avar Vars[] = {
 	  "This variable defines the number of spaces displayed per tab in "
 	  "C mode buffers. See also tabs."
 	},
-	{ "comments",		V_FLAG,		V(1),
+	{ "comments",		V_FLAG,		V(0),
 	  "If set then Zedit tries to bold (display in red) comments in C "
 	  "and shell mode buffers."
 	},

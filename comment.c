@@ -57,6 +57,9 @@ static void scanbuffer(struct zbuff *buff)
 	Byte comchar = Curbuff->comchar;
 
 	uncomment(buff);
+	/* SAM FIXME This invalidate is brutal on slow connections. We
+	 * need a better way to handle this.
+	 */
 	invalidate_scrnmarks(0, Rowmax - 2);
 
 	zswitchto(buff);

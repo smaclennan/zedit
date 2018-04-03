@@ -303,8 +303,8 @@ struct zbuff *zcreatebuff(const char *bname, char *fname)
 		!(bptr->buff = bcreate()) ||
 		(fname && !(bptr->fname = strdup(fname)))) {
 		bdelbuff(bptr->buff);
-		if (bptr->fname) free(bptr->fname);
-		if (bptr) free(bptr);
+		FREE(bptr->fname);
+		FREE(bptr);
 		error("Unable to create buffer");
 		return NULL;
 	}
@@ -394,8 +394,7 @@ bool cdelbuff(struct zbuff *tbuff)
 	if (tbuff->next)
 		tbuff->next->prev = tbuff->prev;
 
-	if (tbuff->fname)
-		free(tbuff->fname);
+	FREE(tbuff->fname);
 
 	bdelbuff(tbuff->buff);
 	free(tbuff);

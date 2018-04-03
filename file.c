@@ -422,8 +422,7 @@ void Zwrite_file(void)
 	Arg = 0;
 	*path = '\0';
 	if (getfname(prompt, path) == 0) {
-		if (Curbuff->fname)
-			free(Curbuff->fname);
+		FREE(Curbuff->fname);
 		Curbuff->fname = strdup(path);
 		Curbuff->mtime = 0;	/* this is no longer valid */
 		Zsave_file();

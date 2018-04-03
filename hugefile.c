@@ -90,10 +90,8 @@ static void start_thread(struct buff *buff)
 	if (!buff->lock ||
 		pthread_mutex_init(buff->lock, NULL) ||
 		pthread_create(&thread, NULL, read_thread, buff)) {
-		if (buff->lock) {
-			free(buff->lock);
-			buff->lock = NULL;
-		}
+		FREE(buff->lock);
+		buff->lock = NULL;
 		huge_file_cb(buff, EAGAIN);
 	}
 }
@@ -268,8 +266,7 @@ int breadhuge(struct buff *buff, const char *fname)
 
 failed:
 	close(fd);
-	if (buff->stat)
-		free(buff->stat);
+	FREE(buff->stat);
 	return rc;
 }
 
@@ -301,8 +298,7 @@ void bhugecleanup(struct buff *buff)
 	}
 	do_unlock(buff);
 
-	if (buff->stat)
-		free(buff->stat);
+	FREE(buff->stat);
 	free(buff->lock);
 }
 #endif

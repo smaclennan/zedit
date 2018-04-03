@@ -67,8 +67,7 @@ static void free_undo(void **tail)
 	if (undo) {
 		*tail = undo->prev;
 
-		if (undo->data)
-			free(undo->data);
+		FREE(undo->data);
 		free(undo);
 	}
 }

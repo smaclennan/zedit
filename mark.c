@@ -50,10 +50,8 @@ static struct mark *freemark;
 void mrkfini(void)
 {
 #ifdef HAVE_ATOMIC
-	if (freemark) {
-		free(freemark);
-		freemark = NULL;
-	}
+	FREE(freemark);
+	freemark = NULL;
 #endif
 }
 

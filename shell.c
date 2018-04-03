@@ -69,8 +69,7 @@ void message(struct zbuff *buff, const char *str)
 {
 	struct wdo *wdo;
 
-	if (buff->fname)
-		free(buff->fname);
+	FREE(buff->fname);
 	buff->fname = strdup(str);
 	foreachwdo(wdo)
 		if (wdo->wbuff == buff)

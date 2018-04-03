@@ -28,10 +28,8 @@ static char *dbgfname;
 
 const char *Dbgfname(const char *fname)
 {
-	if (dbgfname) {
-		free(dbgfname);
-		dbgfname = NULL;
-	}
+	FREE(dbgfname);
+	dbgfname = NULL;
 	if (fname) {
 		dbgfname = malloc(strlen(fname) + 1);
 		if (dbgfname)

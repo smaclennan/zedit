@@ -504,12 +504,12 @@ static void modeflags(struct wdo *wdo)
 	t_goto(trow, tcol);
 }
 
-#define PAWCAT(s) n += snprintf(PawStr + n, PAWSTRLEN - n, "%s", s)
+#define PAWCAT(s) strcat(PawStr, s)
 
 /* local routine to set PawStr to the correct mode */
 static char *setmodes(struct zbuff *buff)
 {
-	int n = 0;
+	*PawStr = 0;
 
 	if (!InPaw)	/* we should never be in the Paw but .... */
 		Curcmds = 0;

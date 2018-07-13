@@ -21,7 +21,7 @@
 
 /* general linked list structure */
 struct llist {
-	char fname[STRMAX];
+	char fname[PATHMAX];
 	struct llist *prev, *next;
 };
 
@@ -145,7 +145,7 @@ static struct llist *add(struct llist **list, char *fname)
 
 	newl = (struct llist *)calloc(1, sizeof(struct llist));
 	if (newl) {
-		strcpy(newl->fname, fname);
+		safecpy(newl->fname, fname, sizeof(newl->fname));
 		if (*list == NULL || strcmp(fname, (*list)->fname) < 0) {
 			newl->next = *list;
 			if (*list)

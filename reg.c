@@ -85,9 +85,9 @@ int re_compile(regexp_t *re, const char *regex, int cflags)
 void re_free(regexp_t *re) { regfree(&re->re); }
 
 /** Convert a regular expression error to a string. */
-int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
+void re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
 {
-	return regerror(errcode, &preg->re, errbuf, errbuf_size);
+	regerror(errcode, &preg->re, errbuf, errbuf_size);
 }
 
 /** Check if a pre-compiled regular expression matches at the point. */
@@ -604,7 +604,7 @@ defchar:
 	}
 }
 
-int re_error(int errnum, const regexp_t *preg, char *errbuf, int errbuf_size)
+void re_error(int errnum, const regexp_t *preg, char *errbuf, int errbuf_size)
 {
 	static const char * const errs[] = {
 		/*40*/	"Illegal or missing delimiter.",
@@ -620,10 +620,14 @@ int re_error(int errnum, const regexp_t *preg, char *errbuf, int errbuf_size)
 		/*50*/	"Regular expression overflow.",
 		/*51*/	"\"digit\" out of range.",
 		/*52*/  "Out of memory.",
+		/*53*/  "Unknown error" /* for errnum out of range */
 	};
+#define N_RE_ERRORS (sizeof(errs) / sizeof(char *))
 
-	snprintf(errbuf, errbuf_size, "%s", errs[errnum - 40]);
-	return 0;
+	errnum -= 40;
+	if (errnum < 0 || errnum >= N_RE_ERRORS)
+		errnum = N_RE_ERRORS - 1;
+	snprintf(errbuf, errbuf_size, "%s", errs[errnum]);
 }
 
 void re_free(regexp_t *re) {}

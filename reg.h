@@ -60,7 +60,7 @@ typedef struct regexp {
 
 int re_compile(regexp_t *re, const char *regex, int cflags);
 bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart);
-int re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size);
+void re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size);
 void re_free(regexp_t *re);
 bool lookingat(struct buff *buff, const char *str);
 bool _lookingat(struct buff *buff, regexp_t *re);

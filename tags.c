@@ -194,7 +194,7 @@ void Znext_bookmark(void)
 	}
 
 	if (Bookmrks[Bookmark]->mbuff != Bbuff) {
-		strcpy(Lbufname, Curbuff->bname);
+		set_last_bufname(Curbuff);
 		wgoto(Bookmrks[Bookmark]->mbuff);
 	}
 	bpnttomrk(Bbuff, Bookmrks[Bookmark]);

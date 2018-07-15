@@ -189,7 +189,6 @@ extern int raw_mode;
 
 #define CMD(n) (*Cmds[n][Curcmds])()
 
-extern char Lbufname[];
 extern struct zbuff *Bufflist;
 extern struct zbuff *Buff_save;
 extern struct mark *Sstart;
@@ -214,6 +213,8 @@ extern void (*Nextpart)(void);
 #define T_COMMENT		(T_FG | T_RED)
 #endif
 #define T_REGION		T_REVERSE
+
+void set_last_bufname(struct zbuff *buff);
 
 char *zgetcwd(char *cwd, int len);
 #ifdef WIN32

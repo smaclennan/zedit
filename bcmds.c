@@ -30,6 +30,12 @@ static struct zbuff *Bufflist_tail;
 struct zbuff *Curbuff;		/* the current buffer */
 struct buff *Bbuff;         /* the current low-level buffer */
 
+/* Set Lbufname */
+void set_last_bufname(struct zbuff *buff)
+{
+	strlcpy(Lbufname, buff->bname, sizeof(Lbufname));
+}
+
 /* Get the word at the current buffer point and store in 'word'.
  * Get at the most 'max' characters.
  * Leaves the point alone.
@@ -86,7 +92,7 @@ static void switchto_part(void)
 void Zswitch_to_buffer(void)
 {
 	int rc;
-	char *was = Curbuff->bname;
+	struct zbuff *was = Curbuff;
 
 	Arg = 0;
 	Nextpart = switchto_part;
@@ -94,7 +100,7 @@ void Zswitch_to_buffer(void)
 	Nextpart = NULL;
 	if (rc == -1)
 		return;
-	strlcpy(Lbufname, was, sizeof(Lbufname));
+	set_last_bufname(was);
 	uncomment(Curbuff);
 	cswitchto(cfindbuff(Bnames[rc]));
 }
@@ -106,7 +112,7 @@ void Znext_buffer(void)
 	if (!next)
 		next = Bufflist;
 	if (next) {
-		strlcpy(Lbufname, Curbuff->bname, sizeof(Lbufname));
+		set_last_bufname(Curbuff);
 		uncomment(Curbuff);
 		cswitchto(next);
 		reframe();

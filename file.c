@@ -320,18 +320,17 @@ static bool readone(char *bname, char *path)
 	else if (access(path, R_OK | W_OK) == EOF)
 		Curbuff->bmode |= VIEW;
 #endif
-	strcpy(Lbufname, was->bname);
+	set_last_bufname(was);
 	return true;
 }
 
 bool findfile(char *path)
 {
 	char tbname[BUFNAMMAX + 1];
-	char *was;
 	struct zbuff *tbuff;
+	struct zbuff *was = Curbuff;
 
 	Arg = 0;
-	was = Curbuff->bname;
 
 	/* limit name to BUFNAMMAX */
 	strncpy(tbname, lastpart(path), BUFNAMMAX);
@@ -345,7 +344,7 @@ bool findfile(char *path)
 			zswitchto(tbuff);
 			if (Initializing)
 				return true;
-			strcpy(Lbufname, was);
+			set_last_bufname(was);
 			break;
 		}
 

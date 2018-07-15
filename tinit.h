@@ -1,5 +1,5 @@
 /* tinit.h - term definitions
- * Copyright (C) 1988-2016 Sean MacLennan <seanm@seanm.ca>
+ * Copyright (C) 1988-2017 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,5 +1,5 @@
 /* cnames.c - array of names to functions + help
- * Copyright (C) 1988-2016 Sean MacLennan <seanm@seanm.ca>
+ * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

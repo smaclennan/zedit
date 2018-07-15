@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-93,1996-1999,2001,2004,2012
+/* Copyright (C) 1991-2017,1996-1999,2001,2004,2012
    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 

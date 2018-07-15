@@ -39,7 +39,7 @@
 #include "config.h"
 
 #ifdef WIN32
-#include "zwin32.h"
+#include "bwin32.h"
 #else
 #include <unistd.h>
 #include <dirent.h>

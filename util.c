@@ -22,7 +22,7 @@
 #include <stdarg.h>
 #include "buff.h"
 
-#ifdef __linux__
+#if defined(__linux__) || defined(WIN32)
 /* A simple strlcpy implementation for Linux */
 size_t strlcpy(char *dst, const char *src, size_t dstsize)
 {

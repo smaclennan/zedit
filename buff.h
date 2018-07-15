@@ -138,7 +138,7 @@ int do_undo(struct buff *buff);
 #endif
 
 /* util.c */
-#ifdef __linux__
+#if defined(__linux__) || defined(WIN32)
 size_t strlcpy(char *dst, const char *src, size_t dstsize);
 #endif
 const char *Dbgfname(const char *fname);

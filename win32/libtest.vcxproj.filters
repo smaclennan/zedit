@@ -7,13 +7,13 @@
     <ClCompile Include="..\bsocket.c" />
     <ClCompile Include="..\buff.c" />
     <ClCompile Include="..\calc.c" />
-    <ClCompile Include="..\dbg.c" />
     <ClCompile Include="..\hugefile.c" />
     <ClCompile Include="..\mark.c" />
     <ClCompile Include="..\reg.c" />
     <ClCompile Include="..\tinit.c" />
     <ClCompile Include="winkbd.c" />
     <ClCompile Include="bwin32.c" />
+    <ClCompile Include="..\util.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\buff.h" />

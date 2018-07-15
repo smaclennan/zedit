@@ -111,9 +111,6 @@
     <ClCompile Include="..\bfile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\dbg.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\tinit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -129,6 +126,9 @@
     <ClCompile Include="..\life.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\util.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\z.h">
@@ -140,13 +140,13 @@
     <ClInclude Include="winkeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zwin32.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\buff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="bwin32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fnmatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

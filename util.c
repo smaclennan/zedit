@@ -3,35 +3,27 @@
 #include <stdarg.h>
 #include "buff.h"
 
-static inline int __copy(char *dst, const char *src, int dstsize)
+#ifdef __linux__
+/* A simple strlcpy implementation for Linux */
+size_t strlcpy(char *dst, const char *src, size_t dstsize)
 {
-	int i;
+	size_t i = 0;
 
-	if (dstsize <= 0) return 0;
+	if (dstsize > 0) {
+		--dstsize;
+		while (*src && i < dstsize) {
+			*dst++ = *src++;
+			++i;
+		}
+		*dst = 0;
+	}
 
-	--dstsize;
-	for (i = 0; i < dstsize && *src; ++i)
-		*dst++ = *src++;
-	*dst = 0;
+	/* strlcpy returns the size of the src */
+	while (*src++) ++i;
 
 	return i;
 }
-
-int safecpy(char *dst, const char *src, int dstsize)
-{
-	return __copy(dst, src, dstsize);
-}
-
-int safecat(char *dst, const char *src, int dstsize)
-{
-	if (dstsize <= 0) return 0;
-
-	int len = strlen(dst);
-	dst += len;
-	dstsize -= len;
-
-	return __copy(dst, src, dstsize);
-}
+#endif
 
 static char *dbgfname;
 

@@ -137,13 +137,12 @@ int do_undo(struct buff *buff);
 #define do_undo(b) 0
 #endif
 
-/* dbg.c */
+/* util.c */
+#ifdef __linux__
+size_t strlcpy(char *dst, const char *src, size_t dstsize);
+#endif
 const char *Dbgfname(const char *fname);
 void Dbg(const char *fmt, ...);
-
-/* util.c */
-int safecpy(char *dst, const char *src, int dstsize);
-int safecat(char *dst, const char *src, int dstsize);
 
 #ifndef NULL
 #define NULL ((void *)0)

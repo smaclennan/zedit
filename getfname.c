@@ -283,7 +283,7 @@ void Zfname(void)
 char *zgetcwd(char *cwd, int len)
 {
 	if (!getcwd(cwd, len - 1))
-		snprintf(cwd, len - 1, "%s", Home);
+		strlcpy(cwd, Home, len - 1);
 	len = strlen(cwd);
 	*(cwd + len) = '/';
 	*(cwd + len + 1) = 0;

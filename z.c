@@ -264,8 +264,9 @@ int main(int argc, char **argv)
 	if (tbuff) {
 		zswitchto(tbuff);
 
-		snprintf(Lbufname, BUFNAMMAX + 1, "%s",
-			   Curbuff->prev ? Curbuff->prev->bname : MAINBUFF);
+		strlcpy(Lbufname,
+				Curbuff->prev ? Curbuff->prev->bname : MAINBUFF,
+				BUFNAMMAX + 1);
 	}
 
 	winit();

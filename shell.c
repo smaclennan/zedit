@@ -54,7 +54,7 @@ int do_chdir(struct zbuff *buff)
 	if (buff->fname) {
 		char dir[PATHMAX + 1], *p;
 
-		snprintf(dir, sizeof(dir), "%s", buff->fname);
+		strlcpy(dir, buff->fname, sizeof(dir));
 		p = strrchr(dir, '/');
 		if (p) {
 			*p = '\0';
@@ -218,7 +218,7 @@ static bool _cmdtobuff(struct zbuff *tbuff, const char *icmd)
 		return false;
 	}
 
-	snprintf(cmd, sizeof(cmd), "%s", icmd);
+	strlcpy(cmd, icmd, sizeof(cmd));
 	for (p = cmd, arg = 0; arg < 10 && (argv[arg] = wordit(&p)); ++arg)
 		;
 
@@ -320,7 +320,7 @@ void Zmake(void)
 	static char mkcmd[STRMAX + 1];
 
 	if (!*mkcmd) {
-		snprintf(mkcmd, sizeof(mkcmd), "%s", VARSTR(VMAKE));
+		strlcpy(mkcmd, VARSTR(VMAKE), sizeof(mkcmd));
 		VARSTR(VMAKE) = mkcmd;
 	}
 
@@ -507,6 +507,7 @@ void Zspell_word(void)
 				n = snprintf(PawStr + i, len, "%s", s);
 			else
 				n = snprintf(PawStr + i, len, " %s", s);
+			if (n > len) n = len; /* overflow */
 			i += n;
 			len -= n;
 		}

@@ -627,7 +627,7 @@ void re_error(int errnum, const regexp_t *preg, char *errbuf, int errbuf_size)
 	errnum -= 40;
 	if (errnum < 0 || errnum >= N_RE_ERRORS)
 		errnum = N_RE_ERRORS - 1;
-	snprintf(errbuf, errbuf_size, "%s", errs[errnum]);
+	snprintf(errbuf, errs[errnum], errbuf_size);
 }
 
 void re_free(regexp_t *re) {}

@@ -94,7 +94,7 @@ void Zswitch_to_buffer(void)
 	Nextpart = NULL;
 	if (rc == -1)
 		return;
-	snprintf(Lbufname, sizeof(Lbufname), "%s", was);
+	strlcpy(Lbufname, was, sizeof(Lbufname));
 	uncomment(Curbuff);
 	cswitchto(cfindbuff(Bnames[rc]));
 }
@@ -106,7 +106,7 @@ void Znext_buffer(void)
 	if (!next)
 		next = Bufflist;
 	if (next) {
-		snprintf(Lbufname, sizeof(Lbufname), "%s", Curbuff->bname);
+		strlcpy(Lbufname, Curbuff->bname, sizeof(Lbufname));
 		uncomment(Curbuff);
 		cswitchto(next);
 		reframe();
@@ -146,7 +146,7 @@ void Zdelete_buffer(void)
 	char bname[BUFNAMMAX + 1];
 
 	if (Argp) {
-		snprintf(bname, sizeof(bname), "%s", Lbufname);
+		strlcpy(bname, Lbufname, sizeof(bname));
 		do
 			if (getarg("Buffer: ", bname, BUFNAMMAX))
 				return;

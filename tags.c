@@ -54,7 +54,7 @@ static int get_tagfile(void)
 
 	if (Curbuff->fname) {
 		char *p;
-		snprintf(Tagfile, sizeof(Tagfile) - 4, "%s", Curbuff->fname);
+		strlcpy(Tagfile, Curbuff->fname, sizeof(Tagfile) - 4);
 		p = strrchr(Tagfile, '/');
 		if (p) {
 			++p;

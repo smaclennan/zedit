@@ -833,7 +833,7 @@ void Zmeta_x(void)
 
 	int rc = getplete("M-X: ", cmd, (char **)Cnames, CNAMESIZE, NUMFUNCS);
 	if (rc != -1) {
-		snprintf(cmd, sizeof(cmd), "%s", Cnames[rc].name);
+		strlcpy(cmd, Cnames[rc].name, sizeof(cmd));
 		Cmd = Cnames[rc].fnum;
 		Lfunc = ZMETA_X;
 		for (Arg = Arg == 0 ? 1 : Arg; Arg > 0; --Arg)
@@ -962,7 +962,7 @@ static bool matchit(char *extstr, char *str)
 void toggle_mode(int mode)
 {
 	char tmp[PATHMAX], *ext;
-	snprintf(tmp, sizeof(tmp), "%s", Curbuff->fname);
+	strlcpy(tmp, Curbuff->fname, sizeof(tmp));
 
 	ext = strrchr(tmp, '.');
 #if ZLIB
@@ -1120,7 +1120,7 @@ void Zsetenv(void)
 			error("Variable is too long.");
 			return;
 		}
-		snprintf(set, sizeof(set), "%s", p);
+		strlcpy(set, p, sizeof(set));
 	} else
 		*set = '\0';
 

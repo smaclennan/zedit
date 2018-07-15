@@ -52,7 +52,7 @@ static void doincsrch(const char *prompt, bool forward)
 
 	bmrktopnt(Bbuff, &marks[0]); /* make sure this is set */
 	memset(str, '\0', sizeof(str));
-	snprintf(promptstr, sizeof(promptstr), "%s", nocase(prompt));
+	strlcpy(promptstr, nocase(prompt), sizeof(promptstr));
 	while (go) {
 		zrefresh();
 		putpaw("%s: %s", promptstr, str);

@@ -33,7 +33,7 @@ void Zset_variable(void)
 		snprintf(pstr, sizeof(pstr), "%s: ", Vars[rc].vname);
 		if (Vars[rc].vtype == V_STRING)
 			if (VARSTR(rc))
-				snprintf(arg, sizeof(arg), "%s", VARSTR(rc));
+				strlcpy(arg, VARSTR(rc), sizeof(arg));
 			else
 				*arg = '\0';
 		else
@@ -141,7 +141,7 @@ static void setavar(const char *vin, bool display)
 	char msg[STRMAX + 1];
 	int i = 0;
 
-	snprintf(msg, sizeof(msg), "%s", vin);
+	strlcpy(msg, vin, sizeof(msg));
 	strtok(msg, " \t");
 
 	for (i = 0; i < NUMVARS; ++i)

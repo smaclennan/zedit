@@ -22,7 +22,7 @@
 
 static int innerdsp(int from, int to, struct mark *pmark);
 static void modeflags(struct wdo *wdo);
-static char *setmodes(struct zbuff *);
+static char *setmodes(zbuff_t *);
 static void pawdisplay(struct mark *, struct mark *);
 
 struct mark *Sstart;			/* Screen start */
@@ -52,7 +52,7 @@ static jmp_buf zrefresh_jmp;
 
 static void huge_file_modified(struct buff *buff)
 {
-	struct zbuff *zbuff = cfindzbuff(buff);
+	zbuff_t *zbuff = cfindzbuff(buff);
 	if (!zbuff) { /* can't happen */
 		printf("\n\nUnable to get zbuff for huge buffer\n\n\n");
 		exit(1);
@@ -77,7 +77,7 @@ again:
 
 static void huge_file_io(struct buff *buff)
 {
-	struct zbuff *zbuff = cfindzbuff(buff);
+	zbuff_t *zbuff = cfindzbuff(buff);
 	if (!zbuff) { /* can't happen */
 		printf("\n\nUnable to get zbuff for huge buffer\n\n\n");
 		exit(1);
@@ -507,7 +507,7 @@ static void modeflags(struct wdo *wdo)
 #define PAWCAT(s) strcat(PawStr, s)
 
 /* local routine to set PawStr to the correct mode */
-static char *setmodes(struct zbuff *buff)
+static char *setmodes(zbuff_t *buff)
 {
 	*PawStr = 0;
 

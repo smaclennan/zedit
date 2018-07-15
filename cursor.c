@@ -235,7 +235,7 @@ void Zout_to(void)
 
 void Zredisplay(void)
 {
-	struct zbuff *buff;
+	zbuff_t *buff;
 
 	wsize();
 	redisplay();

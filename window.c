@@ -145,7 +145,7 @@ void wswitchto(struct wdo *wdo)
 }
 
 /* Switch to a new buffer in the current window. */
-void cswitchto(struct zbuff *buff)
+void cswitchto(zbuff_t *buff)
 {
 	zswitchto(buff);
 	if (Curwdo->wbuff != Curbuff) {
@@ -272,7 +272,7 @@ void wsize(void)
 bool wuseother(const char *bname)
 {
 	struct wdo *wdo, *last;
-	struct zbuff *buff;
+	zbuff_t *buff;
 
 	for (wdo = Whead, last = NULL; wdo; last = wdo, wdo = wdo->next)
 		if (strcmp(wdo->wbuff->bname, bname) == 0)
@@ -377,7 +377,7 @@ void wgoto(struct buff *buff)
 	if (wdo)
 		wswitchto(wdo);
 	else {
-		struct zbuff *tbuff = cfindzbuff(buff);
+		zbuff_t *tbuff = cfindzbuff(buff);
 		if (tbuff)
 			cswitchto(tbuff);
 		else

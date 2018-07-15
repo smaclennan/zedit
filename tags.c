@@ -72,7 +72,7 @@ static int get_tagfile(void)
 	return getfname("Tagfile: ", Tagfile);
 }
 
-static bool tagfile_modified(struct zbuff *buff)
+static bool tagfile_modified(zbuff_t *buff)
 {
 	struct stat sbuf;
 
@@ -86,9 +86,9 @@ static bool tagfile_modified(struct zbuff *buff)
 }
 
 /* May change Curbuff */
-static struct zbuff *read_tagfile(void)
+static zbuff_t *read_tagfile(void)
 {
-	struct zbuff *buff;
+	zbuff_t *buff;
 
 	if (get_tagfile())
 		return NULL;
@@ -112,7 +112,7 @@ static bool find_tag(char *word)
 {
 	char path[PATHMAX], regstr[STRMAX], *p;
 	regexp_t re;
-	struct zbuff *buff, *save = Curbuff;
+	zbuff_t *buff, *save = Curbuff;
 	int offset;
 
 	buff = read_tagfile();

@@ -53,7 +53,6 @@ struct zbuff;
 #include "reg.h"
 #include "vars.h"
 #include "funcs.h"
-#include "proto.h"
 #include "keys.h"
 #include "calc.h"
 #include "tinit.h"
@@ -148,7 +147,7 @@ extern struct wdo *Curwdo, *Whead;
 extern struct zbuff *Curbuff;
 extern struct buff *Bbuff;
 
-struct zbuff {
+typedef struct zbuff {
 	struct zbuff *prev;		/**< list of buffers */
 	struct zbuff *next;		/**< list of buffers */
 	char *bname;            /**< buffer name */
@@ -160,7 +159,7 @@ struct zbuff {
 	void *ctail;		    /**< list of comments in file */
 	Byte comchar;			/**< single char comment character */
 	unsigned bmode;		    /**< buffer mode */
-};
+} zbuff_t;
 
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)
 
@@ -173,7 +172,7 @@ extern int InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
 #define PAWSTRLEN (COLMAX + 10)
 extern int Pawcol, Pawlen, Pshift;
-extern struct zbuff *Paw;
+extern zbuff_t *Paw;
 extern int verbose;
 
 extern unsigned Cmd;
@@ -189,8 +188,8 @@ extern int raw_mode;
 
 #define CMD(n) (*Cmds[n][Curcmds])()
 
-extern struct zbuff *Bufflist;
-extern struct zbuff *Buff_save;
+extern zbuff_t *Bufflist;
+extern zbuff_t *Buff_save;
 extern struct mark *Sstart;
 extern bool Initializing;
 extern bool Insearch;
@@ -214,7 +213,7 @@ extern void (*Nextpart)(void);
 #endif
 #define T_REGION		T_REVERSE
 
-void set_last_bufname(struct zbuff *buff);
+void set_last_bufname(zbuff_t *buff);
 
 char *zgetcwd(char *cwd, int len);
 #ifdef WIN32
@@ -242,5 +241,7 @@ void tbell_dbg(char *func, int line);
 #define NEED_UMARK do if (!UMARK_SET) { tbell(); return; } while (0)
 #define UMARK (Curbuff->umark) /* Must guarantee umark set! */
 #define CLEAR_UMARK clear_umark()
+
+#include "proto.h"
 
 #endif /* _Z_H_ */

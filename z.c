@@ -194,7 +194,7 @@ int main(int argc, char **argv)
 	char path[PATHMAX + 1];
 	int arg, textMode = 0, exitflag = 0, line = 0;
 	struct mark tmark;
-	struct zbuff *tbuff = NULL;
+	zbuff_t *tbuff = NULL;
 
 	Home = gethomedir();
 	if (!Home) {
@@ -291,7 +291,7 @@ int main(int argc, char **argv)
 
 void Zstats(void)
 {
-	struct zbuff *buff;
+	zbuff_t *buff;
 	struct mark *mark;
 	struct page *page;
 	unsigned nbuff = 2; /* paw + kill */

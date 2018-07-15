@@ -187,7 +187,7 @@ static void doreplace(int type)
 	bool exit = false, crgone, query;
 	regexp_t re;
 	struct mark *pmark, tmark;
-	struct zbuff *tbuff, *save = Curbuff;
+	zbuff_t *tbuff, *save = Curbuff;
 	int rc = 0;
 
 	Arg = 0;

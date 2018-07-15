@@ -207,7 +207,7 @@ void Zshow_config(void)
 {
 	int i;
 	char line[STRMAX * 2];
-	struct zbuff *tbuff = cmakebuff(CONFBUFF, NULL);
+	zbuff_t *tbuff = cmakebuff(CONFBUFF, NULL);
 	if (!tbuff)
 		return;
 

@@ -357,10 +357,14 @@ bool findfile(char *path)
 
 			i = strlen(tbname);
 			p = &tbname[i < BUFNAMMAX - 3 ? i : BUFNAMMAX - 3];
-			i = 0;
-			do
-				snprintf(p, 3, ".%d", ++i);
-			while (cfindbuff(tbname));
+			/* We cannot use 100 here due to a bug in gcc 7.3.0 */
+			for (i = 0; i < 99; ++i) {
+				snprintf(p, 4, ".%d", i);
+				if (!cfindbuff(tbname))
+					break;
+			}
+			if (cfindbuff(tbname))
+				return false;
 		}
 
 		if (!readone(tbname, path))

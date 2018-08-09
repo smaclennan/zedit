@@ -281,7 +281,7 @@ void tclrwind(void)
 #else
 	fputs("\033[2J", stdout);
 #endif
-	memset(Clrcol, 0, ROWMAX);
+	memset(Clrcol, 0, sizeof(Clrcol));
 	Prow = Pcol = 0;
 	tflush();
 }

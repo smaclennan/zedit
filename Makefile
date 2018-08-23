@@ -45,6 +45,9 @@ CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 
 LFILES = buff.c bfile.c bmsearch.c mark.c reg.c tinit.c calc.c undo.c \
 	kbd.c hugefile.c util.c
+
+LFILES += buff/newpage.c
+
 # Not used in Zedit
 L1FILES=bsocket.c
 
@@ -111,3 +114,4 @@ clean:
 	rm -f *.o $(ZEXE) fcheck main core* TAGS valgrind.out sless cscope.*
 	rm -rf doxygen/html tmpdir
 	@$(MAKE) -C docs clean
+	@$(MAKE) -C buff clean

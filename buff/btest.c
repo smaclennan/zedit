@@ -98,5 +98,14 @@ int main(int argc, char *argv[])
 	unlink(FILENAME);
 	unlink(FILENAME2);
 
+	const char *teststr = "The quick brown fox jumped over the lazy dog.";
+	buff = bcreate();
+	for (const char *p = teststr; *p; ++p)
+		binsert(buff, *p);
+	btostart(buff);
+	assert(bm_search(buff, "fox", false));
+	assert(bcsearch(buff, 'l'));
+	bdelbuff(buff);
+
 	return 0;
 }

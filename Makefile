@@ -43,7 +43,7 @@ CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 	display.c file.c funcs.c getarg.c getfname.c help.c shell.c \
 	srch.c tags.c term.c vars.c window.c varray.c z.c zgrep.c life.c
 
-LFILES = buff.c bmsearch.c mark.c reg.c tinit.c calc.c undo.c \
+LFILES = buff.c mark.c reg.c tinit.c calc.c undo.c \
 	kbd.c hugefile.c util.c
 
 # Not used in Zedit
@@ -56,7 +56,7 @@ HFILES = config.h funcs.h proto.h vars.h z.h $(LHFILES)
 O := $(CFILES:.c=.o)
 L := $(LFILES:.c=.o)
 
-L += bcreate.o bdelbuff.o binsert.o breadfile.o bwritefile.o \
+L += bcreate.o bcsearch.o bdelbuff.o binsert.o bmsearch.o bmove.o breadfile.o bwritefile.o \
      freepage.o globals.o newpage.o pagesplit.o
 
 

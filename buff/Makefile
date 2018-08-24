@@ -5,8 +5,11 @@ CFLAGS += -DPGSIZE=8 -DPAGE_DBG
 
 CFILES = \
 	bcreate.c \
+	bcsearch.c \
 	bdelbuff.c \
 	binsert.c \
+	bmove.c \
+	bmsearch.c \
 	breadfile.c \
 	bwritefile.c \
 	freepage.c \

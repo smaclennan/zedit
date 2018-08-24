@@ -17,13 +17,13 @@ static void dump_pages(struct buff *buff, const char *str)
 	printf("Pages %s:\n", str);
 	for (struct page *pg = buff->firstp; pg; pg = pg->nextp)
 		if (buff->curpage == pg) {
-			printf("  >%.*s\n", PGSIZE, pg->pdata);
+			printf("  '%.*s'\n", pg->plen, pg->pdata);
 			printf("   ");
 			for (int i = 0; i < buff->curchar; ++i)
 				putchar(' ');
 			printf("^\n");
 		} else
-			printf("   %.*s\n", PGSIZE, pg->pdata);
+			printf("  '%.*s'\n", pg->plen, pg->pdata);
 }
 
 static void create_file(const char *fname)
@@ -104,7 +104,10 @@ int main(int argc, char *argv[])
 		binsert(buff, *p);
 	btostart(buff);
 	assert(bm_search(buff, "fox", false));
-	assert(bcsearch(buff, 'l'));
+	assert(bcsearch(buff, 'l')); // leaves the point after the l
+	bmove(buff, -1);
+	bdelete(buff, 4);
+	dump_pages(buff, "search/delete");
 	bdelbuff(buff);
 
 	return 0;

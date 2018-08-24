@@ -7,6 +7,7 @@ CFILES = \
 	bcreate.c \
 	bcsearch.c \
 	bdelbuff.c \
+	bdelete.c \
 	binsert.c \
 	bmove.c \
 	bmsearch.c \

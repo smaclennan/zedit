@@ -216,6 +216,8 @@ int zreadfile(char *fname)
 
 	Curbuff->mtime = sbuf.st_mtime;
 
+	bempty(Bbuff);
+
 #if HUGE_FILES
 	if (sbuf.st_size > HUGE_SIZE) {
 		compressed = 0;
@@ -444,6 +446,7 @@ void Zread_file(void)
 
 	if ((tbuff = bcreate())) {
 		putpaw("Reading %s", lastpart(Fname));
+		bempty(tbuff);
 		rc = breadfile(tbuff, Fname, NULL);
 		if (rc == 0) {
 			btoend(tbuff);

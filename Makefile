@@ -25,7 +25,7 @@ ZEXE = ze
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
 D = -O2
-CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC)
+CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC) -I.
 CFLAGS += -DHAVE_CONFIG_H
 
 # Saves about 20k
@@ -46,8 +46,6 @@ CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 LFILES = buff.c bfile.c bmsearch.c mark.c reg.c tinit.c calc.c undo.c \
 	kbd.c hugefile.c util.c
 
-LFILES += buff/newpage.c
-
 # Not used in Zedit
 L1FILES=bsocket.c
 
@@ -57,6 +55,9 @@ HFILES = config.h funcs.h proto.h vars.h z.h $(LHFILES)
 
 O := $(CFILES:.c=.o)
 L := $(LFILES:.c=.o)
+
+L += bcreate.o bdelbuff.o binsert.o breadfile.o freepage.o globals.o newpage.o pagesplit.o
+
 
 #################
 
@@ -70,6 +71,9 @@ QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 QUIET_AR      = $(Q:@=@echo    '     AR       '$@;)
 
 .c.o:
+	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
+
+%.o : buff/%.c
 	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
 
 #################

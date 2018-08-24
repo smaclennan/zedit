@@ -29,6 +29,7 @@
 static void grep_one(char *fname, regexp_t *re,
 					 struct buff *inbuff, struct buff *outbuff)
 {
+	bempty(inbuff);
 	if (breadfile(inbuff, fname, NULL))
 		return;
 

@@ -1,12 +1,23 @@
-CFLAGS += -Wall -O2 -I.. -L.
+CFLAGS += -Wall -g -I.. -L.
 
-CFILES = newpage.c
+# For debugging use small pages
+CFLAGS += -DPGSIZE=8 -DPAGE_DBG
+
+CFILES = \
+	bcreate.c \
+	bdelbuff.c \
+	binsert.c \
+	breadfile.c \
+	freepage.c \
+	globals.c \
+	newpage.c \
+	pagesplit.c \
 
 O := $(CFILES:.c=.o)
 
 all: libbuff.a btest
 
-btest: btest.c
+btest: btest.c libbuff.a
 	$(CC) $(CFLAGS) -o $@ $< -lbuff
 
 libbuff.a: $O

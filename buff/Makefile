@@ -10,13 +10,19 @@ CFILES = \
 	bdelbuff.c \
 	bdelete.c \
 	binsert.c \
+	bisbeforemrk.c \
+	bisaftermrk.c \
 	bmove.c \
 	bmsearch.c \
+	bpnttomrk.c \
 	breadfile.c \
+	bswappnt.c \
 	bwritefile.c \
 	freepage.c \
 	globals.c \
 	newpage.c \
+	mrkaftermrk.c \
+	mrkbeforemrk.c \
 	pagesplit.c \
 
 O := $(CFILES:.c=.o)

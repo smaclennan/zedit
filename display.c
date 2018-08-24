@@ -179,6 +179,35 @@ static bool bisatumark(void)
 	return  UMARK_SET && bisatmrk(Bbuff, UMARK);
 }
 
+/** Returns true if point is between start and end. This has to walk
+ * all the pages between start and end. So it is most efficient for
+ * small ranges and terrible if end is before start.
+ *
+ * Note: point == start == end returns false: it is not between.
+ */
+static bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end)
+{
+	struct page *tp;
+	bool found = false;
+
+	if (start->mbuff != buff || end->mbuff != buff)
+		return false;
+
+	if (buff->curpage == start->mpage)
+		if (buff->curchar < start->moffset)
+			return false;
+
+	for (tp = start->mpage; tp; tp = tp->nextp)
+		if (tp == buff->curpage) {
+			if (tp == end->mpage)
+				return buff->curchar < end->moffset;
+			found = true;
+		} else if (tp == end->mpage)
+			return found;
+
+	return false;
+}
+
 /* Set Sstart and Psstart. Mark Send as invalid. */
 void set_sstart(struct mark *mrk)
 {

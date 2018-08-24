@@ -51,11 +51,6 @@ static inline int bisatmrk(struct buff *b, struct mark *m)
 }
 bool bisaftermrk(struct buff *, struct mark *);
 bool bisbeforemrk(struct buff *, struct mark *);
-/* True if point is between start and end. This has to walk all the
- * pages between start and end. So it is most efficient for small
- * ranges and terrible if end is before start.
- */
-bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end);
 bool bpnttomrk(struct buff *, struct mark *);
 bool bswappnt(struct buff *, struct mark *);
 void mrkfini(void);

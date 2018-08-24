@@ -24,6 +24,7 @@ CFILES = \
 	mrkaftermrk.c \
 	mrkbeforemrk.c \
 	pagesplit.c \
+	reg.c \
 
 O := $(CFILES:.c=.o)
 

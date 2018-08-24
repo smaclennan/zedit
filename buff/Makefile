@@ -8,6 +8,7 @@ CFILES = \
 	bdelbuff.c \
 	binsert.c \
 	breadfile.c \
+	bwritefile.c \
 	freepage.c \
 	globals.c \
 	newpage.c \

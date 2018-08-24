@@ -9,7 +9,8 @@
 #include <assert.h>
 #include "buff.h"
 
-#define FILENAME "/tmp/btest.file"
+#define FILENAME  "/tmp/btest.file"
+#define FILENAME2 "/tmp/btest2.file"
 
 static void dump_pages(struct buff *buff, const char *str)
 {
@@ -75,11 +76,13 @@ int main(int argc, char *argv[])
 	buff = bcreate();
 	memset(buff->curpage->pdata, 'B', PGSIZE);
 	memset(buff->curpage->pdata, 'A', HALFP);
+	buff->curpage->pdata[PGSIZE - 1] = '\n';
 	makeoffset(buff, HALFP);
 	curplen(buff) = PGSIZE;
 	rc = breadfile(buff, FILENAME, NULL);
 	assert(rc == 0);
 	dump_pages(buff, "half");
+	assert(bwritefile(buff, FILENAME2, 0644));
 	bdelbuff(buff);
 
 	// full page
@@ -93,6 +96,7 @@ int main(int argc, char *argv[])
 	bdelbuff(buff);
 
 	unlink(FILENAME);
+	unlink(FILENAME2);
 
 	return 0;
 }

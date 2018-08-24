@@ -88,7 +88,6 @@ void bdelbuff(struct buff *);
 bool binsert(struct buff *, Byte);
 void bdelete(struct buff *, unsigned);
 bool bmove(struct buff *, int);
-void btostart(struct buff *);
 void btoend(struct buff *);
 void tobegline(struct buff *);
 void toendline(struct buff *);
@@ -210,6 +209,12 @@ void makecur(struct buff *buff, struct page *page, int dist);
 #else
 #define makecur __makecur
 #endif
+
+/** Move point to start of buffer. */
+static inline void btostart(struct buff *buff)
+{
+	makecur(buff, buff->firstp, 0);
+}
 
 /** Move current page to offset. */
 static inline void makeoffset(struct buff *buff, int dist)

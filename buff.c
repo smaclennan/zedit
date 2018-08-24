@@ -215,12 +215,6 @@ bool bmove(struct buff *buff, int dist)
 	return true;
 }
 
-/** Move point to start of buffer. */
-void btostart(struct buff *buff)
-{
-	makecur(buff, buff->firstp, 0);
-}
-
 /** Move point to end of buffer. */
 void btoend(struct buff *buff)
 {

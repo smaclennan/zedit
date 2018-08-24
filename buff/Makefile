@@ -5,6 +5,7 @@ CFLAGS += -DPGSIZE=8 -DPAGE_DBG
 
 CFILES = \
 	bcreate.c \
+	bcremark.c \
 	bcsearch.c \
 	bdelbuff.c \
 	bdelete.c \

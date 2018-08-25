@@ -22,10 +22,6 @@
 #else
 #define _GNU_SOURCE /* for memrchr */
 #endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 
 #include "buff.h"
 

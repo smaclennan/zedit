@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <assert.h>
+#include <limits.h>
 #include "buff.h"
 
 #define FILENAME  "/tmp/btest.file"
@@ -108,6 +109,12 @@ int main(int argc, char *argv[])
 	bmove(buff, -1);
 	bdelete(buff, 4);
 	dump_pages(buff, "search/delete");
+	bdelbuff(buff);
+
+	buff = bcreate();
+	binstr(buff, "int %d", 666);
+	binstr(buff, " unsigned %u", 666);
+	dump_pages(buff, "binstr");
 	bdelbuff(buff);
 
 	return 0;

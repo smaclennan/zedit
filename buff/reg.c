@@ -125,7 +125,6 @@ bool lookingat(struct buff *buff, const char *str)
  *		loc2 was removed, buffer will be left pointing here!
  *		locs is set externally by ed and sed - removed!
  */
-#include <stdio.h>
 
 static bool advance(struct buff *buff, uint8_t *ep);
 static bool ecmp(struct buff *buff, struct mark *, int);
@@ -627,7 +626,7 @@ void re_error(int errnum, const regexp_t *preg, char *errbuf, int errbuf_size)
 	errnum -= 40;
 	if (errnum < 0 || errnum >= N_RE_ERRORS)
 		errnum = N_RE_ERRORS - 1;
-	snprintf(errbuf, errs[errnum], errbuf_size);
+	strlcpy(errbuf, errs[errnum], errbuf_size);
 }
 
 void re_free(regexp_t *re) {}

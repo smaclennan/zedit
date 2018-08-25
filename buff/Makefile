@@ -2,6 +2,8 @@ CFLAGS += -Wall -g -I.. -L.
 
 # For debugging use small pages
 CFLAGS += -DPGSIZE=8 -DPAGE_DBG
+# For testing the builtin reg
+CFLAGS += -DBUILTIN_REG
 
 CFILES = \
 	bcreate.c \
@@ -10,6 +12,7 @@ CFILES = \
 	bdelbuff.c \
 	bdelete.c \
 	binsert.c \
+	binstr.c \
 	bisbeforemrk.c \
 	bisaftermrk.c \
 	bmove.c \
@@ -25,6 +28,7 @@ CFILES = \
 	mrkbeforemrk.c \
 	pagesplit.c \
 	reg.c \
+	strlcpy.c \
 
 O := $(CFILES:.c=.o)
 

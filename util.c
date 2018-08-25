@@ -22,27 +22,6 @@
 #include <stdarg.h>
 #include "buff.h"
 
-#if defined(__linux__) || defined(WIN32)
-/* A simple strlcpy implementation for Linux */
-size_t strlcpy(char *dst, const char *src, size_t dstsize)
-{
-	size_t i = 0;
-
-	if (dstsize > 0) {
-		--dstsize;
-		while (*src && i < dstsize) {
-			*dst++ = *src++;
-			++i;
-		}
-		*dst = 0;
-	}
-
-	/* strlcpy returns the size of the src */
-	while (*src++) ++i;
-
-	return i;
-}
-#endif
 
 static char *dbgfname;
 

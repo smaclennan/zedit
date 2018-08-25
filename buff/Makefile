@@ -1,4 +1,4 @@
-CFLAGS += -Wall -g -L. -DHAVE_CONFIG_H
+CFLAGS += -Wall -g -L.
 
 # For debugging use small pages
 CFLAGS += -DPGSIZE=8 -DPAGE_DBG
@@ -22,6 +22,8 @@ CFILES = \
 	bline.c \
 	blocation.c \
 	bmove.c \
+	bmovepast.c \
+	bmoveto.c \
 	bmsearch.c \
 	boffset.c \
 	bpeek.c \

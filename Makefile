@@ -43,7 +43,7 @@ CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 	display.c file.c funcs.c getarg.c getfname.c help.c shell.c \
 	srch.c tags.c term.c vars.c window.c varray.c z.c zgrep.c life.c
 
-LFILES = buff.c tinit.c calc.c undo.c kbd.c hugefile.c
+LFILES = tinit.c calc.c undo.c kbd.c hugefile.c
 
 HFILES = config.h funcs.h proto.h vars.h z.h
 HFILES += buff/buff.h calc.h buff/mark.h buff/reg.h tinit.h keys.h
@@ -54,7 +54,7 @@ L := $(LFILES:.c=.o)
 L += bcopyrgn.o bcreate.o bcremark.o bcsearch.o bdelbuff.o \
 	bdelete.o bdeltomrk.o bempty.o binsert.o binstr.o \
 	bisbeforemrk.o bisaftermrk.o blength.o bline.o blocation.o boffset.o \
-	bmsearch.o bmove.o bpeek.o \
+	bmovepast.o bmoveto.o bmsearch.o bmove.o bpeek.o \
 	bpnttomrk.o breadfile.o bswappnt.o btoend.o bwritefile.o \
 	dbg.o freepage.o globals.o newpage.o mrkbeforemrk.o mrkaftermrk.o \
 	pagesplit.o reg.o strlcpy.o tobegline.o toendline.o

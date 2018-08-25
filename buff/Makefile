@@ -3,7 +3,7 @@ CFLAGS += -Wall -g -I.. -L.
 # For debugging use small pages
 CFLAGS += -DPGSIZE=8 -DPAGE_DBG
 # For testing the builtin reg
-CFLAGS += -DBUILTIN_REG
+#CFLAGS += -DBUILTIN_REG
 
 CFILES = \
 	bcreate.c \
@@ -20,7 +20,9 @@ CFILES = \
 	bpnttomrk.c \
 	breadfile.c \
 	bswappnt.c \
+	btoend.c \
 	bwritefile.c \
+	dbg.c \
 	freepage.c \
 	globals.c \
 	newpage.c \

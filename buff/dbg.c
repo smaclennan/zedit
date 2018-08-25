@@ -17,11 +17,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h> /* for vsnprintf */
+#include <fcntl.h>
 #include <stdarg.h>
 #include "buff.h"
-
 
 static char *dbgfname;
 
@@ -39,17 +38,21 @@ const char *Dbgfname(const char *fname)
 
 void Dbg(const char *fmt, ...)
 {
-	va_list arg_ptr;
+	va_list ap;
+	char line[1024];
+	int len;
 
-	va_start(arg_ptr, fmt);
+	va_start(ap, fmt);
+	len = vsnprintf(line, sizeof(line), fmt, ap);
+	va_end(ap);
+
 	if (dbgfname) {
-		FILE *fp = fopen(dbgfname, "a");
+		int fd = open(dbgfname, O_CREAT | O_WRONLY | O_APPEND, 0644);
 
-		if (fp) {
-			vfprintf(fp, fmt, arg_ptr);
-			fclose(fp);
+		if (fd >= 0) {
+			write(fd, line, len);
+			close(fd);
 		}
 	} else
-		vfprintf(stderr, fmt, arg_ptr);
-	va_end(arg_ptr);
+		write(2, line, len);
 }

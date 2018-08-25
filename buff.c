@@ -17,28 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/stat.h>
-
 #include "buff.h"
-
-
-/** Move point to end of buffer. */
-void btoend(struct buff *buff)
-{
-	struct page *lastp;
-
-	/* For huge files we don't want to make every page current */
-	for (lastp = buff->curpage; lastp->nextp; lastp = lastp->nextp)
-		;
-	makecur(buff, lastp, lastp->plen);
-}
 
 /** Move point to the beginning of the line. */
 void tobegline(struct buff *buff)

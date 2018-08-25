@@ -45,9 +45,6 @@ CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 
 LFILES = buff.c tinit.c calc.c undo.c kbd.c hugefile.c
 
-# Not used in Zedit
-L1FILES=bsocket.c
-
 HFILES = config.h funcs.h proto.h vars.h z.h
 HFILES += buff/buff.h calc.h buff/mark.h buff/reg.h tinit.h keys.h
 
@@ -96,8 +93,8 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 
 # The second sparse checks just the buffer code
 checkit:
-	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(CFILES) $(LFILES) $(L1FILES)
-	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(LFILES) $(L1FILES)
+	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(CFILES) $(LFILES)
+	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(LFILES))
 	@sparse -D__unix__ -D__linux__ $(CFLAGS) fcheck.c
 
 doxy:

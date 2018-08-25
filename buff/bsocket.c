@@ -17,6 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/* SAM FIXME
+ * This should be split up... but I am not currently using this
+ * code. The project that used it is done.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

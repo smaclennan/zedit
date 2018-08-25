@@ -6,17 +6,25 @@ CFLAGS += -DPGSIZE=8 -DPAGE_DBG
 #CFLAGS += -DBUILTIN_REG
 
 CFILES = \
+	bcopyrgn.c \
 	bcreate.c \
 	bcremark.c \
 	bcsearch.c \
 	bdelbuff.c \
 	bdelete.c \
+	bdeltomrk.c \
+	bempty.c \
 	binsert.c \
 	binstr.c \
 	bisbeforemrk.c \
 	bisaftermrk.c \
+	blength.c \
+	bline.c \
+	blocation.c \
 	bmove.c \
 	bmsearch.c \
+	boffset.c \
+	bpeek.c \
 	bpnttomrk.c \
 	breadfile.c \
 	bswappnt.c \
@@ -31,6 +39,8 @@ CFILES = \
 	pagesplit.c \
 	reg.c \
 	strlcpy.c \
+	tobegline.c \
+	toendline.c \
 
 O := $(CFILES:.c=.o)
 

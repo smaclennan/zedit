@@ -55,12 +55,13 @@ HFILES = config.h funcs.h proto.h vars.h z.h $(LHFILES)
 O := $(CFILES:.c=.o)
 L := $(LFILES:.c=.o)
 
-L += bcreate.o bcremark.o bcsearch.o bdelbuff.o bdelete.o binsert.o binstr.o \
-	bisbeforemrk.o bisaftermrk.o \
-	bmsearch.o bmove.o bpnttomrk.o breadfile.o bswappnt.o btoend.o bwritefile.o \
+L += bcopyrgn.o bcreate.o bcremark.o bcsearch.o bdelbuff.o \
+	bdelete.o bdeltomrk.o bempty.o binsert.o binstr.o \
+	bisbeforemrk.o bisaftermrk.o blength.o bline.o blocation.o boffset.o \
+	bmsearch.o bmove.o bpeek.o \
+	bpnttomrk.o breadfile.o bswappnt.o btoend.o bwritefile.o \
 	dbg.o freepage.o globals.o newpage.o mrkbeforemrk.o mrkaftermrk.o \
-	pagesplit.o reg.o strlcpy.o
-
+	pagesplit.o reg.o strlcpy.o tobegline.o toendline.o
 
 #################
 

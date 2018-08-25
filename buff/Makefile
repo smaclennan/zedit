@@ -1,4 +1,4 @@
-CFLAGS += -Wall -g -I.. -L.
+CFLAGS += -Wall -g -L. -DHAVE_CONFIG_H
 
 # For debugging use small pages
 CFLAGS += -DPGSIZE=8 -DPAGE_DBG
@@ -44,14 +44,23 @@ CFILES = \
 
 O := $(CFILES:.c=.o)
 
+V	      = @
+Q	      = $(V:1=)
+QUIET_CC      = $(Q:@=@echo    '     CC       '$@;)
+QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
+QUIET_AR      = $(Q:@=@echo    '     AR       '$@;)
+
+.c.o:
+	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
+
 all: libbuff.a btest
 
 btest: btest.c libbuff.a
-	$(CC) $(CFLAGS) -o $@ $< -lbuff
+	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $< -lbuff
 
 libbuff.a: $O
-	rm -f libbuff.a
-	ar cr libbuff.a $O
+	@rm -f libbuff.a
+	$(QUIET_AR)$(AR) cr libbuff.a $O
 
 clean:
 	rm -f *.o libbuff.a btest

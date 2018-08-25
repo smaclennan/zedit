@@ -19,7 +19,7 @@
 
 #include "z.h"
 
-char Lbufname[BUFNAMMAX + 1];
+static char Lbufname[BUFNAMMAX + 1];
 
 static char **Bnames;			/* array of ptrs to buffer names */
 static int Numbnames;			/* number of buffers */

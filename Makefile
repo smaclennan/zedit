@@ -25,7 +25,7 @@ ZEXE = ze
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
 D = -O2
-CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC) -I.
+CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC) -I. -Ibuff
 CFLAGS += -DHAVE_CONFIG_H
 
 # Saves about 20k
@@ -48,9 +48,8 @@ LFILES = buff.c tinit.c calc.c undo.c kbd.c hugefile.c
 # Not used in Zedit
 L1FILES=bsocket.c
 
-LHFILES = buff.h calc.h mark.h reg.h tinit.h keys.h
-
-HFILES = config.h funcs.h proto.h vars.h z.h $(LHFILES)
+HFILES = config.h funcs.h proto.h vars.h z.h
+HFILES += buff/buff.h calc.h buff/mark.h buff/reg.h tinit.h keys.h
 
 O := $(CFILES:.c=.o)
 L := $(LFILES:.c=.o)
@@ -92,22 +91,14 @@ fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c $(LIBS)
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
-# This is just to check that no zedit dependencies crept into libbuff.a
-main: main.c $(LFILES) $(L1FILES)
-	@rm -rf tmpdir
-	@mkdir tmpdir
-	@cp $+ $(LHFILES) tmpdir
-	@echo -e "all:\n\t$(CC) -DPGSIZE=1024 -g -o $@ $+" > tmpdir/Makefile
-	@make -C tmpdir
-
 # Make all c files depend on all .h files
 *.o: $(HFILES)
 
 # The second sparse checks just the buffer code
 checkit:
-	@sparse -D__unix__ $(CFLAGS) $(CFILES) $(LFILES) $(L1FILES)
-	@sparse -D__unix__ $(LFILES) $(L1FILES)
-	@sparse -D__unix__ fcheck.c
+	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(CFILES) $(LFILES) $(L1FILES)
+	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(LFILES) $(L1FILES)
+	@sparse -D__unix__ -D__linux__ $(CFLAGS) fcheck.c
 
 doxy:
 	doxygen doxygen/Doxyfile
@@ -119,7 +110,7 @@ install: all
 #	install -m644 zedit-termcap $(DESTDIR)/usr/share/zedit/termcap
 
 clean:
-	rm -f *.o $(ZEXE) fcheck main core* TAGS valgrind.out sless cscope.*
+	rm -f *.o $(ZEXE) fcheck core* TAGS valgrind.out sless cscope.*
 	rm -rf doxygen/html tmpdir
 	@$(MAKE) -C docs clean
 	@$(MAKE) -C buff clean

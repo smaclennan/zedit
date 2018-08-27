@@ -223,6 +223,6 @@ int main(int argc, char *argv[])
 
 /*
  * Local Variables:
- * compile-command: "gcc -g -Wall sless.c buff.c mark.c bfile.c tinit.c kbd.c dbg.c reg.c -o sless"
+ * compile-command: "gcc -g -Wall sless.c -o sless ./libbuff.a"
  * End:
  */

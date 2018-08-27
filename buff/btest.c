@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <limits.h>
 #include "buff.h"
+#include "tinit.h"
 
 #define FILENAME  "/tmp/btest.file"
 #define FILENAME2 "/tmp/btest2.file"
@@ -116,6 +117,8 @@ int main(int argc, char *argv[])
 	binstr(buff, " unsigned %u", 666);
 	dump_pages(buff, "binstr");
 	bdelbuff(buff);
+
+	tinit();
 
 	return 0;
 }

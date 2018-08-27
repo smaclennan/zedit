@@ -30,8 +30,8 @@ HANDLE hstdin;
 int Colmax, Rowmax;
 #include "winkbd.c"
 #else
-#include "kbd.c"
-#include "tinit.c"
+#include "buff/kbd.c"
+// SAM #include "buff/tinit.c"
 #endif
 
 #ifdef __unix__

@@ -35,12 +35,15 @@ CFILES = \
 	dbg.c \
 	freepage.c \
 	globals.c \
+	kbd.c \
 	newpage.c \
 	mrkaftermrk.c \
 	mrkbeforemrk.c \
 	pagesplit.c \
 	reg.c \
 	strlcpy.c \
+	term.c \
+	tinit.c \
 	tobegline.c \
 	toendline.c \
 
@@ -65,4 +68,4 @@ libbuff.a: $O
 	$(QUIET_AR)$(AR) cr libbuff.a $O
 
 clean:
-	rm -f *.o libbuff.a btest
+	rm -f *.o libbuff.a btest sless

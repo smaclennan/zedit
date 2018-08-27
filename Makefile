@@ -43,10 +43,10 @@ CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 	display.c file.c funcs.c getarg.c getfname.c help.c shell.c \
 	srch.c tags.c zterm.c vars.c window.c varray.c z.c zgrep.c life.c
 
-LFILES = tinit.c calc.c undo.c kbd.c hugefile.c
+LFILES = calc.c undo.c hugefile.c
 
 HFILES = config.h funcs.h proto.h vars.h z.h
-HFILES += buff/buff.h calc.h buff/mark.h buff/reg.h tinit.h keys.h
+HFILES += buff/buff.h calc.h buff/mark.h buff/reg.h buff/tinit.h buff/keys.h
 
 O := $(CFILES:.c=.o)
 L := $(LFILES:.c=.o)
@@ -56,8 +56,8 @@ L += bcopyrgn.o bcreate.o bcremark.o bcsearch.o bdelbuff.o \
 	bisbeforemrk.o bisaftermrk.o blength.o bline.o blocation.o boffset.o \
 	bmovepast.o bmoveto.o bmsearch.o bmove.o bpeek.o \
 	bpnttomrk.o breadfile.o bswappnt.o btoend.o bwritefile.o \
-	dbg.o freepage.o globals.o newpage.o mrkbeforemrk.o mrkaftermrk.o \
-	pagesplit.o reg.o strlcpy.o tobegline.o toendline.o
+	dbg.o freepage.o globals.o kbd.o newpage.o mrkbeforemrk.o mrkaftermrk.o \
+	pagesplit.o reg.o strlcpy.o term.o tinit.o tobegline.o toendline.o
 
 #################
 
@@ -84,7 +84,7 @@ $(ZEXE): $O $L
 	$(QUIET_LINK)$(CC) -o $@ $O $L $(LIBS)
 	@$(ETAGS) $(CFILES) $(LFILES) $(HFILES)
 
-fcheck: fcheck.c funcs.c kbd.c varray.c cnames.c bind.c config.h vars.h keys.h
+fcheck: fcheck.c funcs.c varray.c cnames.c bind.c config.h vars.h buff/keys.h
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c $(LIBS)
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
@@ -107,7 +107,7 @@ install: all
 #	install -m644 zedit-termcap $(DESTDIR)/usr/share/zedit/termcap
 
 clean:
-	rm -f *.o $(ZEXE) fcheck core* TAGS valgrind.out sless cscope.*
+	rm -f *.o $(ZEXE) fcheck core* TAGS valgrind.out cscope.*
 	rm -rf doxygen/html tmpdir
 	@$(MAKE) -C docs clean
 	@$(MAKE) -C buff clean

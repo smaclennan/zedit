@@ -13,6 +13,68 @@
 #define fileclose(a) close(a)
 #endif
 
+#if 1
+/**
+ * Load the file 'fname' into the current buffer.  Returns 0
+ * successfully opened file, < 0 (errno) on error, 1 on gzdopen
+ * error.
+ * Leaves point at start of buffer.
+ */
+int breadfile(struct buff *buff, const char *fname, int *compressed)
+{
+	char buf[PGSIZE];
+	int fd, len;
+
+	fd = open(fname, O_RDONLY | O_BINARY);
+	if (fd < 0)
+		return -errno;
+
+#if ZLIB
+	gzFile gz = gzdopen(fd, "rb");
+
+	if (!gz) {
+		close(fd);
+		return 1;
+	}
+
+	if (compressed)
+		*compressed = gzdirect(gz) == 0;
+#else
+	if (compressed)
+		*compressed = 0;
+#endif
+
+	bempty(buff);
+
+	while ((len = fileread(fd, buf, PGSIZE)) > 0) {
+		if (curplen(buff)) {
+			if (!newpage(buff->curpage)) {
+				bempty(buff);
+				fileclose(fd);
+				return -ENOMEM;
+			}
+			makecur(buff, buff->curpage->nextp, 0);
+		}
+		memcpy(buff->curcptr, buf, len);
+		curplen(buff) = len;
+	}
+	fileclose(fd);
+
+	btostart(buff);
+
+#if ZLIB
+	/* Ubuntu 12.04 has a bug where zero length files are reported as
+	 * compressed.
+	 */
+	if (compressed && curplen(buff) == 0)
+		*compressed = 0;
+#endif
+
+	buff->bmodf = false;
+
+	return 0;
+}
+#else
 /**
  * Load the file 'fname' into the current buffer at the point.  Returns 0
  * successfully opened file, < 0 (errno) on error, 1 on gzdopen
@@ -22,6 +84,7 @@
 int breadfile(struct buff *buff, const char *fname, int *compressed)
 {
 	char buf[PGSIZE];
+	struct mark start;
 	int fd, len;
 
 	fd = open(fname, O_RDONLY | O_BINARY);
@@ -51,6 +114,8 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 		makecur(buff, buff->curpage->nextp, 0);
 	}
 
+	bmrktopnt(&start);
+
 	while ((len = fileread(fd, buf, PGSIZE)) > 0) {
 		if (curplen(buff)) {
 			if (!newpage(buff->curpage)) {
@@ -64,6 +129,8 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 	}
 	fileclose(fd);
 
+	bpnttomrk(&start);
+
 #if ZLIB
 	/* Ubuntu 12.04 has a bug where zero length files are reported as
 	 * compressed.
@@ -76,3 +143,4 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 
 	return 0;
 }
+#endif

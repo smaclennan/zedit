@@ -140,6 +140,7 @@ int do_undo(struct buff *buff);
 /* util.c */
 #if defined(__linux__) || defined(WIN32)
 size_t strlcpy(char *dst, const char *src, size_t dstsize);
+size_t strlcat(char *dst, const char *src, size_t dstsize);
 #endif
 const char *Dbgfname(const char *fname);
 void Dbg(const char *fmt, ...);
@@ -242,6 +243,9 @@ static inline void bmove1(struct buff *buff)
 		/* already at eob - paw needs this */
 		makeoffset(buff, curplen(buff));
 }
+
+char *itoa(int val, char *out);
+char *utoa(unsigned val, char *out);
 
 #if HUGE_FILES
 extern void (*huge_file_cb)(struct buff *buff, int rc);

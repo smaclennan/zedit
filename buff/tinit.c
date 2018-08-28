@@ -17,9 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <signal.h>
 #include "tinit.h"
 
@@ -44,7 +41,12 @@ HANDLE hstdout;	/* Console out handle */
 /* Come here on SIGHUP or SIGTERM */
 static void t_hang_up(int signo)
 {
-	printf("\r\nHang up! (%d)\r\n", signo);
+	if (signo == SIGHUP)
+		write(1, "\r\nHang up!\r\n", 12);
+	else if (signo == SIGTERM)
+		write(1, "\r\nTerminate!\r\n", 14);
+	else
+		write(1, "\r\nGot signal!\r\n", 15);
 	exit(1);
 }
 

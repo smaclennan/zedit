@@ -56,7 +56,7 @@ L += bcopyrgn.o bcreate.o bcremark.o bcsearch.o bdelbuff.o \
 	bisbeforemrk.o bisaftermrk.o blength.o bline.o blocation.o boffset.o \
 	bmovepast.o bmoveto.o bmsearch.o bmove.o bpeek.o \
 	bpnttomrk.o breadfile.o bswappnt.o btoend.o bwritefile.o \
-	dbg.o freepage.o globals.o kbd.o newpage.o mrkbeforemrk.o mrkaftermrk.o \
+	dbg.o freepage.o globals.o itoa.o kbd.o newpage.o mrkbeforemrk.o mrkaftermrk.o \
 	pagesplit.o reg.o strlcpy.o term.o tinit.o tobegline.o toendline.o
 
 #################

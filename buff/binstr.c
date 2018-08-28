@@ -38,65 +38,6 @@ static bool out_str(struct buff *buff, const char *s, int saw_neg, int len)
 	return true;
 }
 
-/** Helper function for itoa() and utoa(). */
-static void reverse_string(char *start, char *end)
-{
-	int len = (end - start) / 2;
-	--end;
-	for (int i = 0; i < len; ++i) {
-		char temp = *end;
-		*end = *start;
-		*start = temp;
-		start++;
-		end--;
-	}
-}
-
-/** Helper function for handle_format(). */
-static char *itoa(int val, char *out)
-{
-	char *p = out;
-	int neg = val < 0;
-
-	if (val == 0) {
-		strcpy(out, "0");
-		return out;
-	}
-
-	if (neg)
-		val = -val;
-
-	while (val > 0) {
-		*p++ = (val % 10) + '0';
-		val /= 10;
-	}
-	if (neg) *p++ = '-';
-	*p = 0;
-
-	reverse_string(out, p);
-	return out;
-}
-
-/** Helper function for handle_format(). */
-static char *utoa(unsigned val, char *out)
-{
-	char *p = out;
-
-	if (val == 0) {
-		strcpy(out, "0");
-		return out;
-	}
-
-	while (val > 0) {
-		*p++ = (val % 10) + '0';
-		val /= 10;
-	}
-	*p = 0;
-
-	reverse_string(out, p);
-	return out;
-}
-
 /** Helper function for binstr(). */
 static bool handle_format(struct buff *buff, const char **fmt, va_list ap)
 {

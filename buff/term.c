@@ -17,9 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "tinit.h"
 
 int Prow, Pcol;
@@ -45,8 +42,8 @@ void tsize(int *rows, int *cols)
 		SetConsoleScreenBufferSize(hstdout, size);
 	}
 #else
-	char buf[12];
-	int n, w;
+	char buf[12], *p;
+	int n, w, r, c = 0;
 
 	/* Save cursor position */
 	w = write(0, "\033[s", 3);
@@ -60,9 +57,14 @@ void tsize(int *rows, int *cols)
 
 	if (n > 0) {
 		buf[n] = '\0';
-		if (sscanf(buf, "\033[%d;%dR", rows, cols) != 2) {
-			*rows = 25;
-			*cols = 80;
+		if (buf[0] == '\033' && buf[1] == '[') {
+			r = strtol(buf + 2, &p, 10);
+			if (*p++ == ';')
+				c = strtol(p, NULL, 10);
+		}
+		if (r > 0 && c > 0) {
+			*rows = r;
+			*cols = c;
 		}
 	}
 #endif
@@ -83,8 +85,14 @@ void tforce(void)
 #elif defined(TERMCAP)
 		TPUTS(tgoto(cm[0], Pcol, Prow));
 #else
-		printf("\033[%d;%dH", Prow + 1, Pcol + 1);
-		tflush();
+		char str[64], *p = str;
+
+		*p++ = '\033'; *p++ = '[';
+		p = _utoa(Prow + 1, p);
+		*p++ = ';';
+		p = _utoa(Pcol + 1, p);
+		*p++ = 'H';
+		write(1, str, p - str);
 #endif
 		Srow = Prow;
 		Scol = Pcol;
@@ -99,7 +107,7 @@ void tputchar(Byte ch)
 	DWORD written;
 	WriteConsole(hstdout, &ch, 1, &written, NULL);
 #else
-	putchar(ch);
+	write(1, &ch, 1);
 #endif
 	++Scol;
 	++Pcol;
@@ -140,7 +148,7 @@ void tcleol(void)
 #ifdef TERMCAP
 		TPUTS(cm[1]);
 #else
-		fputs("\033[K", stdout);
+		write(1, "\033[K", 3);
 		tflush();
 #endif
 #endif
@@ -162,7 +170,7 @@ void tclrwind(void)
 #elif defined(TERMCAP)
 	TPUTS(cm[2]);
 #else
-	fputs("\033[2J", stdout);
+	write(1, "\033[2J", 4);
 #endif
 	memset(Clrcol, 0, sizeof(Clrcol));
 	Prow = Pcol = 0;
@@ -241,7 +249,12 @@ void tstyle(int style)
 		return;
 	}
 #else
-	printf("\033[%dm", style);
+	char str[32], *p = str;
+
+	*p++ = '\033'; *p++ = '[';
+	p = _utoa(style, p);
+	*p++ = 'm';
+	write(1, str, p - str);
 #endif
 
 	cur_style = style;

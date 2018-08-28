@@ -47,7 +47,7 @@ void tkbdinit(void);
 #define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
 #define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
 #else
-#define tflush() fflush(stdout)
+#define tflush() // fflush(stdout)
 #endif
 
 /* windows.h must be before buff.h... no idea why */
@@ -87,5 +87,9 @@ void tclrwind(void);
 #endif
 
 void tstyle(int style);
+
+char *itoa(int val, char *out);
+char *utoa(unsigned val, char *out);
+char *_utoa(unsigned val, char *out);
 
 #endif

@@ -35,6 +35,7 @@ CFILES = \
 	dbg.c \
 	freepage.c \
 	globals.c \
+	itoa.c \
 	kbd.c \
 	newpage.c \
 	mrkaftermrk.c \
@@ -46,6 +47,8 @@ CFILES = \
 	tinit.c \
 	tobegline.c \
 	toendline.c \
+
+CFILES += bsocket.c
 
 O := $(CFILES:.c=.o)
 

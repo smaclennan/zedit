@@ -41,7 +41,7 @@ size_t strlcat(char *dst, const char *src, size_t dstsize)
 		*dst = 0;
 	}
 
-	/* strlcpy returns the size of the src */
+	/* strlcat returns the size of the src + initial dst */
 	while (*src++) ++i;
 
 	return i;

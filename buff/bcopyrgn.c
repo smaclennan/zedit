@@ -4,7 +4,7 @@
 long bcopyrgn(struct mark *tmark, struct buff *to)
 {
 	struct mark *ltmrk, *btmrk;
-	bool flip;
+	int flip;
 	int  srclen, dstlen;
 	long copied = 0;
 	struct buff *from = tmark->mbuff;
@@ -48,7 +48,7 @@ long bcopyrgn(struct mark *tmark, struct buff *to)
 					btmrk->moffset += dstlen;
 		makeoffset(to, to->curchar + dstlen);
 		bsetmod(to);
-		to->bmodf = true;
+		to->bmodf = 1;
 		bmove(from, dstlen);
 	}
 

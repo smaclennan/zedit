@@ -1,11 +1,11 @@
 #include "buff.h"
 
 /** Put the current buffer point at the mark */
-bool bpnttomrk(struct buff *buff, struct mark *tmark)
+int bpnttomrk(struct buff *buff, struct mark *tmark)
 {
 	if (tmark->mbuff != buff)
-		return false;
+		return 0;
 	if (tmark->mpage)
 		makecur(buff, tmark->mpage, tmark->moffset);
-	return true;
+	return 1;
 }

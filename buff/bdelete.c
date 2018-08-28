@@ -22,7 +22,7 @@ void bdelete(struct buff *buff, unsigned quantity)
 			quantity = 0;
 		else
 			quantity -= quan;
-		buff->bmodf = true;
+		buff->bmodf = 1;
 		if (curplen(buff) == 0 && (curpage->nextp || curpage->prevp)) {
 			/* We deleted entire page. */
 			tpage = curpage->nextp;

@@ -20,7 +20,6 @@
 #ifndef _mark_h
 #define _mark_h
 
-#include <stdbool.h>
 #include <string.h>
 
 /**
@@ -44,19 +43,19 @@ void bdelmark(struct mark *);
 struct mark *_bcremark(struct buff *buff, struct mark **tail);
 void _bdelmark(struct mark *mark, struct mark **tail);
 
-/** Returns true if buffer is at mark */
+/** Returns 1 if buffer is at mark */
 static inline int bisatmrk(struct buff *b, struct mark *m)
 {
 	return b->curpage == m->mpage && b->curchar == m->moffset;
 }
-bool bisaftermrk(struct buff *, struct mark *);
-bool bisbeforemrk(struct buff *, struct mark *);
-bool bpnttomrk(struct buff *, struct mark *);
-bool bswappnt(struct buff *, struct mark *);
+int bisaftermrk(struct buff *, struct mark *);
+int bisbeforemrk(struct buff *, struct mark *);
+int bpnttomrk(struct buff *, struct mark *);
+int bswappnt(struct buff *, struct mark *);
 void mrkfini(void);
 
-bool mrkaftermrk(struct mark *, struct mark *);
-bool mrkbeforemrk(struct mark *, struct mark *);
+int mrkaftermrk(struct mark *, struct mark *);
+int mrkbeforemrk(struct mark *, struct mark *);
 
 /** Move the mark to the point. */
 static inline void bmrktopnt(struct buff *buff, struct mark *tmark)
@@ -73,7 +72,7 @@ static inline void mrktomrk(struct mark *m1, struct mark *m2)
 }
 
 /** True if mark1 is at mark2 */
-static inline bool mrkatmrk(struct mark *m1, struct mark *m2)
+static inline int mrkatmrk(struct mark *m1, struct mark *m2)
 {
 	return memcmp(m1, m2, __MRKSIZE) == 0;
 }

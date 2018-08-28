@@ -25,7 +25,7 @@
 #define buff() (*buff->curcptr)
 #define buffint() ((uint8_t)buff())
 
-static inline bool bequal(struct buff *buff, char ch, bool sensitive)
+static inline int bequal(struct buff *buff, char ch, int sensitive)
 {
 	return buff() == ch ||
 		(!sensitive && tolower(buff()) == tolower(ch));
@@ -34,10 +34,10 @@ static inline bool bequal(struct buff *buff, char ch, bool sensitive)
 /** This is an implementation of the Boyer-Moore Search.
  * It uses the delta1 only with the fast/slow loops.
  * It searches for the string 'str' starting at the current buffer location.
- * If sensitive is false, then the match is case insensitive.
+ * If sensitive is 0, then the match is case insensitive.
  * The point is left at the byte after the search str.
  */
-bool bm_search(struct buff *buff, const char *str, bool sensitive)
+int bm_search(struct buff *buff, const char *str, int sensitive)
 {
 	int delta[NUMASCII], len, i, shift;
 
@@ -72,7 +72,7 @@ bool bm_search(struct buff *buff, const char *str, bool sensitive)
 			 bmove(buff, -1), --i)
 			if (i == 0) {
 				bmove(buff, len + 1);
-				return true;
+				return 1;
 			}
 		/* compute shift. shift must be forward! */
 		if (i + delta[buffint()] > len)
@@ -82,16 +82,16 @@ bool bm_search(struct buff *buff, const char *str, bool sensitive)
 		bmove(buff, shift);
 	}
 
-	return false;
+	return 0;
 }
 
 /** This is an implementation of the Boyer-Moore Search that searches backwards.
  * It uses the delta1 only with the fast/slow loops.
  * It searches for the string 'str' starting at the current buffer location.
- * If sensitive is false, then the match is case insensitive.
+ * If sensitive is 0, then the match is case insensitive.
  * The point is left at the start of the search str.
  */
-bool bm_rsearch(struct buff *buff, const char *str, bool sensitive)
+int bm_rsearch(struct buff *buff, const char *str, int sensitive)
 {
 	int delta[NUMASCII], len, i, shift;
 
@@ -126,12 +126,12 @@ bool bm_rsearch(struct buff *buff, const char *str, bool sensitive)
 		if (i > len) {
 			/* we matched! */
 			bmove(buff, -len - 1);
-			return true;
+			return 1;
 		}
 		/* compute shift. shift must be backward! */
 		shift = delta[buffint()] + i < 0 ? delta[buffint()] : -i - 1;
 		bmove(buff, shift);
 	}
 
-	return false;
+	return 0;
 }

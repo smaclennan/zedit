@@ -31,7 +31,6 @@
 #endif
 
 #include <stdlib.h>
-#include <stdbool.h>
 #include <stdint.h>
 
 #ifdef UNSIGNED_BYTES
@@ -57,9 +56,9 @@ struct buff {
 	struct page *curpage;	/**< Point page. */
 	Byte *curcptr;		/**< Point position in the page. */
 	unsigned curchar;	/**< Point index in the page. */
-	bool bmodf;		/**< Buffer modified? */
+	int bmodf;		/**< Buffer modified? */
 #if defined(UNDO) && UNDO
-	bool in_undo;		/**< Are we currently performing an undo? */
+	int in_undo;		/**< Are we currently performing an undo? */
 	void *undo_tail;	/**< List of undos. */
 #endif
 #if HUGE_FILES
@@ -85,36 +84,36 @@ extern void (*bsetmod)(struct buff *buff);
 
 struct buff *bcreate(void);
 void bdelbuff(struct buff *);
-bool binsert(struct buff *, Byte);
+int binsert(struct buff *, Byte);
 void bdelete(struct buff *, unsigned);
-bool bmove(struct buff *, int);
+int bmove(struct buff *, int);
 void btoend(struct buff *);
 void tobegline(struct buff *);
 void toendline(struct buff *);
 unsigned long blength(struct buff *);
 unsigned long blocation(struct buff *);
 unsigned long bline(struct buff *buff);
-bool bcsearch(struct buff *, Byte);
-bool bcrsearch(struct buff *, Byte);
+int bcsearch(struct buff *, Byte);
+int bcrsearch(struct buff *, Byte);
 void bempty(struct buff *buff);
 Byte bpeek(struct buff *buff);
 void boffset(struct buff *buff, unsigned long offset);
 long bcopyrgn(struct mark *, struct buff*);
 long bdeltomrk(struct mark *);
 
-bool binstr(struct buff *buff, const char *str, ...);
-void bmovepast(struct buff *buff, int (*pred)(int), bool forward);
-void bmoveto(struct buff *buff, int (*pred)(int), bool forward);
+int binstr(struct buff *buff, const char *str, ...);
+void bmovepast(struct buff *buff, int (*pred)(int), int forward);
+void bmoveto(struct buff *buff, int (*pred)(int), int forward);
 
 /* bfile.c */
 #define FILE_COMPRESSED		0x10000
 #define FILE_CRLF			0x20000
 int breadfile(struct buff *buff, const char *, int *compressed);
-bool bwritefile(struct buff *buff, char *, int mode);
+int bwritefile(struct buff *buff, char *, int mode);
 
 /* bmsearch.c */
-bool bm_search(struct buff *buff, const char *str, bool sensitive);
-bool bm_rsearch(struct buff *buff, const char *str, bool sensitive);
+int bm_search(struct buff *buff, const char *str, int sensitive);
+int bm_rsearch(struct buff *buff, const char *str, int sensitive);
 
 /* bsocket.c */
 /** Max iovs used for one writev in bwrite(). */
@@ -184,13 +183,13 @@ void freepage(struct buff *buff, struct page *page);
 struct page *pagesplit(struct buff *buff, unsigned dist);
 
 /** Is the point at the start of the buffer? */
-static inline bool bisstart(struct buff *buff)
+static inline int bisstart(struct buff *buff)
 {
 	return buff->curpage == buff->firstp && buff->curchar == 0;
 }
 
 /** Is the point at the end of the buffer? */
-static inline bool bisend(struct buff *buff)
+static inline int bisend(struct buff *buff)
 {
 	return buff->curpage->nextp == NULL &&
 		buff->curchar >= buff->curpage->plen;
@@ -225,7 +224,7 @@ static inline void makeoffset(struct buff *buff, int dist)
 }
 
 /** Is this the last page in the buffer? */
-static inline bool lastp(struct page *page)
+static inline int lastp(struct page *page)
 {
 	return page->nextp == NULL;
 }

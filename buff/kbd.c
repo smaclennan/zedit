@@ -59,7 +59,7 @@ static char *Tkeys[] = {
 static Byte cstack[CSTACK]; /**< The keyboard input stack */
 static int cptr = -1; /**< Current pointer in keyboard input stack. */
 static int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
-static bool Pending; /**< Set to true if poll stdin detected input. */
+static int Pending; /**< Set to 1 if poll stdin detected input. */
 
 /** This is the lowest level keyboard routine. It reads the keys into
  * a stack then returns the keys one at a time. When the stack is
@@ -145,7 +145,7 @@ int tgetkb(void)
 {
 	int cmd = _tgetkb() & 0x7f;
 
-	Pending = false;
+	Pending = 0;
 
 	/* All special keys start with ESC */
 	if (cmd == '\033' && tkbrdy())
@@ -161,7 +161,7 @@ static struct pollfd stdin_fd = { .fd = 0, .events = POLLIN };
 int tkbrdy(void)
 {
 	if (cpushed || Pending)
-		return true;
+		return 1;
 
 	return Pending = poll(&stdin_fd, 1, 0) == 1;
 }
@@ -170,7 +170,7 @@ int tkbrdy(void)
 int tdelay(int ms)
 {
 	if (cpushed || Pending)
-		return false;
+		return 0;
 
 	return poll(&stdin_fd, 1, ms) != 1;
 }

@@ -21,25 +21,25 @@ static char valid_format(const char *fmt, int *saw_neg, int *len, int *n)
 }
 
 /** Helper function for binstr(). */
-static bool out_str(struct buff *buff, const char *s, int saw_neg, int len)
+static int out_str(struct buff *buff, const char *s, int saw_neg, int len)
 {
 	int slen = strlen(s);
 
 	if (saw_neg == 0)
 		while (slen++ < len)
 			if (!binsert(buff, ' '))
-				return false;
+				return 0;
 	while (*s)
 		if (!binsert(buff, *s++))
-			return false;
+			return 0;
 	while (slen++ < len)
 		if (!binsert(buff, ' '))
-			return false;
-	return true;
+			return 0;
+	return 1;
 }
 
 /** Helper function for binstr(). */
-static bool handle_format(struct buff *buff, const char **fmt, va_list ap)
+static int handle_format(struct buff *buff, const char **fmt, va_list ap)
 {
 	char tmp[12];
 	int saw_neg, len, n;
@@ -66,10 +66,10 @@ static bool handle_format(struct buff *buff, const char **fmt, va_list ap)
  * Supports a subset of printf: %%s, %%d, %%u. Format can contain a width
  * and a minus (-) for left justify.
  */
-bool binstr(struct buff *buff, const char *fmt, ...)
+int binstr(struct buff *buff, const char *fmt, ...)
 {
 	va_list ap;
-	bool rc = true;
+	int rc = 1;
 
 	va_start(ap, fmt);
 	while (*fmt && rc) {

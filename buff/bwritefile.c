@@ -3,15 +3,15 @@
 
 #if ZLIB
 /** Write out a file compressed. */
-static bool bwritegzip(struct buff *buff, int fd)
+static int bwritegzip(struct buff *buff, int fd)
 {
 	struct page *tpage;
-	bool status = true;
+	int status = 1;
 	gzFile gz = gzdopen(fd, "wb");
 
 	if (!gz) {
 		close(fd);
-		return false;
+		return 0;
 	}
 
 	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)
@@ -28,10 +28,10 @@ static bool bwritegzip(struct buff *buff, int fd)
 #endif
 
 /** Write out a file normally. */
-static bool bwritefd(struct buff *buff, int fd)
+static int bwritefd(struct buff *buff, int fd)
 {
 	struct page *tpage;
-	int n, status = true;
+	int n, status = 1;
 
 	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)
 		if (tpage->plen) {
@@ -46,10 +46,10 @@ static bool bwritefd(struct buff *buff, int fd)
 }
 
 /** Write out a DOS file. Converts LF to CR LF. */
-static bool bwritedos(struct buff *buff, int fd)
+static int bwritedos(struct buff *buff, int fd)
 {
 	struct page *tpage;
-	int n, status = true;
+	int n, status = 1;
 	unsigned i;
 	Byte buf[PGSIZE * 2], *p;
 
@@ -78,13 +78,13 @@ static bool bwritedos(struct buff *buff, int fd)
 
 /** Write the buffer to the file 'fname'.
  * Mode is umask + FILE_COMPRESSED + FILE_CRLF
- * Returns:	true if write successful.
+ * Returns:	1 if write successful.
  * Leaves point at start of buffer.
  */
-bool bwritefile(struct buff *buff, char *fname, int mode)
+int bwritefile(struct buff *buff, char *fname, int mode)
 {
 	int fd;
-	bool status = false;
+	int status = 0;
 
 	if (!fname)
 		goto done;
@@ -106,7 +106,7 @@ bool bwritefile(struct buff *buff, char *fname, int mode)
 
 	/* cleanup */
 	if (status)
-		buff->bmodf = false;
+		buff->bmodf = 0;
 
 done:
 	btostart(buff);

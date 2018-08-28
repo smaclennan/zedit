@@ -1,7 +1,7 @@
 #include "buff.h"
 
 /** Go forward or back to a thingy */
-void bmoveto(struct buff *buff, int (*pred)(int), bool forward)
+void bmoveto(struct buff *buff, int (*pred)(int), int forward)
 {
 	if (forward)
 		while (!bisend(buff) && !pred(*buff->curcptr))

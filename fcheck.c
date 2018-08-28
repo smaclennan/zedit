@@ -31,7 +31,6 @@ int Colmax, Rowmax;
 #include "winkbd.c"
 #else
 #include "buff/kbd.c"
-// SAM #include "buff/tinit.c"
 #endif
 
 #ifdef __unix__
@@ -49,15 +48,6 @@ int Colmax, Rowmax;
 #else
 #define N_KEYS NUM_SPECIAL
 #endif
-
-int InPaw;
-unsigned Cmd;
-int ring_bell;
-struct wdo *Curwdo;
-
-void hang_up(int sig) {}
-
-void Dbg(const char *fmt, ...) {}
 
 int main(int argc, char *argv[])
 {

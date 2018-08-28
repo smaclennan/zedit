@@ -70,7 +70,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 		*compressed = 0;
 #endif
 
-	buff->bmodf = false;
+	buff->bmodf = 0;
 
 	return 0;
 }
@@ -139,7 +139,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 		*compressed = 0;
 #endif
 
-	buff->bmodf = false;
+	buff->bmodf = 0;
 
 	return 0;
 }

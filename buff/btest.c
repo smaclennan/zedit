@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 	for (const char *p = teststr; *p; ++p)
 		binsert(buff, *p);
 	btostart(buff);
-	assert(bm_search(buff, "fox", false));
+	assert(bm_search(buff, "fox", 0));
 	assert(bcsearch(buff, 'l')); // leaves the point after the l
 	bmove(buff, -1);
 	bdelete(buff, 4);

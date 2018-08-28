@@ -21,7 +21,7 @@
 #include "reg.h"
 
 #ifndef BUILTIN_REG
-static bool advance(struct buff *buff, regex_t *re, struct mark *REstart)
+static int advance(struct buff *buff, regex_t *re, struct mark *REstart)
 {
 	char line[4096];
 	int i;
@@ -38,19 +38,19 @@ static bool advance(struct buff *buff, regex_t *re, struct mark *REstart)
 		bmove(buff, match[0].rm_so);
 		bmrktopnt(buff, REstart);
 		bmove(buff, match[0].rm_eo - match[0].rm_so);
-		return true;
+		return 1;
 	}
 
 	if (i == 0)
 		bmove1(buff);
-	return false;
+	return 0;
 }
 
 /** Step through the buffer looking for a regular expression. If
  * REstart is non-null, then it points to the start of the match. The
  * point is left at the end of the match.
  */
-bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
+int re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 {
 	struct mark tmark;
 
@@ -68,9 +68,9 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 
 		bmrktopnt(buff, REstart);
 		if (advance(buff, &re->re, REstart))
-			return true;
+			return 1;
 	}
-	return false;
+	return 0;
 }
 
 /** Compile a regular expression. */
@@ -91,7 +91,7 @@ void re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
 }
 
 /** Check if a pre-compiled regular expression matches at the point. */
-bool _lookingat(struct buff *buff, regexp_t *re)
+int _lookingat(struct buff *buff, regexp_t *re)
 {
 	struct mark start, REstart;
 
@@ -99,20 +99,20 @@ bool _lookingat(struct buff *buff, regexp_t *re)
 	bmrktopnt(buff, &REstart);
 	if (advance(buff, &re->re, &REstart))
 		if (mrkatmrk(&start, &REstart))
-			return true;
+			return 1;
 
 	bpnttomrk(buff, &start);
-	return false;
+	return 0;
 }
 
 /** Check if a regular expression matches at the point. */
-bool lookingat(struct buff *buff, const char *str)
+int lookingat(struct buff *buff, const char *str)
 {
 	regexp_t re;
-	bool rc;
+	int rc;
 
 	if (re_compile(&re, str, REG_EXTENDED))
-		return false;
+		return 0;
 	rc = _lookingat(buff, &re);
 	re_free(&re);
 	return rc;
@@ -126,8 +126,8 @@ bool lookingat(struct buff *buff, const char *str)
  *		locs is set externally by ed and sed - removed!
  */
 
-static bool advance(struct buff *buff, uint8_t *ep);
-static bool ecmp(struct buff *buff, struct mark *, int);
+static int advance(struct buff *buff, uint8_t *ep);
+static int ecmp(struct buff *buff, struct mark *, int);
 static void getrnge(uint8_t *);
 
 #define	CBRA	2
@@ -163,11 +163,11 @@ static Byte bittab[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
 
 
 /* Step thru the buffer trying to match the compiled expression.
- * Returns true if matched, else false.
+ * Returns 1 if matched, else 0.
  * The point is left at the end of the matched string or the buffer end and
  * REstart points to the start of the match.
  */
-bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
+int re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 {
 	uint8_t *ep = re->ep;
 	struct mark tmark;
@@ -187,7 +187,7 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 	while (!bisend(buff)) {
 		bmrktopnt(buff, REstart);
 		if (advance(buff, ep))
-			return true;
+			return 1;
 		if (re->circf)
 			bcsearch(buff, '\n');	/* goto next line */
 		else {
@@ -195,35 +195,35 @@ bool re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 			bmove1(buff);
 		}
 	}
-	return false;
+	return 0;
 }
 
-bool _lookingat(struct buff *buff, regexp_t *re)
+int _lookingat(struct buff *buff, regexp_t *re)
 {
 	struct mark tmark;
 
 	bmrktopnt(buff, &tmark);
 	if (advance(buff, re->ep))
-		return true;
+		return 1;
 
 	bpnttomrk(buff, &tmark);
-	return false;
+	return 0;
 }
 
-bool lookingat(struct buff *buff, const char *str)
+int lookingat(struct buff *buff, const char *str)
 {
 	regexp_t re;
-	bool rc;
+	int rc;
 
 	if (re_compile(&re, str, 0))
-		return false;
+		return 0;
 	rc = _lookingat(buff, &re);
 	re_free(&re);
 	return rc;
 }
 
 /* Called by step to try to match at current position. */
-static bool advance(struct buff *buff, uint8_t *ep)
+static int advance(struct buff *buff, uint8_t *ep)
 {
 	int c, ct;
 	struct mark *bbeg, curlp, tmark;
@@ -233,27 +233,27 @@ static bool advance(struct buff *buff, uint8_t *ep)
 		case CCHR:
 			if (*ep++ == buff())
 				break;
-			return false;
+			return 0;
 
 		case CDOT:
 			if (ISNL(buff()))
-				return false;
+				return 0;
 			break;
 
 		case CDOL:
 			if (ISNL(buff()))
 				continue;
-			return false;
+			return 0;
 
 		case CCEOF:
-			return true;
+			return 1;
 
 		case CCL:
 			if (ISTHERE(((Byte)buff()))) {
 				ep += 16;
 				break;
 			}
-			return false;
+			return 0;
 
 		case CBRA:
 			bmrktopnt(buff, &braslist[*ep++]);
@@ -268,7 +268,7 @@ static bool advance(struct buff *buff, uint8_t *ep)
 			getrnge(ep);
 			while (low--) {
 				if (buff() != c)
-					return false;
+					return 0;
 				bmove1(buff);
 			}
 			bmrktopnt(buff, &curlp);
@@ -281,7 +281,7 @@ static bool advance(struct buff *buff, uint8_t *ep)
 			getrnge(ep);
 			while (low--) {
 				if (ISNL(buff()))
-					return false;
+					return 0;
 				bmove1(buff);
 			}
 			bmrktopnt(buff, &curlp);
@@ -298,7 +298,7 @@ static bool advance(struct buff *buff, uint8_t *ep)
 				c = buff() & 0177;
 				bmove1(buff);
 				if (!ISTHERE(c))
-					return false;
+					return 0;
 			}
 			bmrktopnt(buff, &curlp);
 			while (size--) {
@@ -315,7 +315,7 @@ static bool advance(struct buff *buff, uint8_t *ep)
 			ct = &braelist[*ep++] - bbeg; /* length */
 			if (ecmp(buff, bbeg, ct)) /* same?? */
 				continue;
-			return false;
+			return 0;
 
 		case CBACK | STAR:
 			bbeg = &braslist[*ep];
@@ -324,12 +324,12 @@ static bool advance(struct buff *buff, uint8_t *ep)
 			while (ecmp(buff, bbeg, ct))
 				;
 			while (bisaftermrk(buff, &curlp) ||
-			       bisatmrk(buff, &curlp)) {
+				   bisatmrk(buff, &curlp)) {
 				if (advance(buff, ep))
-					return true;
+					return 1;
 				bmove(buff, -ct);
 			}
-			return false;
+			return 0;
 
 		case CDOT | STAR:
 			bmrktopnt(buff, &curlp); /* save the current position */
@@ -353,13 +353,13 @@ star:
 			do {	/* till back to start */
 				bmrktopnt(buff, &tmark);
 				if (advance(buff, ep)) /* try to match */
-					return true;
+					return 1;
 				bpnttomrk(buff, &tmark);
 				if (!bmove(buff, -1))
 					break; /* go back and try again */
 			} while (!bisbeforemrk(buff, &curlp));
 			bpnttomrk(buff, &curlp); /* Don't slip backwards */
-			return false;
+			return 0;
 		}
 		bmove1(buff);
 	}
@@ -375,10 +375,10 @@ static void getrnge(uint8_t *str)
 
 /* Compare the string at buffer mrk start to the string at the current point.
  * Match cnt chars.
- * Returns true if matched.
+ * Returns 1 if matched.
  * Moves the buffer point and start mrk.
  */
-static bool ecmp(struct buff *buff, struct mark *start, int cnt)
+static int ecmp(struct buff *buff, struct mark *start, int cnt)
 {
 	Byte c;
 
@@ -388,10 +388,10 @@ static bool ecmp(struct buff *buff, struct mark *start, int cnt)
 		bmove1(buff);
 		bswappnt(buff, start);
 		if (buff() != c)
-			return false;
+			return 0;
 		bmove1(buff);
 	}
-	return true;
+	return 1;
 }
 
 /* Compile the match string.

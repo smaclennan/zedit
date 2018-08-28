@@ -36,27 +36,27 @@ static inline Byte *memchrpage(struct buff *buff, Byte what)
 /* Not Boyer-Moore.. but I think it makes sense to put it here */
 
 /** Search forward for a single byte `what'. If what found leaves
- * point at the byte after what and returns true. If not found leaves
- * point at the end of buffer and returns false.
+ * point at the byte after what and returns 1. If not found leaves
+ * point at the end of buffer and returns 0.
  */
-bool bcsearch(struct buff *buff, Byte what)
+int bcsearch(struct buff *buff, Byte what)
 {
 	Byte *n;
 
 	if (bisend(buff))
-		return false;
+		return 0;
 
 	while ((n = memchrpage(buff, what)) == NULL) {
 		if (lastp(buff->curpage)) {
 			makeoffset(buff, buff->curpage->plen);
-			return false;
+			return 0;
 		}
 		makecur(buff, buff->curpage->nextp, 0);
 	}
 
 	makeoffset(buff, n - buff->curpage->pdata);
 	bmove1(buff);
-	return true;
+	return 1;
 }
 
 #ifdef NO_MEMRCHR
@@ -77,24 +77,24 @@ static void *memrchr(const void *s, int c, size_t n)
 #endif
 
 /** Search backward for a single byte. If byte found leaves point at
- * byte and returns true. If not found leaves point at the start of
- * buffer and returns false.
+ * byte and returns 1. If not found leaves point at the start of
+ * buffer and returns 0.
  */
-bool bcrsearch(struct buff *buff, Byte what)
+int bcrsearch(struct buff *buff, Byte what)
 {
 	Byte *n;
 
 	if (bisstart(buff))
-		return false;
+		return 0;
 
 	while (!(n = memrchr(buff->curpage->pdata, what, buff->curchar))) {
 		if (buff->curpage == buff->firstp) {
 			makeoffset(buff, 0);
-			return false;
+			return 0;
 		}
 		makecur(buff, buff->curpage->prevp, buff->curpage->prevp->plen);
 	}
 
 	makeoffset(buff, n - buff->curpage->pdata);
-	return true;
+	return 1;
 }

@@ -1,15 +1,15 @@
 #include "buff.h"
 
 /** Swap the point and the mark. */
-bool bswappnt(struct buff *buff, struct mark *tmark)
+int bswappnt(struct buff *buff, struct mark *tmark)
 {
 	struct mark tmp;
 
 	if (tmark->mbuff != buff)
-		return false;
+		return 0;
 
 	bmrktopnt(buff, &tmp);
 	bpnttomrk(buff, tmark);
 	mrktomrk(tmark, &tmp);
-	return true;
+	return 1;
 }

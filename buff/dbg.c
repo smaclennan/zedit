@@ -17,7 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h> /* for vsnprintf */
 #include <fcntl.h>
 #include <stdarg.h>
 #include "buff.h"
@@ -43,7 +42,7 @@ void Dbg(const char *fmt, ...)
 	int len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(line, sizeof(line), fmt, ap);
+	len = strfmt_ap(line, sizeof(line), fmt, ap);
 	va_end(ap);
 
 	if (dbgfname) {

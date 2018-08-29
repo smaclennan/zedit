@@ -108,17 +108,10 @@ int binstr(struct buff *buff, const char *fmt, ...)
 	return rc;
 }
 
-/** Poor man's snprintf.
- *
- * Supports a subset of printf: %%s, %%d, %%u. Format can contain a width
- * and a minus (-) for left justify.
- *
- * Returns bytes inserted.
- */
-int strfmt(char *str, int len, const char *fmt, ...)
+/** Lower level interface to strfmt when you have the va_list */
+int strfmt_ap(char *str, int len, const char *fmt, va_list ap)
 {
 	struct outbuff out;
-	va_list ap;
 	int rc = 1;
 
 	if (len < 1)
@@ -128,7 +121,6 @@ int strfmt(char *str, int len, const char *fmt, ...)
 	out.str = str;
 	out.len = len;
 
-	va_start(ap, fmt);
 	while (*fmt && rc) {
 		if (*fmt == '%')
 			rc = handle_format(&out, &fmt, ap);
@@ -136,10 +128,29 @@ int strfmt(char *str, int len, const char *fmt, ...)
 			rc = outchar(&out, *fmt);
 		++fmt;
 	}
-	va_end(ap);
 
 	/* We leave room for the NULL */
 	*out.str = 0;
 
 	return len - out.len;
+}
+
+/** Poor man's snprintf.
+ *
+ * Supports a subset of printf: %%s, %%d, %%u. Format can contain a width
+ * and a minus (-) for left justify.
+ *
+ * Returns bytes inserted.
+ */
+int strfmt(char *str, int len, const char *fmt, ...)
+{
+	if (len < 1)
+		return 0;
+
+	va_list ap;
+	va_start(ap, fmt);
+	int n = strfmt_ap(str, len, fmt, ap);
+	va_end(ap);
+
+	return n;
 }

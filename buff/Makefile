@@ -1,7 +1,7 @@
 CFLAGS += -Wall -g -L.
 
 # For debugging use small pages
-CFLAGS += -DPGSIZE=8 -DPAGE_DBG
+#CFLAGS += -DPGSIZE=8 -DPAGE_DBG
 # For testing the builtin reg
 #CFLAGS += -DBUILTIN_REG
 

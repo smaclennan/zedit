@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdarg.h>
 
 #ifdef UNSIGNED_BYTES
 #define Byte unsigned char
@@ -103,6 +104,7 @@ long bdeltomrk(struct mark *);
 
 int binstr(struct buff *buff, const char *fmt, ...);
 int strfmt(char *str, int len, const char *fmt, ...);
+int strfmt_ap(char *str, int len, const char *fmt, va_list ap);
 void bmovepast(struct buff *buff, int (*pred)(int), int forward);
 void bmoveto(struct buff *buff, int (*pred)(int), int forward);
 

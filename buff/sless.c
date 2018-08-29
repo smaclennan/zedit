@@ -17,14 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <fcntl.h>
-#include <ctype.h>
 #include <errno.h>
-
 #include "buff.h"
 #include "tinit.h"
 #include "keys.h"
@@ -151,18 +144,20 @@ static int do_search(struct buff *buff)
 int main(int argc, char *argv[])
 {
 	if (argc == 1) {
-		fputs("I need a filename\n", stderr);
+		write(2, "I need a filename\n", 18);
 		exit(1);
 	}
 
 	struct buff *buff = bcreate();
 	if (!buff) {
-		fputs("Unable to create buffer!\n", stderr);
+		write(2, "Unable to create buffer!\n", 25);
 		exit(1);
 	}
 
 	if (breadfile(buff, argv[1], NULL)) {
-		perror(argv[1]);
+		char err[256];
+		int n = strfmt(err, sizeof(err), "%s: %s\n", argv[1], strerror(errno));
+		write(2, err, n);
 		exit(1);
 	}
 

@@ -101,7 +101,8 @@ void boffset(struct buff *buff, unsigned long offset);
 long bcopyrgn(struct mark *, struct buff*);
 long bdeltomrk(struct mark *);
 
-int binstr(struct buff *buff, const char *str, ...);
+int binstr(struct buff *buff, const char *fmt, ...);
+int strfmt(char *str, int len, const char *fmt, ...);
 void bmovepast(struct buff *buff, int (*pred)(int), int forward);
 void bmoveto(struct buff *buff, int (*pred)(int), int forward);
 

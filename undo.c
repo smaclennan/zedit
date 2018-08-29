@@ -37,7 +37,7 @@ struct undo {
 #define is_insert(u) ((u)->data == NULL)
 
 static struct undo *new_undo(struct buff *buff, void **tail,
-			     bool insert, int size)
+				 int insert, int size)
 {
 	struct undo *undo = (struct undo *)calloc(1, sizeof(struct undo));
 
@@ -72,7 +72,7 @@ static void free_undo(void **tail)
 	}
 }
 
-static bool add_clumped(struct buff *buff, struct undo *undo, int size)
+static int add_clumped(struct buff *buff, struct undo *undo, int size)
 {
 	int left;
 	struct mark *mrk = &undo->mrk;
@@ -87,7 +87,7 @@ static bool add_clumped(struct buff *buff, struct undo *undo, int size)
 			mrk->mpage = mrk->mpage->nextp;
 			mrk->moffset = 0;
 			if (!mrk->mpage)
-				return false;
+				return 0;
 			if (mrk->mpage->plen >= (unsigned)size) {
 				mrk->moffset = size;
 				size = 0;
@@ -136,7 +136,7 @@ void undo_add(struct buff *buff, int size)
 		undo->offset += size;
 	} else
 		/* need a new undo */
-		undo = new_undo(buff, &buff->undo_tail, true, size);
+		undo = new_undo(buff, &buff->undo_tail, 1, size);
 
 	bmrktopnt(buff, &undo->mrk);
 }
@@ -192,7 +192,7 @@ void undo_del(struct buff *buff, int size)
 		}
 
 	/* need a new undo */
-	undo = new_undo(buff, &buff->undo_tail, false, size);
+	undo = new_undo(buff, &buff->undo_tail, 0, size);
 	if (undo == NULL)
 		return;
 
@@ -214,7 +214,7 @@ int do_undo(struct buff *buff)
 		return 1;
 
 	undo = (struct undo *)buff->undo_tail;
-	buff->in_undo = true;
+	buff->in_undo = 1;
 	boffset(buff, undo->offset);
 
 	if (is_insert(undo)) {
@@ -237,7 +237,7 @@ int do_undo(struct buff *buff)
 		bdelmark(tmark);
 	}
 
-	buff->in_undo = false;
+	buff->in_undo = 0;
 	return 0;
 }
 #endif

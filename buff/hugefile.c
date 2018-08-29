@@ -17,13 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <signal.h>
 #include <sys/stat.h>
 
 #include "buff.h"
@@ -129,15 +124,16 @@ void default_huge_file_cb(struct buff *buff, int rc)
 	case EAGAIN:
 		return; /* success */
 	case EIO:
-		printf("FATAL I/O Error: page read\r\n");
-		exit(2);
+		write(2, "FATAL I/O Error: page read\n", 27);
+		break;
 	case EBADF:
-		printf("FATAL I/O Error: file modified\r\n");
-		exit(2);
+		write(2, "FATAL I/O Error: file modified\n", 31);
+		break;
 	default:
-		printf("FATAL I/O Error: unexpected error %d\r\n", rc);
-		exit(2);
+		write(2, "FATAL I/O Error: unexpected error\n", 34);
+		break;
 	}
+	exit(2);
 }
 
 void (*huge_file_cb)(struct buff *buff, int rc) = default_huge_file_cb;

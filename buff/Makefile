@@ -4,6 +4,8 @@ CFLAGS += -Wall -g -L.
 #CFLAGS += -DPGSIZE=8 -DPAGE_DBG
 # For testing the builtin reg
 #CFLAGS += -DBUILTIN_REG
+# For hugefiles
+#CFLAGS += -DHUGE_FILES
 
 CFILES = \
 	bcopyrgn.c \
@@ -35,6 +37,7 @@ CFILES = \
 	dbg.c \
 	freepage.c \
 	globals.c \
+	hugefile.c \
 	itoa.c \
 	kbd.c \
 	newpage.c \

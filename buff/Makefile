@@ -48,8 +48,6 @@ CFILES = \
 	tobegline.c \
 	toendline.c \
 
-CFILES += bsocket.c
-
 O := $(CFILES:.c=.o)
 
 V	      = @
@@ -69,6 +67,10 @@ btest: btest.c libbuff.a
 libbuff.a: $O
 	@rm -f libbuff.a
 	$(QUIET_AR)$(AR) cr libbuff.a $O
+
+# The second sparse checks just the buffer code
+checkit:
+	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(CFILES)
 
 clean:
 	rm -f *.o libbuff.a btest sless strtest

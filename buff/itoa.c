@@ -33,7 +33,8 @@ static void reverse_string(char *start, char *end)
 	}
 }
 
-char *itoa(int val, char *out)
+/* Returns the end of the output */
+char *_itoa(int val, char *out)
 {
 	char *p = out;
 	int neg = val < 0;
@@ -54,6 +55,12 @@ char *itoa(int val, char *out)
 	*p = 0;
 
 	reverse_string(out, p);
+	return p;
+}
+
+char *itoa(int val, char *out)
+{
+	_itoa(val, out);
 	return out;
 }
 

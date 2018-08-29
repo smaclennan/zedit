@@ -71,4 +71,4 @@ libbuff.a: $O
 	$(QUIET_AR)$(AR) cr libbuff.a $O
 
 clean:
-	rm -f *.o libbuff.a btest sless
+	rm -f *.o libbuff.a btest sless strtest

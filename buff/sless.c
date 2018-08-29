@@ -1,4 +1,4 @@
-/* sless.c - simple less to test buffer functions
+/* sless.c - simple less to test buffer functions (not part of libbuff)
  * Copyright (C) 2016-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify

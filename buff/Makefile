@@ -34,6 +34,7 @@ CFILES = \
 	bswappnt.c \
 	btoend.c \
 	bwritefile.c \
+	calc.c \
 	dbg.c \
 	freepage.c \
 	globals.c \

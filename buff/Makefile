@@ -1,4 +1,4 @@
-CFLAGS += -Wall -g -L.
+CFLAGS += -Wall -O2 -L.
 
 # For debugging use small pages
 #CFLAGS += -DPGSIZE=8 -DPAGE_DBG

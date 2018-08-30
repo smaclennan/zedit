@@ -42,11 +42,11 @@ HANDLE hstdout;	/* Console out handle */
 static void t_hang_up(int signo)
 {
 	if (signo == SIGHUP)
-		write(1, "\r\nHang up!\r\n", 12);
+		terror("\r\nHang up!\r\n");
 	else if (signo == SIGTERM)
-		write(1, "\r\nTerminate!\r\n", 14);
+		terror("\r\nTerminate!\r\n");
 	else
-		write(1, "\r\nGot signal!\r\n", 15);
+		terror("\r\nGot signal!\r\n");
 	exit(1);
 }
 

@@ -20,6 +20,7 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include "buff.h"
+#include "tinit.h"
 
 static char *dbgfname;
 
@@ -49,9 +50,9 @@ void Dbg(const char *fmt, ...)
 		int fd = open(dbgfname, O_CREAT | O_WRONLY | O_APPEND, 0644);
 
 		if (fd >= 0) {
-			write(fd, line, len);
+			_twrite(fd, line, len);
 			close(fd);
 		}
 	} else
-		write(2, line, len);
+		terror(line);
 }

@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 
 #include "buff.h"
+#include "tinit.h"
 
 #if HUGE_FILES
 
@@ -124,13 +125,13 @@ void default_huge_file_cb(struct buff *buff, int rc)
 	case EAGAIN:
 		return; /* success */
 	case EIO:
-		write(2, "FATAL I/O Error: page read\n", 27);
+		terror("FATAL I/O Error: page read\n");
 		break;
 	case EBADF:
-		write(2, "FATAL I/O Error: file modified\n", 31);
+		terror("FATAL I/O Error: file modified\n");
 		break;
 	default:
-		write(2, "FATAL I/O Error: unexpected error\n", 34);
+		terror("FATAL I/O Error: unexpected error\n");
 		break;
 	}
 	exit(2);

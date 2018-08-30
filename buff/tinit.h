@@ -92,4 +92,22 @@ char *itoa(int val, char *out);
 char *utoa(unsigned val, char *out);
 char *_utoa(unsigned val, char *out);
 
+/** Low level twrite mainly to get around write return warnings */
+static inline int _twrite(int fd, const void *buf, int count)
+{
+	return write(fd, buf, count);
+}
+
+/** Write to stdout */
+static inline int twrite(const void *buf, int count)
+{
+	return write(1, buf, count);
+}
+
+/** Write string to stderr */
+static inline int terror(const char *str)
+{
+	return write(2, str, strlen(str));
+}
+
 #endif

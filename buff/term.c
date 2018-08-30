@@ -43,17 +43,17 @@ void tsize(int *rows, int *cols)
 	}
 #else
 	char buf[12], *p;
-	int n, w, r, c = 0;
+	int n, r, c = 0;
 
 	/* Save cursor position */
-	w = write(0, "\033[s", 3);
+	twrite("\033[s", 3);
 	/* Send the cursor to the extreme right corner */
-	w += write(0, "\033[999;999H", 10);
+	twrite("\033[999;999H", 10);
 	/* Ask where we really ended up */
-	w += write(0, "\033[6n", 4);
+	twrite("\033[6n", 4);
 	n = read(0, buf, sizeof(buf) - 1);
 	/* Restore cursor */
-	w += write(0, "\033[u", 3);
+	twrite("\033[u", 3);
 
 	if (n > 0) {
 		buf[n] = '\0';
@@ -92,7 +92,7 @@ void tforce(void)
 		*p++ = ';';
 		p = _utoa(Pcol + 1, p);
 		*p++ = 'H';
-		write(1, str, p - str);
+		twrite(str, p - str);
 #endif
 		Srow = Prow;
 		Scol = Pcol;
@@ -107,7 +107,7 @@ void tputchar(Byte ch)
 	DWORD written;
 	WriteConsole(hstdout, &ch, 1, &written, NULL);
 #else
-	write(1, &ch, 1);
+	twrite(&ch, 1);
 #endif
 	++Scol;
 	++Pcol;
@@ -148,7 +148,7 @@ void tcleol(void)
 #ifdef TERMCAP
 		TPUTS(cm[1]);
 #else
-		write(1, "\033[K", 3);
+		twrite("\033[K", 3);
 		tflush();
 #endif
 #endif
@@ -170,7 +170,7 @@ void tclrwind(void)
 #elif defined(TERMCAP)
 	TPUTS(cm[2]);
 #else
-	write(1, "\033[2J", 4);
+	twrite("\033[2J", 4);
 #endif
 	memset(Clrcol, 0, sizeof(Clrcol));
 	Prow = Pcol = 0;
@@ -254,7 +254,7 @@ void tstyle(int style)
 	*p++ = '\033'; *p++ = '[';
 	p = _utoa(style, p);
 	*p++ = 'm';
-	write(1, str, p - str);
+	twrite(str, p - str);
 #endif
 
 	cur_style = style;

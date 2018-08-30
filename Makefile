@@ -41,17 +41,15 @@ ETAGS=`which etags || echo true`
 
 CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 	display.c file.c funcs.c getarg.c getfname.c help.c shell.c \
-	srch.c tags.c zterm.c vars.c window.c varray.c z.c zgrep.c life.c
-
-LFILES = undo.c
+	srch.c tags.c zterm.c vars.c window.c varray.c z.c zgrep.c life.c \
+	undo.c
 
 HFILES = config.h funcs.h proto.h vars.h z.h
 HFILES += buff/buff.h buff/calc.h buff/mark.h buff/reg.h buff/tinit.h buff/keys.h
 
 O := $(CFILES:.c=.o)
-L := $(LFILES:.c=.o)
 
-L += bcopyrgn.o bcreate.o bcremark.o bcsearch.o bdelbuff.o \
+L := bcopyrgn.o bcreate.o bcremark.o bcsearch.o bdelbuff.o \
 	bdelete.o bdeltomrk.o bempty.o binsert.o binstr.o \
 	bisbeforemrk.o bisaftermrk.o blength.o bline.o blocation.o boffset.o \
 	bmovepast.o bmoveto.o bmsearch.o bmove.o bpeek.o \
@@ -83,7 +81,7 @@ all:	fcheck $(ZEXE)
 
 $(ZEXE): $O $L
 	$(QUIET_LINK)$(CC) -o $@ $O $L $(LIBS)
-	@$(ETAGS) $(CFILES) $(LFILES) $(HFILES)
+	@$(ETAGS) $(CFILES) $(HFILES)
 
 fcheck: fcheck.c funcs.c varray.c cnames.c bind.c config.h vars.h buff/keys.h
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c $(LIBS)
@@ -92,10 +90,8 @@ fcheck: fcheck.c funcs.c varray.c cnames.c bind.c config.h vars.h buff/keys.h
 # Make all c files depend on all .h files
 *.o: $(HFILES)
 
-# The second sparse checks just the buffer code
 checkit:
-	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(CFILES) $(LFILES)
-	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(LFILES))
+	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(CFILES)
 	@sparse -D__unix__ -D__linux__ $(CFLAGS) fcheck.c
 
 doxy:

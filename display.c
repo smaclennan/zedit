@@ -375,7 +375,7 @@ static void bshove(void)
 }
 
 /*
- * Do the acutal screen update.
+ * Do the actual screen update.
  * Curwdo is not valid.
  */
 static int innerdsp(int from, int to, struct mark *pmark)

@@ -29,6 +29,7 @@
 #define TPUTS(s) tputs(s, 1, putchar)
 extern char *cm[];
 extern char *termcap_end;
+#define tflush()
 #endif
 
 #define	ROWMAX			110
@@ -46,8 +47,10 @@ void tkbdinit(void);
 
 #define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
 #define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
-#else
-#define tflush() // fflush(stdout)
+#endif
+
+#ifndef tflush
+#define tflush()
 #endif
 
 /* windows.h must be before buff.h... no idea why */

@@ -49,6 +49,8 @@ CFILES = \
 	strlcpy.c \
 	term.c \
 	tinit.c \
+	tsize.c \
+	tstyle.c \
 	tobegline.c \
 	toendline.c \
 

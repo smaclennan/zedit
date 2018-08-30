@@ -50,7 +50,8 @@ void tkbdinit(void);
 #endif
 
 #ifndef tflush
-#define tflush()
+/* This is user configurable, turn it off if you want */
+#define TBUFFERED
 #endif
 
 /* windows.h must be before buff.h... no idea why */
@@ -101,11 +102,16 @@ static inline int _twrite(int fd, const void *buf, int count)
 	return write(fd, buf, count);
 }
 
+#ifdef TBUFFERED
+int twrite(const void *buf, int count);
+void tflush(void);
+#else
 /** Write to stdout */
 static inline int twrite(const void *buf, int count)
 {
 	return write(1, buf, count);
 }
+#endif
 
 /** Write string to stderr */
 static inline int terror(const char *str)

@@ -25,6 +25,40 @@ static int Clrcol[ROWMAX];
 
 /* Optimized routines to minimize output */
 
+#ifdef TBUFFERED
+
+#define MAX_BUF 2048 /* a nice screen full */
+static Byte tbuffer[MAX_BUF];
+static int tcur;
+
+int twrite(const void *buf, int len)
+{
+again:
+	if (tcur + len < MAX_BUF) {
+		memcpy(tbuffer + tcur, buf, len);
+		tcur += len;
+		return len;
+	}
+
+	tflush();
+
+	if (len >= MAX_BUF) {
+		write(1, buf, len);
+		return len;
+	}
+
+	goto again;
+}
+
+void tflush(void)
+{
+	if (tcur) {
+		write(1, tbuffer, tcur);
+		tcur = 0;
+	}
+}
+#endif
+
 /** Move the cursor to the current Prow+Pcol */
 void tforce(void)
 {
@@ -38,14 +72,9 @@ void tforce(void)
 #elif defined(TERMCAP)
 		TPUTS(tgoto(cm[0], Pcol, Prow));
 #else
-		char str[64], *p = str;
-
-		*p++ = '\033'; *p++ = '[';
-		p = _utoa(Prow + 1, p);
-		*p++ = ';';
-		p = _utoa(Pcol + 1, p);
-		*p++ = 'H';
-		twrite(str, p - str);
+		char str[64];
+		int n = strfmt(str, sizeof(str), "\033[%d;%dH", Prow + 1, Pcol + 1);
+		twrite(str, n);
 #endif
 		Srow = Prow;
 		Scol = Pcol;

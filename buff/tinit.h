@@ -29,7 +29,6 @@
 #define TPUTS(s) tputs(s, 1, putchar)
 extern char *cm[];
 extern char *termcap_end;
-#define tflush()
 #endif
 
 #define	ROWMAX			110
@@ -40,7 +39,6 @@ void tsize(int *rows, int *cols);
 
 #ifdef WIN32
 #include <Windows.h>
-#define tflush()
 extern HANDLE hstdout;	/* Console out handle */
 
 void tkbdinit(void);
@@ -49,7 +47,7 @@ void tkbdinit(void);
 #define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
 #endif
 
-#ifndef tflush
+#if defined(__unix__) && !defined(TERMCAP)
 /* This is user configurable, turn it off if you want */
 #define TBUFFERED
 #endif
@@ -111,6 +109,8 @@ static inline int twrite(const void *buf, int count)
 {
 	return write(1, buf, count);
 }
+
+#define tflush()
 #endif
 
 /** Write string to stderr */

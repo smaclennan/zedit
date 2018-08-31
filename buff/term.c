@@ -42,10 +42,8 @@ again:
 
 	tflush();
 
-	if (len >= MAX_BUF) {
-		write(1, buf, len);
-		return len;
-	}
+	if (len >= MAX_BUF)
+		return write(1, buf, len);
 
 	goto again;
 }
@@ -53,7 +51,7 @@ again:
 void tflush(void)
 {
 	if (tcur) {
-		write(1, tbuffer, tcur);
+		_twrite(1, tbuffer, tcur);
 		tcur = 0;
 	}
 }

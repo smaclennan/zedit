@@ -39,7 +39,7 @@ void tsize(int *rows, int *cols)
 	}
 #else
 	char buf[12], *p;
-	int n, r, c = 0;
+	int n, r = 0, c = 0;
 
 	/* Save cursor position */
 	twrite("\033[s", 3);

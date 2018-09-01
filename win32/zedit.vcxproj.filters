@@ -21,12 +21,6 @@
     <ClCompile Include="..\bind.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\buff.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\calc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\commands.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -52,9 +46,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\help.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reg.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\shell.c">
@@ -84,9 +75,6 @@
     <ClCompile Include="zwin32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\term.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\cnames.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -102,31 +90,145 @@
     <ClCompile Include="fnmatch.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\bmsearch.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mark.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bfile.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\tinit.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\hugefile.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bsocket.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="bwin32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\life.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\util.c">
+    <ClCompile Include="..\buff\bcopyrgn.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bcreate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bcremark.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bcsearch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bdelbuff.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bdelete.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bdeltomrk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bempty.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\binsert.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\binstr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bisaftermrk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bisbeforemrk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\blength.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bline.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\blocation.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bmove.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bmovepast.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bmoveto.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bmsearch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\boffset.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bpeek.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bpnttomrk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\breadfile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bswappnt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\btoend.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\bwritefile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\calc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\dbg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\freepage.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\globals.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\hugefile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\itoa.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\mrkaftermrk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\mrkbeforemrk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\newpage.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\pagesplit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\reg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\strlcpy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\term.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\tinit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\tobegline.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\toendline.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\tsize.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\buff\tstyle.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zterm.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -147,6 +249,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="fnmatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\buff\buff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\buff\calc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\buff\keys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\buff\mark.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\buff\reg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\buff\tinit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

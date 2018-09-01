@@ -37,7 +37,8 @@
 #define unlink _unlink
 #define getcwd _getcwd
 
-#define creat(a, b) _creat(a, _S_IWRITE)
+/* VS 2017 doesn't seem to like _creat */
+#define creat(a, b) _open(a, _O_CREAT | _O_TRUNC | _O_WRONLY, b)
 #define open _open
 #define read _read
 #define write _write

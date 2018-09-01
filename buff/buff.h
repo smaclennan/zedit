@@ -247,11 +247,11 @@ static inline void bmove1(struct buff *buff)
 }
 
 /* returns the start of the string */
-char *itoa(int val, char *out);
-char *utoa(unsigned val, char *out);
+char *bitoa(int val, char *out);
+char *butoa(unsigned val, char *out);
 /* returns the end of the string */
-char *_itoa(int val, char *out);
-char *_utoa(unsigned val, char *out);
+char *_bitoa(int val, char *out);
+char *_butoa(unsigned val, char *out);
 
 #if HUGE_FILES
 extern void (*huge_file_cb)(struct buff *buff, int rc);

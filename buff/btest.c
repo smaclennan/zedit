@@ -5,12 +5,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this project; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -21,7 +21,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
@@ -30,8 +32,13 @@
 #include "buff.h"
 #include "tinit.h"
 
+#ifdef WIN32
+#define FILENAME "btest.file"
+#define FILENAME2 "btest2.file"
+#else
 #define FILENAME  "/tmp/btest.file"
 #define FILENAME2 "/tmp/btest2.file"
+#endif
 
 static void dump_pages(struct buff *buff, const char *str)
 {
@@ -138,6 +145,10 @@ int main(int argc, char *argv[])
 	bdelbuff(buff);
 
 	tinit();
+
+#ifdef WIN32
+	printf("Hit return to exit "); getchar();
+#endif
 
 	return 0;
 }

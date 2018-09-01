@@ -41,10 +41,12 @@ HANDLE hstdout;	/* Console out handle */
 /* Come here on SIGHUP or SIGTERM */
 static void t_hang_up(int signo)
 {
-	if (signo == SIGHUP)
-		terror("\r\nHang up!\r\n");
-	else if (signo == SIGTERM)
+	if (signo == SIGTERM)
 		terror("\r\nTerminate!\r\n");
+#ifdef SIGHUP /* windows doesn't have SIGHUP */
+	else if (signo == SIGHUP)
+		terror("\r\nHang up!\r\n");
+#endif
 	else
 		terror("\r\nGot signal!\r\n");
 	exit(1);

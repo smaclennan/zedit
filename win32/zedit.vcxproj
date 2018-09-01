@@ -55,7 +55,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../buff;.;..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -88,12 +88,51 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\bcmds.c" />
-    <ClCompile Include="..\bfile.c" />
     <ClCompile Include="..\bind.c" />
-    <ClCompile Include="..\bmsearch.c" />
-    <ClCompile Include="..\bsocket.c" />
-    <ClCompile Include="..\buff.c" />
-    <ClCompile Include="..\calc.c" />
+    <ClCompile Include="..\buff\bcopyrgn.c" />
+    <ClCompile Include="..\buff\bcreate.c" />
+    <ClCompile Include="..\buff\bcremark.c" />
+    <ClCompile Include="..\buff\bcsearch.c" />
+    <ClCompile Include="..\buff\bdelbuff.c" />
+    <ClCompile Include="..\buff\bdelete.c" />
+    <ClCompile Include="..\buff\bdeltomrk.c" />
+    <ClCompile Include="..\buff\bempty.c" />
+    <ClCompile Include="..\buff\binsert.c" />
+    <ClCompile Include="..\buff\binstr.c" />
+    <ClCompile Include="..\buff\bisaftermrk.c" />
+    <ClCompile Include="..\buff\bisbeforemrk.c" />
+    <ClCompile Include="..\buff\blength.c" />
+    <ClCompile Include="..\buff\bline.c" />
+    <ClCompile Include="..\buff\blocation.c" />
+    <ClCompile Include="..\buff\bmove.c" />
+    <ClCompile Include="..\buff\bmovepast.c" />
+    <ClCompile Include="..\buff\bmoveto.c" />
+    <ClCompile Include="..\buff\bmsearch.c" />
+    <ClCompile Include="..\buff\boffset.c" />
+    <ClCompile Include="..\buff\bpeek.c" />
+    <ClCompile Include="..\buff\bpnttomrk.c" />
+    <ClCompile Include="..\buff\breadfile.c" />
+    <ClCompile Include="..\buff\bswappnt.c" />
+    <ClCompile Include="..\buff\btoend.c" />
+    <ClCompile Include="..\buff\bwritefile.c" />
+    <ClCompile Include="..\buff\calc.c" />
+    <ClCompile Include="..\buff\dbg.c" />
+    <ClCompile Include="..\buff\freepage.c" />
+    <ClCompile Include="..\buff\globals.c" />
+    <ClCompile Include="..\buff\hugefile.c" />
+    <ClCompile Include="..\buff\itoa.c" />
+    <ClCompile Include="..\buff\mrkaftermrk.c" />
+    <ClCompile Include="..\buff\mrkbeforemrk.c" />
+    <ClCompile Include="..\buff\newpage.c" />
+    <ClCompile Include="..\buff\pagesplit.c" />
+    <ClCompile Include="..\buff\reg.c" />
+    <ClCompile Include="..\buff\strlcpy.c" />
+    <ClCompile Include="..\buff\term.c" />
+    <ClCompile Include="..\buff\tinit.c" />
+    <ClCompile Include="..\buff\tobegline.c" />
+    <ClCompile Include="..\buff\toendline.c" />
+    <ClCompile Include="..\buff\tsize.c" />
+    <ClCompile Include="..\buff\tstyle.c" />
     <ClCompile Include="..\cnames.c" />
     <ClCompile Include="..\commands.c" />
     <ClCompile Include="..\comment.c" />
@@ -105,22 +144,17 @@
     <ClCompile Include="..\getarg.c" />
     <ClCompile Include="..\getfname.c" />
     <ClCompile Include="..\help.c" />
-    <ClCompile Include="..\hugefile.c" />
     <ClCompile Include="..\life.c" />
-    <ClCompile Include="..\mark.c" />
-    <ClCompile Include="..\reg.c" />
     <ClCompile Include="..\shell.c" />
     <ClCompile Include="..\srch.c" />
     <ClCompile Include="..\tags.c" />
-    <ClCompile Include="..\term.c" />
-    <ClCompile Include="..\tinit.c" />
     <ClCompile Include="..\undo.c" />
-    <ClCompile Include="..\util.c" />
     <ClCompile Include="..\varray.c" />
     <ClCompile Include="..\vars.c" />
     <ClCompile Include="..\window.c" />
     <ClCompile Include="..\z.c" />
     <ClCompile Include="..\zgrep.c" />
+    <ClCompile Include="..\zterm.c" />
     <ClCompile Include="bwin32.c" />
     <ClCompile Include="fnmatch.c" />
     <ClCompile Include="winkbd.c" />
@@ -128,6 +162,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\buff.h" />
+    <ClInclude Include="..\buff\buff.h" />
+    <ClInclude Include="..\buff\calc.h" />
+    <ClInclude Include="..\buff\keys.h" />
+    <ClInclude Include="..\buff\mark.h" />
+    <ClInclude Include="..\buff\reg.h" />
+    <ClInclude Include="..\buff\tinit.h" />
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\z.h" />
     <ClInclude Include="bwin32.h" />

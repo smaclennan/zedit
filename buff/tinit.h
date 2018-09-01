@@ -90,9 +90,9 @@ void tclrwind(void);
 
 void tstyle(int style);
 
-char *itoa(int val, char *out);
-char *utoa(unsigned val, char *out);
-char *_utoa(unsigned val, char *out);
+char *bitoa(int val, char *out);
+char *butoa(unsigned val, char *out);
+char *_butoa(unsigned val, char *out);
 
 /** Low level twrite mainly to get around write return warnings */
 static inline int _twrite(int fd, const void *buf, int count)

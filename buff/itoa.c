@@ -5,12 +5,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this project; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -34,7 +34,7 @@ static void reverse_string(char *start, char *end)
 }
 
 /* Returns the end of the output */
-char *_itoa(int val, char *out)
+char *_bitoa(int val, char *out)
 {
 	char *p = out;
 	int neg = val < 0;
@@ -58,14 +58,14 @@ char *_itoa(int val, char *out)
 	return p;
 }
 
-char *itoa(int val, char *out)
+char *bitoa(int val, char *out)
 {
-	_itoa(val, out);
+	_bitoa(val, out);
 	return out;
 }
 
 /* Returns the end of the output */
-char *_utoa(unsigned val, char *out)
+char *_butoa(unsigned val, char *out)
 {
 	char *p = out;
 
@@ -84,8 +84,8 @@ char *_utoa(unsigned val, char *out)
 	return p;
 }
 
-char *utoa(unsigned val, char *out)
+char *butoa(unsigned val, char *out)
 {
-	_utoa(val, out);
+	_butoa(val, out);
 	return out;
 }

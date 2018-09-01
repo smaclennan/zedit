@@ -28,7 +28,7 @@ HANDLE hstdin;
 static int cstack[CSTACK];
 static int cptr = -1;
 static int cpushed;
-static bool Pending;
+static int Pending;
 
 static int dummy_cb(INPUT_RECORD *event) { return 0; }
 
@@ -115,7 +115,7 @@ void tkbdinit(void)
 
 int tgetkb(void)
 {
-	Pending = false;
+	Pending = 0;
 
 	cptr = (cptr + 1) & (CSTACK - 1);
 	if (cpushed) {
@@ -154,7 +154,7 @@ again:
 int tkbrdy(void)
 {
 	if (cpushed || Pending)
-		return true;
+		return 1;
 
 	return Pending = WaitForSingleObject(hstdin, 0) == WAIT_OBJECT_0;
 }
@@ -162,7 +162,7 @@ int tkbrdy(void)
 int tdelay(int ms)
 {
 	if (cpushed || Pending)
-		return false;
+		return 0;
 
 	return WaitForSingleObject(hstdin, ms) != WAIT_OBJECT_0;
 }

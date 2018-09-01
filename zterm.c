@@ -59,7 +59,7 @@ void hang_up(int signo)
 /* This is called before the windows are created */
 static void initline(void)
 {
-	int i = snprintf(PawStr, PAWSTRLEN, "%s %s  Initializing", ZSTR, VERSION);
+	int i = strconcat(PawStr, PAWSTRLEN, ZSTR, " ", VERSION, "  Initializing", NULL);
 	tclrwind();
 	t_goto(Rowmax - 2, 0);
 	tstyle(T_STANDOUT);

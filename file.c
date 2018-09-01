@@ -76,7 +76,7 @@ static bool cp(char *from, char *to)
 
 static char *make_bakname(char *bakname, int len, const char *fname)
 {
-	snprintf(bakname, len, "%s~", fname);
+	strconcat(bakname, len, fname, "~", NULL);
 	return bakname;
 }
 
@@ -104,9 +104,9 @@ static bool zwritefile(char *fname)
 	/* If the file existed, check to see if it has been modified. */
 	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
 		if (sbuf.st_mtime > Curbuff->mtime) {
-			snprintf(PawStr, PAWSTRLEN,
-					 "WARNING: %s has been modified. Overwrite? ",
-					 lastpart(fname));
+			strconcat(PawStr, PAWSTRLEN,
+					  "WARNING: ", lastpart(fname),
+					  " has been modified. Overwrite? ", NULL);
 			if (ask(PawStr) != YES)
 				return false;
 		}
@@ -117,9 +117,9 @@ static bool zwritefile(char *fname)
 
 #if HUGE_FILES
 	if (Bbuff->fd != -1) {
-		snprintf(PawStr, PAWSTRLEN,
-				 "WARNING: huge file %s not yet read. Are you sure? ",
-				 lastpart(fname));
+		strconcat(PawStr, PAWSTRLEN,
+				  "WARNING: huge file ", lastpart(fname),
+				  " not yet read. Are you sure? ", NULL);
 		if (ask(PawStr) != YES)
 			return false;
 	}
@@ -128,8 +128,8 @@ static bool zwritefile(char *fname)
 	/* check for links and handle backup file */
 	make_bakname(bakname, sizeof(bakname), fname);
 	if (nlink > 1) {
-		snprintf(PawStr, PAWSTRLEN, "WARNING: %s is linked. Preserve? ",
-				 lastpart(fname));
+		strconcat(PawStr, PAWSTRLEN, "WARNING: ", lastpart(fname),
+				  " is linked. Preserve? ", NULL);
 		switch (ask(PawStr)) {
 		case YES:
 			if (VAR(VBACKUP))

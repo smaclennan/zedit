@@ -54,14 +54,14 @@ static void huge_file_modified(struct buff *buff)
 {
 	zbuff_t *zbuff = cfindzbuff(buff);
 	if (!zbuff) { /* can't happen */
-		printf("\n\nUnable to get zbuff for huge buffer\n\n\n");
+		fputs("\n\nUnable to get zbuff for huge buffer\n\n\n", stderr);
 		exit(1);
 	}
 
 again:
-	snprintf(PawStr, PAWSTRLEN,
-			 "WARNING: huge file %s has been modified. Re-read? ",
-			 lastpart(zbuff->fname));
+	strconcat(PawStr, PAWSTRLEN,
+			  "WARNING: huge file ", lastpart(zbuff->fname),
+			  " has been modified. Re-read? ", NULL);
 	if (ask(PawStr) != YES) {
 		if (ask("Delete buffer? ") != YES)
 			goto again;
@@ -79,7 +79,7 @@ static void huge_file_io(struct buff *buff)
 {
 	zbuff_t *zbuff = cfindzbuff(buff);
 	if (!zbuff) { /* can't happen */
-		printf("\n\nUnable to get zbuff for huge buffer\n\n\n");
+		fputs("\n\nUnable to get zbuff for huge buffer\n\n\n", stderr);
 		exit(1);
 	}
 

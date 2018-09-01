@@ -47,10 +47,10 @@ static void usage(char *prog)
 /* Find the correct path for the config files. */
 static void findpath(char *path, const char *f, void (*action)(const char *))
 {
-	snprintf(path, PATHMAX, "%s/%s", Home, f);
+	strconcat(path, PATHMAX, Home, "/", f, NULL);
 	if (access(path, F_OK) == 0)
 		action(path);
-	snprintf(path, PATHMAX, "%s/%s", CONFIGDIR, f);
+	strconcat(path, PATHMAX, CONFIGDIR, "/", f, NULL);
 	if (access(path, F_OK) == 0)
 		action(path);
 	if (access(f, F_OK) == 0)
@@ -202,7 +202,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	snprintf(path, sizeof(path), "%s/z.out", Home);
+	strconcat(path, sizeof(path), Home, "/z.out", NULL);
 	unlink(path);
 	Dbgfname(path);
 
@@ -306,7 +306,5 @@ void Zstats(void)
 			++nmarks;
 	}
 
-	snprintf(PawStr, Colmax, "Buffers: %u  Pages: %u  Marks: %u",
-			 nbuff, npage, nmarks);
-	_putpaw(PawStr);
+	putpaw("Buffers: %u  Pages: %u  Marks: %u", nbuff, npage, nmarks);
 }

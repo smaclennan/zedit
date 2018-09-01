@@ -144,6 +144,7 @@ int do_undo(struct buff *buff);
 size_t strlcpy(char *dst, const char *src, size_t dstsize);
 size_t strlcat(char *dst, const char *src, size_t dstsize);
 #endif
+int strconcat(char *str, int len, ...);
 const char *Dbgfname(const char *fname);
 void Dbg(const char *fmt, ...);
 

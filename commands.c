@@ -652,7 +652,7 @@ bool promptsave(zbuff_t *tbuff, bool must)
 
 	if (tbuff->buff->bmodf) {
 		if (!must && !save_all) {
-			snprintf(str, sizeof(str), "save buffer %s? ", tbuff->bname);
+			strconcat(str, sizeof(str), "save buffer ", tbuff->bname, "? ", NULL);
 			ok = ask2(str, true);
 			if (ok == BANG)
 				save_all = 1;
@@ -1132,7 +1132,7 @@ void Zsetenv(void)
 	len = strlen(env) + strlen(set) + 1;
 	p = (char *)calloc(1, len);
 	if (p) {
-		snprintf(p, len, "%s%s", env, set);
+		strconcat(p, len, env, set, NULL);
 		if (putenv(p))
 			error("Unable to set environment variable.");
 	} else

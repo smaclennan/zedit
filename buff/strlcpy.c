@@ -66,3 +66,24 @@ size_t strlcat(char *dst, const char *src, size_t dstsize)
 	return i;
 }
 #endif
+
+/* Concatenates any number of string. The last string must be NULL.
+ * Returns length actually copied
+ */
+int strconcat(char *str, int len, ...)
+{
+	char *arg;
+	int total = 0;
+
+	va_list ap;
+	va_start(ap, len);
+	while ((arg = va_arg(ap, char *)) && len > 0) {
+		int n = strlcpy(str, arg, len);
+		str += n;
+		len -= n;
+		total += n;
+	}
+	va_end(ap);
+
+	return total;
+}

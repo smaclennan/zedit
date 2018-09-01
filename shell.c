@@ -502,11 +502,12 @@ void Zspell_word(void)
 			aspell_word_list_elements(suggestions);
 		const char *s;
 		while ((s = aspell_string_enumeration_next(elements)) &&
-		       len > 0) {
-			if (i == 0)
-				n = snprintf(PawStr + i, len, "%s", s);
-			else
-				n = snprintf(PawStr + i, len, " %s", s);
+			   len > 2) {
+			if (i) {
+				PawStr[i++] = ' ';
+				len--;
+			}
+			n = strlcpy(PawStr + i, s, len);
 			if (n > len) n = len; /* overflow */
 			i += n;
 			len -= n;

@@ -64,7 +64,7 @@ static int get_tagfile(void)
 		}
 	}
 
-	snprintf(Tagfile, sizeof(Tagfile), "%sTAGS", zgetcwd(Tagfile, sizeof(Tagfile)));
+	strconcat(Tagfile, sizeof(Tagfile), zgetcwd(Tagfile, sizeof(Tagfile)), "TAGS", NULL);
 	if (access(Tagfile, F_OK) == 0)
 		return 0;
 

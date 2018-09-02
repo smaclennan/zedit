@@ -83,8 +83,8 @@ static void huge_file_io(struct buff *buff)
 		exit(1);
 	}
 
-	snprintf(PawStr, PAWSTRLEN, "FATAL: huge file %s had an I/O. ",
-			 lastpart(zbuff->fname));
+	strconcat(PawStr, PAWSTRLEN, "FATAL: huge file ", lastpart(zbuff->fname),
+			  " had an I/O error. ", NULL);
 	ask(PawStr);
 	cdelbuff(zbuff);
 	longjmp(zrefresh_jmp, 1);
@@ -492,12 +492,20 @@ static void modeline(struct wdo *wdo)
 
 	tsetpoint(wdo->last, 0);
 	modeline_style();
-	snprintf(str, sizeof(str), "%s %s  (%s)  %s: ", ZSTR, VERSION,
-			setmodes(wdo->wbuff), wdo->wbuff->bname);
+	strconcat(str, sizeof(str), ZSTR, " ", VERSION, "  (", setmodes(wdo->wbuff),
+			  ")  ", wdo->wbuff->bname, NULL);
 	tprntstr(str);
 	if (wdo->wbuff->fname) {
-		len = strlen(str) + 3;
-		tprntstr(limit(wdo->wbuff->fname, len));
+		char *fname = wdo->wbuff->fname;
+
+		len = strlen(str) + 4;
+		tprntchar(':');
+		if (strncmp(fname, Home, Homelen) == 0) {
+			fname += Homelen;
+			len++;
+			tprntchar('~');
+		}
+		tprntstr(limit(fname, len));
 	}
 	wdo->modecol = Pcol;
 

@@ -23,6 +23,7 @@
 int verbose;
 bool Initializing = true;
 char *Home;
+int Homelen;
 
 unsigned Cmd;
 int Cmdpushed = -1; /* Search pushed a key */
@@ -201,6 +202,7 @@ int main(int argc, char **argv)
 		puts("You don't exist!");
 		exit(1);
 	}
+	Homelen = strlen(Home);
 
 	strconcat(path, sizeof(path), Home, "/z.out", NULL);
 	unlink(path);

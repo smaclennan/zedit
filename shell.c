@@ -276,7 +276,7 @@ static void _cmdtobuff(zbuff_t *buff, const char *cmdin)
 	FILE *pfp;
 	int rc;
 	char cmd[PATHMAX], line[STRMAX];
-	snprintf(cmd, sizeof(cmd), "%s 2>&1", cmdin);
+	strconcat(cmd, sizeof(cmd), cmdin, "2>&1", NULL);
 
 	pfp = popen(cmd, "r");
 	if (pfp == NULL) {

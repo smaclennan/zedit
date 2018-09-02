@@ -80,7 +80,8 @@ static void doincsrch(const char *prompt, bool forward)
 again:
 			if (!bstrsearch(str, forward)) {
 				if (++count == 2) {
-					snprintf(promptstr, sizeof(promptstr), "%s (Wrapped)", nocase(prompt));
+					strconcat(promptstr, sizeof(promptstr),
+							  nocase(prompt), " (Wrapped)", NULL);
 					count = 0;
 					btostart(Bbuff);
 					goto again;

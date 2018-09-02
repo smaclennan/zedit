@@ -167,6 +167,7 @@ typedef struct zbuff {
 #define Buff()  (*Bbuff->curcptr)
 
 extern char *Home;
+extern int Homelen;
 extern bool Argp;
 extern int Arg;				/* must be signed */
 extern int InPaw;		/* Are we in the Paw window? */

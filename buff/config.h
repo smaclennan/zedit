@@ -4,31 +4,31 @@
 /* User configurable */
 
 /* Define for dynamic buffer marks.
-#define HAVE_BUFFER_MARKS
+#define HAVE_BUFFER_MARKS 1
  */
 
 /* Define for global buffer marks.
-#define HAVE_GLOBAL_MARKS
+#define HAVE_GLOBAL_MARKS 1
  */
 
 /* Define for huge file support.
-#define HUGE_FILES
+#define HUGE_FILES 1
  */
 
 /* Make huge file support threaded.
-#define HUGE_THREADED
+#define HUGE_THREADED 1
  */
 
 /* Define for ZLIB support reading/writing files.
-#define ZLIB
+#define ZLIB 1
  */
 
 /* Define for undo support.
-#define UNDO
+#define UNDO 1
  */
 
 /* Define for unsigned bytes. Default is char.
-#define UNSIGNED_BYTES
+#define UNSIGNED_BYTES 1
  */
 
 /* Define the page size. Default is currently 4k.
@@ -36,11 +36,11 @@
  */
 
 /* Define for termcap rather than ansi. You want ansi.
-#define TERMCAP
+#define TERMCAP 1
  */
 
 /* You might need termio rather than termios on some old Unix systems.
-#define HAVE_TERMIO
+#define HAVE_TERMIO 1
  */
 
 /* OS specific settings */

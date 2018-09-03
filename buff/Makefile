@@ -1,4 +1,4 @@
-CFLAGS += -Wall -O2 -L.
+CFLAGS += -Wall -O2 -L. -DHAVE_CONFIG_H
 
 # For debugging use small pages
 #CFLAGS += -DPGSIZE=8 -DPAGE_DBG

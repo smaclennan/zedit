@@ -27,10 +27,6 @@ struct page *newpage(struct page *curpage)
 	if (!page)
 		return NULL;
 
-#ifdef PAGE_DBG
-	memset(page->pdata, 'x', PGSIZE);
-#endif
-
 	if (curpage) {
 		page->prevp = curpage;
 		if (curpage->nextp) {

@@ -26,7 +26,7 @@ ZEXE = ze
 # returns -g, else it returns the default (-O2).
 D = -O2
 CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC) -I. -Ibuff
-CFLAGS += -DHAVE_CONFIG_H
+CFLAGS += -DHAVE_CONFIG_H -include "./config.h"
 
 # Saves about 20k
 #CFLAGS += -DNO_HELP

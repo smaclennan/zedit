@@ -20,6 +20,10 @@
 #include "buff.h"
 #include "reg.h"
 
+#ifdef WIN32
+#define BUILTIN_REG
+#endif
+
 #ifndef BUILTIN_REG
 static int advance(struct buff *buff, regex_t *re, struct mark *REstart)
 {

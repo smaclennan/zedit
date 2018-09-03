@@ -1,5 +1,7 @@
 /* config.h - Zedit user configurable defines */
 
+#define CONFIG_H
+
 #ifndef WIN32
 #define ZLIB		0	/* Requires zlib -lz */
 #define SPELL		0	/* Requires libaspell */
@@ -22,10 +24,6 @@
 #define UNSIGNED_BYTES
 #define HAVE_GLOBAL_MARKS
 #define HAVE_BUFFER_MARKS
-#ifdef WIN32
-#define BUILTIN_REG
-#endif
 #ifdef __QNXNTO__
 #define __unix__
-#define NO_MEMRCHR
 #endif

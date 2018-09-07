@@ -173,7 +173,7 @@ void tprntchar(Byte ichar)
 			tprntstr("^I");
 		else
 			for (tcol = tabsize(Pcol); tcol > 0; --tcol)
-				tprntchar(' ');
+				tputchar(' ');
 		break;
 	case 0x89:
 		tstyle(T_BOLD);
@@ -183,10 +183,10 @@ void tprntchar(Byte ichar)
 	default:
 		tstyle(T_BOLD);
 		if (ichar & 0x80) {
-			tprntchar('~');
+			tputchar('~');
 			tprntchar(ichar & 0x7f);
 		} else {
-			tprntchar('^');
+			tputchar('^');
 			tprntchar(ichar ^ '@');
 		}
 		tstyle(T_NORMAL);

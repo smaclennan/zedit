@@ -124,7 +124,8 @@ void tputchar(Byte ch)
  */
 void t_goto(int row, int col)
 {
-	tsetpoint(row, col);
+	Prow = row;
+	Pcol = col;
 	tforce();
 }
 

@@ -128,7 +128,7 @@ static void pclear(void)
 		wdo->modeflags = INVALID;
 
 	for (i = 0; i < Rowmax - 2; ++i) {
-		tsetpoint(i, 0);
+		t_goto(i, 0);
 		tcleol();
 	}
 	invalidate_scrnmarks(0, Rowmax - 2);
@@ -137,7 +137,7 @@ static void pclear(void)
 
 static void pout(char *str)
 {
-	tsetpoint(p_row, p_col * PCOLSIZE);
+	t_goto(p_row, p_col * PCOLSIZE);
 	invalidate_scrnmarks(p_row, p_row + 1);
 	if (p_row < Rowmax - 2) {
 		tprntstr(str);

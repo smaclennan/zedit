@@ -397,7 +397,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			bmrktopnt(Bbuff, &Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
 			col = 0;
-			tsetpoint(trow, col);
+			t_goto(trow, col);
 			while (!bisend(Bbuff) && !ISNL(Buff()) &&
 				   (col = buff_col()) < Colmax) {
 				if (in_region(pmark)) {
@@ -490,7 +490,7 @@ static void modeline(struct wdo *wdo)
 	char str[COLMAX + 1]; /* can't use PawStr because of setmodes */
 	int len;
 
-	tsetpoint(wdo->last, 0);
+	t_goto(wdo->last, 0);
 	modeline_style();
 	strconcat(str, sizeof(str), ZSTR, " ", VERSION, "  (", setmodes(wdo->wbuff),
 			  ")  ", wdo->wbuff->bname, NULL);
@@ -531,7 +531,7 @@ static void modeflags(struct wdo *wdo)
 
 	mask = delcmd() | (wdo->wbuff->buff->bmodf ? 2 : 0);
 	if (!InPaw && wdo->modeflags != mask) {
-		tsetpoint(wdo->last, wdo->modecol);
+		t_goto(wdo->last, wdo->modecol);
 		tprntchar(mask & 2 ? '*' : ' ');
 		tprntchar(mask & 1 ? '+' : ' ');
 		wdo->modeflags = mask;

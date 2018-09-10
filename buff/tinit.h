@@ -68,7 +68,6 @@ void tkbdinit(void);
 extern int Prow, Pcol;
 
 /** Move the point to row+col but don't move the cursor */
-#define tsetpoint(r, c)		(Prow = r, Pcol = c)
 void tforce(void);
 void tputchar(Byte ch);
 void t_goto(int row, int col);

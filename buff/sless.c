@@ -110,11 +110,11 @@ static int get_line(char *line, int len)
 			break;
 		case 03: /* ctrl-c */
 		case 07: /* ctrl-g */
-			tsetpoint(rows, 0);
+			t_goto(rows, 0);
 			tcleol();
 			return 1;
 		case 04: /* ctrl-d */
-			tsetpoint(rows, 0);
+			t_goto(rows, 0);
 			tcleol();
 			exit(0);
 		}
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
 				break;
 			case 'q':
 			case 04: /* ctrl-d */
-				tsetpoint(rows, 0);
+				t_goto(rows, 0);
 				tcleol();
 				exit(0);
 			case '/':
@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
 			}
 		} while (!cont);
 
-		tsetpoint(rows, 0);
+		t_goto(rows, 0);
 		tcleol();
 
 		if (needclear)

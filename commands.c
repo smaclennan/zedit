@@ -769,7 +769,7 @@ void Ztoggle_case(void)
 {
 	Curbuff->bmode ^= EXACT;
 	if (InPaw && Insearch) {
-		tsetpoint(Rowmax - 1, 0);
+		t_goto(Rowmax - 1, 0);
 		tprntstr(nocase(NULL));
 	} else
 		putpaw(Curbuff->bmode & EXACT ? "Exact Set" : "Exact Reset");

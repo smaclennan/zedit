@@ -192,46 +192,9 @@ int tdelay(int ms)
 }
 
 #ifdef TERMCAP
-static char *key_names[] = {
-	"ku",
-	"kd",
-	"kr",
-	"kl",
-
-	"kI",
-	"kD",
-	"kP",
-	"kN",
-	"kh",
-	"@7",
-
-	"k1",
-	"k2",
-	"k3",
-	"k4",
-	"k5",
-	"k6",
-	"k7",
-	"k8",
-	"k9",
-	"k;",
-	"F1",
-	"F2",
-};
-
-void termcap_keys(void)
+void set_tkey(int i, char *key)
 {
-	int i;
-	char *key;
-
-	/* get the cursor and function key defines */
-	for (i = 0; i < 22; ++i) {
-		key = termcap_end;
-		tgetstr(key_names[i], &termcap_end);
-		if (key != termcap_end)
-			if (*key == 033)
-				Tkeys[i] = key;
-	}
+	Tkeys[i] = key;
 }
 #endif
 /* @} */

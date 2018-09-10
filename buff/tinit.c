@@ -69,20 +69,49 @@ static char bp[1024];
 static char area[1024];
 char *termcap_end;
 
+static char *key_names[] = {
+	"ku",
+	"kd",
+	"kr",
+	"kl",
+
+	"kI",
+	"kD",
+	"kP",
+	"kN",
+	"kh",
+	"@7",
+
+	"k1",
+	"k2",
+	"k3",
+	"k4",
+	"k5",
+	"k6",
+	"k7",
+	"k8",
+	"k9",
+	"k;",
+	"F1",
+	"F2",
+};
+
+extern void set_tkey(int i, char *key);
+
 static void tlinit(void)
 {
 	static const char * const names[] = {
 		"cm", "ce", "cl", "me", "so", "vb", "md"
 	};
-	char *was = area, *end = area, *term = getenv("TERM");
+	char *key, *was = area, *end = area, *term = getenv("TERM");
 	int i;
 
 	if (term == NULL) {
-		printf("ERROR: environment variable TERM not set.\n");
+		terror("ERROR: environment variable TERM not set.\n");
 		exit(1);
 	}
 	if (tgetent(bp, term) != 1) {
-		printf("ERROR: Unable to get termcap entry for %s.\n", term);
+		terror("ERROR: Unable to get termcap entry.\n");
 		exit(1);
 	}
 
@@ -106,7 +135,14 @@ static void tlinit(void)
 
 	termcap_end = end;
 
-	termcap_keys();
+	/* get the cursor and function key defines */
+	for (i = 0; i < 22; ++i) {
+		key = termcap_end;
+		tgetstr(key_names[i], &termcap_end);
+		if (key != termcap_end)
+			if (*key == 033)
+				set_tkey(i, key);
+	}
 }
 #else
 static void tlinit(void) {}

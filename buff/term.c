@@ -66,6 +66,19 @@ again:
 	goto again;
 }
 
+/** Buffered write optimized for 1 byte. It has the same prototype as
+ * putchar() so it can be used by termcap.
+ * @param c The byte to write.
+ * @return Returns the byte written.
+ */
+int tputc(int c)
+{
+	if (tcur >= MAX_BUF)
+		tflush();
+	tbuffer[tcur++] = (Byte)c;
+	return c;
+}
+
 /** Buffered terminal flush. Flushes the buffered output. */
 void tflush(void)
 {
@@ -110,7 +123,7 @@ void tputchar(Byte ch)
 	DWORD written;
 	WriteConsole(hstdout, &ch, 1, &written, NULL);
 #else
-	twrite(&ch, 1);
+	tputc(ch);
 #endif
 	++Scol;
 	++Pcol;

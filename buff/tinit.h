@@ -33,11 +33,9 @@
  * @{
 */
 
-#ifdef TERMCAP
-#include <termcap.h>
-#define TPUTS(s) tputs(s, 1, putchar)
-extern char *cm[];
-extern char *termcap_end;
+#if defined(__unix__)
+/* This is user configurable, turn it off if you want */
+#define TBUFFERED
 #endif
 
 #define	ROWMAX			110
@@ -54,11 +52,6 @@ void tkbdinit(void);
 
 #define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
 #define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
-#endif
-
-#if defined(__unix__) && !defined(TERMCAP)
-/* This is user configurable, turn it off if you want */
-#define TBUFFERED
 #endif
 
 /* windows.h must be before buff.h... no idea why */
@@ -111,6 +104,7 @@ static inline int _twrite(int fd, const void *buf, int count)
 
 #ifdef TBUFFERED
 int twrite(const void *buf, int count);
+int tputc(int c);
 void tflush(void);
 #else
 /** Write to stdout */
@@ -119,7 +113,20 @@ static inline int twrite(const void *buf, int count)
 	return write(1, buf, count);
 }
 
+static inline int tputc(int c)
+{
+	write(1, &c, 1);
+	return c;
+}
+
 #define tflush()
+#endif
+
+#ifdef TERMCAP
+#include <termcap.h>
+#define TPUTS(s) tputs(s, 1, tputc)
+extern char *cm[];
+extern char *termcap_end;
 #endif
 
 /** Write string to stderr.

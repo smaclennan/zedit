@@ -19,16 +19,20 @@
 
 #include "buff.h"
 
-/** Swap the point and the mark. */
-int bswappnt(struct buff *buff, struct mark *tmark)
+/** Swap the Point and the mark.
+ * @param buff The buffer the point is in.
+ * @param mark The mark to swap with.
+ * @return 1 on success, 0 if mark not in buffer.
+ */
+int bswappnt(struct buff *buff, struct mark *mark)
 {
 	struct mark tmp;
 
-	if (tmark->mbuff != buff)
+	if (mark->mbuff != buff)
 		return 0;
 
 	bmrktopnt(buff, &tmp);
-	bpnttomrk(buff, tmark);
-	mrktomrk(tmark, &tmp);
+	bpnttomrk(buff, mark);
+	mrktomrk(mark, &tmp);
 	return 1;
 }

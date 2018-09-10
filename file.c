@@ -446,7 +446,6 @@ void Zread_file(void)
 
 	if ((tbuff = bcreate())) {
 		putpaw("Reading %s", lastpart(Fname));
-		bempty(tbuff);
 		rc = breadfile(tbuff, Fname, NULL);
 		if (rc == 0) {
 			btoend(tbuff);

@@ -19,8 +19,10 @@
 
 #include "buff.h"
 
-/** Peek the previous byte. Does not move the point. Returns LF at
- * start of buffer.
+/** Peek the byte before the point. Does not move the point. Returns
+ * LF at start of buffer. Much more efficient than moving the Point.
+ * @param buff The buffer to peek.
+ * @return The byte before the point. Returns LF at start of buffer.
  */
 Byte bpeek(struct buff *buff)
 {

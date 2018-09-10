@@ -19,12 +19,17 @@
 
 #include "buff.h"
 
-/** Put the current buffer point at the mark */
-int bpnttomrk(struct buff *buff, struct mark *tmark)
+/** Move the current buffer Point to the mark.
+ * @param buff The buffer the point is in.
+ * @param mark The mark to move the Point to.
+ * @return 1 on success, 0 if the mark is not in the same buffer as
+ * the Point.
+ */
+int bpnttomrk(struct buff *buff, struct mark *mark)
 {
-	if (tmark->mbuff != buff)
+	if (mark->mbuff != buff)
 		return 0;
-	if (tmark->mpage)
-		makecur(buff, tmark->mpage, tmark->moffset);
+	if (mark->mpage)
+		makecur(buff, mark->mpage, mark->moffset);
 	return 1;
 }

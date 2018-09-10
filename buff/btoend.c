@@ -19,7 +19,9 @@
 
 #include "buff.h"
 
-/** Move point to end of buffer. */
+/** Move point to end of buffer.
+ * @param buff Buffer to move Point in.
+ */
 void btoend(struct buff *buff)
 {
 	struct page *lastp;

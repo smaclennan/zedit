@@ -54,7 +54,7 @@ static void dump_pages(struct buff *buff, const char *str)
 			printf("  '%.*s'\n", pg->plen, pg->pdata);
 }
 
-static void create_file(const char *fname)
+static void create_file(const char *fname, const char *str)
 {
 	int fd = open(fname, O_CREAT | O_TRUNC | O_WRONLY, 0666);
 	if (fd < 0) {
@@ -62,12 +62,19 @@ static void create_file(const char *fname)
 		exit(1);
 	}
 
-	char buff[PGSIZE];
-	memset(buff, 'R', sizeof(buff));
-	int n = write(fd, buff, sizeof(buff));
+	int n, expected;
+	if (str) {
+		expected = strlen(str);
+		n = write(fd, str, expected);
+	} else {
+		char buff[PGSIZE];
+		memset(buff, 'R', sizeof(buff));
+		n = write(fd, buff, sizeof(buff));
+		expected = sizeof(buff);
+	}
 	close(fd);
 
-	if (n != sizeof(buff)) {
+	if (n != expected) {
 		puts("Create file failed");
 		exit(1);
 	}
@@ -92,7 +99,7 @@ int main(int argc, char *argv[])
 	freepage(NULL, page);
 	assert(next->prevp == NULL);
 
-	create_file(FILENAME);
+	create_file(FILENAME, NULL);
 
 	struct buff *buff = bcreate();
 	int rc = breadfile(buff, FILENAME, NULL);
@@ -142,6 +149,14 @@ int main(int argc, char *argv[])
 	binstr(buff, "int %d", 666);
 	binstr(buff, " unsigned %u", 666);
 	dump_pages(buff, "binstr");
+	bdelbuff(buff);
+
+	create_file(FILENAME, "new ");
+	buff = bcreate();
+	binstr(buff, "Hello world");
+	bmove(buff, -5);
+	assert(breadfile(buff, FILENAME, NULL) == 0);
+	dump_pages(buff, "breadfile");
 	bdelbuff(buff);
 
 	tinit();

@@ -20,6 +20,7 @@
 #include <fcntl.h>
 #include "buff.h"
 
+/* \cond skip */
 #if ZLIB
 /** Write out a file compressed. */
 static int bwritegzip(struct buff *buff, int fd)
@@ -94,11 +95,17 @@ static int bwritedos(struct buff *buff, int fd)
 
 	return status;
 }
+/* \endcond */
 
-/** Write the buffer to the file 'fname'.
- * Mode is umask + FILE_COMPRESSED + FILE_CRLF
- * Returns:	1 if write successful.
+/** Write the buffer to the file. If mode FILE_COMPRESSED is
+ * set, then file is written out compressed (it did not have to be
+ * read compressed). If mode FILE_CRLF is set, then the file is
+ * written out in DOS mode.
  * Leaves point at start of buffer.
+ * @param buff The buffer to write out.
+ * @param fname  The file to write out to.
+ * @param mode umask umask + FILE_COMPRESSED + FILE_CRLF
+ * @return 0 on success, negative number on error.
  */
 int bwritefile(struct buff *buff, char *fname, int mode)
 {

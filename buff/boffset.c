@@ -19,7 +19,10 @@
 
 #include "buff.h"
 
-/** Move the point to a given absolute offset in the buffer. */
+/** Move the point to a given absolute offset in the buffer.
+ * @param buff The buffer to move the Point in.
+ * @param offset The offset to move to in bytes.
+ */
 void boffset(struct buff *buff, unsigned long offset)
 {
 	struct page *tpage;

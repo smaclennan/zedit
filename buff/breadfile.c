@@ -21,6 +21,7 @@
 #include <errno.h>
 #include "buff.h"
 
+/* \cond skip */
 #if ZLIB
 #undef Byte
 #include <zlib.h>
@@ -31,74 +32,15 @@
 #define fileread(a, b, c) read(a, b, c)
 #define fileclose(a) close(a)
 #endif
+/* \endcond */
 
-#if 1
 /**
- * Load the file 'fname' into the current buffer.  Returns 0
- * successfully opened file, < 0 (errno) on error, 1 on gzdopen
- * error.
- * Leaves point at start of buffer.
- */
-int breadfile(struct buff *buff, const char *fname, int *compressed)
-{
-	char buf[PGSIZE];
-	int fd, len;
-
-	fd = open(fname, O_RDONLY | O_BINARY);
-	if (fd < 0)
-		return -errno;
-
-#if ZLIB
-	gzFile gz = gzdopen(fd, "rb");
-
-	if (!gz) {
-		close(fd);
-		return 1;
-	}
-
-	if (compressed)
-		*compressed = gzdirect(gz) == 0;
-#else
-	if (compressed)
-		*compressed = 0;
-#endif
-
-	bempty(buff);
-
-	while ((len = fileread(fd, buf, PGSIZE)) > 0) {
-		if (curplen(buff)) {
-			if (!newpage(buff->curpage)) {
-				bempty(buff);
-				fileclose(fd);
-				return -ENOMEM;
-			}
-			makecur(buff, buff->curpage->nextp, 0);
-		}
-		memcpy(buff->curcptr, buf, len);
-		curplen(buff) = len;
-	}
-	fileclose(fd);
-
-	btostart(buff);
-
-#if ZLIB
-	/* Ubuntu 12.04 has a bug where zero length files are reported as
-	 * compressed.
-	 */
-	if (compressed && curplen(buff) == 0)
-		*compressed = 0;
-#endif
-
-	buff->bmodf = 0;
-
-	return 0;
-}
-#else
-/**
- * Load the file 'fname' into the current buffer at the point.  Returns 0
- * successfully opened file, < 0 (errno) on error, 1 on gzdopen
- * error.
- * Leaves point at start of inserted file.
+ * Insert a file into the buffer at the point.
+ * Leaves the point at the start of the inserted file.
+ * @param buff The buffer to read the file into.
+ * @param fname The file to read.
+ * @param[out] compressed Was the file compressed? Only if ZLIB enabled. Can be NULL.
+ * @return 0 on success, -1 on file error, 1 on zlib error.
  */
 int breadfile(struct buff *buff, const char *fname, int *compressed)
 {
@@ -133,7 +75,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 		makecur(buff, buff->curpage->nextp, 0);
 	}
 
-	bmrktopnt(&start);
+	bmrktopnt(buff, &start);
 
 	while ((len = fileread(fd, buf, PGSIZE)) > 0) {
 		if (curplen(buff)) {
@@ -148,7 +90,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 	}
 	fileclose(fd);
 
-	bpnttomrk(&start);
+	bpnttomrk(buff, &start);
 
 #if ZLIB
 	/* Ubuntu 12.04 has a bug where zero length files are reported as
@@ -162,4 +104,3 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 
 	return 0;
 }
-#endif

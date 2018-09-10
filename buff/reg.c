@@ -24,7 +24,12 @@
 #define BUILTIN_REG
 #endif
 
+/** @addtogroup buffer
+ * @{
+*/
+
 #ifndef BUILTIN_REG
+/* \cond skip */
 static int advance(struct buff *buff, regex_t *re, struct mark *REstart)
 {
 	char line[4096];
@@ -49,10 +54,15 @@ static int advance(struct buff *buff, regex_t *re, struct mark *REstart)
 		bmove1(buff);
 	return 0;
 }
+/* \endcond */
 
 /** Step through the buffer looking for a regular expression. If
  * REstart is non-null, then it points to the start of the match. The
  * point is left at the end of the match.
+ * @param buff The buffer to search in.
+ * @param re The regular expression compiled using re_compile().
+ * @param[out] REstart A mark to the start of the match. Can be NULL.
+ * @return 1 on success, 0 if no matches.
  */
 int re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 {
@@ -77,7 +87,12 @@ int re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 	return 0;
 }
 
-/** Compile a regular expression. */
+/** Compile a regular expression. Basically just calls regcomp().
+ * @param[out] re The output for the compiled expression.
+ * @param regex The regular expression to compile.
+ * @param cflags See regcomp().
+ * @return The output from regcomp().
+ */
 int re_compile(regexp_t *re, const char *regex, int cflags)
 {
 	re->circf = *regex == '^';
@@ -85,16 +100,27 @@ int re_compile(regexp_t *re, const char *regex, int cflags)
 	return regcomp(&re->re, regex, cflags);
 }
 
-/** Free a regular expression */
+/** Free a regular expression.
+ * @param re The compiled regular expression from re_compile().
+ */
 void re_free(regexp_t *re) { regfree(&re->re); }
 
-/** Convert a regular expression error to a string. */
-void re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size)
+/** Convert a regular expression error to a string.
+ * @param errcode The errcode from re_compile.
+ * @param re The compiled regular expression from re_compile().
+ * @param[out] errbuf The buffer to put the error string in.
+ * @param errbuff_size The size of the error buffer.
+ */
+void re_error(int errcode, const regexp_t *re, char *errbuf, int errbuf_size)
 {
-	regerror(errcode, &preg->re, errbuf, errbuf_size);
+	regerror(errcode, &re->re, errbuf, errbuf_size);
 }
 
-/** Check if a pre-compiled regular expression matches at the point. */
+/** Check if a pre-compiled regular expression matches at the point.
+ * @param buff The buffer to look at.
+ * @param re The compiled regular expression from re_compile().
+ * @return 1 if found.
+ */
 int _lookingat(struct buff *buff, regexp_t *re)
 {
 	struct mark start, REstart;
@@ -109,7 +135,11 @@ int _lookingat(struct buff *buff, regexp_t *re)
 	return 0;
 }
 
-/** Check if a regular expression matches at the point. */
+/** Check if a regular expression matches at the point.
+ * @param buff The buffer to look at.
+ * @param str The regular expression.
+ * @return 1 if found.
+ */
 int lookingat(struct buff *buff, const char *str)
 {
 	regexp_t re;
@@ -635,3 +665,4 @@ void re_error(int errnum, const regexp_t *preg, char *errbuf, int errbuf_size)
 
 void re_free(regexp_t *re) {}
 #endif
+/* @} */

@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Swap the Point and the mark.
  * @param buff The buffer the point is in.
  * @param mark The mark to swap with.
@@ -36,3 +40,4 @@ int bswappnt(struct buff *buff, struct mark *mark)
 	mrktomrk(mark, &tmp);
 	return 1;
 }
+/* @} */

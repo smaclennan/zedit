@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Return the length of the buffer.
  * @param buff The buffer to return the length of.
  * @return The length of the buffer in bytes.
@@ -33,3 +37,4 @@ unsigned long blength(struct buff *buff)
 
 	return len;
 }
+/* @} */

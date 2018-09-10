@@ -34,6 +34,10 @@
 #endif
 /* \endcond */
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /**
  * Insert a file into the buffer at the point.
  * Leaves the point at the start of the inserted file.
@@ -104,3 +108,4 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 
 	return 0;
 }
+/* @} */

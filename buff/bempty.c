@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Delete all bytes from a buffer and leave it with one empty page
  * (ala bcreate()). More efficient than bdelete(blength(buff)) since it
  * works on pages rather than bytes.
@@ -51,3 +55,4 @@ void bempty(struct buff *buff)
 	undo_clear(buff);
 	bsetmod(buff);
 }
+/* @} */

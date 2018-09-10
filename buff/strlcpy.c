@@ -19,8 +19,17 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 #if defined(__linux__) || defined(WIN32)
-/* A simple strlcpy implementation for Linux */
+/* A simple strlcpy implementation for systems without.
+ * @param dst The destination buffer.
+ * @param src The source buffer.
+ * @param dstsize The destination size.
+ * @return The size of the source.
+ */
 size_t strlcpy(char *dst, const char *src, size_t dstsize)
 {
 	size_t i = 0;
@@ -40,7 +49,12 @@ size_t strlcpy(char *dst, const char *src, size_t dstsize)
 	return i;
 }
 
-/* A simple strlcat implementation for Linux */
+/* A simple strlcat implementation for systems without.
+ * @param dst The destination buffer.
+ * @param src The source buffer.
+ * @param dstsize The destination size.
+ * @return The size of the source plus the size of the original destination.
+ */
 size_t strlcat(char *dst, const char *src, size_t dstsize)
 {
 	size_t i = 0;
@@ -68,7 +82,10 @@ size_t strlcat(char *dst, const char *src, size_t dstsize)
 #endif
 
 /* Concatenates any number of string. The last string must be NULL.
- * Returns length actually copied
+ * @param str The string to copy to.
+ * @param len The length of the string.
+ * @param ... The strings to concat.
+ * @return The length actually copied.
  */
 int strconcat(char *str, int len, ...)
 {
@@ -87,3 +104,4 @@ int strconcat(char *str, int len, ...)
 
 	return total;
 }
+/* @} */

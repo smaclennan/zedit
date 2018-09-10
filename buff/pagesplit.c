@@ -19,8 +19,17 @@
 
 #include "buff.h"
 
-/** Split the current full page and return a new page. Leaves dist in
- * curpage. Point is moved to the new page if required.
+/** @addtogroup buffer
+ * @{
+*/
+
+/** Low-level page function to split the current full page and return
+ * a new page. Leaves dist in curpage. Point is moved to the new page
+ * if required.
+ * @param buff The buffer the Point is in.
+ * @param dist The amount to leave in the old page (usually
+ * HALFP). Must be <= PGSIZE.
+ * @return The new page or NULL.
  */
 struct page *pagesplit(struct buff *buff, unsigned dist)
 {
@@ -58,3 +67,4 @@ struct page *pagesplit(struct buff *buff, unsigned dist)
 
 	return newp;
 }
+/* @} */

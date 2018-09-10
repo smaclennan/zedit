@@ -19,7 +19,15 @@
 
 #include "buff.h"
 
-/** True if mark1 precedes mark2 */
+/** @addtogroup buffer
+ * @{
+*/
+
+/** True if mark1 precedes mark2.
+ * @param mark1 First mark.
+ * @param mark2 Second mark.
+ * @return 1 if mark1 before mark2.
+ */
 int mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 {
 	struct page *tpage;
@@ -38,3 +46,4 @@ int mrkbeforemrk(struct mark *mark1, struct mark *mark2)
 		;
 	return tpage != NULL;
 }
+/* @} */

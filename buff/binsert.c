@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+ */
+
 /** Insert a byte into a buffer. Grow the buffer if needed.
  * @param buff The buffer to insert into.
  * @param byte The byte to insert.
@@ -50,3 +54,4 @@ int binsert(struct buff *buff, Byte byte)
 	bsetmod(buff);
 	return 1;
 }
+/* @} */

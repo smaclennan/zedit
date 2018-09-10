@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Move the point relative to its current position. The move can be
  * forward (positive dist) or backwards (negative dist). See bmove1()
  * for a more efficient move of dist 1.
@@ -56,4 +60,4 @@ int bmove(struct buff *buff, int dist)
 	}
 	return 1;
 }
-
+/* @} */

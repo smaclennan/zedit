@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Default #bsetmod function. Does nothing ;) */
 static void dummy_bsetmod(struct buff *buff) {}
 /** If you need to know when the buffer is modified, this callback
@@ -33,3 +37,4 @@ void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
  */
 struct mark *Marklist;	/* the marks list tail */
 #endif
+/* @} */

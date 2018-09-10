@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Is the buffer Point after the mark?
  * @param buff The buffer the Point is in.
  * @param mark The mark to check against.
@@ -40,3 +44,4 @@ int bisaftermrk(struct buff *buff, struct mark *mark)
 		;
 	return tp != NULL;
 }
+/* @} */

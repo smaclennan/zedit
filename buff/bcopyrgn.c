@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+ */
+
 /** Copy from Point to mark to another buffer.
  * @param mark Copy from Point to mark.
  * @param to The buffer to copy to.
@@ -84,3 +88,4 @@ long bcopyrgn(struct mark *mark, struct buff *to)
 
 	return copied;
 }
+/* @} */

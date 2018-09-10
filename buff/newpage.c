@@ -19,15 +19,20 @@
 
 #include "buff.h"
 
-/** Create a new memory page and link into chain after curpage. */
+/** @addtogroup buffer
+ * @{
+*/
+
+/** Low-level page function to create a new memory page and link into
+ * chain after curpage.
+ * @param curpage The current page. Can be NULL.
+ * @return The new page or NULL.
+ */
 struct page *newpage(struct page *curpage)
 {
 	struct page *page = (struct page *)calloc(1, sizeof(struct page));
 
-	if (!page)
-		return NULL;
-
-	if (curpage) {
+	if (page && curpage) {
 		page->prevp = curpage;
 		if (curpage->nextp) {
 			page->nextp = curpage->nextp;
@@ -38,3 +43,4 @@ struct page *newpage(struct page *curpage)
 
 	return page;
 }
+/* @} */

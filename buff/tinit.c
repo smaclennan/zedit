@@ -20,6 +20,7 @@
 #include <signal.h>
 #include "tinit.h"
 
+/* \cond skip */
 #ifdef __unix__
 #ifdef HAVE_TERMIO
 #include <termio.h>
@@ -110,8 +111,15 @@ static void tlinit(void)
 #else
 static void tlinit(void) {}
 #endif
+/* \endcond */
 
-/* Initalize the terminal. */
+/** @addtogroup term
+ * @{
+*/
+
+/** Initalize the terminal. Sets the terminal up for raw character at
+ * a time with no echo input.
+ */
 void tinit(void)
 {
 #ifdef __unix__
@@ -140,3 +148,4 @@ void tinit(void)
 	tlinit();
 	atexit(tfini);
 }
+/* @} */

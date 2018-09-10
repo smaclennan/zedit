@@ -19,6 +19,16 @@
 
 #include "tinit.h"
 
+/** @addtogroup term
+ * @{
+*/
+
+/** Allow different styles to be applied to terminal output in a generic way.
+ * The three generically supported styles are T_NORMAL, T_REVERSE, and
+ * T_BOLD. Mainly useful for Zedit.
+ * @param style The T_xxx style (see tinit.h).
+ */
+
 void tstyle(int style)
 {
 	static int cur_style = -1;
@@ -102,3 +112,4 @@ void tstyle(int style)
 	cur_style = style;
 	tflush();
 }
+/* @} */

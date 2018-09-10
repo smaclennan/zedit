@@ -19,8 +19,20 @@
 
 #include "tinit.h"
 
+/** @addtogroup term
+ * @{
+*/
+
+/** Get the current terminal size. If it can't get the size it returns
+ * 80x30.
+ * @param[out] rows The number of rows.
+ * @param[out] cols The number of columns.
+ */
 void tsize(int *rows, int *cols)
 {
+	*cols = 80;
+	*rows = 30;
+
 #ifdef WIN32
 	CONSOLE_SCREEN_BUFFER_INFO info;
 	COORD size;
@@ -66,3 +78,4 @@ void tsize(int *rows, int *cols)
 	}
 #endif
 }
+/* @} */

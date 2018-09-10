@@ -23,6 +23,11 @@
 #include <setjmp.h>
 #include "calc.h"
 
+/** @addtogroup misc
+ * @{
+*/
+
+/* \cond skip */
 /** Main calc struct */
 struct calc {
 	char ops[MAX_OPS];	/**< Stack of operators. */
@@ -208,6 +213,7 @@ static int calc_g(struct calc *c, char op)
 		else				       \
 			push_num(c, one.i op two.i);			\
 	} while (0)
+/* \endcond */
 
 /**  Simple calculator.
  *
@@ -228,6 +234,8 @@ static int calc_g(struct calc *c, char op)
  *	( )	  grouping
  *	* /	  multiplication, division
  *	+  -  addition and subtraction
+ * @param p The input string.
+ * @param[out] result The output result.
  */
 int calc(char *p, struct calc_result *result)
 {
@@ -319,3 +327,4 @@ int calc(char *p, struct calc_result *result)
 
 	return 0;
 }
+/* @} */

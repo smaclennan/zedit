@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Return the current position of the point as an index.
  * @param buff Buffer to check.
  * @return Current position (offset) of Point in buffer.
@@ -33,3 +37,4 @@ unsigned long blocation(struct buff *buff)
 
 	return len + buff->curchar;
 }
+/* @} */

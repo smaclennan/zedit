@@ -21,6 +21,10 @@
 #include <ctype.h>
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /* \cond skip */
 struct outbuff {
 	struct buff *buff;
@@ -188,3 +192,4 @@ int strfmt(char *str, int len, const char *fmt, ...)
 
 	return n;
 }
+/* @} */

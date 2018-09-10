@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Peek the byte before the point. Does not move the point. Returns
  * LF at start of buffer. Much more efficient than moving the Point.
  * @param buff The buffer to peek.
@@ -40,3 +44,4 @@ Byte bpeek(struct buff *buff)
 	bmove1(buff);
 	return ch;
 }
+/* @} */

@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Return the current line of the Point.
  * @param buff The buffer to check.
  * @return The current line 1 based.
@@ -35,3 +39,4 @@ unsigned long bline(struct buff *buff)
 	bpnttomrk(buff, &tmark);
 	return line;
 }
+/* @} */

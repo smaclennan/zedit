@@ -20,6 +20,10 @@
 #include <fcntl.h>
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /* \cond skip */
 #if ZLIB
 /** Write out a file compressed. */
@@ -138,3 +142,4 @@ done:
 	btostart(buff);
 	return status;
 }
+/* @} */

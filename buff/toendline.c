@@ -19,9 +19,16 @@
 
 #include "buff.h"
 
-/** Move point to the end of the line. */
+/** @addtogroup buffer
+ * @{
+*/
+
+/** Move point to the end of the line.
+ * @param buff The buffer to move the Point in.
+ */
 void toendline(struct buff *buff)
 {
 	if (bcsearch(buff, '\n'))
 		bmove(buff, -1);
 }
+/* @} */

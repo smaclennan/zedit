@@ -19,15 +19,25 @@
 
 #include "buff.h"
 
-/** Free a memory page. */
+/** @addtogroup buffer
+ * @{
+*/
+
+/** Low-level page function to free a memory page.
+ * @param buff The buffer to free the page from. Can be NULL.
+ * @param page The page to free. Can be NULL.
+ */
 void freepage(struct buff *buff, struct page *page)
 {
-	if (page->nextp)
-		page->nextp->prevp = page->prevp;
-	if (page->prevp)
-		page->prevp->nextp = page->nextp;
-	else if (buff)
-		buff->firstp = page->nextp;
+	if (page) {
+		if (page->nextp)
+			page->nextp->prevp = page->prevp;
+		if (page->prevp)
+			page->prevp->nextp = page->nextp;
+		else if (buff)
+			buff->firstp = page->nextp;
 
-	free(page);
+		free(page);
+	}
 }
+/* @} */

@@ -78,5 +78,8 @@ libbuff.a: $O
 checkit:
 	@sparse -D__unix__ -D__linux__ $(CFLAGS) $(CFILES)
 
+doxy:
+	doxygen doxygen/Doxyfile
+
 clean:
 	rm -f *.o libbuff.a btest sless strtest

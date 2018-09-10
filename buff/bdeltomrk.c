@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Delete from the Point to the mark in the mark buffer.
  * @param mark The mark to delete to.
  * @return The number of bytes deleted.
@@ -41,3 +45,4 @@ long bdeltomrk(struct mark *mark)
 
 	return deleted;
 }
+/* @} */

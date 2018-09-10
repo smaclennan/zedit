@@ -46,6 +46,12 @@
 #include <unistd.h>
 #endif
 
+/** @defgroup buffer Core buffer routines
+ * The core buffer routines including the mark functions.
+ */
+
+/** @defgroup misc Miscellaneous routines */
+
 /* THE BUFFER STRUCTURES */
 
 /** Main buffer structure. */

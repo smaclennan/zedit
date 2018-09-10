@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+ */
+
 /** Delete a buffer freeing all pages and marks.
  * @param buff The buffer to delete. Can be NULL.
  */
@@ -41,4 +45,4 @@ void bdelbuff(struct buff *buff)
 
 	free(buff);	/* free the buffer proper */
 }
-
+/* @} */

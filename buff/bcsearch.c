@@ -37,6 +37,10 @@ static inline Byte *memchrpage(struct buff *buff, Byte what)
 }
 /* \endcond */
 
+/** @addtogroup buffer
+ * @{
+ */
+
 /** Search forward for a single byte. If found, leaves point at the
  * byte after the match and returns 1. If not found, leaves the point
  * at the end of buffer and returns 0.
@@ -106,3 +110,4 @@ int bcrsearch(struct buff *buff, Byte what)
 	makeoffset(buff, n - buff->curpage->pdata);
 	return 1;
 }
+/* @} */

@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Go forward or back past a thingy. See bistoken() for an example
  * thingy predicate function.
  * @param buff The buffer to move in.
@@ -38,3 +42,4 @@ void bmovepast(struct buff *buff, int (*pred)(int), int forward)
 			bmove1(buff);
 	}
 }
+/* @} */

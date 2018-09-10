@@ -34,6 +34,11 @@ extern char *termcap_end;
 #define	ROWMAX			110
 #define COLMAX			256
 
+/** @defgroup term Terminal functions
+ * Functions that initialize the terminal and some optimized insert
+ * and movement functions.
+ */
+
 void tinit(void);
 void tsize(int *rows, int *cols);
 

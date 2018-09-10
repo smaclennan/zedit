@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+ */
+
 /** Create a buffer and allocate the first page.
  * @return The newly created buffer or NULL.
  */
@@ -40,3 +44,4 @@ struct buff *bcreate(void)
 	}
 	return buf;
 }
+/* @} */

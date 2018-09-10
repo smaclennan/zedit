@@ -19,7 +19,13 @@
 
 #include "buff.h"
 
-/** Move point to the beginning of the line. */
+/** @addtogroup buffer
+ * @{
+*/
+
+/** Move point to the beginning of the line.
+ * @param buff The buffer to move the Point in.
+ */
 void tobegline(struct buff *buff)
 {
 	if (buff->curchar > 0 && *(buff->curcptr - 1) == '\n')
@@ -27,3 +33,4 @@ void tobegline(struct buff *buff)
 	if (bcrsearch(buff, '\n'))
 		bmove1(buff);
 }
+/* @} */

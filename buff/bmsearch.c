@@ -20,6 +20,10 @@
 #include <ctype.h>
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /* \cond skip */
 #define NUMASCII	256			/* number of ascii chars */
 
@@ -145,3 +149,4 @@ int bm_rsearch(struct buff *buff, const char *str, int sensitive)
 
 	return 0;
 }
+/* @} */

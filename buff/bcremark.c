@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+ */
+
 #ifdef HAVE_ATOMIC
 /**
  * The freemark keeps one mark around so that bcremark() can use the
@@ -131,3 +135,4 @@ void mrkfini(void)
 	freemark = NULL;
 #endif
 }
+/* @} */

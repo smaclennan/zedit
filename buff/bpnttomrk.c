@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Move the current buffer Point to the mark.
  * @param buff The buffer the point is in.
  * @param mark The mark to move the Point to.
@@ -33,3 +37,4 @@ int bpnttomrk(struct buff *buff, struct mark *mark)
 		makecur(buff, mark->mpage, mark->moffset);
 	return 1;
 }
+/* @} */

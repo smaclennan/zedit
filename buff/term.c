@@ -19,18 +19,36 @@
 
 #include "tinit.h"
 
-int Prow, Pcol;
+/** @addtogroup term
+ * @{
+*/
+
+int Prow; /**< Current Point row. */
+int Pcol; /**< Current Point column. */
+
+/* \cond skip */
 static int Srow = -1, Scol = -1;
 static int Clrcol[ROWMAX];
+/* \endcond */
 
 /* Optimized routines to minimize output */
 
 #ifdef TBUFFERED
 
-#define MAX_BUF 2048 /* a nice screen full */
+/* a nice screen full */
+#define MAX_BUF 2048 /**< twrite() buffer size */
+
+/* \cond skip */
 static Byte tbuffer[MAX_BUF];
 static int tcur;
+/* \endcond */
 
+/** Low-level buffered terminal output routine. tputchar() is the
+ * preferred function.
+ * @param buf The output buffer.
+ * @param len The length of the output buffer.
+ * @return Same return as write() command.
+ */
 int twrite(const void *buf, int len)
 {
 again:
@@ -48,6 +66,7 @@ again:
 	goto again;
 }
 
+/** Buffered terminal flush. Flushes the buffered output. */
 void tflush(void)
 {
 	if (tcur) {
@@ -57,7 +76,9 @@ void tflush(void)
 }
 #endif
 
-/** Move the cursor to the current Prow+Pcol */
+/** Optimized move the cursor to the current Prow+Pcol. You probably
+ * want t_goto().
+ */
 void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
@@ -79,7 +100,9 @@ void tforce(void)
 	}
 }
 
-/** Print a character at the current Prow+Pcol */
+/** Print a character at the current Prow+Pcol. May be buffered.
+ * @param ch The character to put to the terminal.
+ */
 void tputchar(Byte ch)
 {
 	tforce();
@@ -95,14 +118,17 @@ void tputchar(Byte ch)
 		Clrcol[Prow] = Pcol;
 }
 
-/** Move the cursor to row+col */
+/** Optimized move the cursor to row+col.
+ * @param row Row, zero based.
+ * @param col Column, zero based.
+ */
 void t_goto(int row, int col)
 {
 	tsetpoint(row, col);
 	tforce();
 }
 
-/** Clear from Prow+Pcol to end of line */
+/** Optimized clear from Prow+Pcol to end of line. */
 void tcleol(void)
 {
 	if (Prow >= ROWMAX)
@@ -136,7 +162,9 @@ void tcleol(void)
 	}
 }
 
-/** Clear the entire window (screen) */
+/** Clear the entire window (screen). This performs a flush to make
+ * sure the screen is clear.
+ */
 void tclrwind(void)
 {
 #ifdef WIN32
@@ -156,3 +184,4 @@ void tclrwind(void)
 	Prow = Pcol = 0;
 	tflush();
 }
+/* @} */

@@ -19,6 +19,11 @@
 
 #include "buff.h"
 
+/** @addtogroup buffer
+ * @{
+*/
+
+/* \cond skip */
 /** Helper function for itoa() and utoa(). */
 static void reverse_string(char *start, char *end)
 {
@@ -32,8 +37,13 @@ static void reverse_string(char *start, char *end)
 		end--;
 	}
 }
+/* \endcond */
 
-/* Returns the end of the output */
+/* Integer to ascii.
+ * @param val The integer to convert.
+ * @param out The output string.
+ * @return A pointer to the end of the output.
+ */
 char *_bitoa(int val, char *out)
 {
 	char *p = out;
@@ -58,13 +68,22 @@ char *_bitoa(int val, char *out)
 	return p;
 }
 
+/* Integer to ascii.
+ * @param val The integer to convert.
+ * @param out The output string.
+ * @return A pointer to the start of the output.
+ */
 char *bitoa(int val, char *out)
 {
 	_bitoa(val, out);
 	return out;
 }
 
-/* Returns the end of the output */
+/* Unsigned integer to ascii.
+ * @param val The integer to convert.
+ * @param out The output string.
+ * @return A pointer to the end of the output.
+ */
 char *_butoa(unsigned val, char *out)
 {
 	char *p = out;
@@ -84,8 +103,14 @@ char *_butoa(unsigned val, char *out)
 	return p;
 }
 
+/* Unsigned integer to ascii.
+ * @param val The integer to convert.
+ * @param out The output string.
+ * @return A pointer to the start of the output.
+ */
 char *butoa(unsigned val, char *out)
 {
 	_butoa(val, out);
 	return out;
 }
+/* @} */

@@ -23,7 +23,12 @@
 #include <signal.h>
 #include <unistd.h>
 
-/** The special multi-byte keys. Note: We can currently only have 32 specials */
+/** @addtogroup term
+ * @{
+*/
+
+/** The special multi-byte keys. This array may be updated dynamically if we detect ESC O keys.
+ * Note: We can currently only have 32 specials */
 static char *Tkeys[] = {
 	"\033[A",	/* up */
 	"\033[B",	/* down */
@@ -54,6 +59,7 @@ static char *Tkeys[] = {
 	"\033[8^"	/* C-end */
 };
 
+/* \cond skip */
 /** The size of the keyboard input stack. Must be a power of 2 */
 #define CSTACK 16
 static Byte cstack[CSTACK]; /**< The keyboard input stack */
@@ -139,8 +145,11 @@ static int check_specials(void)
 
 	return _tgetkb() & 0x7f;
 }
+/* \endcond */
 
-/** Get keyboard input. Handles the special keys. */
+/** Get keyboard input. Handles the special keys.
+ * @return The next key input.
+ */
 int tgetkb(void)
 {
 	int cmd = _tgetkb() & 0x7f;
@@ -154,10 +163,14 @@ int tgetkb(void)
 	return cmd;
 }
 
+/* \cond skip */
 /** A static pollfd for stdin. */
 static struct pollfd stdin_fd = { .fd = 0, .events = POLLIN };
+/* \endcond */
 
-/** Is there a key waiting? Non-blocking command. */
+/** Is there a key waiting? Non-blocking command.
+ * @return 1 if a key is pending.
+ */
 int tkbrdy(void)
 {
 	if (cpushed || Pending)
@@ -166,7 +179,10 @@ int tkbrdy(void)
 	return Pending = poll(&stdin_fd, 1, 0) == 1;
 }
 
-/** Delay for a set time or until there is keyboard input. */
+/** Delay for a set time or until there is keyboard input.
+ * @param ms The delay in milliseconds.
+ * @return 1 if we delayed, 0 if a key is pending.
+ */
 int tdelay(int ms)
 {
 	if (cpushed || Pending)
@@ -218,3 +234,4 @@ void termcap_keys(void)
 	}
 }
 #endif
+/* @} */

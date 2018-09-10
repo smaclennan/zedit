@@ -131,7 +131,7 @@ void bdelmark(struct mark *mark)
 void mrkfini(void)
 {	/* This is only here since it needs to know about freemark */
 #ifdef HAVE_ATOMIC
-	FREE(freemark);
+	free(freemark);
 	freemark = NULL;
 #endif
 }

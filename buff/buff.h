@@ -76,11 +76,6 @@ struct buff {
 #endif
 };
 
-/* free() a possibly NULL pointer. This should always be safe... but
- * make it a macro just in case.
- */
-#define FREE(m) free(m)
-
 /* mark.h needs the buffer structure */
 #include "mark.h"
 

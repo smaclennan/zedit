@@ -315,8 +315,8 @@ void Zlife(void)
 	matrix1 = malloc(MATRIX);
 	matrix2 = malloc(MATRIX);
 	if (!matrix1 || !matrix2) {
-		FREE(matrix1);
-		FREE(matrix2);
+		free(matrix1);
+		free(matrix2);
 		error("Not enough memory.");
 		return;
 	}

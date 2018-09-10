@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	FREE(NULL);
+	free(NULL); /* paranoia */
 
 	return err;
 }

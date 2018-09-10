@@ -38,7 +38,7 @@ static char *dbgfname;
  */
 const char *Dbgfname(const char *fname)
 {
-	FREE(dbgfname);
+	free(dbgfname);
 	dbgfname = NULL;
 	if (fname) {
 		dbgfname = malloc(strlen(fname) + 1);

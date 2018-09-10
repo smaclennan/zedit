@@ -44,7 +44,7 @@ static int tcur;
 /* \endcond */
 
 /** Low-level buffered terminal output routine. tputchar() is the
- * preferred function.
+ * preferred function if you are using the optimized functions.
  * @param buf The output buffer.
  * @param len The length of the output buffer.
  * @return Same return as write() command.

@@ -67,11 +67,10 @@ static void _putpaw(const char *str)
 	if (InPaw)
 		return;
 
-	tsetpoint(Rowmax - 1, 0);
+	t_goto(Rowmax - 1, 0);
 	tprntstr(str);
 	tcleol();
-	tsetpoint(trow, tcol);
-	tforce();
+	t_goto(trow, tcol);
 	tflush();
 }
 

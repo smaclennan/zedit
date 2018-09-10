@@ -24,6 +24,15 @@
 #include "config.h"
 #endif
 
+/** @defgroup term Terminal functions
+ * Functions that initialize the terminal and some optimized insert
+ * and movement functions.
+ */
+
+/** @addtogroup term
+ * @{
+*/
+
 #ifdef TERMCAP
 #include <termcap.h>
 #define TPUTS(s) tputs(s, 1, putchar)
@@ -33,11 +42,6 @@ extern char *termcap_end;
 
 #define	ROWMAX			110
 #define COLMAX			256
-
-/** @defgroup term Terminal functions
- * Functions that initialize the terminal and some optimized insert
- * and movement functions.
- */
 
 void tinit(void);
 void tsize(int *rows, int *cols);
@@ -95,11 +99,12 @@ void tclrwind(void);
 
 void tstyle(int style);
 
-char *bitoa(int val, char *out);
-char *butoa(unsigned val, char *out);
-char *_butoa(unsigned val, char *out);
-
-/** Low level twrite mainly to get around write return warnings */
+/** Low level twrite mainly to get around write return warnings.
+ * @param fd File descriptor to write to.
+ * @param buf The output buffer.
+ * @param count The number of bytes to output.
+ * @return Return from write().
+ */
 static inline int _twrite(int fd, const void *buf, int count)
 {
 	return write(fd, buf, count);
@@ -118,10 +123,14 @@ static inline int twrite(const void *buf, int count)
 #define tflush()
 #endif
 
-/** Write string to stderr */
+/** Write string to stderr.
+ * @param str String to write.
+ * @return Output from _twrite().
+ */
 static inline int terror(const char *str)
 {
-	return write(2, str, strlen(str));
+	return _twrite(2, str, strlen(str));
 }
+/* @} */
 
 #endif

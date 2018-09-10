@@ -20,7 +20,13 @@
 #ifndef _calc_h_
 #define _calc_h_
 
-/* reasonable default */
+/** @addtogroup misc
+ * @{
+*/
+
+/** This is the maximum number of operations that can be outstanding
+ * at one time. This mainly limits the number of nested brackets.
+ */
 #define MAX_OPS 10
 
 #define CALC_STACK_OVERFLOW 1
@@ -43,5 +49,6 @@ struct calc_result {
 };
 
 int calc(char *p, struct calc_result *result);
+/* @} */
 
 #endif

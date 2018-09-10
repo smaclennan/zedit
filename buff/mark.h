@@ -22,6 +22,10 @@
 
 #include <string.h>
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /**
  * The static and/or dynamic mark structure.
  */
@@ -107,5 +111,6 @@ extern struct mark *Marklist;
 #define foreach_pagemark(buff, mark, page) if (0)
 #define foreach_buffmark(buff, mark) if (0)
 #endif
+/* @} */
 
 #endif /* _mark_h */

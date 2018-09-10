@@ -33,6 +33,10 @@
 #ifndef _reg_h
 #define _reg_h
 
+/** @addtogroup buffer
+ * @{
+*/
+
 #ifdef BUILTIN_REG
 #define ESIZE		256			/* reg exp buffer size */
 
@@ -64,5 +68,6 @@ void re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size);
 void re_free(regexp_t *re);
 int lookingat(struct buff *buff, const char *str);
 int _lookingat(struct buff *buff, regexp_t *re);
+/* @} */
 
 #endif

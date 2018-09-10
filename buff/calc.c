@@ -236,6 +236,7 @@ static int calc_g(struct calc *c, char op)
  *	+  -  addition and subtraction
  * @param p The input string.
  * @param[out] result The output result.
+ * @return 0 on success, one of the CALC_xxx defines on error.
  */
 int calc(char *p, struct calc_result *result)
 {

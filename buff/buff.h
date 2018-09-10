@@ -54,16 +54,20 @@
 
 /* THE BUFFER STRUCTURES */
 
+/** @addtogroup buffer
+ * @{
+*/
+
 /** Main buffer structure. */
 struct buff {
 #ifdef HAVE_BUFFER_MARKS
-	struct mark *marks;	/**< Buffer dynamic marks. */
+	struct mark *marks;			/**< Buffer dynamic marks. */
 #endif
-	struct page *firstp;	/**< List of pages. */
-	struct page *curpage;	/**< Point page. */
-	Byte *curcptr;		/**< Point position in the page. */
-	unsigned curchar;	/**< Point index in the page. */
-	int bmodf;		/**< Buffer modified? */
+	struct page *firstp;		/**< List of pages. */
+	struct page *curpage;		/**< Point page. */
+	Byte *curcptr;				/**< Point position in the page. */
+	unsigned curchar;			/**< Point index in the page. */
+	int bmodf;					/**< Buffer modified? */
 #if defined(UNDO) && UNDO
 	int in_undo;		/**< Are we currently performing an undo? */
 	void *undo_tail;	/**< List of undos. */
@@ -79,7 +83,10 @@ struct buff {
 /* mark.h needs the buffer structure */
 #include "mark.h"
 
-/* This is used a lot */
+/** Current page length.
+ * @param b Buffer to check.
+ * @return Current page length.
+ */
 #define curplen(b) ((b)->curpage->plen)
 
 extern void (*bsetmod)(struct buff *buff);
@@ -110,8 +117,8 @@ void bmovepast(struct buff *buff, int (*pred)(int), int forward);
 void bmoveto(struct buff *buff, int (*pred)(int), int forward);
 
 /* bfile.c */
-#define FILE_COMPRESSED		0x10000
-#define FILE_CRLF			0x20000
+#define FILE_COMPRESSED		0x10000 /**< File compressed flag for bwritefile(). */
+#define FILE_CRLF			0x20000 /**< DOS file flag for bwritefile(). */
 int breadfile(struct buff *buff, const char *, int *compressed);
 int bwritefile(struct buff *buff, char *, int mode);
 
@@ -134,10 +141,12 @@ void undo_del(struct buff *buff, int size);
 void undo_clear(struct buff *buff);
 int do_undo(struct buff *buff);
 #else
+/* \cond skip */
 #define undo_add(b, s)
 #define undo_del(b, s)
 #define undo_clear(b)
 #define do_undo(b) 0
+/* \endcond */
 #endif
 
 /* util.c */
@@ -146,14 +155,14 @@ size_t strlcpy(char *dst, const char *src, size_t dstsize);
 size_t strlcat(char *dst, const char *src, size_t dstsize);
 #endif
 int strconcat(char *str, int len, ...);
-const char *Dbgfname(const char *fname);
-void Dbg(const char *fmt, ...);
 
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
 
+/** Min of a and b. */
 #define MIN(a, b)	(a < b ? a : b)
+/** Max of a and b. */
 #define MAX(a, b)	(a > b ? a : b)
 
 #ifndef O_BINARY
@@ -187,20 +196,26 @@ struct page *newpage(struct page *curpage);
 void freepage(struct buff *buff, struct page *page);
 struct page *pagesplit(struct buff *buff, unsigned dist);
 
-/** Is the point at the start of the buffer? */
+/** Is the point at the start of the buffer?
+ * @param bbuff The buffer to check.
+ * @return 1 if at start.
+ */
 static inline int bisstart(struct buff *buff)
 {
 	return buff->curpage == buff->firstp && buff->curchar == 0;
 }
 
-/** Is the point at the end of the buffer? */
+/** Is the point at the end of the buffer?
+ * @param bbuff The buffer to check.
+ * @return 1 if at end.
+ */
 static inline int bisend(struct buff *buff)
 {
 	return buff->curpage->nextp == NULL &&
 		buff->curchar >= buff->curpage->plen;
 }
 
-/* Helper function - use makecur */
+/* Helper function - always use makecur */
 static inline void __makecur(struct buff *buff, struct page *page, int dist)
 {
 	buff->curpage = page;
@@ -215,26 +230,35 @@ void makecur(struct buff *buff, struct page *page, int dist);
 #define makecur __makecur
 #endif
 
-/** Move point to start of buffer. */
+/** Move point to start of buffer.
+ * @param buff Buffer to move Point in.
+ */
 static inline void btostart(struct buff *buff)
 {
 	makecur(buff, buff->firstp, 0);
 }
 
-/** Move current page to offset. */
+/** Move current page to offset.
+ * @param buff Buffer to move offset in.
+ * @param dist Amount to move offset (can be negative).
+ */
 static inline void makeoffset(struct buff *buff, int dist)
 {
 	buff->curchar = dist;
 	buff->curcptr = buff->curpage->pdata + dist;
 }
 
-/** Is this the last page in the buffer? */
+/** Is this the last page in the buffer?
+ * @param page Page to check.
+ */
 static inline int lastp(struct page *page)
 {
 	return page->nextp == NULL;
 }
 
-/** Moves the point forward one. This function is highly optimized. */
+/** Moves the point forward one. This function is highly optimized.
+ * @param buff Buffer to move Point in.
+ */
 static inline void bmove1(struct buff *buff)
 {
 	if (++buff->curchar < curplen(buff))
@@ -283,5 +307,13 @@ void bhugecleanup(struct buff *buff);
 #define atomic_inc(a) (++(a))
 #define atomic_dec(a) (--(a))
 #endif
+/* @} buffer */
+
+/** @addtogroup misc
+ * @{
+*/
+const char *Dbgfname(const char *fname);
+void Dbg(const char *fmt, ...);
+/* @} misc */
 
 #endif

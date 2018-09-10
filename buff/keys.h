@@ -20,6 +20,10 @@
 #ifndef _KEYS_H_
 #define _KEYS_H_
 
+/** @addtogroup term
+ * @{
+*/
+
 #define CX(n)	((n) + 128)
 #define M(n)	((n) + 256)
 
@@ -76,5 +80,6 @@ void termcap_keys(void);
 /* Return non-zero if you don't want tgetkb to handle the event */
 extern int (*winkbd_event_cb)(INPUT_RECORD *event);
 #endif
+/* @} */
 
 #endif

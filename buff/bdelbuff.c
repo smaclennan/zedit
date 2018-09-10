@@ -19,24 +19,26 @@
 
 #include "buff.h"
 
-/** Delete a buffer. Buffer can be NULL. */
-void bdelbuff(struct buff *tbuff)
+/** Delete a buffer freeing all pages and marks.
+ * @param buff The buffer to delete. Can be NULL.
+ */
+void bdelbuff(struct buff *buff)
 {
-	if (!tbuff)
+	if (!buff)
 		return;
 
 #if HUGE_FILES
-	bhugecleanup(tbuff);
+	bhugecleanup(buff);
 #endif
 
-	while (tbuff->firstp)	/* delete the pages */
-		freepage(tbuff, tbuff->firstp);
+	while (buff->firstp)	/* delete the pages */
+		freepage(buff, buff->firstp);
 
 #ifdef HAVE_BUFFER_MARKS
-	while (tbuff->marks) /* delete the marks */
-		bdelmark(tbuff->marks);
+	while (buff->marks) /* delete the marks */
+		bdelmark(buff->marks);
 #endif
 
-	free(tbuff);	/* free the buffer proper */
+	free(buff);	/* free the buffer proper */
 }
 

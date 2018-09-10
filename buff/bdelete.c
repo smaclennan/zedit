@@ -19,7 +19,10 @@
 
 #include "buff.h"
 
-/** Delete quantity characters from the buffer at the current point. */
+/** Delete byte(s) from the buffer at the current point.
+ * @param buff The buffer to delete from.
+ * @param quantity The number of bytes to delete.
+ */
 void bdelete(struct buff *buff, unsigned quantity)
 {
 	unsigned quan, noffset;

@@ -19,7 +19,12 @@
 
 #include "buff.h"
 
-/** Go forward or back to a thingy */
+/** Go forward or back to a thingy. See bistoken() for an example
+ * thingy predicate function.
+ * @param buff The buffer to move in.
+ * @param pred The thingy function.
+ * @param forward 1 to move forward, 0 to move backward.
+ */
 void bmoveto(struct buff *buff, int (*pred)(int), int forward)
 {
 	if (forward)

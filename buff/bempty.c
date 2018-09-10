@@ -22,6 +22,7 @@
 /** Delete all bytes from a buffer and leave it with one empty page
  * (ala bcreate()). More efficient than bdelete(blength(buff)) since it
  * works on pages rather than bytes.
+ * @param buff The buffer to empty.
  */
 void bempty(struct buff *buff)
 {

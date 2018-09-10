@@ -20,6 +20,7 @@
 #include <ctype.h>
 #include "buff.h"
 
+/* \cond skip */
 #define NUMASCII	256			/* number of ascii chars */
 
 #define buff() (*buff->curcptr)
@@ -30,12 +31,17 @@ static inline int bequal(struct buff *buff, char ch, int sensitive)
 	return buff() == ch ||
 		(!sensitive && tolower(buff()) == tolower(ch));
 }
+/* \endcond */
 
 /** This is an implementation of the Boyer-Moore Search.
  * It uses the delta1 only with the fast/slow loops.
  * It searches for the string 'str' starting at the current buffer location.
  * If sensitive is 0, then the match is case insensitive.
  * The point is left at the byte after the search str.
+ * @param buff The buffer to search in.
+ * @param str The string to search for.
+ * @param sensitive Should the search be case sensitive?
+ * @return 1 if string found, 0 if not.
  */
 int bm_search(struct buff *buff, const char *str, int sensitive)
 {
@@ -90,6 +96,10 @@ int bm_search(struct buff *buff, const char *str, int sensitive)
  * It searches for the string 'str' starting at the current buffer location.
  * If sensitive is 0, then the match is case insensitive.
  * The point is left at the start of the search str.
+ * @param buff The buffer to search in.
+ * @param str The string to search backwards for.
+ * @param sensitive Should the search be case sensitive?
+ * @return 1 if string found, 0 if not.
  */
 int bm_rsearch(struct buff *buff, const char *str, int sensitive)
 {

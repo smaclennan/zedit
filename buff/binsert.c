@@ -19,8 +19,10 @@
 
 #include "buff.h"
 
-/** Insert a byte into a buffer. Returns 0 if more space is needed
- * but we cannot allocate it.
+/** Insert a byte into a buffer. Grow the buffer if needed.
+ * @param buff The buffer to insert into.
+ * @param byte The byte to insert.
+ * @return 1 on success, 0 if we cannot allocate space for the byte.
  */
 int binsert(struct buff *buff, Byte byte)
 {

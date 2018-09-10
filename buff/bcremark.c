@@ -34,28 +34,32 @@ static struct mark *freemark;
  * This is a helper function that creates a mark on a mark list. For
  * example, it could be used to create marks on the global
  * #Marklist. Normally you would use bcremark().
+ *
+ * @param buff The buffer to create the mark in.
+ * @param tail The tail of the mark list to add the mark to.
+ * @return The newly created mark or NULL.
  */
 struct mark *_bcremark(struct buff *buff, struct mark **tail)
 {
-	struct mark *mptr;
+	struct mark *mark;
 
 #ifdef HAVE_ATOMIC
-	mptr = atomic_exchange(&freemark, freemark, NULL);
-	if (!mptr)
+	mark = atomic_exchange(&freemark, freemark, NULL);
+	if (!mark)
 #endif
-		mptr = (struct mark *)calloc(1, sizeof(struct mark));
-	if (mptr) {
+		mark = (struct mark *)calloc(1, sizeof(struct mark));
+	if (mark) {
 #if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
 		if (tail) {
-			mptr->prev = *tail; /* add to end of list */
+			mark->prev = *tail; /* add to end of list */
 			if (*tail)
-				(*tail)->next = mptr;
-			*tail = mptr;
+				(*tail)->next = mark;
+			*tail = mark;
 		}
 #endif
-		bmrktopnt(buff, mptr);
+		bmrktopnt(buff, mark);
 	}
-	return mptr;
+	return mark;
 }
 
 /** Create a mark in the specified buffer.
@@ -63,6 +67,9 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
  * If dynamic marks are enabled (#HAVE_GLOBAL_MARKS or
  * #HAVE_BUFFER_MARKS) then the buffer code will keep the mark in place
  * as bytes are inserted or deleted.
+ *
+ * @param buff The buffer to create the mark in.
+ * @return The newly created mark or NULL.
  */
 struct mark *bcremark(struct buff *buff)
 {
@@ -73,38 +80,43 @@ struct mark *bcremark(struct buff *buff)
 #endif
 }
 
-/** Low-level delete mark. You probably want bdelmark(). */
-void _bdelmark(struct mark *mptr, struct mark **tail)
+/** Low-level delete mark. You probably want bdelmark().
+ * @param mark The mark to delete. Can be NULL.
+ * @param tail The mark list to remove the mark from.
+ */
+void _bdelmark(struct mark *mark, struct mark **tail)
 {
-	if (mptr) {
+	if (mark) {
 #if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
 		if (tail) {
-			if (mptr == *tail)
-				*tail = mptr->prev;
-			if (mptr->prev)
-				mptr->prev->next = mptr->next;
-			if (mptr->next)
-				mptr->next->prev = mptr->prev;
+			if (mark == *tail)
+				*tail = mark->prev;
+			if (mark->prev)
+				mark->prev->next = mark->next;
+			if (mark->next)
+				mark->next->prev = mark->prev;
 		}
-		mptr->prev = mptr->next = NULL;
+		mark->prev = mark->next = NULL;
 #endif
 #ifdef HAVE_ATOMIC
-		if (atomic_exchange(&freemark, NULL, mptr))
+		if (atomic_exchange(&freemark, NULL, mark))
 #endif
-			free((char *)mptr);
+			free((char *)mark);
 	}
 }
 
 /** Free up the given mark and remove it from the list.  The mark
- * should be created with bcremark(). The mark can be NULL.
+ * should be created with bcremark().
+ *
+ * @param mark The mark to delete. Can be NULL.
  */
-void bdelmark(struct mark *mptr)
+void bdelmark(struct mark *mark)
 {
 #ifdef HAVE_BUFFER_MARKS
-	if (mptr)
-		_bdelmark(mptr, &mptr->mbuff->marks);
+	if (mark)
+		_bdelmark(mark, &mark->mbuff->marks);
 #else
-	_bdelmark(mptr, NULL);
+	_bdelmark(mark, NULL);
 #endif
 }
 

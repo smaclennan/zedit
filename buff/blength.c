@@ -19,13 +19,16 @@
 
 #include "buff.h"
 
-/** Return the length of the buffer. */
-unsigned long blength(struct buff *tbuff)
+/** Return the length of the buffer.
+ * @param buff The buffer to return the length of.
+ * @return The length of the buffer in bytes.
+ */
+unsigned long blength(struct buff *buff)
 {
 	struct page *tpage;
 	unsigned long len = 0;
 
-	for (tpage = tbuff->firstp; tpage; tpage = tpage->nextp)
+	for (tpage = buff->firstp; tpage; tpage = tpage->nextp)
 		len += tpage->plen;
 
 	return len;

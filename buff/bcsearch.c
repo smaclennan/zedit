@@ -1,4 +1,4 @@
-/* bmsearch.c - Boyer-Moore search functions
+/* bcsearch.c - single char search functions
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,14 +17,17 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/* \cond skip */
 #if defined(WIN32) || defined(__QNXNTO__)
 #define NO_MEMRCHR
 #else
 #define _GNU_SOURCE /* for memrchr */
 #endif
+/* \endcond */
 
 #include "buff.h"
 
+/* \cond skip */
 #define buff() (*buff->curcptr)
 
 /** Search for `what' in current buffer page starting at point. */
@@ -32,12 +35,14 @@ static inline Byte *memchrpage(struct buff *buff, Byte what)
 {
 	return memchr(buff->curcptr, what, curplen(buff) - buff->curchar);
 }
+/* \endcond */
 
-/* Not Boyer-Moore.. but I think it makes sense to put it here */
-
-/** Search forward for a single byte `what'. If what found leaves
- * point at the byte after what and returns 1. If not found leaves
- * point at the end of buffer and returns 0.
+/** Search forward for a single byte. If found, leaves point at the
+ * byte after the match and returns 1. If not found, leaves the point
+ * at the end of buffer and returns 0.
+ * @param buff The buffer to search in.
+ * @param what The byte to search for.
+ * @return 1 if byte found, 0 if not found.
  */
 int bcsearch(struct buff *buff, Byte what)
 {
@@ -79,6 +84,9 @@ static void *memrchr(const void *s, int c, size_t n)
 /** Search backward for a single byte. If byte found leaves point at
  * byte and returns 1. If not found leaves point at the start of
  * buffer and returns 0.
+ * @param buff The buffer to search in.
+ * @param what The byte to search backwards for.
+ * @return 1 if byte found, 0 if not found.
  */
 int bcrsearch(struct buff *buff, Byte what)
 {

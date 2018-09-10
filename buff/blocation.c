@@ -19,7 +19,10 @@
 
 #include "buff.h"
 
-/** Return the current position of the point as an index. */
+/** Return the current position of the point as an index.
+ * @param buff Buffer to check.
+ * @return Current position (offset) of Point in buffer.
+ */
 unsigned long blocation(struct buff *buff)
 {
 	struct page *tpage;

@@ -19,7 +19,10 @@
 
 #include "buff.h"
 
-/** Return the current line of the point. */
+/** Return the current line of the Point.
+ * @param buff The buffer to check.
+ * @return The current line 1 based.
+ */
 unsigned long bline(struct buff *buff)
 {
 	struct mark tmark;

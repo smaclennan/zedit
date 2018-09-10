@@ -21,6 +21,7 @@
 #include <ctype.h>
 #include "buff.h"
 
+/* \cond skip */
 struct outbuff {
 	struct buff *buff;
 	char *str;
@@ -98,13 +99,17 @@ static int handle_format(struct outbuff *out, const char **fmt, va_list ap)
 		return outchar(out, **fmt);
 	}
 }
+/* \endcond */
 
-/** Insert a string. Uses variable arguments.
+/** Insert a string formatted with variable arguments into a buffer.
  *
  * Supports a subset of printf: %%s, %%d, %%u. Format can contain a width
  * and a minus (-) for left justify.
  *
- * Returns 1 if success, 0 if output truncated.
+ * @param buff The buffer to insert into.
+ * @param fmt The format string.
+ * @param ... The zero or more variable arguments.
+ * @return 1 for success, 0 if output truncated.
  */
 int binstr(struct buff *buff, const char *fmt, ...)
 {
@@ -127,7 +132,13 @@ int binstr(struct buff *buff, const char *fmt, ...)
 	return rc;
 }
 
-/** Lower level interface to strfmt when you have the va_list */
+/** Lower level interface to strfmt() when you already have the va_list.
+ * @param str The output string.
+ * @param len The length of the output string.
+ * @param fmt The output format.
+ * @param ap The va_list.
+ * @return The number of bytes inserted.
+ */
 int strfmt_ap(char *str, int len, const char *fmt, va_list ap)
 {
 	struct outbuff out;
@@ -159,7 +170,11 @@ int strfmt_ap(char *str, int len, const char *fmt, va_list ap)
  * Supports a subset of printf: %%s, %%d, %%u. Format can contain a width
  * and a minus (-) for left justify.
  *
- * Returns bytes inserted.
+ * @param str The output string.
+ * @param len The length of the output string.
+ * @param fmt The output format.
+ * @param ... The zero or more arguments.
+ * @return The number of bytes inserted.
  */
 int strfmt(char *str, int len, const char *fmt, ...)
 {

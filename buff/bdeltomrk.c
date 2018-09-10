@@ -19,17 +19,20 @@
 
 #include "buff.h"
 
-/** Delete from the point to the Mark. Returns bytes deleted. */
-long bdeltomrk(struct mark *tmark)
+/** Delete from the Point to the mark in the mark buffer.
+ * @param mark The mark to delete to.
+ * @return The number of bytes deleted.
+ */
+long bdeltomrk(struct mark *mark)
 {
 	long amount, deleted = 0;
-	struct buff *buff = tmark->mbuff;
+	struct buff *buff = mark->mbuff;
 
-	if (bisaftermrk(buff, tmark))
-		bswappnt(buff, tmark);
-	while (bisbeforemrk(buff, tmark)) {
-		if (buff->curpage == tmark->mpage)
-			amount = tmark->moffset - buff->curchar;
+	if (bisaftermrk(buff, mark))
+		bswappnt(buff, mark);
+	while (bisbeforemrk(buff, mark)) {
+		if (buff->curpage == mark->mpage)
+			amount = mark->moffset - buff->curchar;
 		else
 			amount = curplen(buff) - buff->curchar;
 		bdelete(buff, amount);

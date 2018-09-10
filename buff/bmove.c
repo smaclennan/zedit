@@ -20,8 +20,11 @@
 #include "buff.h"
 
 /** Move the point relative to its current position. The move can be
- * forward (positive dist) or backwards (negative dist). Returns 1
- * if the full move was possible.
+ * forward (positive dist) or backwards (negative dist). See bmove1()
+ * for a more efficient move of dist 1.
+ * @param buff The buffer to move the Point in.
+ * @param dist The amount to move the Point (can be negative).
+ * @return 1 if the full move was possible, 0 if not.
  */
 int bmove(struct buff *buff, int dist)
 {

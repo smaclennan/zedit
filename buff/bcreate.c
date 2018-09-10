@@ -19,7 +19,9 @@
 
 #include "buff.h"
 
-/** Create a buffer and allocate the first page. */
+/** Create a buffer and allocate the first page.
+ * @return The newly created buffer or NULL.
+ */
 struct buff *bcreate(void)
 {
 	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));

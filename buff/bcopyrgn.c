@@ -19,26 +19,31 @@
 
 #include "buff.h"
 
-/** Copy from Point to mark to buffer 'to'. Returns bytes copied. */
-long bcopyrgn(struct mark *tmark, struct buff *to)
+/** Copy from Point to mark to another buffer.
+ * @param mark Copy from Point to mark.
+ * @param to The buffer to copy to.
+ * @return The number of bytes copied. Can return 0 if a temporary
+ * mark cannot be created.
+ */
+long bcopyrgn(struct mark *mark, struct buff *to)
 {
 	struct mark *ltmrk, *btmrk;
 	int flip;
 	int  srclen, dstlen;
 	long copied = 0;
-	struct buff *from = tmark->mbuff;
+	struct buff *from = mark->mbuff;
 
-	flip = bisaftermrk(from, tmark);
+	flip = bisaftermrk(from, mark);
 	if (flip)
-		bswappnt(from, tmark);
+		bswappnt(from, mark);
 
 	ltmrk = bcremark(from);
 	if (!ltmrk)
 		return 0;
 
-	while (bisbeforemrk(from, tmark)) {
-		if (from->curpage == tmark->mpage)
-			srclen = tmark->moffset - from->curchar;
+	while (bisbeforemrk(from, mark)) {
+		if (from->curpage == mark->mpage)
+			srclen = mark->moffset - from->curchar;
 		else
 			srclen = curplen(from) - from->curchar;
 
@@ -75,7 +80,7 @@ long bcopyrgn(struct mark *tmark, struct buff *to)
 	bdelmark(ltmrk);
 
 	if (flip)
-		bswappnt(from, tmark);
+		bswappnt(from, mark);
 
 	return copied;
 }

@@ -56,7 +56,8 @@
 #define TC_C_HOME		CX('w')
 #define TC_C_END		CX('x')
 
-/* Unknown key - always bound to Znotimpl */
+// #define TC_			CX('y')
+
 #define TC_UNKNOWN		CX('z')
 
 #define KEY_MASK		0x00ffffff
@@ -71,7 +72,6 @@
 int tgetkb(void);
 int tkbrdy(void);
 int tdelay(int ms);
-void termcap_keys(void);
 
 #ifdef WIN32
 /* This mask defines which events are sent to the winkbd_event_cb */

@@ -47,10 +47,14 @@ void bdelmark(struct mark *);
 struct mark *_bcremark(struct buff *buff, struct mark **tail);
 void _bdelmark(struct mark *mark, struct mark **tail);
 
-/** Returns 1 if buffer is at mark */
-static inline int bisatmrk(struct buff *b, struct mark *m)
+/** Is buffer Point at mark?
+ * @param buff Buffer to check.
+ * @param mark Mark to check.
+ * @return 1 if buffer Point is at mark.
+ */
+static inline int bisatmrk(struct buff *buff, struct mark *mark)
 {
-	return b->curpage == m->mpage && b->curchar == m->moffset;
+	return buff->curpage == mark->mpage && buff->curchar == mark->moffset;
 }
 int bisaftermrk(struct buff *, struct mark *);
 int bisbeforemrk(struct buff *, struct mark *);
@@ -61,21 +65,31 @@ void mrkfini(void);
 int mrkaftermrk(struct mark *, struct mark *);
 int mrkbeforemrk(struct mark *, struct mark *);
 
-/** Move the mark to the point. */
-static inline void bmrktopnt(struct buff *buff, struct mark *tmark)
+/** Move the mark to the point.
+ * @param buff The buffer Point to move the mark to.
+ * @param mark The mark to set.
+ */
+static inline void bmrktopnt(struct buff *buff, struct mark *mark)
 {
-	tmark->mbuff   = buff;
-	tmark->mpage   = buff->curpage;
-	tmark->moffset = buff->curchar;
+	mark->mbuff   = buff;
+	mark->mpage   = buff->curpage;
+	mark->moffset = buff->curchar;
 }
 
-/** Move mark 1 to mark 2 */
+/** Move mark 1 to mark 2
+ * @param m1 Destination mark.
+ * @param m2 Source mark.
+ */
 static inline void mrktomrk(struct mark *m1, struct mark *m2)
 {
 	memcpy(m1, m2, __MRKSIZE);
 }
 
-/** True if mark1 is at mark2 */
+/** Is mark1 at mark2?
+ * @param m1 First mark.
+ * @param m2 Second mark.
+ * @return mark1 == mark2.
+ */
 static inline int mrkatmrk(struct mark *m1, struct mark *m2)
 {
 	return memcmp(m1, m2, __MRKSIZE) == 0;

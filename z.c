@@ -32,16 +32,13 @@ int Cmdpushed = -1; /* Search pushed a key */
 #define CONFIGDIR "/usr/share/zedit"
 #endif
 
-static void usage(char *prog)
+static void usage(void)
 {
-	printf(
-		"usage: %s [-hrt] [-l line] [fname ...]\n"
-		"where:\t-h  displays this message.\n"
-		"\t-r  do not do CR/LF conversion.\n"
-		"\t-t  default to text mode.\n"
-		"\t-l  goto specified line number. (First file only)\n"
-		, prog);
-
+	terror("usage: zedit [-hrt] [-l line] [fname ...]\n"
+		   "where:\t-h  displays this message.\n"
+		   "\t-r  do not do CR/LF conversion.\n"
+		   "\t-t  default to text mode.\n"
+		   "\t-l  goto specified line number. (First file only)\n");
 	exit(1);
 }
 
@@ -226,7 +223,7 @@ int main(int argc, char **argv)
 			break;
 		case 'h':
 		default:
-			usage(argv[0]);
+			usage();
 		}
 
 	/* Do this BEFORE tinit */

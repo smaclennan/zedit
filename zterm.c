@@ -52,7 +52,8 @@ void hang_up(int signo)
 			bwritefile(tbuff->buff, tbuff->fname, file_mode());
 	unvoke(NULL);
 	checkpipes(0);
-	printf("\r\nThey hung up! (%d)\r\n", signo);
+	strfmt(PawStr, PAWSTRLEN, "\r\nThey hung up! (%d)\r\n", signo);
+	terror(PawStr);
 	exit(1);
 }
 

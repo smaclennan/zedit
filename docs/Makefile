@@ -1,4 +1,4 @@
-CFLAGS += -Wall
+CFLAGS += -Wall -I.. -I../buff
 
 all:	zhsort
 	./zhsort

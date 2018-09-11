@@ -2,8 +2,8 @@
 #define HAVE_MARKS
 #define HAVE_GLOBAL_MARKS
 #define UNSIGNED_BYTES
-#include "../z.h"
-#include "../keys.h"
+#include "z.h"
+#include "keys.h"
 
 void hang_up(int sig) {}
 int InPaw;

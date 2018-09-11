@@ -613,35 +613,18 @@ running.
 <h2>Generic Functions</h2>
 
 <p>The core buffer routines in Zedit are now generic enough to use
-outside of Zedit. The following files are "Zedit free":
-
-<ul>
-<li>buff.c
-<li>mark.c
-<li>bfile.c
-<li>bmsearch.c
-<li>reg.c
-<li>calc.c
-<li>undo.c
-<li>dbg.c
-<li>tinit.c
-<li>hugefile.c
-<li>bsocket.c
-<li>kbd.c
-</ul>
-
-<p>Basically anything in LFILES in the Makefile.
+outside of Zedit. Anything in the buff sub-directory is Zedit free.
 
 <h2>Threading</h2>
 
-<p>All of the routines in the files listed above are partially thread
+<p>All of the routines in the files in buff are partially thread
 safe. If you only access the buffer in one thread at a time, then they
 are safe. However buffers cannot be shared between threads without
 some form of external locking.
 
-<p>The exceptions are dbg.c and tinit.c. tinit.c could be made thread safe,
-but character at a time output to the screen does not lend itself to
-multi-threading.
+<p>The exceptions are dbg.c and the terminal functions. The terminal
+functions could be made thread safe, but character at a time output to
+the screen does not lend itself to multi-threading.
 
 <h2>Marks</h2>
 

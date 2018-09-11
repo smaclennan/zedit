@@ -18,7 +18,6 @@
  */
 
 #define FCHECK
-#include <stdio.h>
 #include "z.h"
 
 #include "varray.c"
@@ -33,6 +32,9 @@ int Colmax, Rowmax;
 #else
 #include "buff/kbd.c"
 #endif
+
+/* Need to include this after buff/kbd.c for -std=c11 */
+#include <stdio.h>
 
 #ifdef __unix__
 #define OS unix

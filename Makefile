@@ -10,10 +10,6 @@ BDIR ?= $(HOST_ARCH)
 #CC = gcc -std=c11
 #CC = clang -fno-color-diagnostics
 
-# Portable C Compiler
-#LIBDIR=/usr/local/lib/pcc/x86_64-unknown-linux-gnu/1.2.0.DEVEL/lib
-#CC = pcc -D__unix__ -L$(LIBDIR)
-
 # Set this if zlib.h is not in /usr/include
 #ZLIBINC=-I/usr/local/include
 

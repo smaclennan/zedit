@@ -242,9 +242,6 @@
     <ClInclude Include="winkeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\buff.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="bwin32.h">
       <Filter>Header Files</Filter>
     </ClInclude>

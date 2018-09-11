@@ -24,6 +24,9 @@
 #define UNSIGNED_BYTES
 #define HAVE_GLOBAL_MARKS
 #define HAVE_BUFFER_MARKS
+#ifdef WIN32
+#define BUILTIN_REG
+#endif
 #ifdef __QNXNTO__
 #define __unix__
 #endif

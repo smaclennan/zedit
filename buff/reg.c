@@ -20,10 +20,6 @@
 #include "buff.h"
 #include "reg.h"
 
-#ifdef WIN32
-#define BUILTIN_REG
-#endif
-
 /** @addtogroup buffer
  * @{
 */

@@ -18,7 +18,6 @@
  */
 
 #include "z.h"
-#include <stdio.h>
 
 static void setavar(const char *vin, bool display);
 
@@ -47,46 +46,20 @@ void Zset_variable(void)
 		setavar(Vars[rc].vname, true);
 }
 
-static void bindone(char *line)
-{
-	char cmd[STRMAX];
-	int key, i;
-
-	if (sscanf(line, "bind %o %s", &key, cmd) != 2) {
-		Dbg("Bad bind line %s\n", line);
-		return;
-	}
-	if (key < 0 || key >= NUMKEYS) {
-		Dbg("Invalid key %d\n", key);
-		return;
-	}
-
-	for (i = 0; i < NUMFUNCS; ++i)
-		if (strcmp(Cnames[i].name, cmd) == 0) {
-			Keys[key] = Cnames[i].fnum;
-			return;
-		}
-
-	Dbg("Invalid cmd %s\n", cmd);
-}
-
 /* If there is a config.z file, read it! */
 void readvfile(const char *fname)
 {
-	char line[STRMAX + 1];
-	FILE *fp = fopen(fname, "r");
-	if (fp) {
-		while (fgets(line, sizeof(line), fp)) {
-			char *p = strchr(line, '\n');
-			if (p)
-				*p = '\0';
-			if (strncmp(line, "bind", 4) == 0)
-				bindone(line);
-			else
-				setavar(line, false);
-		}
-		fclose(fp);
+	struct buff *buff = bcreate();
+
+	if (!buff || breadfile(buff, fname, NULL)) {
+		terror("Unable to read config file\n");
+		exit(1);
 	}
+
+	while (bstrline(buff, PawStr, PAWSTRLEN))
+		setavar(PawStr, false);
+
+	bdelbuff(buff);
 }
 
 static void setit(int i, const char *ptr)

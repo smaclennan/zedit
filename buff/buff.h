@@ -80,6 +80,8 @@ struct buff {
 #endif
 };
 
+#define BUFF(b) (*(b)->curcptr)
+
 /* mark.h needs the buffer structure */
 #include "mark.h"
 
@@ -96,6 +98,7 @@ void bdelbuff(struct buff *);
 int binsert(struct buff *, Byte);
 void bdelete(struct buff *, unsigned);
 int bmove(struct buff *, int);
+int bstrline(struct buff *buff, char *str, int len);
 void btoend(struct buff *);
 void tobegline(struct buff *);
 void toendline(struct buff *);

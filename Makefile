@@ -53,7 +53,7 @@ L := bcopyrgn.o bcreate.o bcremark.o bcsearch.o bdelbuff.o \
 	bdelete.o bdeltomrk.o bempty.o binsert.o binstr.o \
 	bisbeforemrk.o bisaftermrk.o blength.o bline.o blocation.o boffset.o \
 	bmovepast.o bmoveto.o bmsearch.o bmove.o bpeek.o \
-	bpnttomrk.o breadfile.o bswappnt.o btoend.o bwritefile.o \
+	bpnttomrk.o breadfile.o bstrline.o bswappnt.o btoend.o bwritefile.o \
 	calc.o dbg.o freepage.o globals.o hugefile.o itoa.o kbd.o newpage.o \
 	mrkbeforemrk.o mrkaftermrk.o pagesplit.o reg.o strlcpy.o \
 	term.o tinit.o tsize.o tstyle.o tobegline.o toendline.o
@@ -81,7 +81,7 @@ all:	fcheck $(ZEXE)
 
 $(ZEXE): $O $L
 	$(QUIET_LINK)$(CC) -o $@ $O $L $(LIBS)
-	@$(ETAGS) $(CFILES) $(HFILES)
+	@$(ETAGS) $(CFILES) buff/*.c $(HFILES)
 
 fcheck: fcheck.c funcs.c varray.c cnames.c bind.c config.h vars.h buff/keys.h
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c $(LIBS)

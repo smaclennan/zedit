@@ -31,6 +31,7 @@ CFILES = \
 	bpeek.c \
 	bpnttomrk.c \
 	breadfile.c \
+	bstrline.c \
 	bswappnt.c \
 	btoend.c \
 	bwritefile.c \

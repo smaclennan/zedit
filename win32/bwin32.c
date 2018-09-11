@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "bwin32.h"
+#include "buff.h"
 
 int optind = 1;
 char *optarg;

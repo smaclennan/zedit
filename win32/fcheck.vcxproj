@@ -44,9 +44,12 @@
     <LinkIncremental>true</LinkIncremental>
     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
     <IntDir>f-$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)f-$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IntDir>f-$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)f-$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -62,7 +65,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <CustomBuildStep>
-      <Command>c:/users/sam/source/zedit/win32/debug/fcheck.exe</Command>
+      <Command>c:/users/sam/source/zedit/win32/f-debug/fcheck.exe</Command>
       <Inputs>
       </Inputs>
       <Outputs>zversion.h</Outputs>

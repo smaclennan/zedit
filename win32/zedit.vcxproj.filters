@@ -231,6 +231,9 @@
     <ClCompile Include="..\zterm.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\buff\bstrline.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\z.h">

@@ -267,6 +267,9 @@ void Zkill(void)
 		tbell();
 }
 #else
+#undef EOF
+#include <stdio.h>
+
 void Zkill(void) { tbell(); }
 bool unvoke(zbuff_t *child) { ((void)child); return false; }
 void checkpipes(int type) { ((void)type); }

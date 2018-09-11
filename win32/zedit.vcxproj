@@ -112,6 +112,7 @@
     <ClCompile Include="..\buff\bpeek.c" />
     <ClCompile Include="..\buff\bpnttomrk.c" />
     <ClCompile Include="..\buff\breadfile.c" />
+    <ClCompile Include="..\buff\bstrline.c" />
     <ClCompile Include="..\buff\bswappnt.c" />
     <ClCompile Include="..\buff\btoend.c" />
     <ClCompile Include="..\buff\bwritefile.c" />

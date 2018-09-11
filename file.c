@@ -23,8 +23,10 @@
 #include <sys/sendfile.h>
 #endif
 
+#ifdef __unix__
 /* I am not including all of stdio.h for rename() */
 extern int rename(const char *oldpath, const char *newpath);
+#endif
 
 static char Fname[PATHMAX + 1];
 int raw_mode;

@@ -71,7 +71,6 @@ static char *dispkey(unsigned key, char *s)
 static void dump_bindings(int fnum)
 {
 	int k, found = 0;
-	char buff[BUFSIZ];
 
 	binstr(Bbuff, "\nBinding(s): ");
 
@@ -83,7 +82,7 @@ static void dump_bindings(int fnum)
 				Zfill_check();
 			} else
 				found = true;
-			binstr(Bbuff, dispkey(k, buff));
+			binstr(Bbuff, dispkey(k, PawStr));
 		}
 
 	if (!found)
@@ -202,7 +201,7 @@ void Zhelp_apropos(void)
 		if (strstr(Cnames[i].name, word)) {
 			if (match++ == 0)
 				wuseother(HELPBUFF);
-			n += snprintf(line + n, sizeof(line) - n, "%-24s", Cnames[i].name);
+			n += strfmt(line + n, sizeof(line) - n, "%-24s", Cnames[i].name);
 			if (++j == 3) {
 				binstr(Bbuff, "%s\n", line);
 				j = n = 0;

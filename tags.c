@@ -120,7 +120,7 @@ static bool find_tag(char *word)
 	if (!buff)
 		return false;
 
-	snprintf(regstr, sizeof(regstr), TAG_REGEX, word);
+	strfmt(regstr, sizeof(regstr), TAG_REGEX, word);
 	if (re_compile(&re, regstr, 0)) {
 		putpaw("regcomp failed");
 		return false;

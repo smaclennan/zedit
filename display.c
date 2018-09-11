@@ -54,7 +54,7 @@ static void huge_file_modified(struct buff *buff)
 {
 	zbuff_t *zbuff = cfindzbuff(buff);
 	if (!zbuff) { /* can't happen */
-		fputs("\n\nUnable to get zbuff for huge buffer\n\n\n", stderr);
+		terror("\n\nUnable to get zbuff for huge buffer\n\n\n");
 		exit(1);
 	}
 
@@ -79,7 +79,7 @@ static void huge_file_io(struct buff *buff)
 {
 	zbuff_t *zbuff = cfindzbuff(buff);
 	if (!zbuff) { /* can't happen */
-		fputs("\n\nUnable to get zbuff for huge buffer\n\n\n", stderr);
+		terror("\n\nUnable to get zbuff for huge buffer\n\n\n");
 		exit(1);
 	}
 

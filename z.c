@@ -78,7 +78,7 @@ void putpaw(const char *fmt, ...)
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(str, sizeof(str), fmt, ap);
+	strfmt_ap(str, sizeof(str), fmt, ap);
 	va_end(ap);
 
 	_putpaw(str);
@@ -90,7 +90,7 @@ void error(const char *fmt, ...)
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(str, sizeof(str), fmt, ap);
+	strfmt_ap(str, sizeof(str), fmt, ap);
 	va_end(ap);
 
 	tbell();
@@ -195,7 +195,7 @@ int main(int argc, char **argv)
 
 	Home = gethomedir();
 	if (!Home) {
-		puts("You don't exist!");
+		terror("You don't exist!\n");
 		exit(1);
 	}
 	Homelen = strlen(Home);
@@ -243,7 +243,7 @@ int main(int argc, char **argv)
 	Curbuff = NULL;
 
 	if (!cmakebuff(MAINBUFF, NULL)) {
-		puts("Not enough memory.");
+		terror("Not enough memory.\n");
 		exit(1);
 	}
 

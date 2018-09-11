@@ -18,6 +18,7 @@
  */
 
 #define FCHECK
+#include <stdio.h>
 #include "z.h"
 
 #include "varray.c"

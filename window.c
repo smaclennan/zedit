@@ -399,7 +399,7 @@ void winit(void)
 	/* Create first window over entire screen. */
 	Whead = wcreate(0, Rowmax - 2);
 	if (!Whead) {
-		puts("Unable to create first window!");
+		terror("Unable to create first window!\r\n");
 		exit(1);
 	}
 	wswitchto(Whead);

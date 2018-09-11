@@ -18,6 +18,7 @@
  */
 
 #include "z.h"
+#include <stdio.h>
 
 static void setavar(const char *vin, bool display);
 
@@ -37,7 +38,7 @@ void Zset_variable(void)
 			else
 				*arg = '\0';
 		else
-			snprintf(arg, sizeof(arg), "%d", VAR(rc));
+			strfmt(arg, sizeof(arg), "%d", VAR(rc));
 		if (getarg(pstr, arg, STRMAX))
 			return;
 		strconcat(pstr, sizeof(pstr), Vars[rc].vname, " ", arg, NULL);
@@ -215,16 +216,16 @@ void Zshow_config(void)
 	for (i = 0; i < NUMVARS; ++i) {
 		if (Vars[i].vtype == V_STRING) {
 			if (VARSTR(i))
-				snprintf(line, sizeof(line), "%-15s %s\n",
+				strfmt(line, sizeof(line), "%-15s %s\n",
 					 Vars[i].vname, VARSTR(i));
 			else
-				snprintf(line, sizeof(line), "#%-15s\n",
+				strfmt(line, sizeof(line), "#%-15s\n",
 					 Vars[i].vname);
 		} else if (Vars[i].vtype == V_DECIMAL)
-			snprintf(line, sizeof(line), "%-15s %d\n",
+			strfmt(line, sizeof(line), "%-15s %d\n",
 				 Vars[i].vname, VAR(i));
 		else if (Vars[i].vtype == V_FLAG)
-			snprintf(line, sizeof(line), "%-15s %s\n",
+			strfmt(line, sizeof(line), "%-15s %s\n",
 				 Vars[i].vname,
 				 VAR(i) ? "true" : "false");
 

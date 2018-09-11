@@ -22,6 +22,7 @@
 #ifdef __linux__
 #include <sys/sendfile.h>
 #endif
+#include <stdio.h> // for rename()
 
 static char Fname[PATHMAX + 1];
 int raw_mode;
@@ -361,7 +362,7 @@ bool findfile(char *path)
 			p = &tbname[i < BUFNAMMAX - 3 ? i : BUFNAMMAX - 3];
 			/* We cannot use 100 here due to a bug in gcc 7.3.0 */
 			for (i = 0; i < 99; ++i) {
-				snprintf(p, 4, ".%d", i);
+				strfmt(p, 4, ".%d", i);
 				if (!cfindbuff(tbname))
 					break;
 			}

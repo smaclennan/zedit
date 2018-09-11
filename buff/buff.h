@@ -159,6 +159,9 @@ int strconcat(char *str, int len, ...);
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
+#ifndef EOF
+#define EOF -1
+#endif
 
 /** Min of a and b. */
 #define MIN(a, b)	(a < b ? a : b)

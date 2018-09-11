@@ -109,11 +109,11 @@ void siginit(void)
 /* pipe has something for us */
 int readapipe(void)
 {
-	char buff[BUFSIZ], *ptr;
+	char buff[1024], *ptr;
 	int cnt, i;
 
 	if (in_pipe == -1) return 0;
-	cnt = i = read(in_pipe, ptr = buff, BUFSIZ);
+	cnt = i = read(in_pipe, ptr = buff, sizeof(buff));
 	if (i > 0) {
 		/* Yup! Read somethin' */
 		struct mark tmark;
@@ -141,7 +141,7 @@ static void exit_status(zbuff_t *tbuff, int status)
 		if (status == 0)
 			message(tbuff, "Done.");
 		else {
-			snprintf(PawStr, PAWSTRLEN, "Exit %d.", status);
+			strfmt(PawStr, PAWSTRLEN, "Exit %d.", status);
 			message(tbuff, PawStr);
 		}
 	}

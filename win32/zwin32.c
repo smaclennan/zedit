@@ -74,7 +74,7 @@ char *gethomedir(void)
 	if (!homedrive || !homepath)
 		return NULL;
 
-	snprintf(home, sizeof(home), "%s%s", homedrive, homepath);
+	strconcat(home, sizeof(home), homedrive, homepath, NULL);
 	psepfixup(home);
 
 	return home;

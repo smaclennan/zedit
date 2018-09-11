@@ -17,7 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h> /* for snprintf */
 #include "bwin32.h"
 
 int optind = 1;
@@ -76,7 +75,7 @@ DIR *opendir(const char *dirname)
 		return NULL;
 
 	char path[MAX_PATH];
-	snprintf(path, sizeof(path), "%s/*", dirname);
+	strfmt(path, sizeof(path), "%s/*", dirname);
 	dir->handle = FindFirstFileA(path, &dir->data);
 	if (dir->handle == INVALID_HANDLE_VALUE) {
 		free(dir);

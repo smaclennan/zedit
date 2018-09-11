@@ -22,7 +22,9 @@
 #ifdef __linux__
 #include <sys/sendfile.h>
 #endif
-#include <stdio.h> // for rename()
+
+/* I am not including all of stdio.h for rename() */
+extern int rename(const char *oldpath, const char *newpath);
 
 static char Fname[PATHMAX + 1];
 int raw_mode;

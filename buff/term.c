@@ -89,10 +89,11 @@ void tflush(void)
 }
 #endif
 
+/* \cond skip */
 /** Optimized move the cursor to the current Prow+Pcol. You probably
  * want t_goto().
  */
-void tforce(void)
+static void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
 #ifdef WIN32
@@ -112,6 +113,7 @@ void tforce(void)
 		Scol = Pcol;
 	}
 }
+/* \endcond */
 
 /** Print a character at the current Prow+Pcol. May be buffered.
  * @param ch The character to put to the terminal.

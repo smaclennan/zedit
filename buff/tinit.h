@@ -24,6 +24,37 @@
 #include "config.h"
 #endif
 
+/* Terminal code and how to use it.
+ *
+ * To use any of the terminal code you first need to call
+ * tinit(). This initializes the terminal for raw character at a time
+ * input with no echo. If that is all you need, you are done.
+ *
+ * You can use tsize() to get the current size of the terminal. This
+ * is not required for any of the other terminal functions.
+ *
+ * The main set of optimized functions are:
+ *     tputchar(Byte ch);
+ *     t_goto(int row, int col);
+ *     tcleol(void);
+ *     tclrwind(void);
+ *     tflush(void);
+ *
+ * If you stick with these functions you should have no problems since
+ * they are designed to work together. There is one caveat; if you
+ * want to use ANSI control codes you must use twrite(). This is
+ * because tputchar() assumes a character takes up a space, but ANSI
+ * control codes do not.
+ *
+ * But outside of ANSI control codes, do not mix twrite() (or worse
+ * _twrite) with the optimized functions.
+ *
+ * If you want to deal with everything yourself, go ahead and use
+ * twrite()/tflush() if you want some buffering and _twrite() if you
+ * don't. Again, don't mix twrite() and _twrite() without calling
+ * tflush() in between.
+ */
+
 /** @defgroup term Terminal functions
  * Functions that initialize the terminal and some optimized insert
  * and movement functions.
@@ -60,8 +91,6 @@ void tkbdinit(void);
 /* Optimized routines for output */
 extern int Prow, Pcol;
 
-/** Move the point to row+col but don't move the cursor */
-void tforce(void);
 void tputchar(Byte ch);
 void t_goto(int row, int col);
 void tcleol(void);

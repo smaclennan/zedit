@@ -756,7 +756,7 @@ pawshift:
 	}
 
 	--NESTED;
-	tforce();
+	t_goto(Prow, Pcol);
 	tflush();
 }
 

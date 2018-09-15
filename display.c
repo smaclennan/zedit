@@ -45,11 +45,66 @@ static struct mark *was;	/* last location of user mark for zrefresh() */
 static void (*printchar)(Byte ichar) = tprntchar;
 
 #if HUGE_FILES
+
 #if HUGE_THREADED
-/* Because these callbacks could be called from the thread, we
- * currently cannot handle HUGE_THREADED.
- */
-#error Zedit cannot handle huge threaded
+#include <samthread.h>
+
+static struct huge_event {
+	struct buff *buff;
+	int rc;
+	struct huge_event *next;
+} *events, *events_tail;
+
+static struct huge_event event_fail = { .rc = EIO };
+
+static mutex_t *event_mutex;
+
+static void add_event(struct buff *buff, int rc)
+{
+	if (event_fail.buff)
+		return;
+
+	if (event_mutex == NULL) {
+		event_mutex = mutex_create();
+		if (!event_mutex)
+			goto failed;
+	}
+
+	mutex_lock(event_mutex);
+	struct huge_event *event = calloc(1, sizeof(struct huge_event));
+	if (!event)
+		goto failed;
+
+	event->buff = buff;
+	event->rc = rc;
+	if (events == NULL)
+		events = event;
+	else
+		events_tail->next = event;
+	events_tail = event;
+	return;
+
+failed:
+	event_fail.buff = buff; // mark as failed
+	events = &event_fail;
+	mutex_unlock(event_mutex);
+}
+
+static void do_modeline_invalidate(struct buff *buff, int rc);
+
+void check_events(void)
+{
+	mutex_lock(event_mutex);
+	while (events) {
+		struct huge_event *next = events->next;
+		do_modeline_invalidate(events->buff, events->rc);
+		if (events != &event_fail)
+			free(events);
+		events = next;
+	}
+	mutex_unlock(event_mutex);
+}
+
 #endif
 
 static jmp_buf zrefresh_jmp;
@@ -94,7 +149,7 @@ static void huge_file_io(struct buff *buff)
 	longjmp(zrefresh_jmp, 1);
 }
 
-static void modeline_invalidate(struct buff *buff, int rc)
+static void do_modeline_invalidate(struct buff *buff, int rc)
 {
 	switch (rc) {
 	case 0:
@@ -104,6 +159,8 @@ static void modeline_invalidate(struct buff *buff, int rc)
 			wdo->modeflags = INVALID;
 		return; /* success */
 	}
+	case EAGAIN:
+		return;
 	case EBADF:
 		huge_file_modified(buff);
 		return;
@@ -113,6 +170,19 @@ static void modeline_invalidate(struct buff *buff, int rc)
 	default:
 		default_huge_file_cb(buff, rc);
 	}
+}
+
+static void modeline_invalidate(struct buff *buff, int rc)
+{
+#if HUGE_THREADED
+	if (buff->lock) {
+		/* we are in the thread */
+		add_event(buff, rc);
+		return;
+	}
+#endif
+
+	do_modeline_invalidate(buff, rc);
 }
 #endif
 

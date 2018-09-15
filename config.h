@@ -7,8 +7,9 @@
 #define SPELL		0	/* Requires libaspell */
 #endif
 
-#define UNDO        1
-#define HUGE_FILES	0
+#define UNDO			1
+#define HUGE_FILES		0
+#define HUGE_THREADED	0
 
 /* If TERMCAP not defined defaults to ANSI */
 /* #define TERMCAP */

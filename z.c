@@ -168,6 +168,11 @@ void execute(void)
 {
 	zrefresh();
 
+#if HUGE_FILES && HUGE_THREADED
+	extern void check_events(void);
+	check_events();
+#endif
+
 #ifdef DOPIPES
 	if (tkbrdy() || Cmdpushed != -1)
 		dotty();

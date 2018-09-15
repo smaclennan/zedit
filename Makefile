@@ -21,7 +21,7 @@ BDIR ?= $(HOST_ARCH)
 #LIBS += -lpcreposix -lpcre
 
 # For HUGE_THREADED
-#LIBS += -lpthread
+#LIBS += -lsamthread
 
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
@@ -69,7 +69,7 @@ $(BDIR)/%.o : %.c
 all:	fcheck $(BDIR) $(BDIR)/$(ZEXE)
 
 $(BDIR)/$(ZEXE): $O libbuff
-	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS) buff/z-$(BDIR)/libbuff.a
+	$(QUIET_LINK)$(CC) -o $@ $O buff/z-$(BDIR)/libbuff.a $(LIBS)
 ifeq ($(BDIR), $(HOST_ARCH))
 	@rm -f $(ZEXE)
 	@ln -s $(BDIR)/$(ZEXE) $(ZEXE)

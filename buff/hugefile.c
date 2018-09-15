@@ -27,73 +27,23 @@
 #if HUGE_FILES
 
 #if HUGE_THREADED
-static void *read_thread(void *arg);
+#include <samthread.h>
+
 static void breadpage(struct buff *buff, struct page *page);
 
-#ifdef WIN32
-static void do_lock(struct buff *buff)
-{
-	WaitForSingleObject((HANDLE)read_lock, INFINITE);
-}
-
-static void do_unlock(struct buff *buff)
-{
-	ReleaseMutex((HANDLE)buff->lock);
-}
-
-static DWORD WINAPI read_thread_wrapper(void *arg)
-{
-	read_thread(arg);
-	return 0;
-}
-
-static void start_thread(struct buff *buff)
-{
-	DWORD thread;
-	HANDLE read_lock;
-
-	read_lock = CreateMutex(NULL, FALSE, NULL);
-	if (!read_lock) {
-		Dbg("Unable to create mutex");
-		return;
-	}
-
-	buff->lock = read_lock;
-
-	if (CreateThread(NULL, 0, read_thread_wrapper, buff, 0, &thread) == NULL)
-		error("Unable to create thread.");
-}
-#else
-#include <pthread.h>
-
 static void do_lock(struct buff *buff)
 {
 	if (buff->lock)
-		pthread_mutex_lock(buff->lock);
+		mutex_lock(buff->lock);
 }
 
 static void do_unlock(struct buff *buff)
 {
 	if (buff->lock)
-		pthread_mutex_unlock(buff->lock);
+		mutex_unlock(buff->lock);
 }
 
-static void start_thread(struct buff *buff)
-{
-	pthread_t thread;
-
-	buff->lock = malloc(sizeof(pthread_mutex_t));
-	if (!buff->lock ||
-		pthread_mutex_init(buff->lock, NULL) ||
-		pthread_create(&thread, NULL, read_thread, buff)) {
-		free(buff->lock);
-		buff->lock = NULL;
-		huge_file_cb(buff, EAGAIN);
-	}
-}
-#endif
-
-static void *read_thread(void *arg)
+static int read_thread(void *arg)
 {
 	struct buff *buff = arg;
 	struct page *page;
@@ -110,8 +60,26 @@ static void *read_thread(void *arg)
 
 	Dbg("read_thread done\n");
 
-	return NULL;
+	return 0;
 }
+
+static void start_thread(struct buff *buff)
+{
+	buff->lock = mutex_create();
+	if (!buff->lock)
+		goto failed;
+
+	if (samthread_create(read_thread, buff) == (samthread_t)-1)
+		goto failed;
+
+	return;
+
+failed:
+	mutex_destroy(buff->lock);
+	buff->lock = NULL;
+	huge_file_cb(buff, EAGAIN);
+}
+
 #else
 #define do_lock(b)
 #define do_unlock(b)
@@ -298,6 +266,6 @@ void bhugecleanup(struct buff *buff)
 	do_unlock(buff);
 
 	free(buff->stat);
-	free(buff->lock);
+	mutex_destroy(buff->lock);
 }
 #endif

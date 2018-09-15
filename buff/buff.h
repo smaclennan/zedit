@@ -99,7 +99,6 @@ int binsert(struct buff *, Byte);
 void bdelete(struct buff *, unsigned);
 int bmove(struct buff *, int);
 int bstrline(struct buff *buff, char *str, int len);
-void btoend(struct buff *);
 void tobegline(struct buff *);
 void toendline(struct buff *);
 unsigned long blength(struct buff *);
@@ -256,6 +255,17 @@ static inline void makeoffset(struct buff *buff, int dist)
 static inline void btostart(struct buff *buff)
 {
 	makecur(buff, buff->firstp, 0);
+}
+
+/** Move point to end of buffer.
+ * @param buff Buffer to move Point in.
+ */
+static inline void btoend(struct buff *buff)
+{ 	/* For huge files we don't want to make every page current */
+	struct page *page;
+	for (page = buff->curpage; page->nextp; page = page->nextp)
+		;
+	makecur(buff, page, page->plen);
 }
 
 /** Is this the last page in the buffer?

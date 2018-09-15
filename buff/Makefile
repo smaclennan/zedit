@@ -33,7 +33,6 @@ CFILES = \
 	breadfile.c \
 	bstrline.c \
 	bswappnt.c \
-	btoend.c \
 	bwritefile.c \
 	calc.c \
 	dbg.c \

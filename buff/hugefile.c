@@ -275,7 +275,9 @@ void makecur(struct buff *buff, struct page *page, int dist)
 			dist = page->plen;
 	}
 
-	__makecur(buff, page, dist);
+	buff->curpage = page;
+	buff->curchar = dist;
+	buff->curcptr = page->pdata + dist;
 }
 
 void bhugecleanup(struct buff *buff)

@@ -221,20 +221,34 @@ static inline int bisend(struct buff *buff)
 		buff->curchar >= buff->curpage->plen;
 }
 
-/* Helper function - always use makecur */
-static inline void __makecur(struct buff *buff, struct page *page, int dist)
+#if HUGE_FILES
+/** Make page current at offset. */
+void makecur(struct buff *buff, struct page *page, int dist);
+#else
+/** Low level function to make page current at offset. Does not validate that page is in the
+ * buffer or that dist is valid!
+ * @param buff The buffer to use.
+ * @param page The page to make current.
+ * @param dist The offset in the page.
+ */
+static inline void makecur(struct buff *buff, struct page *page, int dist)
 {
 	buff->curpage = page;
 	buff->curchar = dist;
 	buff->curcptr = page->pdata + dist;
 }
-
-/** Make page current at offset. */
-#if HUGE_FILES
-void makecur(struct buff *buff, struct page *page, int dist);
-#else
-#define makecur __makecur
 #endif
+
+/** Low level function to move current page to offset. Does not
+ * validate dist.
+ * @param buff Buffer to move offset in.
+ * @param dist Amount to move offset.
+ */
+static inline void makeoffset(struct buff *buff, int dist)
+{
+	buff->curchar = dist;
+	buff->curcptr = buff->curpage->pdata + dist;
+}
 
 /** Move point to start of buffer.
  * @param buff Buffer to move Point in.
@@ -242,16 +256,6 @@ void makecur(struct buff *buff, struct page *page, int dist);
 static inline void btostart(struct buff *buff)
 {
 	makecur(buff, buff->firstp, 0);
-}
-
-/** Move current page to offset.
- * @param buff Buffer to move offset in.
- * @param dist Amount to move offset (can be negative).
- */
-static inline void makeoffset(struct buff *buff, int dist)
-{
-	buff->curchar = dist;
-	buff->curcptr = buff->curpage->pdata + dist;
 }
 
 /** Is this the last page in the buffer?

@@ -356,7 +356,11 @@ void zswitchto(zbuff_t *buf)
 	if (buf && buf != Curbuff) {
 		Curbuff = buf;
 		Bbuff = buf->buff;
-		makecur(Bbuff, buf->buff->curpage, buf->buff->curchar);
+
+		/* This makes the new buffs page current. */
+		struct mark tmp;
+		bmrktopnt(Bbuff, &tmp);
+		bpnttomrk(Bbuff, &tmp);
 	}
 }
 

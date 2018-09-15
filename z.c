@@ -20,6 +20,10 @@
 #include "z.h"
 #include <stdarg.h>
 
+/** @addtogroup zedit
+ * @{
+*/
+
 int verbose;
 bool Initializing = true;
 char *Home;
@@ -306,3 +310,4 @@ void Zstats(void)
 
 	putpaw("Buffers: %u  Pages: %u  Marks: %u", nbuff, npage, nmarks);
 }
+/* @} */

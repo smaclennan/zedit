@@ -17,6 +17,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/** @addtogroup zedit
+ * @{
+*/
+
 #define ZNOTIMPL		0 /* Must be zero */
 #define ZONE_WINDOW		(ZNOTIMPL + 1)
 #define ZSPLIT_WINDOW		(ZONE_WINDOW + 1)
@@ -141,3 +145,4 @@
 
 /* this is used by the getfname command in the PAW for command completion */
 #define ZFNAME		NUMFUNCS
+/* @} */

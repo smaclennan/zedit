@@ -20,6 +20,10 @@
 #include "z.h"
 #include <signal.h>
 
+/** @addtogroup zedit
+ * @{
+*/
+
 int Colmax = EOF, Rowmax;		/* Row and column maximums */
 
 int ring_bell;				/* tbell called */
@@ -273,5 +277,4 @@ void tbell_dbg(char *func, int line)
 	Dbg("tbell %s:%d\n", func, line);
 	tbell();
 }
-
-
+/* @} */

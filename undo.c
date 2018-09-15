@@ -19,6 +19,10 @@
 
 #include "buff.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 #if defined(UNDO) && UNDO
 #include <stdlib.h>
 #include <string.h>
@@ -241,3 +245,4 @@ int do_undo(struct buff *buff)
 	return 0;
 }
 #endif
+/* @} */

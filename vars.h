@@ -20,6 +20,10 @@
 #ifndef _VARS_H_
 #define _VARS_H_
 
+/** @addtogroup zedit
+ * @{
+*/
+
 enum v_type { V_STRING, V_DECIMAL, V_FLAG };
 
 /* The variable structure. */
@@ -53,5 +57,6 @@ extern struct avar Vars[];
 #define VTEXTS		(VSPACETAB + 1)
 #define VTABS		(VTEXTS + 1)
 #define NUMVARS		(VTABS + 1)
+/* @} */
 
 #endif

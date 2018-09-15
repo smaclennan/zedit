@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 static const char *key_label[] = {
 	"up", "down", "right", "left",
 	"insert", "delete", "page up", "page down", "home", "end",
@@ -258,3 +262,4 @@ void Zhelp_key(void)
 	 */
 	Cmd = was;
 }
+/* @} */

@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 Byte Lfunc;
 
 Byte Keys[] = {
@@ -222,3 +226,4 @@ Byte Keys[] = {
 
 	[M(127)] = ZDELETE_PREVIOUS_WORD,	/* M-DEL */
 };
+/* @} */

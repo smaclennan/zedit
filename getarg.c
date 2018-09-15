@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 #define PNUMCOLS		3	/* default columns for pout */
 #define PCOLSIZE		26	/* default column size */
 
@@ -99,7 +103,7 @@ bool getarg(const char *prompt, char *arg, int max)
  * Returns offset of entry in array if found, else -1.
  */
 int getplete(const char *prompt, const char *def, char **array,
-	     int size, int num)
+		 int size, int num)
 {
 	char cmdstr[STRMAX + 1];
 
@@ -260,3 +264,4 @@ void Zpart(void)
 	else
 		tbell();
 }
+/* @} */

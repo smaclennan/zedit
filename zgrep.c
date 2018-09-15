@@ -20,6 +20,10 @@
 #include "z.h"
 #include <fnmatch.h>
 
+/** @addtogroup zedit
+ * @{
+*/
+
 #ifdef WIN32
 #define FNM_FLAGS FNM_CASEFOLD
 #else
@@ -125,3 +129,4 @@ void Zgrep(void)
 		wswitchto(save);
 	}
 }
+/* @} */

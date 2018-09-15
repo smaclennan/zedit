@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 struct wdo *Whead, *Curwdo;
 
 #define MINWDO		5		/* minimum window size */
@@ -184,8 +188,8 @@ static bool sizewindow(int size)
 		other->first += size;
 	} else {
 		for (other = Whead;
-		     other && other->next != Curwdo;
-		     other = other->next)
+			 other && other->next != Curwdo;
+			 other = other->next)
 			;
 		if (other && other->last - other->first - size > MINWDO) {
 			Curwdo->first -= size;
@@ -417,3 +421,4 @@ struct wdo *wfind(int row)
 
 	return NULL;
 }
+/* @} */

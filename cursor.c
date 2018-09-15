@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 void Zbeginning_of_line(void)
 {
 	bmove(Bbuff, -1);
@@ -243,3 +247,4 @@ void Zredisplay(void)
 	foreachbuff(buff)
 		uncomment(buff);
 }
+/* @} */

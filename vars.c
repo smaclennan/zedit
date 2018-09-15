@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 static void setavar(const char *vin, bool display);
 
 void Zset_variable(void)
@@ -129,11 +133,11 @@ static void setavar(const char *vin, bool display)
 				if (Vars[i].vtype == V_STRING) {
 					if (VARSTR(i))
 						putpaw("%s = %s",
-						       Vars[i].vname,
-						       VARSTR(i));
+							   Vars[i].vname,
+							   VARSTR(i));
 					else
 						putpaw("%s = NONE",
-						       Vars[i].vname);
+							   Vars[i].vname);
 				} else
 					putpaw("%s = %d",
 						Vars[i].vname, VAR(i));
@@ -209,3 +213,4 @@ void Zshow_config(void)
 	btostart(Bbuff);
 	cswitchto(tbuff);
 }
+/* @} */

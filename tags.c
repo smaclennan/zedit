@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 static char Tagfile[PATHMAX];
 
 /* SAM Currently works for functions only */
@@ -203,3 +207,4 @@ void Znext_bookmark(void)
 	if (--Bookmark < 0)
 		Bookmark = Lastbook;
 }
+/* @} */

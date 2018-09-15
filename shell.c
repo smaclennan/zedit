@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 /* This is cleared indirectly in Zgrep/cmdtobuff via set_shell_mark()
  * and set in Znexterror.  If clear, the make buffer is scrolled
  * up. Once a next error is called, the buffer is kept at the error
@@ -445,27 +449,27 @@ void Zspell_word(void)
 	dlerror(); /* clear errors */
 	ZDLSYM(AspellConfig *, new_aspell_config);
 	ZDLSYM(void , aspell_config_replace,
-	       AspellConfig*, char*, char*);
+		   AspellConfig*, char*, char*);
 	ZDLSYM(AspellCanHaveError *, new_aspell_speller,
-	       AspellConfig*);
+		   AspellConfig*);
 	ZDLSYM(int , aspell_error_number,
-	       AspellCanHaveError*);
+		   AspellCanHaveError*);
 	ZDLSYM(AspellSpeller *, to_aspell_speller,
-	       AspellCanHaveError*);
+		   AspellCanHaveError*);
 	ZDLSYM(int , aspell_speller_check,
-	       AspellSpeller*, char*, int);
+		   AspellSpeller*, char*, int);
 	ZDLSYM(const AspellWordList *, aspell_speller_suggest,
-	       AspellSpeller*, char*, int);
+		   AspellSpeller*, char*, int);
 	ZDLSYM(AspellStringEnumeration *, aspell_word_list_elements,
-	       const AspellWordList*);
+		   const AspellWordList*);
 	ZDLSYM(const char *, aspell_string_enumeration_next,
-	       AspellStringEnumeration*);
+		   AspellStringEnumeration*);
 	ZDLSYM(void , delete_aspell_string_enumeration,
-	       AspellStringEnumeration*);
+		   AspellStringEnumeration*);
 	ZDLSYM(void , delete_aspell_speller,
-	       AspellSpeller*);
+		   AspellSpeller*);
 	ZDLSYM(void , delete_aspell_config,
-	       AspellConfig*);
+		   AspellConfig*);
 	if (dlerror()) {
 		error("You have an incomplete libaspell.so");
 		dlclose(dl);
@@ -526,3 +530,4 @@ void Zspell_word(void)
 #else
 void Zspell_word(void) { tbell(); }
 #endif
+/* @} */

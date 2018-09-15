@@ -28,6 +28,10 @@
 extern int rename(const char *oldpath, const char *newpath);
 #endif
 
+/** @addtogroup zedit
+ * @{
+*/
+
 static char Fname[PATHMAX + 1];
 int raw_mode;
 
@@ -467,3 +471,4 @@ void Zread_file(void)
 	if (rc)
 		error("Unable to read %s", Fname);
 }
+/* @} */

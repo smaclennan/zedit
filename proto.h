@@ -17,6 +17,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/** @addtogroup zedit
+ * @{
+*/
+
 #ifdef FCHECK
 #define Z(f) static void f(void) {}
 #else
@@ -256,3 +260,4 @@ void wgoto(struct buff *);
 void resetcomments(void);
 void uncomment(zbuff_t *buff);
 void cprntchar(Byte ch);
+/* @} */

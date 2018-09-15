@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 /* For now it is a char. May be expanded later. */
 #define AN '+'	/* Arg Normal */
 #define AI '-'	/* Arg Ignored */
@@ -661,3 +665,4 @@ struct cnames Cnames[] = {
 	   "actually delete the text.")
 	},
 };
+/* @} */

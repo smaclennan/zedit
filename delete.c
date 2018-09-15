@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 
 static struct buff *Killbuff;
 
@@ -289,3 +293,4 @@ void Zempty_buffer(void)
 	bempty(Bbuff);
 	Bbuff->bmodf = true;
 }
+/* @} */

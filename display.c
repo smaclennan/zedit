@@ -20,6 +20,10 @@
 #include "z.h"
 #include <setjmp.h>
 
+/** @addtogroup zedit
+ * @{
+*/
+
 static int innerdsp(int from, int to, struct mark *pmark);
 static void modeflags(struct wdo *wdo);
 static char *setmodes(zbuff_t *);
@@ -770,3 +774,4 @@ void makepaw(char *word, bool start)
 	if (start)
 		btostart(Bbuff);
 }
+/* @} */

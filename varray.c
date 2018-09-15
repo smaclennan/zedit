@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 #define V(n) {(char *)n}
 
 struct avar Vars[] = {
@@ -82,3 +86,4 @@ struct avar Vars[] = {
 	  "`sh-tabs'."
 	},
 };
+/* @} */

@@ -20,6 +20,10 @@
 #include "z.h"
 
 
+/** @addtogroup zedit
+ * @{
+*/
+
 static int promptsearch(const char *prompt, int type);
 static void promptreplace(int type);
 static bool dosearch(void);
@@ -480,3 +484,4 @@ char *nocase(const char *prompt)
 	}
 	return (Curbuff->bmode & EXACT) ? is : upper;
 }
+/* @} */

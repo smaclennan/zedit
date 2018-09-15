@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 void (*Cmds[][2])() = {
 	{ Znotimpl,			Znotimpl },
 	{ Zone_window,			Znotimpl },
@@ -144,3 +148,4 @@ void (*Cmds[][2])() = {
 	{ Znotimpl,			Zfname },
 };
 int Curcmds;
+/* @} */

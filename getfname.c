@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 /* general linked list structure */
 struct llist {
 	char fname[PATHMAX];
@@ -419,3 +423,4 @@ int pathfixup(char *to, char *from)
 	return rc;
 }
 #endif /* WIN32 */
+/* @} */

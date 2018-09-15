@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 static bool Comstate;
 
 struct comment {
@@ -179,3 +183,4 @@ void uncomment(zbuff_t *buff)
 
 	Comstate = false;
 }
+/* @} */

@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 int Arg;
 bool Argp;
 
@@ -1259,3 +1263,4 @@ void tindent(int arg)
 	while (arg-- > 0)
 		binsert(Bbuff, ' ');
 }
+/* @} */

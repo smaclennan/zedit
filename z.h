@@ -57,6 +57,14 @@ struct zbuff;
 #include "calc.h"
 #include "tinit.h"
 
+/** @defgroup zedit Zedit functions
+ * The core buffer routines including the mark functions.
+ */
+
+/** @addtogroup zedit
+ * @{
+*/
+
 #define ZSTR	"Zedit"
 #define VERSION	"6.3"
 
@@ -244,5 +252,7 @@ void tbell_dbg(char *func, int line);
 #define CLEAR_UMARK clear_umark()
 
 #include "proto.h"
+
+/* @} */
 
 #endif /* _Z_H_ */

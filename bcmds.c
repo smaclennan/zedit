@@ -19,6 +19,10 @@
 
 #include "z.h"
 
+/** @addtogroup zedit
+ * @{
+*/
+
 static char Lbufname[BUFNAMMAX + 1];
 
 static char **Bnames;			/* array of ptrs to buffer names */
@@ -432,3 +436,4 @@ zbuff_t *cfindzbuff(struct buff *buff)
 			return tbuff;
 	return NULL;
 }
+/* @} */

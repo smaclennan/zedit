@@ -1,4 +1,4 @@
-.PHONY: all check install clean
+.PHONY: all check install clean libbuff
 
 ZEXE = ze
 
@@ -26,13 +26,12 @@ BDIR ?= $(HOST_ARCH)
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
 D = -O2
-CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC) -I. -Ibuff
-CFLAGS += -DHAVE_CONFIG_H -include "./config.h"
+CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC) -I. -Ibuff -DHAVE_CONFIG_H
 
 # Saves about 20k
 #CFLAGS += -DNO_HELP
 
-MAKEFLAGS += --no-print-directory
+MFLAGS += --no-print-directory CC="$(CC)" CFLAGS="$(CFLAGS) -I.." BDIR="z-$(BDIR)"
 
 #LIBS += -lz
 #LIBS += -ldl
@@ -45,20 +44,10 @@ CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 	srch.c tags.c zterm.c vars.c window.c varray.c z.c zgrep.c life.c \
 	undo.c
 
-LFILES := bcopyrgn.c bcreate.c bcremark.c bcsearch.c bdelbuff.c \
-	bdelete.c bdeltomrk.c bempty.c binsert.c binstr.c \
-	bisbeforemrk.c bisaftermrk.c blength.c bline.c blocation.c boffset.c \
-	bmovepast.c bmoveto.c bmsearch.c bmove.c bpeek.c \
-	bpnttomrk.c breadfile.c bstrline.c bswappnt.c btoend.c bwritefile.c \
-	calc.c dbg.c freepage.c globals.c hugefile.c itoa.c kbd.c newpage.c \
-	mrkbeforemrk.c mrkaftermrk.c pagesplit.c reg.c strlcpy.c \
-	term.c tinit.c tsize.c tstyle.c tobegline.c toendline.c
-
 HFILES = config.h funcs.h proto.h vars.h z.h
 HFILES += buff/buff.h buff/calc.h buff/mark.h buff/reg.h buff/tinit.h buff/keys.h
 
 O := $(addprefix $(BDIR)/, $(CFILES:.c=.o))
-O += $(addprefix $(BDIR)/, $(LFILES:.c=.o))
 
 #################
 
@@ -70,24 +59,25 @@ Q	      = $(V:1=)
 QUIET_CC      = $(Q:@=@echo    '     CC       '$@;)
 QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 QUIET_AR      = $(Q:@=@echo    '     AR       '$@;)
+QUIET_MAKE    = $(Q:@=@echo    '   MAKE       '$@;)
 
 $(BDIR)/%.o : %.c
-	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
-
-$(BDIR)/%.o : buff/%.c
 	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
 
 #################
 
 all:	fcheck $(BDIR) $(BDIR)/$(ZEXE)
 
-$(BDIR)/$(ZEXE): $O
-	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
+$(BDIR)/$(ZEXE): $O libbuff
+	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS) buff/z-$(BDIR)/libbuff.a
 ifeq ($(BDIR), $(HOST_ARCH))
 	@rm -f $(ZEXE)
 	@ln -s $(BDIR)/$(ZEXE) $(ZEXE)
 endif
 	@$(ETAGS) $(CFILES) buff/*.c $(HFILES)
+
+libbuff:
+	$(QUIET_MAKE)$(MAKE) $(MFLAGS) -C buff
 
 fcheck: fcheck.c funcs.c varray.c cnames.c bind.c config.h vars.h buff/keys.h
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c $(LIBS)
@@ -116,4 +106,5 @@ clean:
 	rm -f *.o $(ZEXE) fcheck core* TAGS valgrind.out cscope.*
 	rm -rf doxygen/html tmpdir $(BDIR)
 	@$(MAKE) -C docs clean
-	@$(MAKE) -C buff clean
+	@$(MAKE) $(MFLAGS) -C buff clean
+	rm -rf buff/$(BDIR)

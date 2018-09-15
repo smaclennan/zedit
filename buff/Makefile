@@ -1,4 +1,7 @@
-CFLAGS += -Wall -O2 -L. -DHAVE_CONFIG_H
+BDIR ?= $(shell uname -m)
+
+# Paranoia for Zedit
+CFLAGS ?= -Wall -O2
 
 # For debugging use small pages
 #CFLAGS += -DPGSIZE=8 -DPAGE_DBG
@@ -54,7 +57,7 @@ CFILES = \
 	tobegline.c \
 	toendline.c \
 
-O := $(CFILES:.c=.o)
+O := $(addprefix $(BDIR)/, $(CFILES:.c=.o))
 
 V	      = @
 Q	      = $(V:1=)
@@ -62,17 +65,20 @@ QUIET_CC      = $(Q:@=@echo    '     CC       '$@;)
 QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 QUIET_AR      = $(Q:@=@echo    '     AR       '$@;)
 
-.c.o:
+$(BDIR)/%.o : %.c
 	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
 
-all: libbuff.a btest
+all: $(BDIR) $(BDIR)/libbuff.a
 
-btest: btest.c libbuff.a
-	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $< -lbuff
+btest: btest.c $(BDIR)/libbuff.a
+	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $+
 
-libbuff.a: $O
-	@rm -f libbuff.a
-	$(QUIET_AR)$(AR) cr libbuff.a $O
+$(BDIR)/libbuff.a: $O
+	@rm -f $(BDIR)/libbuff.a
+	$(QUIET_AR)$(AR) cr $@ $O
+
+$(BDIR):
+	@mkdir -p $(BDIR)
 
 # The second sparse checks just the buffer code
 checkit:
@@ -82,4 +88,5 @@ doxy:
 	doxygen doxygen/Doxyfile
 
 clean:
-	rm -f *.o libbuff.a btest sless strtest
+	rm -f *.o libbuff.a btest strtest
+	rm -rf $(BDIR)

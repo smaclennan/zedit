@@ -38,3 +38,18 @@ void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
 struct mark *Marklist;	/* the marks list tail */
 #endif
 /* @} */
+
+
+/* \cond skip */
+/* Indirect stringification.  Doing two levels allows the parameter to be a
+ * macro itself.  For example, compile with -DFOO=bar, __stringify(FOO)
+ * converts to "bar".
+ */
+#define __stringify_1(x)	#x
+#define __stringify(x)	__stringify_1(x)
+
+/* The marker is for `strings libbuff.a | fgrep Version' */
+const char *libbuff_marker = "Version-" __stringify(LIBBUFF_MAJOR) "." __stringify(LIBBUFF_MINOR);
+
+const char *libbuff_version = __stringify(LIBBUFF_MAJOR) "." __stringify(LIBBUFF_MINOR);
+/* \endcond */

@@ -52,11 +52,14 @@
 
 /** @defgroup misc Miscellaneous routines */
 
-/* THE BUFFER STRUCTURES */
-
 /** @addtogroup buffer
  * @{
 */
+
+#define LIBBUFF_MAJOR 1
+#define LIBBUFF_MINOR 0
+
+/* THE BUFFER STRUCTURES */
 
 /** Main buffer structure. */
 struct buff {
@@ -334,6 +337,9 @@ void bhugecleanup(struct buff *buff);
 */
 const char *Dbgfname(const char *fname);
 void Dbg(const char *fmt, ...);
+
+/** The libbuff version as a string. */
+extern const char *libbuff_version;
 /* @} misc */
 
 #endif

@@ -4,7 +4,7 @@ BDIR ?= $(shell uname -m)
 CFLAGS ?= -Wall -O2
 
 # For debugging use small pages
-#CFLAGS += -DPGSIZE=8 -DPAGE_DBG
+CFLAGS += -DPGSIZE=8 -DPAGE_DBG
 # For testing the builtin reg
 #CFLAGS += -DBUILTIN_REG
 # For hugefiles
@@ -19,6 +19,7 @@ CFILES = \
 	bdelete.c \
 	bdeltomrk.c \
 	bempty.c \
+	bindata.c \
 	binsert.c \
 	binstr.c \
 	bisbeforemrk.c \
@@ -34,9 +35,11 @@ CFILES = \
 	bpeek.c \
 	bpnttomrk.c \
 	breadfile.c \
+	breadv.c \
 	bstrline.c \
 	bswappnt.c \
 	bwritefile.c \
+	bwritev.c \
 	calc.c \
 	dbg.c \
 	freepage.c \

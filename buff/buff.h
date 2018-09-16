@@ -131,8 +131,8 @@ int bm_rsearch(struct buff *buff, const char *str, int sensitive);
 /* bsocket.c */
 /** Max iovs used for one writev in bwrite(). */
 #define MAX_IOVS 16
-int bread(struct buff *buff, int fd);
-int bwrite(struct buff *buff, int fd, unsigned size);
+int breadv(struct buff *buff, int fd);
+int bwritev(struct buff *buff, int fd, unsigned size);
 int bappend(struct buff *buff, const Byte *, int);
 int bindata(struct buff *buff, Byte *, unsigned);
 

@@ -1,4 +1,4 @@
-/* bsocket.c - buffer socket functions
+/* bwritev.c - socket (or file) writev
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,11 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/* SAM FIXME
- * This should be split up... but I am not currently using this
- * code. The project that used it is done.
- */
-
 #include <errno.h>
 #ifndef WIN32
 #include <sys/uio.h>
@@ -32,28 +27,11 @@
 #define MAX_IOVS 16
 
 #ifdef WIN32
-/* These aren't optimal... but they should work */
+/* Not optimal... but should work */
 struct iovec {
 	void *iov_base;
 	size_t iov_len;
 };
-
-int readv(int fd, const struct iovec *iov, int iovcnt)
-{
-	int i, n, n_read = 0;
-
-	for (i = 0; i < iovcnt; ++i, ++iov)
-		if (iov->iov_len) {
-			n = read(fd, iov->iov_base, iov->iov_len);
-			if (n < 0)
-				return n;
-			else if (n == 0)
-				return n_read;
-			n_read += n;
-		}
-
-	return n_read;
-}
 
 int writev(int fd, const struct iovec *iov, int iovcnt)
 {
@@ -73,72 +51,14 @@ int writev(int fd, const struct iovec *iov, int iovcnt)
 }
 #endif
 
-/* These can be used with files... but where written to use with
- * sockets.
- */
-
-/** Read from a file descriptor using readv.  Simple version; only
- * reads at most two pages. Can be used for file but meant for
- * sockets.
- */
-int bread(struct buff *buff, int fd)
-{
-	int n, n_read, left;
-	struct page *npage;
-	struct iovec iovs[2];
-
-	if (buff->curchar != curplen(buff)) {
-		/* Move data after point into new page */
-		if (!pagesplit(buff, buff->curchar))
-			return -ENOMEM;
-	}
-
-	left = PGSIZE - curplen(buff);
-
-	/* try to fill current page */
-	if (left) {
-		iovs[0].iov_base = buff->curcptr;
-		iovs[0].iov_len = left;
-	} else
-		iovs[0].iov_len = 0;
-
-	/* plus a new page */
-	npage = newpage(buff->curpage);
-	if (!npage)
-		return -ENOMEM;
-
-	iovs[1].iov_base = npage->pdata;
-	iovs[1].iov_len = PGSIZE;
-
-	n = n_read = readv(fd, iovs, 2);
-
-	if (n <= 0) {
-		freepage(buff, npage);
-		return n;
-	}
-
-	if (left) {
-		int wrote = MIN(left, n);
-
-		buff->curcptr += wrote;
-		buff->curchar += wrote;
-		curplen(buff) += wrote;
-		n -= wrote;
-	}
-
-	if (n > 0) {
-		makecur(buff, npage, n);
-		curplen(buff) = n;
-	} else
-		freepage(buff, npage);
-
-	return n_read;
-}
-
 /** Write to a file descriptor using writev.  Can be used for files but
  * meant for sockets. Leaves the point at the end of the write.
+ * @param buff The buffer to read from.
+ * @param fd The open file descriptor to write to.
+ * @param size The number of bytes to write.
+ * @return The number of bytes actually written.
  */
-int bwrite(struct buff *buff, int fd, unsigned size)
+int bwritev(struct buff *buff, int fd, unsigned size)
 {
 	struct iovec iovs[MAX_IOVS];
 	struct page *pg;

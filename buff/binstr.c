@@ -99,6 +99,26 @@ static int handle_format(struct outbuff *out, const char **fmt, va_list ap)
 		*fmt += n;
 		butoa(va_arg(ap, unsigned), tmp);
 		return out_str(out, tmp, saw_neg, len);
+	case 'x':
+		*fmt += n;
+		bxtoa(va_arg(ap, unsigned), tmp);
+		return out_str(out, tmp, saw_neg, len);
+	case 'l':
+		switch (*(*fmt + n + 1)) {
+		case 'd':
+			*fmt += n + 1;
+			bitoa(va_arg(ap, long), tmp);
+			return out_str(out, tmp, saw_neg, len);
+		case 'u':
+			*fmt += n + 1;
+			butoa(va_arg(ap, unsigned long), tmp);
+			return out_str(out, tmp, saw_neg, len);
+		case 'x':
+			*fmt += n + 1;
+			bxtoa(va_arg(ap, unsigned long), tmp);
+			return out_str(out, tmp, saw_neg, len);
+		}
+		/* fall through */
 	default:
 		return outchar(out, **fmt);
 	}

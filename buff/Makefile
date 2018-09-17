@@ -92,4 +92,4 @@ doxy:
 
 clean:
 	rm -f *.o libbuff.a btest strtest
-	rm -rf $(BDIR)
+	rm -rf $(BDIR) doxygen/html

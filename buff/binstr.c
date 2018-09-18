@@ -45,7 +45,12 @@ static int outchar(struct outbuff *out, char ch)
 	return 0;
 }
 
-/** Helper function for binstr(). */
+/** Helper function for binstr().
+ * @param fmt The format string.
+ * @param[out] saw_neg For strings, 1 if we want to left justify.
+ * @param[out] len The width field if set.
+ * @param[out] n Number of bytes of fmt consumed.
+ */
 static char valid_format(const char *fmt, int *saw_neg, int *len, int *n)
 {
 	*saw_neg = *len = *n = 0;
@@ -58,7 +63,7 @@ static char valid_format(const char *fmt, int *saw_neg, int *len, int *n)
 		*len = *len * 10 + *fmt - '0';
 		++fmt; ++*n;
 	}
-	if (*fmt == 'u' || *fmt == 'd')
+	if (*fmt != 's')
 		*saw_neg = 0;
 	return *fmt;
 }
@@ -84,7 +89,7 @@ static int out_str(struct outbuff *out, const char *s, int saw_neg, int len)
 /** Helper function for binstr(). */
 static int handle_format(struct outbuff *out, const char **fmt, va_list ap)
 {
-	char tmp[12];
+	char tmp[22];
 	int saw_neg, len, n;
 
 	switch (valid_format(*fmt, &saw_neg, &len, &n)) {

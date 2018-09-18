@@ -296,13 +296,13 @@ static inline void bmove1(struct buff *buff)
 }
 
 /* returns the start of the string */
-char *bitoa(int val, char *out);
-char *butoa(unsigned val, char *out);
-char *bxtoa(unsigned val, char *out);
+char *bitoa(long val, char *out);
+char *butoa(unsigned long val, char *out);
+char *bxtoa(unsigned long val, char *out);
 /* returns the end of the string */
-char *_bitoa(int val, char *out);
-char *_butoa(unsigned val, char *out);
-char *_bxtoa(unsigned val, char *out);
+char *_bitoa(long val, char *out);
+char *_butoa(unsigned long val, char *out);
+char *_bxtoa(unsigned long val, char *out);
 
 #if HUGE_FILES
 extern void (*huge_file_cb)(struct buff *buff, int rc);

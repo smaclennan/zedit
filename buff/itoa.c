@@ -44,7 +44,7 @@ static void reverse_string(char *start, char *end)
  * @param out The output string.
  * @return A pointer to the end of the output.
  */
-char *_bitoa(int val, char *out)
+char *_bitoa(long val, char *out)
 {
 	char *p = out;
 	int neg = val < 0;
@@ -73,7 +73,7 @@ char *_bitoa(int val, char *out)
  * @param out The output string.
  * @return A pointer to the start of the output.
  */
-char *bitoa(int val, char *out)
+char *bitoa(long val, char *out)
 {
 	_bitoa(val, out);
 	return out;
@@ -84,7 +84,7 @@ char *bitoa(int val, char *out)
  * @param out The output string.
  * @return A pointer to the end of the output.
  */
-char *_butoa(unsigned val, char *out)
+char *_butoa(unsigned long val, char *out)
 {
 	char *p = out;
 
@@ -108,7 +108,7 @@ char *_butoa(unsigned val, char *out)
  * @param out The output string.
  * @return A pointer to the start of the output.
  */
-char *butoa(unsigned val, char *out)
+char *butoa(unsigned long val, char *out)
 {
 	_butoa(val, out);
 	return out;
@@ -119,7 +119,7 @@ char *butoa(unsigned val, char *out)
  * @param out The output string.
  * @return A pointer to the end of the output.
  */
-char *_bxtoa(unsigned val, char *out)
+char *_bxtoa(unsigned long val, char *out)
 {
 	static const char tohex[] = {
 		'0', '1', '2', '3', '4', '5', '6', '7',
@@ -142,7 +142,12 @@ char *_bxtoa(unsigned val, char *out)
 	return p;
 }
 
-char *bxtoa(unsigned val, char *out)
+/** Hex to ascii.
+ * @param val The integer to convert.
+ * @param out The output string.
+ * @return A pointer to the start of the output.
+ */
+char *bxtoa(unsigned long val, char *out)
 {
 	_bxtoa(val, out);
 	return out;

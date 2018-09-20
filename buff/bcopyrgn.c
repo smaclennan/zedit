@@ -26,23 +26,22 @@
 /** Copy from Point to mark to another buffer.
  * @param mark Copy from Point to mark.
  * @param to The buffer to copy to.
- * @return The number of bytes copied. Returns -1 if the mark buffer
- * is the same as to buffer.
+ * @return The number of bytes copied. Can return 0 if a temporary
+ * mark cannot be created.
  */
 long bcopyrgn(struct mark *mark, struct buff *to)
 {
-	struct mark save, *btmrk;
+	struct mark ltmrk, *btmrk;
+	int flip;
 	int  srclen, dstlen;
 	long copied = 0;
 	struct buff *from = mark->mbuff;
 
-	if (from == to)
-		return -1;
-
-	/* We really only need to save if we swap */
-	bmrktopnt(from, &save);
-	if (bisaftermrk(from, mark))
+	flip = bisaftermrk(from, mark);
+	if (flip)
 		bswappnt(from, mark);
+
+	bmrktopnt(from, &ltmrk);
 
 	while (bisbeforemrk(from, mark)) {
 		if (from->curpage == mark->mpage)
@@ -79,7 +78,11 @@ long bcopyrgn(struct mark *mark, struct buff *to)
 		bmove(from, dstlen);
 	}
 
-	bpnttomrk(from, &save);
+	bpnttomrk(from, &ltmrk);
+
+	if (flip)
+		bswappnt(from, mark);
+
 	return copied;
 }
 /* @} */

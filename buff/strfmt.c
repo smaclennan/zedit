@@ -295,7 +295,8 @@ static int __strfmt(struct outbuff *out, const char *fmt, va_list ap)
 	}
 
 	/* We leave room for the NULL */
-	*out->str = 0;
+	if (out->str)
+		*out->str = 0;
 
 	return out->n;
 }

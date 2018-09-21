@@ -40,7 +40,7 @@
  */
 int binstr(struct buff *buff, const char *fmt, ...)
 {
-	struct outbuff out = { .buff = buff, .n = 0 };
+	struct outbuff out = { .buff = buff, .str = NULL, .n = 0 };
 	va_list ap;
 
 	va_start(ap, fmt);

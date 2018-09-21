@@ -1,6 +1,8 @@
 #include <stdarg.h>
 #include <ctype.h>
+#ifndef BUFFERED
 #include "samlib.h"
+#endif
 
 #define WIDTH_MASK		0x0fffff
 #define SAW_NEG			0x100000
@@ -16,6 +18,12 @@ struct outbuff {
 	int n;
 };
 
+const char tohex[] = {
+	'0', '1', '2', '3', '4', '5', '6', '7',
+	'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+};
+
+/* \cond skip */
 static void reverse_string(char *start, char *end)
 {
 	int len = (end - start) / 2;
@@ -28,18 +36,21 @@ static void reverse_string(char *start, char *end)
 		end--;
 	}
 }
+/* \endcond */
 
 /** Integer to ascii.
  * @param val The integer to convert.
  * @param out The output string.
- * @return A pointer to out.
+ * @return A pointer to the end of the string.
  */
-char *int2str(long val, char *out)
+char *_int2str(long val, char *out)
 {
-	if (val == 0)
-		strcpy(out, "0");
-	else {
-		char *p = out;
+	char *p = out;
+
+	if (val == 0) {
+		*p++ = '0';
+		*p = 0;
+	} else {
 		int neg = val < 0;
 
 		if (neg)
@@ -55,7 +66,42 @@ char *int2str(long val, char *out)
 		reverse_string(out, p);
 	}
 
+	return p;
+}
+
+/** Integer to ascii.
+ * @param val The integer to convert.
+ * @param out The output string.
+ * @return A pointer to out.
+ */
+char *int2str(long val, char *out)
+{
+	_int2str(val, out);
 	return out;
+}
+
+/** Unsigned integer to ascii.
+ * @param val The integer to convert.
+ * @param out The output string.
+ * @return A pointer to the end of the string.
+ */
+char *_uint2str(unsigned long val, char *out)
+{
+	char *p = out;
+
+	if (val == 0) {
+		*p++ = '0';
+		*p = 0;
+	} else {
+		while (val > 0) {
+			*p++ = (val % 10) + '0';
+			val /= 10;
+		}
+		*p = 0;
+
+		reverse_string(out, p);
+	}
+	return p;
 }
 
 /** Unsigned integer to ascii.
@@ -65,20 +111,32 @@ char *int2str(long val, char *out)
  */
 char *uint2str(unsigned long val, char *out)
 {
-	if (val == 0)
-		strcpy(out, "0");
-	else {
-		char *p = out;
+	_uint2str(val, out);
+	return out;
+}
 
+/** Hex to ascii.
+ * @param val The integer to convert.
+ * @param out The output string.
+ * @return A pointer to the end of the string.
+ */
+char *_hex2str(unsigned long val, char *out)
+{
+	char *p = out;
+
+	if (val == 0) {
+		*p++ = '0';
+		*p = 0;
+	} else {
 		while (val > 0) {
-			*p++ = (val % 10) + '0';
-			val /= 10;
+			*p++ = tohex[val & 0xf];
+			val >>= 4;
 		}
 		*p = 0;
 
 		reverse_string(out, p);
 	}
-	return out;
+	return p;
 }
 
 /** Hex to ascii.
@@ -88,21 +146,11 @@ char *uint2str(unsigned long val, char *out)
  */
 char *hex2str(unsigned long val, char *out)
 {
-	if (val == 0)
-		strcpy(out, "0");
-	else {
-		char *p = out;
-
-		while (val > 0) {
-			*p++ = tohex[val & 0xf];
-			val >>= 4;
-		}
-		*p = 0;
-
-		reverse_string(out, p);
-	}
+	_hex2str(val, out);
 	return out;
 }
+
+/* \cond skip */
 
 static void outmemset(struct outbuff *out, char c, int size)
 {
@@ -184,13 +232,6 @@ static void outnum(struct outbuff *out, const char *s, unsigned flags)
 	outmemcpy(out, s, slen);
 }
 
-/** Lower level interface to strfmt() when you already have the va_list.
- * @param str The output string.
- * @param len The length of the output string.
- * @param fmt The output format.
- * @param ap The va_list.
- * @return The number of bytes in the source string (like snprintf).
- */
 static int __strfmt(struct outbuff *out, const char *fmt, va_list ap)
 {
 	char tmp[22];
@@ -258,6 +299,7 @@ static int __strfmt(struct outbuff *out, const char *fmt, va_list ap)
 
 	return out->n;
 }
+/* \endcond */
 
 /** Lower level interface to strfmt() when you already have the va_list.
  * @param str The output string.

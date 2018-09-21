@@ -104,7 +104,7 @@ void tstyle(int style)
 	char str[32], *p = str;
 
 	*p++ = '\033'; *p++ = '[';
-	p = _butoa(style, p);
+	p = _uint2str(style, p);
 	*p++ = 'm';
 	twrite(str, p - str);
 #endif

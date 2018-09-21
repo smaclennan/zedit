@@ -118,6 +118,12 @@ long bdeltomrk(struct mark *);
 int binstr(struct buff *buff, const char *fmt, ...);
 int strfmt(char *str, int len, const char *fmt, ...);
 int strfmt_ap(char *str, int len, const char *fmt, va_list ap);
+char *int2str(long val, char *out);
+char *uint2str(unsigned long val, char *out);
+char *hex2str(unsigned long val, char *out);
+char *_int2str(long val, char *out);
+char *_uint2str(unsigned long val, char *out);
+char *_hex2str(unsigned long val, char *out);
 void bmovepast(struct buff *buff, int (*pred)(int), int forward);
 void bmoveto(struct buff *buff, int (*pred)(int), int forward);
 
@@ -294,15 +300,6 @@ static inline void bmove1(struct buff *buff)
 		/* already at eob - paw needs this */
 		makeoffset(buff, curplen(buff));
 }
-
-/* returns the start of the string */
-char *bitoa(long val, char *out);
-char *butoa(unsigned long val, char *out);
-char *bxtoa(unsigned long val, char *out);
-/* returns the end of the string */
-char *_bitoa(long val, char *out);
-char *_butoa(unsigned long val, char *out);
-char *_bxtoa(unsigned long val, char *out);
 
 #if HUGE_FILES
 extern void (*huge_file_cb)(struct buff *buff, int rc);

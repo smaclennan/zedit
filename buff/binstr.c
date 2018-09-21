@@ -25,10 +25,8 @@
  * @{
 */
 
-/* \cond skip */
 #define BUFFERED
 #include "strfmt.c"
-/* \endcond */
 
 /** Insert a string formatted with variable arguments into a buffer.
  *

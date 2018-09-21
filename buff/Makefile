@@ -45,7 +45,6 @@ CFILES = \
 	freepage.c \
 	globals.c \
 	hugefile.c \
-	itoa.c \
 	kbd.c \
 	newpage.c \
 	mrkaftermrk.c \

@@ -37,6 +37,8 @@ MFLAGS += --no-print-directory CC="$(CC)" CFLAGS="$(CFLAGS) -I.." BDIR="z-$(BDIR
 #LIBS += -ldl
 #LIBS += -ltermcap
 
+LIBS += buff/z-$(BDIR)/libbuff.a
+
 ETAGS=`which etags || echo true`
 
 CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
@@ -66,10 +68,10 @@ $(BDIR)/%.o : %.c
 
 #################
 
-all:	fcheck $(BDIR) $(BDIR)/$(ZEXE)
+all:	fcheck $(BDIR) libbuff $(BDIR)/$(ZEXE)
 
-$(BDIR)/$(ZEXE): $O libbuff
-	$(QUIET_LINK)$(CC) -o $@ $O buff/z-$(BDIR)/libbuff.a $(LIBS)
+$(BDIR)/$(ZEXE): $O
+	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 ifeq ($(BDIR), $(HOST_ARCH))
 	@rm -f $(ZEXE)
 	@ln -s $(BDIR)/$(ZEXE) $(ZEXE)
@@ -80,7 +82,7 @@ libbuff:
 	$(QUIET_MAKE)$(MAKE) $(MFLAGS) -C buff
 
 fcheck: fcheck.c funcs.c varray.c cnames.c bind.c config.h vars.h buff/keys.h
-	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c $(LIBS)
+	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 
 $(BDIR):

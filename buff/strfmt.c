@@ -232,6 +232,37 @@ static void outnum(struct outbuff *out, const char *s, unsigned flags)
 	outmemcpy(out, s, slen);
 }
 
+#ifdef WANT_FLOATS
+#define FIXED_SIZE 16
+#define FIXED_MASK ((1 << FIXED_SIZE) - 1)
+
+static int double2fixed(double val, int *f)
+{
+	unsigned long result = 0;
+	unsigned long bit_val = 5000000ul;
+	int neg = 0;
+
+	if (val < 0) {
+		neg = 1;
+		val = -val;
+	}
+
+	long l = (long)((val * (1 << FIXED_SIZE)) + 0.5);
+	int frac = l & FIXED_MASK;
+
+	for (int i = FIXED_SIZE - 1; i >= 0; --i) {
+		if (frac & (1 << i))
+			result += bit_val;
+		bit_val >>= 1;
+	}
+
+	*f = result / 10;
+	l >>= FIXED_SIZE;
+
+	return neg ? -l : l;
+}
+#endif
+
 static int __strfmt(struct outbuff *out, const char *fmt, va_list ap)
 {
 	char tmp[22];
@@ -285,6 +316,17 @@ static int __strfmt(struct outbuff *out, const char *fmt, va_list ap)
 					hex2str(va_arg(ap, unsigned), tmp);
 				outnum(out, tmp, flags);
 				break;
+#ifdef WANT_FLOATS
+			case 'f': ;
+				int frac;
+				int integer = double2fixed(va_arg(ap, double), &frac);
+				int2str(integer, tmp);
+				outnum(out, tmp, flags);
+				outchar(out, '.');
+				int2str(frac, tmp);
+				outnum(out, tmp, flags);
+				break;
+#endif
 			default:
 				outchar(out, '%');
 				fmt = save;

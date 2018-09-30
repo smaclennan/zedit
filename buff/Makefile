@@ -1,5 +1,7 @@
 BDIR ?= $(shell uname -m)
 
+HOST_ARCH := $(shell uname -m)
+
 # Paranoia for Zedit
 CFLAGS ?= -Wall -O2
 
@@ -66,6 +68,7 @@ Q	      = $(V:1=)
 QUIET_CC      = $(Q:@=@echo    '     CC       '$@;)
 QUIET_LINK    = $(Q:@=@echo    '     LINK     '$@;)
 QUIET_AR      = $(Q:@=@echo    '     AR       '$@;)
+QUIET_LN      = $(Q:@=@echo    '     LN       '$@;)
 
 $(BDIR)/%.o : %.c
 	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
@@ -78,6 +81,11 @@ btest: btest.c $(BDIR)/libbuff.a
 $(BDIR)/libbuff.a: $O
 	@rm -f $(BDIR)/libbuff.a
 	$(QUIET_AR)$(AR) cr $@ $O
+ifeq ($(HOST_ARCH), $(BDIR))
+	$(QUIET_LN)ln -fs $(BDIR)/libbuff.a libbuff.a
+endif
+
+$(BDIR)/binstr.o: strfmt.c
 
 $(BDIR):
 	@mkdir -p $(BDIR)

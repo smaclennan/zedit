@@ -17,7 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h> // for snprintf for Zcalc
 #include "z.h"
 
 /** @addtogroup zedit
@@ -1188,9 +1187,7 @@ void Zcalc(void)
 	switch (n) {
 	case 0:
 		if (result.is_float) {
-			// We cannot handle %g
-			snprintf(PawStr, PAWSTRLEN, "= %g", result.result.f);
-			putpaw(PawStr);
+			putpaw("= %f", result.result.f);
 		} else {
 			long n = result.result.i;
 			switch (format) {

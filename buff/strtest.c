@@ -45,9 +45,8 @@ int main(int argc, char *argv[])
 	assert(strcmp(str1, str2) == 0);
 
 #ifdef WANT_FLOATS
-	// We must be a bit careful with the float number since snprintf is more accurate.
-	n1 = snprintf(str1, sizeof(str1), "%f\n", 727.141586);
-	n2 = strfmt(str2, sizeof(str2), "%f\n", 727.141586);
+	n1 = snprintf(str1, sizeof(str1), "%f\n", 3.1415927);
+	n2 = strfmt(str2, sizeof(str2), "%f\n", 3.1415927);
 	assert(n1 == n2);
 	assert(strcmp(str1, str2) == 0);
 #endif

@@ -163,7 +163,8 @@ static void outmemset(struct outbuff *out, char c, int size)
 			return;
 		}
 #endif
-		size = MIN(size, out->len);
+		if (size > out->len)
+			size = out->len;
 		if (size > 0) {
 			memset(out->str, c, size);
 			out->str += size;
@@ -183,7 +184,8 @@ static void outmemcpy(struct outbuff *out, const char *str, int size)
 			return;
 		}
 #endif
-		size = MIN(size, out->len);
+		if (size > out->len)
+			size = out->len;
 		if (size > 0) {
 			memcpy(out->str, str, size);
 			out->str += size;
@@ -233,7 +235,7 @@ static void outnum(struct outbuff *out, const char *s, unsigned flags)
 }
 
 #ifdef WANT_FLOATS
-#define FIXED_SIZE 16
+#define FIXED_SIZE 20
 #define FIXED_MASK ((1 << FIXED_SIZE) - 1)
 
 static int double2fixed(double val, int *f)
@@ -256,7 +258,7 @@ static int double2fixed(double val, int *f)
 		bit_val >>= 1;
 	}
 
-	*f = result / 10;
+	*f = (result + 5) / 10;
 	l >>= FIXED_SIZE;
 
 	return neg ? -l : l;

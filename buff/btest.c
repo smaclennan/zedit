@@ -159,12 +159,6 @@ int main(int argc, char *argv[])
 	dump_pages(buff, "breadfile");
 	bdelbuff(buff);
 
-	char out[20];
-	_bxtoa(0x1234567, out);
-	puts(out);
-	_bxtoa(0x10, out);
-	puts(out);
-
 	tinit();
 
 #ifdef WIN32

@@ -55,6 +55,10 @@ static void t_hang_up(int signo)
 
 static void tfini(void)
 {
+#ifdef TERMINFO
+	TPUTS(reset_1string);
+	resetterm();
+#endif
 #ifdef __unix__
 	tcsetattr(0, TCSAFLUSH, &save_tty);
 #endif
@@ -95,8 +99,6 @@ static char *key_names[] = {
 	"F1",
 	"F2",
 };
-
-extern void set_tkey(int i, char *key);
 
 static void tlinit(void)
 {
@@ -143,6 +145,83 @@ static void tlinit(void)
 			if (*key == 033)
 				set_tkey(i, key);
 	}
+}
+#elif defined(TERMINFO)
+static void tlinit(void)
+{
+	int rc, i;
+
+	char *Term = getenv("TERM");
+	if (Term == NULL) {
+		printf("FATAL ERROR: environment variable TERM not set.\n");
+		exit(1);
+	}
+
+	setupterm(Term, 1, &rc);
+	if (rc != 1) {
+		printf("FATAL ERROR: Unable to get terminfo entry for %s.\n",
+			   Term);
+		exit(1);
+	}
+	if (!clear_screen || !clr_eol || !cursor_address) {
+		printf("FATAL ERROR: Terminfo entry for %s incomplete.\n",
+			   Term);
+		exit(1);
+	}
+
+	if (!exit_attribute_mode)
+		enter_reverse_mode = enter_standout_mode = enter_bold_mode = NULL;
+
+	/* initialize the terminal */
+	TPUTS(init_1string);
+	TPUTS(init_2string);
+	TPUTS(init_3string);
+
+	set_tkey(0, key_up);
+	set_tkey(1, key_down);
+	set_tkey(2, key_right);
+	set_tkey(3, key_left);
+
+	set_tkey(4, key_ic);
+	set_tkey(5, key_dc);
+	set_tkey(6, key_ppage);
+	set_tkey(7, key_npage);
+	set_tkey(8, key_home);
+	set_tkey(9, key_end);
+
+	if (key_f0) { /* old school */
+		set_tkey(10, key_f0);
+		set_tkey(11, key_f1);
+		i = 12;
+	} else {
+		set_tkey(10, key_f1);
+		set_tkey(21, key_f12);
+		i = 11;
+	}
+	set_tkey(i++, key_f2);
+	set_tkey(i++, key_f3);
+	set_tkey(i++, key_f4);
+	set_tkey(i++, key_f5);
+	set_tkey(i++, key_f6);
+	set_tkey(i++, key_f7);
+	set_tkey(i++, key_f8);
+	set_tkey(i++, key_f9);
+	set_tkey(i++, key_f10);
+	set_tkey(i++, key_f11);
+
+#ifdef SAM_NO
+	Key_mask = 0x00c00000; /* C-Home and C-End not in terminfo */
+	for (k = 0; k < i; ++k)
+		if (Tkeys[k] && *Tkeys[k])
+			Key_mask |= 1 << k;
+
+	if (verbose) {
+		for (k = 0; k < i; ++k)
+			dump_key(k, Tkeys[k], NULL);
+
+		Dbg("Key Mask %x\n", Key_mask);
+	}
+#endif
 }
 #else
 static void tlinit(void) {}

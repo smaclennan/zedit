@@ -100,6 +100,21 @@ void tstyle(int style)
 	default:
 		return;
 	}
+#elif defined(TERMINFO)
+	switch (style) {
+	case T_NORMAL:
+		TPUTS(exit_attribute_mode);
+		break;
+	case T_REVERSE:
+		TPUTS(enter_reverse_mode);
+		break;
+	case T_BOLD:
+		TPUTS(enter_bold_mode);
+		break;
+	case T_BELL:
+		TPUTS(tparm(set_a_background, COLOR_RED));
+		break;
+	}
 #else
 	char str[32], *p = str;
 

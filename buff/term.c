@@ -104,6 +104,8 @@ static void tforce(void)
 		SetConsoleCursorPosition(hstdout, where);
 #elif defined(TERMCAP)
 		TPUTS(tgoto(cm[0], Pcol, Prow));
+#elif defined(TERMINFO)
+		TPUTS(tparm(cursor_address, Prow, Pcol));
 #else
 		char str[64];
 		int n = strfmt(str, sizeof(str), "\033[%d;%dH", Prow + 1, Pcol + 1);
@@ -169,6 +171,8 @@ void tcleol(void)
 		tforce();
 #ifdef TERMCAP
 		TPUTS(cm[1]);
+#elif defined(TERMCAP)
+		TPUTS(cm[1]);
 #else
 		twrite("\033[K", 3);
 		tflush();
@@ -193,6 +197,8 @@ void tclrwind(void)
 				   where, &written);
 #elif defined(TERMCAP)
 	TPUTS(cm[2]);
+#elif defined(TERMINFO)
+	TPUTS(clear_screen);
 #else
 	twrite("\033[2J", 4);
 #endif

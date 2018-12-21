@@ -158,6 +158,17 @@ extern char *cm[];
 extern char *termcap_end;
 #endif
 
+#ifdef TERMINFO
+#include <term.h>
+#include <curses.h>
+extern char *cm[];
+#define TPUTS(s) tputs(s, 1, tputc)
+#endif
+
+/* TERMCAP and TERMINFO only */
+void set_tkey(int i, char *key);
+
+
 /** Write string to stderr.
  * @param str String to write.
  * @return Output from _twrite().

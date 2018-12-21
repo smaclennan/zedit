@@ -191,7 +191,7 @@ int tdelay(int ms)
 	return poll(&stdin_fd, 1, ms) != 1;
 }
 
-#ifdef TERMCAP
+#if defined(TERMCAP) || defined(TERMINFO)
 void set_tkey(int i, char *key)
 {
 	Tkeys[i] = key;

@@ -97,7 +97,7 @@ fi
 set_if_one TERMCAP $termcap
 
 if [ $terminfo = 1 ]; then
-    sed 's/#LIBS += -lcurses/LIBS += -lcurses/' Makefile > Makefile.tmp
+    sed 's/#LIBS += -lncurses/LIBS += -lncurses/' Makefile > Makefile.tmp
     mv Makefile.tmp Makefile
 fi
 

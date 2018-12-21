@@ -47,7 +47,7 @@ while [ -n "$1" ]; do
     case "$1" in
       *-clang) clang=$enable;;
       *-termcap) termcap=$enable;;
-      *-termcap) terminfo=$enable;;
+      *-terminfo) terminfo=$enable;;
       *-spell) spell=$enable;;
       *-zlib) zlib=$enable;;
       *-sysv4) sysv4=$enable;;
@@ -150,6 +150,10 @@ else
 fi
 
 cat >> config.h <<EOF
+
+#ifdef __unix__
+#define DOPIPES
+#endif
 
 /* Don't touch these unless you really know what you are doing. */
 #define UNSIGNED_BYTES

@@ -33,11 +33,12 @@ CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC) -I. -Ibuff -DHAVE_CONFIG_H
 
 MFLAGS += --no-print-directory CC="$(CC)" CFLAGS="$(CFLAGS) -I.." BDIR="z-$(BDIR)"
 
+LIBS += buff/z-$(BDIR)/libbuff.a
+
 #LIBS += -lz
 #LIBS += -ldl
 #LIBS += -ltermcap
-
-LIBS += buff/z-$(BDIR)/libbuff.a
+LIBS += -lcurses
 
 ETAGS=`which etags || echo true`
 

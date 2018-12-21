@@ -13,6 +13,8 @@
 
 /* If TERMCAP not defined defaults to ANSI */
 /* #define TERMCAP */
+/* If TERMINFO not defined defaults to ANSI */
+/* #define TERMINFO */
 
 /* DOPIPES: Output in real time and you can continue editing.
  * default: Output in real time but you must wait until command complete.

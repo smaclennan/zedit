@@ -216,8 +216,6 @@ void set_tkey(int i, char *key)
 {	// key must start with ESC
 	if (*key == 033)
 		Tkeys[i] = key;
-	else
-		Dbg("Key %d no ESC\n", i);
 }
 #endif
 /* @} */

@@ -129,7 +129,8 @@ static int check_specials(void)
 	/* No match - push back the chars */
 	tungetkb(j);
 
-	if (tpeek(2) == 'O')
+	switch (tpeek(2)) {
+	case 'O':
 		/* Check for ESC O keys - happens a lot on ssh */
 		switch (tpeek(3)) {
 		case 'A'...'D':
@@ -142,6 +143,25 @@ static int check_specials(void)
 			_tgetkb();
 			return check_specials();
 		}
+		break;
+#if defined(TERMCAP) || defined(TERMINFO)
+	// For mainly terminfo entries that lie
+	case '[':
+		/* Check for ESC [ keys */
+		switch (tpeek(3)) {
+		case 'A'...'D':
+			/* rewrite the arrow keys */
+			Tkeys[0] = "\033[A";	/* up */
+			Tkeys[1] = "\033[B";	/* down */
+			Tkeys[2] = "\033[C";	/* right */
+			Tkeys[3] = "\033[D";	/* left */
+			/* skip the ESC */
+			_tgetkb();
+			return check_specials();
+		}
+		break;
+#endif
+	}
 
 	return _tgetkb() & 0x7f;
 }
@@ -193,8 +213,11 @@ int tdelay(int ms)
 
 #if defined(TERMCAP) || defined(TERMINFO)
 void set_tkey(int i, char *key)
-{
-	Tkeys[i] = key;
+{	// key must start with ESC
+	if (*key == 033)
+		Tkeys[i] = key;
+	else
+		Dbg("Key %d no ESC\n", i);
 }
 #endif
 /* @} */

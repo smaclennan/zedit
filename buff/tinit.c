@@ -142,8 +142,7 @@ static void tlinit(void)
 		key = termcap_end;
 		tgetstr(key_names[i], &termcap_end);
 		if (key != termcap_end)
-			if (*key == 033)
-				set_tkey(i, key);
+			set_tkey(i, key);
 	}
 }
 #elif defined(TERMINFO)

@@ -38,7 +38,7 @@ LIBS += buff/z-$(BDIR)/libbuff.a
 #LIBS += -lz
 #LIBS += -ldl
 #LIBS += -ltermcap
-LIBS += -lncurses
+#LIBS += -lncurses
 
 ETAGS=`which etags || echo true`
 

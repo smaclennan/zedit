@@ -38,7 +38,7 @@ LIBS += buff/z-$(BDIR)/libbuff.a
 #LIBS += -lz
 #LIBS += -ldl
 #LIBS += -ltermcap
-#LIBS += -lncurses
+LIBS += -lncurses
 
 ETAGS=`which etags || echo true`
 
@@ -71,7 +71,7 @@ $(BDIR)/%.o : %.c
 
 all:	fcheck $(BDIR) libbuff $(BDIR)/$(ZEXE)
 
-$(BDIR)/$(ZEXE): $O
+$(BDIR)/$(ZEXE): $O buff/z-$(BDIR)/libbuff.a
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 ifeq ($(BDIR), $(HOST_ARCH))
 	@rm -f $(ZEXE)

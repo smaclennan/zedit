@@ -4,13 +4,13 @@
 
 int main(int argc, char *argv[])
 {
-	char buff[24];
+	unsigned char buff[24];
 	int i, n;
 
 	tinit();
 
 	while (1) {
-		n = read(0, (char *)buff, sizeof(buff));
+		n = read(0, buff, sizeof(buff));
 		if (n == 0)
 			break;
 
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 			break;
 
 		for (i = 0; i < n; ++i)
-			if (isprint(buff[i]))
+			if (buff[i] >= ' ' && buff[i] <= '~')
 				putchar(buff[i]);
 			else
 				printf("\\%03o", buff[i]);
@@ -27,9 +27,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-
-/*
- * Local Variables:
- * compile-command: "gcc -O3 -Wall keyout.c tinit.c -o keyout"
- * End:
- */

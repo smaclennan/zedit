@@ -59,6 +59,40 @@ static char *Tkeys[] = {
 	"\033[8^"	/* C-end */
 };
 
+#ifdef __QNXNTO__
+#define KEY_MASK2		0x00fffff0
+
+static char *Tkeys2[] = {
+	"",	/* up */
+	"",	/* down */
+	"",	/* right */
+	"",	/* left */
+
+	"\033[@",	/* insert */
+	"\033[P",	/* delete */
+	"\033[V",	/* page up */
+	"\033[U",	/* page down */
+	"\033[H",	/* home */
+	"\033[Y",	/* end */
+
+	"\033OP",	/* f1 */
+	"\033OQ",	/* f2 */
+	"\033OR",	/* f3 */
+	"\033OS",	/* f4 */
+	"\033OT",	/* f5 */
+	"\033OU",	/* f6 */
+	"\033Op",	/* f7 */
+	"\033Oq",	/* f8 */
+	"\033Or",	/* f9 */
+	"\033Os",	/* f10 */
+	"\033Ot",	/* f11 */
+	"\033Ou",	/* f12 */
+
+	"\033[h",	/* C-home */
+	"\033[y"	/* C-end */
+};
+#endif
+
 /* \cond skip */
 /** The size of the keyboard input stack. Must be a power of 2 */
 #define CSTACK 16
@@ -112,8 +146,13 @@ static Byte tpeek(int offset)
 static int check_specials(void)
 {
 	int i, j, bit, mask = KEY_MASK;
+#ifdef KEY_MASK2
+	int mask2 = KEY_MASK2;
+#else
+	int mask2 = 0;
+#endif
 
-	for (j = 1; mask; ++j) {
+	for (j = 1; mask || mask2; ++j) {
 		int cmd = _tgetkb() & 0x7f;
 
 		if (mask) {
@@ -124,13 +163,22 @@ static int check_specials(void)
 				} else
 					mask &= ~bit;
 		}
+#ifdef KEY_MASK2
+		if (mask2) {
+			for (bit = 1, i = 0; i < NUM_SPECIAL; ++i, bit <<= 1)
+				if ((mask2 & bit) && cmd == Tkeys2[i][j]) {
+					if (Tkeys2[i][j + 1] == '\0')
+						return i + SPECIAL_START;
+				} else
+					mask2 &= ~bit;
+		}
+#endif
 	}
 
 	/* No match - push back the chars */
 	tungetkb(j);
 
-	switch (tpeek(2)) {
-	case 'O':
+	if (tpeek(2) == 'O')
 		/* Check for ESC O keys - happens a lot on ssh */
 		switch (tpeek(3)) {
 		case 'A'...'D':
@@ -143,25 +191,6 @@ static int check_specials(void)
 			_tgetkb();
 			return check_specials();
 		}
-		break;
-#if defined(TERMCAP) || defined(TERMINFO)
-	// For mainly terminfo entries that lie
-	case '[':
-		/* Check for ESC [ keys */
-		switch (tpeek(3)) {
-		case 'A'...'D':
-			/* rewrite the arrow keys */
-			Tkeys[0] = "\033[A";	/* up */
-			Tkeys[1] = "\033[B";	/* down */
-			Tkeys[2] = "\033[C";	/* right */
-			Tkeys[3] = "\033[D";	/* left */
-			/* skip the ESC */
-			_tgetkb();
-			return check_specials();
-		}
-		break;
-#endif
-	}
 
 	return _tgetkb() & 0x7f;
 }
@@ -213,9 +242,8 @@ int tdelay(int ms)
 
 #if defined(TERMCAP) || defined(TERMINFO)
 void set_tkey(int i, char *key)
-{	// key must start with ESC
-	if (key && *key == 033)
-		Tkeys[i] = key;
+{
+	Tkeys[i] = key;
 }
 #endif
 /* @} */

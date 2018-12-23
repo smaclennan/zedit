@@ -48,7 +48,7 @@ CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 	undo.c
 
 HFILES = config.h funcs.h proto.h vars.h z.h
-HFILES += buff/buff.h buff/calc.h buff/mark.h buff/reg.h buff/tinit.h buff/keys.h
+HFILES += buff/buff.h buff/calc.h buff/reg.h buff/tinit.h buff/keys.h
 
 O := $(addprefix $(BDIR)/, $(CFILES:.c=.o))
 

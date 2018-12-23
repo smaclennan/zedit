@@ -33,6 +33,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #ifdef UNSIGNED_BYTES
 #define Byte unsigned char
@@ -85,8 +86,20 @@ struct buff {
 
 #define BUFF(b) (*(b)->curcptr)
 
-/* mark.h needs the buffer structure */
-#include "mark.h"
+/**
+ * The static and/or dynamic mark structure.
+ */
+struct mark {
+	struct buff *mbuff;			/**< Buffer the mark is in. */
+	struct page *mpage;			/**< Page in the buffer. */
+	unsigned moffset;			/**< Offset in the page. */
+#if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
+	struct mark *prev;			/**< List of marks. */
+	struct mark *next;			/**< List of marks. */
+#endif
+};
+/** Size of mark struct without list pointers */
+#define __MRKSIZE (sizeof(void *) * 2 + sizeof(unsigned))
 
 /** Current page length.
  * @param b Buffer to check.
@@ -329,6 +342,94 @@ void bhugecleanup(struct buff *buff);
 #define atomic_inc(a) (++(a))
 #define atomic_dec(a) (--(a))
 #endif
+
+/* Mark functions */
+
+struct mark *bcremark(struct buff *);
+void bdelmark(struct mark *);
+
+struct mark *_bcremark(struct buff *buff, struct mark **tail);
+void _bdelmark(struct mark *mark, struct mark **tail);
+
+/** Is buffer Point at mark?
+ * @param buff Buffer to check.
+ * @param mark Mark to check.
+ * @return 1 if buffer Point is at mark.
+ */
+static inline int bisatmrk(struct buff *buff, struct mark *mark)
+{
+	return buff->curpage == mark->mpage && buff->curchar == mark->moffset;
+}
+int bisaftermrk(struct buff *, struct mark *);
+int bisbeforemrk(struct buff *, struct mark *);
+int bpnttomrk(struct buff *, struct mark *);
+int bswappnt(struct buff *, struct mark *);
+void mrkfini(void);
+
+int mrkaftermrk(struct mark *, struct mark *);
+int mrkbeforemrk(struct mark *, struct mark *);
+
+/** Move the mark to the point.
+ * @param buff The buffer Point to move the mark to.
+ * @param mark The mark to set.
+ */
+static inline void bmrktopnt(struct buff *buff, struct mark *mark)
+{
+	mark->mbuff   = buff;
+	mark->mpage   = buff->curpage;
+	mark->moffset = buff->curchar;
+}
+
+/** Move mark 1 to mark 2
+ * @param m1 Destination mark.
+ * @param m2 Source mark.
+ */
+static inline void mrktomrk(struct mark *m1, struct mark *m2)
+{
+	memcpy(m1, m2, __MRKSIZE);
+}
+
+/** Is mark1 at mark2?
+ * @param m1 First mark.
+ * @param m2 Second mark.
+ * @return mark1 == mark2.
+ */
+static inline int mrkatmrk(struct mark *m1, struct mark *m2)
+{
+	return memcmp(m1, m2, __MRKSIZE) == 0;
+}
+
+#ifdef HAVE_GLOBAL_MARKS
+extern struct mark *Marklist;
+
+/** Walk through all the global marks that match page */
+#define foreach_global_pagemark(mark, page)		       \
+	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
+		if ((mark)->mpage == (page))
+
+/** Walk through all the global marks that match buff */
+#define foreach_global_buffmark(buff, mark)		       \
+	for ((mark) = Marklist; (mark); (mark) = (mark)->prev) \
+		if ((mark)->mbuff == (buff))
+#else
+#define foreach_global_pagemark(mark, page) if (0)
+#define foreach_global_buffmark(buff, mark) if (0)
+#endif
+
+#ifdef HAVE_BUFFER_MARKS
+/** Walk through all the buffer marks in buff that match page */
+#define foreach_pagemark(buff, mark, page)				\
+	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	\
+		if ((mark)->mpage == (page))
+
+/** Walk through all the buffer marks in buff */
+#define foreach_buffmark(buff, mark)					\
+	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)
+#else
+#define foreach_pagemark(buff, mark, page) if (0)
+#define foreach_buffmark(buff, mark) if (0)
+#endif
+
 /* @} buffer */
 
 /** @addtogroup misc

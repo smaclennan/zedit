@@ -32,5 +32,6 @@
 #define BUILTIN_REG
 #endif
 #ifdef __QNXNTO__
+#undef  __unix__
 #define __unix__
 #endif

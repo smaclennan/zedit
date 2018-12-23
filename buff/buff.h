@@ -30,9 +30,9 @@
 #include "config.h"
 #endif
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <stdarg.h>
 
 #ifdef UNSIGNED_BYTES
 #define Byte unsigned char

@@ -430,6 +430,9 @@ extern struct mark *Marklist;
 #define foreach_buffmark(buff, mark) if (0)
 #endif
 
+/** The libbuff version as a string. */
+extern const char *libbuff_version;
+
 /* @} buffer */
 
 /** @addtogroup misc
@@ -437,9 +440,6 @@ extern struct mark *Marklist;
 */
 const char *Dbgfname(const char *fname);
 void Dbg(const char *fmt, ...);
-
-/** The libbuff version as a string. */
-extern const char *libbuff_version;
 /* @} misc */
 
 #endif

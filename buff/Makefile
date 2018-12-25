@@ -85,8 +85,6 @@ ifeq ($(HOST_ARCH), $(BDIR))
 	$(QUIET_LN)ln -fs $(BDIR)/libbuff.a libbuff.a
 endif
 
-$(BDIR)/binstr.o: strfmt.c
-
 $(BDIR):
 	@mkdir -p $(BDIR)
 

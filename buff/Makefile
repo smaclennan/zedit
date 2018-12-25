@@ -6,7 +6,7 @@ HOST_ARCH := $(shell uname -m)
 CFLAGS ?= -Wall -O2
 
 # For debugging use small pages
-CFLAGS += -DPGSIZE=8 -DPAGE_DBG
+#CFLAGS += -DPGSIZE=8 -DPAGE_DBG
 # For testing the builtin reg
 #CFLAGS += -DBUILTIN_REG
 # For hugefiles
@@ -75,8 +75,8 @@ $(BDIR)/%.o : %.c
 
 all: $(BDIR) $(BDIR)/libbuff.a
 
-btest: btest.c $(BDIR)/libbuff.a
-	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $+
+tests:
+	make -C tests all
 
 $(BDIR)/libbuff.a: $O
 	@rm -f $(BDIR)/libbuff.a
@@ -98,5 +98,6 @@ doxy:
 	doxygen doxygen/Doxyfile
 
 clean:
-	rm -f *.o libbuff.a btest strtest
+	make -C tests clean
+	rm -f *.o libbuff.a
 	rm -rf $(BDIR) doxygen/html

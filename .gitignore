@@ -3,6 +3,7 @@
 ze
 fcheck
 TAGS
+motley.files
 motley.out
 valgrind.out
 func-docs.h

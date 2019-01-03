@@ -69,7 +69,7 @@ $(BDIR)/%.o : %.c
 
 #################
 
-all:	fcheck $(BDIR) libbuff $(BDIR)/$(ZEXE)
+all:	fcheck $(BDIR) $(BDIR)/$(ZEXE)
 
 $(BDIR)/$(ZEXE): $O buff/z-$(BDIR)/libbuff.a
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
@@ -79,7 +79,7 @@ ifeq ($(BDIR), $(HOST_ARCH))
 endif
 	@$(ETAGS) $(CFILES) buff/*.c $(HFILES)
 
-libbuff:
+buff/z-$(BDIR)/libbuff.a: buff/*.[ch]
 	$(QUIET_MAKE)$(MAKE) $(MFLAGS) -C buff
 
 fcheck: fcheck.c funcs.c varray.c cnames.c bind.c config.h vars.h buff/keys.h

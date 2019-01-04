@@ -96,6 +96,6 @@ doxy:
 	doxygen doxygen/Doxyfile
 
 clean:
-	make -C tests clean
+	$(MAKE) -C tests clean
 	rm -f *.o libbuff.a
 	rm -rf $(BDIR) doxygen/html

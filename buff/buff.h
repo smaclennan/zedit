@@ -329,7 +329,7 @@ void bhugecleanup(struct buff *buff);
 #define HAVE_ATOMIC
 #define atomic_exchange_ptr InterlockedCompareExchangePointer
 #define atomic_exchange InterlockedCompareExchange
-#elif defined(__TINYC__) || defined(__X86__) || defined(__X86_64__)
+#elif defined(__x86__) || defined(__x86_64__)
 #define HAVE_ATOMIC
 static inline void *atomic_exchange_ptr(void **ptr, void *old, void *new)
 {

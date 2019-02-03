@@ -323,24 +323,40 @@ void bhugecleanup(struct buff *buff);
 
 #ifdef __GNUC__ /* also clang */
 #define HAVE_ATOMIC
-#define atomic_exchange  __sync_val_compare_and_swap
-#define atomic_add(a, n) __sync_fetch_and_add(&a, n)
-#define atomic_sub(a, n) __sync_fetch_and_sub(&a, n)
-#define atomic_inc(a) __sync_fetch_and_add(&a, 1)
-#define atomic_dec(a) __sync_fetch_and_sub(&a, 1)
+#define atomic_exchange_ptr __sync_val_compare_and_swap
+#define atomic_exchange __sync_val_compare_and_swap
 #elif defined(WIN32)
 #define HAVE_ATOMIC
-#define atomic_exchange InterlockedCompareExchangePointer
-#define atomic_add(a, n) InterlockedAdd(&a, n)
-#define atomic_sub(a, n) InterlockedAdd(&a, -n)
-#define atomic_inc(a) InterlockedIncrement(&a)
-#define atomic_dec(a) InterlockedDecrement(&a)
+#define atomic_exchange_ptr InterlockedCompareExchangePointer
+#define atomic_exchange InterlockedCompareExchange
+#elif defined(__TINYC__) || defined(__X86__) || defined(__X86_64__)
+#define HAVE_ATOMIC
+static inline void *atomic_exchange_ptr(void **ptr, void *old, void *new)
+{
+	uint64_t _ret;
+	uint64_t *_ptr = (uint64_t *)ptr;
+	uint64_t _old = (uint64_t)old;
+	uint64_t _new = (uint64_t)new;
+
+	asm volatile("lock cmpxchgq %2,%1"
+			     : "=a" (_ret), "+m" (*_ptr)
+			     : "r" (_new), "0" (_old)
+			     : "memory");
+	return (void *)_ret;
+}
+
+static inline uint64_t atomic_exchange(uint64_t *ptr, uint64_t old, uint64_t new)
+{
+	uint64_t ret;
+
+	asm volatile("lock cmpxchgq %2,%1"
+			     : "=a" (ret), "+m" (*ptr)
+			     : "r" (new), "0" (old)
+			     : "memory");
+	return ret;
+}
 #else
 #warning no atomic functions
-#define atomic_add(a, n) ((a) += n)
-#define atomic_sub(a, n) ((a) -= n)
-#define atomic_inc(a) (++(a))
-#define atomic_dec(a) (--(a))
 #endif
 
 /* Mark functions */

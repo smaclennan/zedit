@@ -48,7 +48,7 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
 	struct mark *mark;
 
 #ifdef HAVE_ATOMIC
-	mark = atomic_exchange(&freemark, freemark, NULL);
+	mark = atomic_exchange_ptr((void **)&freemark, freemark, NULL);
 	if (!mark)
 #endif
 		mark = (struct mark *)calloc(1, sizeof(struct mark));
@@ -103,7 +103,7 @@ void _bdelmark(struct mark *mark, struct mark **tail)
 		mark->prev = mark->next = NULL;
 #endif
 #ifdef HAVE_ATOMIC
-		if (atomic_exchange(&freemark, NULL, mark))
+		if (atomic_exchange_ptr((void **)&freemark, NULL, mark))
 #endif
 			free((char *)mark);
 	}

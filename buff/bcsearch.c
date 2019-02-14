@@ -20,7 +20,7 @@
 /* \cond skip */
 #if defined(WIN32) || defined(__QNXNTO__)
 #define NO_MEMRCHR
-#else
+#elif !defined(_GNU_SOURCE)
 #define _GNU_SOURCE /* for memrchr */
 #endif
 /* \endcond */

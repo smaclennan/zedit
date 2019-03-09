@@ -168,6 +168,7 @@ extern char *cm[];
 /* TERMCAP and TERMINFO only */
 void set_tkey(int i, char *key);
 
+void st_hack(void);
 
 /** Write string to stderr.
  * @param str String to write.

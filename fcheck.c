@@ -52,6 +52,8 @@ int Colmax, Rowmax;
 #define N_KEYS NUM_SPECIAL
 #endif
 
+void Dbg(const char *fmt, ...) {}
+
 int main(int argc, char *argv[])
 {
 	int i, s1, s2, err = 0;

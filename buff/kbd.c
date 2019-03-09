@@ -28,7 +28,8 @@
 */
 
 /** The special multi-byte keys. This array may be updated dynamically if we detect ESC O keys.
- * Note: We can currently only have 32 specials */
+ * Note: We can currently only have 32 specials.
+ */
 static char *Tkeys[] = {
 	"\033[A",	/* up */
 	"\033[B",	/* down */
@@ -58,6 +59,17 @@ static char *Tkeys[] = {
 	"\033[7^",	/* C-home */
 	"\033[8^"	/* C-end */
 };
+
+void st_hack(void)
+{
+	Tkeys[4] = "\033[4h"; /* insert */
+	Tkeys[5] = "\033[P";  /* delete */
+	Tkeys[8] = "\033[H";  /* home */
+	Tkeys[9] = "\033[4~"; /* end */
+
+	/* C-home == home */
+	Tkeys[23] = "\033[J"; /* C-end */
+}
 
 #ifdef __QNXNTO__
 #define KEY_MASK2		0x00fffff0
@@ -190,6 +202,15 @@ static int check_specials(void)
 			/* skip the ESC */
 			_tgetkb();
 			return check_specials();
+		case 'P'...'S':
+			/* rewrite F1 to F4 */
+			Tkeys[10] = "\033OP";	/* up */
+			Tkeys[11] = "\033OQ";	/* down */
+			Tkeys[12] = "\033OR";	/* right */
+			Tkeys[13] = "\033OS";	/* left */
+			/* skip the ESC */
+			_tgetkb();
+			return check_specials();
 		}
 
 	return _tgetkb() & 0x7f;
@@ -243,7 +264,8 @@ int tdelay(int ms)
 #if defined(TERMCAP) || defined(TERMINFO)
 void set_tkey(int i, char *key)
 {
-	Tkeys[i] = key;
+	if (*key == '\e')
+		Tkeys[i] = key;
 }
 #endif
 /* @} */

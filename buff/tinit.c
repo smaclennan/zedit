@@ -223,7 +223,16 @@ static void tlinit(void)
 #endif
 }
 #else
-static void tlinit(void) {}
+static void tlinit(void)
+{
+	char *term = getenv("TERM");
+
+	/* I like st, but they have a weird mix of ansi and posix and the
+	 * terminfo entry lies.
+	 */
+	if(strcmp(term, "st") == 0 || strncmp(term, "st-", 3) == 0)
+		st_hack();
+}
 #endif
 /* \endcond */
 

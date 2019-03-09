@@ -27,3 +27,9 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+
+/*
+ * Local Variables:
+ * compile-command: "gcc -O2 -Wall -I.. keyout.c -o keyout ../libbuff.a"
+ * End:
+ */

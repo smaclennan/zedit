@@ -57,6 +57,41 @@ static void reverse_string(char *start, char *end)
 }
 /* \endcond */
 
+/** Octal to ascii.
+ * @param val The octal to convert.
+ * @param out The output string.
+ * @return A pointer to the end of the string.
+ */
+char *_octal2str(long val, char *out)
+{
+	char *p = out;
+
+	if (val == 0) {
+		*p++ = '0';
+		*p = 0;
+	} else {
+		while (val > 0) {
+			*p++ = (val & 0x7) + '0';
+			val >>= 3;
+		}
+		*p = 0;
+
+		reverse_string(out, p);
+	}
+	return p;
+}
+
+/** Octal to ascii.
+ * @param val The octal to convert.
+ * @param out The output string.
+ * @return A pointer to out.
+ */
+char *octal2str(long val, char *out)
+{
+	_octal2str(val, out);
+	return out;
+}
+
 /** Integer to ascii.
  * @param val The integer to convert.
  * @param out The output string.
@@ -315,6 +350,13 @@ static int __strfmt(struct outbuff *out, const char *fmt, va_list ap)
 					int2str(va_arg(ap, long), tmp);
 				else
 					int2str(va_arg(ap, int), tmp);
+				outnum(out, tmp, flags);
+				break;
+			case 'o':
+				if (flags & SAW_LONG)
+					octal2str(va_arg(ap, long), tmp);
+				else
+					octal2str(va_arg(ap, int), tmp);
 				outnum(out, tmp, flags);
 				break;
 			case 'u':

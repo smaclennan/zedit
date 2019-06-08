@@ -232,14 +232,15 @@ void set_umark(struct mark *tmark)
 		mrktomrk(UMARK, tmark);
 	else
 		bmrktopnt(Bbuff, UMARK);
+
+	invalidate_scrnmarks(0, Rowmax - 2);
+	Tlrow = -1;
 }
 
 void clear_umark(void)
 {
 	if (UMARK_SET) {
-		int i;
-		for (i = 0; i < ROWMAX; ++i)
-			Scrnmodf[i] = true;
+		invalidate_scrnmarks(0, Rowmax - 2);
 		Tlrow = -1;
 
 		bdelmark(UMARK);
@@ -470,7 +471,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 		tsetcursor();
 
 	for (trow = from; trow < to; ++trow) {
-		if (Scrnmodf[trow] || !bisatmrk(Bbuff, &Scrnmarks[trow]) || UMARK_SET) {
+		if (Scrnmodf[trow] || !bisatmrk(Bbuff, &Scrnmarks[trow])) {
 			Scrnmodf[trow] = false;
 			bmrktopnt(Bbuff, &Scrnmarks[trow]); /* Do this before tkbrdy */
 			lptr = tline;
@@ -749,9 +750,7 @@ void vsetmrk(struct mark *mrk)
 
 void invalidate_scrnmarks(unsigned from, unsigned to)
 {
-	unsigned i;
-
-	for (i = from; i < to; ++i)
+	for (unsigned i = from; i < to; ++i)
 		Scrnmodf[i] = true;
 }
 

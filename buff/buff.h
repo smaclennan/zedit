@@ -376,6 +376,16 @@ static inline int bisatmrk(struct buff *buff, struct mark *mark)
 {
 	return buff->curpage == mark->mpage && buff->curchar == mark->moffset;
 }
+/** Is buffer Point at mark? Mark can be NULL.
+ * @param buff Buffer to check.
+ * @param mark Mark to check.
+ * @return 1 if buffer Point is at mark.
+ */
+static inline int bisatmrk_safe(struct buff *buff, struct mark *mark)
+{
+	return mark && buff->curpage == mark->mpage && buff->curchar == mark->moffset;
+}
+
 int bisaftermrk(struct buff *, struct mark *);
 int bisbeforemrk(struct buff *, struct mark *);
 int bpnttomrk(struct buff *, struct mark *);

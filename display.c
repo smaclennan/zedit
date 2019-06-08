@@ -234,12 +234,14 @@ void set_umark(struct mark *tmark)
 		bmrktopnt(Bbuff, UMARK);
 
 	invalidate_scrnmarks(0, Rowmax - 2);
+	Tlrow = -1;
 }
 
 void clear_umark(void)
 {
 	if (UMARK_SET) {
 		invalidate_scrnmarks(0, Rowmax - 2);
+		Tlrow = -1;
 
 		bdelmark(UMARK);
 		UMARK = NULL;
@@ -249,7 +251,7 @@ void clear_umark(void)
 /* True if buffer at user mark */
 static bool bisatumark(void)
 {
-	return  UMARK_SET && bisatmrk(Bbuff, UMARK);
+	return  bisatmrk_safe(Bbuff, UMARK);
 }
 
 /** Returns true if point is between start and end. This has to walk
@@ -427,21 +429,6 @@ static void extendedlinemarker(void)
 	tstyle(T_NORMAL);
 }
 
-static bool in_region(struct mark *pmark)
-{
-	if (!UMARK_SET || !pmark)
-		return false;
-
-#if 0
-	if (mrkaftermrk(pmark, UMARK))
-		return bisbetweenmrks(Bbuff, UMARK, pmark);
-	else
-		return bisbetweenmrks(Bbuff, pmark, UMARK);
-#else
-	return bisatmrk(Bbuff, UMARK);
-#endif
-}
-
 /* Fairly special routine. Pushes the char one past the end of the
  * buffer. */
 static void bshove(void)
@@ -477,11 +464,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			t_goto(trow, col);
 			while (!bisend(Bbuff) && !ISNL(Buff()) &&
 				   (col = buff_col()) < Colmax) {
-				if (in_region(pmark)) {
-					tstyle(T_REGION);
-					tprntchar(Buff());
-					tstyle(T_NORMAL);
-				} else if (trow == Tlrow &&
+				if (trow == Tlrow &&
 					Buff() == *lptr &&
 					Buff() != (Byte)'\376')
 					Pcol = col;

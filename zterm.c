@@ -112,8 +112,6 @@ void tainit(void)
 		exit(1);
 	}
 
-	tsetcursor();
-
 	initline();		/* Curwdo not defined yet */
 
 	atexit(tafini);
@@ -248,20 +246,6 @@ int prefline(void)
 	w = wheight();
 	line = PREFLINE * w / (Rowmax - 2);
 	return line < w ? line : w >> 1;
-}
-
-void tsetcursor(void)
-{
-#ifdef WIN32
-	CONSOLE_CURSOR_INFO cursorinfo;
-
-	if (Curbuff->bmode & OVERWRITE)
-		cursorinfo.dwSize = 25; /* default */
-	else
-		cursorinfo.dwSize = 100; /* solid */
-	cursorinfo.bVisible = true;
-	SetConsoleCursorInfo(hstdout, &cursorinfo);
-#endif
 }
 
 #undef tbell

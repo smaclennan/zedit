@@ -216,7 +216,6 @@ void shell_init(void);
 void tbell(void);
 void tainit(void);
 void termsize(void);
-void tsetcursor(void);
 void tindent(int);
 void toggle_mode(int);
 void tprntchar(Byte);

@@ -452,9 +452,6 @@ static int innerdsp(int from, int to, struct mark *pmark)
 	if (VAR(VCOMMENTS))
 		resetcomments();
 
-	if (UMARK_SET)
-		tsetcursor();
-
 	for (trow = from; trow < to; ++trow) {
 		if (Scrnmodf[trow] || !bisatmrk(Bbuff, &Scrnmarks[trow])) {
 			Scrnmodf[trow] = false;
@@ -514,9 +511,6 @@ static int innerdsp(int from, int to, struct mark *pmark)
 	}
 
 	tstyle(T_NORMAL);
-
-	if (UMARK_SET)
-		tsetcursor();
 
 	return pntrow;
 }

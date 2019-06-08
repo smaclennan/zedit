@@ -236,7 +236,7 @@ char *gethomedir(void);
 /* terminal variables */
 extern int Prow, Pcol;			/* Point row and column */
 extern int Colmax, Rowmax;		/* Row and column maximums */
-extern int Tabsize, Taboffset;
+extern int Tabsize;
 
 #define ISNL(c)			((c) == '\n')
 

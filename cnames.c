@@ -640,7 +640,9 @@ struct cnames Cnames[] = {
 	   "change the buffer itself.")
 	},
 	{"untab",				ZUNTAB,			AN,
-	 C("Remove a tab. Basically the opposite of tab.")
+	 C("Remove a tab. Basically the opposite of tab.\n\n"
+	   "Special case: if you are at the end of a line, it removes the 'tab' "
+	   "from the start of the line. This is mainly for shell modes.")
 	},
 	{"uppercase-region",		ZUPPERCASE_REGION,	AI,
 	 C("Convert the Region to uppercase. Not allowed in program mode "

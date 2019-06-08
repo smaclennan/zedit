@@ -627,8 +627,6 @@ static char *setmodes(zbuff_t *buff)
 		Keys[CR] = ZSH_INDENT;
 		if (VAR(VCOMMENTS))
 			printchar = cprntchar;
-
-		shell_init();
 		break;
 	case PYMODE:
 		PAWCAT("py");

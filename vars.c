@@ -155,7 +155,6 @@ static void setavar(const char *vin, bool display)
 
 /* Tabs must be >= 2 and <= 8. Enforced in setavar. */
 int Tabsize = 8;
-int Taboffset; /* for shell mode */
 
 /* Returns non-zero if tab size changed */
 int settabsize(unsigned mode)
@@ -166,14 +165,10 @@ int settabsize(unsigned mode)
 			return 0;
 		return Tabsize = VAR(VCTABS);
 	case SHMODE:
-		if (Tabsize == VAR(VTABS) && Taboffset == VAR(VSHTABS))
-			return 0;
-		Taboffset = VAR(VSHTABS);
-		return Tabsize = VAR(VTABS);
 	case PYMODE:
-		if (Tabsize == VAR(VSHTABS) && Taboffset == VAR(VSHTABS))
+		if (Tabsize == VAR(VSHTABS))
 			return 0;
-		return Tabsize = Taboffset = VAR(VSHTABS);
+		return Tabsize = VAR(VSHTABS);
 	default:
 		if (Tabsize == VAR(VTABS))
 			return 0;

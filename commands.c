@@ -272,109 +272,26 @@ void Zc_indent(void)
 
 /* SHELL MODE COMMANDS */
 
-/* The builtin reg cannot handle extended expressions. But if you are
- * on windows, why are you editing shell scripts?
+/* I tried to do a "proper" shell indent but it just hurt more than it
+ * helped.
+ *
+ * So here is a simple implementation. It indents to the current
+ * indentation level. Use tab and untab to correct.
  */
-
-#define RE_IF			0
-#define RE_FI			1
-#define RE_WHILE		2
-#define RE_DONE			3
-#define RE_MAX			4
-
-static regexp_t sh_re[RE_MAX];
-static char *sh_restr[RE_MAX] = {
-#ifdef HAVE_PCRE
-	"\\bif\\b", "\\bfi\\b", "\\bwhile\\b", "\\bdone\\b"
-#else
-	"\\<if\\>", "\\<fi\\>", "\\<while\\>", "\\<done\\>"
-#endif
-};
-
-void shell_init(void)
-{
-	static int first_time = 1;
-
-	if (first_time) {
-		int i;
-
-		for (i = 0; i < RE_MAX; ++i)
-			if (re_compile(&sh_re[i], sh_restr[i], REG_EXTENDED))
-				/* This is a programming error */
-				error("Unable to compile re '%s'\n", sh_restr[i]);
-
-		first_time = 0;
-	}
-}
-
-static bool find_line(int re_index)
-{
-	struct mark end, save;
-
-	bmrktopnt(Bbuff, &save);
-	bmrktopnt(Bbuff, &end);
-	toendline(Bbuff);
-	bswappnt(Bbuff, &end);
-
-	while (bisbeforemrk(Bbuff, &end)) {
-		if (_lookingat(Bbuff, &sh_re[re_index])) {
-			bpnttomrk(Bbuff, &save);
-			return true;
-		}
-		Znext_word();
-	}
-
-	bpnttomrk(Bbuff, &save);
-	return false;
-}
-
 void Zsh_indent(void)
 {
-	int width, fixup = 0;
-	struct mark *save, *tmark;
+	int width;
+	struct mark save;
 
-	if (!(save = bcremark(Bbuff))) {
-		Znewline();
-		return;
-	}
-
+	bmrktopnt(Bbuff, &save);
 	tobegline(Bbuff);
 	bmovepast(Bbuff, biswhite, FORWARD);
-	tmark = bcremark(Bbuff);
 	width = bgetcol(true, 0);
+	bpnttomrk(Bbuff, &save);
 
-	if (_lookingat(Bbuff, &sh_re[RE_IF])) {
-		if (find_line(RE_FI) == 0)
-			width += Taboffset;
-	} else if (_lookingat(Bbuff, &sh_re[RE_WHILE])) {
-		if (find_line(RE_DONE) == 0)
-			width += Taboffset;
-	} else if (_lookingat(Bbuff, &sh_re[RE_FI])) {
-		width -= Taboffset;
-		fixup = 1;
-	} else if (_lookingat(Bbuff, &sh_re[RE_DONE])) {
-		width -= Taboffset;
-		fixup = 1;
-	} else if (Buff() == '}') {
-		width -= Taboffset;
-		fixup = 1;
-	} else if (lookingat(Bbuff, ".*\\{[ \t]*$")) {
-		/* Won't work if there is a comment */
-		width += Taboffset;
-	}
-
-	if (fixup && tmark) {
-		tobegline(Bbuff);
-		bdeltomrk(tmark);
-		tindent(width);
-	}
-
-	bpnttomrk(Bbuff, save);
 	binsert(Bbuff, NL);
 	Lfunc = ZINSERT; /* for undo */
 	tindent(width);
-	bdelmark(tmark);
-	bdelmark(save);
 }
 
 /* PYTHON MODE COMMANDS */
@@ -400,7 +317,7 @@ void Zpy_indent(void)
 
 	/* Simple version to start with. */
 	if (_lookingat(Bbuff, &py_re))
-		width += Taboffset;
+		width += Tabsize;
 
 	bpnttomrk(Bbuff, &save);
 	binsert(Bbuff, NL);
@@ -760,6 +677,12 @@ void Ztab(void)
 		binsert(Bbuff, '\t');
 }
 
+static inline void space_delete(int n)
+{
+	for (int i = 0; i < n && Buff() == ' '; ++i)
+		bdelete(Bbuff, 1);
+}
+
 void Zuntab(void)
 {
 	switch(bpeek(Bbuff)) {
@@ -768,14 +691,12 @@ void Zuntab(void)
 		if (Buff() == '\t')
 			bdelete(Bbuff, 1);
 		else
-			for (int i = 0; i < Tabsize; ++i)
-				if (Buff() == ' ')
-					bdelete(Bbuff, 1);
-		break;
+			space_delete(Tabsize);
+		return;
 	case '\t':
 		bmove(Bbuff, -1);
 		bdelete(Bbuff, 1);
-		break;
+		return;
 	case ' ': ;
 		int del = bgetcol(false, 0) % Tabsize;
 		if (del == 0)
@@ -785,10 +706,18 @@ void Zuntab(void)
 			if (Buff() == ' ')
 				bdelete(Bbuff, 1);
 		}
-		for (int i = 0; i < 8 - del; ++i)
-			if (Buff() == ' ')
-				bdelete(Bbuff, 1);
-		break;
+		space_delete(8 - del);
+		return;
+	}
+
+	if (Buff() == '\n' || bisend(Bbuff)) {
+		/* special case for EOL - delete from start of line */
+		tobegline(Bbuff);
+		if (Buff() == '\t')
+			bdelete(Bbuff, 1);
+		else
+			space_delete(Tabsize);
+		toendline(Bbuff);
 	}
 }
 

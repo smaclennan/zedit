@@ -19,14 +19,6 @@
 
 #include "z.h"
 #include <setjmp.h>
-#ifdef __linux__
-#include <sys/sendfile.h>
-#endif
-
-#ifdef __unix__
-/* I am not including all of stdio.h for rename() */
-extern int rename(const char *oldpath, const char *newpath);
-#endif
 
 /** @addtogroup zedit
  * @{
@@ -45,50 +37,6 @@ char *lastpart(char *fname)
 		return fname;
 }
 
-static bool cp(char *from, char *to)
-{
-	int in, out;
-	int rc = true;
-	size_t n;
-	struct stat sbuf;
-
-	in = open(from, O_RDONLY);
-	if (in < 0)
-		return false;
-	if (fstat(in, &sbuf)) {
-		close(in);
-		return false;
-	}
-	out = open(to, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (out < 0) {
-		close(in);
-		return false;
-	}
-
-#ifdef __linux__
-	n = sendfile(out, in, NULL, sbuf.st_size);
-	if (n != sbuf.st_size)
-		rc = false;
-#else
-	char buf[1024];
-	while ((n = read(in, buf, sizeof(buf))) > 0)
-		if (write(out, buf, n) != n)
-			break;
-	if (n)
-		rc = false;
-#endif
-
-	close(in);
-	close(out);
-	return rc;
-}
-
-static char *make_bakname(char *bakname, int len, const char *fname)
-{
-	strconcat(bakname, len, fname, "~", NULL);
-	return bakname;
-}
-
 int file_mode(void)
 {
 	static int Cmask = 0;
@@ -104,11 +52,9 @@ int file_mode(void)
 
 static bool zwritefile(char *fname)
 {
-	char bakname[PATHMAX + 1];
 	struct mark smark;
 	struct stat sbuf;
 	int nlink = 1, rc;
-	bool bak = false;
 
 	/* If the file existed, check to see if it has been modified. */
 	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
@@ -134,27 +80,20 @@ static bool zwritefile(char *fname)
 	}
 #endif
 
-	/* check for links and handle backup file */
-	make_bakname(bakname, sizeof(bakname), fname);
+	/* check for links */
 	if (nlink > 1) {
 		strconcat(PawStr, PAWSTRLEN, "WARNING: ", lastpart(fname),
 				  " is linked. Preserve? ", NULL);
 		switch (ask(PawStr)) {
 		case YES:
-			if (VAR(VBACKUP))
-				bak = cp(fname, bakname);
 			break;
 		case NO:
-			if (VAR(VBACKUP))
-				bak = rename(fname, bakname);
-			else
-				unlink(fname);	/* break link */
+			unlink(fname);	/* break link */
 			break;
 		case ABORT:
 			return false;
 		}
-	} else if (VAR(VBACKUP))
-		bak = rename(fname, bakname);
+	}
 
 	bmrktopnt(Bbuff, &smark);
 	rc = bwritefile(Bbuff, fname, file_mode());
@@ -170,13 +109,6 @@ static bool zwritefile(char *fname)
 			error("File is read only.");
 		else
 			error("Unable to write file.");
-		if (bak) {
-			if (sbuf.st_nlink) {
-				cp(bakname, fname);
-				unlink(bakname);
-			} else
-				rename(bakname, fname);
-		}
 	}
 
 	return rc;

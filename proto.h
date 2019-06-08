@@ -116,7 +116,6 @@ Z(Zre_replace);
 Z(Zre_search);
 Z(Zreverse_search);
 Z(Zsave_all_files);
-Z(Zshow_config);
 Z(Zsearch);
 Z(Zset_variable);
 Z(Zset_bookmark);

@@ -127,7 +127,6 @@ void (*Cmds[][2])() = {
 	{ Zsave_all_files,		Znotimpl },
 	{ Zsize_window,			Znotimpl },
 	{ Zrevert_file,			Znotimpl },
-	{ Zshow_config,			Znotimpl },
 	{ Zsetenv,			Znotimpl },
 	{ Zgrep,			Znotimpl },
 	{ Zundo,			Znotimpl },

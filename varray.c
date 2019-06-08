@@ -26,9 +26,6 @@
 #define V(n) {(char *)n}
 
 struct avar Vars[] = {
-	{ "backup",		V_FLAG,		V(0),
-	  "If set, a backup file is created when a file is written."
-	},
 	{ "c-extends",		V_STRING,	V(".c.h.cpp.cc.cxx.y.l"),
 	  "This variable defines the extensions that turn on C mode."
 	},

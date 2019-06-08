@@ -174,37 +174,4 @@ int settabsize(unsigned mode)
 		return Tabsize = VAR(VTABS);
 	}
 }
-
-void Zshow_config(void)
-{
-	int i;
-	char line[STRMAX * 2];
-	zbuff_t *tbuff = cmakebuff(CONFBUFF, NULL);
-	if (!tbuff)
-		return;
-
-	bempty(Bbuff);
-	for (i = 0; i < NUMVARS; ++i) {
-		if (Vars[i].vtype == V_STRING) {
-			if (VARSTR(i))
-				strfmt(line, sizeof(line), "%-15s %s\n",
-					 Vars[i].vname, VARSTR(i));
-			else
-				strfmt(line, sizeof(line), "#%-15s\n",
-					 Vars[i].vname);
-		} else if (Vars[i].vtype == V_DECIMAL)
-			strfmt(line, sizeof(line), "%-15s %d\n",
-				 Vars[i].vname, VAR(i));
-		else if (Vars[i].vtype == V_FLAG)
-			strfmt(line, sizeof(line), "%-15s %s\n",
-				 Vars[i].vname,
-				 VAR(i) ? "true" : "false");
-
-		binstr(Bbuff, line);
-	}
-
-	tbuff->buff->bmodf = false;
-	btostart(Bbuff);
-	cswitchto(tbuff);
-}
 /* @} */

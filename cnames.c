@@ -549,11 +549,6 @@ struct cnames Cnames[] = {
 	   "level. Also handles the 'if', 'while', 'fi', and 'done' "
 	   "keywords. Bound to Newline in SH mode.")
 	},
-	{"show-config",			ZSHOW_CONFIG,		AI,
-	 C("Show the current settings of all the Zedit variables in a "
-	   "buffer. The buffer is suitable for use as a .config.z file and "
-	   "can be saved to a file using Write File.")
-	},
 	{"size-window",			ZSIZE_WINDOW,		0,
 	 C("Sets the window to Universal Argument lines.")
 	},

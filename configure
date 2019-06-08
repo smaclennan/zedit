@@ -19,7 +19,6 @@ do_help() {
     echo "  --enable-undo		Enable undo"
     echo "  --enable-huge       Enable HUGE_FILES"
     echo "  --enable-huge-threaded Enable HUGE_THREADED"
-    echo "  --config-dir <dir>	Default config directory."
     echo
     echo "To disable a feature replace --enable with --disable."
 
@@ -38,7 +37,6 @@ while [ -n "$1" ]; do
     case "$1" in
       --enable-*) enable=1;;
       --disable-*) enable=0;;
-      --config-dir) ;;
       --help) do_help;;
       -h) do_help;;
       *) echo "Unknown arg '$1' ignored"; shift; continue;;
@@ -54,7 +52,6 @@ while [ -n "$1" ]; do
       *-undo) undo=$enable;;
       *-huge) huge=$enable;;
       *-huge-threaded) huge_threaded=$enable;;
-      --config-dir) shift; confdir=$1;;
       *) echo "Unknown arg '$1' ignored";;
     esac
 
@@ -113,8 +110,6 @@ fi
 echo >> config.h
 
 [ "$sysv4" = 1 ] && echo "#define SYSV4" >> config.h
-
-[ -n "$confdir" ] && echo "#define CONFIGDIR \"$confdir\"" >> config.h
 
 set_one SPELL $spell
 set_one ZLIB $zlib

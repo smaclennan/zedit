@@ -180,7 +180,7 @@ bool delcmd(void);
 int do_chdir(zbuff_t *buff);
 void execute(void);
 int readapipe(void);
-bool fd_add(int fd);
+void fd_add(int fd);
 void fd_remove(int fd);
 bool filesave(void);
 bool findfile(char *);

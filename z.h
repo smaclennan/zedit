@@ -69,8 +69,6 @@ struct zbuff;
 
 #define INVALID		-1
 
-#define ZCFILE		".config.z"
-
 /* the first three must follow:  (define + 1) % 4 = 0 */
 #define BUFNAMMAX	31			/* max buffer name */
 #define PATHMAX		255			/* max file name */

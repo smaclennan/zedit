@@ -38,9 +38,8 @@ void delfini(void)
 
 unsigned delpages(void)
 {
-	struct page *page;
 	unsigned npage = 0;
-	for (page = Killbuff->firstp; page; page = page->nextp)
+	for (struct page *page = Killbuff->firstp; page; page = page->nextp)
 			++npage;
 	return npage;
 }

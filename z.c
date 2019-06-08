@@ -32,31 +32,14 @@ int Homelen;
 unsigned Cmd;
 int Cmdpushed = -1; /* Search pushed a key */
 
-#ifndef CONFIGDIR
-#define CONFIGDIR "/usr/share/zedit"
-#endif
-
 static void usage(void)
 {
-	terror("usage: zedit [-hrt] [-l line] [fname ...]\n"
+	terror("usage: zedit [-hrt] [-c config] [-l line] [fname ...]\n"
 		   "where:\t-h  displays this message.\n"
 		   "\t-r  do not do CR/LF conversion.\n"
 		   "\t-t  default to text mode.\n"
 		   "\t-l  goto specified line number. (First file only)\n");
 	exit(1);
-}
-
-/* Find the correct path for the config files. */
-static void findpath(char *path, const char *f, void (*action)(const char *))
-{
-	strconcat(path, PATHMAX, Home, "/", f, NULL);
-	if (access(path, F_OK) == 0)
-		action(path);
-	strconcat(path, PATHMAX, CONFIGDIR, "/", f, NULL);
-	if (access(path, F_OK) == 0)
-		action(path);
-	if (access(f, F_OK) == 0)
-		action(f);
 }
 
 char PawStr[PAWSTRLEN];
@@ -145,20 +128,14 @@ static void fd_init(void)
 	fds[0].fd = 0; /* stdin */
 }
 
-bool fd_add(int fd)
+void fd_add(int fd)
 {
-	if (fds[PIPEFD].fd == -1) {
-		fds[PIPEFD].fd = fd;
-		return true;
-	}
-	return false;
+	fds[PIPEFD].fd = fd;
 }
 
 void fd_remove(int fd)
 {
-	if (fds[PIPEFD].fd == fd) {
-		fds[PIPEFD].fd = -1;
-	}
+	fds[PIPEFD].fd = -1;
 }
 #else
 static void fd_init(void) {}
@@ -174,7 +151,7 @@ void execute(void)
 #endif
 
 #ifdef DOPIPES
-	if (tkbrdy() || Cmdpushed != -1)
+	if (fds[PIPEFD].fd == -1 || tkbrdy() || Cmdpushed != -1)
 		dotty();
 	else {
 		/* select returns -1 if a child dies (SIGPIPE) -
@@ -198,7 +175,7 @@ void execute(void)
 int main(int argc, char **argv)
 {
 	char path[PATHMAX + 1];
-	int arg, textMode = 0, exitflag = 0, line = 0;
+	int arg, textMode = 0, line = 0;
 	struct mark tmark;
 	zbuff_t *tbuff = NULL;
 
@@ -213,8 +190,11 @@ int main(int argc, char **argv)
 	unlink(path);
 	Dbgfname(path);
 
-	while ((arg = getopt(argc, argv, "hl:rtvE")) != EOF)
+	while ((arg = getopt(argc, argv, "c:hl:rtv")) != EOF)
 		switch (arg) {
+		case 'c':
+			readvfile(optarg);
+			break;
 		case 'l':
 			line = atoi(optarg);
 			break;
@@ -224,9 +204,6 @@ int main(int argc, char **argv)
 		case 't':
 			textMode = 1;
 			break;
-		case 'E':
-			exitflag = true;
-			break;
 		case 'v':
 			++verbose;
 			break;
@@ -234,9 +211,6 @@ int main(int argc, char **argv)
 		default:
 			usage();
 		}
-
-	/* Do this BEFORE tinit */
-	findpath(path, ZCFILE, readvfile);
 
 	/* User wants Text mode as default */
 	if (textMode)
@@ -288,9 +262,6 @@ int main(int argc, char **argv)
 	}
 
 	Initializing = false;
-
-	if (exitflag)
-		Zexit();
 
 	while (1)
 		execute();

@@ -422,10 +422,6 @@ struct cnames Cnames[] = {
 	 C("Moves the Point back to the start of a word or to the start of "
 	   "the previous word.")
 	},
-	{"py-indent",			ZPY_INDENT,		AN,
-	 C("Causes Newline characters to auto-indent to the current tab "
-	   "level. Bound to Newline in PY mode.")
-	},
 	{"query-replace",		ZQUERY_REPLACE,		0,
 	 C("Prompts for a search string and a replacement string and searches "
 	   "from the current Point looking for matches of the search string. "

@@ -165,7 +165,6 @@ int settabsize(unsigned mode)
 			return 0;
 		return Tabsize = VAR(VCTABS);
 	case SHMODE:
-	case PYMODE:
 		if (Tabsize == VAR(VSHTABS))
 			return 0;
 		return Tabsize = VAR(VSHTABS);

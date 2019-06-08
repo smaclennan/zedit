@@ -142,7 +142,6 @@ void (*Cmds[][2])() = {
 	{ Zhelp,			Znotimpl },
 	{ Zzap_to_char,			Zzap_to_char },
 	{ Zsh_indent,		pnewline },
-	{ Zpy_indent,		pnewline },
 	{ Zdos2unix,		Znotimpl },
 	{ Zuntab,			Zuntab },
 	/* only in the PAW you say? pity... */

@@ -57,7 +57,7 @@ struct avar Vars[] = {
 	  "the default buffer mode is Text. Some file extensions "
 	  "override this variable."
 	},
-	{ "sh-extends",		V_STRING,	V(".sh.csh.el"),
+	{ "sh-extends",		V_STRING,	V(".sh.csh.el.py"),
 	  "This variable defines the extensions that turn on shell mode. "
 	  "Note that a '#!/bin/sh' type line at the start of the file can "
 	  "also turn on shell mode."

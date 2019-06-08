@@ -760,6 +760,38 @@ void Ztab(void)
 		binsert(Bbuff, '\t');
 }
 
+void Zuntab(void)
+{
+	switch(bpeek(Bbuff)) {
+	case '\n':
+		/* start of line or buffer */
+		if (Buff() == '\t')
+			bdelete(Bbuff, 1);
+		else
+			for (int i = 0; i < Tabsize; ++i)
+				if (Buff() == ' ')
+					bdelete(Bbuff, 1);
+		break;
+	case '\t':
+		bmove(Bbuff, -1);
+		bdelete(Bbuff, 1);
+		break;
+	case ' ': ;
+		int del = bgetcol(false, 0) % Tabsize;
+		if (del == 0)
+			del = 8;
+		for (int i = 0; i < del; ++i) {
+			bmove(Bbuff, -1);
+			if (Buff() == ' ')
+				bdelete(Bbuff, 1);
+		}
+		for (int i = 0; i < 8 - del; ++i)
+			if (Buff() == ' ')
+				bdelete(Bbuff, 1);
+		break;
+	}
+}
+
 void Zinsert_overwrite(void)
 {
 	Curbuff->bmode ^= OVERWRITE;

@@ -130,6 +130,7 @@ Z(Zswap_mark);
 Z(Zswap_words);
 Z(Zswitch_to_buffer);
 Z(Ztab);
+Z(Zuntab);
 Z(Zend_of_buffer);
 Z(Zbeginning_of_buffer);
 Z(Zundent);

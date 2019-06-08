@@ -144,6 +144,7 @@ void (*Cmds[][2])() = {
 	{ Zsh_indent,		pnewline },
 	{ Zpy_indent,		pnewline },
 	{ Zdos2unix,		Znotimpl },
+	{ Zuntab,			Zuntab },
 	/* only in the PAW you say? pity... */
 	{ Znotimpl,			Zfname },
 };

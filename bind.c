@@ -86,7 +86,7 @@ Byte Keys[] = {
 	ZFIND_FILE,				/* C-X C-F */
 	ZABORT,					/* C-X C-G */
 	ZHELP_KEY,				/* C-X C-H */
-	0,						/* C-X C-I */
+	ZUNTAB,					/* C-X C-I */
 	0,						/* C-X C-J */
 	ZDELETE_LINE,			/* C-X C-K */
 	ZLOWERCASE_REGION,		/* C-X C-L */

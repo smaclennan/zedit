@@ -639,6 +639,9 @@ struct cnames Cnames[] = {
 	 C("Turns off the modified flag for the current buffer. Does not "
 	   "change the buffer itself.")
 	},
+	{"untab",				ZUNTAB,			AN,
+	 C("Remove a tab. Basically the opposite of tab.")
+	},
 	{"uppercase-region",		ZUPPERCASE_REGION,	AI,
 	 C("Convert the Region to uppercase. Not allowed in program mode "
 	   "buffers.")

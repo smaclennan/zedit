@@ -141,7 +141,8 @@
 #define ZSH_INDENT		(ZZAP_TO_CHAR + 1)
 #define ZPY_INDENT		(ZSH_INDENT + 1)
 #define ZDOS2UNIX		(ZPY_INDENT + 1)
-#define NUMFUNCS		(ZDOS2UNIX + 1)
+#define ZUNTAB			(ZDOS2UNIX + 1)
+#define NUMFUNCS		(ZUNTAB + 1)
 
 /* this is used by the getfname command in the PAW for command completion */
 #define ZFNAME		NUMFUNCS

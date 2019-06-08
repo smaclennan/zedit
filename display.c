@@ -433,10 +433,14 @@ static bool in_region(struct mark *pmark)
 	if (!UMARK_SET || !pmark)
 		return false;
 
+#if 0
 	if (mrkaftermrk(pmark, UMARK))
 		return bisbetweenmrks(Bbuff, UMARK, pmark);
 	else
 		return bisbetweenmrks(Bbuff, pmark, UMARK);
+#else
+	return bisatmrk(Bbuff, UMARK);
+#endif
 }
 
 /* Fairly special routine. Pushes the char one past the end of the

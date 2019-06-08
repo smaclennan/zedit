@@ -234,14 +234,12 @@ void set_umark(struct mark *tmark)
 		bmrktopnt(Bbuff, UMARK);
 
 	invalidate_scrnmarks(0, Rowmax - 2);
-	Tlrow = -1;
 }
 
 void clear_umark(void)
 {
 	if (UMARK_SET) {
 		invalidate_scrnmarks(0, Rowmax - 2);
-		Tlrow = -1;
 
 		bdelmark(UMARK);
 		UMARK = NULL;

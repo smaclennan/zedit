@@ -80,6 +80,18 @@ char *gethomedir(void)
 	return home;
 }
 
+static struct wdo *wfind(int row)
+{
+	struct wdo *wdo;
+
+	/* wdo->last == modeline */
+	for (wdo = Whead; wdo; wdo = wdo->next)
+		if (row >= wdo->first && row < wdo->last)
+			return wdo;
+
+	return NULL;
+}
+
 static void mouse_scroll(int row, bool down)
 {
 	struct wdo *wdo = wfind(row);

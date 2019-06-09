@@ -409,16 +409,4 @@ void winit(void)
 	wswitchto(Whead);
 	atexit(wfini);
 }
-
-struct wdo *wfind(int row)
-{
-	struct wdo *wdo;
-
-	/* wdo->last == modeline */
-	for (wdo = Whead; wdo; wdo = wdo->next)
-		if (row >= wdo->first && row < wdo->last)
-			return wdo;
-
-	return NULL;
-}
 /* @} */

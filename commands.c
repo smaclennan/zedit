@@ -456,7 +456,7 @@ void Znotimpl(void) { tbell(); }
 
 void Zset_mark(void)
 {
-	set_umark(NULL); /* set to point */
+	_set_umark(NULL); /* set to point */
 	putpaw("Mark Set.");
 }
 

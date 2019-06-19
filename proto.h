@@ -234,6 +234,7 @@ void vsetmod_callback(struct buff *buff);
 void set_sstart(struct mark *mrk);
 
 /* umark routines */
+int _set_umark(struct mark *tmark); /* tmark == NULL means set to point */
 void set_umark(struct mark *tmark); /* tmark == NULL means set to point */
 void clear_umark(void);
 

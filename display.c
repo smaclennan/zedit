@@ -222,16 +222,27 @@ static bool umarkmoved(struct mark *tmark)
 	return	UMARK_SET && !mrkatmrk(tmark, UMARK);
 }
 
-void set_umark(struct mark *tmark)
+/* You can call this one if you are going to invalidate scrnmarks
+ * yourself.
+ */
+int _set_umark(struct mark *tmark)
 {
 	if (!UMARK_SET)
 		if (!(UMARK = bcremark(Bbuff)))
-			return;
+			return 1;
 
 	if (tmark)
 		mrktomrk(UMARK, tmark);
 	else
 		bmrktopnt(Bbuff, UMARK);
+
+	return 0;
+}
+
+void set_umark(struct mark *tmark)
+{
+	if (_set_umark(tmark))
+		return;
 
 	invalidate_scrnmarks(0, Rowmax - 2);
 	Tlrow = -1;
@@ -455,7 +466,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 	for (trow = from; trow < to; ++trow) {
 		if (Scrnmodf[trow] || !bisatmrk(Bbuff, &Scrnmarks[trow])) {
 			Scrnmodf[trow] = false;
-			bmrktopnt(Bbuff, &Scrnmarks[trow]); /* Do this before tkbrdy */
+			bmrktopnt(Bbuff, &Scrnmarks[trow]);
 			lptr = tline;
 			col = 0;
 			t_goto(trow, col);

@@ -129,16 +129,11 @@ void termsize(void)
 	int rows = 0, cols = 0;
 
 	/* Get the defaults from the low level interface */
-	if (getenv("BROKEN_TERM"))
+	if (getenv("BROKEN_TERM") == NULL)
 		tsize(&rows, &cols);
 
-	Rowmax = rows <= 0 ? 24 : rows;
-	if (Rowmax > ROWMAX)
-		Rowmax = ROWMAX;
-
-	Colmax = cols <= 0 ? 80 : cols;
-	if (Colmax > COLMAX)
-		Colmax = COLMAX;
+	Rowmax = rows <= 0 ? 24 : MIN(rows, ROWMAX);
+	Colmax = cols <= 0 ? 80 : MIN(cols, COLMAX);
 }
 
 static int tabsize(int col)

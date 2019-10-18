@@ -38,9 +38,7 @@ struct buff *bcreate(void)
 			return NULL;
 		}
 		makecur(buf, buf->firstp, 0);
-#if HUGE_FILES
-		buf->fd = -1;
-#endif
+		HUGE_INIT(buf);
 	}
 	return buf;
 }

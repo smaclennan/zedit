@@ -245,6 +245,7 @@ static inline int bisend(struct buff *buff)
 #if HUGE_FILES
 /** Make page current at offset. */
 void makecur(struct buff *buff, struct page *page, int dist);
+#define HUGE_INIT(b) ((b)->fd) = -1
 #else
 /** Low level function to make page current at offset. Does not validate that page is in the
  * buffer or that dist is valid!
@@ -258,6 +259,9 @@ static inline void makecur(struct buff *buff, struct page *page, int dist)
 	buff->curchar = dist;
 	buff->curcptr = page->pdata + dist;
 }
+
+#define HUGE_INIT(b)
+#define bhugecleanup(b)
 #endif
 
 /** Low level function to move current page to offset. Does not

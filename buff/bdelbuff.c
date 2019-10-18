@@ -31,9 +31,7 @@ void bdelbuff(struct buff *buff)
 	if (!buff)
 		return;
 
-#if HUGE_FILES
 	bhugecleanup(buff);
-#endif
 
 	while (buff->firstp)	/* delete the pages */
 		freepage(buff, buff->firstp);

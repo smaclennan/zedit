@@ -32,9 +32,7 @@ void bempty(struct buff *buff)
 {
 	struct mark *btmark;
 
-#if HUGE_FILES
 	bhugecleanup(buff);
-#endif
 
 	makecur(buff, buff->firstp, 0);
 	curplen(buff) = 0;

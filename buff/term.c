@@ -96,13 +96,7 @@ void tflush(void)
 static void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {
-#ifdef WIN32
-		COORD where;
-
-		where.X = Pcol;
-		where.Y = Prow;
-		SetConsoleCursorPosition(hstdout, where);
-#elif defined(TERMCAP)
+#if defined(TERMCAP)
 		TPUTS(tgoto(cm[0], Pcol, Prow));
 #elif defined(TERMINFO)
 		TPUTS(tparm(cursor_address, Prow, Pcol));
@@ -123,12 +117,7 @@ static void tforce(void)
 void tputchar(Byte ch)
 {
 	tforce();
-#ifdef WIN32
-	DWORD written;
-	WriteConsole(hstdout, &ch, 1, &written, NULL);
-#else
 	tputc(ch);
-#endif
 	++Scol;
 	++Pcol;
 	if (Clrcol[Prow] < Pcol)
@@ -153,30 +142,14 @@ void tcleol(void)
 		Prow = ROWMAX - 1;
 
 	if (Pcol < Clrcol[Prow]) {
-#ifdef WIN32
-		COORD where;
-		DWORD written;
-
-		where.X = Pcol;
-		where.Y = Prow;
-		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol,
-					   where, &written);
-
-		/* This is to clear a possible mark */
-		if (Clrcol[Prow])
-			where.X = Clrcol[Prow] - 1;
-		FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, 1,
-					   where, &written);
-#else
 		tforce();
-#ifdef TERMCAP
+#if defined(TERMCAP)
 		TPUTS(cm[1]);
-#elif defined(TERMCAP)
-		TPUTS(cm[1]);
+#elif defined(TERMINFO)
+		TPUTS(clr_eol);
 #else
 		twrite("\033[K", 3);
 		tflush();
-#endif
 #endif
 		Clrcol[Prow] = Pcol;
 	}
@@ -187,15 +160,7 @@ void tcleol(void)
  */
 void tclrwind(void)
 {
-#ifdef WIN32
-	COORD where;
-	DWORD written;
-	where.X = where.Y = 0;
-	FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, COLMAX * ROWMAX,
-				   where, &written);
-	FillConsoleOutputCharacter(hstdout, ' ', COLMAX * ROWMAX,
-				   where, &written);
-#elif defined(TERMCAP)
+#if defined(TERMCAP)
 	TPUTS(cm[2]);
 #elif defined(TERMINFO)
 	TPUTS(clear_screen);

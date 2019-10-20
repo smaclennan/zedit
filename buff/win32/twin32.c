@@ -1,5 +1,76 @@
 #include "tinit.h"
 
+static void tforce(void)
+{
+	if (Scol != Pcol || Srow != Prow) {
+		COORD where;
+
+		where.X = Pcol;
+		where.Y = Prow;
+		SetConsoleCursorPosition(hstdout, where);
+		Srow = Prow;
+		Scol = Pcol;
+	}
+}
+
+void tputchar(Byte ch)
+{
+	tforce();
+
+	DWORD written;
+	WriteConsole(hstdout, &ch, 1, &written, NULL);
+
+	++Scol;
+	++Pcol;
+	if (Clrcol[Prow] < Pcol)
+		Clrcol[Prow] = Pcol;
+}
+
+void t_goto(int row, int col)
+{
+	Prow = row;
+	Pcol = col;
+	tforce();
+}
+
+void tcleol(void)
+{
+	if (Prow >= ROWMAX)
+		Prow = ROWMAX - 1;
+
+	if (Pcol < Clrcol[Prow]) {
+		COORD where;
+		DWORD written;
+
+		where.X = Pcol;
+		where.Y = Prow;
+		FillConsoleOutputCharacter(hstdout, ' ', Clrcol[Prow] - Pcol,
+					   where, &written);
+
+		/* This is to clear a possible mark */
+		if (Clrcol[Prow])
+			where.X = Clrcol[Prow] - 1;
+		FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, 1,
+					   where, &written);
+
+		Clrcol[Prow] = Pcol;
+	}
+}
+
+void tclrwind(void)
+{
+	COORD where = { 0 };
+	DWORD written;
+	FillConsoleOutputAttribute(hstdout, ATTR_NORMAL, COLMAX * ROWMAX,
+				   where, &written);
+	FillConsoleOutputCharacter(hstdout, ' ', COLMAX * ROWMAX,
+				   where, &written);
+
+	memset(Clrcol, 0, sizeof(Clrcol));
+	Prow = Pcol = 0;
+	tflush();
+}
+
 void tsize(int *rows, int *cols)
 {
 	CONSOLE_SCREEN_BUFFER_INFO info;

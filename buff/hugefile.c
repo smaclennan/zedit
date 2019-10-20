@@ -114,7 +114,7 @@ static void breadpage(struct buff *buff, struct page *page)
 	int len;
 
 	do_lock(buff);
-	if (page->pgoffset == 0 || buff->fd == -1) {
+	if (page->pgoffset == 0 || buff->huge == NULL) {
 		do_unlock(buff);
 		return;
 	}
@@ -122,13 +122,13 @@ static void breadpage(struct buff *buff, struct page *page)
 	offset = page->pgoffset * PGSIZE;
 	page->pgoffset = 0;
 
-	if (fstat(buff->fd, &sbuf) ||
-		sbuf.st_size != buff->stat->st_size ||
-		sbuf.st_mtime != buff->stat->st_mtime)
+	if (fstat(buff->huge->fd, &sbuf) ||
+		sbuf.st_size != buff->huge->stat.st_size ||
+		sbuf.st_mtime != buff->huge->stat.st_mtime)
 		goto fatal_mod;
-	if (lseek(buff->fd, offset, SEEK_SET) != offset)
+	if (lseek(buff->huge->fd, offset, SEEK_SET) != offset)
 		goto fatal;
-	len = read(buff->fd, page->pdata, PGSIZE);
+	len = read(buff->huge->fd, page->pdata, PGSIZE);
 	/* All pages should be PGSIZE except the last page */
 	if (len != PGSIZE) {
 		if (page->nextp)
@@ -138,10 +138,10 @@ static void breadpage(struct buff *buff, struct page *page)
 	}
 
 	page->plen = len;
-	--buff->n_huge;
+	--buff->huge->n_huge;
 	do_unlock(buff);
 
-	if (buff->n_huge <= 0) {
+	if (buff->huge->n_huge <= 0) {
 		/* last page - verify all pages read */
 		struct page *tp;
 
@@ -149,9 +149,10 @@ static void breadpage(struct buff *buff, struct page *page)
 			if (tp->pgoffset)
 				breadpage(buff, tp);
 
-		close(buff->fd);
-		buff->fd = -1;
 		huge_file_cb(buff, 0);
+		close(buff->huge->fd);
+		free(buff->huge);
+		buff->huge = NULL;
 	}
 
 	return;
@@ -169,20 +170,20 @@ int breadhuge(struct buff *buff, const char *fname)
 	int fd, len, pages, i, rc, left;
 	struct page *page;
 
-	if (buff->fd != -1)
+	if (buff->huge)
 		return -EBUSY;
 
 	fd = open(fname, O_RDONLY | O_BINARY);
 	if (fd < 0)
 		return -errno;
 
-	buff->stat = malloc(sizeof(struct stat));
-	if (!buff->stat) {
+	buff->huge = calloc(1, sizeof(struct huge_file));
+	if (!buff->huge) {
 		rc = -ENOMEM;
 		goto failed;
 	}
 
-	if (fstat(fd, buff->stat)) {
+	if (fstat(fd, &buff->huge->stat)) {
 		rc = -EIO;
 		goto failed;
 	}
@@ -196,12 +197,12 @@ int breadhuge(struct buff *buff, const char *fname)
 		goto failed;
 	}
 	buff->curpage->plen = len;
-	buff->fd = fd;
+	buff->huge->fd = fd;
 
-	pages = buff->stat->st_size / PGSIZE;
-	left = buff->stat->st_size % PGSIZE;
+	pages = buff->huge->stat.st_size / PGSIZE;
+	left = buff->huge->stat.st_size % PGSIZE;
 	page = buff->curpage;
-	buff->n_huge = pages - 1;
+	buff->huge->n_huge = pages - 1;
 	for (i = 1; i < pages; ++i) {
 		page = newpage(page);
 		if (!page) {
@@ -220,7 +221,7 @@ int breadhuge(struct buff *buff, const char *fname)
 		}
 		page->pgoffset = i;
 		page->plen = left;
-		++buff->n_huge;
+		++buff->huge->n_huge;
 	}
 
 	btostart(buff);
@@ -231,7 +232,8 @@ int breadhuge(struct buff *buff, const char *fname)
 
 failed:
 	close(fd);
-	free(buff->stat);
+	free(buff->huge);
+	buff->huge = NULL;
 	return rc;
 }
 
@@ -252,20 +254,17 @@ void bhugecleanup(struct buff *buff)
 {
 	struct page *page;
 
-	if (buff->fd == -1)
+	if (buff->huge == NULL)
 		return; /* normal case */
 
 	do_lock(buff);
 	for (page = buff->firstp; page; page = page->nextp)
 		page->pgoffset = 0;
 
-	if (buff->fd >= 0) {
-		close(buff->fd);
-		buff->fd = -1;
-	}
+	if (buff->huge->fd >= 0)
+		close(buff->huge->fd);
 	do_unlock(buff);
 
-	free(buff->stat);
-	mutex_destroy(buff->lock);
+	free(buff->huge);
 }
 #endif

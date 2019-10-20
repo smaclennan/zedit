@@ -71,7 +71,7 @@ static bool zwritefile(char *fname)
 	}
 
 #if HUGE_FILES
-	if (Bbuff->fd != -1) {
+	if (Bbuff->huge) {
 		strconcat(PawStr, PAWSTRLEN,
 				  "WARNING: huge file ", lastpart(fname),
 				  " not yet read. Are you sure? ", NULL);

@@ -650,7 +650,7 @@ static char *setmodes(zbuff_t *buff)
 	if (buff->bmode & VIEW)
 		PAWCAT(" RO");
 #if HUGE_FILES
-	if (buff->buff->fd != -1)
+	if (buff->buff->huge)
 		PAWCAT(" H");
 #endif
 	if (buff->bmode & FILE_COMPRESSED)

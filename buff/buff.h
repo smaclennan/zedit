@@ -62,6 +62,17 @@
 
 /* THE BUFFER STRUCTURES */
 
+#if HUGE_FILES
+#include <sys/stat.h>
+
+struct huge_file {
+	struct stat stat;	/**< Stat buffer for huge files. */
+	void *lock;		/**< Lock for huge files. */
+	int fd;			/**< File descriptor for huge files. */
+	int n_huge;		/**< Number of huge pages to read. */
+};
+#endif
+
 /** Main buffer structure. */
 struct buff {
 #ifdef HAVE_BUFFER_MARKS
@@ -77,10 +88,7 @@ struct buff {
 	void *undo_tail;	/**< List of undos. */
 #endif
 #if HUGE_FILES
-	struct stat *stat;	/**< Stat buffer for huge files. */
-	void *lock;		/**< Lock for huge files. */
-	int fd;			/**< File descriptor for huge files. */
-	int n_huge;		/**< Number of huge pages to read. */
+	struct huge_file *huge; /**< Huge file if huge file. */
 #endif
 };
 
@@ -245,7 +253,6 @@ static inline int bisend(struct buff *buff)
 #if HUGE_FILES
 /** Make page current at offset. */
 void makecur(struct buff *buff, struct page *page, int dist);
-#define HUGE_INIT(b) ((b)->fd) = -1
 #else
 /** Low level function to make page current at offset. Does not validate that page is in the
  * buffer or that dist is valid!
@@ -260,7 +267,6 @@ static inline void makecur(struct buff *buff, struct page *page, int dist)
 	buff->curcptr = page->pdata + dist;
 }
 
-#define HUGE_INIT(b)
 #define bhugecleanup(b)
 #endif
 

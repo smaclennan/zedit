@@ -38,7 +38,6 @@ struct buff *bcreate(void)
 			return NULL;
 		}
 		makecur(buf, buf->firstp, 0);
-		HUGE_INIT(buf);
 	}
 	return buf;
 }

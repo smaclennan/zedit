@@ -5,7 +5,7 @@
 #define ZLIB			0	/* Requires zlib -lz */
 #define SPELL			0	/* Requires libaspell */
 #define UNDO			1
-#define HUGE_FILES		0
+#define HUGE_FILES		1
 #define HUGE_THREADED	0
 
 /* If TERMCAP not defined defaults to ANSI */

@@ -205,20 +205,6 @@ static void tlinit(void)
 	set_tkey(i++, key_f9);
 	set_tkey(i++, key_f10);
 	set_tkey(i++, key_f11);
-
-#ifdef SAM_NO
-	Key_mask = 0x00c00000; /* C-Home and C-End not in terminfo */
-	for (k = 0; k < i; ++k)
-		if (Tkeys[k] && *Tkeys[k])
-			Key_mask |= 1 << k;
-
-	if (verbose) {
-		for (k = 0; k < i; ++k)
-			dump_key(k, Tkeys[k], NULL);
-
-		Dbg("Key Mask %x\n", Key_mask);
-	}
-#endif
 }
 #else
 static void tlinit(void)

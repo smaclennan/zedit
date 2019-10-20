@@ -30,28 +30,11 @@
  */
 void tsize(int *rows, int *cols)
 {
-	*cols = 80;
-	*rows = 30;
-
-#ifdef WIN32
-	CONSOLE_SCREEN_BUFFER_INFO info;
-	COORD size;
-
-	if (GetConsoleScreenBufferInfo(hstdout, &info)) {
-		size.Y = info.srWindow.Bottom - info.srWindow.Top + 1;
-		size.X = info.srWindow.Right - info.srWindow.Left + 1;
-	}
-
-	if (size.X != *cols || size.Y != *rows) {
-		if (size.X > COLMAX) size.X = COLMAX;
-		if (size.Y > ROWMAX) size.Y = ROWMAX;
-		*cols = size.X;
-		*rows = size.Y;
-		SetConsoleScreenBufferSize(hstdout, size);
-	}
-#else
 	char buf[12], *p;
 	int n, r = 0, c = 0;
+
+	*cols = 80;
+	*rows = 30;
 
 	/* Save cursor position */
 	twrite("\033[s", 3);
@@ -76,6 +59,5 @@ void tsize(int *rows, int *cols)
 			*cols = c;
 		}
 	}
-#endif
 }
 /* @} */

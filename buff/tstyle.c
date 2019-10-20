@@ -36,54 +36,7 @@ void tstyle(int style)
 	if (style == cur_style)
 		return;
 
-#ifdef WIN32
-	switch (style) {
-	case T_NORMAL:
-		SetConsoleTextAttribute(hstdout, ATTR_NORMAL);
-		break;
-	case T_REVERSE:
-		SetConsoleTextAttribute(hstdout, ATTR_REVERSE);
-		break;
-	case T_BOLD:
-		SetConsoleTextAttribute(hstdout,
-					ATTR_NORMAL | FOREGROUND_INTENSITY);
-		break;
-	case T_FG + T_BLACK:
-		SetConsoleTextAttribute(hstdout, ATTR_NORMAL); break;
-	case T_FG + T_RED:
-		SetConsoleTextAttribute(hstdout, FOREGROUND_RED); break;
-	case T_FG + T_GREEN:
-		SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN); break;
-	case T_FG + T_YELLOW:
-		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_GREEN); break;
-	case T_FG + T_BLUE:
-		SetConsoleTextAttribute(hstdout, FOREGROUND_BLUE); break;
-	case T_FG + T_MAGENTA:
-		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_BLUE); break;
-	case T_FG + T_CYAN:
-		SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_BLUE); break;
-	case T_FG + T_WHITE:
-		SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-		break;
-	case T_BG + T_BLACK:
-		SetConsoleTextAttribute(hstdout, ATTR_REVERSE); break;
-	case T_BG + T_RED:
-		SetConsoleTextAttribute(hstdout, BACKGROUND_RED); break;
-	case T_BG + T_GREEN:
-		SetConsoleTextAttribute(hstdout, BACKGROUND_GREEN); break;
-	case T_BG + T_YELLOW:
-		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_GREEN); break;
-	case T_BG + T_BLUE:
-		SetConsoleTextAttribute(hstdout, BACKGROUND_BLUE); break;
-	case T_BG + T_MAGENTA:
-		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_BLUE); break;
-	case T_BG + T_CYAN:
-		SetConsoleTextAttribute(hstdout, BACKGROUND_GREEN | BACKGROUND_BLUE); break;
-	case T_BG + T_WHITE:
-		SetConsoleTextAttribute(hstdout, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
-		break;
-	}
-#elif defined(TERMCAP)
+#ifdef TERMCAP
 	switch (style) {
 	case T_NORMAL:
 		TPUTS(cm[3]);

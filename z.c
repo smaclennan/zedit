@@ -179,11 +179,9 @@ int main(int argc, char **argv)
 	struct mark tmark;
 	zbuff_t *tbuff = NULL;
 
-	Home = gethomedir();
-	if (!Home) {
-		terror("You don't exist!\n");
-		exit(1);
-	}
+	Home = getenv("HOME");
+	if (!Home)
+		Home = "/";
 	Homelen = strlen(Home);
 
 	strconcat(path, sizeof(path), Home, "/z.out", NULL);

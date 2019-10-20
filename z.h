@@ -216,7 +216,6 @@ extern void (*Nextpart)(void);
 void set_last_bufname(zbuff_t *buff);
 
 char *zgetcwd(char *cwd, int len);
-#define gethomedir() getenv("HOME")
 
 /* this is MUCH faster than an isascii isprint pair */
 #define ZISPRINT(c)		(c >= ' ' && c <= '~')

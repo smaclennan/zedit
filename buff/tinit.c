@@ -35,8 +35,6 @@ static struct termio settty;
 static struct termios save_tty;
 static struct termios settty;
 #endif
-#elif defined(WIN32)
-HANDLE hstdout;	/* Console out handle */
 #endif
 
 /* Come here on SIGHUP or SIGTERM */
@@ -258,7 +256,6 @@ void tinit(void)
 	tcsetattr(0, TCSANOW, &settty);
 #elif defined(WIN32)
 	tkbdinit();
-	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 #endif
 
 #ifdef SIGHUP

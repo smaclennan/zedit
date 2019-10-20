@@ -2,11 +2,8 @@
 
 #define CONFIG_H
 
-#ifndef WIN32
-#define ZLIB		0	/* Requires zlib -lz */
-#define SPELL		0	/* Requires libaspell */
-#endif
-
+#define ZLIB			0	/* Requires zlib -lz */
+#define SPELL			0	/* Requires libaspell */
 #define UNDO			1
 #define HUGE_FILES		0
 #define HUGE_THREADED	0
@@ -28,9 +25,6 @@
 #define HAVE_GLOBAL_MARKS
 #define HAVE_BUFFER_MARKS
 #define WANT_FLOATS
-#ifdef WIN32
-#define BUILTIN_REG
-#endif
 #ifdef __QNXNTO__
 #undef  __unix__
 #define __unix__

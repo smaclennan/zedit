@@ -24,12 +24,6 @@
  * @{
 */
 
-#ifdef WIN32
-#define FNM_FLAGS FNM_CASEFOLD
-#else
-#define FNM_FLAGS 0
-#endif
-
 static void grep_one(char *fname, regexp_t *re,
 					 struct buff *inbuff, struct buff *outbuff)
 {
@@ -78,7 +72,7 @@ static void grepit(char *input, char *files)
 	}
 
 	while ((ent = readdir(dir)) != NULL)
-		if (fnmatch(files, ent->d_name, FNM_FLAGS) == 0)
+		if (fnmatch(files, ent->d_name, 0) == 0)
 			grep_one(ent->d_name, &re, inbuff, outbuff);
 
 cleanup:

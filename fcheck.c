@@ -24,22 +24,13 @@
 #include "funcs.c"
 #include "cnames.c"
 #include "bind.c"
-#ifdef WIN32
-#define zrefresh()
-HANDLE hstdin;
-int Colmax, Rowmax;
-#include "winkbd.c"
-#else
 #include "buff/kbd.c"
-#endif
 
 /* Need to include this after buff/kbd.c for -std=c11 */
 #include <stdio.h>
 
 #ifdef __unix__
 #define OS unix
-#elif defined(WIN32)
-#define OS win32
 #else
 #error Unknown OS
 #endif
@@ -177,19 +168,6 @@ int main(int argc, char *argv[])
 			err = 1;
 		}
 	}
-
-#ifdef WIN32
-#if HUGE_FILES && HUGE_THREADED
-	if (sizeof(HANDLE) != sizeof(void *)) {
-		printf("Problems with huge file lock\n");
-		err = 1;
-	}
-#endif
-
-	if (err) {
-		printf("Problems found! Hit enter to exit:"); getchar();
-	}
-#endif
 
 	free(NULL); /* paranoia */
 

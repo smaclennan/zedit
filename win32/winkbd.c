@@ -22,6 +22,7 @@
 #include "winkeys.h"
 
 HANDLE hstdin;
+HANDLE hstdout;
 
 /* stack and vars for t[un]getkb / tkbrdy */
 #define CSTACK 16 /* must be power of 2 */
@@ -109,6 +110,7 @@ static _inline void do_mouse(MOUSE_EVENT_RECORD *mouse) {}
 
 void tkbdinit(void)
 {
+	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	hstdin = GetStdHandle(STD_INPUT_HANDLE);
 	SetConsoleMode(hstdin, WINKBD_EVENT_MASK);
 }

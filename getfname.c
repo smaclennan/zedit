@@ -18,6 +18,7 @@
  */
 
 #include "z.h"
+#include <pwd.h>
 
 /** @addtogroup zedit
  * @{
@@ -31,11 +32,7 @@ struct llist {
 
 static struct llist *Flist;
 static bool Didmatch;
-#ifdef WIN32
-#define OBJEXT ".obj"
-#else
 #define OBJEXT ".o"
-#endif
 
 static struct llist *add(struct llist **list, char *fname);
 static void freelist(struct llist **list);
@@ -280,9 +277,6 @@ void Zfname(void)
 	}
 }
 
-#ifndef WIN32
-#include <pwd.h>
-
 /* Must always end in /. Must always return something sane. */
 char *zgetcwd(char *cwd, int len)
 {
@@ -422,5 +416,4 @@ int pathfixup(char *to, char *from)
 		Dbg("TOO LONG %d '%s'\n", strlen(start), start);
 	return rc;
 }
-#endif /* WIN32 */
 /* @} */

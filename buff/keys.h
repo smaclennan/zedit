@@ -72,14 +72,6 @@
 int tgetkb(void);
 int tkbrdy(void);
 int tdelay(int ms);
-
-#ifdef WIN32
-/* This mask defines which events are sent to the winkbd_event_cb */
-#define WINKBD_EVENT_MASK (ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT)
-
-/* Return non-zero if you don't want tgetkb to handle the event */
-extern int (*winkbd_event_cb)(INPUT_RECORD *event);
-#endif
 /* @} */
 
 #endif

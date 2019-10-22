@@ -431,12 +431,6 @@ static bool dosearch(void)
 	struct mark save, fmark;
 
 	bmrktopnt(Bbuff, &save);
-#if 0
-	/* This causes problems with RE search. You can't match the first line.
-	 * Why is it needed?
-	 */
-	bmove(Bbuff, searchdir[0] == BACKWARD ? -1 : 1);
-#endif
 	if (searchdir[0] == REGEXP) {
 		regexp_t re;
 

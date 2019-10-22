@@ -28,7 +28,7 @@ HANDLE hstdout;
 #define CSTACK 16 /* must be power of 2 */
 static int cstack[CSTACK];
 static int cptr = -1;
-static int cpushed;
+int cpushed;
 static int Pending;
 
 static int dummy_cb(INPUT_RECORD *event) { return 0; }

@@ -172,7 +172,7 @@ void checkpipes(int type)
 				while (readapipe() > 0) ;
 				exit_status(pipebuff, status);
 			}
-			fd_remove(in_pipe);
+			set_pipefd(-1);
 			(void)close(in_pipe);
 			in_pipe = EOF;
 			child = EOF;
@@ -243,7 +243,7 @@ static bool _cmdtobuff(zbuff_t *tbuff, const char *icmd)
 			pipebuff = tbuff;
 			in_pipe = from[0];
 			child = pid;
-			fd_add(in_pipe);
+			set_pipefd(in_pipe);
 			return true;
 		} else {
 			/* fork failed - clean up */

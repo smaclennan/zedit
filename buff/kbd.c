@@ -110,7 +110,7 @@ static char *Tkeys2[] = {
 #define CSTACK 16
 static Byte cstack[CSTACK]; /**< The keyboard input stack */
 static int cptr = -1; /**< Current pointer in keyboard input stack. */
-static int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
+int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
 static int Pending; /**< Set to 1 if poll stdin detected input. */
 
 /** This is the lowest level keyboard routine. It reads the keys into

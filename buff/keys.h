@@ -68,6 +68,8 @@
 /* 128 ASCII + 128 meta + 128 C-X */
 #define NUMKEYS			(128 + 128 + 128)
 
+extern int cpushed;
+
 /* kbd.c */
 int tgetkb(void);
 int tkbrdy(void);

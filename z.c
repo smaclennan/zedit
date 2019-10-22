@@ -112,33 +112,16 @@ static void dotty(void)
 #ifdef DOPIPES
 #include <poll.h>
 
-#define MAX_FDS 2
-#define PIPEFD 1
+static struct pollfd fds[] = {
+	{ .fd =  0, .events = POLLIN },
+	{ .fd = -1, .events = POLLIN }
+};
+#define MAX_FDS (sizeof(fds) / sizeof(struct pollfd))
 
-static struct pollfd fds[MAX_FDS];
-
-static void fd_init(void)
+void set_pipefd(int fd)
 {
-	int i;
-	for (i = 0; i < MAX_FDS; ++i) {
-		fds[i].fd = -1;
-		fds[i].events = POLLIN;
-	}
-
-	fds[0].fd = 0; /* stdin */
+	fds[1].fd = fd;
 }
-
-void fd_add(int fd)
-{
-	fds[PIPEFD].fd = fd;
-}
-
-void fd_remove(int fd)
-{
-	fds[PIPEFD].fd = -1;
-}
-#else
-static void fd_init(void) {}
 #endif
 
 void execute(void)
@@ -151,7 +134,7 @@ void execute(void)
 #endif
 
 #ifdef DOPIPES
-	if (fds[PIPEFD].fd == -1 || tkbrdy() || Cmdpushed != -1)
+	if (fds[1].fd == -1 || cpushed || Cmdpushed != -1)
 		dotty();
 	else {
 		/* select returns -1 if a child dies (SIGPIPE) -
@@ -164,7 +147,7 @@ void execute(void)
 
 		if (fds[0].revents)
 			dotty();
-		if (fds[PIPEFD].revents)
+		if (fds[1].revents)
 			readapipe();
 	}
 #else
@@ -231,7 +214,6 @@ int main(int argc, char **argv)
 
 	tinit();
 	tainit();
-	fd_init();
 
 	for (; optind < argc; ++optind)
 		if (pathfixup(path, argv[optind]) == 0)

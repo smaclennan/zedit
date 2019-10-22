@@ -29,19 +29,9 @@
 /* Need to include this after buff/kbd.c for -std=c11 */
 #include <stdio.h>
 
-#ifdef __unix__
-#define OS unix
-#else
-#error Unknown OS
-#endif
-
 #define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))
 
-#ifdef __unix__
 #define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
-#else
-#define N_KEYS NUM_SPECIAL
-#endif
 
 void Dbg(const char *fmt, ...) {}
 

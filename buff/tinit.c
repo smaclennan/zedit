@@ -148,21 +148,21 @@ static void tlinit(void)
 {
 	int rc, i;
 
-	char *Term = getenv("TERM");
-	if (Term == NULL) {
+	char *term = getenv("TERM");
+	if (term == NULL) {
 		printf("FATAL ERROR: environment variable TERM not set.\n");
 		exit(1);
 	}
 
-	setupterm(Term, 1, &rc);
+	setupterm(term, 1, &rc);
 	if (rc != 1) {
 		printf("FATAL ERROR: Unable to get terminfo entry for %s.\n",
-			   Term);
+			   term);
 		exit(1);
 	}
 	if (!clear_screen || !clr_eol || !cursor_address) {
 		printf("FATAL ERROR: Terminfo entry for %s incomplete.\n",
-			   Term);
+			   term);
 		exit(1);
 	}
 

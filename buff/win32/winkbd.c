@@ -103,11 +103,6 @@ static short convertKey(KEY_EVENT_RECORD *event)
 	return key;
 }
 
-#ifdef FCHECK
-static _inline void do_mouse(MOUSE_EVENT_RECORD *mouse) {}
-#else
-#endif
-
 void tlinit(void)
 {
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);

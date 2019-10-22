@@ -1,5 +1,10 @@
 #include "tinit.h"
 
+extern HANDLE hstdout;
+
+#define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
+#define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
+
 static void tforce(void)
 {
 	if (Scol != Pcol || Srow != Prow) {

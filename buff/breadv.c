@@ -28,31 +28,6 @@
  * @{
  */
 
-#ifdef WIN32
-/* Not optimal... but should work */
-struct iovec {
-	void *iov_base;
-	size_t iov_len;
-};
-
-int readv(int fd, const struct iovec *iov, int iovcnt)
-{
-	int i, n, n_read = 0;
-
-	for (i = 0; i < iovcnt; ++i, ++iov)
-		if (iov->iov_len) {
-			n = read(fd, iov->iov_base, iov->iov_len);
-			if (n < 0)
-				return n;
-			else if (n == 0)
-				return n_read;
-			n_read += n;
-		}
-
-	return n_read;
-}
-#endif
-
 /** Read from a file descriptor using readv. Simple version; only
  * reads at most two pages. Can be used for files but meant for
  * sockets.

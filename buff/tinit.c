@@ -206,6 +206,8 @@ static void tlinit(void)
 	set_tkey(i++, key_f10);
 	set_tkey(i++, key_f11);
 }
+#elif defined (WIN32)
+extern void tlint(void);
 #else
 static void tlinit(void)
 {
@@ -240,8 +242,6 @@ void tinit(void)
 	settty.c_cc[VMIN] = (char) 1;
 	settty.c_cc[VTIME] = (char) 1;
 	tcsetattr(0, TCSANOW, &settty);
-#elif defined(WIN32)
-	tkbdinit();
 #endif
 
 #ifdef SIGHUP

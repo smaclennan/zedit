@@ -108,7 +108,7 @@ static _inline void do_mouse(MOUSE_EVENT_RECORD *mouse) {}
 #else
 #endif
 
-void tkbdinit(void)
+void tlinit(void)
 {
 	hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	hstdin = GetStdHandle(STD_INPUT_HANDLE);

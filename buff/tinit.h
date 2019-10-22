@@ -75,16 +75,6 @@
 void tinit(void);
 void tsize(int *rows, int *cols);
 
-#ifdef WIN32
-#include <Windows.h>
-extern HANDLE hstdout;	/* Console out handle */
-
-void tkbdinit(void);
-
-#define ATTR_NORMAL	(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
-#define ATTR_REVERSE	(BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY)
-#endif
-
 /* windows.h must be before buff.h... no idea why */
 #include "buff.h"
 

@@ -104,3 +104,44 @@ void closedir(DIR *dir)
 	FindClose(dir->handle);
 	free(dir);
 }
+
+struct iovec {
+	void *iov_base;
+	size_t iov_len;
+};
+
+/* Not optimal... but should work */
+int readv(int fd, const struct iovec *iov, int iovcnt)
+{
+	int i, n, n_read = 0;
+
+	for (i = 0; i < iovcnt; ++i, ++iov)
+		if (iov->iov_len) {
+			n = read(fd, iov->iov_base, iov->iov_len);
+			if (n < 0)
+				return n;
+			else if (n == 0)
+				return n_read;
+			n_read += n;
+		}
+
+	return n_read;
+}
+
+/* Not optimal... but should work */
+int writev(int fd, const struct iovec *iov, int iovcnt)
+{
+	int i, n, n_wrote = 0;
+
+	for (i = 0; i < iovcnt; ++i, ++iov)
+		if (iov->iov_len) {
+			n = write(fd, iov->iov_base, iov->iov_len);
+			if (n < 0)
+				return n;
+			else if (n == 0)
+				return n_wrote;
+			n_wrote += n;
+		}
+
+	return n_wrote;
+}

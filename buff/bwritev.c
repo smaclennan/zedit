@@ -26,31 +26,6 @@
 
 #define MAX_IOVS 16
 
-#ifdef WIN32
-/* Not optimal... but should work */
-struct iovec {
-	void *iov_base;
-	size_t iov_len;
-};
-
-int writev(int fd, const struct iovec *iov, int iovcnt)
-{
-	int i, n, n_wrote = 0;
-
-	for (i = 0; i < iovcnt; ++i, ++iov)
-		if (iov->iov_len) {
-			n = write(fd, iov->iov_base, iov->iov_len);
-			if (n < 0)
-				return n;
-			else if (n == 0)
-				return n_wrote;
-			n_wrote += n;
-		}
-
-	return n_wrote;
-}
-#endif
-
 /** Write to a file descriptor using writev.  Can be used for files but
  * meant for sockets. Leaves the point at the end of the write.
  * @param buff The buffer to read from.

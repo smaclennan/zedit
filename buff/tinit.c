@@ -216,8 +216,9 @@ static void tlinit(void)
 	/* I like st, but they have a weird mix of ansi and posix and the
 	 * terminfo entry lies.
 	 */
-	if(strcmp(term, "st") == 0 || strncmp(term, "st-", 3) == 0)
-		st_hack();
+	if (term)
+		if(strcmp(term, "st") == 0 || strncmp(term, "st-", 3) == 0)
+			st_hack();
 }
 #endif
 /* \endcond */

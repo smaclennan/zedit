@@ -125,8 +125,7 @@ void termsize(void)
 	int rows = 0, cols = 0;
 
 	/* Get the defaults from the low level interface */
-	if (getenv("BROKEN_TERM") == NULL)
-		tsize(&rows, &cols);
+	tsize(&rows, &cols);
 
 	Rowmax = rows <= 0 ? 24 : MIN(rows, ROWMAX);
 	Colmax = cols <= 0 ? 80 : MIN(cols, COLMAX);

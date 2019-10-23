@@ -46,6 +46,7 @@ void tsize(int *rows, int *cols)
 	n = read(0, buf, sizeof(buf) - 1);
 	/* Restore cursor */
 	twrite("\033[u", 3);
+	tflush();
 
 	if (n > 0) {
 		buf[n] = '\0';

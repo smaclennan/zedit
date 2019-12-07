@@ -408,6 +408,10 @@ int pathfixup(char *to, char *from)
 			*to = save;
 		} else
 			rc = 0;
+#ifdef __QNX__
+	} else if (S_TYPEISSHM(&sbuf)) {
+		rc = 0;
+#endif
 	} else if (sbuf.st_mode & S_IFDIR)
 		rc = -1;
 	else

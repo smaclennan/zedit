@@ -22,7 +22,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 static void grep_one(char *fname, regexp_t *re,
 					 struct buff *inbuff, struct buff *outbuff)

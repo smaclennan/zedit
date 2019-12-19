@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 static bool Comstate;
 

@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 static char Lbufname[BUFNAMMAX + 1];
 

@@ -22,7 +22,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 int verbose;
 bool Initializing = true;

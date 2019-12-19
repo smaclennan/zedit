@@ -22,7 +22,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 /* general linked list structure */
 struct llist {
@@ -323,7 +323,7 @@ Returns -1 if the 'from' is a directory
 		 2 if ~ specifier invalid
 		 0 if all is well
 NOTE: assumes a valid path (in particular /.. would not work)
-*/
+ */
 #define Psep(c)		((c) == '/')
 
 int pathfixup(char *to, char *from)

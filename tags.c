@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 static char Tagfile[PATHMAX];
 

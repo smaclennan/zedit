@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 static void setavar(const char *vin, bool display);
 

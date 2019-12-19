@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 void Zbeginning_of_line(void)
 {

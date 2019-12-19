@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 /* For now it is a char. May be expanded later. */
 #define AN '+'	/* Arg Normal */

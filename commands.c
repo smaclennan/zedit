@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 int Arg;
 bool Argp;
@@ -90,7 +90,7 @@ void Zuppercase_word(void)
 
 /* Move a block of chars around point and "from" to "to".
  * Assumes point is before "from".
-*/
+ */
 static void blockmove(struct mark *from, struct mark *to)
 {
 	char tmp;
@@ -564,7 +564,7 @@ bool promptsave(zbuff_t *tbuff, bool must)
  * If the user aborts a prompt, he is left in the buffer he aborted in
  * and the routine returns false.
  * Else the user returns to the buffer he started in.
-*/
+ */
 bool saveall(bool must)
 {
 	zbuff_t *tbuff, *bsave;

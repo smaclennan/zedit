@@ -22,7 +22,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 static int innerdsp(int from, int to, struct mark *pmark);
 static void modeflags(struct wdo *wdo);

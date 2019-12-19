@@ -22,7 +22,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 int Colmax = EOF, Rowmax;		/* Row and column maximums */
 
@@ -179,7 +179,7 @@ void tprntchar(Byte ichar)
 
 /* Calculate the width of a character.
  * The 'adjust' parameter adjusts for the end of line.
-*/
+ */
 int chwidth(Byte ch, int col, bool adjust)
 {
 	int wid;

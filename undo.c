@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 #if defined(UNDO) && UNDO
 #include <stdlib.h>

@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 void (*Cmds[][2])() = {
 	{ Znotimpl,			Znotimpl },

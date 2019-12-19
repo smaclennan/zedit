@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 #define PNUMCOLS		3	/* default columns for pout */
 #define PCOLSIZE		26	/* default column size */

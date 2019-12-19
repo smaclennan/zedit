@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 #define SROWS	(Rowmax - 2)	/* Screen rows */
 #define SCOLS	(Colmax - 1)	/* Screen columns */
@@ -251,7 +251,7 @@ static void init_matrix1(char *p1)
   Go throught the current buffer and find any 'lives'. If a life is found,
   convert the buffer character to a '*' and fill in matrix1. While going
   though the buffer it is padded with spaces to fill SROWS * SCOLS
-*/
+ */
 static void fill_matrix1(char *p1)
 {
 	bool eol;

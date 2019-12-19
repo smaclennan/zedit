@@ -22,7 +22,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 static char Fname[PATHMAX + 1];
 int raw_mode;
@@ -142,7 +142,7 @@ Load the file 'fname' into the current buffer.
 Returns  0  successfully opened file
 	 1  no such file
 	-1  on error
-*/
+ */
 int zreadfile(char *fname)
 {
 	struct stat sbuf;

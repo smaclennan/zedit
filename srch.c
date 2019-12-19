@@ -22,7 +22,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 static int promptsearch(const char *prompt, int type);
 static void promptreplace(int type);

@@ -21,7 +21,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 /* This is cleared indirectly in Zgrep/cmdtobuff via set_shell_mark()
  * and set in Znexterror.  If clear, the make buffer is scrolled
@@ -211,7 +211,7 @@ static char *wordit(char **str)
 
 /* Invoke 'cmd' on a pipe.
  * Returns true if the invocation succeeded.
-*/
+ */
 static bool _cmdtobuff(zbuff_t *tbuff, const char *icmd)
 {
 	char cmd[STRMAX + 1], *p, *argv[11];

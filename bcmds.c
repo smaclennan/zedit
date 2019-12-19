@@ -157,10 +157,10 @@ void Zdelete_buffer(void)
 
 	if (Argp) {
 		strlcpy(bname, Lbufname, sizeof(bname));
-		do
+		do {
 			if (getarg("Buffer: ", bname, BUFNAMMAX))
 				return;
-		while ((tbuff = cfindbuff(bname)) == NULL);
+		} while ((tbuff = cfindbuff(bname)) == NULL);
 		zswitchto(tbuff);
 	}
 	if (Bbuff->bmodf)
@@ -237,7 +237,8 @@ static char *addbname(const char *bname)
 
 	for (i = Numbnames; i > 0 && strcasecmp(bname, Bnames[i - 1]) < 0; --i)
 		Bnames[i] = Bnames[i - 1];
-	if ((Bnames[i] = strdup(bname))) {
+	Bnames[i] = strdup(bname);
+	if (Bnames[i]) {
 		if (strlen(Bnames[i]) > BUFNAMMAX)
 			Bnames[i][BUFNAMMAX] = '\0';
 		++Numbnames;
@@ -319,10 +320,13 @@ zbuff_t *zcreatebuff(const char *bname, char *fname)
 		return NULL;
 	}
 
-	if (bname && !(bptr->bname = addbname(bname))) {
-		error("Out of buffer name space");
-		cdelbuff(bptr);
-		return NULL;
+	if (bname) {
+		bptr->bname = addbname(bname);
+		if (!bptr->bname) {
+			error("Out of buffer name space");
+			cdelbuff(bptr);
+			return NULL;
+		}
 	}
 
 	/* add the buffer to the tail of the list */

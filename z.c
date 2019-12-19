@@ -32,7 +32,7 @@ int Homelen;
 unsigned Cmd;
 int Cmdpushed = -1; /* Search pushed a key */
 
-static void usage(void)
+static void _usage(void)
 {
 	terror("usage: zedit [-hrt] [-c config] [-l line] [fname ...]\n"
 		   "where:\t-h  displays this message.\n"
@@ -190,7 +190,7 @@ int main(int argc, char **argv)
 			break;
 		case 'h':
 		default:
-			usage();
+			_usage();
 		}
 
 	/* User wants Text mode as default */
@@ -198,7 +198,8 @@ int main(int argc, char **argv)
 		VAR(VNORMAL) = 0;
 
 	/* PAW must not be on the Bufflist */
-	if (!(Paw = cmakebuff("*paw*", NULL)))
+	Paw = cmakebuff("*paw*", NULL);
+	if (!Paw)
 		exit(1);
 	Paw->prev = Paw->next = NULL;
 	Bufflist = NULL;

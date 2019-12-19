@@ -68,10 +68,10 @@ long bcopyrgn(struct mark *mark, struct buff *to)
 		copied += dstlen;
 		foreach_global_pagemark(btmrk, to->curpage)
 			if (btmrk->moffset > to->curchar)
-					btmrk->moffset += dstlen;
+				btmrk->moffset += dstlen;
 		foreach_pagemark(to, btmrk, to->curpage)
 			if (btmrk->moffset > to->curchar)
-					btmrk->moffset += dstlen;
+				btmrk->moffset += dstlen;
 		makeoffset(to, to->curchar + dstlen);
 		bsetmod(to);
 		to->bmodf = 1;

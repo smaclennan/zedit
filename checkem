@@ -1,0 +1,28 @@
+#!/bin/sh
+
+if which sparse > /dev/null; then
+    echo "Running sparse..."
+    CFILES=`ls *.c | fgrep -v fcheck.c`
+
+    sparse -D__unix__ $CFILES
+    sparse -D__unix__ fcheck.c
+else
+    echo "ERROR: sparse not found"
+fi
+
+K=`uname -r`
+checkpatch=`readlink -f /lib/modules/${K}/source/scripts/checkpatch.pl`
+if [ ! -f "$checkpatch" ]; then
+    checkpatch=`readlink -f /lib/modules/${K}/build/scripts/checkpatch.pl`
+    if [ ! -f "$checkpatch" ]; then
+	echo "ERROR: checkpatch not found"
+	exit 1
+    fi
+fi
+
+# SAM ignore .h files for now...
+echo "Running checkpatch..."
+for f in *.c; do
+    $checkpatch --no-tree --ignore SPDX_LICENSE_TAG,UNSPECIFIED_INT,LINE_SPACING --file $f |
+	fgrep -q "no obvious style problems" || echo "$f"
+done

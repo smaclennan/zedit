@@ -23,7 +23,7 @@
 
 /** @addtogroup buffer
  * @{
-*/
+ */
 
 #define WIDTH_MASK		0x0fffff
 #define SAW_NEG			0x100000
@@ -37,7 +37,7 @@ struct outbuff {
 	int n;
 };
 
-const char tohex[] = {
+static const char tohex[] = {
 	'0', '1', '2', '3', '4', '5', '6', '7',
 	'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
 };
@@ -60,9 +60,9 @@ static void reverse_string(char *start, char *end)
 /** Octal to ascii.
  * @param val The octal to convert.
  * @param out The output string.
- * @return A pointer to the end of the string.
+ * @return A pointer to the end of string.
  */
-char *_octal2str(long val, char *out)
+char *octal2str(long val, char *out)
 {
 	char *p = out;
 
@@ -81,23 +81,12 @@ char *_octal2str(long val, char *out)
 	return p;
 }
 
-/** Octal to ascii.
- * @param val The octal to convert.
- * @param out The output string.
- * @return A pointer to out.
- */
-char *octal2str(long val, char *out)
-{
-	_octal2str(val, out);
-	return out;
-}
-
 /** Integer to ascii.
  * @param val The integer to convert.
  * @param out The output string.
  * @return A pointer to the end of the string.
  */
-char *_int2str(long val, char *out)
+char *int2str(long val, char *out)
 {
 	char *p = out;
 
@@ -114,7 +103,8 @@ char *_int2str(long val, char *out)
 			*p++ = (val % 10) + '0';
 			val /= 10;
 		}
-		if (neg) *p++ = '-';
+		if (neg)
+			*p++ = '-';
 		*p = 0;
 
 		reverse_string(out, p);
@@ -123,23 +113,12 @@ char *_int2str(long val, char *out)
 	return p;
 }
 
-/** Integer to ascii.
- * @param val The integer to convert.
- * @param out The output string.
- * @return A pointer to out.
- */
-char *int2str(long val, char *out)
-{
-	_int2str(val, out);
-	return out;
-}
-
 /** Unsigned integer to ascii.
  * @param val The integer to convert.
  * @param out The output string.
  * @return A pointer to the end of the string.
  */
-char *_uint2str(unsigned long val, char *out)
+char *uint2str(unsigned long val, char *out)
 {
 	char *p = out;
 
@@ -158,23 +137,12 @@ char *_uint2str(unsigned long val, char *out)
 	return p;
 }
 
-/** Unsigned integer to ascii.
- * @param val The integer to convert.
- * @param out The output string.
- * @return A pointer to out.
- */
-char *uint2str(unsigned long val, char *out)
-{
-	_uint2str(val, out);
-	return out;
-}
-
 /** Hex to ascii.
  * @param val The integer to convert.
  * @param out The output string.
  * @return A pointer to the end of the string.
  */
-char *_hex2str(unsigned long val, char *out)
+char *hex2str(unsigned long val, char *out)
 {
 	char *p = out;
 
@@ -191,17 +159,6 @@ char *_hex2str(unsigned long val, char *out)
 		reverse_string(out, p);
 	}
 	return p;
-}
-
-/** Hex to ascii.
- * @param val The integer to convert.
- * @param out The output string.
- * @return A pointer to out.
- */
-char *hex2str(unsigned long val, char *out)
-{
-	_hex2str(val, out);
-	return out;
 }
 
 /* \cond skip */
@@ -318,78 +275,83 @@ static int __strfmt(struct outbuff *out, const char *fmt, va_list ap)
 	char tmp[22];
 
 	while (*fmt) {
-		if (*fmt == '%') {
-			const char *save = fmt++;
-			unsigned flags = 0, width = 0;
-
-			if (*fmt == '-') {
-				++fmt;
-				flags |= SAW_NEG;
-			}
-			if (*fmt == '0')
-				flags |= SAW_ZERO;
-			while (isdigit(*fmt)) {
-				width = width * 10 + *fmt - '0';
-				++fmt;
-			}
-			flags |= width & WIDTH_MASK;
-			if (*fmt == 'l') {
-				++fmt;
-				flags |= SAW_LONG;
-			}
-			switch (*fmt) {
-			case 's':
-				outstr(out, va_arg(ap, char *), flags);
-				break;
-			case 'c':
-				// char is promoted to int in ...
-				outchar(out, va_arg(ap, int));
-				break;
-			case 'd':
-				if (flags & SAW_LONG)
-					int2str(va_arg(ap, long), tmp);
-				else
-					int2str(va_arg(ap, int), tmp);
-				outnum(out, tmp, flags);
-				break;
-			case 'o':
-				if (flags & SAW_LONG)
-					octal2str(va_arg(ap, long), tmp);
-				else
-					octal2str(va_arg(ap, int), tmp);
-				outnum(out, tmp, flags);
-				break;
-			case 'u':
-				if (flags & SAW_LONG)
-					uint2str(va_arg(ap, unsigned long), tmp);
-				else
-					uint2str(va_arg(ap, unsigned), tmp);
-				outnum(out, tmp, flags);
-				break;
-			case 'x':
-				if (flags & SAW_LONG)
-					hex2str(va_arg(ap, unsigned long), tmp);
-				else
-					hex2str(va_arg(ap, unsigned), tmp);
-				outnum(out, tmp, flags);
-				break;
-#ifdef WANT_FLOATS
-			case 'f': ;
-				int frac;
-				int integer = double2fixed(va_arg(ap, double), &frac);
-				int2str(integer, tmp);
-				outnum(out, tmp, flags);
-				outchar(out, '.');
-				int2str(frac, tmp);
-				outnum(out, tmp, flags);
-				break;
-#endif
-			default:
-				outchar(out, '%');
-				fmt = save;
-			}
-		} else
+		if (*fmt != '%') {
 			outchar(out, *fmt);
+			++fmt;
+			continue;
+		}
+
+		const char *save = fmt++;
+		unsigned flags = 0, width = 0;
+
+		if (*fmt == '-') {
+			++fmt;
+			flags |= SAW_NEG;
+		}
+		if (*fmt == '0')
+			flags |= SAW_ZERO;
+		while (isdigit(*fmt)) {
+			width = width * 10 + *fmt - '0';
+			++fmt;
+		}
+		flags |= width & WIDTH_MASK;
+		if (*fmt == 'l') {
+			++fmt;
+			flags |= SAW_LONG;
+		}
+		switch (*fmt) {
+		case 's':
+			outstr(out, va_arg(ap, char *), flags);
+			break;
+		case 'c':
+			// char is promoted to int in ...
+			outchar(out, va_arg(ap, int));
+			break;
+		case 'd':
+			if (flags & SAW_LONG)
+				int2str(va_arg(ap, long), tmp);
+			else
+				int2str(va_arg(ap, int), tmp);
+			outnum(out, tmp, flags);
+			break;
+		case 'o':
+			if (flags & SAW_LONG)
+				octal2str(va_arg(ap, long), tmp);
+			else
+				octal2str(va_arg(ap, int), tmp);
+			outnum(out, tmp, flags);
+			break;
+		case 'u':
+			if (flags & SAW_LONG)
+				uint2str(va_arg(ap, unsigned long), tmp);
+			else
+				uint2str(va_arg(ap, unsigned), tmp);
+			outnum(out, tmp, flags);
+			break;
+		case 'x':
+			if (flags & SAW_LONG)
+				hex2str(va_arg(ap, unsigned long), tmp);
+			else
+				hex2str(va_arg(ap, unsigned), tmp);
+			outnum(out, tmp, flags);
+			break;
+#ifdef WANT_FLOATS
+		case 'f':
+		{
+			int frac;
+			int integer = double2fixed(va_arg(ap, double), &frac);
+			int2str(integer, tmp);
+			outnum(out, tmp, flags);
+			outchar(out, '.');
+			int2str(frac, tmp);
+			outnum(out, tmp, flags);
+			break;
+		}
+#endif
+		default:
+			outchar(out, '%');
+			fmt = save;
+		}
 		++fmt;
 	}
 

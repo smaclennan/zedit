@@ -22,7 +22,7 @@
 
 /** @addtogroup misc
  * @{
-*/
+ */
 
 /** This is the maximum number of operations that can be outstanding
  * at one time. This mainly limits the number of nested brackets.

@@ -19,7 +19,7 @@
 
 #include <stdio.h> // for snprintf
 #include <assert.h>
-#include "buff.h"
+#include <buff.h>
 
 int main(int argc, char *argv[])
 {
@@ -56,6 +56,6 @@ int main(int argc, char *argv[])
 
 /*
  * Local Variables:
- * compile-command: "gcc -O2 -Wall strtest.c -o strtest libbuff.a"
+ * compile-command: "gcc -I.. -O2 -Wall strtest.c -o strtest ../x86_64/libbuff.a"
  * End:
  */

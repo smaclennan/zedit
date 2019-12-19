@@ -5,12 +5,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this project; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -36,14 +36,15 @@
 
 /** @addtogroup buffer
  * @{
-*/
+ */
 
 /**
  * Insert a file into the buffer at the point.
  * Leaves the point at the start of the inserted file.
  * @param buff The buffer to read the file into.
  * @param fname The file to read.
- * @param[out] compressed Was the file compressed? Only if ZLIB enabled. Can be NULL.
+ * @param[out] compressed Was the file compressed? Only if ZLIB enabled.
+ *             Can be NULL.
  * @return 0 on success, -1 on file error, 1 on zlib error.
  */
 int breadfile(struct buff *buff, const char *fname, int *compressed)

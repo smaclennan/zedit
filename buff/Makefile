@@ -48,7 +48,6 @@ CFILES = \
 	globals.c \
 	hugefile.c \
 	kbd.c \
-	newpage.c \
 	mrkaftermrk.c \
 	mrkbeforemrk.c \
 	pagesplit.c \
@@ -58,7 +57,6 @@ CFILES = \
 	tinit.c \
 	tsize.c \
 	tstyle.c \
-	tobegline.c \
 	toendline.c \
 
 O := $(addprefix $(BDIR)/, $(CFILES:.c=.o))

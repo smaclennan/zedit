@@ -5,12 +5,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this project; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -21,7 +21,7 @@
 
 /** @addtogroup buffer
  * @{
-*/
+ */
 
 /** Move point to the end of the line.
  * @param buff The buffer to move the Point in.
@@ -30,5 +30,16 @@ void toendline(struct buff *buff)
 {
 	if (bcsearch(buff, '\n'))
 		bmove(buff, -1);
+}
+
+/** Move point to the beginning of the line.
+ * @param buff The buffer to move the Point in.
+ */
+void tobegline(struct buff *buff)
+{
+	if (buff->curchar > 0 && *(buff->curcptr - 1) == '\n')
+		return;
+	if (bcrsearch(buff, '\n'))
+		bmove1(buff);
 }
 /* @} */

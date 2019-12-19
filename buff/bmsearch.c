@@ -22,7 +22,7 @@
 
 /** @addtogroup buffer
  * @{
-*/
+ */
 
 /* \cond skip */
 #define NUMASCII	256			/* number of ascii chars */

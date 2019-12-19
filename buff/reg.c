@@ -22,7 +22,7 @@
 
 /** @addtogroup buffer
  * @{
-*/
+ */
 
 #ifndef BUILTIN_REG
 /* \cond skip */

@@ -55,7 +55,7 @@
 
 /** @addtogroup buffer
  * @{
-*/
+ */
 
 #define LIBBUFF_MAJOR 1
 #define LIBBUFF_MINOR 0
@@ -76,13 +76,13 @@ struct huge_file {
 /** Main buffer structure. */
 struct buff {
 #ifdef HAVE_BUFFER_MARKS
-	struct mark *marks;			/**< Buffer dynamic marks. */
+	struct mark *marks;		/**< Buffer dynamic marks. */
 #endif
-	struct page *firstp;		/**< List of pages. */
-	struct page *curpage;		/**< Point page. */
-	Byte *curcptr;				/**< Point position in the page. */
-	unsigned curchar;			/**< Point index in the page. */
-	int bmodf;					/**< Buffer modified? */
+	struct page *firstp;	/**< List of pages. */
+	struct page *curpage;	/**< Point page. */
+	Byte *curcptr;			/**< Point position in the page. */
+	unsigned curchar;		/**< Point index in the page. */
+	int bmodf;				/**< Buffer modified? */
 #if defined(UNDO) && UNDO
 	int in_undo;		/**< Are we currently performing an undo? */
 	void *undo_tail;	/**< List of undos. */
@@ -139,12 +139,10 @@ long bdeltomrk(struct mark *);
 int binstr(struct buff *buff, const char *fmt, ...);
 int strfmt(char *str, int len, const char *fmt, ...);
 int strfmt_ap(char *str, int len, const char *fmt, va_list ap);
+char *octal2str(long val, char *out);
 char *int2str(long val, char *out);
 char *uint2str(unsigned long val, char *out);
 char *hex2str(unsigned long val, char *out);
-char *_int2str(long val, char *out);
-char *_uint2str(unsigned long val, char *out);
-char *_hex2str(unsigned long val, char *out);
 void bmovepast(struct buff *buff, int (*pred)(int), int forward);
 void bmoveto(struct buff *buff, int (*pred)(int), int forward);
 
@@ -181,7 +179,7 @@ int do_undo(struct buff *buff);
 /* \endcond */
 #endif
 
-/* util.c */
+/* strlcpy.c */
 #if defined(__linux__) || defined(WIN32)
 size_t strlcpy(char *dst, const char *src, size_t dstsize);
 size_t strlcat(char *dst, const char *src, size_t dstsize);
@@ -468,6 +466,7 @@ extern struct mark *Marklist;
 
 /** The libbuff version as a string. */
 extern const char *libbuff_version;
+extern const char *libbuff_marker;
 
 /* @} buffer */
 

@@ -25,7 +25,7 @@
 
 /** @addtogroup misc
  * @{
-*/
+ */
 
 /* \cond skip */
 /** Main calc struct */

@@ -21,7 +21,7 @@
 
 /** @addtogroup term
  * @{
-*/
+ */
 
 /** Allow different styles to be applied to terminal output in a generic way.
  * The three generically supported styles are T_NORMAL, T_REVERSE, and
@@ -72,7 +72,7 @@ void tstyle(int style)
 	char str[32], *p = str;
 
 	*p++ = '\033'; *p++ = '[';
-	p = _uint2str(style, p);
+	p = uint2str(style, p);
 	*p++ = 'm';
 	twrite(str, p - str);
 #endif

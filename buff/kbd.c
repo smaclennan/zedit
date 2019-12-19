@@ -25,9 +25,10 @@
 
 /** @addtogroup term
  * @{
-*/
+ */
 
-/** The special multi-byte keys. This array may be updated dynamically if we detect ESC O keys.
+/** The special multi-byte keys. This array may be updated dynamically
+ * if we detect ESC O keys.
  * Note: We can currently only have 32 specials.
  */
 static char *Tkeys[] = {

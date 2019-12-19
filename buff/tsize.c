@@ -21,7 +21,7 @@
 
 /** @addtogroup term
  * @{
-*/
+ */
 
 /** Get the current terminal size. If it can't get the size it returns
  * 80x30.

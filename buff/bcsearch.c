@@ -76,10 +76,10 @@ static void *memrchr(const void *s, int c, size_t n)
 		const unsigned char *p = (const unsigned char *)s + n;
 		const unsigned char cmp = c;
 
-		do
+		do {
 			if (*--p == cmp)
 				return (void *)p;
-		while (--n != 0);
+		} while (--n != 0);
 	}
 	return NULL;
 }

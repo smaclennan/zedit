@@ -28,7 +28,7 @@ static char *dbgfname;
 
 /** @addtogroup misc
  * @{
-*/
+ */
 
 /** Set the filename for the Dbg() function. Allocates the space for
  * the filename. If the filename is NULL, free the current filename if

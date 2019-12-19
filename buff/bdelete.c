@@ -5,12 +5,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this project; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -21,7 +21,29 @@
 
 /** @addtogroup buffer
  * @{
-*/
+ */
+
+static void delete_entire_page(struct buff *buff, struct page *curpage)
+{	/* We deleted the entire page. */
+	struct mark *tmark;
+	struct page *tpage = curpage->nextp;
+	unsigned noffset = 0;
+
+	if (tpage == NULL) {
+		tpage = curpage->prevp;
+		noffset = tpage->plen;
+	}
+	foreach_global_pagemark(tmark, curpage) {
+		tmark->mpage = tpage;
+		tmark->moffset = noffset;
+	}
+	foreach_pagemark(buff, tmark, curpage) {
+		tmark->mpage = tpage;
+		tmark->moffset = noffset;
+	}
+	freepage(buff, curpage);
+	makecur(buff, tpage, noffset);
+}
 
 /** Delete byte(s) from the buffer at the current point.
  * @param buff The buffer to delete from.
@@ -49,49 +71,36 @@ void bdelete(struct buff *buff, unsigned quantity)
 		else
 			quantity -= quan;
 		buff->bmodf = 1;
+
 		if (curplen(buff) == 0 && (curpage->nextp || curpage->prevp)) {
-			/* We deleted entire page. */
+			delete_entire_page(buff, curpage);
+			continue;
+		}
+
+		tpage = curpage;
+		noffset = buff->curchar;
+		if ((noffset >= curplen(buff)) && curpage->nextp) {
 			tpage = curpage->nextp;
 			noffset = 0;
-			if (tpage == NULL) {
-				tpage = curpage->prevp;
-				noffset = tpage->plen;
-			}
-			foreach_global_pagemark(tmark, curpage) {
-				tmark->mpage = tpage;
-				tmark->moffset = noffset;
-			}
-			foreach_pagemark(buff, tmark, curpage) {
-				tmark->mpage = tpage;
-				tmark->moffset = noffset;
-			}
-			freepage(buff, curpage);
-		} else {
-			tpage = curpage;
-			noffset = buff->curchar;
-			if ((noffset >= curplen(buff)) && curpage->nextp) {
-				tpage = curpage->nextp;
-				noffset = 0;
-			}
-			foreach_global_pagemark(tmark, curpage)
-				if (tmark->moffset >= buff->curchar) {
-					if (tmark->moffset >= buff->curchar + quan)
-						tmark->moffset -= quan;
-					else {
-						tmark->mpage = tpage;
-						tmark->moffset = noffset;
-					}
-				}
-			foreach_pagemark(buff, tmark, curpage)
-				if (tmark->moffset >= buff->curchar) {
-					if (tmark->moffset >= buff->curchar + quan)
-						tmark->moffset -= quan;
-					else {
-						tmark->mpage = tpage;
-						tmark->moffset = noffset;
-					}
-				}
 		}
+		foreach_global_pagemark(tmark, curpage)
+			if (tmark->moffset >= buff->curchar) {
+				if (tmark->moffset >= buff->curchar + quan)
+					tmark->moffset -= quan;
+				else {
+					tmark->mpage = tpage;
+					tmark->moffset = noffset;
+				}
+			}
+		foreach_pagemark(buff, tmark, curpage)
+			if (tmark->moffset >= buff->curchar) {
+				if (tmark->moffset >= buff->curchar + quan)
+					tmark->moffset -= quan;
+				else {
+					tmark->mpage = tpage;
+					tmark->moffset = noffset;
+				}
+			}
 		makecur(buff, tpage, noffset);
 	}
 	bsetmod(buff);

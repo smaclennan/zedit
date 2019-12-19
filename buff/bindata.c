@@ -23,8 +23,8 @@
  * @{
  */
 
-/** Helper function to append data to a page, creating new pages as needed. You must
- * guarantee we are at the end of a page.
+/** Helper function to append data to a page, creating new pages as
+ * needed. You must guarantee we are at the end of a page.
  * @param buff The buffer to append to.
  * @param data The data to append.
  * @param size The size of the data.

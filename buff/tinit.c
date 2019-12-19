@@ -166,8 +166,11 @@ static void tlinit(void)
 		exit(1);
 	}
 
-	if (!exit_attribute_mode)
-		enter_reverse_mode = enter_standout_mode = enter_bold_mode = NULL;
+	if (!exit_attribute_mode) {
+		enter_reverse_mode = NULL;
+		enter_standout_mode = NULL;
+		enter_bold_mode = NULL;
+	}
 
 	/* initialize the terminal */
 	TPUTS(init_1string);
@@ -206,7 +209,7 @@ static void tlinit(void)
 	set_tkey(i++, key_f10);
 	set_tkey(i++, key_f11);
 }
-#elif defined (WIN32)
+#elif defined(WIN32)
 extern void tlint(void);
 #else
 static void tlinit(void)
@@ -217,7 +220,7 @@ static void tlinit(void)
 	 * terminfo entry lies.
 	 */
 	if (term)
-		if(strcmp(term, "st") == 0 || strncmp(term, "st-", 3) == 0)
+		if (strcmp(term, "st") == 0 || strncmp(term, "st-", 3) == 0)
 			st_hack();
 }
 #endif
@@ -225,7 +228,7 @@ static void tlinit(void)
 
 /** @addtogroup term
  * @{
-*/
+ */
 
 /** Initalize the terminal. Sets the terminal up for raw character at
  * a time with no echo input.

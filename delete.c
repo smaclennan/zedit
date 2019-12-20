@@ -40,7 +40,7 @@ unsigned delpages(void)
 {
 	unsigned npage = 0;
 	for (struct page *page = Killbuff->firstp; page; page = page->nextp)
-			++npage;
+		++npage;
 	return npage;
 }
 
@@ -152,11 +152,13 @@ void Zyank(void)
 
 #if !UNDO
 	/* This leaves the mark at the start of the yank and
-	 * the point at the end. */
+	 * the point at the end.
+	 */
 	set_umark(NULL);
 #endif
 	btoend(Killbuff);
-	if (!(tmark = bcremark(Killbuff))) {
+	tmark = bcremark(Killbuff);
+	if (!tmark) {
 		error("out of memory");
 		return;
 	}
@@ -210,12 +212,16 @@ void Zcopy_word(void)
 		struct mark *tmark = bcremark(Bbuff); /* save current Point */
 		struct mark *start = bcremark(Bbuff);
 		if (tmark && start) {
-			bmoveto(Bbuff, bistoken, FORWARD); /* find start of word */
+			 /* find start of word */
+			bmoveto(Bbuff, bistoken, FORWARD);
 			bmovepast(Bbuff, bistoken, BACKWARD);
 			bmrktopnt(Bbuff, start);
-			bmovepast(Bbuff, bistoken, FORWARD); /* move Point to end of word */
-			copytomrk(start); /* copy to Kill buffer */
-			bpnttomrk(Bbuff, tmark); /* move Point back */
+			/* move Point to end of word */
+			bmovepast(Bbuff, bistoken, FORWARD);
+			/* copy to Kill buffer */
+			copytomrk(start);
+			/* move Point back */
+			bpnttomrk(Bbuff, tmark);
 		} else
 			tbell();
 		bdelmark(tmark);

@@ -132,10 +132,12 @@ void Znext_page(void)
 	int i, col = forcecol();
 
 	bpnttomrk(Bbuff, Sstart);
-	for (i = wheight() + prefline() - 2; i > 0 && bcsearch(Bbuff, NL); --i) {
+	i = wheight() + prefline() - 2;
+	while (i > 0 && bcsearch(Bbuff, NL)) {
 		bmove(Bbuff, -1);
 		i -= bgetcol(true, 0) / Colmax;
 		bmove1(Bbuff);
+		--i;
 	}
 	bmakecol(col);
 	reframe();

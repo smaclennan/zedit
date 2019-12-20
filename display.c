@@ -699,9 +699,8 @@ static void subset(struct buff *buff, int from, int to)
 		}
 		if (--row >= from)
 			Scrnmodf[row] = true;
-		while (row > from && bisatmrk(buff, &Scrnmarks[row])) {
+		while (row > from && bisatmrk(buff, &Scrnmarks[row]))
 			Scrnmodf[--row] = true;
-		}
 	}
 }
 

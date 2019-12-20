@@ -33,7 +33,7 @@ struct comment {
 /* Mark a new comment from start to Point. */
 static void newcomment(struct mark *start)
 {
-	struct comment *com = (struct comment *)calloc(sizeof(struct comment), 1);
+	struct comment *com = calloc(sizeof(struct comment), 1);
 	if (!com)
 		return;
 	com->start = bcremark(Bbuff);
@@ -72,7 +72,8 @@ static void scanbuffer(zbuff_t *buff)
 	btostart(Bbuff);
 	if (comchar) {
 		while (bcsearch(Bbuff, comchar) && !bisend(Bbuff)) {
-			if (bmove(Bbuff, -2) == 0) { /* skip to char *before* # */
+			 /* skip to char *before* # */
+			if (bmove(Bbuff, -2) == 0) {
 				/* # is first character in buffer */
 			} else if (isspace(Buff()))
 				bmove1(Bbuff);
@@ -160,7 +161,8 @@ void cprntchar(Byte ch)
 	for (; start; start = start->next)
 		if (bisbeforemrk(Bbuff, start->start))
 			break;
-		else if (bisbeforemrk(Bbuff, start->end) || bisatmrk(Bbuff, start->end)) {
+		else if (bisbeforemrk(Bbuff, start->end) ||
+			 bisatmrk(Bbuff, start->end)) {
 			style = T_COMMENT;
 			break;
 		}

@@ -120,9 +120,9 @@ struct cnames Cnames[] = {
 	 C("Command prefix.")
 	},
 	{"delete-blanks",		ZDELETE_BLANKS,		0,
-	 C("Delete all the blank lines around the Point. With a Universal Argument "
-	   "all blanks lines in the file are deleted. The lines are NOT put in the "
-	   "Kill Buffer.")
+	 C("Delete all the blank lines around the Point. With a Universal "
+	   "Argument all blanks lines in the file are deleted. The lines are "
+	   "NOT put in the Kill Buffer.")
 	},
 	{"delete-buffer",		ZDELETE_BUFFER,		0,
 	 C("Deletes the current buffer and goes to a previous buffer. There "
@@ -165,7 +165,8 @@ struct cnames Cnames[] = {
 	{"dos2unix",		    ZDOS2UNIX,			0,
 	 C("Convert a DOS file (CR in the modeline) to a normal unix file."
 	   "The conversion only takes place if the file is written.\n"
-	   "A Universal Argument causes the CR state of the buffer to be flipped.")
+	   "A Universal Argument causes the CR state of the buffer to be "
+	   "flipped.")
 	},
 	{"empty-buffer",		ZEMPTY_BUFFER,		AI,
 	 C("Deletes the entire contents of the current buffer.")
@@ -656,9 +657,9 @@ struct cnames Cnames[] = {
 	   "characters are inserted, even in overwrite mode.")
 	},
 	{"zap-to-char",			ZZAP_TO_CHAR,		AN,
-	 C("Waits for a character and moves the Point to that character. The Mark "
-	   "is set where the Point was. Unlike the Emacs zap-to-char does not "
-	   "actually delete the text.")
+	 C("Waits for a character and moves the Point to that character. The "
+	   "Mark is set where the Point was. Unlike the Emacs zap-to-char does "
+	   "not actually delete the text.")
 	},
 };
 /* @} */

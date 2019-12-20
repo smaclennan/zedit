@@ -46,15 +46,17 @@ void set_last_bufname(zbuff_t *buff)
  */
 int getbword(char word[], int max, int (*valid)(int))
 {
-	int i;
 	struct mark tmark;
+	int i;
 
 	bmrktopnt(Bbuff, &tmark);
 	if (!bistoken(Buff()))
 		bmoveto(Bbuff, bistoken, BACKWARD);
 	bmovepast(Bbuff, bistoken, BACKWARD);
-	for (i = 0; !bisend(Bbuff) && valid(Buff()) && i < max; ++i, bmove1(Bbuff))
+	for (i = 0; !bisend(Bbuff) && valid(Buff()) && i < max; ++i) {
 		word[i] = Buff();
+		bmove1(Bbuff);
+	}
 	word[i] = '\0';
 	bpnttomrk(Bbuff, &tmark);
 	return i;
@@ -66,11 +68,12 @@ int getbword(char word[], int max, int (*valid)(int))
  */
 char *getbtxt(char txt[], int max)
 {
-	int i;
 	struct mark tmark;
+	int i;
 
 	bmrktopnt(Bbuff, &tmark);
-	for (btostart(Bbuff), i = 0; !bisend(Bbuff) && i < max; bmove1(Bbuff), ++i)
+	btostart(Bbuff);
+	for (i = 0; !bisend(Bbuff) && i < max; bmove1(Bbuff), ++i)
 		txt[i] = Buff();
 	txt[i] = '\0';
 	bpnttomrk(Bbuff, &tmark);
@@ -226,8 +229,8 @@ static char *addbname(const char *bname)
 
 	if (Numbnames == Maxbnames) {
 		/* increase Bnames array */
-		char **ptr = (char **)realloc(Bnames,
-						  (Maxbnames + 10) * sizeof(char *));
+		int new = (Maxbnames + 10) * sizeof(char *);
+		char **ptr = (char **)realloc(Bnames, new);
 		if (!ptr)
 			return NULL;
 
@@ -287,37 +290,30 @@ static void bfini(void)
 	Dbgfname(NULL);
 }
 
-static void binit(void)
+void binit(void)
 {
-	static int binitialized = 0;
-
-	if (!binitialized) {
-		bsetmod = vsetmod_callback;
-		delinit();
-		atexit(bfini);
-		binitialized = 1;
-	}
+	bsetmod = vsetmod_callback;
+	delinit();
+	atexit(bfini);
 }
 
 /* Create a buffer and add to Bufflist. Do not switch to buffer. */
 zbuff_t *zcreatebuff(const char *bname, char *fname)
 {
-	zbuff_t *bptr;
-
-	bptr = cfindbuff(bname);
+	zbuff_t *bptr = cfindbuff(bname);
 	if (bptr)
 		return bptr;
 
-	binit();
-
-	if (!(bptr = calloc(1, sizeof(zbuff_t))) ||
-		!(bptr->buff = bcreate()) ||
-		(fname && !(bptr->fname = strdup(fname)))) {
-		bdelbuff(bptr->buff);
-		free(bptr->fname);
-		free(bptr);
-		error("Unable to create buffer");
-		return NULL;
+	bptr = calloc(1, sizeof(zbuff_t));
+	if (!bptr)
+		goto failed;
+	bptr->buff = bcreate();
+	if (!bptr->buff)
+		goto failed;
+	if (fname) {
+		bptr->fname = strdup(fname);
+		if (!bptr->fname)
+			goto failed;
 	}
 
 	if (bname) {
@@ -349,6 +345,15 @@ zbuff_t *zcreatebuff(const char *bname, char *fname)
 	}
 
 	return bptr;
+
+failed:
+	if (bptr) {
+		free(bptr->fname);
+		bdelbuff(bptr->buff);
+		free(bptr);
+	}
+error("Unable to create buffer");
+	return NULL;
 }
 
 /* Create a buffer and add to Bufflist. Switch to buffer. */

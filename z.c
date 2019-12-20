@@ -197,6 +197,8 @@ int main(int argc, char **argv)
 	if (textMode)
 		VAR(VNORMAL) = 0;
 
+	binit();
+
 	/* PAW must not be on the Bufflist */
 	Paw = cmakebuff("*paw*", NULL);
 	if (!Paw)

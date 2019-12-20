@@ -157,6 +157,7 @@ Z(pnewline);
 
 int ask(const char *);
 int bgetcol(bool, int);
+void binit(void);
 int bmakecol(int);
 void zswitchto(zbuff_t *);
 zbuff_t *cfindbuff(const char *);

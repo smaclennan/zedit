@@ -682,10 +682,10 @@ static void subset(struct buff *buff, int from, int to)
 		++row;
 
 	if (row > to) {
-		for (row = from, btmark = &Scrnmarks[from];
-		     row <= to && (btmark->mbuff != buff || bisaftermrk(buff, btmark));
-		     ++btmark, ++row)
-			;
+		btmark = &Scrnmarks[from];
+		for (row = from; row <= to; ++btmark, ++row)
+			if (btmark->mbuff != buff || bisaftermrk(buff, btmark))
+				break;
 		if (row > from) {
 			while (Scrnmarks[--row].mbuff != buff)
 				;
@@ -693,7 +693,9 @@ static void subset(struct buff *buff, int from, int to)
 		}
 	} else {
 		btmark = &Scrnmarks[row];
-		while (btmark->mpage == buff->curpage && btmark->moffset <= buff->curchar && row <= to) {
+		while (btmark->mpage == buff->curpage &&
+		       btmark->moffset <= buff->curchar &&
+		       row <= to) {
 			++btmark;
 			++row;
 		}

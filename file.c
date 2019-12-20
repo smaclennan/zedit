@@ -60,8 +60,8 @@ static bool zwritefile(char *fname)
 	if (Curbuff->mtime && stat(fname, &sbuf) == 0) {
 		if (sbuf.st_mtime > Curbuff->mtime) {
 			strconcat(PawStr, PAWSTRLEN,
-					  "WARNING: ", lastpart(fname),
-					  " has been modified. Overwrite? ", NULL);
+				  "WARNING: ", lastpart(fname),
+				  " has been modified. Overwrite? ", NULL);
 			if (ask(PawStr) != YES)
 				return false;
 		}
@@ -116,7 +116,7 @@ static bool zwritefile(char *fname)
 
 static void crfixup(void)
 {
-	char *p = (char *)memchr(Bbuff->curpage->pdata + 1, '\n', curplen(Bbuff) - 1);
+	char *p = memchr(Bbuff->curpage->pdata + 1, '\n', curplen(Bbuff) - 1);
 	if (!p)
 		return;
 
@@ -137,11 +137,10 @@ static void crfixup(void)
 	btostart(Bbuff);
 }
 
-/*
-Load the file 'fname' into the current buffer.
-Returns  0  successfully opened file
-	 1  no such file
-	-1  on error
+/* Load the file 'fname' into the current buffer.
+ * Returns 0  successfully opened file
+ *         1  no such file
+ *        -1  on error
  */
 int zreadfile(char *fname)
 {
@@ -293,8 +292,9 @@ bool findfile(char *path)
 
 	if (!tbuff) {
 		if (cfindbuff(tbname)) {
-			/* Resolve buffer name collisions by creating
-			 * a unique name */
+			/* Resolve buffer name collisions
+			 * by creating a unique name
+			 */
 			char *p;
 			int i;
 
@@ -378,29 +378,25 @@ void Zwrite_file(void)
 
 void Zread_file(void)
 {
-	struct buff *tbuff;
-	struct mark *tmark;
-	int rc = 1;
-
 	if (get_findfile("Read File: "))
 		return;
 
-	if ((tbuff = bcreate())) {
-		putpaw("Reading %s", lastpart(Fname));
-		rc = breadfile(tbuff, Fname, NULL);
-		if (rc == 0) {
-			btoend(tbuff);
-			if ((tmark = bcremark(tbuff))) {
-				btostart(tbuff);
-				bcopyrgn(tmark, Bbuff);
-				bdelmark(tmark);
-			} else
-				error("Out of memory");
-		}
-		bdelbuff(tbuff);
+	struct buff *tbuff = bcreate();
+	if (!tbuff) {
+		error("Unable to create buffer");
+		return;
 	}
 
-	if (rc)
+	putpaw("Reading %s", lastpart(Fname));
+	if (breadfile(tbuff, Fname, NULL)) {
 		error("Unable to read %s", Fname);
+		return;
+	}
+
+	struct mark tmark;
+	bmrktopnt(tbuff, &tmark);
+	btoend(tbuff);
+	bcopyrgn(&tmark, Bbuff);
+	bdelbuff(tbuff);
 }
 /* @} */

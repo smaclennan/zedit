@@ -38,7 +38,8 @@ static int set_bookmark(void)
 {
 	Bookmark = (Bookmark + 1) & (BOOKMARKS - 1);
 	if (Bookmark > Lastbook) {
-		if (!(Bookmrks[Bookmark] = bcremark(Bbuff)))
+		Bookmrks[Bookmark] = bcremark(Bbuff);
+		if (!Bookmrks[Bookmark])
 			return -1;
 		Lastbook = Bookmark;
 	} else
@@ -68,7 +69,8 @@ static int get_tagfile(void)
 		}
 	}
 
-	strconcat(Tagfile, sizeof(Tagfile), zgetcwd(Tagfile, sizeof(Tagfile)), "TAGS", NULL);
+	strconcat(Tagfile, sizeof(Tagfile), zgetcwd(Tagfile, sizeof(Tagfile)),
+		  "TAGS", NULL);
 	if (access(Tagfile, F_OK) == 0)
 		return 0;
 

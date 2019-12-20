@@ -52,7 +52,7 @@ bool _getarg(const char *prompt, char *arg, int max, bool tostart)
 	int tcol, trow;
 
 	tcol = Pcol; trow = Prow;
-	t_goto(Rowmax - 1 , 0);			/* display the prompt */
+	t_goto(Rowmax - 1, 0); /* display the prompt */
 	tprntstr(prompt);
 	Pawcol = Pcol = strlen(prompt); /* prompts are always simple ascii */
 
@@ -246,8 +246,8 @@ void pnewline(void)
 					/* Exact match */
 					InPaw = false;
 					return;
-				} else
-					++found;
+				}
+				++found;
 			}
 		if (found != 1) {
 			tbell();

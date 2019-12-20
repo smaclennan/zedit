@@ -25,7 +25,7 @@
  */
 
 static void grep_one(char *fname, regexp_t *re,
-					 struct buff *inbuff, struct buff *outbuff)
+		     struct buff *inbuff, struct buff *outbuff)
 {
 	bempty(inbuff);
 	if (breadfile(inbuff, fname, NULL))
@@ -66,7 +66,8 @@ static void grepit(char *input, char *files)
 		return;
 	}
 
-	if (!(inbuff = bcreate())) {
+	inbuff = bcreate();
+	if (!inbuff) {
 		error("Unable to create tmp file buffer.");
 		goto cleanup;
 	}

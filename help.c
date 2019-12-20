@@ -23,7 +23,7 @@
  * @{
  */
 
-static const char *key_label[] = {
+static const char *const key_label[] = {
 	"up", "down", "right", "left",
 	"insert", "delete", "page up", "page down", "home", "end",
 	"f1", "f2", "f3", "f4", "f5", "f6",
@@ -205,7 +205,8 @@ void Zhelp_apropos(void)
 		if (strstr(Cnames[i].name, word)) {
 			if (match++ == 0)
 				wuseother(HELPBUFF);
-			n += strfmt(line + n, sizeof(line) - n, "%-24s", Cnames[i].name);
+			n += strfmt(line + n, sizeof(line) - n,
+				    "%-24s", Cnames[i].name);
 			if (++j == 3) {
 				binstr(Bbuff, "%s\n", line);
 				j = n = 0;

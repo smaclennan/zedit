@@ -116,7 +116,8 @@ int readapipe(void)
 	char buff[1024], *ptr;
 	int cnt, i;
 
-	if (in_pipe == -1) return 0;
+	if (in_pipe == -1)
+		return 0;
 	cnt = i = read(in_pipe, ptr = buff, sizeof(buff));
 	if (i > 0) {
 		/* Yup! Read somethin' */
@@ -158,9 +159,11 @@ void checkpipes(int type)
 {
 	int pid = 0, status;
 
-	if (child == EOF) return;
+	if (child == EOF)
+		return;
 
-	if ((pid = waitpid((pid_t)-1, &status, WNOHANG)) > 0) {
+	pid = waitpid((pid_t)-1, &status, WNOHANG);
+	if (pid > 0) {
 		if (pid == child) {
 			/*
 			 * make sure pipe empty (except on exit)
@@ -169,7 +172,8 @@ void checkpipes(int type)
 			 *	read
 			 */
 			if (type) {
-				while (readapipe() > 0) ;
+				while (readapipe() > 0)
+					;
 				exit_status(pipebuff, status);
 			}
 			set_pipefd(-1);
@@ -226,33 +230,35 @@ static bool _cmdtobuff(zbuff_t *tbuff, const char *icmd)
 	for (p = cmd, arg = 0; arg < 10 && (argv[arg] = wordit(&p)); ++arg)
 		;
 
-	if (pipe(from) == 0) {
-		pid_t pid = fork();
-		if (pid == 0) {
-			/* child */
-			(void)close(from[0]);
-			dup2(from[1], 1);
-			dup2(from[1], 2);
-			execvp(argv[0], argv);
-			exit(1);
-		}
-
-		(void)close(from[1]);		/* close fail or not */
-		if (pid != EOF) {
-			/* SUCCESS! */
-			pipebuff = tbuff;
-			in_pipe = from[0];
-			child = pid;
-			set_pipefd(in_pipe);
-			return true;
-		} else {
-			/* fork failed - clean up */
-			(void)close(from[0]);
-			error("Unable to fork shell");
-		}
-	} else
+	if (pipe(from)) {
 		error("Unable to open pipes");
-	return false;
+		return false;
+	}
+
+	pid_t pid = fork();
+	if (pid == 0) {
+		/* child */
+		(void)close(from[0]);
+		dup2(from[1], 1);
+		dup2(from[1], 2);
+		execvp(argv[0], argv);
+		exit(1);
+	}
+
+	(void)close(from[1]);		/* close fail or not */
+	if (pid == EOF) {
+		/* fork failed - clean up */
+		(void)close(from[0]);
+		error("Unable to fork shell");
+		return false;
+	}
+
+	/* SUCCESS! */
+	pipebuff = tbuff;
+	in_pipe = from[0];
+	child = pid;
+	set_pipefd(in_pipe);
+	return true;
 }
 
 /* Try to kill a child process */
@@ -365,8 +371,11 @@ static int parse(char *fname)
 
 	while (!bisend(Bbuff)) {
 		/* try to get the fname */
-		for (p = fname; !isspace(Buff()) && Buff() != ':'; bmove1(Bbuff))
+		p = fname;
+		while (!isspace(Buff()) && Buff() != ':') {
 			*p++ = Buff();
+			bmove1(Bbuff);
+		}
 		*p = '\0';
 
 		/* try to get the line */
@@ -436,7 +445,7 @@ void Znext_error(void)
 #include <aspell.h>
 #include <dlfcn.h>
 
-#define ZDLSYM(A, B, args...) A(*B)(args) = (A(*)(args))dlsym(dl, #B)
+#define ZDLSYM(A, B, args...) (A(*B)(args) = (A(*)(args))dlsym(dl, #B))
 
 void Zspell_word(void)
 {
@@ -448,15 +457,15 @@ void Zspell_word(void)
 
 	dlerror(); /* clear errors */
 	ZDLSYM(AspellConfig *, new_aspell_config);
-	ZDLSYM(void , aspell_config_replace,
+	ZDLSYM(void, aspell_config_replace,
 		   AspellConfig*, char*, char*);
 	ZDLSYM(AspellCanHaveError *, new_aspell_speller,
 		   AspellConfig*);
-	ZDLSYM(int , aspell_error_number,
+	ZDLSYM(int, aspell_error_number,
 		   AspellCanHaveError*);
 	ZDLSYM(AspellSpeller *, to_aspell_speller,
 		   AspellCanHaveError*);
-	ZDLSYM(int , aspell_speller_check,
+	ZDLSYM(int, aspell_speller_check,
 		   AspellSpeller*, char*, int);
 	ZDLSYM(const AspellWordList *, aspell_speller_suggest,
 		   AspellSpeller*, char*, int);
@@ -464,11 +473,11 @@ void Zspell_word(void)
 		   const AspellWordList*);
 	ZDLSYM(const char *, aspell_string_enumeration_next,
 		   AspellStringEnumeration*);
-	ZDLSYM(void , delete_aspell_string_enumeration,
+	ZDLSYM(void, delete_aspell_string_enumeration,
 		   AspellStringEnumeration*);
-	ZDLSYM(void , delete_aspell_speller,
+	ZDLSYM(void, delete_aspell_speller,
 		   AspellSpeller*);
-	ZDLSYM(void , delete_aspell_config,
+	ZDLSYM(void, delete_aspell_config,
 		   AspellConfig*);
 	if (dlerror()) {
 		error("You have an incomplete libaspell.so");
@@ -476,7 +485,7 @@ void Zspell_word(void)
 		return;
 	}
 
-	AspellConfig *config = new_aspell_config();
+	AspellConfig * config = new_aspell_config();
 	if (!config) {
 		error("Aspell failed");
 		dlclose(dl);
@@ -491,7 +500,7 @@ void Zspell_word(void)
 		dlclose(dl);
 		return;
 	}
-	AspellSpeller *speller = to_aspell_speller(possible_err);
+	AspellSpeller * speller = to_aspell_speller(possible_err);
 
 	char word[STRMAX];
 	getbword(word, sizeof(word), bisword);
@@ -515,7 +524,8 @@ void Zspell_word(void)
 				len--;
 			}
 			n = strlcpy(PawStr + i, s, len);
-			if (n > len) n = len; /* overflow */
+			if (n > len)
+				n = len; /* overflow */
 			i += n;
 			len -= n;
 		}

@@ -52,7 +52,9 @@ void hang_up(int signo)
 
 	InPaw = true;	/* Kludge to turn off error */
 	foreachbuff(tbuff)
-		if (tbuff->buff->bmodf && !(tbuff->bmode & SYSBUFF) && Curbuff->fname)
+		if (tbuff->buff->bmodf &&
+			!(tbuff->bmode & SYSBUFF) &&
+			Curbuff->fname)
 			bwritefile(tbuff->buff, tbuff->fname, file_mode());
 	unvoke(NULL);
 	checkpipes(0);
@@ -64,7 +66,8 @@ void hang_up(int signo)
 /* This is called before the windows are created */
 static void initline(void)
 {
-	int i = strconcat(PawStr, PAWSTRLEN, ZSTR, " ", VERSION, "  Initializing", NULL);
+	int i = strconcat(PawStr, PAWSTRLEN, ZSTR,
+					  " ", VERSION, "  Initializing", NULL);
 	tclrwind();
 	t_goto(Rowmax - 2, 0);
 	tstyle(T_STANDOUT);

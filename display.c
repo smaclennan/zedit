@@ -38,7 +38,8 @@ static int NESTED;		/* zrefresh can go recursive... */
 static Byte tline[COLMAX + 1];
 
 #define EXTRA_MARKS 4
-static struct mark Scrnmarks[ROWMAX + EXTRA_MARKS];	/* Screen marks - one per line */
+ /* Screen marks - one per line */
+static struct mark Scrnmarks[ROWMAX + EXTRA_MARKS];
 static bool Scrnmodf[ROWMAX];
 static struct mark *was;	/* last location of user mark for zrefresh() */
 
@@ -142,8 +143,8 @@ static void huge_file_io(struct buff *buff)
 		exit(1);
 	}
 
-	strconcat(PawStr, PAWSTRLEN, "FATAL: huge file ", lastpart(zbuff->fname),
-			  " had an I/O error. ", NULL);
+	strconcat(PawStr, PAWSTRLEN, "FATAL: huge file ",
+		  lastpart(zbuff->fname), " had an I/O error. ", NULL);
 	ask(PawStr);
 	cdelbuff(zbuff);
 	longjmp(zrefresh_jmp, 1);
@@ -227,9 +228,11 @@ static bool umarkmoved(struct mark *tmark)
  */
 int _set_umark(struct mark *tmark)
 {
-	if (!UMARK_SET)
-		if (!(UMARK = bcremark(Bbuff)))
+	if (!UMARK_SET) {
+		UMARK = bcremark(Bbuff);
+		if (!UMARK)
 			return 1;
+	}
 
 	if (tmark)
 		mrktomrk(UMARK, tmark);
@@ -271,7 +274,8 @@ static bool bisatumark(void)
  *
  * Note: point == start == end returns false: it is not between.
  */
-static bool bisbetweenmrks(struct buff *buff, struct mark *start, struct mark *end)
+static bool bisbetweenmrks(struct buff *buff,
+			   struct mark *start, struct mark *end)
 {
 	struct page *tp;
 	bool found = false;
@@ -441,7 +445,8 @@ static void extendedlinemarker(void)
 }
 
 /* Fairly special routine. Pushes the char one past the end of the
- * buffer. */
+ * buffer.
+ */
 static void bshove(void)
 {
 	btoend(Bbuff);
@@ -492,7 +497,7 @@ static int innerdsp(int from, int to, struct mark *pmark)
 			}
 			tcleol();
 			if (bisatumark() &&
-				(ISNL(Buff()) || bisstart(Bbuff) || bisend(Bbuff)))
+			    (ISNL(Buff()) || bisstart(Bbuff) || bisend(Bbuff)))
 				setmark(false);
 			if (col >= Colmax)
 				extendedlinemarker();
@@ -534,7 +539,7 @@ void reframe(void)
 
 	bmrktopnt(Bbuff, &pmark);
 	for (cnt = prefline(); cnt > 0 && bcrsearch(Bbuff, NL); --cnt)
-			cnt -= bgetcol(true, 0) / Colmax;
+		cnt -= bgetcol(true, 0) / Colmax;
 	if (cnt < 0)
 		bmakecol((-cnt) * Colmax);
 	else
@@ -557,8 +562,8 @@ static void modeline(struct wdo *wdo)
 
 	t_goto(wdo->last, 0);
 	modeline_style();
-	strconcat(str, sizeof(str), ZSTR, " ", VERSION, "  (", setmodes(wdo->wbuff),
-			  ")  ", wdo->wbuff->bname, NULL);
+	strconcat(str, sizeof(str), ZSTR, " ", VERSION,
+		  "  (", setmodes(wdo->wbuff), ")  ", wdo->wbuff->bname, NULL);
 	tprntstr(str);
 	if (wdo->wbuff->fname) {
 		char *fname = wdo->wbuff->fname;
@@ -668,20 +673,22 @@ static char *setmodes(zbuff_t *buff)
 static void subset(struct buff *buff, int from, int to)
 {
 	struct mark *btmark;
-	int row;
+	int row = from;
 
 	if (Scrnmarks[from].mbuff != buff)
 		return;
 
-	for (row = from; row <= to && Scrnmarks[row].mpage != buff->curpage; ++row) ;
+	while (row <= to && Scrnmarks[row].mpage != buff->curpage)
+		++row;
 
 	if (row > to) {
 		for (row = from, btmark = &Scrnmarks[from];
-			 row <= to && (btmark->mbuff != buff || bisaftermrk(buff, btmark));
-			 ++btmark, ++row)
+		     row <= to && (btmark->mbuff != buff || bisaftermrk(buff, btmark));
+		     ++btmark, ++row)
 			;
 		if (row > from) {
-			while (Scrnmarks[--row].mbuff != buff) ;
+			while (Scrnmarks[--row].mbuff != buff)
+				;
 			Scrnmodf[row] = true;
 		}
 	} else {
@@ -703,7 +710,8 @@ void vsetmod_callback(struct buff *buff)
 {
 	struct wdo *wdo;
 
-	if (buff == NULL) buff = Bbuff;
+	if (buff == NULL)
+		buff = Bbuff;
 
 	foreachwdo(wdo)
 		if (wdo->wbuff == Curbuff)

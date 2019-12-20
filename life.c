@@ -182,12 +182,15 @@ static void generation(char *matrix1, char *matrix2)
 	 *          other >= 100    Live cell becomes dead
 	 */
 	col = 0;
-	for (btostart(Bbuff), p1 = matrix1, p2 = matrix2; p1 < end; ++p1, ++p2) {
+	btostart(Bbuff);
+	p1 = matrix1;
+	p2 = matrix2;
+	while (p1 < end) {
 		if (*p2 == 3) {	/* Birth */
 			*p1 += 100;
 			Buff() = LIFECH;
 			invalidate_row(row);
-	} else if (*p2 >= 100 && *p2 != 102 && *p2 != 103) { /* Death */
+		} else if (*p2 >= 100 && *p2 != 102 && *p2 != 103) { /* Death */
 			*p1 -= 100;
 			Buff() = EMPTY;
 			invalidate_row(row);
@@ -199,6 +202,8 @@ static void generation(char *matrix1, char *matrix2)
 			bmove1(Bbuff);
 		} else
 			++col;
+		++p1;
+		++p2;
 	}
 }
 
@@ -247,10 +252,10 @@ static void init_matrix1(char *p1)
 }
 
 
-/*
-  Go throught the current buffer and find any 'lives'. If a life is found,
-  convert the buffer character to a '*' and fill in matrix1. While going
-  though the buffer it is padded with spaces to fill SROWS * SCOLS
+/* Go throught the current buffer and find any 'lives'. If a life is
+ * found, convert the buffer character to a '*' and fill in matrix1.
+ * While going though the buffer it is padded with spaces to fill
+ * SROWS * SCOLS
  */
 static void fill_matrix1(char *p1)
 {

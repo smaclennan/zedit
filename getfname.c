@@ -234,7 +234,9 @@ void Zfname(void)
 			if (len < n)
 				tbell();
 		}
-		if (f == 0 && isdir(getbtxt(txt, PATHMAX)) && (int)blength(Bbuff) < Pawlen)
+		if (f == 0 &&
+		    isdir(getbtxt(txt, PATHMAX)) &&
+		    (int)blength(Bbuff) < Pawlen)
 			binsert(Bbuff, '/');
 	} else if (!update)
 		tbell();
@@ -313,16 +315,15 @@ static bool zgetpwdir(char *name, char *to)
 	return match;
 }
 
-/*
-Fixup the pathname. 'to' and 'from' cannot overlap.
-- if the path starts with a ~, lookup the user in the /etc/passwd file
-- add the current directory if not rooted.
-- remove the . and .. entries
-Returns -1 if the 'from' is a directory
-		 1 if the directory portion of a new file is invalid.
-		 2 if ~ specifier invalid
-		 0 if all is well
-NOTE: assumes a valid path (in particular /.. would not work)
+/* Fixup the pathname. 'to' and 'from' cannot overlap.
+ * - if the path starts with a ~, lookup the user in the /etc/passwd file
+ * - add the current directory if not rooted.
+ * - remove the . and .. entries
+ * Returns -1 if the 'from' is a directory
+ *		 1 if the directory portion of a new file is invalid.
+ *		 2 if ~ specifier invalid
+ *		 0 if all is well
+ * NOTE: assumes a valid path (in particular /.. would not work)
  */
 #define Psep(c)		((c) == '/')
 

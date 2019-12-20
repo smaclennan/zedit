@@ -80,12 +80,14 @@ static void doincsrch(const char *prompt, bool forward)
 					bmrktopnt(Bbuff, &marks[i]);
 			}
 
-			bmrktopnt(Bbuff, &tmark); /* save in case search fails */
+			 /* save in case search fails */
+			bmrktopnt(Bbuff, &tmark);
 again:
 			if (!bstrsearch(str, forward)) {
 				if (++count == 2) {
 					strconcat(promptstr, sizeof(promptstr),
-							  nocase(prompt), " (Wrapped)", NULL);
+						  nocase(prompt), " (Wrapped)",
+						  NULL);
 					count = 0;
 					btostart(Bbuff);
 					goto again;
@@ -200,7 +202,8 @@ static void doreplace(int type)
 	query = type == FORWARD ? false : true;
 
 	crgone = *olds && *(olds + strlen(olds) - 1) == '\n';
-	if (!(pmark = bcremark(Bbuff))) {
+	pmark = bcremark(Bbuff);
+	if (!pmark) {
 		tbell();
 		return;
 	}
@@ -210,20 +213,17 @@ static void doreplace(int type)
 	if (rc) {
 		re_error(rc, &re, PawStr, COLMAX);
 		error("%s", PawStr);
-	}
-	else if (Argp) {
+	} else if (Argp) {
 		foreachbuff(tbuff) {
-			if(exit)
+			if (exit)
 				break;
-			else {
-				cswitchto(tbuff);
-				bmrktopnt(Bbuff, &tmark);
-				btostart(Bbuff);
-				while (replaceone(type, &query, &exit, &re, crgone) &&
-					   !exit)
-					;
-				bpnttomrk(Bbuff, &tmark);
-			}
+			cswitchto(tbuff);
+			bmrktopnt(Bbuff, &tmark);
+			btostart(Bbuff);
+			while (replaceone(type, &query, &exit, &re, crgone))
+				if (exit)
+					break;
+			bpnttomrk(Bbuff, &tmark);
 		}
 		clrpaw();
 		cswitchto(save);
@@ -275,7 +275,8 @@ static bool next_replace(regexp_t *re, struct mark *REstart, int type)
 	return false;
 }
 
-static bool replaceone(int type, bool *query, bool *exit, regexp_t *re, bool crgone)
+static bool replaceone(int type, bool *query, bool *exit,
+		       regexp_t *re, bool crgone)
 {
 	bool found = false;
 	char tchar = ',', *ptr;
@@ -284,13 +285,15 @@ static bool replaceone(int type, bool *query, bool *exit, regexp_t *re, bool crg
 	struct mark *REstart = NULL;
 
 	if (type == REGEXP) {
-		if (!(REstart = bcremark(Bbuff))) {
+		REstart = bcremark(Bbuff);
+		if (!REstart) {
 			tbell();
 			return false;
 		}
 	}
 
-	if (!(prevmatch = bcremark(Bbuff))) {
+	prevmatch = bcremark(Bbuff);
+	if (!prevmatch) {
 		bdelmark(REstart);
 		tbell();
 		return false;
@@ -370,9 +373,11 @@ input:
 			for (ptr = news; *ptr; ++ptr)
 				switch (*ptr) {
 				case '\\':
-					binsert(Bbuff, *(++ptr) ? *ptr : '\\'); break;
+					binsert(Bbuff, *(++ptr) ? *ptr : '\\');
+					break;
 				case '&':
-					Zyank(); break;
+					Zyank();
+					break;
 				default:
 					binsert(Bbuff, *ptr);
 				}
@@ -434,7 +439,8 @@ static bool dosearch(void)
 	if (searchdir[0] == REGEXP) {
 		regexp_t re;
 
-		if ((rc = re_compile(&re, olds, REG_EXTENDED))) {
+		rc = re_compile(&re, olds, REG_EXTENDED);
+		if (rc) {
 			re_error(rc, &re, PawStr, COLMAX);
 			error("%s", PawStr);
 		} else {

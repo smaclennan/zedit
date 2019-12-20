@@ -23,6 +23,6 @@ fi
 # SAM ignore .h files for now...
 echo "Running checkpatch..."
 for f in *.c; do
-    $checkpatch --no-tree --ignore SPDX_LICENSE_TAG,UNSPECIFIED_INT,LINE_SPACING --file $f |
+    $checkpatch --no-tree --ignore SPDX_LICENSE_TAG,UNSPECIFIED_INT,LINE_SPACING,SPLIT_STRING --file $f |
 	fgrep -q "no obvious style problems" || echo "$f"
 done

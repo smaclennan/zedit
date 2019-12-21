@@ -117,7 +117,7 @@ static struct zbuff *read_tagfile(void)
 static bool find_tag(char *word)
 {
 	char path[PATHMAX], regstr[STRMAX], *p;
-	regexp_t re;
+	struct regexp re;
 	struct zbuff *buff, *save = Curbuff;
 	int offset;
 

@@ -60,7 +60,7 @@ static int advance(struct buff *buff, regex_t *re, struct mark *REstart)
  * @param[out] REstart A mark to the start of the match. Can be NULL.
  * @return 1 on success, 0 if no matches.
  */
-int re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
+int re_step(struct buff *buff, struct regexp *re, struct mark *REstart)
 {
 	struct mark tmark;
 
@@ -89,7 +89,7 @@ int re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
  * @param cflags See regcomp().
  * @return The output from regcomp().
  */
-int re_compile(regexp_t *re, const char *regex, int cflags)
+int re_compile(struct regexp *re, const char *regex, int cflags)
 {
 	re->circf = *regex == '^';
 
@@ -99,7 +99,7 @@ int re_compile(regexp_t *re, const char *regex, int cflags)
 /** Free a regular expression.
  * @param re The compiled regular expression from re_compile().
  */
-void re_free(regexp_t *re) { regfree(&re->re); }
+void re_free(struct regexp *re) { regfree(&re->re); }
 
 /** Convert a regular expression error to a string.
  * @param errcode The errcode from re_compile.
@@ -107,7 +107,8 @@ void re_free(regexp_t *re) { regfree(&re->re); }
  * @param[out] errbuf The buffer to put the error string in.
  * @param errbuff_size The size of the error buffer.
  */
-void re_error(int errcode, const regexp_t *re, char *errbuf, int errbuf_size)
+void re_error(int errcode, const struct regexp *re,
+	      char *errbuf, int errbuf_size)
 {
 	regerror(errcode, &re->re, errbuf, errbuf_size);
 }
@@ -117,7 +118,7 @@ void re_error(int errcode, const regexp_t *re, char *errbuf, int errbuf_size)
  * @param re The compiled regular expression from re_compile().
  * @return 1 if found.
  */
-int _lookingat(struct buff *buff, regexp_t *re)
+int _lookingat(struct buff *buff, struct regexp *re)
 {
 	struct mark start, REstart;
 
@@ -138,7 +139,7 @@ int _lookingat(struct buff *buff, regexp_t *re)
  */
 int lookingat(struct buff *buff, const char *str)
 {
-	regexp_t re;
+	struct regexp re;
 	int rc;
 
 	if (re_compile(&re, str, REG_EXTENDED))
@@ -197,7 +198,7 @@ static Byte bittab[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
  * The point is left at the end of the matched string or the buffer end and
  * REstart points to the start of the match.
  */
-int re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
+int re_step(struct buff *buff, struct regexp *re, struct mark *REstart)
 {
 	uint8_t *ep = re->ep;
 	struct mark tmark;
@@ -228,7 +229,7 @@ int re_step(struct buff *buff, regexp_t *re, struct mark *REstart)
 	return 0;
 }
 
-int _lookingat(struct buff *buff, regexp_t *re)
+int _lookingat(struct buff *buff, struct regexp *re)
 {
 	struct mark tmark;
 
@@ -242,7 +243,7 @@ int _lookingat(struct buff *buff, regexp_t *re)
 
 int lookingat(struct buff *buff, const char *str)
 {
-	regexp_t re;
+	struct regexp re;
 	int rc;
 
 	if (re_compile(&re, str, 0))
@@ -429,7 +430,7 @@ static int ecmp(struct buff *buff, struct mark *start, int cnt)
  */
 #define EOFCH	('\0')
 
-int re_compile(regexp_t *re, const char *regex, int cflags)
+int re_compile(struct regexp *re, const char *regex, int cflags)
 {
 	Byte *sp = (Byte *)regex;
 	uint8_t *ep = re->ep, *endbuf = re->ep + sizeof(re->ep);
@@ -633,7 +634,8 @@ defchar:
 	}
 }
 
-void re_error(int errnum, const regexp_t *preg, char *errbuf, int errbuf_size)
+void re_error(int errnum, const struct regexp *preg,
+	      char *errbuf, int errbuf_size)
 {
 	static const char * const errs[] = {
 		/*40*/	"Illegal or missing delimiter.",
@@ -659,6 +661,6 @@ void re_error(int errnum, const regexp_t *preg, char *errbuf, int errbuf_size)
 	strlcpy(errbuf, errs[errnum], errbuf_size);
 }
 
-void re_free(regexp_t *re) {}
+void re_free(struct regexp *re) {}
 #endif
 /* @} */

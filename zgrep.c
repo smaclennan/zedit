@@ -24,7 +24,7 @@
  * @{
  */
 
-static void grep_one(char *fname, regexp_t *re,
+static void grep_one(char *fname, struct regexp *re,
 		     struct buff *inbuff, struct buff *outbuff)
 {
 	bempty(inbuff);
@@ -48,7 +48,7 @@ static void grep_one(char *fname, regexp_t *re,
 
 static void grepit(char *input, char *files)
 {
-	regexp_t re;
+	struct regexp re;
 	DIR *dir;
 	struct dirent *ent;
 	struct buff *inbuff, *outbuff = Curbuff->buff;

@@ -40,10 +40,10 @@
 #ifdef BUILTIN_REG
 #define ESIZE		256			/* reg exp buffer size */
 
-typedef struct regex {
+struct regexp {
 	uint8_t ep[ESIZE];
 	int circf;
-} regexp_t;
+};
 
 #define REG_EXTENDED	0
 #define REG_ICASE		0
@@ -56,18 +56,19 @@ typedef struct regex {
 #  include <regex.h>
 # endif
 
-typedef struct regexp {
+struct regexp {
 	regex_t re;
 	int circf;
-} regexp_t;
+};
 #endif
 
-int re_compile(regexp_t *re, const char *regex, int cflags);
-int re_step(struct buff *buff, regexp_t *re, struct mark *REstart);
-void re_error(int errcode, const regexp_t *preg, char *errbuf, int errbuf_size);
-void re_free(regexp_t *re);
+int re_compile(struct regexp *re, const char *regex, int cflags);
+int re_step(struct buff *buff, struct regexp *re, struct mark *REstart);
+void re_error(int errcode, const struct regexp *preg,
+	      char *errbuf, int errbuf_size);
+void re_free(struct regexp *re);
 int lookingat(struct buff *buff, const char *str);
-int _lookingat(struct buff *buff, regexp_t *re);
+int _lookingat(struct buff *buff, struct regexp *re);
 /* @} */
 
 #endif

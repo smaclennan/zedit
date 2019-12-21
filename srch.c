@@ -27,7 +27,7 @@
 static int promptsearch(const char *prompt, int type);
 static void promptreplace(int type);
 static bool dosearch(void);
-static bool replaceone(int, bool *, bool *, regexp_t *, bool);
+static bool replaceone(int, bool *, bool *, struct regexp *, bool);
 
 
 bool Insearch;	/* set by nocase, reset by getarg */
@@ -192,7 +192,7 @@ void Zre_replace(void)
 static void doreplace(int type)
 {
 	bool exit = false, crgone, query;
-	regexp_t re;
+	struct regexp re;
 	struct mark *pmark, tmark;
 	struct zbuff *tbuff, *save = Curbuff;
 	int rc = 0;
@@ -262,7 +262,7 @@ static void promptreplace(int type)
 	doreplace(type);
 }
 
-static bool next_replace(regexp_t *re, struct mark *REstart, int type)
+static bool next_replace(struct regexp *re, struct mark *REstart, int type)
 {
 	if (type == REGEXP)
 		return re_step(Bbuff, re, REstart);
@@ -276,7 +276,7 @@ static bool next_replace(regexp_t *re, struct mark *REstart, int type)
 }
 
 static bool replaceone(int type, bool *query, bool *exit,
-		       regexp_t *re, bool crgone)
+		       struct regexp *re, bool crgone)
 {
 	bool found = false;
 	char tchar = ',', *ptr;
@@ -437,7 +437,7 @@ static bool dosearch(void)
 
 	bmrktopnt(Bbuff, &save);
 	if (searchdir[0] == REGEXP) {
-		regexp_t re;
+		struct regexp re;
 
 		rc = re_compile(&re, olds, REG_EXTENDED);
 		if (rc) {

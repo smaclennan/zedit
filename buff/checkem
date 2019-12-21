@@ -34,7 +34,6 @@ fi
 for f in *.h; do
     case $f in
 	buff.h) check_one buff.h SPDX_LICENSE_TAG,COMPLEX_MACRO,MULTISTATEMENT_MACRO_USE_DO_WHILE,LONG_LINE_COMMENT;;
-	reg.h) check_one reg.h SPDX_LICENSE_TAG,NEW_TYPEDEFS;;
 	defconfig.h) ;; # no point
 	*)  check_one $f SPDX_LICENSE_TAG;;
     esac

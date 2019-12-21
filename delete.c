@@ -240,7 +240,7 @@ void Zdelete_blanks(void)
 	}
 
 	if (Argp) {
-		regexp_t re;
+		struct regexp re;
 		Arg = 0;
 
 		if (re_compile(&re, "^[ \t]*\r?$", REG_EXTENDED)) {

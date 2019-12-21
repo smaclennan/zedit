@@ -22,7 +22,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 enum v_type { V_STRING, V_DECIMAL, V_FLAG };
 

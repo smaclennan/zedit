@@ -57,7 +57,7 @@ struct zbuff;
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 #define ZSTR	"Zedit"
 #define VERSION	"6.3"
@@ -147,17 +147,17 @@ extern struct zbuff *Curbuff;
 extern struct buff *Bbuff;
 
 typedef struct zbuff {
-	struct zbuff *prev;		/**< list of buffers */
-	struct zbuff *next;		/**< list of buffers */
+	struct zbuff *prev;	/**< list of buffers */
+	struct zbuff *next;	/**< list of buffers */
 	char *bname;            /**< buffer name */
 	char *fname;            /**< file associated with buffer */
 	struct mark *umark;     /**< user mark */
-	struct buff *buff;	    /**< low-level buffer */
+	struct buff *buff;	/**< low-level buffer */
 	time_t mtime;           /**< file modified time */
-	void *chead;			/**< list of comments in file */
-	void *ctail;		    /**< list of comments in file */
-	Byte comchar;			/**< single char comment character */
-	unsigned bmode;		    /**< buffer mode */
+	void *chead;		/**< list of comments in file */
+	void *ctail;		/**< list of comments in file */
+	Byte comchar;		/**< single char comment character */
+	unsigned int bmode;	/**< buffer mode */
 } zbuff_t;
 
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)
@@ -175,7 +175,7 @@ extern int Pawcol, Pawlen, Pshift;
 extern zbuff_t *Paw;
 extern int verbose;
 
-extern unsigned Cmd;
+extern unsigned int Cmd;
 extern int Cmdpushed;
 
 extern struct cnames Cnames[];
@@ -233,7 +233,7 @@ void tbell_dbg(char *func, int line);
 #endif
 
 #define UMARK_SET (Curbuff->umark)
-#define NEED_UMARK do if (!UMARK_SET) { tbell(); return; } while (0)
+#define NEED_UMARK do { if (!UMARK_SET) { tbell(); return; } } while (0)
 #define UMARK (Curbuff->umark) /* Must guarantee umark set! */
 #define CLEAR_UMARK clear_umark()
 

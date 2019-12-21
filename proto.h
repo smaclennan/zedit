@@ -19,7 +19,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 #ifdef FCHECK
 #define Z(f) static void f(void) {}
@@ -155,34 +155,34 @@ Z(pnewline);
 
 /* General routines */
 
-int ask(const char *);
-int bgetcol(bool, int);
+int ask(const char *str);
+int bgetcol(bool flag, int col);
 void binit(void);
-int bmakecol(int);
-void zswitchto(zbuff_t *);
-zbuff_t *cfindbuff(const char *);
+int bmakecol(int col);
+void zswitchto(zbuff_t *buff);
+zbuff_t *cfindbuff(const char *bname);
 zbuff_t *cfindzbuff(struct buff *buff);
 zbuff_t *zcreatebuff(const char *bname, char *fname);
-zbuff_t *cmakebuff(const char *, char *);
+zbuff_t *cmakebuff(const char *bname, char *fname);
 bool cdelbuff(zbuff_t *buff);
-void cswitchto(zbuff_t *);
+void cswitchto(zbuff_t *buff);
 void display_init(struct mark *mrk);
-int delayprompt(const char *);
+int delayprompt(const char *prompt);
 void delinit(void);
 void delfini(void);
-unsigned delpages(void);
+unsigned int delpages(void);
 bool delcmd(void);
 int do_chdir(zbuff_t *buff);
 void execute(void);
 int readapipe(void);
 void set_pipefd(int fd);
 bool filesave(void);
-bool findfile(char *);
-struct wdo *findwdo(struct buff *);
-bool getarg(const char *, char *, int);
-bool _getarg(const char *, char *, int, bool);
-char *getbtxt(char *, int);
-int getbword(char *, int, int (*)(int));
+bool findfile(char *fname);
+struct wdo *findwdo(struct buff *buff);
+bool getarg(const char *prompt, char *arg, int max);
+bool _getarg(const char *prompt, char *arg, int max, bool tostart);
+char *getbtxt(char *text, int len);
+int getbword(char *word, int len, int (*func)(int));
 int getplete(const char *, const char *, char **, int, int);
 int bistoken(int c);
 int biswhite(int c);
@@ -203,7 +203,7 @@ void redisplay(void);
 void reframe(void);
 void zrefresh(void);
 bool saveall(bool);
-int settabsize(unsigned);
+int settabsize(unsigned int size);
 void setmark(bool);
 void tbell(void);
 void tainit(void);
@@ -213,9 +213,9 @@ void toggle_mode(int);
 void tprntchar(Byte);
 void tprntstr(const char *);
 void vsetmrk(struct mark *);
-void invalidate_scrnmarks(unsigned from, unsigned to);
-int chwidth(Byte, int, bool);
-void hang_up(int);
+void invalidate_scrnmarks(unsigned int from, unsigned int to);
+int chwidth(Byte ch, int col, bool adjust);
+void hang_up(int signo);
 void dump_doc(const char *doc);
 int zreadfile(char *fname);
 void set_shell_mark(void);
@@ -224,7 +224,7 @@ void message(zbuff_t *buff, const char *str);
 int batoi(void);
 
 void vsetmod_callback(struct buff *buff);
-#define vsetmod() vsetmod_callback(NULL);
+#define vsetmod() vsetmod_callback(NULL)
 void set_sstart(struct mark *mrk);
 
 /* umark routines */
@@ -236,7 +236,7 @@ void winit(void);
 
 void checkpipes(int type);
 void siginit(void);
-bool unvoke(zbuff_t *);
+bool unvoke(zbuff_t *buff);
 
 /* for getfname */
 int getfname(const char *, char *);

@@ -39,7 +39,7 @@ char *lastpart(char *fname)
 
 int file_mode(void)
 {
-	static int Cmask = 0;
+	static int Cmask;
 
 	if (Cmask == 0) {
 		Cmask = umask(0);	/* get the current umask */

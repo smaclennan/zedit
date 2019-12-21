@@ -19,7 +19,7 @@
 
 /** @addtogroup zedit
  * @{
-*/
+ */
 
 #define ZNOTIMPL		0 /* Must be zero */
 #define ZONE_WINDOW		(ZNOTIMPL + 1)

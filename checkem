@@ -20,9 +20,33 @@ if [ ! -f "$checkpatch" ]; then
     fi
 fi
 
-# SAM ignore .h files for now...
+check_one() {
+    local opts="--no-tree"
+    [ -n "$2" ] && opts="$opts --ignore $2"
+    $checkpatch $opts --file $1 | fgrep -q "no obvious style problems" ||
+	echo "$1"
+}
+
 echo "Running checkpatch..."
-for f in *.c; do
-    $checkpatch --no-tree --ignore SPDX_LICENSE_TAG,UNSPECIFIED_INT,LINE_SPACING,SPLIT_STRING,INITIALISED_STATIC --file $f |
-	fgrep -q "no obvious style problems" || echo "$f"
-done
+if [ 1 -eq 1 ]; then
+    for f in *.c; do
+	case $f in
+	    # docs need long strings
+	    cnames.c|varray.c) check_one $f SPDX_LICENSE_TAG,SPLIT_STRING;;
+	    # SAM we should fixup unsigned ints :(
+	    *) check_one $f SPDX_LICENSE_TAG,UNSPECIFIED_INT,LINE_SPACING;;
+	esac
+    done
+fi
+
+if [ 1 -eq 1 ]; then
+    for f in *.h; do
+	case $f in
+	    # SAM we should fix the function args :(
+	    proto.h) check_one $f SPDX_LICENSE_TAG,FUNCTION_ARGUMENTS;;
+	    # SAM we should fix typedef
+	    z.h) check_one $f SPDX_LICENSE_TAG,NEW_TYPEDEFS,IF_0,MACRO_WITH_FLOW_CONTROL;;
+	    *) check_one $f SPDX_LICENSE_TAG,LINE_SPACING,NEW_TYPEDEFS;;
+	esac
+    done
+fi

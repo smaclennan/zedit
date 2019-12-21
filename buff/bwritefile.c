@@ -74,7 +74,7 @@ static int bwritedos(struct buff *buff, int fd)
 {
 	struct page *tpage;
 	int n, status = 1;
-	unsigned i;
+	unsigned int i;
 	Byte buf[PGSIZE * 2], *p;
 
 	for (tpage = buff->firstp; tpage && status; tpage = tpage->nextp)

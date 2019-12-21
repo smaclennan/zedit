@@ -22,7 +22,7 @@
 
 /** @addtogroup term
  * @{
-*/
+ */
 
 #define CX(n)	((n) + 128)
 #define M(n)	((n) + 256)

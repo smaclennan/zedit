@@ -147,8 +147,8 @@ static void tlinit(void)
 static void tlinit(void)
 {
 	int rc, i;
-
 	char *term = getenv("TERM");
+
 	if (term == NULL) {
 		printf("FATAL ERROR: environment variable TERM not set.\n");
 		exit(1);

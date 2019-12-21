@@ -36,7 +36,7 @@ int bmove(struct buff *buff, int dist)
 		struct page *curpage = buff->curpage;
 
 		dist += buff->curchar;
-		if (dist >= 0 && (unsigned)dist < curplen(buff)) {
+		if (dist >= 0 && (unsigned int)dist < curplen(buff)) {
 			/* within current page makeoffset dist */
 			makeoffset(buff, dist);
 			return 1;

@@ -31,7 +31,7 @@
  * HALFP). Must be <= PGSIZE.
  * @return The new page or NULL.
  */
-struct page *pagesplit(struct buff *buff, unsigned dist)
+struct page *pagesplit(struct buff *buff, unsigned int dist)
 {
 	struct page *curpage, *newp;
 	struct mark *btmark;

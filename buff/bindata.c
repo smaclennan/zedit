@@ -91,10 +91,10 @@ int bappend(struct buff *buff, const Byte *data, int size)
  * @param size The size of the data.
  * @return The amount of data actually inserted.
  */
-int bindata(struct buff *buff, Byte *data, unsigned size)
+int bindata(struct buff *buff, Byte *data, unsigned int size)
 {
 	struct page *npage;
-	unsigned n, copied = 0;
+	unsigned int n, copied = 0;
 
 	/* If we can append... use append */
 	if (buff->curchar == curplen(buff))

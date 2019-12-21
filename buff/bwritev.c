@@ -33,14 +33,14 @@
  * @param size The number of bytes to write.
  * @return The number of bytes actually written.
  */
-int bwritev(struct buff *buff, int fd, unsigned size)
+int bwritev(struct buff *buff, int fd, unsigned int size)
 {
 	struct iovec iovs[MAX_IOVS];
 	struct page *pg;
 	int i, n, amount, did = 0;
 
 	do {
-		unsigned have = curplen(buff) - buff->curchar;
+		unsigned int have = curplen(buff) - buff->curchar;
 
 		iovs[0].iov_base = buff->curcptr;
 		iovs[0].iov_len = MIN(have, size);

@@ -35,7 +35,7 @@
 
 /** @addtogroup buffer
  * @{
-*/
+ */
 
 #ifdef BUILTIN_REG
 #define ESIZE		256			/* reg exp buffer size */
@@ -71,3 +71,9 @@ int _lookingat(struct buff *buff, regexp_t *re);
 /* @} */
 
 #endif
+
+/*
+ * Local Variables:
+ * my-checkpatch-ignores: "SPDX_LICENSE_TAG,NEW_TYPEDEFS"
+ * End:
+ */

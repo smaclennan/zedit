@@ -27,7 +27,7 @@ static void delete_entire_page(struct buff *buff, struct page *curpage)
 {	/* We deleted the entire page. */
 	struct mark *tmark;
 	struct page *tpage = curpage->nextp;
-	unsigned noffset = 0;
+	unsigned int noffset = 0;
 
 	if (tpage == NULL) {
 		tpage = curpage->prevp;
@@ -49,9 +49,9 @@ static void delete_entire_page(struct buff *buff, struct page *curpage)
  * @param buff The buffer to delete from.
  * @param quantity The number of bytes to delete.
  */
-void bdelete(struct buff *buff, unsigned quantity)
+void bdelete(struct buff *buff, unsigned int quantity)
 {
-	unsigned quan, noffset;
+	unsigned int quan, noffset;
 	struct mark *tmark;
 	struct page *tpage, *curpage = buff->curpage;
 

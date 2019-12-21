@@ -214,7 +214,7 @@ static void outchar(struct outbuff *out, char ch)
 	}
 }
 
-static void outstr(struct outbuff *out, const char *s, unsigned flags)
+static void outstr(struct outbuff *out, const char *s, unsigned int flags)
 {
 	int slen = strlen(s);
 	int len = flags & WIDTH_MASK;
@@ -228,7 +228,7 @@ static void outstr(struct outbuff *out, const char *s, unsigned flags)
 	outmemset(out, ' ', pad);
 }
 
-static void outnum(struct outbuff *out, const char *s, unsigned flags)
+static void outnum(struct outbuff *out, const char *s, unsigned int flags)
 {
 	int slen = strlen(s);
 	int len = flags & WIDTH_MASK;
@@ -282,7 +282,7 @@ static int __strfmt(struct outbuff *out, const char *fmt, va_list ap)
 		}
 
 		const char *save = fmt++;
-		unsigned flags = 0, width = 0;
+		unsigned int flags = 0, width = 0;
 
 		if (*fmt == '-') {
 			++fmt;
@@ -325,14 +325,14 @@ static int __strfmt(struct outbuff *out, const char *fmt, va_list ap)
 			if (flags & SAW_LONG)
 				uint2str(va_arg(ap, unsigned long), tmp);
 			else
-				uint2str(va_arg(ap, unsigned), tmp);
+				uint2str(va_arg(ap, unsigned int), tmp);
 			outnum(out, tmp, flags);
 			break;
 		case 'x':
 			if (flags & SAW_LONG)
 				hex2str(va_arg(ap, unsigned long), tmp);
 			else
-				hex2str(va_arg(ap, unsigned), tmp);
+				hex2str(va_arg(ap, unsigned int), tmp);
 			outnum(out, tmp, flags);
 			break;
 #ifdef WANT_FLOATS
@@ -340,6 +340,7 @@ static int __strfmt(struct outbuff *out, const char *fmt, va_list ap)
 		{
 			int frac;
 			int integer = double2fixed(va_arg(ap, double), &frac);
+
 			int2str(integer, tmp);
 			outnum(out, tmp, flags);
 			outchar(out, '.');
@@ -395,8 +396,10 @@ int strfmt_ap(char *str, int len, const char *fmt, va_list ap)
 int strfmt(char *str, int len, const char *fmt, ...)
 {
 	va_list ap;
+	int n;
+
 	va_start(ap, fmt);
-	int n = strfmt_ap(str, len, fmt, ap);
+	n = strfmt_ap(str, len, fmt, ap);
 	va_end(ap);
 
 	return n;
@@ -416,9 +419,10 @@ int binstr(struct buff *buff, const char *fmt, ...)
 {
 	struct outbuff out = { .buff = buff, .str = NULL, .n = 0 };
 	va_list ap;
+	int rc;
 
 	va_start(ap, fmt);
-	int rc = __strfmt(&out, fmt, ap);
+	rc = __strfmt(&out, fmt, ap);
 	va_end(ap);
 
 	return rc;

@@ -81,7 +81,7 @@ struct buff {
 	struct page *firstp;	/**< List of pages. */
 	struct page *curpage;	/**< Point page. */
 	Byte *curcptr;			/**< Point position in the page. */
-	unsigned curchar;		/**< Point index in the page. */
+	unsigned int curchar;		/**< Point index in the page. */
 	int bmodf;				/**< Buffer modified? */
 #if defined(UNDO) && UNDO
 	int in_undo;		/**< Are we currently performing an undo? */
@@ -100,14 +100,14 @@ struct buff {
 struct mark {
 	struct buff *mbuff;			/**< Buffer the mark is in. */
 	struct page *mpage;			/**< Page in the buffer. */
-	unsigned moffset;			/**< Offset in the page. */
+	unsigned int moffset;			/**< Offset in the page. */
 #if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
 	struct mark *prev;			/**< List of marks. */
 	struct mark *next;			/**< List of marks. */
 #endif
 };
 /** Size of mark struct without list pointers */
-#define __MRKSIZE (sizeof(void *) * 2 + sizeof(unsigned))
+#define __MRKSIZE (sizeof(void *) * 2 + sizeof(unsigned int))
 
 /** Current page length.
  * @param b Buffer to check.
@@ -118,23 +118,23 @@ struct mark {
 extern void (*bsetmod)(struct buff *buff);
 
 struct buff *bcreate(void);
-void bdelbuff(struct buff *);
-int binsert(struct buff *, Byte);
-void bdelete(struct buff *, unsigned);
-int bmove(struct buff *, int);
+void bdelbuff(struct buff *buff);
+int binsert(struct buff *buff, Byte ch);
+void bdelete(struct buff *buff, unsigned int n);
+int bmove(struct buff *buff, int n);
 int bstrline(struct buff *buff, char *str, int len);
-void tobegline(struct buff *);
-void toendline(struct buff *);
-unsigned long blength(struct buff *);
-unsigned long blocation(struct buff *);
+void tobegline(struct buff *buff);
+void toendline(struct buff *buff);
+unsigned long blength(struct buff *buff);
+unsigned long blocation(struct buff *buff);
 unsigned long bline(struct buff *buff);
-int bcsearch(struct buff *, Byte);
-int bcrsearch(struct buff *, Byte);
+int bcsearch(struct buff *buff, Byte ch);
+int bcrsearch(struct buff *buff, Byte ch);
 void bempty(struct buff *buff);
 Byte bpeek(struct buff *buff);
 void boffset(struct buff *buff, unsigned long offset);
-long bcopyrgn(struct mark *, struct buff*);
-long bdeltomrk(struct mark *);
+long bcopyrgn(struct mark *mark, struct buff *buff);
+long bdeltomrk(struct mark *mark);
 
 int binstr(struct buff *buff, const char *fmt, ...);
 int strfmt(char *str, int len, const char *fmt, ...);
@@ -147,10 +147,10 @@ void bmovepast(struct buff *buff, int (*pred)(int), int forward);
 void bmoveto(struct buff *buff, int (*pred)(int), int forward);
 
 /* bfile.c */
-#define FILE_COMPRESSED		0x10000 /**< File compressed flag for bwritefile(). */
-#define FILE_CRLF			0x20000 /**< DOS file flag for bwritefile(). */
-int breadfile(struct buff *buff, const char *, int *compressed);
-int bwritefile(struct buff *buff, char *, int mode);
+#define FILE_COMPRESSED	0x10000 /**< File compressed flag for bwritefile(). */
+#define FILE_CRLF	0x20000 /**< DOS file flag for bwritefile(). */
+int breadfile(struct buff *buff, const char *fname, int *compressed);
+int bwritefile(struct buff *buff, char *fname, int mode);
 
 /* bmsearch.c */
 int bm_search(struct buff *buff, const char *str, int sensitive);
@@ -160,9 +160,9 @@ int bm_rsearch(struct buff *buff, const char *str, int sensitive);
 /** Max iovs used for one writev in bwrite(). */
 #define MAX_IOVS 16
 int breadv(struct buff *buff, int fd);
-int bwritev(struct buff *buff, int fd, unsigned size);
-int bappend(struct buff *buff, const Byte *, int);
-int bindata(struct buff *buff, Byte *, unsigned);
+int bwritev(struct buff *buff, int fd, unsigned int size);
+int bappend(struct buff *buff, const Byte *data, int len);
+int bindata(struct buff *buff, Byte *data, unsigned int len);
 
 /* undo.c */
 #if defined(UNDO) && UNDO
@@ -218,16 +218,16 @@ int strconcat(char *str, int len, ...);
 struct page {
 	Byte pdata[PGSIZE];	/**< Page data. */
 #if HUGE_FILES
-	unsigned pgoffset;      /**< Huge files offset or 0 if in memory. */
+	unsigned int pgoffset;  /**< Huge files offset or 0 if in memory. */
 #endif
-	unsigned plen;          /**< Current length of the page. */
+	unsigned int plen;      /**< Current length of the page. */
 	struct page *prevp;	/**< List of pages. */
 	struct page *nextp;	/**< List of pages. */
 };
 
 struct page *newpage(struct page *curpage);
 void freepage(struct buff *buff, struct page *page);
-struct page *pagesplit(struct buff *buff, unsigned dist);
+struct page *pagesplit(struct buff *buff, unsigned int dist);
 
 /** Is the point at the start of the buffer?
  * @param bbuff The buffer to check.
@@ -252,8 +252,8 @@ static inline int bisend(struct buff *buff)
 /** Make page current at offset. */
 void makecur(struct buff *buff, struct page *page, int dist);
 #else
-/** Low level function to make page current at offset. Does not validate that page is in the
- * buffer or that dist is valid!
+/** Low level function to make page current at offset.
+ * Does not validate that page is in the buffer or that dist is valid!
  * @param buff The buffer to use.
  * @param page The page to make current.
  * @param dist The offset in the page.
@@ -291,8 +291,9 @@ static inline void btostart(struct buff *buff)
  * @param buff Buffer to move Point in.
  */
 static inline void btoend(struct buff *buff)
-{ 	/* For huge files we don't want to make every page current */
+{	/* For huge files we don't want to make every page current */
 	struct page *page;
+
 	for (page = buff->curpage; page->nextp; page = page->nextp)
 		;
 	makecur(buff, page, page->plen);
@@ -339,7 +340,8 @@ void bhugecleanup(struct buff *buff);
 #define atomic_exchange InterlockedCompareExchange
 #elif defined(__x86__) || defined(__x86_64__)
 #define HAVE_ATOMIC
-static inline void *atomic_exchange_ptr(void **ptr, void *old, void *new)
+static inline void *
+atomic_exchange_ptr(void **ptr, void *old, void *new)
 {
 	uint64_t _ret;
 	uint64_t *_ptr = (uint64_t *)ptr;
@@ -353,7 +355,8 @@ static inline void *atomic_exchange_ptr(void **ptr, void *old, void *new)
 	return (void *)_ret;
 }
 
-static inline uint64_t atomic_exchange(uint64_t *ptr, uint64_t old, uint64_t new)
+static inline uint64_t
+atomic_exchange(uint64_t *ptr, uint64_t old, uint64_t new)
 {
 	uint64_t ret;
 
@@ -369,8 +372,8 @@ static inline uint64_t atomic_exchange(uint64_t *ptr, uint64_t old, uint64_t new
 
 /* Mark functions */
 
-struct mark *bcremark(struct buff *);
-void bdelmark(struct mark *);
+struct mark *bcremark(struct buff *buff);
+void bdelmark(struct mark *mark);
 
 struct mark *_bcremark(struct buff *buff, struct mark **tail);
 void _bdelmark(struct mark *mark, struct mark **tail);
@@ -391,17 +394,17 @@ static inline int bisatmrk(struct buff *buff, struct mark *mark)
  */
 static inline int bisatmrk_safe(struct buff *buff, struct mark *mark)
 {
-	return mark && buff->curpage == mark->mpage && buff->curchar == mark->moffset;
+	return mark && bisatmrk(buff, mark);
 }
 
-int bisaftermrk(struct buff *, struct mark *);
-int bisbeforemrk(struct buff *, struct mark *);
-int bpnttomrk(struct buff *, struct mark *);
-int bswappnt(struct buff *, struct mark *);
+int bisaftermrk(struct buff *buff, struct mark *mark);
+int bisbeforemrk(struct buff *buff, struct mark *mark);
+int bpnttomrk(struct buff *buff, struct mark *mark);
+int bswappnt(struct buff *buff, struct mark *mark);
 void mrkfini(void);
 
-int mrkaftermrk(struct mark *, struct mark *);
-int mrkbeforemrk(struct mark *, struct mark *);
+int mrkaftermrk(struct mark *mark1, struct mark *mark2);
+int mrkbeforemrk(struct mark *mark1, struct mark *mark2);
 
 /** Move the mark to the point.
  * @param buff The buffer Point to move the mark to.
@@ -472,9 +475,16 @@ extern const char *libbuff_marker;
 
 /** @addtogroup misc
  * @{
-*/
+ */
 const char *Dbgfname(const char *fname);
 void Dbg(const char *fmt, ...);
 /* @} misc */
 
 #endif
+
+/* Ironically, I need LONG_LINE_COMMENT for the local variable! */
+/*
+ * Local Variables:
+ * my-checkpatch-ignores: "SPDX_LICENSE_TAG,COMPLEX_MACRO,MULTISTATEMENT_MACRO_USE_DO_WHILE,LONG_LINE_COMMENT"
+ * End:
+ */

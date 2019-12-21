@@ -62,7 +62,7 @@
 
 /** @addtogroup term
  * @{
-*/
+ */
 
 #if defined(__unix__)
 /* This is user configurable, turn it off if you want */

@@ -291,7 +291,7 @@ void Zlife(void)
 {
 	char *matrix1, *matrix2;
 	bool go = true, step = true;
-	unsigned cmd;
+	unsigned int cmd;
 	struct zbuff *buff;
 
 	buff = zcreatebuff(LIFEBUFF, NULL);

@@ -455,7 +455,7 @@ void Zprevious_paragraph(void)
 void Zposition(void)
 {
 	unsigned long mark, point = blocation(Bbuff);
-	unsigned col = bgetcol(false, 0) + 1;
+	unsigned int col = bgetcol(false, 0) + 1;
 	char mstr[16];
 
 	if (UMARK_SET) {
@@ -511,7 +511,7 @@ void Zsave_and_exit(void)
 static int ask2(const char *msg, bool allow_bang)
 {
 	int rc = BADCHAR;
-	unsigned cmd;
+	unsigned int cmd;
 
 	putpaw("%s", msg);
 	while (rc == BADCHAR)
@@ -597,7 +597,7 @@ bool saveall(bool must)
 	return true;
 }
 
-static void mshow(unsigned ch)
+static void mshow(unsigned int ch)
 {
 	Byte match;
 	int cnt = 0;
@@ -830,7 +830,7 @@ void Zswap_chars(void)
 void Zcount(void)
 {
 	bool word, swapped = false;
-	unsigned l, w, c;
+	unsigned int l, w, c;
 	struct mark *tmark = bcremark(Bbuff);
 
 	if (!tmark) {

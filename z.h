@@ -227,11 +227,6 @@ extern int Tabsize;
 
 #define ISNL(c)			((c) == '\n')
 
-void tbell_dbg(char *func, int line);
-#if 0
-#define tbell() tbell_dbg(__FILE__, __LINE__)
-#endif
-
 #define UMARK_SET (Curbuff->umark)
 #define NEED_UMARK do { if (!UMARK_SET) { tbell(); return; } } while (0)
 #define UMARK (Curbuff->umark) /* Must guarantee umark set! */
@@ -242,3 +237,10 @@ void tbell_dbg(char *func, int line);
 /* @} */
 
 #endif /* _Z_H_ */
+
+/* The NEED_UMARK macro is just too useful */
+/*
+ * Local Variables:
+ * my-checkpatch-ignores: "SPDX_LICENSE_TAG,MACRO_WITH_FLOW_CONTROL"
+ * End:
+ */

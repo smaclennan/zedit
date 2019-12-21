@@ -28,13 +28,12 @@ check_one() {
 }
 
 echo "Running checkpatch..."
-if [ 1 -eq 1 ]; then
+if [ 1 -eq 0 ]; then
     for f in *.c; do
 	case $f in
 	    # docs need long strings
 	    cnames.c|varray.c) check_one $f SPDX_LICENSE_TAG,SPLIT_STRING;;
-	    # SAM we should fixup unsigned ints :(
-	    *) check_one $f SPDX_LICENSE_TAG,UNSPECIFIED_INT,LINE_SPACING;;
+	    *) check_one $f SPDX_LICENSE_TAG,LINE_SPACING;;
 	esac
     done
 fi
@@ -44,8 +43,8 @@ if [ 1 -eq 1 ]; then
 	case $f in
 	    # SAM we should fix the function args :(
 	    proto.h) check_one $f SPDX_LICENSE_TAG,FUNCTION_ARGUMENTS;;
-	    z.h) check_one $f SPDX_LICENSE_TAG,IF_0,MACRO_WITH_FLOW_CONTROL;;
-	    *) check_one $f SPDX_LICENSE_TAG,LINE_SPACING,NEW_TYPEDEFS;;
+	    z.h) check_one $f SPDX_LICENSE_TAG,MACRO_WITH_FLOW_CONTROL;;
+	    *) check_one $f SPDX_LICENSE_TAG;;
 	esac
     done
 fi

@@ -157,7 +157,7 @@ static void setavar(const char *vin, bool display)
 int Tabsize = 8;
 
 /* Returns non-zero if tab size changed */
-int settabsize(unsigned mode)
+int settabsize(unsigned int mode)
 {
 	switch (mode & MAJORMODE) {
 	case CMODE:

@@ -29,7 +29,7 @@ bool Initializing = true;
 char *Home;
 int Homelen;
 
-unsigned Cmd;
+unsigned int Cmd;
 int Cmdpushed = -1; /* Search pushed a key */
 
 static void _usage(void)
@@ -253,9 +253,9 @@ void Zstats(void)
 	struct zbuff *buff;
 	struct mark *mark;
 	struct page *page;
-	unsigned nbuff = 2; /* paw + kill */
-	unsigned npage = 1 + delpages(); /* paw page + kill */
-	unsigned nmarks = 0;
+	unsigned int nbuff = 2; /* paw + kill */
+	unsigned int npage = 1 + delpages(); /* paw page + kill */
+	unsigned int nmarks = 0;
 
 	foreachbuff(buff) {
 		++nbuff;

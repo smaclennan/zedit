@@ -44,7 +44,7 @@ static int is_special(int cmd)
 	return cmd >= SPECIAL_START && cmd <= SPECIAL_END;
 }
 
-static char *dispkey(unsigned key, char *s)
+static char *dispkey(unsigned int key, char *s)
 {
 	char *p;
 	int j;
@@ -228,7 +228,7 @@ void Zhelp_key(void)
 {
 	char kstr[12];
 	int rc;
-	unsigned key, was = Cmd;
+	unsigned int key, was = Cmd;
 
 	Arg = 0;
 	putpaw("Key: ");

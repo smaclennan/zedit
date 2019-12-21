@@ -225,17 +225,10 @@ int prefline(void)
 	return line < w ? line : w >> 1;
 }
 
-#undef tbell
 void tbell(void)
 {
 	ring_bell = 1;
 	if (Curwdo)
 		Curwdo->modeflags = INVALID;
-}
-
-void tbell_dbg(char *func, int line)
-{
-	Dbg("tbell %s:%d\n", func, line);
-	tbell();
 }
 /* @} */

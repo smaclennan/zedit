@@ -588,7 +588,7 @@ static void modeline(struct wdo *wdo)
 /* This routine will call modeline if wdo->modeflags == INVALID */
 static void modeflags(struct wdo *wdo)
 {
-	unsigned trow, tcol;
+	unsigned int trow, tcol;
 	int mask;
 
 	trow = Prow;
@@ -735,9 +735,9 @@ void vsetmrk(struct mark *mrk)
 	}
 }
 
-void invalidate_scrnmarks(unsigned from, unsigned to)
+void invalidate_scrnmarks(unsigned int from, unsigned int to)
 {
-	for (unsigned i = from; i < to; ++i)
+	for (unsigned int i = from; i < to; ++i)
 		Scrnmodf[i] = true;
 }
 

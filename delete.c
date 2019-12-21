@@ -36,9 +36,9 @@ void delfini(void)
 	bdelbuff(Killbuff);
 }
 
-unsigned delpages(void)
+unsigned int delpages(void)
 {
-	unsigned npage = 0;
+	unsigned int npage = 0;
 	for (struct page *page = Killbuff->firstp; page; page = page->nextp)
 		++npage;
 	return npage;

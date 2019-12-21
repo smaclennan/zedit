@@ -55,7 +55,7 @@ static void newcomment(struct mark *start)
 }
 
 /* Scan an entire buffer for comments. */
-static void scanbuffer(zbuff_t *buff)
+static void scanbuffer(struct zbuff *buff)
 {
 	struct mark tmark, start;
 	Byte comchar = Curbuff->comchar;
@@ -148,7 +148,7 @@ void cprntchar(Byte ch)
 
 	if (!Comstate) {
 		struct wdo *wdo;
-		zbuff_t *was = Curbuff;
+		struct zbuff *was = Curbuff;
 
 		scanbuffer(Curbuff);
 		for (wdo = Whead; wdo; wdo = wdo->next)
@@ -172,7 +172,7 @@ void cprntchar(Byte ch)
 }
 
 /* Remove all comments from buffer and mark unscanned */
-void uncomment(zbuff_t *buff)
+void uncomment(struct zbuff *buff)
 {
 	if (buff)
 		while (buff->chead) {

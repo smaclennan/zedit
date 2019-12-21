@@ -160,7 +160,7 @@ int main(int argc, char **argv)
 	char path[PATHMAX + 1];
 	int arg, textMode = 0, line = 0;
 	struct mark tmark;
-	zbuff_t *tbuff = NULL;
+	struct zbuff *tbuff = NULL;
 
 	Home = getenv("HOME");
 	if (!Home)
@@ -250,7 +250,7 @@ int main(int argc, char **argv)
 
 void Zstats(void)
 {
-	zbuff_t *buff;
+	struct zbuff *buff;
 	struct mark *mark;
 	struct page *page;
 	unsigned nbuff = 2; /* paw + kill */

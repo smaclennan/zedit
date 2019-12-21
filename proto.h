@@ -159,20 +159,20 @@ int ask(const char *str);
 int bgetcol(bool flag, int col);
 void binit(void);
 int bmakecol(int col);
-void zswitchto(zbuff_t *buff);
-zbuff_t *cfindbuff(const char *bname);
-zbuff_t *cfindzbuff(struct buff *buff);
-zbuff_t *zcreatebuff(const char *bname, char *fname);
-zbuff_t *cmakebuff(const char *bname, char *fname);
-bool cdelbuff(zbuff_t *buff);
-void cswitchto(zbuff_t *buff);
+void zswitchto(struct zbuff *buff);
+struct zbuff *cfindbuff(const char *bname);
+struct zbuff *cfindzbuff(struct buff *buff);
+struct zbuff *zcreatebuff(const char *bname, char *fname);
+struct zbuff *cmakebuff(const char *bname, char *fname);
+bool cdelbuff(struct zbuff *buff);
+void cswitchto(struct zbuff *buff);
 void display_init(struct mark *mrk);
 int delayprompt(const char *prompt);
 void delinit(void);
 void delfini(void);
 unsigned int delpages(void);
 bool delcmd(void);
-int do_chdir(zbuff_t *buff);
+int do_chdir(struct zbuff *buff);
 void execute(void);
 int readapipe(void);
 void set_pipefd(int fd);
@@ -194,7 +194,7 @@ char *limit(char *, int);
 void makepaw(char *, bool);
 char *nocase(const char *);
 int pathfixup(char *, char *);
-bool promptsave(zbuff_t *tbuff, bool must);
+bool promptsave(struct zbuff *tbuff, bool must);
 int prefline(void);
 void putpaw(const char *fmt, ...);
 void error(const char *fmt, ...);
@@ -219,7 +219,7 @@ void hang_up(int signo);
 void dump_doc(const char *doc);
 int zreadfile(char *fname);
 void set_shell_mark(void);
-void message(zbuff_t *buff, const char *str);
+void message(struct zbuff *buff, const char *str);
 
 int batoi(void);
 
@@ -236,7 +236,7 @@ void winit(void);
 
 void checkpipes(int type);
 void siginit(void);
-bool unvoke(zbuff_t *buff);
+bool unvoke(struct zbuff *buff);
 
 /* for getfname */
 int getfname(const char *, char *);
@@ -249,6 +249,6 @@ void wgoto(struct buff *);
 
 /* COMMENTBOLD */
 void resetcomments(void);
-void uncomment(zbuff_t *buff);
+void uncomment(struct zbuff *buff);
 void cprntchar(Byte ch);
 /* @} */

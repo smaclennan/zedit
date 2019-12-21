@@ -138,7 +138,7 @@ void Zhelp_function(void)
 		return;
 
 	if (Argp) {
-		zbuff_t *buff = cmakebuff(HELPBUFF, NULL);
+		struct zbuff *buff = cmakebuff(HELPBUFF, NULL);
 		if (buff == NULL)
 			return;
 		cswitchto(buff);

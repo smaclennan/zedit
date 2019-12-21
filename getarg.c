@@ -30,8 +30,8 @@
 int InPaw;
 bool First;
 int Pawcol, Pawlen, Pshift;
-zbuff_t *Paw;
-zbuff_t *Buff_save;
+struct zbuff *Paw;
+struct zbuff *Buff_save;
 
 /* globals for getplete */
 static char **Carray;

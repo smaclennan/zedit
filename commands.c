@@ -479,7 +479,7 @@ void Zset_mark(void)
 
 void Zexit(void)
 {
-	zbuff_t *tbuff;
+	struct zbuff *tbuff;
 	bool modf = false;
 
 	if (!saveall(Argp))
@@ -551,7 +551,7 @@ int ask(const char *msg)
  * Always saves if 'must' is true or saveOnExit is set.
  * Returns false if the user ABORTS the prompt.
  */
-bool promptsave(zbuff_t *tbuff, bool must)
+bool promptsave(struct zbuff *tbuff, bool must)
 {
 	static int save_all;
 	char str[BUFNAMMAX + 20];
@@ -585,7 +585,7 @@ bool promptsave(zbuff_t *tbuff, bool must)
  */
 bool saveall(bool must)
 {
-	zbuff_t *tbuff, *bsave;
+	struct zbuff *tbuff, *bsave;
 
 	bsave = Curbuff;
 	foreachbuff(tbuff)

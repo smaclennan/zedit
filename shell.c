@@ -53,7 +53,7 @@ int batoi(void)
 	return num;
 }
 
-int do_chdir(zbuff_t *buff)
+int do_chdir(struct zbuff *buff)
 {
 	if (buff->fname) {
 		char dir[PATHMAX + 1], *p;
@@ -69,7 +69,7 @@ int do_chdir(zbuff_t *buff)
 }
 
 /* echo 'str' to the paw and as the filename for 'buff' */
-void message(zbuff_t *buff, const char *str)
+void message(struct zbuff *buff, const char *str)
 {
 	struct wdo *wdo;
 
@@ -86,7 +86,7 @@ void message(zbuff_t *buff, const char *str)
 #include <sys/wait.h>
 
 /* We only allow one pipe command */
-static zbuff_t *pipebuff;
+static struct zbuff *pipebuff;
 static pid_t child = EOF;	/* PID of shell or EOF */
 static int in_pipe = -1;	/* the pipe */
 
@@ -122,7 +122,7 @@ int readapipe(void)
 	if (i > 0) {
 		/* Yup! Read somethin' */
 		struct mark tmark;
-		zbuff_t *save = Curbuff;
+		struct zbuff *save = Curbuff;
 
 		zswitchto(pipebuff);
 		bmrktopnt(Bbuff, &tmark);
@@ -137,7 +137,7 @@ int readapipe(void)
 	return cnt;
 }
 
-static void exit_status(zbuff_t *tbuff, int status)
+static void exit_status(struct zbuff *tbuff, int status)
 {
 	if (status & 0xff)
 		message(tbuff, "Died.");
@@ -216,7 +216,7 @@ static char *wordit(char **str)
 /* Invoke 'cmd' on a pipe.
  * Returns true if the invocation succeeded.
  */
-static bool _cmdtobuff(zbuff_t *tbuff, const char *icmd)
+static bool _cmdtobuff(struct zbuff *tbuff, const char *icmd)
 {
 	char cmd[STRMAX + 1], *p, *argv[11];
 	int from[2], arg;
@@ -262,7 +262,7 @@ static bool _cmdtobuff(zbuff_t *tbuff, const char *icmd)
 }
 
 /* Try to kill a child process */
-bool unvoke(zbuff_t *buff)
+bool unvoke(struct zbuff *buff)
 {
 	if (!pipebuff || (buff && buff != pipebuff))
 		return false;
@@ -281,10 +281,10 @@ void Zkill(void)
 #include <stdio.h>
 
 void Zkill(void) { tbell(); }
-bool unvoke(zbuff_t *child) { ((void)child); return false; }
+bool unvoke(struct zbuff *child) { ((void)child); return false; }
 void checkpipes(int type) { ((void)type); }
 
-static void _cmdtobuff(zbuff_t *buff, const char *cmdin)
+static void _cmdtobuff(struct zbuff *buff, const char *cmdin)
 {
 	FILE *pfp;
 	int rc;
@@ -397,7 +397,7 @@ static int parse(char *fname)
 void Znext_error(void)
 {
 	struct wdo *wdo;
-	zbuff_t *save, *mbuff;
+	struct zbuff *save, *mbuff;
 	char fname[STRMAX + 1];
 	char path[PATHMAX + 1];
 	int line;

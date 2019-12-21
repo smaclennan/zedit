@@ -48,7 +48,7 @@ static void sigwinch(int sig)
 /* Come here on SIGHUP or SIGTERM */
 void hang_up(int signo)
 {
-	zbuff_t *tbuff;
+	struct zbuff *tbuff;
 
 	InPaw = true;	/* Kludge to turn off error */
 	foreachbuff(tbuff)

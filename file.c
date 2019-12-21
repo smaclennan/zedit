@@ -238,7 +238,7 @@ void Zrevert_file(void)
 static bool readone(char *bname, char *path)
 {
 	int rc;
-	zbuff_t *was = Curbuff;
+	struct zbuff *was = Curbuff;
 
 	if (cfindbuff(bname))
 		return true;
@@ -269,8 +269,8 @@ static bool readone(char *bname, char *path)
 bool findfile(char *path)
 {
 	char tbname[BUFNAMMAX + 1];
-	zbuff_t *tbuff;
-	zbuff_t *was = Curbuff;
+	struct zbuff *tbuff;
+	struct zbuff *was = Curbuff;
 
 	Arg = 0;
 
@@ -326,7 +326,7 @@ bool findfile(char *path)
 void Zsave_all_files(void)
 {
 	if (Argp) {
-		zbuff_t *tbuff;
+		struct zbuff *tbuff;
 
 		foreachbuff(tbuff)
 			if (!(tbuff->bmode & SYSBUFF) && tbuff->fname)

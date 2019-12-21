@@ -44,8 +44,7 @@ if [ 1 -eq 1 ]; then
 	case $f in
 	    # SAM we should fix the function args :(
 	    proto.h) check_one $f SPDX_LICENSE_TAG,FUNCTION_ARGUMENTS;;
-	    # SAM we should fix typedef
-	    z.h) check_one $f SPDX_LICENSE_TAG,NEW_TYPEDEFS,IF_0,MACRO_WITH_FLOW_CONTROL;;
+	    z.h) check_one $f SPDX_LICENSE_TAG,IF_0,MACRO_WITH_FLOW_CONTROL;;
 	    *) check_one $f SPDX_LICENSE_TAG,LINE_SPACING,NEW_TYPEDEFS;;
 	esac
     done

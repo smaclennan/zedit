@@ -146,7 +146,7 @@ extern struct wdo *Curwdo, *Whead;
 extern struct zbuff *Curbuff;
 extern struct buff *Bbuff;
 
-typedef struct zbuff {
+struct zbuff {
 	struct zbuff *prev;	/**< list of buffers */
 	struct zbuff *next;	/**< list of buffers */
 	char *bname;            /**< buffer name */
@@ -158,7 +158,7 @@ typedef struct zbuff {
 	void *ctail;		/**< list of comments in file */
 	Byte comchar;		/**< single char comment character */
 	unsigned int bmode;	/**< buffer mode */
-} zbuff_t;
+};
 
 #define foreachbuff(b) for ((b) = Bufflist; (b); (b) = (b)->next)
 
@@ -172,7 +172,7 @@ extern int InPaw;		/* Are we in the Paw window? */
 extern char PawStr[];		/* handy string to put text in */
 #define PAWSTRLEN (COLMAX + 10)
 extern int Pawcol, Pawlen, Pshift;
-extern zbuff_t *Paw;
+extern struct zbuff *Paw;
 extern int verbose;
 
 extern unsigned int Cmd;
@@ -188,8 +188,8 @@ extern int raw_mode;
 
 #define CMD(n) (*Cmds[n][Curcmds])()
 
-extern zbuff_t *Bufflist;
-extern zbuff_t *Buff_save;
+extern struct zbuff *Bufflist;
+extern struct zbuff *Buff_save;
 extern struct mark *Sstart;
 extern bool Initializing;
 extern bool Insearch;
@@ -213,7 +213,7 @@ extern void (*Nextpart)(void);
 #endif
 #define T_REGION		T_REVERSE
 
-void set_last_bufname(zbuff_t *buff);
+void set_last_bufname(struct zbuff *buff);
 
 char *zgetcwd(char *cwd, int len);
 

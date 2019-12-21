@@ -454,6 +454,13 @@ static void bshove(void)
 	++Bbuff->curchar;
 }
 
+static void setmark(bool prntchar)
+{
+	tstyle(T_REVERSE);
+	tprntchar(prntchar ? Buff() : ' ');
+	tstyle(T_NORMAL);
+}
+
 /*
  * Do the actual screen update.
  * Curwdo is not valid.

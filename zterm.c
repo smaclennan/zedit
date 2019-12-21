@@ -116,13 +116,6 @@ void tainit(void)
 	atexit(tafini);
 }
 
-void setmark(bool prntchar)
-{
-	tstyle(T_REVERSE);
-	tprntchar(prntchar ? Buff() : ' ');
-	tstyle(T_NORMAL);
-}
-
 void termsize(void)
 {
 	int rows = 0, cols = 0;

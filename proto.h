@@ -183,17 +183,18 @@ bool getarg(const char *prompt, char *arg, int max);
 bool _getarg(const char *prompt, char *arg, int max, bool tostart);
 char *getbtxt(char *text, int len);
 int getbword(char *word, int len, int (*func)(int));
-int getplete(const char *, const char *, char **, int, int);
+int getplete(const char *prompt, const char *def, char **array,
+	     int size, int num);
 int bistoken(int c);
 int biswhite(int c);
 int bisword(int c);
 int file_mode(void);
-void killtomrk(struct mark *);
-char *lastpart(char *);
-char *limit(char *, int);
-void makepaw(char *, bool);
-char *nocase(const char *);
-int pathfixup(char *, char *);
+void killtomrk(struct mark *mark);
+char *lastpart(char *fname);
+char *limit(char *fname, int num);
+void makepaw(char *str, bool start);
+char *nocase(const char *str);
+int pathfixup(char *to, char *from);
 bool promptsave(struct zbuff *tbuff, bool must);
 int prefline(void);
 void putpaw(const char *fmt, ...);
@@ -202,17 +203,16 @@ void readvfile(const char *path);
 void redisplay(void);
 void reframe(void);
 void zrefresh(void);
-bool saveall(bool);
+bool saveall(bool must);
 int settabsize(unsigned int size);
-void setmark(bool);
 void tbell(void);
 void tainit(void);
 void termsize(void);
-void tindent(int);
-void toggle_mode(int);
-void tprntchar(Byte);
-void tprntstr(const char *);
-void vsetmrk(struct mark *);
+void tindent(int arg);
+void toggle_mode(int mode);
+void tprntchar(Byte ch);
+void tprntstr(const char *str);
+void vsetmrk(struct mark *mark);
 void invalidate_scrnmarks(unsigned int from, unsigned int to);
 int chwidth(Byte ch, int col, bool adjust);
 void hang_up(int signo);
@@ -239,13 +239,13 @@ void siginit(void);
 bool unvoke(struct zbuff *buff);
 
 /* for getfname */
-int getfname(const char *, char *);
-int nmatch(char *, char *);
+int getfname(const char *prompt, char *path);
+int nmatch(char *s1, char *s2);
 
 void wswitchto(struct wdo *wdo);
 void wsize(void);
-bool wuseother(const char *);
-void wgoto(struct buff *);
+bool wuseother(const char *bname);
+void wgoto(struct buff *buff);
 
 /* COMMENTBOLD */
 void resetcomments(void);

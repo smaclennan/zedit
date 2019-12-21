@@ -28,23 +28,11 @@ check_one() {
 }
 
 echo "Running checkpatch..."
-if [ 1 -eq 0 ]; then
-    for f in *.c; do
-	case $f in
-	    # docs need long strings
-	    cnames.c|varray.c) check_one $f SPDX_LICENSE_TAG,SPLIT_STRING;;
-	    *) check_one $f SPDX_LICENSE_TAG,LINE_SPACING;;
-	esac
-    done
-fi
-
-if [ 1 -eq 1 ]; then
-    for f in *.h; do
-	case $f in
-	    # SAM we should fix the function args :(
-	    proto.h) check_one $f SPDX_LICENSE_TAG,FUNCTION_ARGUMENTS;;
-	    z.h) check_one $f SPDX_LICENSE_TAG,MACRO_WITH_FLOW_CONTROL;;
-	    *) check_one $f SPDX_LICENSE_TAG;;
-	esac
-    done
-fi
+for f in *.[ch]; do
+    case $f in
+	# docs need long strings
+	cnames.c|varray.c) check_one $f SPDX_LICENSE_TAG,SPLIT_STRING;;
+	z.h) check_one $f SPDX_LICENSE_TAG,MACRO_WITH_FLOW_CONTROL;;
+	*) check_one $f SPDX_LICENSE_TAG,LINE_SPACING;;
+    esac
+done

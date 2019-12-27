@@ -39,19 +39,19 @@ int bstrline(struct buff *buff, char *str, int len)
 
 	tobegline(buff);
 
-	while (len > 1 && !bisend(buff) && BUFF(buff) != '\n') {
-		*str++ = BUFF(buff);
+	while (len > 1 && !bisend(buff) && *buff->curcptr != '\n') {
+		*str++ = *buff->curcptr;
 		--len;
 		++count;
 		bmove1(buff);
 	}
 	*str = 0;
 
-	while (!bisend(buff) && BUFF(buff) != '\n') {
+	while (!bisend(buff) && *buff->curcptr != '\n') {
 		++count;
 		bmove1(buff);
 	}
-	if (BUFF(buff) == '\n')
+	if (*buff->curcptr == '\n')
 		bmove1(buff);
 
 	return count;

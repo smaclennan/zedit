@@ -28,8 +28,6 @@
 #include "buff.h"
 
 /* \cond skip */
-#define buff() (*buff->curcptr)
-
 /** Search for `what' in current buffer page starting at point. */
 static inline Byte *memchrpage(struct buff *buff, Byte what)
 {

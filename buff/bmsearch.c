@@ -27,13 +27,12 @@
 /* \cond skip */
 #define NUMASCII	256			/* number of ascii chars */
 
-#define buff() (*buff->curcptr)
-#define buffint() ((uint8_t)buff())
+#define buffint() ((uint8_t)(*buff->curcptr))
 
 static inline int bequal(struct buff *buff, char ch, int sensitive)
 {
-	return buff() == ch ||
-		(!sensitive && tolower(buff()) == tolower(ch));
+	return *buff->curcptr == ch ||
+		(!sensitive && tolower(*buff->curcptr) == tolower(ch));
 }
 /* \endcond */
 

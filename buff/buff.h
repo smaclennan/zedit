@@ -92,8 +92,6 @@ struct buff {
 #endif
 };
 
-#define BUFF(b) (*(b)->curcptr)
-
 /**
  * The static and/or dynamic mark structure.
  */

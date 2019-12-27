@@ -4,11 +4,11 @@
 /* User configurable */
 
 /* Define for dynamic buffer marks.
-#define HAVE_BUFFER_MARKS 1
+#define BUFFER_MARKS 1
  */
 
 /* Define for global buffer marks.
-#define HAVE_GLOBAL_MARKS 1
+#define GLOBAL_MARKS 1
  */
 
 /* Define for huge file support.

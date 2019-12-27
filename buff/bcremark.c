@@ -53,7 +53,7 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
 #endif
 		mark = (struct mark *)calloc(1, sizeof(struct mark));
 	if (mark) {
-#if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
+#if defined(GLOBAL_MARKS) || defined(BUFFER_MARKS)
 		if (tail) {
 			mark->prev = *tail; /* add to end of list */
 			if (*tail)
@@ -68,8 +68,8 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
 
 /** Create a mark in the specified buffer.
  *
- * If dynamic marks are enabled (#HAVE_GLOBAL_MARKS or
- * #HAVE_BUFFER_MARKS) then the buffer code will keep the mark in place
+ * If dynamic marks are enabled (#GLOBAL_MARKS or
+ * #BUFFER_MARKS) then the buffer code will keep the mark in place
  * as bytes are inserted or deleted.
  *
  * @param buff The buffer to create the mark in.
@@ -77,7 +77,7 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail)
  */
 struct mark *bcremark(struct buff *buff)
 {
-#ifdef HAVE_BUFFER_MARKS
+#ifdef BUFFER_MARKS
 	return _bcremark(buff, &buff->marks);
 #else
 	return _bcremark(buff, NULL);
@@ -91,7 +91,7 @@ struct mark *bcremark(struct buff *buff)
 void _bdelmark(struct mark *mark, struct mark **tail)
 {
 	if (mark) {
-#if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
+#if defined(GLOBAL_MARKS) || defined(BUFFER_MARKS)
 		if (tail) {
 			if (mark == *tail)
 				*tail = mark->prev;
@@ -116,7 +116,7 @@ void _bdelmark(struct mark *mark, struct mark **tail)
  */
 void bdelmark(struct mark *mark)
 {
-#ifdef HAVE_BUFFER_MARKS
+#ifdef BUFFER_MARKS
 	if (mark)
 		_bdelmark(mark, &mark->mbuff->marks);
 #else

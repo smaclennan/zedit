@@ -31,7 +31,7 @@ static void dummy_bsetmod(struct buff *buff) {}
  */
 void (*bsetmod)(struct buff *buff) = dummy_bsetmod;
 
-#ifdef HAVE_GLOBAL_MARKS
+#ifdef GLOBAL_MARKS
 /** Global mark list. The buffer code keeps the marks in this list
  * up to date.
  */

@@ -75,14 +75,14 @@ struct huge_file {
 
 /** Main buffer structure. */
 struct buff {
-#ifdef HAVE_BUFFER_MARKS
-	struct mark *marks;		/**< Buffer dynamic marks. */
-#endif
 	struct page *firstp;	/**< List of pages. */
 	struct page *curpage;	/**< Point page. */
-	Byte *curcptr;			/**< Point position in the page. */
-	unsigned int curchar;		/**< Point index in the page. */
-	int bmodf;				/**< Buffer modified? */
+	Byte *curcptr;		/**< Point position in the page. */
+	unsigned int curchar;	/**< Point index in the page. */
+	int bmodf;		/**< Buffer modified? */
+#ifdef BUFFER_MARKS
+	struct mark *marks;	/**< Buffer dynamic marks. */
+#endif
 #if defined(UNDO) && UNDO
 	int in_undo;		/**< Are we currently performing an undo? */
 	void *undo_tail;	/**< List of undos. */
@@ -101,7 +101,7 @@ struct mark {
 	struct buff *mbuff;			/**< Buffer the mark is in. */
 	struct page *mpage;			/**< Page in the buffer. */
 	unsigned int moffset;			/**< Offset in the page. */
-#if defined(HAVE_GLOBAL_MARKS) || defined(HAVE_BUFFER_MARKS)
+#if defined(GLOBAL_MARKS) || defined(BUFFER_MARKS)
 	struct mark *prev;			/**< List of marks. */
 	struct mark *next;			/**< List of marks. */
 #endif
@@ -436,7 +436,7 @@ static inline int mrkatmrk(struct mark *m1, struct mark *m2)
 	return memcmp(m1, m2, __MRKSIZE) == 0;
 }
 
-#ifdef HAVE_GLOBAL_MARKS
+#ifdef GLOBAL_MARKS
 extern struct mark *Marklist;
 
 /** Walk through all the global marks that match page */
@@ -453,7 +453,7 @@ extern struct mark *Marklist;
 #define foreach_global_buffmark(buff, mark) if (0)
 #endif
 
-#ifdef HAVE_BUFFER_MARKS
+#ifdef BUFFER_MARKS
 /** Walk through all the buffer marks in buff that match page */
 #define foreach_pagemark(buff, mark, page)				\
 	for ((mark) = (buff)->marks; (mark); (mark) = (mark)->prev)	\

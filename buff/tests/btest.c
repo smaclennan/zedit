@@ -159,7 +159,9 @@ int main(int argc, char *argv[])
 	dump_pages(buff, "breadfile");
 	bdelbuff(buff);
 
-	tinit();
+// SAM	tinit();
+
+	printf("buffer size %ld\n", sizeof(struct buff));
 
 #ifdef WIN32
 	printf("Hit return to exit "); getchar();

@@ -36,7 +36,7 @@ void bdelbuff(struct buff *buff)
 	while (buff->firstp)	/* delete the pages */
 		freepage(buff, buff->firstp);
 
-#ifdef HAVE_BUFFER_MARKS
+#ifdef BUFFER_MARKS
 	while (buff->marks) /* delete the marks */
 		bdelmark(buff->marks);
 #endif

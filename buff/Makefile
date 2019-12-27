@@ -11,6 +11,8 @@ CFLAGS ?= -Wall -O2
 #CFLAGS += -DBUILTIN_REG
 # For hugefiles
 #CFLAGS += -DHUGE_FILES
+# Generally useful
+CFLAGS += -DBUFFER_MARKS
 
 CFILES = \
 	bcopyrgn.c \

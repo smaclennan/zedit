@@ -22,8 +22,8 @@
 
 /* Don't touch these unless you really know what you are doing. */
 #define UNSIGNED_BYTES
-#define HAVE_GLOBAL_MARKS
-#define HAVE_BUFFER_MARKS
+#define GLOBAL_MARKS
+#define BUFFER_MARKS
 #define WANT_FLOATS
 #ifdef __QNXNTO__
 #undef  __unix__

@@ -185,6 +185,7 @@ extern Byte Keys[], Lfunc;
 extern bool First;
 extern int ring_bell;
 extern int raw_mode;
+extern int text_mode;
 
 #define CMD(n) (*Cmds[n][Curcmds])()
 

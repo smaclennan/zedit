@@ -28,6 +28,7 @@ int verbose;
 bool Initializing = true;
 char *Home;
 int Homelen;
+int text_mode;
 
 unsigned int Cmd;
 int Cmdpushed = -1; /* Search pushed a key */
@@ -158,7 +159,7 @@ void execute(void)
 int main(int argc, char **argv)
 {
 	char path[PATHMAX + 1];
-	int arg, textMode = 0, line = 0;
+	int arg, line = 0;
 	struct mark tmark;
 	struct zbuff *tbuff = NULL;
 
@@ -183,7 +184,7 @@ int main(int argc, char **argv)
 			raw_mode = 1;
 			break;
 		case 't':
-			textMode = 1;
+			text_mode = 1;
 			break;
 		case 'v':
 			++verbose;
@@ -192,10 +193,6 @@ int main(int argc, char **argv)
 		default:
 			_usage();
 		}
-
-	/* User wants Text mode as default */
-	if (textMode)
-		VAR(VNORMAL) = 0;
 
 	binit();
 

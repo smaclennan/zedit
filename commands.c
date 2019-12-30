@@ -936,9 +936,7 @@ void toggle_mode(int mode)
 		else if (matchit(VARSTR(VSEXTS), ext) ||
 			 strncmp((char *)Bbuff->curcptr, "#!/", 3) == 0)
 			mode = SHMODE;
-		else if (matchit(VARSTR(VTEXTS), ext))
-			mode = TXTMODE;
-		else if (!VAR(VNORMAL))
+		else if (matchit(VARSTR(VTEXTS), ext) || text_mode)
 			mode = TXTMODE;
 		else
 			mode = NORMAL;

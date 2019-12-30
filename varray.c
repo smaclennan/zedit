@@ -49,11 +49,6 @@ struct avar Vars[] = {
 	{ "make-cmd",		V_STRING,	V("make "),
 	  "The command to use for the make command."
 	},
-	{ "normal",		V_FLAG,		V(1),
-	  "If set, the default buffer mode is Normal. If off, "
-	  "the default buffer mode is Text. Some file extensions "
-	  "override this variable."
-	},
 	{ "sh-extends",		V_STRING,	V(".sh.csh.el.py"),
 	  "This variable defines the extensions that turn on shell mode. "
 	  "Note that a '#!/bin/sh' type line at the start of the file can "

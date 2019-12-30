@@ -333,7 +333,7 @@ struct zbuff *zcreatebuff(const char *bname, char *fname)
 		Bufflist = bptr;
 	Bufflist_tail = bptr;
 
-	bptr->bmode = (VAR(VNORMAL) ? NORMAL : TXTMODE) |
+	bptr->bmode = (text_mode ? TXTMODE : NORMAL) |
 		(VAR(VEXACT) ? EXACT : 0);
 
 	if (bname && *bname == '*') {

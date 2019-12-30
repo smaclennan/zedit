@@ -24,30 +24,26 @@
  */
 
 #if defined(__linux__) || defined(WIN32)
-/* A simple strlcpy implementation for systems without.
+/* A strlcpy implementation for systems without.
  * @param dst The destination buffer.
  * @param src The source buffer.
  * @param dstsize The destination size.
  * @return The size of the source.
  */
-size_t strlcpy(char *dst, const char *src, size_t dstsize)
+size_t strlcpy(char *dst, const char *src, size_t dstlen)
 {
-	size_t i = 0;
+	int srclen = strlen(src);
 
-	if (dstsize > 0) {
-		--dstsize;
-		while (*src && i < dstsize) {
-			*dst++ = *src++;
-			++i;
+	if (dstlen > 0) {
+		if (dstlen > srclen)
+			strcpy(dst, src);
+		else {
+			strncpy(dst, src, dstlen - 1);
+			dst[dstlen - 1] = 0;
 		}
-		*dst = 0;
 	}
 
-	/* strlcpy returns the size of the src */
-	while (*src++)
-		++i;
-
-	return i;
+	return srclen;
 }
 
 /* A simple strlcat implementation for systems without.
@@ -58,28 +54,20 @@ size_t strlcpy(char *dst, const char *src, size_t dstsize)
  */
 size_t strlcat(char *dst, const char *src, size_t dstsize)
 {
-	size_t i = 0;
+	int dstlen = strlen(dst);
+	int srclen = strlen(src);
+	int left   = dstsize - dstlen;
 
-	while (dstsize > 0 && *dst) {
-		--dstsize;
-		++dst;
-		++i;
-	}
-
-	if (dstsize > 0) {
-		--dstsize;
-		while (*src && i < dstsize) {
-			*dst++ = *src++;
-			++i;
+	if (left > 0) {
+		if (left > srclen)
+			strcpy(dst + dstlen, src);
+		else {
+			strncpy(dst + dstlen, src, left - 1);
+			dst[dstsize - 1] = 0;
 		}
-		*dst = 0;
 	}
 
-	/* strlcat returns the size of the src + initial dst */
-	while (*src++)
-		++i;
-
-	return i;
+	return dstlen + srclen;
 }
 #endif
 

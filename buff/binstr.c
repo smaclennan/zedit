@@ -30,12 +30,14 @@
 #define SAW_ZERO		0x200000
 #define SAW_LONG		0x400000
 
+/* \cond skip */
 struct outbuff {
 	struct buff *buff;
 	char *str;
 	int len;
 	int n;
 };
+/* \endcond */
 
 static const char tohex[] = {
 	'0', '1', '2', '3', '4', '5', '6', '7',

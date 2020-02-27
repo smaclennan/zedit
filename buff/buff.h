@@ -184,21 +184,22 @@ size_t strlcat(char *dst, const char *src, size_t dstsize);
 #endif
 int strconcat(char *str, int len, ...);
 
+/* \cond skip */
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
 #ifndef EOF
 #define EOF -1
 #endif
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+/* \endcond */
 
 /** Min of a and b. */
 #define MIN(a, b)	(a < b ? a : b)
 /** Max of a and b. */
 #define MAX(a, b)	(a > b ? a : b)
-
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
 
 /* Page struct and functions. */
 

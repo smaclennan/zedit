@@ -1,5 +1,4 @@
-Zedit - A Short History
------------------------
+# Zedit - A Short History
 
 Back in 1988 I was using three editors on a daily basis. One for the
 bulk of my editing, one for regular expressions, and one for large
@@ -20,8 +19,7 @@ XEmacs.
 But it has morphed back into a nice little terminal only editor to use
 for those quick edits of config files. Or for low powered machines.
 
-About the Name
---------------
+## About the Name
 
 The program is called Zedit, but the executable was always z. I liked
 the fact that if you say z the British/Canadian way (zed not zee) it

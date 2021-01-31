@@ -21,7 +21,9 @@
 
 /** @addtogroup term
  * @{
- */
+*/
+
+extern int no_tsize;
 
 /** Get the current terminal size. If it can't get the size it returns
  * 80x30.
@@ -30,11 +32,15 @@
  */
 void tsize(int *rows, int *cols)
 {
-	char buf[12], *p;
-	int n, r = 0, c = 0;
-
 	*cols = 80;
 	*rows = 30;
+
+	if (no_tsize) {
+		return;
+	}
+
+	char buf[12], *p;
+	int n, r = 0, c = 0;
 
 	/* Save cursor position */
 	twrite("\033[s", 3);

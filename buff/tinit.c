@@ -37,6 +37,9 @@ static struct termios settty;
 #endif
 #endif
 
+// Terminal does not support save/restore cursor
+int no_tsize;
+
 /* Come here on SIGHUP or SIGTERM */
 static void t_hang_up(int signo)
 {
@@ -147,8 +150,8 @@ static void tlinit(void)
 static void tlinit(void)
 {
 	int rc, i;
-	char *term = getenv("TERM");
 
+	char *term = getenv("TERM");
 	if (term == NULL) {
 		printf("FATAL ERROR: environment variable TERM not set.\n");
 		exit(1);
@@ -166,11 +169,8 @@ static void tlinit(void)
 		exit(1);
 	}
 
-	if (!exit_attribute_mode) {
-		enter_reverse_mode = NULL;
-		enter_standout_mode = NULL;
-		enter_bold_mode = NULL;
-	}
+	if (!exit_attribute_mode)
+		enter_reverse_mode = enter_standout_mode = enter_bold_mode = NULL;
 
 	/* initialize the terminal */
 	TPUTS(init_1string);
@@ -209,7 +209,7 @@ static void tlinit(void)
 	set_tkey(i++, key_f10);
 	set_tkey(i++, key_f11);
 }
-#elif defined(WIN32)
+#elif defined (WIN32)
 extern void tlint(void);
 #else
 static void tlinit(void)
@@ -254,6 +254,10 @@ void tinit(void)
 #ifdef SIGTERM
 	signal(SIGTERM, t_hang_up);
 #endif
+
+	char *env = getenv("NO_TSIZE");
+	if (env)
+		no_tsize = strtol(env, NULL, 0);
 
 	tlinit();
 	atexit(tfini);

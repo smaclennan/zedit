@@ -1,6 +1,6 @@
 BDIR ?= $(shell uname -m)
 
-CFLAGS += -Wall -O2 -I.. -DBUFFER_MARKS
+CFLAGS += -Wall -g -I.. -DBUFFER_MARKS
 
 all: btest strtest
 

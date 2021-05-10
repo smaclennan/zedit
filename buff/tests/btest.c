@@ -40,7 +40,7 @@
 #define FILENAME2 "/tmp/btest2.file"
 #endif
 
-static void dump_pages(struct buff *buff, const char *str)
+void dump_pages(struct buff *buff, const char *str)
 {
 	printf("Pages %s:\n", str);
 	for (struct page *pg = buff->firstp; pg; pg = pg->nextp)
@@ -54,7 +54,7 @@ static void dump_pages(struct buff *buff, const char *str)
 			printf("  '%.*s'\n", pg->plen, pg->pdata);
 }
 
-static void create_file(const char *fname, const char *str)
+void create_file(const char *fname, const char *str)
 {
 	int fd = open(fname, O_CREAT | O_TRUNC | O_WRONLY, 0666);
 	if (fd < 0) {
@@ -80,8 +80,45 @@ static void create_file(const char *fname, const char *str)
 	}
 }
 
+void bpeek_test(void)
+{
+	struct buff *buff = bcreate();
+	assert(buff);
+
+	// Put some data in the first page
+	memset(buff->firstp->pdata, 'a', 9);
+	buff->firstp->pdata[10] = 'b';
+	buff->firstp->plen = 11;
+
+	// Create a newpage and make it current
+	struct page *new = newpage(buff->firstp);
+	makecur(buff, new, 0);
+	binsert(buff, 'c');
+	bmove(buff, -1);
+
+	// We should now be sitting on the first byte of the new page (c)
+	assert(buff->curpage == buff->firstp->nextp);
+	assert(buff->curchar == 0);
+	assert(*buff->curcptr == 'c');
+
+	// So the bpeek() should be the last char of the previous page
+	assert(bpeek(buff) == 'b');
+
+	// Start of buffer should be LF
+	btostart(buff);
+	assert(bpeek(buff) == '\n');
+
+	// Test simple offset
+	*buff->curcptr = 'd';
+	bmove(buff, 1);
+	assert(bpeek(buff) == 'd');
+}
+
 int main(int argc, char *argv[])
 {
+#if 0
+	bpeek_test();
+#else
 	struct page *page = newpage(NULL);
 	assert(page);
 	struct page *last = newpage(page);
@@ -162,6 +199,7 @@ int main(int argc, char *argv[])
 // SAM	tinit();
 
 	printf("buffer size %ld\n", sizeof(struct buff));
+#endif
 
 #ifdef WIN32
 	printf("Hit return to exit "); getchar();

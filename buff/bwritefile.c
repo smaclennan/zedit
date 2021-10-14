@@ -1,4 +1,4 @@
-/* bwritefile.c - write file
+/* write file
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,7 +108,7 @@ static int bwritedos(struct buff *buff, int fd)
  * Leaves point at start of buffer.
  * @param buff The buffer to write out.
  * @param fname  The file to write out to.
- * @param mode umask umask + FILE_COMPRESSED + FILE_CRLF
+ * @param mode umask + FILE_COMPRESSED + FILE_CRLF
  * @return 0 on success, negative number on error.
  */
 int bwritefile(struct buff *buff, char *fname, int mode)

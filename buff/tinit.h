@@ -1,4 +1,4 @@
-/* tinit.h - term definitions
+/* term definitions
  * Copyright (C) 1988-2017 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -71,6 +71,8 @@
 
 #define	ROWMAX			110
 #define COLMAX			256
+
+extern int no_tsize;
 
 void tinit(void);
 void tsize(int *rows, int *cols);

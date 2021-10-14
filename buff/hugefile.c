@@ -1,4 +1,4 @@
-/* hugefile.c - Deal with huge files
+/* Deal with huge files
  * Copyright (C) 2016-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify

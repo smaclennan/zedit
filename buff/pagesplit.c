@@ -1,4 +1,4 @@
-/* pagesplit.c - split the current page into two pages
+/* split the current page into two pages
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify

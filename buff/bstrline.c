@@ -1,4 +1,4 @@
-/* bstrline.c - get the current line at the point
+/* get the current line at the point
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify

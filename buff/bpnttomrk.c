@@ -1,4 +1,4 @@
-/* bpnttomrk.c - bring point to mark
+/* bring point to mark
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify

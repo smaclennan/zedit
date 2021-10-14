@@ -1,4 +1,4 @@
-/* blength.c - length of buffer in bytes
+/* length of buffer in bytes
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify

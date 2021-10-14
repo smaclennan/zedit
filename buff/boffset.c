@@ -1,4 +1,4 @@
-/* boffset.c - move the point to an absolute offset
+/* move the point to an absolute offset
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify

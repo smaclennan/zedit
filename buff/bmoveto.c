@@ -1,4 +1,4 @@
-/* bmoveto.c - move to a thingy
+/* move to a thingy
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify

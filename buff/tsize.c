@@ -1,4 +1,4 @@
-/* term.c - generic terminal routines
+/* terminal size
  * Copyright (C) 1988-2017 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -21,9 +21,7 @@
 
 /** @addtogroup term
  * @{
-*/
-
-extern int no_tsize;
+ */
 
 /** Get the current terminal size. If it can't get the size it returns
  * 80x30.
@@ -35,9 +33,8 @@ void tsize(int *rows, int *cols)
 	*cols = 80;
 	*rows = 30;
 
-	if (no_tsize) {
+	if (no_tsize)
 		return;
-	}
 
 	char buf[12], *p;
 	int n, r = 0, c = 0;

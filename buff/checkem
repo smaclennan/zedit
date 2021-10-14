@@ -27,7 +27,7 @@ check_one() {
 echo "Running checkpatch..."
 if [ 1 -eq 1 ]; then
     for f in *.c; do
-	check_one $f SPDX_LICENSE_TAG
+	check_one $f SPDX_LICENSE_TAG,LINE_SPACING
     done
 fi
 

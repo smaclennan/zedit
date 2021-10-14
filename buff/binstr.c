@@ -1,4 +1,4 @@
-/* binstr.c - insert a string and format a string
+/* insert a string and format a string
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify

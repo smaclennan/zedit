@@ -1,4 +1,4 @@
-/* tinit.c - generic terminal init/fini routines
+/* generic terminal init/fini routines
  * Copyright (C) 1988-2017 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -209,7 +209,7 @@ static void tlinit(void)
 	set_tkey(i++, key_f10);
 	set_tkey(i++, key_f11);
 }
-#elif defined (WIN32)
+#elif defined(WIN32)
 extern void tlint(void);
 #else
 static void tlinit(void)

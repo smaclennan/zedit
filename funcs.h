@@ -1,4 +1,4 @@
-/* funcs.h - Zedit function defines
+/* Zedit function defines
  * Copyright (C) 1988-2017 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it

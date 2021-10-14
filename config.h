@@ -1,4 +1,4 @@
-/* config.h - Zedit user configurable defines */
+/* Zedit user configurable defines */
 
 #define CONFIG_H
 

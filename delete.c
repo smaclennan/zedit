@@ -1,4 +1,4 @@
-/* delete.c - Zedit delete commands
+/* Zedit delete commands
  * Copyright (C) 1988-2017 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it

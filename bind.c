@@ -1,4 +1,4 @@
-/* bind.c - Zedit key bindings
+/* Zedit key bindings
  * Copyright (C) 1988-2017 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it

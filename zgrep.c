@@ -1,4 +1,4 @@
-/* zgrep.c - simple standalone grep
+/* simple standalone grep
  * Copyright (C) 2015-2017 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it

@@ -1,4 +1,4 @@
-/* life.c - The game of life
+/* The game of life
  * Copyright (C) 1990-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify

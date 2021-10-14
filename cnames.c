@@ -1,4 +1,4 @@
-/* cnames.c - array of names to functions + help
+/* array of names to functions + help
  * Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,12 +103,12 @@ struct cnames Cnames[] = {
 	},
 	{"copy-region",			ZCOPY_REGION,		AI,
 	 C("Copies the region to the kill buffer. The kill buffer is "
-	   "overwritten unless the the delete flag is set. See Append Kill "
+	   "overwritten unless the delete flag is set. See Append Kill "
 	   "command.")
 	},
 	{"copy-word",			ZCOPY_WORD,		AI,
 	 C("Copies the word the Point is on to the kill buffer. The kill "
-	   "buffer is overwritten unless the the delete flag is set. In the "
+	   "buffer is overwritten unless the delete flag is set. In the "
 	   "PAW, the Copy Word command takes the word the Point was on in the "
 	   "previously active window and inserts it into the PAW.")
 	},
@@ -543,7 +543,7 @@ struct cnames Cnames[] = {
 	},
 	{"setenv",			ZSETENV,		AN,
 	 C("Performs a 'setenv' command on an environment variable. The "
-	   "variable will keep the setting during the the Zedit session.")
+	   "variable will keep the setting during the Zedit session.")
 	},
 	{"sh-indent",			ZSH_INDENT,		AN,
 	 C("Causes Newline characters to auto-indent to the current tab "

@@ -1,4 +1,4 @@
-/* vars.h - Zedit variable defines
+/* Zedit variable defines
  * Copyright (C) 1988-2016 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it

@@ -1,4 +1,4 @@
-/* getfname.c - get a file name with completion
+/* get a file name with completion
  * Copyright (C) 1988-2018 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it

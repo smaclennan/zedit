@@ -1,4 +1,4 @@
-/* z.h - Main Zedit include file
+/* Main Zedit include file
  * Copyright (C) 1988-2018 Sean MacLennan
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -187,7 +187,7 @@ extern int ring_bell;
 extern int raw_mode;
 extern int text_mode;
 
-#define CMD(n) (*Cmds[n][Curcmds])()
+#define CMD(n) ((*Cmds[n][Curcmds])())
 
 extern struct zbuff *Bufflist;
 extern struct zbuff *Buff_save;

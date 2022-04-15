@@ -227,3 +227,5 @@ Byte Keys[] = {
 	[M(127)] = ZDELETE_PREVIOUS_WORD,	/* M-DEL */
 };
 /* @} */
+
+_Static_assert(sizeof(Keys) == NUMKEYS, "Keys != NUMKEYS");

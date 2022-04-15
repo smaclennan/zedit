@@ -37,6 +37,9 @@ struct avar {
 	const char *doc;
 };
 extern struct avar Vars[];
+/* getplete structs must be aligned */
+_Static_assert(((sizeof(struct avar) % sizeof(char *)) == 0),
+	       "struct avar not aligned");
 
 /* Handy macros */
 #define VAR(n)		Vars[n].u.val

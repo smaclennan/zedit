@@ -664,6 +664,10 @@ struct cnames Cnames[] = {
 };
 /* @} */
 
+_Static_assert((sizeof(Cnames) / sizeof(struct cnames)) == NUMFUNCS,
+	       "Cnames != NUMFUNCS");
+
+
 /*
  * Local Variables:
  * my-checkpatch-ignores: "SPDX_LICENSE_TAG,SPLIT_STRING"

@@ -147,4 +147,9 @@ void (*Cmds[][2])() = {
 	{ Znotimpl,			Zfname },
 };
 int Curcmds;
+
+/* We must subtract one due to Zfname */
+_Static_assert(((sizeof(Cmds) / sizeof(void *) / 2) - 1) == NUMFUNCS,
+	       "Cmds != NUMFUNCS - 1");
+
 /* @} */

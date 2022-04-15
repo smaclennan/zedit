@@ -61,6 +61,11 @@ static char *Tkeys[] = {
 	"\033[8^"	/* C-end */
 };
 
+_Static_assert((sizeof(Tkeys) / sizeof(char *)) == NUM_SPECIAL,
+	       "Tkeys != NUM_SPECIAL");
+/* Currently NUM_SPECIAL must fit in 32 bits */
+_Static_assert(NUM_SPECIAL <= 32, "Too many NUM_SPECIAL");
+
 void st_hack(void)
 {
 	Tkeys[4] = "\033[4h"; /* insert */

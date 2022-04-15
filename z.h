@@ -126,6 +126,9 @@ struct cnames {
 	const char *doc;
 };
 #define CNAMESIZE sizeof(struct cnames)
+/* getplete structs must be aligned */
+_Static_assert((sizeof(struct cnames) % sizeof(char *)) == 0,
+	       "cnames not aligned");
 
 struct wdo {
 	struct wdo *next;

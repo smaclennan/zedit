@@ -29,90 +29,52 @@
 /* Need to include this after buff/kbd.c for -std=c11 */
 #include <stdio.h>
 
-#define VARSNUM		((int)(sizeof(Vars) / sizeof(struct avar)))
-
-#define N_KEYS ((int)(sizeof(Tkeys) / sizeof(char *)))
-
 void Dbg(const char *fmt, ...) {}
 
 int main(int argc, char *argv[])
 {
-	int i, s1, s2, err = 0;
-	Byte array[97];
+	int err = 0;
 
-	if (NUMVARS != VARSNUM) {
-		printf("Mismatch in NUMVARS and VARNUM %d:%d\n",
-			   NUMVARS, VARSNUM);
+	// Check KEY_MASK
+	unsigned long mask = 0;
+	for (int i = 0; i < NUM_SPECIAL; ++i)
+		mask = (mask << 1) | 1;
+	if (mask != KEY_MASK) {
+		printf("Mismatch mask %08lx and %08lx\n",
+		       mask, (unsigned long)KEY_MASK);
 		err = 1;
-	}
-
-	if (N_KEYS != NUM_SPECIAL) {
-		printf("Mismatch N_KEYS %d NUM_SPECIAL %d\n",
-			   N_KEYS, NUM_SPECIAL);
-		err = 1;
-	}
-
-	if (NUM_SPECIAL > 32) {
-		printf("Too many special keys\n");
-		err = 1;
-	} else {
-		unsigned long mask = 0;
-
-		for (i = 0; i < NUM_SPECIAL; ++i)
-			mask = (mask << 1) | 1;
-		if (mask != KEY_MASK) {
-			printf("Mismatch mask %08lx and %08lx\n",
-				   mask, (unsigned long)KEY_MASK);
-			err = 1;
-		}
 	}
 
 	/* Spot check keys array */
-	if (sizeof(Keys) != NUMKEYS) {
-		printf("Problems with Keys array\n");
-		err = 1;
-	} else {
-		memset(array, ZINSERT, sizeof(array));
-		array[0] = ZUNDO;
-		array[96] = ZDELETE_PREVIOUS_CHAR;
-		if (memcmp(array, Keys + 31, sizeof(array))) {
-			printf("Problems with Keys array 1\n");
-			err = 1;
-		}
-
-		if (Keys[CX('1')] != ZONE_WINDOW ||
-			Keys[CX('=')] != ZPOSITION ||
-			Keys[CX('O')] != ZNEXT_WINDOW ||
-			Keys[CX('Z')] != ZZAP_TO_CHAR ||
-			Keys[CX(127)] != ZDELETE_PREVIOUS_WORD) {
-			printf("Problems with Keys array 2\n");
-			err = 1;
-		}
-
-		if (Keys[M('A')] != ZAGAIN ||
-			Keys[M('Z')] != ZSAVE_AND_EXIT ||
-			Keys[TC_UP] != ZPREVIOUS_LINE ||
-			Keys[TC_F12] != ZREVERT_FILE ||
-			Keys[M(127)] != ZDELETE_PREVIOUS_WORD) {
-			printf("Problems with Keys array 3\n");
-			err = 1;
-		}
-	}
-
-	/* check sizes of various stuff */
-	if (NUMFUNCS >= 256) {
-		printf("Cnames[].fnum is a byte. Too many functions.\n");
+	Byte array[97];
+	memset(array, ZINSERT, sizeof(array));
+	array[0] = ZUNDO;
+	array[96] = ZDELETE_PREVIOUS_CHAR;
+	if (memcmp(array, Keys + 31, sizeof(array))) {
+		printf("Problems with Keys array 1\n");
 		err = 1;
 	}
-	s1 = sizeof(Cnames) / sizeof(struct cnames);
-	s2 = (sizeof(Cmds) / sizeof(void *) / 2) - 1;
-	if (s1 != NUMFUNCS || s2 != NUMFUNCS) {
-		printf("Cnames: %d Cmds: %d NUMFUNCS: %d\n", s1, s2, NUMFUNCS);
-		exit(1); /* stop since the loop below might segfault */
+
+	if (Keys[CX('1')] != ZONE_WINDOW ||
+	    Keys[CX('=')] != ZPOSITION ||
+	    Keys[CX('O')] != ZNEXT_WINDOW ||
+	    Keys[CX('Z')] != ZZAP_TO_CHAR ||
+	    Keys[CX(127)] != ZDELETE_PREVIOUS_WORD) {
+		printf("Problems with Keys array 2\n");
+		err = 1;
+	}
+
+	if (Keys[M('A')] != ZAGAIN ||
+	    Keys[M('Z')] != ZSAVE_AND_EXIT ||
+	    Keys[TC_UP] != ZPREVIOUS_LINE ||
+	    Keys[TC_F12] != ZREVERT_FILE ||
+	    Keys[M(127)] != ZDELETE_PREVIOUS_WORD) {
+		printf("Problems with Keys array 3\n");
+		err = 1;
 	}
 
 	/* validate the Cnames array the best we can */
-	for (s1 = 1; s1 < NUMFUNCS; ++s1) {
+	for (int s1 = 1; s1 < NUMFUNCS; ++s1) {
 		if (strcasecmp(Cnames[s1].name, Cnames[s1 - 1].name) <= 0) {
 			printf("Problem: (%d) %s and %s\n",
 				s1, Cnames[s1 - 1].name, Cnames[s1].name);
@@ -125,24 +87,12 @@ int main(int argc, char *argv[])
 	}
 
 	/* validate the Vars array */
-	for (s1 = 1; s1 < NUMVARS; ++s1)
+	for (int s1 = 1; s1 < NUMVARS; ++s1)
 		if (strcasecmp(Vars[s1].vname, Vars[s1 - 1].vname) <= 0) {
 			printf("Problem: (%d) %s and %s\n",
 				s1, Vars[s1 - 1].vname, Vars[s1].vname);
 			err = 1;
 		}
-
-	/* getplete structs must be aligned */
-	if (sizeof(struct cnames) % sizeof(char *)) {
-		printf("struct cnames not aligned [%d/%d]\n",
-			   (int)sizeof(struct cnames), (int)sizeof(char *));
-		err = 1;
-	}
-	if (sizeof(struct avar) % sizeof(char *)) {
-		printf("struct avar not aligned [%d/%d]\n",
-			   (int)sizeof(struct avar), (int)sizeof(char *));
-		err = 1;
-	}
 
 	free(NULL); /* paranoia */
 

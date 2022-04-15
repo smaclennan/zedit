@@ -80,6 +80,9 @@ struct avar Vars[] = {
 };
 /* @} */
 
+_Static_assert((sizeof(Vars) / sizeof(struct avar)) == NUMVARS,
+	       "Vars != NUMVARS");
+
 /*
  * Local Variables:
  * my-checkpatch-ignores: "SPDX_LICENSE_TAG,SPLIT_STRING"

@@ -142,6 +142,10 @@
 #define ZUNTAB			(ZDOS2UNIX + 1)
 #define NUMFUNCS		(ZUNTAB + 1)
 
+_Static_assert(NUMFUNCS < 256,
+	       "Cnames[].fnum is a byte. Too many functions.");
+
+
 /* this is used by the getfname command in the PAW for command completion */
 #define ZFNAME		NUMFUNCS
 /* @} */

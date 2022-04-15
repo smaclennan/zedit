@@ -30,6 +30,7 @@
 #include "config.h"
 #endif
 
+#include <stddef.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -104,8 +105,6 @@ struct mark {
 	struct mark *next;			/**< List of marks. */
 #endif
 };
-/** Size of mark struct without list pointers */
-#define __MRKSIZE (sizeof(void *) * 2 + sizeof(unsigned int))
 
 /** Current page length.
  * @param b Buffer to check.
@@ -422,7 +421,9 @@ static inline void bmrktopnt(struct buff *buff, struct mark *mark)
  */
 static inline void mrktomrk(struct mark *m1, struct mark *m2)
 {
-	memcpy(m1, m2, __MRKSIZE);
+	m1->mbuff = m2->mbuff;
+	m1->mpage = m2->mpage;
+	m1->moffset = m2->moffset;
 }
 
 /** Is mark1 at mark2?
@@ -432,7 +433,9 @@ static inline void mrktomrk(struct mark *m1, struct mark *m2)
  */
 static inline int mrkatmrk(struct mark *m1, struct mark *m2)
 {
-	return memcmp(m1, m2, __MRKSIZE) == 0;
+	return  m1->moffset == m2->moffset &&
+		m1->mpage == m2->mpage &&
+		m1->mbuff == m2->mbuff;
 }
 
 #ifdef GLOBAL_MARKS

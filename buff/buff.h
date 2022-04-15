@@ -211,6 +211,7 @@ int strconcat(char *str, int len, ...);
 #endif
 /** Half a page for pagesplit(). */
 #define HALFP		(PGSIZE / 2)
+_Static_assert((PGSIZE & 1) == 0, "PGSIZE must be even.");
 
 /** Describes one page in memory. */
 struct page {

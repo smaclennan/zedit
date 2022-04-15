@@ -471,11 +471,8 @@ struct cnames Cnames[] = {
 	},
 	{"read-file",			ZREAD_FILE,		0,
 	 C("Prompts for a path name, with file name completion, and inserts "
-	   "the file into the current buffer before the Point. If there is a "
-	   "Universal Argument, the current buffer is deleted, first asking "
-	   "to save the file if it is modified, before reading in the new "
-	   "file. The buffers file name is not changed, any writes will be to "
-	   "the old file name.")
+	   "the file into the current buffer before the Point. The buffers file"
+	   "name is not changed, any writes will be to the old file name.")
 	},
 	{"redisplay",			ZREDISPLAY,		AN,
 	 C("Repaints the entire screen.")

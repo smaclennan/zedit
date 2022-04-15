@@ -381,22 +381,18 @@ void Zread_file(void)
 	if (get_findfile("Read File: "))
 		return;
 
-	struct buff *tbuff = bcreate();
-	if (!tbuff) {
-		error("Unable to create buffer");
-		return;
-	}
+	struct mark *tmark = bcremark(Bbuff);
+	bmrktopnt(Bbuff, tmark);
 
 	putpaw("Reading %s", lastpart(Fname));
-	if (breadfile(tbuff, Fname, NULL)) {
+	if (breadfile(Bbuff, Fname, NULL))
 		error("Unable to read %s", Fname);
-		return;
-	}
 
-	struct mark tmark;
-	bmrktopnt(tbuff, &tmark);
-	btoend(tbuff);
-	bcopyrgn(&tmark, Bbuff);
-	bdelbuff(tbuff);
+	Bbuff->bmodf = 1;
+
+	bpnttomrk(Bbuff, tmark);
+	bdelmark(tmark);
+
+	redisplay();
 }
 /* @} */

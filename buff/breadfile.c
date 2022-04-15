@@ -45,7 +45,7 @@
  * @param fname The file to read.
  * @param[out] compressed Was the file compressed? Only if ZLIB enabled.
  *             Can be NULL.
- * @return 0 on success, -1 on file error, 1 on zlib error.
+ * @return 0 on success, -errno on general errors, 1 on zlib error.
  */
 int breadfile(struct buff *buff, const char *fname, int *compressed)
 {

@@ -75,7 +75,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 	/* Deal with point in the middle of a page. */
 	if (curplen(buff) && buff->curchar < PGSIZE) {
 		pagesplit(buff, buff->curchar);
-		if (!newpage(buff, buff->curpage))
+		if (!newpage(buff))
 			return -ENOMEM;
 		makecur(buff, buff->curpage->nextp, 0);
 	}
@@ -84,7 +84,7 @@ int breadfile(struct buff *buff, const char *fname, int *compressed)
 
 	while ((len = fileread(fd, buf, PGSIZE)) > 0) {
 		if (curplen(buff)) {
-			if (!newpage(buff, buff->curpage)) {
+			if (!newpage(buff)) {
 				fileclose(fd);
 				return -ENOMEM;
 			}

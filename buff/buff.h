@@ -225,7 +225,7 @@ struct page {
 	struct page *nextp;	/**< List of pages. */
 };
 
-struct page *newpage(struct buff *buff, struct page *curpage);
+struct page *newpage(struct buff *buff);
 void freepage(struct buff *buff, struct page *page);
 struct page *pagesplit(struct buff *buff, unsigned int dist);
 

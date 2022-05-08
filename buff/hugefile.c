@@ -201,24 +201,25 @@ int breadhuge(struct buff *buff, const char *fname)
 
 	pages = buff->huge->stat.st_size / PGSIZE;
 	left = buff->huge->stat.st_size % PGSIZE;
-	page = buff->curpage;
 	buff->huge->n_huge = pages - 1;
 	for (i = 1; i < pages; ++i) {
-		page = newpage(buff, page);
+		page = newpage(buff);
 		if (!page) {
 			bempty(buff); /* will close fd */
 			return -ENOMEM;
 		}
+		buff->curpage = page;
 		page->pgoffset = i;
 		page->plen = PGSIZE;
 	}
 
 	if (left) {
-		page = newpage(buff, page);
+		page = newpage(buff);
 		if (!page) {
 			bempty(buff); /* will close fd */
 			return -ENOMEM;
 		}
+		buff->curpage = page;
 		page->pgoffset = i;
 		page->plen = left;
 		++buff->huge->n_huge;

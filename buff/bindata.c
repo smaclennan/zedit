@@ -51,7 +51,7 @@ static int bappendpage(struct buff *buff, const Byte *data, int size)
 
 	/* Put the rest in new pages */
 	while (size > 0) {
-		struct page *npage = newpage(buff, buff->curpage);
+		struct page *npage = newpage(buff);
 
 		if (!npage)
 			return appended;
@@ -138,7 +138,7 @@ int bindata(struct buff *buff, Byte *data, unsigned int size)
 	}
 
 	while (size > 0) {
-		npage = newpage(buff, buff->curpage);
+		npage = newpage(buff);
 		if (!npage)
 			break;
 

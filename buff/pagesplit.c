@@ -40,11 +40,11 @@ struct page *pagesplit(struct buff *buff, unsigned int dist)
 	if (dist > PGSIZE)
 		return NULL;
 
-	curpage = buff->curpage;
-	newp = newpage(buff, curpage);
+	newp = newpage(buff);
 	if (!newp)
 		return NULL;
 
+	curpage = buff->curpage;
 	newsize = curpage->plen - dist;
 	memcpy(newp->pdata, curpage->pdata + dist, newsize);
 	curpage->plen = dist;

@@ -52,6 +52,7 @@ CFILES = \
 	kbd.c \
 	mrkaftermrk.c \
 	mrkbeforemrk.c \
+	newpage.c \
 	pagesplit.c \
 	reg.c \
 	strlcpy.c \

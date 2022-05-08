@@ -31,40 +31,19 @@ struct buff *bcreate(void)
 	struct buff *buf = (struct buff *)calloc(1, sizeof(struct buff));
 
 	if (buf) {
-		buf->firstp = newpage(buf, NULL);
+		/* This is the only place that can create a page
+		 * without calling newpage().
+		 */
+		buf->firstp = calloc(1, sizeof(struct page));
 		if (!buf->firstp) {
 			/* bad news, de-allocate */
 			free(buf);
 			return NULL;
 		}
+		buf->lastp = buf->firstp;
 		makecur(buf, buf->firstp, 0);
 	}
 	return buf;
 }
 
-/** Low-level page function to create a new memory page and link into
- * chain after curpage.
- * @param buf The buffer to add the page to.
- * @param curpage The current page. Can be NULL.
- * @return The new page or NULL.
- */
-struct page *newpage(struct buff *buff, struct page *curpage)
-{
-	struct page *page = (struct page *)calloc(1, sizeof(struct page));
-
-	if (page) {
-		if (curpage) {
-			page->prevp = curpage;
-			if (curpage->nextp) {
-				page->nextp = curpage->nextp;
-				curpage->nextp->prevp = page;
-			} else
-				buff->lastp = page;
-			curpage->nextp = page;
-		} else
-			buff->lastp = page;
-	}
-
-	return page;
-}
 /* @} */

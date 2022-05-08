@@ -91,7 +91,7 @@ void bpeek_test(void)
 	buff->firstp->plen = 11;
 
 	// Create a newpage and make it current
-	struct page *new = newpage(buff->firstp);
+	struct page *new = newpage(buff, buff->firstp);
 	makecur(buff, new, 0);
 	binsert(buff, 'c');
 	bmove(buff, -1);
@@ -119,11 +119,12 @@ int main(int argc, char *argv[])
 #if 0
 	bpeek_test();
 #else
-	struct page *page = newpage(NULL);
+	struct buff *buff = { 0 };
+	struct page *page = newpage(buff, NULL);
 	assert(page);
-	struct page *last = newpage(page);
+	struct page *last = newpage(buff, page);
 	assert(page);
-	struct page *next = newpage(page);
+	struct page *next = newpage(buff, page);
 	assert(last);
 
 	assert(page->prevp == NULL);

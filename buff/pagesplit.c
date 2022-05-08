@@ -41,7 +41,7 @@ struct page *pagesplit(struct buff *buff, unsigned int dist)
 		return NULL;
 
 	curpage = buff->curpage;
-	newp = newpage(curpage);
+	newp = newpage(buff, curpage);
 	if (!newp)
 		return NULL;
 

@@ -60,7 +60,7 @@ int breadv(struct buff *buff, int fd)
 		iovs[0].iov_len = 0;
 
 	/* plus a new page */
-	npage = newpage(buff->curpage);
+	npage = newpage(buff, buff->curpage);
 	if (!npage) {
 		errno = ENOMEM;
 		return -1;

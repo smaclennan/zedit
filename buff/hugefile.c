@@ -204,7 +204,7 @@ int breadhuge(struct buff *buff, const char *fname)
 	page = buff->curpage;
 	buff->huge->n_huge = pages - 1;
 	for (i = 1; i < pages; ++i) {
-		page = newpage(page);
+		page = newpage(buff, page);
 		if (!page) {
 			bempty(buff); /* will close fd */
 			return -ENOMEM;
@@ -214,7 +214,7 @@ int breadhuge(struct buff *buff, const char *fname)
 	}
 
 	if (left) {
-		page = newpage(page);
+		page = newpage(buff, page);
 		if (!page) {
 			bempty(buff); /* will close fd */
 			return -ENOMEM;

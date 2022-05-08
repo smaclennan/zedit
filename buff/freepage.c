@@ -29,15 +29,18 @@
  */
 void freepage(struct buff *buff, struct page *page)
 {
-	if (page) {
-		if (page->nextp)
-			page->nextp->prevp = page->prevp;
-		if (page->prevp)
-			page->prevp->nextp = page->nextp;
-		else if (buff)
-			buff->firstp = page->nextp;
+	if (!page)
+		return;
 
-		free(page);
-	}
+	if (page->nextp)
+		page->nextp->prevp = page->prevp;
+	else
+		buff->lastp = page->prevp;
+	if (page->prevp)
+		page->prevp->nextp = page->nextp;
+	else if (buff)
+		buff->firstp = page->nextp;
+
+	free(page);
 }
 /* @} */

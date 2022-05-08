@@ -77,6 +77,7 @@ struct huge_file {
 /** Main buffer structure. */
 struct buff {
 	struct page *firstp;	/**< List of pages. */
+	struct page *lastp;	/**< Last page in buffer. */
 	struct page *curpage;	/**< Point page. */
 	Byte *curcptr;		/**< Point position in the page. */
 	unsigned int curchar;	/**< Point index in the page. */
@@ -224,7 +225,7 @@ struct page {
 	struct page *nextp;	/**< List of pages. */
 };
 
-struct page *newpage(struct page *curpage);
+struct page *newpage(struct buff *buff, struct page *curpage);
 void freepage(struct buff *buff, struct page *page);
 struct page *pagesplit(struct buff *buff, unsigned int dist);
 
@@ -290,12 +291,8 @@ static inline void btostart(struct buff *buff)
  * @param buff Buffer to move Point in.
  */
 static inline void btoend(struct buff *buff)
-{	/* For huge files we don't want to make every page current */
-	struct page *page;
-
-	for (page = buff->curpage; page->nextp; page = page->nextp)
-		;
-	makecur(buff, page, page->plen);
+{
+	makecur(buff, buff->lastp, buff->lastp->plen);
 }
 
 /** Is this the last page in the buffer?

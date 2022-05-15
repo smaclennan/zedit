@@ -19,31 +19,16 @@
 
 #define FCHECK
 #include "z.h"
+#include <stdio.h>
 
 #include "varray.c"
 #include "funcs.c"
 #include "cnames.c"
 #include "bind.c"
-#include "buff/kbd.c"
-
-/* Need to include this after buff/kbd.c for -std=c11 */
-#include <stdio.h>
-
-void Dbg(const char *fmt, ...) {}
 
 int main(int argc, char *argv[])
 {
 	int err = 0;
-
-	// Check KEY_MASK
-	unsigned long mask = 0;
-	for (int i = 0; i < NUM_SPECIAL; ++i)
-		mask = (mask << 1) | 1;
-	if (mask != KEY_MASK) {
-		printf("Mismatch mask %08lx and %08lx\n",
-		       mask, (unsigned long)KEY_MASK);
-		err = 1;
-	}
 
 	/* Spot check keys array */
 	Byte array[97];
@@ -93,8 +78,6 @@ int main(int argc, char *argv[])
 				s1, Vars[s1 - 1].vname, Vars[s1].vname);
 			err = 1;
 		}
-
-	free(NULL); /* paranoia */
 
 	return err;
 }

@@ -48,6 +48,9 @@
 #define SPECIAL_END		TC_C_END
 #define NUM_SPECIAL		(SPECIAL_END - SPECIAL_START + 1)
 
+_Static_assert(sizeof(unsigned) * 8 - __builtin_clz(KEY_MASK) == NUM_SPECIAL,
+		"KEY_MASK and NUM_SPECIAL mismatch");
+
 /* 128 ASCII + 128 meta + 128 C-X */
 #define NUMKEYS			(128 + 128 + 128)
 

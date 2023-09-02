@@ -109,8 +109,8 @@ void tputchar(Byte ch)
 }
 
 /** Optimized move the cursor to row+col.
- * @param row Row, zero based.
- * @param col Column, zero based.
+ * @param row The row, zero based.
+ * @param col The column, zero based.
  */
 void t_goto(int row, int col)
 {

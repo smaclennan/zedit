@@ -279,7 +279,7 @@ static inline void btoend(struct buff *buff)
 }
 
 /** Is this the last page in the buffer?
- * @param page Page to check.
+ * @param page The page to check.
  */
 static inline int lastp(struct page *page)
 {
@@ -358,8 +358,8 @@ struct mark *_bcremark(struct buff *buff, struct mark **tail);
 void _bdelmark(struct mark *mark, struct mark **tail);
 
 /** Is buffer Point at mark?
- * @param buff Buffer to check.
- * @param mark Mark to check.
+ * @param buff The buffer to check.
+ * @param mark The mark to check.
  * @return 1 if buffer Point is at mark.
  */
 static inline int bisatmrk(struct buff *buff, struct mark *mark)
@@ -367,8 +367,8 @@ static inline int bisatmrk(struct buff *buff, struct mark *mark)
 	return buff->curpage == mark->mpage && buff->curchar == mark->moffset;
 }
 /** Is buffer Point at mark? Mark can be NULL.
- * @param buff Buffer to check.
- * @param mark Mark to check.
+ * @param buff The buffer to check.
+ * @param mark The mark to check.
  * @return 1 if buffer Point is at mark.
  */
 static inline int bisatmrk_safe(struct buff *buff, struct mark *mark)

@@ -48,7 +48,11 @@
  */
 
 #if defined(__unix__)
-/* This is user configurable, turn it off if you want */
+/* This enables some simple buffering rather then writing on demand.
+ * It is user configurable, turn it off if you want.
+ * If you do leave it on, you have to tflush() in the right places. It
+ * does not flush on a NL like stdio does.
+ */
 #define TBUFFERED
 #endif
 

@@ -31,8 +31,6 @@ static int read_thread(void *arg)
 	struct buff *buff = arg;
 	struct page *page;
 
-	Dbg("%s running\n", __func__);
-
 	for (page = buff->firstp; page; page = page->nextp)
 		if (page->pgoffset)
 			breadpage(buff, page);
@@ -40,8 +38,6 @@ static int read_thread(void *arg)
 	bhugecleanup(buff);
 
 	huge_file_cb(buff, 0);
-
-	Dbg("%s done\n", __func__);
 
 	return 0;
 }

@@ -9,8 +9,6 @@
 int Prow; /**< Current Point row. */
 int Pcol; /**< Current Point column. */
 
-char *int2str(long val, char *out); // SAM FIXME
-
 /* \cond skip */
 static int Srow = -1, Scol = -1;
 static int Clrcol[ROWMAX];
@@ -74,6 +72,50 @@ void tflush(void)
 }
 #endif
 
+// This is very specific to ansi_force.
+static int rowcol2ascii(char **str, int rowcol)
+{
+	int n = 0;
+
+	if (rowcol == 0) {
+		*(*str)-- = '0';
+		return 1;
+	}
+
+	while (rowcol > 0) {
+		*(*str)-- = (rowcol % 10) + '0';
+		rowcol /= 10;
+		++n;
+	}
+
+	str--;
+	return n;
+}
+
+// SAM FIXME
+static void ansi_force(void)
+{
+	// The longest string is 10 + 10 + 4
+	char str[32], *p = str + 31;
+
+#ifdef ZERO_BASED
+	Prow++; Pcol++;
+#endif
+
+	// Build the string backwards
+	*p-- = 'H';
+	int ncol = rowcol2ascii(&p, Pcol);
+	*p-- = ';';
+	int nrow = rowcol2ascii(&p, Prow);
+	*p-- = '[';
+	*p = '\033';
+	twrite(p, ncol + nrow + 4);
+
+#ifdef ZERO_BASED
+	Prow--; Pcol--;
+#endif
+}
+
 /* \cond skip */
 /** Optimized move the cursor to the current Prow+Pcol. You probably
  * want t_goto().
@@ -86,20 +128,7 @@ static void tforce(void)
 #elif defined(TERMINFO)
 		TPUTS(tparm(cursor_address, Prow, Pcol));
 #else
-		// SAM FIXME func
-		char str[64], *p;
-		strcpy(str, "\033[");
-#ifdef ZERO_BASED
-		p = int2str(Prow + 1, str + 2);
-		*p++ = ';';
-		p = int2str(Pcol + 1, p);
-#else
-		p = int2str(Prow, str + 2);
-		*p++ = ';';
-		p = int2str(Pcol, p);
-#endif
-		*p++ = 'H';
-		twrite(str, p - str);
+		ansi_force();
 #endif
 		Srow = Prow;
 		Scol = Pcol;
@@ -123,7 +152,7 @@ void tputchar(Byte ch)
 /** Print a character at the current Prow+Pcol. May be buffered.
  * @param ch The character to put to the terminal.
  */
-void tputstr(const char *str)
+void tputstr(char *str)
 {
 	tforce();
 	while (*str) {

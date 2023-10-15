@@ -2,8 +2,6 @@
 
 #include "tinit.h"
 
-char *uint2str(unsigned long val, char *out); // SAM FIXME
-
 /** @addtogroup term
  * @{
  */
@@ -20,6 +18,7 @@ void tstyle(int style)
 
 	if (style == cur_style)
 		return;
+	cur_style = style;
 
 #ifdef TERMCAP
 	switch (style) {
@@ -54,15 +53,25 @@ void tstyle(int style)
 		break;
 	}
 #else
-	char str[32], *p = str;
+	char str[8], *p = str;
+	int n = 4;
 
 	*p++ = '\033'; *p++ = '[';
-	p = uint2str(style, p);
+	if (style >= T_FG) {
+		if (style >= T_BG) {
+			*p++ = '4';
+			style -= 40;
+		} else {
+			*p++ = '3';
+			style -= 30;
+		}
+		++n;
+	}
+	*p++ = style + '0';
 	*p++ = 'm';
-	twrite(str, p - str);
+	twrite(str, n);
 #endif
 
-	cur_style = style;
 	tflush();
 }
 /* @} */

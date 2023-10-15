@@ -101,7 +101,7 @@ void tclrwind(void);
 #ifdef TERMCAP
 #define T_BELL			256
 #else
-#define T_BELL			(T_BG | T_RED)
+#define T_BELL			(T_BG + T_RED)
 #endif
 
 void tstyle(int style);

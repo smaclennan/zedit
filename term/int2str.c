@@ -42,28 +42,3 @@ char *int2str(long val, char *out)
 
 	return p;
 }
-
-// SAM We should probably use this for everything
-/** Unsigned integer to ascii.
- * @param val The integer to convert.
- * @param out The output string.
- * @return A pointer to the end of the string.
- */
-char *uint2str(unsigned long val, char *out)
-{
-	char *p = out;
-
-	if (val == 0) {
-		*p++ = '0';
-		*p = 0;
-	} else {
-		while (val > 0) {
-			*p++ = (val % 10) + '0';
-			val /= 10;
-		}
-		*p = 0;
-
-		reverse_string(out, p);
-	}
-	return p;
-}

@@ -92,7 +92,6 @@ static int rowcol2ascii(char **str, int rowcol)
 	return n;
 }
 
-// SAM FIXME
 static void ansi_force(void)
 {
 	// The longest string is 10 + 10 + 4

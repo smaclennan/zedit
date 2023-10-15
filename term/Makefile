@@ -10,6 +10,7 @@ CFILES = \
 	tinit.c \
 	tsize.c \
 	tstyle.c \
+	kbd.c \
 
 O := $(addprefix $(BDIR)/, $(CFILES:.c=.o))
 

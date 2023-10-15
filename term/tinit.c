@@ -197,7 +197,6 @@ extern void tlint(void);
 #else
 static void tlinit(void)
 {
-#if 0 // SAM FIXME this is for kbd
 	char *term = getenv("TERM");
 
 	/* I like st, but they have a weird mix of ansi and posix and the
@@ -206,7 +205,6 @@ static void tlinit(void)
 	if (term)
 		if (strcmp(term, "st") == 0 || strncmp(term, "st-", 3) == 0)
 			st_hack();
-#endif
 }
 #endif
 /* \endcond */

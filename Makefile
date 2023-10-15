@@ -26,7 +26,7 @@ BDIR ?= $(HOST_ARCH)
 # If you set D=1 on the command line then $(D:1=-g)
 # returns -g, else it returns the default (-O2).
 D = -O2
-CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC) -I. -Ibuff -DHAVE_CONFIG_H
+CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC) -I. -Ibuff -Iterm -DHAVE_CONFIG_H -DZERO_BASED
 
 # Saves about 20k
 #CFLAGS += -DNO_HELP
@@ -34,6 +34,7 @@ CFLAGS += -Wall $(D:1=-g) $(ZLIBINC) $(ASPELLINC) -I. -Ibuff -DHAVE_CONFIG_H
 MFLAGS += --no-print-directory CC="$(CC)" CFLAGS="$(CFLAGS) -I.." BDIR="z-$(BDIR)"
 
 LIBS += buff/z-$(BDIR)/libbuff.a
+LIBS += term/z-$(BDIR)/libterm.a
 
 #LIBS += -lz
 #LIBS += -ldl
@@ -48,7 +49,8 @@ CFILES = bcmds.c bind.c cnames.c comment.c commands.c cursor.c delete.c \
 	undo.c
 
 HFILES = config.h funcs.h proto.h vars.h z.h
-HFILES += buff/buff.h buff/calc.h buff/reg.h buff/tinit.h buff/keys.h
+HFILES += buff/buff.h buff/calc.h buff/reg.h
+HFILES += term/tinit.h term/keys.h
 
 O := $(addprefix $(BDIR)/, $(CFILES:.c=.o))
 
@@ -71,7 +73,7 @@ $(BDIR)/%.o : %.c
 
 all:	fcheck $(BDIR) $(BDIR)/$(ZEXE)
 
-$(BDIR)/$(ZEXE): $O buff/z-$(BDIR)/libbuff.a
+$(BDIR)/$(ZEXE): $O buff/z-$(BDIR)/libbuff.a term/z-$(BDIR)/libterm.a
 	$(QUIET_LINK)$(CC) -o $@ $O $(LIBS)
 ifeq ($(BDIR), $(HOST_ARCH))
 	@rm -f $(ZEXE)
@@ -82,7 +84,10 @@ endif
 buff/z-$(BDIR)/libbuff.a: buff/*.[ch]
 	$(QUIET_MAKE)$(MAKE) $(MFLAGS) -C buff
 
-fcheck: fcheck.c funcs.c varray.c cnames.c bind.c config.h vars.h buff/keys.h
+term/z-$(BDIR)/libterm.a: term/*.[ch]
+	$(QUIET_MAKE)$(MAKE) $(MFLAGS) -C term
+
+fcheck: fcheck.c funcs.c varray.c cnames.c bind.c config.h vars.h term/keys.h
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ fcheck.c
 	@./fcheck $(ZLIBINC) $(ASPELLINC)
 

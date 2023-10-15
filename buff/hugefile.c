@@ -5,7 +5,6 @@
 #include <sys/stat.h>
 
 #include "buff.h"
-#include "tinit.h"
 
 #if HUGE_FILES
 

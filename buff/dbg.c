@@ -3,7 +3,7 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include "buff.h"
-#include "tinit.h"
+// SAM #include "tinit.h"
 
 /* \cond skip */
 static char *dbgfname;
@@ -54,10 +54,10 @@ void Dbg(const char *fmt, ...)
 		int fd = open(dbgfname, O_CREAT | O_WRONLY | O_APPEND, 0644);
 
 		if (fd >= 0) {
-			_twrite(fd, line, len);
+			write(fd, line, len);
 			close(fd);
 		}
 	} else
-		terror(line);
+		write(2, line, strlen(line));
 }
 /* @} */

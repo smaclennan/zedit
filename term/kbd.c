@@ -97,7 +97,7 @@ static char *Tkeys2[] = {
 /* \cond skip */
 /** The size of the keyboard input stack. Must be a power of 2 */
 #define CSTACK 16
-static Byte cstack[CSTACK]; /**< The keyboard input stack */
+static char cstack[CSTACK]; /**< The keyboard input stack */
 static int cptr = -1; /**< Current pointer in keyboard input stack. */
 int cpushed; /**< Number of bytes pushed on the keyboard input stack. */
 static int Pending; /**< Set to 1 if poll stdin detected input. */
@@ -108,13 +108,13 @@ static int Pending; /**< Set to 1 if poll stdin detected input. */
  *
  * The read can block.
  */
-static Byte _tgetkb(void)
+static char _tgetkb(void)
 {
 	cptr = (cptr + 1) & (CSTACK - 1);
 	if (cpushed)
 		--cpushed;
 	else {
-		Byte buff[CSTACK];
+		char buff[CSTACK];
 		int i, p = cptr;
 
 		cpushed = read(0, (char *)buff, CSTACK) - 1;
@@ -136,7 +136,7 @@ static void tungetkb(int n)
 }
 
 /** Peek the key at a given offset */
-static Byte tpeek(int offset)
+static char tpeek(int offset)
 {
 	return cstack[(cptr + offset) & (CSTACK - 1)];
 }

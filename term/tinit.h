@@ -11,8 +11,6 @@
 #include <string.h>
 #include <unistd.h>
 
-typedef char Byte; // SAM FIXME
-
 /* Terminal code and how to use it.
  *
  * To use any of the terminal code you first need to call
@@ -23,7 +21,7 @@ typedef char Byte; // SAM FIXME
  * is not required for any of the other terminal functions.
  *
  * The main set of optimized functions are:
- *     tputchar(Byte ch);
+ *     tputchar(char ch);
  *     t_goto(int row, int col);
  *     tcleol(void);
  *     tclrwind(void);
@@ -76,7 +74,7 @@ void tsize(int *rows, int *cols);
 /* Optimized routines for output */
 extern int Prow, Pcol;
 
-void tputchar(Byte ch);
+void tputchar(char ch);
 void tputstr(char *str);
 void t_goto(int row, int col);
 void tcleol(void);

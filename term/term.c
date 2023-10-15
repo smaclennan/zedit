@@ -22,7 +22,7 @@ static int Clrcol[ROWMAX];
 #define MAX_BUF 2048 /**< twrite() buffer size */
 
 /* \cond skip */
-static Byte tbuffer[MAX_BUF];
+static char tbuffer[MAX_BUF];
 static int tcur;
 /* \endcond */
 
@@ -58,7 +58,7 @@ int tputc(int c)
 {
 	if (tcur >= MAX_BUF)
 		tflush();
-	tbuffer[tcur++] = (Byte)c;
+	tbuffer[tcur++] = c;
 	return c;
 }
 
@@ -138,7 +138,7 @@ static void tforce(void)
 /** Print a character at the current Prow+Pcol. May be buffered.
  * @param ch The character to put to the terminal.
  */
-void tputchar(Byte ch)
+void tputchar(char ch)
 {
 	tforce();
 	tputc(ch);

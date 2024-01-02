@@ -54,7 +54,7 @@ size_t strlcat(char *dst, const char *src, size_t dstsize)
 }
 #endif
 
-/* Concatenates any number of string. The last string must be NULL.
+/* Concatenates any number of strings. The last string must be NULL.
  * @param str The string to copy to.
  * @param len The length of the string.
  * @param ... The strings to concat.

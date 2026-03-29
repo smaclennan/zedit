@@ -114,7 +114,7 @@ static void crfixup(void)
 	while (bcsearch(Bbuff, '\r'))
 		if (Buff() == '\n') {
 			bmove(Bbuff, -1);
-			bdelete(Bbuff, 1);
+			bdelete1(Bbuff);
 		}
 
 	btostart(Bbuff);

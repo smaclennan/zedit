@@ -76,6 +76,9 @@ $(BDIR)/%.o : %.c
 
 all: $(BDIR) $(BDIR)/libbuff.a
 
+tags:
+	etags *.[ch]
+
 tests:
 	make -C tests all
 

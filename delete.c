@@ -78,7 +78,7 @@ void Zdelete_previous_char(void)
 void Zdelete_to_eol(void)
 {
 	if (!bisend(Bbuff) && Buff() == NL)
-		bdelete(Bbuff, 1);
+		bdelete1(Bbuff);
 	else {
 		bool atstart = bpeek(Bbuff) == NL;
 		struct mark *tmark = bcremark(Bbuff);
@@ -269,7 +269,7 @@ done:
 void Zjoin(void)
 {
 	toendline(Bbuff);
-	bdelete(Bbuff, 1);
+	bdelete1(Bbuff);
 	Ztrim_white_space();
 	binsert(Bbuff, ' ');
 }

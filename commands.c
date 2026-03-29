@@ -86,7 +86,7 @@ static void blockmove(struct mark *from, struct mark *to)
 		bswappnt(Bbuff, to);
 		binsert(Bbuff, tmp);
 		bswappnt(Bbuff, to);
-		bdelete(Bbuff, 1);
+		bdelete1(Bbuff);
 	}
 }
 
@@ -209,7 +209,7 @@ void Zc_insert(void)
 			}
 			tobegline(Bbuff);
 			while (isspace(Buff()))
-				bdelete(Bbuff, 1);
+				bdelete1(Bbuff);
 			bpnttomrk(Bbuff, tmark);
 		}
 		break;
@@ -325,11 +325,11 @@ void Zfill_check(void)
 void Ztrim_white_space(void)
 {
 	while (!bisend(Bbuff) && biswhite(Buff()))
-		bdelete(Bbuff, 1);
+		bdelete1(Bbuff);
 	while (!bisstart(Bbuff)) {
 		bmove(Bbuff, -1);
 		if (biswhite(Buff()))
-			bdelete(Bbuff, 1);
+			bdelete1(Bbuff);
 		else {
 			bmove1(Bbuff);
 			break;
@@ -377,7 +377,7 @@ void Zfill_paragraph(void)
 			}
 			bmovepast(Bbuff, biswhite, FORWARD);
 			if (Buff() == NL && bisbeforemrk(Bbuff, tmp)) {
-				bdelete(Bbuff, 1);
+				bdelete1(Bbuff);
 				Ztrim_white_space();
 				binsert(Bbuff, ' ');
 			}
@@ -623,7 +623,7 @@ void Zinsert(void)
 {
 	if (Curbuff->bmode & OVERWRITE) {
 		if (!bisend(Bbuff) && Buff() != NL)
-			bdelete(Bbuff, 1);
+			bdelete1(Bbuff);
 	}
 
 	binsert(Bbuff, Cmd);
@@ -651,7 +651,7 @@ void Ztab(void)
 static inline void space_delete(int n)
 {
 	for (int i = 0; i < n && Buff() == ' '; ++i)
-		bdelete(Bbuff, 1);
+		bdelete1(Bbuff);
 }
 
 void Zuntab(void)
@@ -660,13 +660,13 @@ void Zuntab(void)
 	case '\n':
 		/* start of line or buffer */
 		if (Buff() == '\t')
-			bdelete(Bbuff, 1);
+			bdelete1(Bbuff);
 		else
 			space_delete(Tabsize);
 		return;
 	case '\t':
 		bmove(Bbuff, -1);
-		bdelete(Bbuff, 1);
+		bdelete1(Bbuff);
 		return;
 	case ' ':
 	{
@@ -676,7 +676,7 @@ void Zuntab(void)
 		for (int i = 0; i < del; ++i) {
 			bmove(Bbuff, -1);
 			if (Buff() == ' ')
-				bdelete(Bbuff, 1);
+				bdelete1(Bbuff);
 		}
 		space_delete(8 - del);
 		return;
@@ -687,7 +687,7 @@ void Zuntab(void)
 		/* special case for EOL - delete from start of line */
 		tobegline(Bbuff);
 		if (Buff() == '\t')
-			bdelete(Bbuff, 1);
+			bdelete1(Bbuff);
 		else
 			space_delete(Tabsize);
 		toendline(Bbuff);
@@ -805,7 +805,7 @@ void Zswap_chars(void)
 	if (!bisstart(Bbuff))
 		bmove(Bbuff, -1);
 	tmp = Buff();
-	bdelete(Bbuff, 1);
+	bdelete1(Bbuff);
 	bmove1(Bbuff);
 	binsert(Bbuff, tmp);
 }
@@ -1017,7 +1017,7 @@ static void indent(bool flag)
 					binsert(Bbuff, '\t');
 		} else
 			for (i = 0; i < Arg && Buff() == '\t'; ++i)
-				bdelete(Bbuff, 1);
+				bdelete1(Bbuff);
 		bcsearch(Bbuff, NL);
 	}
 	bpnttomrk(Bbuff, psave);

@@ -102,6 +102,7 @@ struct buff *bcreate(void);
 void bdelbuff(struct buff *buff);
 int binsert(struct buff *buff, Byte ch);
 void bdelete(struct buff *buff, unsigned int n);
+void bdelete1(struct buff *buff);
 int bmove(struct buff *buff, int n);
 int bstrline(struct buff *buff, char *str, int len);
 void tobegline(struct buff *buff);

@@ -43,7 +43,7 @@ struct zbuff;
  */
 
 #define ZSTR	"Zedit"
-#define VERSION	"6.3"
+#define VERSION	"6.4"
 
 #define INVALID		-1
 

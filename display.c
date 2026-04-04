@@ -196,7 +196,7 @@ void display_init(struct mark *mrk)
 		set_sstart(mrk);
 
 #if HUGE_FILES
-	huge_file_cb = modeline_invalidate;
+	_huge_file_cb = modeline_invalidate;
 #endif
 }
 

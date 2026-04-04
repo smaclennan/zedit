@@ -305,7 +305,7 @@ static inline void bmove1(struct buff *buff)
 
 #if HUGE_FILES
 extern void (*huge_file_cb)(struct buff *buff, int rc);
-void default_huge_file_cb(struct buff *buff, int rc);
+extern int huge_file_errno;
 int breadhuge(struct buff *buff, const char *fname);
 void bhugecleanup(struct buff *buff);
 #endif

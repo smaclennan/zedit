@@ -44,23 +44,13 @@ CFILES = \
 	bswappnt.c \
 	bwritefile.c \
 	bwritev.c \
-	calc.c \
-	dbg.c \
 	freepage.c \
 	globals.c \
 	hugefile.c \
-	kbd.c \
 	mrkaftermrk.c \
 	mrkbeforemrk.c \
 	newpage.c \
 	pagesplit.c \
-	reg.c \
-	strlcpy.c \
-	term.c \
-	tinit.c \
-	tsize.c \
-	tstyle.c \
-	toendline.c \
 
 O := $(addprefix $(BDIR)/, $(CFILES:.c=.o))
 

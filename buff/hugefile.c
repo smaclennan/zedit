@@ -5,7 +5,6 @@
 #include <sys/stat.h>
 
 #include "buff.h"
-#include "tinit.h"
 
 #if HUGE_FILES
 
@@ -56,7 +55,7 @@ static void start_thread(struct buff *buff)
 failed:
 	mutex_destroy(buff->lock);
 	buff->lock = NULL;
-	huge_file_cb(buff, EAGAIN);
+	_huge_file_cb(buff, EAGAIN);
 }
 
 #else
@@ -65,26 +64,16 @@ failed:
 #define start_thread(b)
 #endif
 
-void default_huge_file_cb(struct buff *buff, int rc)
-{
-	switch (rc) {
-	case 0:
-	case EAGAIN:
-		return; /* success */
-	case EIO:
-		terror("FATAL I/O Error: page read\n");
-		break;
-	case EBADF:
-		terror("FATAL I/O Error: file modified\n");
-		break;
-	default:
-		terror("FATAL I/O Error: unexpected error\n");
-		break;
-	}
-	exit(2);
-}
+void (*huge_file_cb)(struct buff *buff, int rc);
+int huge_file_errno;
 
-void (*huge_file_cb)(struct buff *buff, int rc) = default_huge_file_cb;
+static inline void safe_huge_file_cb(struct buff *buff, int rc)
+{
+	if (rc)
+		huge_file_errno = rc;
+	if (huge_file_cb)
+		huge_file_cb(buff, rc);
+}
 
 static void breadpage(struct buff *buff, struct page *page)
 {
@@ -128,7 +117,7 @@ static void breadpage(struct buff *buff, struct page *page)
 			if (tp->pgoffset)
 				breadpage(buff, tp);
 
-		huge_file_cb(buff, 0);
+		safe_huge_file_cb(buff, 0);
 		close(buff->huge->fd);
 		free(buff->huge);
 		buff->huge = NULL;
@@ -137,10 +126,10 @@ static void breadpage(struct buff *buff, struct page *page)
 	return;
 
 fatal:
-	huge_file_cb(buff, EIO);
+	safe_huge_file_cb(buff, EIO);
 	return; /* assume they dealt with it */
 fatal_mod:
-	huge_file_cb(buff, EBADF);
+	safe_huge_file_cb(buff, EBADF);
 }
 
 /* Warning: keeps the fd open. */

@@ -1,6 +1,5 @@
 /* Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca> */
 
-#include "buff.h"
 #include "reg.h"
 
 /** @addtogroup buffer

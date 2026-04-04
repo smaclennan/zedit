@@ -11,7 +11,6 @@
 #include <assert.h>
 #include <limits.h>
 #include "buff.h"
-#include "tinit.h"
 
 void dump_pages(struct buff *buff)
 {

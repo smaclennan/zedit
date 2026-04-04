@@ -30,7 +30,6 @@
 #include <assert.h>
 #include <limits.h>
 #include "buff.h"
-#include "tinit.h"
 
 #ifdef WIN32
 #define FILENAME "btest.file"

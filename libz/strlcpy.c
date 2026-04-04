@@ -1,10 +1,6 @@
 /* Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca> */
 
-#include "buff.h"
-
-/** @addtogroup buffer
- * @{
- */
+#include "libz.h"
 
 #if defined(__linux__) || defined(WIN32)
 /* A strlcpy implementation for systems without.
@@ -78,4 +74,3 @@ int strconcat(char *str, int len, ...)
 
 	return total;
 }
-/* @} */

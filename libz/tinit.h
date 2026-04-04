@@ -3,9 +3,7 @@
 #ifndef _TINIT_H_
 #define _TINIT_H_
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "libz.h"
 
 /* Terminal code and how to use it.
  *
@@ -63,9 +61,6 @@ extern int no_tsize;
 
 void tinit(void);
 void tsize(int *rows, int *cols);
-
-/* windows.h must be before buff.h... no idea why */
-#include "buff.h"
 
 /* Optimized routines for output */
 extern int Prow, Pcol;

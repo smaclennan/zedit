@@ -7,8 +7,6 @@ CFLAGS ?= -Wall -O2
 
 # For debugging use small pages
 #CFLAGS += -DPGSIZE=8 -DPAGE_DBG
-# For testing the builtin reg
-#CFLAGS += -DBUILTIN_REG
 # For hugefiles
 #CFLAGS += -DHUGE_FILES
 # Generally useful
@@ -51,6 +49,7 @@ CFILES = \
 	mrkbeforemrk.c \
 	newpage.c \
 	pagesplit.c \
+	reg.c \
 
 O := $(addprefix $(BDIR)/, $(CFILES:.c=.o))
 

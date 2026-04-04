@@ -41,7 +41,7 @@
  * @{
  */
 
-#define LIBBUFF_MAJOR 1
+#define LIBBUFF_MAJOR 2
 #define LIBBUFF_MINOR 0
 
 /* THE BUFFER STRUCTURES */
@@ -161,19 +161,9 @@ int do_undo(struct buff *buff);
 /* \endcond */
 #endif
 
-/* strlcpy.c */
-#if defined(__linux__) || defined(WIN32)
-size_t strlcpy(char *dst, const char *src, size_t dstsize);
-size_t strlcat(char *dst, const char *src, size_t dstsize);
-#endif
-int strconcat(char *str, int len, ...);
-
 /* \cond skip */
 #ifndef NULL
 #define NULL ((void *)0)
-#endif
-#ifndef EOF
-#define EOF -1
 #endif
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -456,13 +446,6 @@ extern const char *libbuff_version;
 extern const char *libbuff_marker;
 
 /* @} buffer */
-
-/** @addtogroup misc
- * @{
- */
-const char *Dbgfname(const char *fname);
-void Dbg(const char *fmt, ...);
-/* @} misc */
 
 #endif
 

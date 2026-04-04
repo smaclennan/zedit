@@ -5,62 +5,19 @@ HOST_ARCH := $(shell uname -m)
 # Paranoia for Zedit
 CFLAGS ?= -Wall -O2
 
-# For debugging use small pages
-#CFLAGS += -DPGSIZE=8 -DPAGE_DBG
 # For testing the builtin reg
 #CFLAGS += -DBUILTIN_REG
-# For hugefiles
-#CFLAGS += -DHUGE_FILES
-# Generally useful
-CFLAGS += -DBUFFER_MARKS
 
 CFILES = \
-	bcopyrgn.c \
-	bcreate.c \
-	bcremark.c \
-	bcsearch.c \
-	bdelbuff.c \
-	bdelete.c \
-	bdeltomrk.c \
-	bempty.c \
-	bindata.c \
-	binsert.c \
-	binstr.c \
-	bisbeforemrk.c \
-	bisaftermrk.c \
-	blength.c \
-	bline.c \
-	blocation.c \
-	bmove.c \
-	bmovepast.c \
-	bmoveto.c \
-	bmsearch.c \
-	boffset.c \
-	bpeek.c \
-	bpnttomrk.c \
-	breadfile.c \
-	breadv.c \
-	bstrline.c \
-	bswappnt.c \
-	bwritefile.c \
-	bwritev.c \
 	calc.c \
 	dbg.c \
-	freepage.c \
 	globals.c \
-	hugefile.c \
 	kbd.c \
-	mrkaftermrk.c \
-	mrkbeforemrk.c \
-	newpage.c \
-	pagesplit.c \
-	reg.c \
 	strlcpy.c \
 	term.c \
 	tinit.c \
 	tsize.c \
 	tstyle.c \
-	toendline.c \
 
 O := $(addprefix $(BDIR)/, $(CFILES:.c=.o))
 
@@ -74,7 +31,7 @@ QUIET_LN      = $(Q:@=@echo    '     LN       '$@;)
 $(BDIR)/%.o : %.c
 	$(QUIET_CC)$(CC) -o $@ -c $(CFLAGS) $<
 
-all: $(BDIR) $(BDIR)/libbuff.a
+all: $(BDIR) $(BDIR)/liblibz.a
 
 tags:
 	etags *.[ch]
@@ -82,11 +39,11 @@ tags:
 tests:
 	make -C tests all
 
-$(BDIR)/libbuff.a: $O
-	@rm -f $(BDIR)/libbuff.a
+$(BDIR)/liblibz.a: $O
+	@rm -f $(BDIR)/liblibz.a
 	$(QUIET_AR)$(AR) cr $@ $O
 ifeq ($(HOST_ARCH), $(BDIR))
-	$(QUIET_LN)ln -fs $(BDIR)/libbuff.a libbuff.a
+	$(QUIET_LN)ln -fs $(BDIR)/liblibz.a liblibz.a
 endif
 
 $(BDIR):
@@ -101,5 +58,5 @@ doxy:
 
 clean:
 	$(MAKE) -C tests clean
-	rm -f *.o libbuff.a
+	rm -f *.o liblibz.a
 	rm -rf $(BDIR) doxygen/html

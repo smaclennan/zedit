@@ -16,6 +16,8 @@
 #ifndef _reg_h
 #define _reg_h
 
+#include "buff.h"
+
 /** @addtogroup buffer
  * @{
  */

@@ -50,6 +50,7 @@ CFILES = \
 	newpage.c \
 	pagesplit.c \
 	reg.c \
+	toendline.c \
 
 O := $(addprefix $(BDIR)/, $(CFILES:.c=.o))
 

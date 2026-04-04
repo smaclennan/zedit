@@ -165,6 +165,9 @@ int do_undo(struct buff *buff);
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
+#ifndef EOF
+#define EOF -1
+#endif
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif

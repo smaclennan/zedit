@@ -85,8 +85,8 @@ static void tforce(void)
 		TPUTS(tparm(cursor_address, Prow, Pcol));
 #else
 		char str[64];
-		int n = strfmt(str, sizeof(str),
-					   "\033[%d;%dH", Prow + 1, Pcol + 1);
+		int n = snprintf(str, sizeof(str), "\033[%d;%dH",
+				 Prow + 1, Pcol + 1);
 		twrite(str, n);
 #endif
 		Srow = Prow;

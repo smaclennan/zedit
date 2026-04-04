@@ -3,6 +3,7 @@
 #ifndef _TINIT_H_
 #define _TINIT_H_
 
+#include <stdio.h>
 #include "libz.h"
 
 /* Terminal code and how to use it.

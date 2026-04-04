@@ -52,12 +52,9 @@ void tstyle(int style)
 		break;
 	}
 #else
-	char str[32], *p = str;
-
-	*p++ = '\033'; *p++ = '[';
-	p = uint2str(style, p);
-	*p++ = 'm';
-	twrite(str, p - str);
+	char str[16];
+	int n = snprintf(str, sizeof(str), "\033[%dm", style);
+	twrite(str, n);
 #endif
 
 	cur_style = style;

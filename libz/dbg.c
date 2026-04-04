@@ -1,17 +1,14 @@
 /* Copyright (C) 1988-2018 Sean MacLennan <seanm@seanm.ca> */
 
-#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
-// #include "buff.h"
-#include "tinit.h"
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
 
-/* \cond skip */
 static char *dbgfname;
-/* \endcond */
 
-/** @addtogroup misc
- * @{
- */
 
 /** Set the filename for the Dbg() function. Allocates the space for
  * the filename. If the filename is NULL, free the current filename if
@@ -47,17 +44,15 @@ void Dbg(const char *fmt, ...)
 	int len;
 
 	va_start(ap, fmt);
-	len = strfmt_ap(line, sizeof(line), fmt, ap);
+	len = vsnprintf(line, sizeof(line), fmt, ap);
 	va_end(ap);
 
 	if (dbgfname) {
 		int fd = open(dbgfname, O_CREAT | O_WRONLY | O_APPEND, 0644);
-
 		if (fd >= 0) {
-			_twrite(fd, line, len);
+			write(fd, line, len);
 			close(fd);
 		}
 	} else
-		terror(line);
+		fputs(line, stderr);
 }
-/* @} */

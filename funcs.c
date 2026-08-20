@@ -123,9 +123,12 @@ void (*Cmds[][2])() = {
 	{ Ztag_word,			Znotimpl },
 	{ Zhelp,			Znotimpl },
 	{ Zzap_to_char,			Zzap_to_char },
-	{ Zsh_indent,		pnewline },
-	{ Zdos2unix,		Znotimpl },
+	{ Zsh_indent,			pnewline },
+	{ Zdos2unix,			Znotimpl },
 	{ Zuntab,			Zuntab },
+#ifdef BUILTIN_FCHECK
+	{ Zfcheck,			Znotimpl },
+#endif
 	/* only in the PAW you say? pity... */
 	{ Znotimpl,			Zfname },
 };

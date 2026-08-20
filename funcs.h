@@ -123,7 +123,12 @@
 #define ZSH_INDENT		(ZZAP_TO_CHAR + 1)
 #define ZDOS2UNIX		(ZSH_INDENT + 1)
 #define ZUNTAB			(ZDOS2UNIX + 1)
+#ifdef BUILTIN_FCHECK
+#define ZFCHECK			(ZUNTAB + 1)
+#define NUMFUNCS		(ZFCHECK + 1)
+#else
 #define NUMFUNCS		(ZUNTAB + 1)
+#endif
 
 _Static_assert(NUMFUNCS < 256,
 	       "Cnames[].fnum is a byte. Too many functions.");

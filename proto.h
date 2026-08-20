@@ -132,6 +132,9 @@ Z(Ztag);
 Z(Ztag_word);
 Z(Zzap_to_char);
 Z(Zdos2unix);
+#ifdef BUILTIN_FCHECK
+Z(Zfcheck);
+#endif
 
 Z(pinsert);
 Z(pnewline);

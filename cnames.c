@@ -166,6 +166,11 @@ struct cnames Cnames[] = {
 	   "bang (!) saves all remaining buffers. A Universal Argument causes "
 	   "all modified buffers to be saved without prompting.")
 	},
+#ifdef BUILTIN_FCHECK
+	{"fcheck",			ZFCHECK,		AI,
+	 C("Does some runtime sanity checking on structures.")
+	},
+#endif
 	{"fill-check",			ZFILL_CHECK,		0,
 	 C("Checks if the current column is past the FillWidth column. If it "
 	   "is, the words past or on the FillWidth column are wrapped. This "

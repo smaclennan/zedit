@@ -79,6 +79,10 @@ static bool zwritefile(char *fname)
 	}
 
 	bmrktopnt(Bbuff, &smark);
+	// Deal with NL at EOF
+	btoend(Bbuff);
+	if (bpeek(Bbuff) != '\n')
+		binsert(Bbuff, '\n');
 	rc = bwritefile(Bbuff, fname, file_mode());
 	bpnttomrk(Bbuff, &smark);
 	if (rc) {

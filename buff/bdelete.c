@@ -89,6 +89,8 @@ void bdelete(struct buff *buff, unsigned int quantity)
 	bsetmod(buff);
 }
 
+#ifndef bdelete1
+// SAM buggy. Kills tend to now be displayed right
 /** Delete one byte from the buffer at the current point.
  * @param buff The buffer to delete from.
  */
@@ -131,4 +133,5 @@ void bdelete1(struct buff *buff)
 
 	bsetmod(buff);
 }
+#endif
 /* @} */

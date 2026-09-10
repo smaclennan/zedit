@@ -51,7 +51,7 @@ void Dbg(const char *fmt, ...)
 	if (dbgfname) {
 		int fd = open(dbgfname, O_CREAT | O_WRONLY | O_APPEND, 0644);
 		if (fd >= 0) {
-			write(fd, line, len);
+			int n = write(fd, line, len); (void)n;
 			close(fd);
 		}
 	} else

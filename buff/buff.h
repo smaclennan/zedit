@@ -454,10 +454,3 @@ extern const char *libbuff_marker;
 /* @} buffer */
 
 #endif
-
-/* Ironically, I need LONG_LINE_COMMENT for the local variable! */
-/*
- * Local Variables:
- * my-checkpatch-ignores: "SPDX_LICENSE_TAG,COMPLEX_MACRO,MULTISTATEMENT_MACRO_USE_DO_WHILE,LONG_LINE_COMMENT"
- * End:
- */

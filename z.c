@@ -155,6 +155,8 @@ int main(int argc, char **argv)
 	unlink(path);
 	Dbgfname(path);
 
+	Dbg("SAM WAS HERE\n"); // SAM
+
 	while ((arg = getopt(argc, argv, "c:hl:rtv")) != EOF)
 		switch (arg) {
 		case 'c':
@@ -226,25 +228,5 @@ int main(int argc, char **argv)
 
 	while (1)
 		execute();
-}
-
-void Zstats(void)
-{
-	struct zbuff *buff;
-	struct mark *mark;
-	struct page *page;
-	unsigned int nbuff = 2; /* paw + kill */
-	unsigned int npage = 1 + delpages(); /* paw page + kill */
-	unsigned int nmarks = 0;
-
-	foreachbuff(buff) {
-		++nbuff;
-		for (page = buff->buff->firstp; page; page = page->nextp)
-			++npage;
-		foreach_buffmark(buff->buff, mark)
-			++nmarks;
-	}
-
-	putpaw("Buffers: %u  Pages: %u  Marks: %u", nbuff, npage, nmarks);
 }
 /* @} */

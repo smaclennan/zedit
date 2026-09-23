@@ -155,8 +155,6 @@ int main(int argc, char **argv)
 	unlink(path);
 	Dbgfname(path);
 
-	Dbg("SAM WAS HERE\n"); // SAM
-
 	while ((arg = getopt(argc, argv, "c:hl:rtv")) != EOF)
 		switch (arg) {
 		case 'c':
